@@ -182,4 +182,43 @@ class TeamController extends Controller
             'user' => $user,
         ]);
     }
+    public function allTimeLogs()
+    {
+        // Get all team members of the authenticated user
+        $teamMembers = Team::query()
+            ->where('user_id', auth()->id())
+            ->with('member')
+            ->get()
+            ->pluck('member.id');
+
+        $query = TimeLog::query()->whereIn('user_id', $teamMembers);
+
+        // Apply date filters if provided
+        if (request()->has('start_date')) {
+            $query->whereDate('start_timestamp', '>=', request('start_date'));
+        }
+
+        if (request()->has('end_date')) {
+            $query->whereDate('start_timestamp', '<=', request('end_date'));
+        }
+
+        $timeLogs = $query->with('user')->get()
+            ->map(function ($timeLog) {
+                return [
+                    'id' => $timeLog->id,
+                    'user_name' => $timeLog->user->name,
+                    'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                    'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
+                    'duration' => $timeLog->duration,
+                ];
+            });
+
+        return Inertia::render('team/all-time-logs', [
+            'timeLogs' => $timeLogs,
+            'filters' => [
+                'start_date' => request('start_date', ''),
+                'end_date' => request('end_date', ''),
+            ],
+        ]);
+    }
 }

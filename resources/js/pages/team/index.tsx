@@ -31,12 +31,19 @@ export default function Team({ teamMembers }: Props) {
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-xl font-semibold">Team Members</h2>
-                    <Button className="flex items-center gap-2">
-                        <Link href={route('team.create')} className="flex items-center gap-2">
-                            <PlusCircle className="h-4 w-4" />
-                            <span>Create New</span>
+                    <div className="flex items-center gap-2">
+                        <Link href={route('team.all-time-logs')}>
+                            <Button variant="outline" className="flex items-center gap-2">
+                                <span>All Time Logs</span>
+                            </Button>
                         </Link>
-                    </Button>
+                        <Button className="flex items-center gap-2">
+                            <Link href={route('team.create')} className="flex items-center gap-2">
+                                <PlusCircle className="h-4 w-4" />
+                                <span>Create New</span>
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
 
                 {teamMembers.length > 0 ? (
