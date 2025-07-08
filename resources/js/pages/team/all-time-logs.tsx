@@ -1,12 +1,13 @@
 import EmptyState from '@/components/empty-state';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Search } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { ArrowLeft, ClockIcon, CalendarIcon, Search } from 'lucide-react';
+import { FormEventHandler, useMemo } from 'react';
 
 type TimeLog = {
     id: number;
@@ -37,6 +38,29 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
             href: '/team/all-time-logs',
         },
     ];
+
+    // Calculate total hours and weekly average
+    const { totalHours, weeklyAverage } = useMemo(() => {
+        // Convert minutes to hours and sum them up
+        const totalMinutes = timeLogs.reduce((sum, log) => sum + log.duration, 0);
+        const totalHours = Math.round((totalMinutes / 60) * 10) / 10; // Round to 1 decimal place
+
+        // Calculate weekly average based on the date range
+        let weeklyAverage = 0;
+
+        if (filters.start_date && filters.end_date) {
+            const startDate = new Date(filters.start_date);
+            const endDate = new Date(filters.end_date);
+            const daysDifference = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+            const weeksDifference = Math.max(1, daysDifference / 7);
+            weeklyAverage = Math.round((totalHours / weeksDifference) * 10) / 10; // Round to 1 decimal place
+        } else {
+            // If no date range, use 4 weeks as default period
+            weeklyAverage = Math.round((totalHours / 4) * 10) / 10;
+        }
+
+        return { totalHours, weeklyAverage };
+    }, [timeLogs, filters]);
 
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
@@ -121,6 +145,42 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
                         </Button>
                     </form>
                 </div>
+
+                {timeLogs.length > 0 && (
+                    <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        {/* Total hours card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Total Team Hours</CardTitle>
+                                <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">{totalHours}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {filters.start_date && filters.end_date
+                                        ? `Hours logged from ${filters.start_date} to ${filters.end_date}`
+                                        : filters.start_date
+                                          ? `Hours logged from ${filters.start_date}`
+                                          : filters.end_date
+                                            ? `Hours logged until ${filters.end_date}`
+                                            : 'Total hours logged by all team members'}
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Weekly average card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Team Weekly Average</CardTitle>
+                                <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">{weeklyAverage}</div>
+                                <p className="text-xs text-muted-foreground">Hours per week across all team members</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
 
                 {timeLogs.length > 0 ? (
                     <div className="rounded-md border">
