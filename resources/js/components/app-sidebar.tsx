@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Folder, LayoutGrid, LucideServerCog } from 'lucide-react';
+import { Folder, LayoutGrid, LucideServerCog, TimerIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -18,6 +18,11 @@ const mainNavItems: NavItem[] = [
         href: '/team',
         icon: LucideServerCog,
     },
+    {
+        title: 'Time Log',
+        href: '/time-log',
+        icon: TimerIcon,
+    }
 ];
 
 const footerNavItems: NavItem[] = [

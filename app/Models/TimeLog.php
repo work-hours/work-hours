@@ -8,22 +8,18 @@ class TimeLog extends Model
 {
     protected $fillable = [
         'user_id',
-        'start_date',
-        'end_date',
-        'start_time',
-        'end_time',
+        'start_timestamp',
+        'end_timestamp',
         'duration',
     ];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'start_time' => 'datetime',
-        'end_time' => 'datetime',
+        'start_timestamp' => 'datetime',
+        'end_timestamp' => 'datetime',
         'duration' => 'float',
     ];
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }

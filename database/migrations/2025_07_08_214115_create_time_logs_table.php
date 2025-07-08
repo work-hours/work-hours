@@ -14,10 +14,8 @@ return new class extends Migration
         Schema::create('time_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->date('start_date');
-            $table->date('end_date')->nullable();
-            $table->time('start_time');
-            $table->time('end_time')->nullable();
+            $table->timestamp('start_timestamp');
+            $table->timestamp('end_timestamp')->nullable();
             $table->float('duration')->nullable(); // Duration in minutes
             $table->timestamps();
         });
