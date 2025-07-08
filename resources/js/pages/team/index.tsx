@@ -1,10 +1,10 @@
 import DeleteTeamMember from '@/components/delete-team-member';
-import EmptyState from '@/components/empty-state';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { Edit, PlusCircle } from 'lucide-react';
+import { Edit, Users, Clock, UserPlus } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -28,72 +28,98 @@ export default function Team({ teamMembers }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Team" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">Team Members</h2>
-                    <div className="flex items-center gap-2">
-                        <Link href={route('team.all-time-logs')}>
-                            <Button variant="outline" className="flex items-center gap-2">
-                                <span>All Time Logs</span>
-                            </Button>
-                        </Link>
-                        <Button className="flex items-center gap-2">
-                            <Link href={route('team.create')} className="flex items-center gap-2">
-                                <PlusCircle className="h-4 w-4" />
-                                <span>Create New</span>
-                            </Link>
-                        </Button>
-                    </div>
-                </div>
+            <div className="flex flex-col gap-6 p-6">
+                {/* Header section */}
+                <section className="mb-2">
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Team Management</h1>
+                    <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your team members and their time logs</p>
+                </section>
 
-                {teamMembers.length > 0 ? (
-                    <div className="rounded-md border">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b bg-muted/50">
-                                    <th className="px-4 py-3 text-left font-medium">Name</th>
-                                    <th className="px-4 py-3 text-left font-medium">Email</th>
-                                    <th className="px-4 py-3 text-left font-medium">Role</th>
-                                    <th className="px-4 py-3 text-right font-medium">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {teamMembers.map((member) => (
-                                    <tr key={member.id} className="border-b">
-                                        <td className="px-4 py-3">{member.name}</td>
-                                        <td className="px-4 py-3">{member.email}</td>
-                                        <td className="px-4 py-3">{member.role}</td>
-                                        <td className="px-4 py-3 text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <Link href={route('team.time-logs', member.id)}>
-                                                    <Button variant="outline" size="sm">
-                                                        Time Logs
-                                                    </Button>
-                                                </Link>
-                                                <Link href={route('team.edit', member.id)}>
-                                                    <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                        <Edit className="h-4 w-4" />
-                                                        <span className="sr-only">Edit</span>
-                                                    </Button>
-                                                </Link>
-                                                <DeleteTeamMember userId={member.id} />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                ) : (
-                    <div className="rounded-md border p-6">
-                        <EmptyState
-                            title="No Team Members"
-                            description="You haven't added any team members yet."
-                            actionLabel="Add Team Member"
-                            actionRoute="team.create"
-                        />
-                    </div>
-                )}
+                {/* Actions card */}
+                <Card className="overflow-hidden transition-all hover:shadow-md">
+                    <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-xl">Team Members</CardTitle>
+                                <CardDescription>You have {teamMembers.length} team members</CardDescription>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Link href={route('team.all-time-logs')}>
+                                    <Button variant="outline" className="flex items-center gap-2">
+                                        <Clock className="h-4 w-4" />
+                                        <span>All Time Logs</span>
+                                    </Button>
+                                </Link>
+                                <Link href={route('team.create')}>
+                                    <Button className="flex items-center gap-2">
+                                        <UserPlus className="h-4 w-4" />
+                                        <span>Add Member</span>
+                                    </Button>
+                                </Link>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {teamMembers.length > 0 ? (
+                            <div className="rounded-md border overflow-hidden">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b bg-muted/50">
+                                            <th className="px-4 py-3 text-left font-medium">Name</th>
+                                            <th className="px-4 py-3 text-left font-medium">Email</th>
+                                            <th className="px-4 py-3 text-left font-medium">Role</th>
+                                            <th className="px-4 py-3 text-right font-medium">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {teamMembers.map((member) => (
+                                            <tr key={member.id} className="border-b hover:bg-muted/20 transition-colors">
+                                                <td className="px-4 py-3 font-medium">{member.name}</td>
+                                                <td className="px-4 py-3 text-muted-foreground">{member.email}</td>
+                                                <td className="px-4 py-3">
+                                                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                                                        {member.role}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-right">
+                                                    <div className="flex justify-end gap-2">
+                                                        <Link href={route('team.time-logs', member.id)}>
+                                                            <Button variant="outline" size="sm" className="h-8">
+                                                                <Clock className="h-3.5 w-3.5 mr-1" />
+                                                                Time Logs
+                                                            </Button>
+                                                        </Link>
+                                                        <Link href={route('team.edit', member.id)}>
+                                                            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                                                                <Edit className="h-3.5 w-3.5" />
+                                                                <span className="sr-only">Edit</span>
+                                                            </Button>
+                                                        </Link>
+                                                        <DeleteTeamMember userId={member.id} />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="rounded-md border p-6 bg-muted/5">
+                                <div className="flex flex-col items-center justify-center text-center py-12">
+                                    <Users className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                                    <h3 className="text-lg font-medium mb-1">No Team Members</h3>
+                                    <p className="text-muted-foreground mb-4">You haven't added any team members yet.</p>
+                                    <Link href={route('team.create')}>
+                                        <Button className="flex items-center gap-2">
+                                            <UserPlus className="h-4 w-4" />
+                                            <span>Add Team Member</span>
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

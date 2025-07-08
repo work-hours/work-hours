@@ -1,9 +1,10 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
+import { LoaderCircle, User, Mail, Lock, ArrowLeft, UserPlus } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
@@ -43,75 +44,118 @@ export default function CreateTeamMember() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Team Member" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">Create Team Member</h2>
-                </div>
+            <div className="flex flex-col gap-6 p-6">
+                {/* Header section */}
+                <section className="mb-2">
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Add Team Member</h1>
+                    <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new member for your team</p>
+                </section>
 
-                <div className="max-w-2xl rounded-md border p-6">
-                    <form className="flex flex-col gap-6" onSubmit={submit}>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
-                                <Input
-                                    id="name"
-                                    type="text"
-                                    required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="name"
-                                    value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
-                                    disabled={processing}
-                                    placeholder="Full name"
-                                />
-                                <InputError message={errors.name} className="mt-2" />
-                            </div>
+                <Card className="max-w-2xl overflow-hidden transition-all hover:shadow-md">
+                    <CardHeader>
+                        <CardTitle className="text-xl">Team Member Details</CardTitle>
+                        <CardDescription>Enter the information for the new team member</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form className="flex flex-col gap-6" onSubmit={submit}>
+                            <div className="grid gap-6">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                            <User className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <Input
+                                            id="name"
+                                            type="text"
+                                            required
+                                            autoFocus
+                                            tabIndex={1}
+                                            autoComplete="name"
+                                            value={data.name}
+                                            onChange={(e) => setData('name', e.target.value)}
+                                            disabled={processing}
+                                            placeholder="John Doe"
+                                            className="pl-10"
+                                        />
+                                    </div>
+                                    <InputError message={errors.name} className="mt-1" />
+                                </div>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    required
-                                    tabIndex={2}
-                                    autoComplete="email"
-                                    value={data.email}
-                                    onChange={(e) => setData('email', e.target.value)}
-                                    disabled={processing}
-                                    placeholder="email@example.com"
-                                />
-                                <InputError message={errors.email} />
-                            </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                            <Mail className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <Input
+                                            id="email"
+                                            type="email"
+                                            required
+                                            tabIndex={2}
+                                            autoComplete="email"
+                                            value={data.email}
+                                            onChange={(e) => setData('email', e.target.value)}
+                                            disabled={processing}
+                                            placeholder="john@example.com"
+                                            className="pl-10"
+                                        />
+                                    </div>
+                                    <InputError message={errors.email} />
+                                </div>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    required
-                                    tabIndex={3}
-                                    autoComplete="new-password"
-                                    value={data.password}
-                                    onChange={(e) => setData('password', e.target.value)}
-                                    disabled={processing}
-                                    placeholder="Password"
-                                />
-                                <InputError message={errors.password} />
-                            </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                            <Lock className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <Input
+                                            id="password"
+                                            type="password"
+                                            required
+                                            tabIndex={3}
+                                            autoComplete="new-password"
+                                            value={data.password}
+                                            onChange={(e) => setData('password', e.target.value)}
+                                            disabled={processing}
+                                            placeholder="••••••••"
+                                            className="pl-10"
+                                        />
+                                    </div>
+                                    <InputError message={errors.password} />
+                                </div>
 
-                            <div className="mt-4 flex justify-end gap-2">
-                                <Button type="button" variant="outline" onClick={() => window.history.back()} tabIndex={5} disabled={processing}>
-                                    Cancel
-                                </Button>
-                                <Button type="submit" tabIndex={4} disabled={processing}>
-                                    {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                                    Create Team Member
-                                </Button>
+                                <div className="mt-4 flex justify-end gap-3">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => window.history.back()}
+                                        tabIndex={5}
+                                        disabled={processing}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <ArrowLeft className="h-4 w-4" />
+                                        Back
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        tabIndex={4}
+                                        disabled={processing}
+                                        className="flex items-center gap-2"
+                                    >
+                                        {processing ? (
+                                            <LoaderCircle className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <UserPlus className="h-4 w-4" />
+                                        )}
+                                        {processing ? "Creating..." : "Create Team Member"}
+                                    </Button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );
