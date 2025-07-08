@@ -151,10 +151,7 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
                     </div>
                 ) : (
                     <div className="rounded-md border p-6">
-                        <EmptyState
-                            title="No Time Logs"
-                            description={`${user.name} hasn't added any time logs yet.`}
-                        />
+                        <EmptyState title="No Time Logs" description={`${user.name} hasn't added any time logs yet.`} />
                     </div>
                 )}
             </div>

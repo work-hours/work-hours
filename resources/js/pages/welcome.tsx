@@ -20,7 +20,7 @@ export default function Welcome() {
             </nav>
 
             {/* Hero Section */}
-            <section className="container mx-auto px-4 mb-12">
+            <section className="container mx-auto mb-12 px-4">
                 <div className="mx-auto max-w-4xl text-center">
                     <h1 className="mb-6 text-4xl leading-tight font-bold text-gray-900 md:text-6xl">
                         Track Your Work Hours <span className="text-primary">Effortlessly</span>
@@ -41,7 +41,7 @@ export default function Welcome() {
             </section>
 
             {/* Features Section */}
-            <section id="features" className="container mx-auto px-4 mb-12">
+            <section id="features" className="container mx-auto mb-12 px-4">
                 <div className="mb-16 text-center">
                     <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">Powerful Features</h2>
                     <p className="mx-auto max-w-2xl text-xl text-gray-600">Everything you need to track, analyze, and optimize your work hours.</p>
