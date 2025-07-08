@@ -1,3 +1,4 @@
+import { Icon } from '@/components/icon';
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
@@ -28,7 +29,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
                     <Link className="block w-full" href={route('profile.edit')} as="button" prefetch onClick={cleanup}>
-                        <Settings className="mr-2" />
+                        <Icon iconNode={Settings} className="mr-2" />
                         Settings
                     </Link>
                 </DropdownMenuItem>
@@ -36,7 +37,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
                 <Link className="block w-full" method="post" href={route('logout')} as="button" onClick={handleLogout}>
-                    <LogOut className="mr-2" />
+                    <Icon iconNode={LogOut} className="mr-2" />
                     Log out
                 </Link>
             </DropdownMenuItem>
