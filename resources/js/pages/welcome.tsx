@@ -5,13 +5,13 @@ import { Clock, BarChart2, Users, ArrowRight, CheckCircle } from 'lucide-react';
 export default function Welcome() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-background/90">
-            <Head title="WorkHours - Track Your Time Effortlessly" />
+            <Head title="Work Hours - Track Your Time Effortlessly" />
 
             {/* Navigation */}
             <nav className="container mx-auto flex items-center justify-between px-6 py-6 lg:px-8">
                 <div className="flex items-center gap-2">
                     <AppLogoIcon className="h-16 w-16 text-primary transition-all hover:scale-105" />
-                    <span className="text-xl font-bold tracking-tight text-foreground">WorkHours</span>
+                    <span className="text-xl font-bold tracking-tight text-foreground">Work Hours</span>
                 </div>
                 <div className="flex items-center gap-6 md:gap-8">
                     <Link href={route('login')} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
@@ -152,7 +152,7 @@ export default function Welcome() {
                             <span className="text-sm font-medium text-foreground">WorkHours</span>
                         </div>
                         <div className="text-sm text-muted-foreground">
-                            &copy; {new Date().getFullYear()} WorkHours. All rights reserved.
+                            &copy; {new Date().getFullYear()} Work Hours. All rights reserved.
                         </div>
                     </div>
                 </div>

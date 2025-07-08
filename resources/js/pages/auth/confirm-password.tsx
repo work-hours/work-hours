@@ -1,6 +1,6 @@
 // Components
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
+import { LoaderCircle, Lock } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
@@ -29,28 +29,42 @@ export default function ConfirmPassword() {
         >
             <Head title="Confirm password" />
 
-            <form onSubmit={submit}>
+            <form onSubmit={submit} className="flex flex-col gap-6">
                 <div className="space-y-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input
-                            id="password"
-                            type="password"
-                            name="password"
-                            placeholder="Password"
-                            autoComplete="current-password"
-                            value={data.password}
-                            autoFocus
-                            onChange={(e) => setData('password', e.target.value)}
-                        />
-
+                        <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                <Lock className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                            <Input
+                                id="password"
+                                type="password"
+                                name="password"
+                                placeholder="••••••••"
+                                autoComplete="current-password"
+                                value={data.password}
+                                autoFocus
+                                onChange={(e) => setData('password', e.target.value)}
+                                className="pl-10"
+                            />
+                        </div>
                         <InputError message={errors.password} />
                     </div>
 
                     <div className="flex items-center">
-                        <Button className="w-full" disabled={processing}>
-                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                            Confirm password
+                        <Button
+                            className="w-full rounded-md py-2.5 font-medium transition-all hover:shadow-md"
+                            disabled={processing}
+                        >
+                            {processing ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                                    <span>Confirming...</span>
+                                </span>
+                            ) : (
+                                "Confirm password"
+                            )}
                         </Button>
                     </div>
                 </div>
