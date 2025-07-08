@@ -1,131 +1,162 @@
 import AppLogoIcon from '@/components/app-logo-icon';
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+import { Clock, BarChart2, Users, ArrowRight, CheckCircle } from 'lucide-react';
 
 export default function Welcome() {
     return (
-        <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+        <div className="min-h-screen bg-gradient-to-b from-background to-background/90">
+            <Head title="WorkHours - Track Your Time Effortlessly" />
+
             {/* Navigation */}
-            <nav className="container mx-auto flex items-center justify-between px-4 py-6">
+            <nav className="container mx-auto flex items-center justify-between px-6 py-6 lg:px-8">
                 <div className="flex items-center gap-2">
-                    <AppLogoIcon className="h-20 w-20 text-primary" />
+                    <AppLogoIcon className="h-16 w-16 text-primary transition-all hover:scale-105" />
+                    <span className="text-xl font-bold tracking-tight text-foreground">WorkHours</span>
                 </div>
-                <div className="flex items-center gap-12">
-                    <Link href={route('login')} className="text-gray-600 transition-colors hover:text-gray-900">
-                        Login
+                <div className="flex items-center gap-6 md:gap-8">
+                    <Link href={route('login')} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary">
+                        Sign in
                     </Link>
-                    <Link href={route('register')} className="rounded-lg bg-primary px-4 py-2 text-white shadow-sm transition-all hover:shadow-md">
+                    <Link
+                        href={route('register')}
+                        className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-primary/90 hover:shadow-md"
+                    >
                         Get Started
                     </Link>
                 </div>
             </nav>
 
             {/* Hero Section */}
-            <section className="container mx-auto mb-12 px-4">
+            <section className="container mx-auto mb-24 px-6 pt-12 lg:px-8 lg:pt-20">
                 <div className="mx-auto max-w-4xl text-center">
-                    <h1 className="mb-6 text-4xl leading-tight font-bold text-gray-900 md:text-6xl">
-                        Track Your Work Hours <span className="text-primary">Effortlessly</span>
+                    {/* Decorative elements */}
+                    <div className="absolute top-40 -left-10 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
+                    <div className="absolute top-60 right-10 h-64 w-64 rounded-full bg-primary/10 blur-3xl"></div>
+
+                    <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl">
+                        Track Your Work Hours <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">Effortlessly</span>
                     </h1>
-                    <p className="mx-auto mb-10 max-w-2xl text-xl text-gray-600">
+                    <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground md:text-xl">
                         A simple, intuitive time tracking solution for teams and individuals. Boost productivity and gain insights into how you spend
                         your time.
                     </p>
                     <div className="flex flex-col justify-center gap-4 sm:flex-row">
                         <Link
                             href={route('register')}
-                            className="transform rounded-lg bg-primary px-8 py-3 text-lg font-medium text-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
+                            className="group inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-base font-medium text-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
                         >
-                            Start Now
+                            Start for free
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </Link>
+                    </div>
+
+                    {/* Trust badges */}
+                    <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                            <CheckCircle className="h-5 w-5 text-primary" />
+                            <span className="text-sm font-medium">No credit card required</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <CheckCircle className="h-5 w-5 text-primary" />
+                            <span className="text-sm font-medium">Free for small teams</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <CheckCircle className="h-5 w-5 text-primary" />
+                            <span className="text-sm font-medium">Cancel anytime</span>
+                        </div>
                     </div>
                 </div>
             </section>
 
             {/* Features Section */}
-            <section id="features" className="container mx-auto mb-12 px-4">
+            <section id="features" className="container mx-auto mb-24 px-6 lg:px-8">
                 <div className="mb-16 text-center">
-                    <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">Powerful Features</h2>
-                    <p className="mx-auto max-w-2xl text-xl text-gray-600">Everything you need to track, analyze, and optimize your work hours.</p>
+                    <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">Powerful Features</h2>
+                    <p className="mx-auto max-w-2xl text-lg text-muted-foreground">Everything you need to track, analyze, and optimize your work hours.</p>
                 </div>
 
                 <div className="grid gap-8 md:grid-cols-3">
                     {/* Feature 1 */}
-                    <div className="rounded-xl bg-white p-8 shadow-sm transition-all hover:shadow-md">
-                        <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6 text-primary"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                    <div className="group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+                        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
+                            <Clock className="h-7 w-7 text-primary" />
                         </div>
-                        <h3 className="mb-3 text-xl font-semibold text-gray-900">Time Tracking</h3>
-                        <p className="text-gray-600">Track time with a single click. Add notes and categorize your activities for better insights.</p>
+                        <h3 className="mb-3 text-xl font-semibold text-foreground">Time Tracking</h3>
+                        <p className="text-muted-foreground">Track time with a single click. Add notes and categorize your activities for better insights.</p>
                     </div>
 
                     {/* Feature 2 */}
-                    <div className="rounded-xl bg-white p-8 shadow-sm transition-all hover:shadow-md">
-                        <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6 text-primary"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                                />
-                            </svg>
+                    <div className="group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+                        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
+                            <BarChart2 className="h-7 w-7 text-primary" />
                         </div>
-                        <h3 className="mb-3 text-xl font-semibold text-gray-900">Detailed Reports</h3>
-                        <p className="text-gray-600">Generate comprehensive reports to analyze your productivity and identify improvement areas.</p>
+                        <h3 className="mb-3 text-xl font-semibold text-foreground">Detailed Reports</h3>
+                        <p className="text-muted-foreground">Generate comprehensive reports to analyze your productivity and identify improvement areas.</p>
                     </div>
 
                     {/* Feature 3 */}
-                    <div className="rounded-xl bg-white p-8 shadow-sm transition-all hover:shadow-md">
-                        <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6 text-primary"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                                />
-                            </svg>
+                    <div className="group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+                        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
+                            <Users className="h-7 w-7 text-primary" />
                         </div>
-                        <h3 className="mb-3 text-xl font-semibold text-gray-900">Team Collaboration</h3>
-                        <p className="text-gray-600">Manage your team's time, assign tasks, and track progress all in one place.</p>
+                        <h3 className="mb-3 text-xl font-semibold text-foreground">Team Collaboration</h3>
+                        <p className="text-muted-foreground">Manage your team's time, assign tasks, and track progress all in one place.</p>
+                    </div>
+                </div>
+            </section>
+
+            {/* Testimonial Section */}
+            <section className="container mx-auto mb-24 px-6 lg:px-8">
+                <div className="rounded-2xl bg-primary/5 p-8 md:p-12">
+                    <div className="mx-auto max-w-3xl text-center">
+                        <h2 className="mb-6 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+                            "WorkHours has transformed how our team tracks time. We've increased productivity by 35% since implementing it."
+                        </h2>
+                        <div className="flex flex-col items-center">
+                            <div className="mb-2 h-12 w-12 overflow-hidden rounded-full bg-primary/20">
+                                {/* Avatar placeholder */}
+                                <div className="flex h-full w-full items-center justify-center text-lg font-bold text-primary">JD</div>
+                            </div>
+                            <p className="font-medium text-foreground">Jane Doe</p>
+                            <p className="text-sm text-muted-foreground">Product Manager, Acme Inc.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
             {/* CTA Section */}
-            <section className="bg-primary/5 py-12">
-                <div className="container mx-auto px-4 text-center">
-                    <h2 className="mb-6 text-3xl font-bold text-gray-900 md:text-4xl">Ready to Optimize Your Time?</h2>
-                    <p className="mx-auto mb-10 max-w-2xl text-xl text-gray-600">
+            <section className="bg-gradient-to-r from-primary/10 to-primary/5 py-16 md:py-24">
+                <div className="container mx-auto px-6 text-center lg:px-8">
+                    <h2 className="mb-6 text-3xl font-bold tracking-tight text-foreground md:text-4xl">Ready to Optimize Your Time?</h2>
+                    <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
                         Join thousands of professionals who have transformed how they track and manage their time.
                     </p>
                     <Link
                         href={route('register')}
-                        className="inline-block transform rounded-lg bg-primary px-8 py-4 text-lg font-medium text-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
+                        className="group inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium text-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
                     >
-                        Start Now
+                        Get started today
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
+
+                    <p className="mt-6 text-sm text-muted-foreground">No credit card required</p>
                 </div>
             </section>
+
+            {/* Footer */}
+            <footer className="border-t border-border/40 py-8">
+                <div className="container mx-auto px-6 lg:px-8">
+                    <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+                        <div className="flex items-center gap-2">
+                            <AppLogoIcon className="h-8 w-8 text-primary" />
+                            <span className="text-sm font-medium text-foreground">WorkHours</span>
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                            &copy; {new Date().getFullYear()} WorkHours. All rights reserved.
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }
