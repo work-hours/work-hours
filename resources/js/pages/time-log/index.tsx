@@ -1,13 +1,13 @@
-import { Button } from '@/components/ui/button';
 import DeleteTimeLog from '@/components/delete-time-log';
 import EmptyState from '@/components/empty-state';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Edit, PlusCircle, Search } from 'lucide-react';
 import { FormEventHandler } from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -67,8 +67,8 @@ export default function TimeLog({ timeLogs, filters }: Props) {
                             {data.start_date && data.end_date
                                 ? `Showing logs from ${data.start_date} to ${data.end_date}`
                                 : data.start_date
-                                    ? `Showing logs from ${data.start_date}`
-                                    : `Showing logs until ${data.end_date}`}
+                                  ? `Showing logs from ${data.start_date}`
+                                  : `Showing logs until ${data.end_date}`}
                         </p>
                     )}
                     <form onSubmit={submit} className="flex flex-wrap items-end gap-4">

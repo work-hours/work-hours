@@ -22,7 +22,7 @@ const mainNavItems: NavItem[] = [
         title: 'Time Log',
         href: '/time-log',
         icon: TimerIcon,
-    }
+    },
 ];
 
 const footerNavItems: NavItem[] = [

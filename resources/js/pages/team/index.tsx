@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
 import DeleteTeamMember from '@/components/delete-team-member';
 import EmptyState from '@/components/empty-state';
+import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
