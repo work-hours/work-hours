@@ -59,6 +59,16 @@ class TeamController extends Controller
 
     public function edit(User $user)
     {
+        // Check if the user is a member of the authenticated user's team
+        $isTeamMember = Team::query()
+            ->where('user_id', auth()->id())
+            ->where('member_id', $user->getKey())
+            ->exists();
+
+        if (!$isTeamMember) {
+            abort(403, 'You can only edit members of your team.');
+        }
+
         return Inertia::render('team/edit', [
             'user' => $user,
         ]);
@@ -70,6 +80,16 @@ class TeamController extends Controller
     #[Action(method: 'put', name: 'team.update', params: ['user'], middleware: ['auth', 'verified'])]
     public function update(UpdateTeamMemberRequest $request, User $user): void
     {
+        // Check if the user is a member of the authenticated user's team
+        $isTeamMember = Team::query()
+            ->where('user_id', auth()->id())
+            ->where('member_id', $user->getKey())
+            ->exists();
+
+        if (!$isTeamMember) {
+            abort(403, 'You can only update members of your team.');
+        }
+
         DB::beginTransaction();
         try {
             $data = $request->validated();
@@ -97,6 +117,16 @@ class TeamController extends Controller
     #[Action(method: 'delete', name: 'team.destroy', params: ['user'], middleware: ['auth', 'verified'])]
     public function destroy(User $user): void
     {
+        // Check if the user is a member of the authenticated user's team
+        $isTeamMember = Team::query()
+            ->where('user_id', auth()->id())
+            ->where('member_id', $user->id)
+            ->exists();
+
+        if (!$isTeamMember) {
+            abort(403, 'You can only delete members of your team.');
+        }
+
         DB::beginTransaction();
         try {
             // Find and delete the team relationship
