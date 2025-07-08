@@ -2,6 +2,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { User, Mail, CheckCircle, LoaderCircle } from 'lucide-react';
 
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
@@ -50,62 +51,90 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                     <form onSubmit={submit} className="space-y-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="name">Name</Label>
-
-                            <Input
-                                id="name"
-                                className="mt-1 block w-full"
-                                value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
-                                required
-                                autoComplete="name"
-                                placeholder="Full name"
-                            />
-
-                            <InputError className="mt-2" message={errors.name} />
+                            <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                    <User className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <Input
+                                    id="name"
+                                    className="pl-10"
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    required
+                                    autoComplete="name"
+                                    placeholder="Full name"
+                                />
+                            </div>
+                            <InputError className="mt-1" message={errors.name} />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email address</Label>
-
-                            <Input
-                                id="email"
-                                type="email"
-                                className="mt-1 block w-full"
-                                value={data.email}
-                                onChange={(e) => setData('email', e.target.value)}
-                                required
-                                autoComplete="username"
-                                placeholder="Email address"
-                            />
-
-                            <InputError className="mt-2" message={errors.email} />
+                            <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                    <Mail className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    className="pl-10"
+                                    value={data.email}
+                                    onChange={(e) => setData('email', e.target.value)}
+                                    required
+                                    autoComplete="username"
+                                    placeholder="Email address"
+                                />
+                            </div>
+                            <InputError className="mt-1" message={errors.email} />
                         </div>
 
                         {mustVerifyEmail && auth.user.email_verified_at === null && (
-                            <div>
-                                <p className="-mt-4 text-sm text-muted-foreground">
-                                    Your email address is unverified.{' '}
-                                    <Link
-                                        href={route('verification.send')}
-                                        method="post"
-                                        as="button"
-                                        className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
-                                    >
-                                        Click here to resend the verification email.
-                                    </Link>
-                                </p>
+                            <div className="rounded-md bg-amber-50 p-4 dark:bg-amber-900/20">
+                                <div className="flex">
+                                    <div className="flex-shrink-0">
+                                        <svg className="h-5 w-5 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div className="ml-3">
+                                        <p className="text-sm text-amber-700 dark:text-amber-200">
+                                            Your email address is unverified.{' '}
+                                            <Link
+                                                href={route('verification.send')}
+                                                method="post"
+                                                as="button"
+                                                className="font-medium text-amber-700 underline hover:text-amber-600 dark:text-amber-200 dark:hover:text-amber-100"
+                                            >
+                                                Click here to resend the verification email.
+                                            </Link>
+                                        </p>
+                                    </div>
+                                </div>
 
                                 {status === 'verification-link-sent' && (
-                                    <div className="mt-2 text-sm font-medium text-green-600">
-                                        A new verification link has been sent to your email address.
+                                    <div className="mt-4 flex items-center gap-2 text-sm font-medium text-green-600 dark:text-green-400">
+                                        <CheckCircle className="h-4 w-4" />
+                                        <span>A new verification link has been sent to your email address.</span>
                                     </div>
                                 )}
                             </div>
                         )}
 
                         <div className="flex items-center gap-4">
-                            <Button disabled={processing}>Save</Button>
+                            <Button
+                                disabled={processing}
+                                className="flex items-center gap-2"
+                            >
+                                {processing ? (
+                                    <>
+                                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                                        <span>Saving...</span>
+                                    </>
+                                ) : (
+                                    <span>Save Changes</span>
+                                )}
+                            </Button>
 
                             <Transition
                                 show={recentlySuccessful}
@@ -114,7 +143,10 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 leave="transition ease-in-out"
                                 leaveTo="opacity-0"
                             >
-                                <p className="text-sm text-neutral-600">Saved</p>
+                                <div className="flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
+                                    <CheckCircle className="h-4 w-4" />
+                                    <span>Saved successfully</span>
+                                </div>
                             </Transition>
                         </div>
                     </form>
