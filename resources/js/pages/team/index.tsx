@@ -58,6 +58,11 @@ export default function Team({ teamMembers }: Props) {
                                         <td className="px-4 py-3">{member.role}</td>
                                         <td className="px-4 py-3 text-right">
                                             <div className="flex justify-end gap-2">
+                                                <Link href={route('team.time-logs', member.id)}>
+                                                    <Button variant="outline" size="sm">
+                                                        Time Logs
+                                                    </Button>
+                                                </Link>
                                                 <Link href={route('team.edit', member.id)}>
                                                     <Button variant="outline" size="sm" className="h-8 w-8 p-0">
                                                         <Edit className="h-4 w-4" />

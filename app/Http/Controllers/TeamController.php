@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTeamMemberRequest;
 use App\Http\Requests\UpdateTeamMemberRequest;
 use App\Models\Team;
+use App\Models\TimeLog;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -136,5 +138,48 @@ class TeamController extends Controller
             DB::rollBack();
             throw $e;
         }
+    }
+
+    public function timeLogs(User $user)
+    {
+        // Check if the user is a member of the authenticated user's team
+        $isTeamMember = Team::query()
+            ->where('user_id', auth()->id())
+            ->where('member_id', $user->id)
+            ->exists();
+
+        if (!$isTeamMember) {
+            abort(403, 'You can only view time logs of members in your team.');
+        }
+
+        $query = TimeLog::query()->where('user_id', $user->id);
+
+        // Apply date filters if provided
+        if (request()->has('start_date')) {
+            $query->whereDate('start_timestamp', '>=', request('start_date'));
+        }
+
+        if (request()->has('end_date')) {
+            $query->whereDate('start_timestamp', '<=', request('end_date'));
+        }
+
+        $timeLogs = $query->get()
+            ->map(function ($timeLog) {
+                return [
+                    'id' => $timeLog->id,
+                    'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                    'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
+                    'duration' => $timeLog->duration,
+                ];
+            });
+
+        return Inertia::render('team/time-logs', [
+            'timeLogs' => $timeLogs,
+            'filters' => [
+                'start_date' => request('start_date', ''),
+                'end_date' => request('end_date', ''),
+            ],
+            'user' => $user,
+        ]);
     }
 }

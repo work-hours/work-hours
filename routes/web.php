@@ -17,6 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('team', [TeamController::class, 'index'])->name('team.index');
     Route::get('team/create', [TeamController::class, 'create'])->name('team.create');
     Route::get('team/{user}/edit', [TeamController::class, 'edit'])->name('team.edit');
+    Route::get('team/{user}/time-logs', [TeamController::class, 'timeLogs'])->name('team.time-logs');
 
     // Time Log routes
     Route::get('time-log', [TimeLogController::class, 'index'])->name('time-log.index');
