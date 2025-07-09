@@ -70,6 +70,12 @@ class TeamController extends Controller
                 // Calculate total hours
                 $totalDuration = round($timeLogs->sum('duration'), 2);
 
+                // Calculate unpaid hours
+                $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
+
+                // Calculate unpaid amount
+                $unpaidAmount = round($unpaidHours * $team->hourly_rate, 2);
+
                 // Calculate weekly average
                 $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
@@ -81,6 +87,8 @@ class TeamController extends Controller
                     'currency' => $team->currency,
                     'totalHours' => $totalDuration,
                     'weeklyAverage' => $weeklyAverage,
+                    'unpaidHours' => $unpaidHours,
+                    'unpaidAmount' => $unpaidAmount,
                 ];
             });
 
@@ -441,6 +449,12 @@ class TeamController extends Controller
                 // Calculate total hours
                 $totalDuration = round($timeLogs->sum('duration'), 2);
 
+                // Calculate unpaid hours
+                $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
+
+                // Calculate unpaid amount
+                $unpaidAmount = round($unpaidHours * $team->hourly_rate, 2);
+
                 // Calculate weekly average
                 $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
@@ -451,11 +465,13 @@ class TeamController extends Controller
                     'hourly_rate' => $team->hourly_rate,
                     'currency' => $team->currency,
                     'total_hours' => $totalDuration,
+                    'unpaid_hours' => $unpaidHours,
+                    'unpaid_amount' => $unpaidAmount,
                     'weekly_average' => $weeklyAverage,
                 ];
             });
 
-        $headers = ['ID', 'Name', 'Email', 'Hourly Rate', 'Currency', 'Total Hours', 'Weekly Average'];
+        $headers = ['ID', 'Name', 'Email', 'Hourly Rate', 'Currency', 'Total Hours', 'Unpaid Hours', 'Unpaid Amount', 'Weekly Average'];
         $filename = 'team_members_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($teamMembers, $headers, $filename);

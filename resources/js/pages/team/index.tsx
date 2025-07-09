@@ -63,6 +63,8 @@ type TeamMember = {
     currency: string;
     totalHours: number;
     weeklyAverage: number;
+    unpaidHours: number;
+    unpaidAmount: number;
 };
 
 type Filters = {
@@ -283,6 +285,8 @@ export default function Team({ teamMembers, filters }: Props) {
                                         <TableHead>Hourly Rate</TableHead>
                                         <TableHead>Currency</TableHead>
                                         <TableHead>Total Hours</TableHead>
+                                        <TableHead>Unpaid Hours</TableHead>
+                                        <TableHead>Unpaid Amount</TableHead>
                                         <TableHead>Weekly Average</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableHeaderRow>
@@ -295,6 +299,8 @@ export default function Team({ teamMembers, filters }: Props) {
                                             <TableCell>{member.hourly_rate}</TableCell>
                                             <TableCell>{member.currency}</TableCell>
                                             <TableCell>{member.totalHours} hrs</TableCell>
+                                            <TableCell>{member.unpaidHours} hrs</TableCell>
+                                            <TableCell>{member.currency} {member.unpaidAmount}</TableCell>
                                             <TableCell>{member.weeklyAverage} hrs</TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
