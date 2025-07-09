@@ -38,8 +38,20 @@ export default function AuthSimpleLayout({ children, title, description }: Props
             </div>
 
             {/* Footer */}
-            <div className="mt-8 text-center text-sm text-muted-foreground">
-                &copy; {new Date().getFullYear()} WorkHours. All rights reserved.
+            <div className="mt-8 text-center text-sm">
+                <div className="mb-2">
+                    <a
+                        href="https://github.com/sponsors/msamgan"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:text-primary/80 transition-colors"
+                    >
+                        Sponsor this project
+                    </a>
+                </div>
+                <div className="text-muted-foreground">
+                    &copy; {new Date().getFullYear()} WorkHours. All rights reserved.
+                </div>
             </div>
         </div>
     );

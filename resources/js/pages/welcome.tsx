@@ -105,25 +105,6 @@ export default function Welcome() {
                 </div>
             </section>
 
-            {/* Testimonial Section */}
-            <section className="container mx-auto mb-24 px-6 lg:px-8">
-                <div className="rounded-2xl bg-primary/5 p-8 md:p-12">
-                    <div className="mx-auto max-w-3xl text-center">
-                        <h2 className="mb-6 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-                            "WorkHours has transformed how our team tracks time. We've increased productivity by 35% since implementing it."
-                        </h2>
-                        <div className="flex flex-col items-center">
-                            <div className="mb-2 h-12 w-12 overflow-hidden rounded-full bg-primary/20">
-                                {/* Avatar placeholder */}
-                                <div className="flex h-full w-full items-center justify-center text-lg font-bold text-primary">JD</div>
-                            </div>
-                            <p className="font-medium text-foreground">Jane Doe</p>
-                            <p className="text-sm text-muted-foreground">Product Manager, Acme Inc.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             {/* CTA Section */}
             <section className="bg-gradient-to-r from-primary/10 to-primary/5 py-16 md:py-24">
                 <div className="container mx-auto px-6 text-center lg:px-8">

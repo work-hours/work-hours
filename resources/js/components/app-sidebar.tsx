@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Folder, LayoutGrid, LucideServerCog, TimerIcon } from 'lucide-react';
+import { Folder, LayoutGrid, LucideServerCog, TimerIcon, Heart } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -30,6 +30,12 @@ const footerNavItems: NavItem[] = [
         title: 'Repository',
         href: 'https://github.com/msamgan/work-hours',
         icon: Folder,
+    },
+    {
+        title: 'Sponsor',
+        href: 'https://github.com/sponsors/msamgan',
+        icon: Heart,
+        external: true,
     },
 ];
 
