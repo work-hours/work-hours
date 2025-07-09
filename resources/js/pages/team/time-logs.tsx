@@ -83,10 +83,12 @@ type Props = {
     user: User;
     totalDuration: number;
     unpaidHours: number;
+    unpaidAmount: number;
+    currency: string;
     weeklyAverage: number;
 };
 
-export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, totalDuration, unpaidHours, weeklyAverage }: Props) {
+export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, totalDuration, unpaidHours, unpaidAmount, currency, weeklyAverage }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Team',
@@ -179,6 +181,71 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, 
                         </div>
                     </div>
                 </section>
+
+                {/* Stats Cards */}
+                {timeLogs.length > 0 && (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        {/* Total hours card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
+                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{totalDuration}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {filters.start_date && filters.end_date
+                                        ? `Hours logged from ${filters.start_date} to ${filters.end_date}`
+                                        : filters.start_date
+                                          ? `Hours logged from ${filters.start_date}`
+                                          : filters.end_date
+                                            ? `Hours logged until ${filters.end_date}`
+                                            : 'Total hours logged'}
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Unpaid hours card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Unpaid Hours</CardTitle>
+                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{unpaidHours}</div>
+                                <p className="text-xs text-muted-foreground">Hours pending payment</p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Unpaid amount card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Unpaid Amount</CardTitle>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-muted-foreground">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                                        <path d="M12 18V6" />
+                                    </svg>
+                                </div>
+                                <div className="text-2xl font-bold">{currency} {unpaidAmount}</div>
+                                <p className="text-xs text-muted-foreground">Amount pending payment</p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Weekly average card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
+                                    <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{weeklyAverage}</div>
+                                <p className="text-xs text-muted-foreground">Hours per week</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
 
                 {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
@@ -333,55 +400,6 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, 
                         </p>
                     </CardContent>
                 </Card>
-
-                {/* Stats Cards */}
-                {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        {/* Total hours card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
-                                    <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
-                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{totalDuration}</div>
-                                <p className="text-xs text-muted-foreground">
-                                    {filters.start_date && filters.end_date
-                                        ? `Hours logged from ${filters.start_date} to ${filters.end_date}`
-                                        : filters.start_date
-                                          ? `Hours logged from ${filters.start_date}`
-                                          : filters.end_date
-                                            ? `Hours logged until ${filters.end_date}`
-                                            : 'Total hours logged'}
-                                </p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Unpaid hours card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
-                                    <CardTitle className="text-sm font-medium">Unpaid Hours</CardTitle>
-                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{unpaidHours}</div>
-                                <p className="text-xs text-muted-foreground">Hours pending payment</p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Weekly average card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
-                                    <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
-                                    <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{weeklyAverage}</div>
-                                <p className="text-xs text-muted-foreground">Hours per week</p>
-                            </CardContent>
-                        </Card>
-                    </div>
-                )}
 
                 {/* Time Logs Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">

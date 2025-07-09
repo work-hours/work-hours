@@ -295,6 +295,17 @@ class TeamController extends Controller
         $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
+        // Get the team member's hourly rate
+        $team = Team::query()
+            ->where('user_id', auth()->id())
+            ->where('member_id', $user->id)
+            ->first();
+
+        // Calculate unpaid amount
+        $hourlyRate = $team ? $team->hourly_rate : 0;
+        $unpaidAmount = round($unpaidHours * $hourlyRate, 2);
+        $currency = $team ? $team->currency : 'USD';
+
         // Get projects for the dropdown
         $projects = $this->getUserProjects();
 
@@ -310,6 +321,8 @@ class TeamController extends Controller
             'user' => $user,
             'totalDuration' => $totalDuration,
             'unpaidHours' => $unpaidHours,
+            'unpaidAmount' => $unpaidAmount,
+            'currency' => $currency,
             'weeklyAverage' => $weeklyAverage,
         ]);
     }
@@ -389,6 +402,51 @@ class TeamController extends Controller
         $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
+        // Calculate unpaid amount
+        $unpaidAmount = 0;
+
+        // Group unpaid logs by user
+        $unpaidLogsByUser = [];
+        foreach ($timeLogs as $timeLog) {
+            if (!$timeLog['is_paid']) {
+                // Get the user ID from the original query
+                $userId = TimeLog::find($timeLog['id'])->user_id;
+                $userName = $timeLog['user_name'];
+
+                if (!isset($unpaidLogsByUser[$userId])) {
+                    $unpaidLogsByUser[$userId] = [
+                        'name' => $userName,
+                        'hours' => 0
+                    ];
+                }
+
+                $unpaidLogsByUser[$userId]['hours'] += $timeLog['duration'];
+            }
+        }
+
+        // Calculate unpaid amount for each user
+        foreach ($unpaidLogsByUser as $userId => $userData) {
+            $memberUnpaidHours = $userData['hours'];
+
+            $hourlyRate = Team::query()
+                ->where('member_id', $userId)
+                ->value('hourly_rate') ?? 0;
+
+            $unpaidAmount += $memberUnpaidHours * $hourlyRate;
+        }
+
+        // Get default currency (USD) or determine a common currency
+        $currency = 'USD';
+
+        // Try to get the currency of the authenticated user if they are part of a team
+        $authUserCurrency = Team::query()
+            ->where('member_id', auth()->id())
+            ->value('currency');
+
+        if ($authUserCurrency) {
+            $currency = $authUserCurrency;
+        }
+
         // Get projects for the dropdown
         $projects = $this->getUserProjects();
 
@@ -405,6 +463,8 @@ class TeamController extends Controller
             'teamMembers' => $teamMembersList,
             'totalDuration' => $totalDuration,
             'unpaidHours' => $unpaidHours,
+            'unpaidAmount' => round($unpaidAmount, 2),
+            'currency' => $currency,
             'weeklyAverage' => $weeklyAverage,
         ]);
     }

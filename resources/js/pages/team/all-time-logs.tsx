@@ -84,10 +84,12 @@ type Props = {
     projects: Project[];
     totalDuration: number; // Total duration in minutes
     unpaidHours: number; // Unpaid hours
+    unpaidAmount: number; // Unpaid amount
+    currency: string; // Currency for monetary values
     weeklyAverage: number; // Weekly average in hours
 };
 
-export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projects, totalDuration, unpaidHours, weeklyAverage }: Props) {
+export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projects, totalDuration, unpaidHours, unpaidAmount, currency, weeklyAverage }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Team',
@@ -182,6 +184,113 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                         </div>
                     </div>
                 </section>
+
+                {/* Stats Cards */}
+                {timeLogs.length > 0 && (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        {/* Total hours card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Total Team Hours</CardTitle>
+                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{totalDuration}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {(() => {
+                                        let description = '';
+
+                                        // Date range description
+                                        if (filters.start_date && filters.end_date) {
+                                            description = `Hours logged from ${filters.start_date} to ${filters.end_date}`;
+                                        } else if (filters.start_date) {
+                                            description = `Hours logged from ${filters.start_date}`;
+                                        } else if (filters.end_date) {
+                                            description = `Hours logged until ${filters.end_date}`;
+                                        } else {
+                                            description = 'Total hours logged';
+                                        }
+
+                                        // Team member description
+                                        if (filters.team_member_id) {
+                                            const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
+                                            const memberName = selectedMember ? selectedMember.name : '';
+
+                                            if (memberName) {
+                                                description += ` by ${memberName}`;
+                                            }
+                                        } else {
+                                            description += ' by all team members';
+                                        }
+
+                                        return description;
+                                    })()}
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Unpaid hours card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Unpaid Team Hours</CardTitle>
+                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{unpaidHours}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {filters.team_member_id
+                                        ? (() => {
+                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
+                                              return selectedMember ? `Hours pending payment for ${selectedMember.name}` : 'Hours pending payment';
+                                          })()
+                                        : 'Hours pending payment across all team members'}
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Unpaid amount card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Unpaid Team Amount</CardTitle>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-muted-foreground">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                                        <path d="M12 18V6" />
+                                    </svg>
+                                </div>
+                                <div className="text-2xl font-bold">{currency} {unpaidAmount}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {filters.team_member_id
+                                        ? (() => {
+                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
+                                              return selectedMember ? `Amount pending payment for ${selectedMember.name}` : 'Amount pending payment';
+                                          })()
+                                        : 'Amount pending payment across all team members'}
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Weekly average card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Team Weekly Average</CardTitle>
+                                    <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{weeklyAverage}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {filters.team_member_id
+                                        ? (() => {
+                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
+                                              return selectedMember ? `Hours per week for ${selectedMember.name}` : 'Hours per week';
+                                          })()
+                                        : 'Hours per week across all team members'}
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
 
                 {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
@@ -363,90 +472,6 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                         </p>
                     </CardContent>
                 </Card>
-
-                {/* Stats Cards */}
-                {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        {/* Total hours card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
-                                    <CardTitle className="text-sm font-medium">Total Team Hours</CardTitle>
-                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{totalDuration}</div>
-                                <p className="text-xs text-muted-foreground">
-                                    {(() => {
-                                        let description = '';
-
-                                        // Date range description
-                                        if (filters.start_date && filters.end_date) {
-                                            description = `Hours logged from ${filters.start_date} to ${filters.end_date}`;
-                                        } else if (filters.start_date) {
-                                            description = `Hours logged from ${filters.start_date}`;
-                                        } else if (filters.end_date) {
-                                            description = `Hours logged until ${filters.end_date}`;
-                                        } else {
-                                            description = 'Total hours logged';
-                                        }
-
-                                        // Team member description
-                                        if (filters.team_member_id) {
-                                            const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
-                                            const memberName = selectedMember ? selectedMember.name : '';
-
-                                            if (memberName) {
-                                                description += ` by ${memberName}`;
-                                            }
-                                        } else {
-                                            description += ' by all team members';
-                                        }
-
-                                        return description;
-                                    })()}
-                                </p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Unpaid hours card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
-                                    <CardTitle className="text-sm font-medium">Unpaid Team Hours</CardTitle>
-                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{unpaidHours}</div>
-                                <p className="text-xs text-muted-foreground">
-                                    {filters.team_member_id
-                                        ? (() => {
-                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
-                                              return selectedMember ? `Hours pending payment for ${selectedMember.name}` : 'Hours pending payment';
-                                          })()
-                                        : 'Hours pending payment across all team members'}
-                                </p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Weekly average card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
-                                    <CardTitle className="text-sm font-medium">Team Weekly Average</CardTitle>
-                                    <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{weeklyAverage}</div>
-                                <p className="text-xs text-muted-foreground">
-                                    {filters.team_member_id
-                                        ? (() => {
-                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
-                                              return selectedMember ? `Hours per week for ${selectedMember.name}` : 'Hours per week';
-                                          })()
-                                        : 'Hours per week across all team members'}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </div>
-                )}
 
                 {/* Time Logs Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">

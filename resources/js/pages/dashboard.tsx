@@ -8,6 +8,8 @@ interface TeamStats {
     count: number;
     totalHours: number;
     unpaidHours: number;
+    unpaidAmount: number;
+    currency: string;
     weeklyAverage: number;
     recentLogs: Array<{
         date: string;
@@ -86,6 +88,22 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                         <CardContent>
                             <div className="text-2xl font-bold">{teamStats.unpaidHours}</div>
                             <p className="text-xs text-muted-foreground">Hours pending payment</p>
+                        </CardContent>
+                    </Card>
+
+                    {/* Unpaid amount card */}
+                    <Card className="overflow-hidden transition-all hover:shadow-md">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Unpaid Amount</CardTitle>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-muted-foreground">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                                <path d="M12 18V6" />
+                            </svg>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{teamStats.currency} {teamStats.unpaidAmount}</div>
+                            <p className="text-xs text-muted-foreground">Amount pending payment</p>
                         </CardContent>
                     </Card>
                 </section>
