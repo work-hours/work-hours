@@ -27,7 +27,18 @@ class TeamController extends Controller
             ->get()
             ->map(function ($team) {
                 // Get time logs for this team member
-                $timeLogs = TimeLog::query()->where('user_id', $team->member->id)->get();
+                $query = TimeLog::query()->where('user_id', $team->member->id);
+
+                // Apply date filters if provided
+                if (request()->get('start_date')) {
+                    $query->whereDate('start_timestamp', '>=', request('start_date'));
+                }
+
+                if (request()->get('end_date')) {
+                    $query->whereDate('start_timestamp', '<=', request('end_date'));
+                }
+
+                $timeLogs = $query->get();
 
                 // Calculate total hours
                 $totalDuration = round($timeLogs->sum('duration'), 2);
@@ -46,6 +57,10 @@ class TeamController extends Controller
 
         return Inertia::render('team/index', [
             'teamMembers' => $teamMembers,
+            'filters' => [
+                'start_date' => request('start_date', ''),
+                'end_date' => request('end_date', ''),
+            ],
         ]);
     }
 

@@ -1,11 +1,16 @@
 import DeleteTeamMember from '@/components/delete-team-member';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
-import { Clock, Edit, UserPlus, Users } from 'lucide-react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { CalendarIcon, Clock, Edit, Search, UserPlus, Users } from 'lucide-react';
+import { FormEventHandler, forwardRef } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -13,6 +18,42 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/team',
     },
 ];
+
+// Custom input component for DatePicker with icon
+interface CustomInputProps {
+    value?: string;
+    onClick?: () => void;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    icon: React.ReactNode;
+    placeholder?: string;
+    disabled?: boolean;
+    required?: boolean;
+    autoFocus?: boolean;
+    tabIndex?: number;
+    id: string;
+}
+
+const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
+    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
+        <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
+            <Input
+                id={id}
+                ref={ref}
+                value={value}
+                onClick={onClick}
+                onChange={onChange}
+                placeholder={placeholder}
+                disabled={disabled}
+                required={required}
+                autoFocus={autoFocus}
+                tabIndex={tabIndex}
+                className="pl-10"
+                readOnly={!onChange}
+            />
+        </div>
+    ),
+);
 
 type TeamMember = {
     id: number;
@@ -22,11 +63,50 @@ type TeamMember = {
     weeklyAverage: number;
 };
 
-type Props = {
-    teamMembers: TeamMember[];
+type Filters = {
+    start_date: string;
+    end_date: string;
 };
 
-export default function Team({ teamMembers }: Props) {
+type Props = {
+    teamMembers: TeamMember[];
+    filters: Filters;
+};
+
+export default function Team({ teamMembers, filters }: Props) {
+    const { data, setData, get, processing } = useForm<Filters>({
+        start_date: filters.start_date || '',
+        end_date: filters.end_date || '',
+    });
+
+    // Convert string dates to Date objects for DatePicker
+    const startDate = data.start_date ? new Date(data.start_date) : null;
+    const endDate = data.end_date ? new Date(data.end_date) : null;
+
+    // Handle date changes
+    const handleStartDateChange = (date: Date | null) => {
+        if (date) {
+            setData('start_date', date.toISOString().split('T')[0]);
+        } else {
+            setData('start_date', '');
+        }
+    };
+
+    const handleEndDateChange = (date: Date | null) => {
+        if (date) {
+            setData('end_date', date.toISOString().split('T')[0]);
+        } else {
+            setData('end_date', '');
+        }
+    };
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+        get(route('team.index'), {
+            preserveState: true,
+        });
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Team" />
@@ -36,6 +116,63 @@ export default function Team({ teamMembers }: Props) {
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Team Management</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your team members and their time logs</p>
                 </section>
+
+                {/* Date filter form */}
+                <Card className="overflow-hidden transition-all hover:shadow-md">
+                    <CardHeader className="pb-3">
+                        <CardTitle className="text-xl">Filter by Date</CardTitle>
+                        <CardDescription>Filter total hours and weekly average by date range</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={submit} className="flex flex-wrap items-end gap-4">
+                            <div className="flex-1 min-w-[200px]">
+                                <Label htmlFor="start_date" className="mb-2 block">
+                                    Start Date
+                                </Label>
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={handleStartDateChange}
+                                    selectsStart
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    customInput={
+                                        <CustomInput
+                                            id="start_date"
+                                            icon={<CalendarIcon className="h-4 w-4 text-muted-foreground" />}
+                                            placeholder="Select start date"
+                                        />
+                                    }
+                                />
+                            </div>
+                            <div className="flex-1 min-w-[200px]">
+                                <Label htmlFor="end_date" className="mb-2 block">
+                                    End Date
+                                </Label>
+                                <DatePicker
+                                    selected={endDate}
+                                    onChange={handleEndDateChange}
+                                    selectsEnd
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    minDate={startDate}
+                                    customInput={
+                                        <CustomInput
+                                            id="end_date"
+                                            icon={<CalendarIcon className="h-4 w-4 text-muted-foreground" />}
+                                            placeholder="Select end date"
+                                        />
+                                    }
+                                />
+                            </div>
+                            <div>
+                                <Button type="submit" disabled={processing} className="flex items-center gap-2">
+                                    <Search className="h-4 w-4" />
+                                    <span>Filter</span>
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
 
                 {/* Actions card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
