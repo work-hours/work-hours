@@ -190,10 +190,12 @@ class TeamController extends Controller
             $query->whereDate('start_timestamp', '<=', request('end_date'));
         }
 
-        $timeLogs = $query->get()
+        $timeLogs = $query->with('project')->get()
             ->map(function ($timeLog) {
                 return [
                     'id' => $timeLog->id,
+                    'project_id' => $timeLog->project_id,
+                    'project_name' => $timeLog->project ? $timeLog->project->name : null,
                     'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                     'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
                     'duration' => round($timeLog->duration, 2),
@@ -257,11 +259,13 @@ class TeamController extends Controller
             $query->where('user_id', request('team_member_id'));
         }
 
-        $timeLogs = $query->with('user')->get()
+        $timeLogs = $query->with(['user', 'project'])->get()
             ->map(function ($timeLog) {
                 return [
                     'id' => $timeLog->id,
                     'user_name' => $timeLog->user->name,
+                    'project_id' => $timeLog->project_id,
+                    'project_name' => $timeLog->project ? $timeLog->project->name : null,
                     'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                     'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
                     'duration' => round($timeLog->duration, 2),

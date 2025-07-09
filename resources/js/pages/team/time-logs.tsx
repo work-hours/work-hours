@@ -14,6 +14,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 type TimeLog = {
     id: number;
+    project_id: number;
+    project_name: string | null;
     start_timestamp: string;
     end_timestamp: string;
     duration: number;
@@ -282,6 +284,7 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user, totalDurat
                             <Table>
                                 <TableHeader>
                                     <TableHeaderRow>
+                                        <TableHead>Project</TableHead>
                                         <TableHead>Start Time</TableHead>
                                         <TableHead>End Time</TableHead>
                                         <TableHead>Duration</TableHead>
@@ -290,6 +293,7 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user, totalDurat
                                 <TableBody>
                                     {timeLogs.map((log) => (
                                         <TableRow key={log.id}>
+                                            <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>
                                             <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
                                             <TableCell className="font-medium">{formatDateTime(log.end_timestamp)}</TableCell>
                                             <TableCell>
