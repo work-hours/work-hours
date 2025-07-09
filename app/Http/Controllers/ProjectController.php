@@ -6,14 +6,19 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Models\Team;
+use App\Traits\ExportableTrait;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Msamgan\Lact\Attributes\Action;
 use Throwable;
 
 class ProjectController extends Controller
 {
+    use ExportableTrait;
     public function index()
     {
         // Get projects where user is the owner
@@ -163,5 +168,48 @@ class ProjectController extends Controller
             DB::rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * Export projects to CSV
+     *
+     * @return StreamedResponse
+     */
+    #[Action(method: 'get', name: 'project.export', middleware: ['auth', 'verified'])]
+    public function export(): StreamedResponse
+    {
+        // Get projects where user is the owner
+        $ownedProjects = Project::query()
+            ->where('user_id', auth()->id())
+            ->with(['teamMembers', 'user'])
+            ->get();
+
+        // Get projects where user is a team member
+        $assignedProjects = Project::query()
+            ->whereHas('teamMembers', function ($query) {
+                $query->where('users.id', auth()->id());
+            })
+            ->where('user_id', '!=', auth()->id())
+            ->with(['teamMembers', 'user'])
+            ->get();
+
+        // Combine both sets of projects
+        $projects = $ownedProjects->concat($assignedProjects);
+
+        $projectsData = $projects->map(function ($project) {
+            return [
+                'id' => $project->id,
+                'name' => $project->name,
+                'description' => $project->description,
+                'owner' => $project->user->name,
+                'team_members' => $project->teamMembers->pluck('name')->implode(', '),
+                'created_at' => Carbon::parse($project->created_at)->toDateTimeString(),
+            ];
+        });
+
+        $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Created At'];
+        $filename = 'projects_' . Carbon::now()->format('Y-m-d') . '.csv';
+
+        return $this->exportToCsv($projectsData, $headers, $filename);
     }
 }

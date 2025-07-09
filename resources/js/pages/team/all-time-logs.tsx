@@ -7,7 +7,7 @@ import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Briefcase, Calendar, CalendarIcon, CalendarRange, ClockIcon, Search, TimerReset } from 'lucide-react';
+import { ArrowLeft, Briefcase, Calendar, CalendarIcon, CalendarRange, ClockIcon, Download, Search, TimerReset } from 'lucide-react';
 import { FormEventHandler, forwardRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -200,6 +200,14 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                                         })()}
                                     </CardDescription>
                                 )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <a href={route('team.export-time-logs') + window.location.search} className="inline-block">
+                                    <Button variant="outline" className="flex items-center gap-2">
+                                        <Download className="h-4 w-4" />
+                                        <span>Export</span>
+                                    </Button>
+                                </a>
                             </div>
                         </div>
                     </CardHeader>

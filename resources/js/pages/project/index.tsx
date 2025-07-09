@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { Edit, FolderPlus, Folders } from 'lucide-react';
+import { Download, Edit, FolderPlus, Folders } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -56,6 +56,12 @@ export default function Projects({ projects }: Props) {
                                 <CardDescription>You have {projects.length} projects</CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
+                                <a href={route('project.export')} className="inline-block">
+                                    <Button variant="outline" className="flex items-center gap-2">
+                                        <Download className="h-4 w-4" />
+                                        <span>Export</span>
+                                    </Button>
+                                </a>
                                 <Link href={route('project.create')}>
                                     <Button className="flex items-center gap-2">
                                         <FolderPlus className="h-4 w-4" />

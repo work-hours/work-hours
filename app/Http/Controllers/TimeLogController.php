@@ -6,15 +6,19 @@ use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
 use App\Models\Project;
 use App\Models\TimeLog;
+use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Msamgan\Lact\Attributes\Action;
 use Throwable;
 
 class TimeLogController extends Controller
 {
+    use ExportableTrait;
     public function index()
     {
         $query = TimeLog::query()->where('user_id', auth()->id());
@@ -194,5 +198,50 @@ class TimeLogController extends Controller
             DB::rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * Export time logs to CSV
+     *
+     * @return StreamedResponse
+     */
+    #[Action(method: 'get', name: 'time-log.export', middleware: ['auth', 'verified'])]
+    public function export(): StreamedResponse
+    {
+        $query = TimeLog::query()->where('user_id', auth()->id());
+
+        // Apply date filters if provided
+        if (request()->get('start_date')) {
+            $query->whereDate('start_timestamp', '>=', request('start_date'));
+        }
+
+        if (request()->get('end_date')) {
+            $query->whereDate('start_timestamp', '<=', request('end_date'));
+        }
+
+        // Apply project filter if provided
+        if (request()->get('project_id') && request('project_id')) {
+            // Validate that the project belongs to the logged-in user
+            $userProjects = $this->getUserProjects()->pluck('id')->toArray();
+            if (in_array(request('project_id'), $userProjects)) {
+                $query->where('project_id', request('project_id'));
+            }
+        }
+
+        $timeLogs = $query->with('project')->get()
+            ->map(function ($timeLog) {
+                return [
+                    'id' => $timeLog->id,
+                    'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
+                    'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                    'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
+                    'duration' => round($timeLog->duration, 2),
+                ];
+            });
+
+        $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)'];
+        $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
+
+        return $this->exportToCsv($timeLogs, $headers, $filename);
     }
 }

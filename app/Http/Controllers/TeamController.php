@@ -7,11 +7,14 @@ use App\Http\Requests\UpdateTeamMemberRequest;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
+use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Msamgan\Lact\Attributes\Action;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -19,6 +22,7 @@ use Throwable;
 
 class TeamController extends Controller
 {
+    use ExportableTrait;
     /**
      * Get projects created by or assigned to the current user
      */
@@ -338,5 +342,128 @@ class TeamController extends Controller
             'totalDuration' => $totalDuration,
             'weeklyAverage' => $weeklyAverage,
         ]);
+    }
+
+    /**
+     * Export team members to CSV
+     *
+     * @return StreamedResponse
+     */
+    #[Action(method: 'get', name: 'team.export', middleware: ['auth', 'verified'])]
+    public function export(): StreamedResponse
+    {
+        $query = Team::query()
+            ->where('user_id', auth()->id())
+            ->with('member');
+
+        // Apply search filter if provided
+        if (request()->get('search')) {
+            $search = request('search');
+            $query->whereHas('member', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+
+        $teamMembers = $query->get()
+            ->map(function ($team) {
+                // Get time logs for this team member
+                $query = TimeLog::query()->where('user_id', $team->member->id);
+
+                // Apply date filters if provided
+                if (request()->get('start_date')) {
+                    $query->whereDate('start_timestamp', '>=', request('start_date'));
+                }
+
+                if (request()->get('end_date')) {
+                    $query->whereDate('start_timestamp', '<=', request('end_date'));
+                }
+
+                $timeLogs = $query->get();
+
+                // Calculate total hours
+                $totalDuration = round($timeLogs->sum('duration'), 2);
+
+                // Calculate weekly average
+                $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
+
+                return [
+                    'id' => $team->member->id,
+                    'name' => $team->member->name,
+                    'email' => $team->member->email,
+                    'total_hours' => $totalDuration,
+                    'weekly_average' => $weeklyAverage,
+                ];
+            });
+
+        $headers = ['ID', 'Name', 'Email', 'Total Hours', 'Weekly Average'];
+        $filename = 'team_members_' . Carbon::now()->format('Y-m-d') . '.csv';
+
+        return $this->exportToCsv($teamMembers, $headers, $filename);
+    }
+
+    /**
+     * Export time logs of all team members to CSV
+     *
+     * @return StreamedResponse
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    #[Action(method: 'get', name: 'team.export-time-logs', middleware: ['auth', 'verified'])]
+    public function exportTimeLogs(): StreamedResponse
+    {
+        // Get all team members of the authenticated user
+        $teamMembersQuery = Team::query()
+            ->where('user_id', auth()->id())
+            ->with('member');
+
+        $teamMemberIds = $teamMembersQuery->get()->pluck('member.id');
+
+        $query = TimeLog::query()->whereIn('user_id', $teamMemberIds);
+
+        // Apply date filters if provided
+        if (request()->get('start_date')) {
+            $query->whereDate('start_timestamp', '>=', request('start_date'));
+        }
+
+        if (request()->get('end_date')) {
+            $query->whereDate('start_timestamp', '<=', request('end_date'));
+        }
+
+        // Apply team member filter if provided
+        if (request()->get('team_member_id') && request('team_member_id')) {
+            // Validate that the team_member_id belongs to a team member of the authenticated user
+            if (!$teamMemberIds->contains(request('team_member_id'))) {
+                abort(403, 'You can only view time logs of members in your team.');
+            }
+
+            $query->where('user_id', request('team_member_id'));
+        }
+
+        // Apply project filter if provided
+        if (request()->get('project_id') && request('project_id')) {
+            // Validate that the project belongs to the logged-in user
+            $userProjects = $this->getUserProjects()->pluck('id')->toArray();
+            if (in_array(request('project_id'), $userProjects)) {
+                $query->where('project_id', request('project_id'));
+            }
+        }
+
+        $timeLogs = $query->with(['user', 'project'])->get()
+            ->map(function ($timeLog) {
+                return [
+                    'id' => $timeLog->id,
+                    'user_name' => $timeLog->user->name,
+                    'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
+                    'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                    'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
+                    'duration' => round($timeLog->duration, 2),
+                ];
+            });
+
+        $headers = ['ID', 'Team Member', 'Project', 'Start Time', 'End Time', 'Duration (hours)'];
+        $filename = 'team_time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
+
+        return $this->exportToCsv($timeLogs, $headers, $filename);
     }
 }

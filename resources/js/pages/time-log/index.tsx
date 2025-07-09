@@ -7,7 +7,7 @@ import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Briefcase, Calendar, CalendarIcon, CalendarRange, ClockIcon, PlusCircle, Search, TimerReset } from 'lucide-react';
+import { Briefcase, Calendar, CalendarIcon, CalendarRange, ClockIcon, Download, PlusCircle, Search, TimerReset } from 'lucide-react';
 import { FormEventHandler, forwardRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -165,12 +165,20 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                     </CardDescription>
                                 )}
                             </div>
-                            <Link href={route('time-log.create')}>
-                                <Button className="flex items-center gap-2">
-                                    <ClockIcon className="h-4 w-4" />
-                                    <span>Log Time</span>
-                                </Button>
-                            </Link>
+                            <div className="flex gap-2">
+                                <a href={route('time-log.export') + window.location.search} className="inline-block">
+                                    <Button variant="outline" className="flex items-center gap-2">
+                                        <Download className="h-4 w-4" />
+                                        <span>Export</span>
+                                    </Button>
+                                </a>
+                                <Link href={route('time-log.create')}>
+                                    <Button className="flex items-center gap-2">
+                                        <ClockIcon className="h-4 w-4" />
+                                        <span>Log Time</span>
+                                    </Button>
+                                </Link>
+                            </div>
                         </div>
                     </CardHeader>
                     <CardContent>
