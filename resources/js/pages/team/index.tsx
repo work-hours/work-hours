@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { Edit, Users, Clock, UserPlus } from 'lucide-react';
+import { Clock, Edit, UserPlus, Users } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -61,7 +61,7 @@ export default function Team({ teamMembers }: Props) {
                     </CardHeader>
                     <CardContent>
                         {teamMembers.length > 0 ? (
-                            <div className="rounded-md border overflow-hidden">
+                            <div className="overflow-hidden rounded-md border">
                                 <table className="w-full">
                                     <thead>
                                         <tr className="border-b bg-muted/50">
@@ -73,7 +73,7 @@ export default function Team({ teamMembers }: Props) {
                                     </thead>
                                     <tbody>
                                         {teamMembers.map((member) => (
-                                            <tr key={member.id} className="border-b hover:bg-muted/20 transition-colors">
+                                            <tr key={member.id} className="border-b transition-colors hover:bg-muted/20">
                                                 <td className="px-4 py-3 font-medium">{member.name}</td>
                                                 <td className="px-4 py-3 text-muted-foreground">{member.email}</td>
                                                 <td className="px-4 py-3">
@@ -85,7 +85,7 @@ export default function Team({ teamMembers }: Props) {
                                                     <div className="flex justify-end gap-2">
                                                         <Link href={route('team.time-logs', member.id)}>
                                                             <Button variant="outline" size="sm" className="h-8">
-                                                                <Clock className="h-3.5 w-3.5 mr-1" />
+                                                                <Clock className="mr-1 h-3.5 w-3.5" />
                                                                 Time Logs
                                                             </Button>
                                                         </Link>
@@ -104,11 +104,11 @@ export default function Team({ teamMembers }: Props) {
                                 </table>
                             </div>
                         ) : (
-                            <div className="rounded-md border p-6 bg-muted/5">
-                                <div className="flex flex-col items-center justify-center text-center py-12">
-                                    <Users className="h-12 w-12 text-muted-foreground/50 mb-4" />
-                                    <h3 className="text-lg font-medium mb-1">No Team Members</h3>
-                                    <p className="text-muted-foreground mb-4">You haven't added any team members yet.</p>
+                            <div className="rounded-md border bg-muted/5 p-6">
+                                <div className="flex flex-col items-center justify-center py-12 text-center">
+                                    <Users className="mb-4 h-12 w-12 text-muted-foreground/50" />
+                                    <h3 className="mb-1 text-lg font-medium">No Team Members</h3>
+                                    <p className="mb-4 text-muted-foreground">You haven't added any team members yet.</p>
                                     <Link href={route('team.create')}>
                                         <Button className="flex items-center gap-2">
                                             <UserPlus className="h-4 w-4" />

@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, Clock, Timer, ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
@@ -59,17 +59,17 @@ export default function EditTimeLog({ timeLog }: Props) {
                 <Card className="max-w-2xl overflow-hidden transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-xl">Time Entry Details</CardTitle>
-                        <CardDescription>
-                            Current duration: {timeLog.duration} minutes
-                        </CardDescription>
+                        <CardDescription>Current duration: {timeLog.duration} minutes</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="start_timestamp" className="text-sm font-medium">Start Time</Label>
+                                    <Label htmlFor="start_timestamp" className="text-sm font-medium">
+                                        Start Time
+                                    </Label>
                                     <div className="relative">
-                                        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                             <Clock className="h-4 w-4 text-muted-foreground" />
                                         </div>
                                         <Input
@@ -88,9 +88,11 @@ export default function EditTimeLog({ timeLog }: Props) {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="end_timestamp" className="text-sm font-medium">End Time</Label>
+                                    <Label htmlFor="end_timestamp" className="text-sm font-medium">
+                                        End Time
+                                    </Label>
                                     <div className="relative">
-                                        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                             <Timer className="h-4 w-4 text-muted-foreground" />
                                         </div>
                                         <Input
@@ -119,18 +121,9 @@ export default function EditTimeLog({ timeLog }: Props) {
                                         <ArrowLeft className="h-4 w-4" />
                                         Back
                                     </Button>
-                                    <Button
-                                        type="submit"
-                                        tabIndex={3}
-                                        disabled={processing}
-                                        className="flex items-center gap-2"
-                                    >
-                                        {processing ? (
-                                            <LoaderCircle className="h-4 w-4 animate-spin" />
-                                        ) : (
-                                            <Save className="h-4 w-4" />
-                                        )}
-                                        {processing ? "Updating..." : "Update Time Log"}
+                                    <Button type="submit" tabIndex={3} disabled={processing} className="flex items-center gap-2">
+                                        {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                                        {processing ? 'Updating...' : 'Update Time Log'}
                                     </Button>
                                 </div>
                             </div>

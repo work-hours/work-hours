@@ -14,7 +14,7 @@ export default function AuthSimpleLayout({ children, title, description }: Props
             <div className="relative w-full max-w-md">
                 {/* Background decorative elements */}
                 <div className="absolute -top-6 -left-6 h-12 w-12 rounded-full bg-primary/5 blur-xl"></div>
-                <div className="absolute -bottom-8 -right-8 h-16 w-16 rounded-full bg-primary/10 blur-xl"></div>
+                <div className="absolute -right-8 -bottom-8 h-16 w-16 rounded-full bg-primary/10 blur-xl"></div>
 
                 {/* Card container */}
                 <div className="relative z-10 rounded-xl border border-border/40 bg-card/95 p-8 shadow-lg backdrop-blur-sm">
@@ -44,14 +44,12 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                         href="https://github.com/sponsors/msamgan"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-primary hover:text-primary/80 transition-colors"
+                        className="text-primary transition-colors hover:text-primary/80"
                     >
                         Sponsor this project
                     </a>
                 </div>
-                <div className="text-muted-foreground">
-                    &copy; {new Date().getFullYear()} WorkHours. All rights reserved.
-                </div>
+                <div className="text-muted-foreground">&copy; {new Date().getFullYear()} WorkHours. All rights reserved.</div>
             </div>
         </div>
     );

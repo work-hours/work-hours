@@ -1,6 +1,6 @@
 // Components
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, Mail, ArrowLeft } from 'lucide-react';
+import { ArrowLeft, LoaderCircle, Mail } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
@@ -34,9 +34,11 @@ export default function ForgotPassword({ status }: { status?: string }) {
             <div className="space-y-6">
                 <form onSubmit={submit} className="flex flex-col gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+                        <Label htmlFor="email" className="text-sm font-medium">
+                            Email Address
+                        </Label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                 <Mail className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <Input
@@ -55,18 +57,14 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <Button
-                            type="submit"
-                            className="w-full rounded-md py-2.5 font-medium transition-all hover:shadow-md"
-                            disabled={processing}
-                        >
+                        <Button type="submit" className="w-full rounded-md py-2.5 font-medium transition-all hover:shadow-md" disabled={processing}>
                             {processing ? (
                                 <span className="flex items-center justify-center gap-2">
                                     <LoaderCircle className="h-4 w-4 animate-spin" />
                                     <span>Sending link...</span>
                                 </span>
                             ) : (
-                                "Email password reset link"
+                                'Email password reset link'
                             )}
                         </Button>
 
@@ -74,7 +72,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                             type="button"
                             variant="outline"
                             className="flex items-center justify-center gap-2"
-                            onClick={() => window.location.href = route('login')}
+                            onClick={() => (window.location.href = route('login'))}
                         >
                             <ArrowLeft className="h-4 w-4" />
                             <span>Back to login</span>

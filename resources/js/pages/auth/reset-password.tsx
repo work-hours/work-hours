@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, Mail, Lock, KeyRound } from 'lucide-react';
+import { KeyRound, LoaderCircle, Lock, Mail } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
@@ -42,9 +42,11 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
             <form onSubmit={submit} className="flex flex-col gap-6">
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+                        <Label htmlFor="email" className="text-sm font-medium">
+                            Email Address
+                        </Label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                 <Mail className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <Input
@@ -55,16 +57,18 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                                 value={data.email}
                                 readOnly
                                 onChange={(e) => setData('email', e.target.value)}
-                                className="pl-10 bg-muted/30"
+                                className="bg-muted/30 pl-10"
                             />
                         </div>
                         <InputError message={errors.email} className="mt-1" />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password" className="text-sm font-medium">New Password</Label>
+                        <Label htmlFor="password" className="text-sm font-medium">
+                            New Password
+                        </Label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                 <Lock className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <Input
@@ -83,9 +87,11 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password_confirmation" className="text-sm font-medium">Confirm Password</Label>
+                        <Label htmlFor="password_confirmation" className="text-sm font-medium">
+                            Confirm Password
+                        </Label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                 <KeyRound className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <Input
@@ -102,18 +108,14 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                         <InputError message={errors.password_confirmation} className="mt-1" />
                     </div>
 
-                    <Button
-                        type="submit"
-                        className="mt-2 w-full rounded-md py-2.5 font-medium transition-all hover:shadow-md"
-                        disabled={processing}
-                    >
+                    <Button type="submit" className="mt-2 w-full rounded-md py-2.5 font-medium transition-all hover:shadow-md" disabled={processing}>
                         {processing ? (
                             <span className="flex items-center justify-center gap-2">
                                 <LoaderCircle className="h-4 w-4 animate-spin" />
                                 <span>Resetting password...</span>
                             </span>
                         ) : (
-                            "Reset password"
+                            'Reset password'
                         )}
                     </Button>
                 </div>

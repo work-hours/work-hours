@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, ClockIcon, CalendarIcon, Search, Calendar, CalendarRange, TimerReset } from 'lucide-react';
+import { ArrowLeft, Calendar, CalendarIcon, CalendarRange, ClockIcon, Search, TimerReset } from 'lucide-react';
 import { FormEventHandler, useMemo } from 'react';
 
 type TimeLog = {
@@ -120,9 +120,11 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
                     <CardContent>
                         <form onSubmit={submit} className="flex flex-wrap items-end gap-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="start_date" className="text-sm font-medium">Start Date</Label>
+                                <Label htmlFor="start_date" className="text-sm font-medium">
+                                    Start Date
+                                </Label>
                                 <div className="relative">
-                                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                         <Calendar className="h-4 w-4 text-muted-foreground" />
                                     </div>
                                     <Input
@@ -137,9 +139,11 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="end_date" className="text-sm font-medium">End Date</Label>
+                                <Label htmlFor="end_date" className="text-sm font-medium">
+                                    End Date
+                                </Label>
                                 <div className="relative">
-                                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                         <CalendarRange className="h-4 w-4 text-muted-foreground" />
                                     </div>
                                     <Input
@@ -229,7 +233,7 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
                     </CardHeader>
                     <CardContent>
                         {timeLogs.length > 0 ? (
-                            <div className="rounded-md border overflow-hidden">
+                            <div className="overflow-hidden rounded-md border">
                                 <table className="w-full">
                                     <thead>
                                         <tr className="border-b bg-muted/50">
@@ -240,10 +244,8 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
                                     </thead>
                                     <tbody>
                                         {timeLogs.map((log) => (
-                                            <tr key={log.id} className="border-b hover:bg-muted/20 transition-colors">
-                                                <td className="px-4 py-3 font-medium">
-                                                    {new Date(log.start_timestamp).toLocaleString()}
-                                                </td>
+                                            <tr key={log.id} className="border-b transition-colors hover:bg-muted/20">
+                                                <td className="px-4 py-3 font-medium">{new Date(log.start_timestamp).toLocaleString()}</td>
                                                 <td className="px-4 py-3 text-muted-foreground">
                                                     {log.end_timestamp ? new Date(log.end_timestamp).toLocaleString() : '-'}
                                                 </td>
@@ -258,11 +260,11 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
                                 </table>
                             </div>
                         ) : (
-                            <div className="rounded-md border p-6 bg-muted/5">
-                                <div className="flex flex-col items-center justify-center text-center py-12">
-                                    <ClockIcon className="h-12 w-12 text-muted-foreground/50 mb-4" />
-                                    <h3 className="text-lg font-medium mb-1">No Time Logs</h3>
-                                    <p className="text-muted-foreground mb-4">{user.name} hasn't added any time logs yet.</p>
+                            <div className="rounded-md border bg-muted/5 p-6">
+                                <div className="flex flex-col items-center justify-center py-12 text-center">
+                                    <ClockIcon className="mb-4 h-12 w-12 text-muted-foreground/50" />
+                                    <h3 className="mb-1 text-lg font-medium">No Time Logs</h3>
+                                    <p className="mb-4 text-muted-foreground">{user.name} hasn't added any time logs yet.</p>
                                 </div>
                             </div>
                         )}

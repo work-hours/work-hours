@@ -1,8 +1,8 @@
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { CheckCircle, LoaderCircle, Mail, User } from 'lucide-react';
 import { FormEventHandler } from 'react';
-import { User, Mail, CheckCircle, LoaderCircle } from 'lucide-react';
 
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
@@ -51,9 +51,11 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                     <form onSubmit={submit} className="space-y-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
+                            <Label htmlFor="name" className="text-sm font-medium">
+                                Full Name
+                            </Label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                     <User className="h-4 w-4 text-muted-foreground" />
                                 </div>
                                 <Input
@@ -70,9 +72,11 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+                            <Label htmlFor="email" className="text-sm font-medium">
+                                Email Address
+                            </Label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                     <Mail className="h-4 w-4 text-muted-foreground" />
                                 </div>
                                 <Input
@@ -94,7 +98,11 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 <div className="flex">
                                     <div className="flex-shrink-0">
                                         <svg className="h-5 w-5 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
+                                                clipRule="evenodd"
+                                            />
                                         </svg>
                                     </div>
                                     <div className="ml-3">
@@ -122,10 +130,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                         )}
 
                         <div className="flex items-center gap-4">
-                            <Button
-                                disabled={processing}
-                                className="flex items-center gap-2"
-                            >
+                            <Button disabled={processing} className="flex items-center gap-2">
                                 {processing ? (
                                     <>
                                         <LoaderCircle className="h-4 w-4 animate-spin" />

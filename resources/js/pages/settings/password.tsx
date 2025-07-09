@@ -4,8 +4,8 @@ import SettingsLayout from '@/layouts/settings/layout';
 import { type BreadcrumbItem } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, useForm } from '@inertiajs/react';
+import { CheckCircle, KeyRound, LoaderCircle, Lock } from 'lucide-react';
 import { FormEventHandler, useRef } from 'react';
-import { Lock, KeyRound, CheckCircle, LoaderCircle } from 'lucide-react';
 
 import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
@@ -59,9 +59,11 @@ export default function Password() {
 
                     <form onSubmit={updatePassword} className="space-y-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="current_password" className="text-sm font-medium">Current Password</Label>
+                            <Label htmlFor="current_password" className="text-sm font-medium">
+                                Current Password
+                            </Label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                     <KeyRound className="h-4 w-4 text-muted-foreground" />
                                 </div>
                                 <Input
@@ -79,9 +81,11 @@ export default function Password() {
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password" className="text-sm font-medium">New Password</Label>
+                            <Label htmlFor="password" className="text-sm font-medium">
+                                New Password
+                            </Label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                     <Lock className="h-4 w-4 text-muted-foreground" />
                                 </div>
                                 <Input
@@ -99,9 +103,11 @@ export default function Password() {
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation" className="text-sm font-medium">Confirm Password</Label>
+                            <Label htmlFor="password_confirmation" className="text-sm font-medium">
+                                Confirm Password
+                            </Label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                     <Lock className="h-4 w-4 text-muted-foreground" />
                                 </div>
                                 <Input
@@ -118,10 +124,7 @@ export default function Password() {
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <Button
-                                disabled={processing}
-                                className="flex items-center gap-2"
-                            >
+                            <Button disabled={processing} className="flex items-center gap-2">
                                 {processing ? (
                                     <>
                                         <LoaderCircle className="h-4 w-4 animate-spin" />

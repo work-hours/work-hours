@@ -1,8 +1,8 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { ClockIcon, UsersIcon, CalendarIcon, TrendingUpIcon } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { CalendarIcon, ClockIcon, UsersIcon } from 'lucide-react';
 
 interface TeamStats {
     count: number;
@@ -27,8 +27,8 @@ export default function Dashboard({ teamStats }: DashboardProps) {
         recentLogs: [
             { date: '2023-11-15', hours: 8 },
             { date: '2023-11-14', hours: 7.5 },
-            { date: '2023-11-13', hours: 8 }
-        ]
+            { date: '2023-11-13', hours: 8 },
+        ],
     };
 
     return (
@@ -97,7 +97,13 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                                                 <ClockIcon className="h-4 w-4 text-primary" />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium">{new Date(log.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+                                                <p className="text-sm font-medium">
+                                                    {new Date(log.date).toLocaleDateString('en-US', {
+                                                        weekday: 'long',
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                    })}
+                                                </p>
                                             </div>
                                         </div>
                                         <div className="text-sm font-medium">{log.hours} hours</div>

@@ -1,6 +1,6 @@
 // Components
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, Mail, LogOut } from 'lucide-react';
+import { LoaderCircle, LogOut, Mail } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -52,7 +52,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                         type="button"
                         variant="outline"
                         className="flex items-center justify-center gap-2"
-                        onClick={() => window.location.href = route('logout')}
+                        onClick={() => (window.location.href = route('logout'))}
                     >
                         <LogOut className="h-4 w-4" />
                         <span>Log out</span>

@@ -1,6 +1,6 @@
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Head, Link } from '@inertiajs/react';
-import { Clock, BarChart2, Users, ArrowRight, CheckCircle } from 'lucide-react';
+import { ArrowRight, BarChart2, CheckCircle, Clock, Users } from 'lucide-react';
 
 export default function Welcome() {
     return (
@@ -34,7 +34,8 @@ export default function Welcome() {
                     <div className="absolute top-60 right-10 h-64 w-64 rounded-full bg-primary/10 blur-3xl"></div>
 
                     <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl">
-                        Track Your Work Hours <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">Effortlessly</span>
+                        Track Your Work Hours{' '}
+                        <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">Effortlessly</span>
                     </h1>
                     <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground md:text-xl">
                         A simple, intuitive time tracking solution for teams and individuals. Boost productivity and gain insights into how you spend
@@ -72,7 +73,9 @@ export default function Welcome() {
             <section id="features" className="container mx-auto mb-24 px-6 lg:px-8">
                 <div className="mb-16 text-center">
                     <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">Powerful Features</h2>
-                    <p className="mx-auto max-w-2xl text-lg text-muted-foreground">Everything you need to track, analyze, and optimize your work hours.</p>
+                    <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+                        Everything you need to track, analyze, and optimize your work hours.
+                    </p>
                 </div>
 
                 <div className="grid gap-8 md:grid-cols-3">
@@ -82,7 +85,9 @@ export default function Welcome() {
                             <Clock className="h-7 w-7 text-primary" />
                         </div>
                         <h3 className="mb-3 text-xl font-semibold text-foreground">Time Tracking</h3>
-                        <p className="text-muted-foreground">Track time with a single click. Add notes and categorize your activities for better insights.</p>
+                        <p className="text-muted-foreground">
+                            Track time with a single click. Add notes and categorize your activities for better insights.
+                        </p>
                     </div>
 
                     {/* Feature 2 */}
@@ -91,7 +96,9 @@ export default function Welcome() {
                             <BarChart2 className="h-7 w-7 text-primary" />
                         </div>
                         <h3 className="mb-3 text-xl font-semibold text-foreground">Detailed Reports</h3>
-                        <p className="text-muted-foreground">Generate comprehensive reports to analyze your productivity and identify improvement areas.</p>
+                        <p className="text-muted-foreground">
+                            Generate comprehensive reports to analyze your productivity and identify improvement areas.
+                        </p>
                     </div>
 
                     {/* Feature 3 */}
@@ -132,9 +139,7 @@ export default function Welcome() {
                             <AppLogoIcon className="h-8 w-8 text-primary" />
                             <span className="text-sm font-medium text-foreground">WorkHours</span>
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                            &copy; {new Date().getFullYear()} Work Hours. All rights reserved.
-                        </div>
+                        <div className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Work Hours. All rights reserved.</div>
                     </div>
                 </div>
             </footer>

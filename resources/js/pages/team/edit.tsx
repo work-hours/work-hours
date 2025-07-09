@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, User, Mail, Lock, ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, LoaderCircle, Lock, Mail, Save, User } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
@@ -66,9 +66,11 @@ export default function EditTeamMember({ user }: Props) {
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
+                                    <Label htmlFor="name" className="text-sm font-medium">
+                                        Full Name
+                                    </Label>
                                     <div className="relative">
-                                        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                             <User className="h-4 w-4 text-muted-foreground" />
                                         </div>
                                         <Input
@@ -89,9 +91,11 @@ export default function EditTeamMember({ user }: Props) {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+                                    <Label htmlFor="email" className="text-sm font-medium">
+                                        Email Address
+                                    </Label>
                                     <div className="relative">
-                                        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                             <Mail className="h-4 w-4 text-muted-foreground" />
                                         </div>
                                         <Input
@@ -115,7 +119,7 @@ export default function EditTeamMember({ user }: Props) {
                                         Password <span className="text-xs text-muted-foreground">(leave empty to keep current password)</span>
                                     </Label>
                                     <div className="relative">
-                                        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                             <Lock className="h-4 w-4 text-muted-foreground" />
                                         </div>
                                         <Input
@@ -145,18 +149,9 @@ export default function EditTeamMember({ user }: Props) {
                                         <ArrowLeft className="h-4 w-4" />
                                         Back
                                     </Button>
-                                    <Button
-                                        type="submit"
-                                        tabIndex={4}
-                                        disabled={processing}
-                                        className="flex items-center gap-2"
-                                    >
-                                        {processing ? (
-                                            <LoaderCircle className="h-4 w-4 animate-spin" />
-                                        ) : (
-                                            <Save className="h-4 w-4" />
-                                        )}
-                                        {processing ? "Updating..." : "Update Member"}
+                                    <Button type="submit" tabIndex={4} disabled={processing} className="flex items-center gap-2">
+                                        {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                                        {processing ? 'Updating...' : 'Update Member'}
                                     </Button>
                                 </div>
                             </div>

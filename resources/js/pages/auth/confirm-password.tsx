@@ -32,9 +32,11 @@ export default function ConfirmPassword() {
             <form onSubmit={submit} className="flex flex-col gap-6">
                 <div className="space-y-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                        <Label htmlFor="password" className="text-sm font-medium">
+                            Password
+                        </Label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                 <Lock className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <Input
@@ -53,17 +55,14 @@ export default function ConfirmPassword() {
                     </div>
 
                     <div className="flex items-center">
-                        <Button
-                            className="w-full rounded-md py-2.5 font-medium transition-all hover:shadow-md"
-                            disabled={processing}
-                        >
+                        <Button className="w-full rounded-md py-2.5 font-medium transition-all hover:shadow-md" disabled={processing}>
                             {processing ? (
                                 <span className="flex items-center justify-center gap-2">
                                     <LoaderCircle className="h-4 w-4 animate-spin" />
                                     <span>Confirming...</span>
                                 </span>
                             ) : (
-                                "Confirm password"
+                                'Confirm password'
                             )}
                         </Button>
                     </div>

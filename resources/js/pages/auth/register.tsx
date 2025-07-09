@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, User, Mail, Lock, KeyRound } from 'lucide-react';
+import { KeyRound, LoaderCircle, Lock, Mail, User } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
@@ -37,9 +37,11 @@ export default function Register() {
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
+                        <Label htmlFor="name" className="text-sm font-medium">
+                            Full Name
+                        </Label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                 <User className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <Input
@@ -60,9 +62,11 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+                        <Label htmlFor="email" className="text-sm font-medium">
+                            Email Address
+                        </Label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                 <Mail className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <Input
@@ -82,9 +86,11 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                        <Label htmlFor="password" className="text-sm font-medium">
+                            Password
+                        </Label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                 <Lock className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <Input
@@ -104,9 +110,11 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password_confirmation" className="text-sm font-medium">Confirm Password</Label>
+                        <Label htmlFor="password_confirmation" className="text-sm font-medium">
+                            Confirm Password
+                        </Label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                 <KeyRound className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <Input
@@ -137,7 +145,7 @@ export default function Register() {
                                 <span>Creating account...</span>
                             </span>
                         ) : (
-                            "Create account"
+                            'Create account'
                         )}
                     </Button>
                 </div>

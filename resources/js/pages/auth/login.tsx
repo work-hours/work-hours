@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, Mail, Lock } from 'lucide-react';
+import { LoaderCircle, Lock, Mail } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
@@ -48,9 +48,11 @@ export default function Login({ status, canResetPassword }: LoginProps) {
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="email" className="text-sm font-medium">Email address</Label>
+                        <Label htmlFor="email" className="text-sm font-medium">
+                            Email address
+                        </Label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                 <Mail className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <Input
@@ -71,15 +73,21 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
                     <div className="grid gap-2">
                         <div className="flex items-center justify-between">
-                            <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                            <Label htmlFor="password" className="text-sm font-medium">
+                                Password
+                            </Label>
                             {canResetPassword && (
-                                <TextLink href={route('password.request')} className="text-xs font-medium text-primary hover:text-primary/80" tabIndex={5}>
+                                <TextLink
+                                    href={route('password.request')}
+                                    className="text-xs font-medium text-primary hover:text-primary/80"
+                                    tabIndex={5}
+                                >
                                     Forgot password?
                                 </TextLink>
                             )}
                         </div>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                 <Lock className="h-4 w-4 text-muted-foreground" />
                             </div>
                             <Input
@@ -104,9 +112,11 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             checked={data.remember}
                             onClick={() => setData('remember', !data.remember)}
                             tabIndex={3}
-                            className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                            className="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
                         />
-                        <Label htmlFor="remember" className="text-sm text-muted-foreground">Remember me</Label>
+                        <Label htmlFor="remember" className="text-sm text-muted-foreground">
+                            Remember me
+                        </Label>
                     </div>
 
                     <Button
@@ -121,7 +131,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 Logging in...
                             </span>
                         ) : (
-                            "Sign in"
+                            'Sign in'
                         )}
                     </Button>
                 </div>
