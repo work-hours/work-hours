@@ -34,10 +34,20 @@ class TeamController extends Controller
     }
     public function index()
     {
-        $teamMembers = Team::query()
+        $query = Team::query()
             ->where('user_id', auth()->id())
-            ->with('member')
-            ->get()
+            ->with('member');
+
+        // Apply search filter if provided
+        if (request()->get('search')) {
+            $search = request('search');
+            $query->whereHas('member', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+
+        $teamMembers = $query->get()
             ->map(function ($team) {
                 // Get time logs for this team member
                 $query = TimeLog::query()->where('user_id', $team->member->id);
@@ -73,6 +83,7 @@ class TeamController extends Controller
             'filters' => [
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
+                'search' => request('search', ''),
             ],
         ]);
     }

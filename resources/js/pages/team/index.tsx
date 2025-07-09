@@ -66,6 +66,7 @@ type TeamMember = {
 type Filters = {
     start_date: string;
     end_date: string;
+    search: string;
 };
 
 type Props = {
@@ -77,6 +78,7 @@ export default function Team({ teamMembers, filters }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
+        search: filters.search || '',
     });
 
     // Convert string dates to Date objects for DatePicker
@@ -146,6 +148,24 @@ export default function Team({ teamMembers, filters }: Props) {
                     <CardContent>
                         <form onSubmit={submit} className="flex flex-wrap items-end gap-4">
                             <div className="grid gap-2">
+                                <Label htmlFor="search" className="text-sm font-medium">
+                                    Search
+                                </Label>
+                                <div className="relative">
+                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                        <Search className="h-4 w-4 text-muted-foreground" />
+                                    </div>
+                                    <Input
+                                        id="search"
+                                        type="text"
+                                        value={data.search}
+                                        onChange={(e) => setData('search', e.target.value)}
+                                        placeholder="Search by name or email"
+                                        className="pl-10"
+                                    />
+                                </div>
+                            </div>
+                            <div className="grid gap-2">
                                 <Label htmlFor="start_date" className="text-sm font-medium">
                                     Start Date
                                 </Label>
@@ -194,11 +214,12 @@ export default function Team({ teamMembers, filters }: Props) {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    disabled={processing || (!data.start_date && !data.end_date)}
+                                    disabled={processing || (!data.start_date && !data.end_date && !data.search)}
                                     onClick={() => {
                                         setData({
                                             start_date: '',
                                             end_date: '',
+                                            search: '',
                                         });
                                         get(route('team.index'), {
                                             preserveState: true,
