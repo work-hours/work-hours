@@ -12,12 +12,14 @@ class TimeLog extends Model
         'start_timestamp',
         'end_timestamp',
         'duration',
+        'is_paid',
     ];
 
     protected $casts = [
         'start_timestamp' => 'datetime',
         'end_timestamp' => 'datetime',
         'duration' => 'float',
+        'is_paid' => 'boolean',
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo

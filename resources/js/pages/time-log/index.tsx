@@ -6,9 +6,9 @@ import { SearchableSelect } from '@/components/ui/searchable-select';
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { Briefcase, Calendar, CalendarIcon, CalendarRange, ClockIcon, Download, PlusCircle, Search, TimerReset } from 'lucide-react';
-import { FormEventHandler, forwardRef } from 'react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Briefcase, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, PlusCircle, Search, TimerReset } from 'lucide-react';
+import { FormEventHandler, forwardRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -62,6 +62,7 @@ type TimeLog = {
     start_timestamp: string;
     end_timestamp: string;
     duration: number;
+    is_paid: boolean;
 };
 
 type Filters = {
@@ -89,6 +90,33 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
         end_date: filters.end_date || '',
         project_id: filters.project_id || '',
     });
+
+    // State for selected time logs
+    const [selectedLogs, setSelectedLogs] = useState<number[]>([]);
+
+    // Handle checkbox selection
+    const handleSelectLog = (id: number, checked: boolean) => {
+        if (checked) {
+            setSelectedLogs([...selectedLogs, id]);
+        } else {
+            setSelectedLogs(selectedLogs.filter(logId => logId !== id));
+        }
+    };
+
+    // Mark selected logs as paid
+    const markAsPaid = () => {
+        if (selectedLogs.length === 0) {
+            return;
+        }
+
+        router.post(route('time-log.mark-as-paid'), {
+            time_log_ids: selectedLogs
+        }, {
+            onSuccess: () => {
+                setSelectedLogs([]);
+            }
+        });
+    };
 
     // Convert string dates to Date objects for DatePicker
     const startDate = data.start_date ? new Date(data.start_date) : null;
@@ -305,6 +333,16 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                         <span>Export</span>
                                     </Button>
                                 </a>
+                                {selectedLogs.length > 0 && (
+                                    <Button
+                                        onClick={markAsPaid}
+                                        variant="secondary"
+                                        className="flex items-center gap-2"
+                                    >
+                                        <CheckCircle className="h-4 w-4" />
+                                        <span>Mark as Paid ({selectedLogs.length})</span>
+                                    </Button>
+                                )}
                                 <Link href={route('time-log.create')}>
                                     <Button className="flex items-center gap-2">
                                         <ClockIcon className="h-4 w-4" />
@@ -316,7 +354,13 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                     </CardHeader>
                     <CardContent>
                         {timeLogs.length > 0 ? (
-                            <TimeLogTable timeLogs={timeLogs as TimeLogEntry[]} showActions={true} />
+                            <TimeLogTable
+                                timeLogs={timeLogs as TimeLogEntry[]}
+                                showActions={true}
+                                showCheckboxes={true}
+                                selectedLogs={selectedLogs}
+                                onSelectLog={handleSelectLog}
+                            />
                         ) : (
                             <div className="rounded-md border bg-muted/5 p-6">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">

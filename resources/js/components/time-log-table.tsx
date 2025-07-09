@@ -13,30 +13,54 @@ export type TimeLogEntry = {
     end_timestamp: string;
     duration: number;
     user_name?: string;
+    is_paid?: boolean;
 };
 
 type TimeLogTableProps = {
     timeLogs: TimeLogEntry[];
     showTeamMember?: boolean;
     showActions?: boolean;
+    showCheckboxes?: boolean;
+    selectedLogs?: number[];
+    onSelectLog?: (id: number, checked: boolean) => void;
 };
 
-export default function TimeLogTable({ timeLogs, showTeamMember = false, showActions = false }: TimeLogTableProps) {
+export default function TimeLogTable({
+    timeLogs,
+    showTeamMember = false,
+    showActions = false,
+    showCheckboxes = false,
+    selectedLogs = [],
+    onSelectLog
+}: TimeLogTableProps) {
     return (
         <Table>
             <TableHeader>
                 <TableHeaderRow>
+                    {showCheckboxes && <TableHead className="w-[50px]">Select</TableHead>}
                     {showTeamMember && <TableHead>Team Member</TableHead>}
                     <TableHead>Project</TableHead>
                     <TableHead>Start Time</TableHead>
                     <TableHead>End Time</TableHead>
                     <TableHead>Duration</TableHead>
+                    <TableHead>Status</TableHead>
                     {showActions && <TableHead className="text-right">Actions</TableHead>}
                 </TableHeaderRow>
             </TableHeader>
             <TableBody>
                 {timeLogs.map((log) => (
                     <TableRow key={log.id}>
+                        {showCheckboxes && (
+                            <TableCell>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedLogs.includes(log.id)}
+                                    onChange={(e) => onSelectLog && onSelectLog(log.id, e.target.checked)}
+                                    disabled={log.is_paid}
+                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                />
+                            </TableCell>
+                        )}
                         {showTeamMember && <TableCell className="font-medium">{log.user_name}</TableCell>}
                         <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>
                         <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
@@ -45,6 +69,17 @@ export default function TimeLogTable({ timeLogs, showTeamMember = false, showAct
                             <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                                 {log.duration}
                             </span>
+                        </TableCell>
+                        <TableCell>
+                            {log.is_paid ? (
+                                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                    Paid
+                                </span>
+                            ) : (
+                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
+                                    Unpaid
+                                </span>
+                            )}
                         </TableCell>
                         {showActions && (
                             <TableCell className="text-right">

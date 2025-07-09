@@ -50,6 +50,7 @@ class TimeLogController extends Controller
                     'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                     'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
                     'duration' => round($timeLog->duration, 2),
+                    'is_paid' => $timeLog->is_paid,
                 ];
             });
 
@@ -193,6 +194,39 @@ class TimeLogController extends Controller
         DB::beginTransaction();
         try {
             $timeLog->delete();
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Mark selected time logs as paid
+     *
+     * @throws Throwable
+     */
+    #[Action(method: 'post', name: 'time-log.mark-as-paid', middleware: ['auth', 'verified'])]
+    public function markAsPaid(): void
+    {
+        $timeLogIds = request('time_log_ids', []);
+
+        if (empty($timeLogIds)) {
+            abort(400, 'No time logs selected.');
+        }
+
+        DB::beginTransaction();
+        try {
+            // Ensure the time logs belong to the authenticated user
+            $timeLogs = TimeLog::query()
+                ->where('user_id', auth()->id())
+                ->whereIn('id', $timeLogIds)
+                ->get();
+
+            foreach ($timeLogs as $timeLog) {
+                $timeLog->update(['is_paid' => true]);
+            }
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

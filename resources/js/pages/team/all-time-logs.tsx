@@ -6,9 +6,9 @@ import { SearchableSelect } from '@/components/ui/searchable-select';
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Briefcase, Calendar, CalendarIcon, CalendarRange, ClockIcon, Download, Search, TimerReset } from 'lucide-react';
-import { FormEventHandler, forwardRef } from 'react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
+import { ArrowLeft, Briefcase, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset } from 'lucide-react';
+import { FormEventHandler, forwardRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -20,6 +20,7 @@ type TimeLog = {
     start_timestamp: string;
     end_timestamp: string;
     duration: number;
+    is_paid: boolean;
 };
 
 type Filters = {
@@ -95,6 +96,33 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
             href: '/team/all-time-logs',
         },
     ];
+
+    // State for selected time logs
+    const [selectedLogs, setSelectedLogs] = useState<number[]>([]);
+
+    // Handle checkbox selection
+    const handleSelectLog = (id: number, checked: boolean) => {
+        if (checked) {
+            setSelectedLogs([...selectedLogs, id]);
+        } else {
+            setSelectedLogs(selectedLogs.filter(logId => logId !== id));
+        }
+    };
+
+    // Mark selected logs as paid
+    const markAsPaid = () => {
+        if (selectedLogs.length === 0) {
+            return;
+        }
+
+        router.post(route('time-log.mark-as-paid'), {
+            time_log_ids: selectedLogs
+        }, {
+            onSuccess: () => {
+                setSelectedLogs([]);
+            }
+        });
+    };
 
     // Calculate total hours and weekly average
     const { data, setData, get, processing } = useForm<Filters>({
@@ -400,12 +428,28 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                                         <span>Export</span>
                                     </Button>
                                 </a>
+                                {selectedLogs.length > 0 && (
+                                    <Button
+                                        onClick={markAsPaid}
+                                        variant="secondary"
+                                        className="flex items-center gap-2"
+                                    >
+                                        <CheckCircle className="h-4 w-4" />
+                                        <span>Mark as Paid ({selectedLogs.length})</span>
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </CardHeader>
                     <CardContent>
                         {timeLogs.length > 0 ? (
-                            <TimeLogTable timeLogs={timeLogs as TimeLogEntry[]} showTeamMember={true} />
+                            <TimeLogTable
+                                timeLogs={timeLogs as TimeLogEntry[]}
+                                showTeamMember={true}
+                                showCheckboxes={true}
+                                selectedLogs={selectedLogs}
+                                onSelectLog={handleSelectLog}
+                            />
                         ) : (
                             <div className="rounded-md border bg-muted/5 p-6">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
