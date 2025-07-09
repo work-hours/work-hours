@@ -14,6 +14,8 @@ type TeamMemberForm = {
     name: string;
     email: string;
     password: string;
+    hourly_rate: number | string;
+    currency: string;
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -32,6 +34,8 @@ export default function CreateTeamMember() {
         name: '',
         email: '',
         password: '',
+        hourly_rate: 0,
+        currency: 'USD',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -132,19 +136,66 @@ export default function CreateTeamMember() {
                                     <InputError message={errors.password} />
                                 </div>
 
+                                <div className="grid gap-2">
+                                    <Label htmlFor="hourly_rate" className="text-sm font-medium">
+                                        Hourly Rate
+                                    </Label>
+                                    <div className="relative">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <span className="h-4 w-4 text-muted-foreground">$</span>
+                                        </div>
+                                        <Input
+                                            id="hourly_rate"
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
+                                            tabIndex={4}
+                                            value={data.hourly_rate}
+                                            onChange={(e) => setData('hourly_rate', e.target.value)}
+                                            disabled={processing}
+                                            placeholder="0.00"
+                                            className="pl-10"
+                                        />
+                                    </div>
+                                    <InputError message={errors.hourly_rate} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="currency" className="text-sm font-medium">
+                                        Currency
+                                    </Label>
+                                    <div className="relative">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <span className="h-4 w-4 text-muted-foreground">¤</span>
+                                        </div>
+                                        <Input
+                                            id="currency"
+                                            type="text"
+                                            maxLength={3}
+                                            tabIndex={5}
+                                            value={data.currency}
+                                            onChange={(e) => setData('currency', e.target.value)}
+                                            disabled={processing}
+                                            placeholder="USD"
+                                            className="pl-10"
+                                        />
+                                    </div>
+                                    <InputError message={errors.currency} />
+                                </div>
+
                                 <div className="mt-4 flex justify-end gap-3">
                                     <Button
                                         type="button"
                                         variant="outline"
                                         onClick={() => window.history.back()}
-                                        tabIndex={5}
+                                        tabIndex={7}
                                         disabled={processing}
                                         className="flex items-center gap-2"
                                     >
                                         <ArrowLeft className="h-4 w-4" />
                                         Back
                                     </Button>
-                                    <Button type="submit" tabIndex={4} disabled={processing} className="flex items-center gap-2">
+                                    <Button type="submit" tabIndex={6} disabled={processing} className="flex items-center gap-2">
                                         {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
                                         {processing ? 'Creating...' : 'Create Team Member'}
                                     </Button>

@@ -77,6 +77,8 @@ class TeamController extends Controller
                     'id' => $team->member->id,
                     'name' => $team->member->name,
                     'email' => $team->member->email,
+                    'hourly_rate' => $team->hourly_rate,
+                    'currency' => $team->currency,
                     'totalHours' => $totalDuration,
                     'weeklyAverage' => $weeklyAverage,
                 ];
@@ -100,8 +102,16 @@ class TeamController extends Controller
     {
         DB::beginTransaction();
         try {
-            $user = User::query()->create($request->validated());
-            Team::query()->create(['user_id' => auth()->id(), 'member_id' => $user->getKey()]);
+            $userData = $request->safe()->except(['hourly_rate', 'currency']);
+            $user = User::query()->create($userData);
+
+            $teamData = [
+                'user_id' => auth()->id(),
+                'member_id' => $user->getKey(),
+                'hourly_rate' => $request->hourly_rate ?? 0,
+                'currency' => $request->currency ?? 'USD'
+            ];
+            Team::query()->create($teamData);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -117,17 +127,23 @@ class TeamController extends Controller
     public function edit(User $user)
     {
         // Check if the user is a member of the authenticated user's team
-        $isTeamMember = Team::query()
+        $team = Team::query()
             ->where('user_id', auth()->id())
             ->where('member_id', $user->getKey())
-            ->exists();
+            ->first();
 
-        if (!$isTeamMember) {
+        if (!$team) {
             abort(403, 'You can only edit members of your team.');
         }
 
         return Inertia::render('team/edit', [
-            'user' => $user,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'hourly_rate' => $team->hourly_rate,
+                'currency' => $team->currency,
+            ],
         ]);
     }
 
@@ -158,7 +174,21 @@ class TeamController extends Controller
                 $data['password'] = Hash::make($data['password']);
             }
 
+            // Extract team-related fields
+            $teamData = [
+                'hourly_rate' => $data['hourly_rate'] ?? 0,
+                'currency' => $data['currency'] ?? 'USD'
+            ];
+            unset($data['hourly_rate'], $data['currency']);
+
+            // Update user data
             $user->update($data);
+
+            // Update team data
+            Team::query()
+                ->where('user_id', auth()->id())
+                ->where('member_id', $user->getKey())
+                ->update($teamData);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -391,12 +421,14 @@ class TeamController extends Controller
                     'id' => $team->member->id,
                     'name' => $team->member->name,
                     'email' => $team->member->email,
+                    'hourly_rate' => $team->hourly_rate,
+                    'currency' => $team->currency,
                     'total_hours' => $totalDuration,
                     'weekly_average' => $weeklyAverage,
                 ];
             });
 
-        $headers = ['ID', 'Name', 'Email', 'Total Hours', 'Weekly Average'];
+        $headers = ['ID', 'Name', 'Email', 'Hourly Rate', 'Currency', 'Total Hours', 'Weekly Average'];
         $filename = 'team_members_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($teamMembers, $headers, $filename);

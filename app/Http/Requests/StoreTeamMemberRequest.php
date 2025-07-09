@@ -26,6 +26,8 @@ class StoreTeamMemberRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
+            'hourly_rate' => ['nullable', 'numeric', 'min:0'],
+            'currency' => ['nullable', 'string', 'max:3'],
         ];
     }
 }

@@ -54,7 +54,12 @@ class AddData extends Command
         $this->info('Created team members:');
         foreach ($teamMembers as $member) {
             $this->line("- {$member->name} (ID: {$member->getKey()})");
-            Team::query()->create(['user_id' => $loggedInUser->getKey(), 'member_id' => $member->getKey()]);
+            Team::query()->create([
+                'user_id' => $loggedInUser->getKey(),
+                'member_id' => $member->getKey(),
+                'hourly_rate' => rand(10, 100), // Random hourly rate between 10 and 100
+                'currency' => 'USD' // Default currency
+            ]);
         }
 
         $this->info('Creating projects for the logged-in user...');

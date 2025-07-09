@@ -59,6 +59,8 @@ type TeamMember = {
     id: number;
     name: string;
     email: string;
+    hourly_rate: number;
+    currency: string;
     totalHours: number;
     weeklyAverage: number;
 };
@@ -278,6 +280,8 @@ export default function Team({ teamMembers, filters }: Props) {
                                     <TableHeaderRow>
                                         <TableHead>Name</TableHead>
                                         <TableHead>Email</TableHead>
+                                        <TableHead>Hourly Rate</TableHead>
+                                        <TableHead>Currency</TableHead>
                                         <TableHead>Total Hours</TableHead>
                                         <TableHead>Weekly Average</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
@@ -288,6 +292,8 @@ export default function Team({ teamMembers, filters }: Props) {
                                         <TableRow key={member.id}>
                                             <TableCell className="font-medium">{member.name}</TableCell>
                                             <TableCell className="text-muted-foreground">{member.email}</TableCell>
+                                            <TableCell>{member.hourly_rate}</TableCell>
+                                            <TableCell>{member.currency}</TableCell>
                                             <TableCell>{member.totalHours} hrs</TableCell>
                                             <TableCell>{member.weeklyAverage} hrs</TableCell>
                                             <TableCell className="text-right">

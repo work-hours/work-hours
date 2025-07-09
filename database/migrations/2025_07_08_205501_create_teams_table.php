@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->unsignedInteger('member_id');
             $table->foreign('member_id')->references('id')->on('users')->onDelete('cascade');
+            $table->decimal('hourly_rate', 10, 2)->default(0);
+            $table->string('currency', 3)->default('USD');
             $table->timestamps();
         });
     }

@@ -27,6 +27,8 @@ class UpdateTeamMemberRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore(request('email'), 'email')],
             'password' => ['nullable', 'string', 'min:8'],
+            'hourly_rate' => ['nullable', 'numeric', 'min:0'],
+            'currency' => ['nullable', 'string', 'max:3'],
         ];
     }
 }
