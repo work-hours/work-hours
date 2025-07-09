@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 
@@ -130,23 +130,14 @@ export default function CreateTimeLog({ projects }: Props) {
                                     <Label htmlFor="project_id" className="text-sm font-medium">
                                         Project
                                     </Label>
-                                    <Select
+                                    <SearchableSelect
+                                        id="project_id"
                                         value={data.project_id ? data.project_id.toString() : ''}
-                                        onValueChange={(value) => setData('project_id', parseInt(value))}
+                                        onChange={(value) => setData('project_id', parseInt(value))}
+                                        options={projects}
+                                        placeholder="Select a project"
                                         disabled={processing}
-                                        required
-                                    >
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select a project" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {projects.map((project) => (
-                                                <SelectItem key={project.id} value={project.id.toString()}>
-                                                    {project.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    />
                                     <InputError message={errors.project_id} className="mt-1" />
                                 </div>
 
