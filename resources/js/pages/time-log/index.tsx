@@ -8,7 +8,7 @@ import AppLayout from '@/layouts/app-layout';
 import { formatDateTime } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Calendar, CalendarRange, ClockIcon, Edit, PlusCircle, Search, TimerReset } from 'lucide-react';
+import { Calendar, CalendarIcon, CalendarRange, ClockIcon, Edit, PlusCircle, Search, TimerReset } from 'lucide-react';
 import { FormEventHandler, forwardRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -216,6 +216,43 @@ export default function TimeLog({ timeLogs, filters, totalDuration, weeklyAverag
                     </CardContent>
                 </Card>
 
+                {/* Stats Cards */}
+                {timeLogs.length > 0 && (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        {/* Total hours card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
+                                <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">{totalDuration}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {data.start_date && data.end_date
+                                        ? `Hours logged from ${data.start_date} to ${data.end_date}`
+                                        : data.start_date
+                                          ? `Hours logged from ${data.start_date}`
+                                          : data.end_date
+                                            ? `Hours logged until ${data.end_date}`
+                                            : 'Total hours logged'}
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Weekly average card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
+                                <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">{weeklyAverage}</div>
+                                <p className="text-xs text-muted-foreground">Hours per week</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+
                 {/* Time Logs Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
@@ -225,22 +262,6 @@ export default function TimeLog({ timeLogs, filters, totalDuration, weeklyAverag
                                 ? `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`
                                 : 'No time logs found for the selected period'}
                         </CardDescription>
-                        {timeLogs.length > 0 && (
-                            <div className="mt-2 flex flex-wrap gap-4">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Hours:</span>
-                                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary">
-                                        {totalDuration}
-                                    </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Weekly Average:</span>
-                                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary">
-                                        {weeklyAverage}
-                                    </span>
-                                </div>
-                            </div>
-                        )}
                     </CardHeader>
                     <CardContent>
                         {timeLogs.length > 0 ? (
