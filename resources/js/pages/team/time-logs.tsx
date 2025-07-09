@@ -247,7 +247,7 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
                                     {timeLogs.map((log) => (
                                         <TableRow key={log.id}>
                                             <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
-                                            <TableCell className="text-muted-foreground">
+                                            <TableCell className="font-medium">
                                                 {formatDateTime(log.end_timestamp)}
                                             </TableCell>
                                             <TableCell>

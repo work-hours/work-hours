@@ -243,7 +243,7 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
                                         <TableRow key={log.id}>
                                             <TableCell className="font-medium">{log.user_name}</TableCell>
                                             <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
-                                            <TableCell className="text-muted-foreground">
+                                            <TableCell className="font-medium">
                                                 {formatDateTime(log.end_timestamp)}
                                             </TableCell>
                                             <TableCell>
