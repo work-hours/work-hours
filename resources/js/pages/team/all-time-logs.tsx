@@ -3,9 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelect } from '@/components/ui/searchable-select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table';
+import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table';
 import AppLayout from '@/layouts/app-layout';
-import { formatDateTime } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Briefcase, Calendar, CalendarIcon, CalendarRange, ClockIcon, Search, TimerReset } from 'lucide-react';
@@ -398,32 +397,7 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                     </CardHeader>
                     <CardContent>
                         {timeLogs.length > 0 ? (
-                            <Table>
-                                <TableHeader>
-                                    <TableHeaderRow>
-                                        <TableHead>Team Member</TableHead>
-                                        <TableHead>Project</TableHead>
-                                        <TableHead>Start Time</TableHead>
-                                        <TableHead>End Time</TableHead>
-                                        <TableHead>Duration</TableHead>
-                                    </TableHeaderRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {timeLogs.map((log) => (
-                                        <TableRow key={log.id}>
-                                            <TableCell className="font-medium">{log.user_name}</TableCell>
-                                            <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>
-                                            <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
-                                            <TableCell className="font-medium">{formatDateTime(log.end_timestamp)}</TableCell>
-                                            <TableCell>
-                                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                                                    {log.duration}
-                                                </span>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            <TimeLogTable timeLogs={timeLogs as TimeLogEntry[]} showTeamMember={true} />
                         ) : (
                             <div className="rounded-md border bg-muted/5 p-6">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
