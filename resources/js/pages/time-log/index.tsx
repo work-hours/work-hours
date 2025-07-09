@@ -8,7 +8,7 @@ import AppLayout from '@/layouts/app-layout';
 import { formatDateTime } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Calendar, CalendarRange, Clock, Edit, PlusCircle, Search, TimerReset } from 'lucide-react';
+import { Calendar, CalendarRange, ClockIcon, Edit, PlusCircle, Search, TimerReset } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -76,7 +76,7 @@ export default function TimeLog({ timeLogs, filters }: Props) {
                             </div>
                             <Link href={route('time-log.create')}>
                                 <Button className="flex items-center gap-2">
-                                    <Clock className="h-4 w-4" />
+                                    <ClockIcon className="h-4 w-4" />
                                     <span>Log Time</span>
                                 </Button>
                             </Link>
@@ -200,7 +200,7 @@ export default function TimeLog({ timeLogs, filters }: Props) {
                         ) : (
                             <div className="rounded-md border bg-muted/5 p-6">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                                    <Clock className="mb-4 h-12 w-12 text-muted-foreground/50" />
+                                    <ClockIcon className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Time Logs</h3>
                                     <p className="mb-4 text-muted-foreground">You haven't added any time logs yet.</p>
                                     <Link href={route('time-log.create')}>
