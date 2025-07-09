@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { CalendarIcon, Clock, Edit, Search, UserPlus, Users } from 'lucide-react';
+import { Calendar, CalendarRange, Clock, Edit, Search, TimerReset, UserPlus, Users } from 'lucide-react';
 import { FormEventHandler, forwardRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -117,57 +117,97 @@ export default function Team({ teamMembers, filters }: Props) {
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your team members and their time logs</p>
                 </section>
 
-                {/* Date filter form */}
+                {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
-                        <CardTitle className="text-xl">Filter by Date</CardTitle>
-                        <CardDescription>Filter total hours and weekly average by date range</CardDescription>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-xl">Filter Team Data</CardTitle>
+                                {(data.start_date || data.end_date) && (
+                                    <CardDescription>
+                                        {data.start_date && data.end_date
+                                            ? `Showing team data from ${data.start_date} to ${data.end_date}`
+                                            : data.start_date
+                                              ? `Showing team data from ${data.start_date}`
+                                              : `Showing team data until ${data.end_date}`}
+                                    </CardDescription>
+                                )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Link href={route('team.all-time-logs')}>
+                                    <Button variant="outline" className="flex items-center gap-2">
+                                        <Clock className="h-4 w-4" />
+                                        <span>All Time Logs</span>
+                                    </Button>
+                                </Link>
+                            </div>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={submit} className="flex flex-wrap items-end gap-4">
-                            <div className="flex-1 min-w-[200px]">
-                                <Label htmlFor="start_date" className="mb-2 block">
+                            <div className="grid gap-2">
+                                <Label htmlFor="start_date" className="text-sm font-medium">
                                     Start Date
                                 </Label>
                                 <DatePicker
                                     selected={startDate}
                                     onChange={handleStartDateChange}
-                                    selectsStart
-                                    startDate={startDate}
-                                    endDate={endDate}
+                                    dateFormat="yyyy-MM-dd"
+                                    isClearable
+                                    disabled={processing}
                                     customInput={
                                         <CustomInput
                                             id="start_date"
-                                            icon={<CalendarIcon className="h-4 w-4 text-muted-foreground" />}
+                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                            disabled={processing}
                                             placeholder="Select start date"
                                         />
                                     }
                                 />
                             </div>
-                            <div className="flex-1 min-w-[200px]">
-                                <Label htmlFor="end_date" className="mb-2 block">
+                            <div className="grid gap-2">
+                                <Label htmlFor="end_date" className="text-sm font-medium">
                                     End Date
                                 </Label>
                                 <DatePicker
                                     selected={endDate}
                                     onChange={handleEndDateChange}
-                                    selectsEnd
-                                    startDate={startDate}
-                                    endDate={endDate}
-                                    minDate={startDate}
+                                    dateFormat="yyyy-MM-dd"
+                                    isClearable
+                                    disabled={processing}
                                     customInput={
                                         <CustomInput
                                             id="end_date"
-                                            icon={<CalendarIcon className="h-4 w-4 text-muted-foreground" />}
+                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                            disabled={processing}
                                             placeholder="Select end date"
                                         />
                                     }
                                 />
                             </div>
-                            <div>
+                            <div className="flex gap-2">
                                 <Button type="submit" disabled={processing} className="flex items-center gap-2">
                                     <Search className="h-4 w-4" />
                                     <span>Filter</span>
+                                </Button>
+
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    disabled={processing || (!data.start_date && !data.end_date)}
+                                    onClick={() => {
+                                        setData({
+                                            start_date: '',
+                                            end_date: '',
+                                        });
+                                        get(route('team.index'), {
+                                            preserveState: true,
+                                        });
+                                    }}
+                                    className="flex items-center gap-2"
+                                >
+                                    <TimerReset className="h-4 w-4" />
+                                    <span>Clear</span>
                                 </Button>
                             </div>
                         </form>
