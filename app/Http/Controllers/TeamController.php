@@ -102,16 +102,23 @@ class TeamController extends Controller
     {
         DB::beginTransaction();
         try {
-            $userData = $request->safe()->except(['hourly_rate', 'currency']);
-            $user = User::query()->create($userData);
+
+            $user = User::query()->where('email', $request->email)->first();
+
+            if (!$user) {
+                $userData = $request->safe()->except(['hourly_rate', 'currency']);
+                $user = User::query()->create($userData);
+            }
 
             $teamData = [
                 'user_id' => auth()->id(),
                 'member_id' => $user->getKey(),
-                'hourly_rate' => $request->hourly_rate ?? 0,
-                'currency' => $request->currency ?? 'USD'
+                'hourly_rate' => $request->get('hourly_rate') ?? 0,
+                'currency' => strtoupper($request->get('currency')) ?? 'USD'
             ];
+
             Team::query()->create($teamData);
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

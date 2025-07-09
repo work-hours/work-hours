@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('time_logs', function (Blueprint $table) {
             $table->foreignId('project_id')->after('user_id')->constrained('projects')->onDelete('cascade');
+            $table->boolean('is_paid')->default(false)->after('duration');
         });
     }
 
