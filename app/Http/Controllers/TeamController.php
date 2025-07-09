@@ -19,6 +19,19 @@ use Throwable;
 
 class TeamController extends Controller
 {
+    /**
+     * Get projects created by or assigned to the current user
+     */
+    private function getUserProjects()
+    {
+        $userId = auth()->id();
+
+        return \App\Models\Project::where('user_id', $userId)
+            ->orWhereHas('teamMembers', function ($query) use ($userId) {
+                $query->where('member_id', $userId);
+            })
+            ->get(['id', 'name']);
+    }
     public function index()
     {
         $teamMembers = Team::query()
@@ -190,6 +203,11 @@ class TeamController extends Controller
             $query->whereDate('start_timestamp', '<=', request('end_date'));
         }
 
+        // Apply project filter if provided
+        if (request()->get('project_id') && request('project_id')) {
+            $query->where('project_id', request('project_id'));
+        }
+
         $timeLogs = $query->with('project')->get()
             ->map(function ($timeLog) {
                 return [
@@ -205,12 +223,17 @@ class TeamController extends Controller
         $totalDuration = round($timeLogs->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
+        // Get projects for the dropdown
+        $projects = $this->getUserProjects();
+
         return Inertia::render('team/time-logs', [
             'timeLogs' => $timeLogs,
             'filters' => [
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
+                'project_id' => request('project_id', ''),
             ],
+            'projects' => $projects,
             'user' => $user,
             'totalDuration' => $totalDuration,
             'weeklyAverage' => $weeklyAverage,
@@ -259,6 +282,11 @@ class TeamController extends Controller
             $query->where('user_id', request('team_member_id'));
         }
 
+        // Apply project filter if provided
+        if (request()->get('project_id') && request('project_id')) {
+            $query->where('project_id', request('project_id'));
+        }
+
         $timeLogs = $query->with(['user', 'project'])->get()
             ->map(function ($timeLog) {
                 return [
@@ -275,13 +303,18 @@ class TeamController extends Controller
         $totalDuration = round($timeLogs->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
+        // Get projects for the dropdown
+        $projects = $this->getUserProjects();
+
         return Inertia::render('team/all-time-logs', [
             'timeLogs' => $timeLogs,
             'filters' => [
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
                 'team_member_id' => request('team_member_id', ''),
+                'project_id' => request('project_id', ''),
             ],
+            'projects' => $projects,
             'teamMembers' => $teamMembersList,
             'totalDuration' => $totalDuration,
             'weeklyAverage' => $weeklyAverage,

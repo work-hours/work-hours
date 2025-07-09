@@ -2,13 +2,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateTime } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Calendar, CalendarIcon, CalendarRange, ClockIcon, Search, TimerReset } from 'lucide-react';
-import { FormEventHandler, forwardRef, useMemo } from 'react';
+import { ArrowLeft, Briefcase, Calendar, CalendarIcon, CalendarRange, ClockIcon, Search, TimerReset } from 'lucide-react';
+import { FormEventHandler, forwardRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -24,12 +25,18 @@ type TimeLog = {
 type Filters = {
     start_date: string;
     end_date: string;
+    project_id: string;
 };
 
 type User = {
     id: number;
     name: string;
     email: string;
+};
+
+type Project = {
+    id: number;
+    name: string;
 };
 
 // Custom input component for DatePicker with icon
@@ -71,12 +78,13 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
 type Props = {
     timeLogs: TimeLog[];
     filters: Filters;
+    projects: Project[];
     user: User;
     totalDuration: number;
     weeklyAverage: number;
 };
 
-export default function TeamMemberTimeLogs({ timeLogs, filters, user, totalDuration, weeklyAverage }: Props) {
+export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, totalDuration, weeklyAverage }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Team',
@@ -91,6 +99,7 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user, totalDurat
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
+        project_id: filters.project_id || '',
     });
 
     // Convert string dates to Date objects for DatePicker
@@ -147,13 +156,34 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user, totalDurat
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Filter Time Logs</CardTitle>
-                                {(data.start_date || data.end_date) && (
+                                {(data.start_date || data.end_date || data.project_id) && (
                                     <CardDescription>
-                                        {data.start_date && data.end_date
-                                            ? `Showing logs from ${data.start_date} to ${data.end_date}`
-                                            : data.start_date
-                                              ? `Showing logs from ${data.start_date}`
-                                              : `Showing logs until ${data.end_date}`}
+                                        {(() => {
+                                            let description = '';
+
+                                            // Date range description
+                                            if (data.start_date && data.end_date) {
+                                                description = `Showing logs from ${data.start_date} to ${data.end_date}`;
+                                            } else if (data.start_date) {
+                                                description = `Showing logs from ${data.start_date}`;
+                                            } else if (data.end_date) {
+                                                description = `Showing logs until ${data.end_date}`;
+                                            }
+
+                                            // Project description
+                                            if (data.project_id) {
+                                                const selectedProject = projects.find((project) => project.id.toString() === data.project_id);
+                                                const projectName = selectedProject ? selectedProject.name : '';
+
+                                                if (description) {
+                                                    description += ` for ${projectName}`;
+                                                } else {
+                                                    description = `Showing logs for ${projectName}`;
+                                                }
+                                            }
+
+                                            return description;
+                                        })()}
                                     </CardDescription>
                                 )}
                             </div>
@@ -203,6 +233,21 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user, totalDurat
                                 />
                             </div>
 
+                            <div className="grid gap-2">
+                                <Label htmlFor="project_id" className="text-sm font-medium">
+                                    Project
+                                </Label>
+                                <SearchableSelect
+                                    id="project_id"
+                                    value={data.project_id}
+                                    onChange={(value) => setData('project_id', value)}
+                                    options={[{ id: '', name: 'All Projects' }, ...projects]}
+                                    placeholder="Select project"
+                                    disabled={processing}
+                                    icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                />
+                            </div>
+
                             <div className="flex gap-2">
                                 <Button type="submit" disabled={processing} className="flex items-center gap-2">
                                     <Search className="h-4 w-4" />
@@ -212,11 +257,12 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user, totalDurat
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    disabled={processing || (!data.start_date && !data.end_date)}
+                                    disabled={processing || (!data.start_date && !data.end_date && !data.project_id)}
                                     onClick={() => {
                                         setData({
                                             start_date: '',
                                             end_date: '',
+                                            project_id: '',
                                         });
                                         get(route('team.time-logs', user.id), {
                                             preserveState: true,

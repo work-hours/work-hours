@@ -8,8 +8,8 @@ import AppLayout from '@/layouts/app-layout';
 import { formatDateTime } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Calendar, CalendarIcon, CalendarRange, ClockIcon, Search, TimerReset } from 'lucide-react';
-import { FormEventHandler, forwardRef, useMemo } from 'react';
+import { ArrowLeft, Briefcase, Calendar, CalendarIcon, CalendarRange, ClockIcon, Search, TimerReset } from 'lucide-react';
+import { FormEventHandler, forwardRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -27,6 +27,7 @@ type Filters = {
     start_date: string;
     end_date: string;
     team_member_id: string;
+    project_id: string;
 };
 
 // Custom input component for DatePicker with icon
@@ -70,15 +71,21 @@ type TeamMember = {
     name: string;
 };
 
+type Project = {
+    id: number;
+    name: string;
+};
+
 type Props = {
     timeLogs: TimeLog[];
     filters: Filters;
     teamMembers: TeamMember[];
+    projects: Project[];
     totalDuration: number; // Total duration in minutes
     weeklyAverage: number; // Weekly average in hours
 };
 
-export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, totalDuration, weeklyAverage }: Props) {
+export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projects, totalDuration, weeklyAverage }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Team',
@@ -95,6 +102,7 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, totalD
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
         team_member_id: filters.team_member_id || '',
+        project_id: filters.project_id || '',
     });
 
     // Convert string dates to Date objects for DatePicker
@@ -151,7 +159,7 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, totalD
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Filter Time Logs</CardTitle>
-                                {(data.start_date || data.end_date || data.team_member_id) && (
+                                {(data.start_date || data.end_date || data.team_member_id || data.project_id) && (
                                     <CardDescription>
                                         {(() => {
                                             let description = '';
@@ -174,6 +182,18 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, totalD
                                                     description += ` for ${memberName}`;
                                                 } else {
                                                     description = `Showing logs for ${memberName}`;
+                                                }
+                                            }
+
+                                            // Project description
+                                            if (data.project_id) {
+                                                const selectedProject = projects.find((project) => project.id.toString() === data.project_id);
+                                                const projectName = selectedProject ? selectedProject.name : '';
+
+                                                if (description) {
+                                                    description += ` on ${projectName}`;
+                                                } else {
+                                                    description = `Showing logs for ${projectName}`;
                                                 }
                                             }
 
@@ -242,6 +262,21 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, totalD
                                 />
                             </div>
 
+                            <div className="grid gap-2">
+                                <Label htmlFor="project_id" className="text-sm font-medium">
+                                    Project
+                                </Label>
+                                <SearchableSelect
+                                    id="project_id"
+                                    value={data.project_id}
+                                    onChange={(value) => setData('project_id', value)}
+                                    options={[{ id: '', name: 'All Projects' }, ...projects]}
+                                    placeholder="Select project"
+                                    disabled={processing}
+                                    icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                />
+                            </div>
+
                             <div className="flex gap-2">
                                 <Button type="submit" disabled={processing} className="flex items-center gap-2">
                                     <Search className="h-4 w-4" />
@@ -251,12 +286,13 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, totalD
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    disabled={processing || (!data.start_date && !data.end_date && !data.team_member_id)}
+                                    disabled={processing || (!data.start_date && !data.end_date && !data.team_member_id && !data.project_id)}
                                     onClick={() => {
                                         setData({
                                             start_date: '',
                                             end_date: '',
                                             team_member_id: '',
+                                            project_id: '',
                                         });
                                         get(route('team.all-time-logs'), {
                                             preserveState: true,

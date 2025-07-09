@@ -20,12 +20,17 @@ class TimeLogController extends Controller
         $query = TimeLog::query()->where('user_id', auth()->id());
 
         // Apply date filters if provided
-        if (request()->has('start_date')) {
+        if (request()->get('start_date')) {
             $query->whereDate('start_timestamp', '>=', request('start_date'));
         }
 
-        if (request()->has('end_date')) {
+        if (request()->get('end_date')) {
             $query->whereDate('start_timestamp', '<=', request('end_date'));
+        }
+
+        // Apply project filter if provided
+        if (request()->get('project_id') && request('project_id')) {
+            $query->where('project_id', request('project_id'));
         }
 
         $timeLogs = $query->with('project')->get()
@@ -46,12 +51,17 @@ class TimeLogController extends Controller
         // Calculate weekly average
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
+        // Get projects for the dropdown
+        $projects = $this->getUserProjects();
+
         return Inertia::render('time-log/index', [
             'timeLogs' => $timeLogs,
             'filters' => [
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
+                'project_id' => request('project_id', ''),
             ],
+            'projects' => $projects,
             'totalDuration' => $totalDuration,
             'weeklyAverage' => $weeklyAverage,
         ]);
