@@ -8,7 +8,9 @@ import { formatDateTime } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Calendar, CalendarIcon, CalendarRange, ClockIcon, Search, TimerReset } from 'lucide-react';
-import { FormEventHandler, useMemo } from 'react';
+import { FormEventHandler, useMemo, forwardRef } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 type TimeLog = {
     id: number;
@@ -22,6 +24,42 @@ type Filters = {
     start_date: string;
     end_date: string;
 };
+
+// Custom input component for DatePicker with icon
+interface CustomInputProps {
+    value?: string;
+    onClick?: () => void;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    icon: React.ReactNode;
+    placeholder?: string;
+    disabled?: boolean;
+    required?: boolean;
+    autoFocus?: boolean;
+    tabIndex?: number;
+    id: string;
+}
+
+const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
+    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
+        <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
+            <Input
+                id={id}
+                ref={ref}
+                value={value}
+                onClick={onClick}
+                onChange={onChange}
+                placeholder={placeholder}
+                disabled={disabled}
+                required={required}
+                autoFocus={autoFocus}
+                tabIndex={tabIndex}
+                className="pl-10"
+                readOnly={!onChange}
+            />
+        </div>
+    ),
+);
 
 type Props = {
     timeLogs: TimeLog[];
@@ -67,6 +105,27 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
     });
+
+    // Convert string dates to Date objects for DatePicker
+    const startDate = data.start_date ? new Date(data.start_date) : null;
+    const endDate = data.end_date ? new Date(data.end_date) : null;
+
+    // Handle date changes
+    const handleStartDateChange = (date: Date | null) => {
+        if (date) {
+            setData('start_date', date.toISOString().split('T')[0]);
+        } else {
+            setData('start_date', '');
+        }
+    };
+
+    const handleEndDateChange = (date: Date | null) => {
+        if (date) {
+            setData('end_date', date.toISOString().split('T')[0]);
+        } else {
+            setData('end_date', '');
+        }
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -119,38 +178,42 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
                                 <Label htmlFor="start_date" className="text-sm font-medium">
                                     Start Date
                                 </Label>
-                                <div className="relative">
-                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                                    </div>
-                                    <Input
-                                        id="start_date"
-                                        type="date"
-                                        value={data.start_date}
-                                        onChange={(e) => setData('start_date', e.target.value)}
-                                        disabled={processing}
-                                        className="pl-10"
-                                    />
-                                </div>
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={handleStartDateChange}
+                                    dateFormat="yyyy-MM-dd"
+                                    isClearable
+                                    disabled={processing}
+                                    customInput={
+                                        <CustomInput
+                                            id="start_date"
+                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                            disabled={processing}
+                                            placeholder="Select start date"
+                                        />
+                                    }
+                                />
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="end_date" className="text-sm font-medium">
                                     End Date
                                 </Label>
-                                <div className="relative">
-                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                        <CalendarRange className="h-4 w-4 text-muted-foreground" />
-                                    </div>
-                                    <Input
-                                        id="end_date"
-                                        type="date"
-                                        value={data.end_date}
-                                        onChange={(e) => setData('end_date', e.target.value)}
-                                        disabled={processing}
-                                        className="pl-10"
-                                    />
-                                </div>
+                                <DatePicker
+                                    selected={endDate}
+                                    onChange={handleEndDateChange}
+                                    dateFormat="yyyy-MM-dd"
+                                    isClearable
+                                    disabled={processing}
+                                    customInput={
+                                        <CustomInput
+                                            id="end_date"
+                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                            disabled={processing}
+                                            placeholder="Select end date"
+                                        />
+                                    }
+                                />
                             </div>
 
                             <div className="flex gap-2">
