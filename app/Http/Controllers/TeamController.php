@@ -26,11 +26,21 @@ class TeamController extends Controller
             ->with('member')
             ->get()
             ->map(function ($team) {
+                // Get time logs for this team member
+                $timeLogs = TimeLog::query()->where('user_id', $team->member->id)->get();
+
+                // Calculate total hours
+                $totalDuration = round($timeLogs->sum('duration'), 2);
+
+                // Calculate weekly average
+                $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
+
                 return [
                     'id' => $team->member->id,
                     'name' => $team->member->name,
                     'email' => $team->member->email,
-                    'role' => $team->member->role ?? 'Member',
+                    'totalHours' => $totalDuration,
+                    'weeklyAverage' => $weeklyAverage,
                 ];
             });
 

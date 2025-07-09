@@ -18,7 +18,8 @@ type TeamMember = {
     id: number;
     name: string;
     email: string;
-    role: string;
+    totalHours: number;
+    weeklyAverage: number;
 };
 
 type Props = {
@@ -67,7 +68,8 @@ export default function Team({ teamMembers }: Props) {
                                     <TableHeaderRow>
                                         <TableHead>Name</TableHead>
                                         <TableHead>Email</TableHead>
-                                        <TableHead>Role</TableHead>
+                                        <TableHead>Total Hours</TableHead>
+                                        <TableHead>Weekly Average</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
@@ -76,11 +78,8 @@ export default function Team({ teamMembers }: Props) {
                                         <TableRow key={member.id}>
                                             <TableCell className="font-medium">{member.name}</TableCell>
                                             <TableCell className="text-muted-foreground">{member.email}</TableCell>
-                                            <TableCell>
-                                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                                                    {member.role}
-                                                </span>
-                                            </TableCell>
+                                            <TableCell>{member.totalHours} hrs</TableCell>
+                                            <TableCell>{member.weeklyAverage} hrs</TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <Link href={route('team.time-logs', member.id)}>
