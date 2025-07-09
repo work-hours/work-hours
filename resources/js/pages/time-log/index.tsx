@@ -165,20 +165,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                     </CardDescription>
                                 )}
                             </div>
-                            <div className="flex gap-2">
-                                <a href={route('time-log.export') + window.location.search} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
-                                <Link href={route('time-log.create')}>
-                                    <Button className="flex items-center gap-2">
-                                        <ClockIcon className="h-4 w-4" />
-                                        <span>Log Time</span>
-                                    </Button>
-                                </Link>
-                            </div>
                         </div>
                     </CardHeader>
                     <CardContent>
@@ -310,12 +296,30 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                 {/* Time Logs Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
-                        <CardTitle className="text-xl">Your Time Logs</CardTitle>
-                        <CardDescription>
-                            {timeLogs.length > 0
-                                ? `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`
-                                : 'No time logs found for the selected period'}
-                        </CardDescription>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-xl">Your Time Logs</CardTitle>
+                                <CardDescription>
+                                    {timeLogs.length > 0
+                                        ? `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`
+                                        : 'No time logs found for the selected period'}
+                                </CardDescription>
+                            </div>
+                            <div className="flex gap-2">
+                                <a href={route('time-log.export') + window.location.search} className="inline-block">
+                                    <Button variant="outline" className="flex items-center gap-2">
+                                        <Download className="h-4 w-4" />
+                                        <span>Export</span>
+                                    </Button>
+                                </a>
+                                <Link href={route('time-log.create')}>
+                                    <Button className="flex items-center gap-2">
+                                        <ClockIcon className="h-4 w-4" />
+                                        <span>Log Time</span>
+                                    </Button>
+                                </Link>
+                            </div>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         {timeLogs.length > 0 ? (

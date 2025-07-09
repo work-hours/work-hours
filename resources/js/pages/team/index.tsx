@@ -135,20 +135,6 @@ export default function Team({ teamMembers, filters }: Props) {
                                     </CardDescription>
                                 )}
                             </div>
-                            <div className="flex items-center gap-2">
-                                <a href={route('team.export') + window.location.search} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
-                                <Link href={route('team.all-time-logs')}>
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Clock className="h-4 w-4" />
-                                        <span>All Time Logs</span>
-                                    </Button>
-                                </Link>
-                            </div>
                         </div>
                     </CardHeader>
                     <CardContent>
@@ -250,6 +236,12 @@ export default function Team({ teamMembers, filters }: Props) {
                                 <CardDescription>You have {teamMembers.length} team members</CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
+                                <a href={route('team.export') + window.location.search} className="inline-block">
+                                    <Button variant="outline" className="flex items-center gap-2">
+                                        <Download className="h-4 w-4" />
+                                        <span>Export</span>
+                                    </Button>
+                                </a>
                                 <Link href={route('team.all-time-logs')}>
                                     <Button variant="outline" className="flex items-center gap-2">
                                         <Clock className="h-4 w-4" />

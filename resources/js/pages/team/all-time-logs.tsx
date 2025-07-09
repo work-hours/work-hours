@@ -201,14 +201,6 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                                     </CardDescription>
                                 )}
                             </div>
-                            <div className="flex items-center gap-2">
-                                <a href={route('team.export-time-logs') + window.location.search} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
-                            </div>
                         </div>
                     </CardHeader>
                     <CardContent>
@@ -383,25 +375,37 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                 {/* Time Logs Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
-                        <CardTitle className="text-xl">Team Time Logs</CardTitle>
-                        <CardDescription>
-                            {timeLogs.length > 0
-                                ? (() => {
-                                      let description = `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`;
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-xl">Team Time Logs</CardTitle>
+                                <CardDescription>
+                                    {timeLogs.length > 0
+                                        ? (() => {
+                                              let description = `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`;
 
-                                      if (filters.team_member_id) {
-                                          const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
-                                          if (selectedMember) {
-                                              description += ` from ${selectedMember.name}`;
-                                          }
-                                      } else {
-                                          description += ' from all team members';
-                                      }
+                                              if (filters.team_member_id) {
+                                                  const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
+                                                  if (selectedMember) {
+                                                      description += ` from ${selectedMember.name}`;
+                                                  }
+                                              } else {
+                                                  description += ' from all team members';
+                                              }
 
-                                      return description;
-                                  })()
-                                : 'No time logs found for the selected period'}
-                        </CardDescription>
+                                              return description;
+                                          })()
+                                        : 'No time logs found for the selected period'}
+                                </CardDescription>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <a href={route('team.export-time-logs') + window.location.search} className="inline-block">
+                                    <Button variant="outline" className="flex items-center gap-2">
+                                        <Download className="h-4 w-4" />
+                                        <span>Export</span>
+                                    </Button>
+                                </a>
+                            </div>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         {timeLogs.length > 0 ? (
