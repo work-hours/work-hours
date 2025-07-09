@@ -155,6 +155,7 @@ class AddData extends Command
                 'start_timestamp' => $entryDate,
                 'end_timestamp' => $endTimestamp,
                 'duration' => round($durationHours, 2),
+                'is_paid' => (bool) rand(0, 1), // Randomly set as paid or unpaid
             ]);
         }
     }
