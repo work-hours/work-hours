@@ -278,11 +278,11 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, 
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
-                                <ClockIcon className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
                             <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
+                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
                                 <div className="text-2xl font-bold">{totalDuration}</div>
                                 <p className="text-xs text-muted-foreground">
                                     {filters.start_date && filters.end_date
@@ -298,11 +298,11 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, 
 
                         {/* Weekly average card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
-                                <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
                             <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
+                                    <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
                                 <div className="text-2xl font-bold">{weeklyAverage}</div>
                                 <p className="text-xs text-muted-foreground">Hours per week</p>
                             </CardContent>
