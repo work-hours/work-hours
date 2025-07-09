@@ -168,9 +168,9 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={submit} className="flex flex-wrap items-end gap-4">
-                            <div className="grid gap-2">
-                                <Label htmlFor="start_date" className="text-sm font-medium">
+                        <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+                            <div className="grid gap-1">
+                                <Label htmlFor="start_date" className="text-xs font-medium">
                                     Start Date
                                 </Label>
                                 <DatePicker
@@ -190,8 +190,8 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                 />
                             </div>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="end_date" className="text-sm font-medium">
+                            <div className="grid gap-1">
+                                <Label htmlFor="end_date" className="text-xs font-medium">
                                     End Date
                                 </Label>
                                 <DatePicker
@@ -211,8 +211,8 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                 />
                             </div>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="project_id" className="text-sm font-medium">
+                            <div className="grid gap-1">
+                                <Label htmlFor="project_id" className="text-xs font-medium">
                                     Project
                                 </Label>
                                 <SearchableSelect
@@ -226,9 +226,9 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                 />
                             </div>
 
-                            <div className="flex gap-2">
-                                <Button type="submit" disabled={processing} className="flex items-center gap-2">
-                                    <Search className="h-4 w-4" />
+                            <div className="flex items-end gap-2">
+                                <Button type="submit" disabled={processing} className="flex items-center gap-1 h-9 px-3">
+                                    <Search className="h-3.5 w-3.5" />
                                     <span>Filter</span>
                                 </Button>
 
@@ -246,9 +246,9 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                             preserveState: true,
                                         });
                                     }}
-                                    className="flex items-center gap-2"
+                                    className="flex items-center gap-1 h-9 px-3"
                                 >
-                                    <TimerReset className="h-4 w-4" />
+                                    <TimerReset className="h-3.5 w-3.5" />
                                     <span>Clear</span>
                                 </Button>
                             </div>
