@@ -30,7 +30,11 @@ class TimeLogController extends Controller
 
         // Apply project filter if provided
         if (request()->get('project_id') && request('project_id')) {
-            $query->where('project_id', request('project_id'));
+            // Validate that the project belongs to the logged-in user
+            $userProjects = $this->getUserProjects()->pluck('id')->toArray();
+            if (in_array(request('project_id'), $userProjects)) {
+                $query->where('project_id', request('project_id'));
+            }
         }
 
         $timeLogs = $query->with('project')->get()
@@ -110,7 +114,7 @@ class TimeLogController extends Controller
     {
         $userId = auth()->id();
 
-        return Project::where('user_id', $userId)
+        return Project::query()->where('user_id', $userId)
             ->orWhereHas('teamMembers', function ($query) use ($userId) {
                 $query->where('member_id', $userId);
             })
