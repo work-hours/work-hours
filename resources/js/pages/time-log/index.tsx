@@ -130,43 +130,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
 
                 {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="text-xl">Filter Time Logs</CardTitle>
-                                {(data.start_date || data.end_date || data.project_id) && (
-                                    <CardDescription>
-                                        {(() => {
-                                            let description = '';
-
-                                            // Date range description
-                                            if (data.start_date && data.end_date) {
-                                                description = `Showing logs from ${data.start_date} to ${data.end_date}`;
-                                            } else if (data.start_date) {
-                                                description = `Showing logs from ${data.start_date}`;
-                                            } else if (data.end_date) {
-                                                description = `Showing logs until ${data.end_date}`;
-                                            }
-
-                                            // Project description
-                                            if (data.project_id) {
-                                                const selectedProject = projects.find((project) => project.id.toString() === data.project_id);
-                                                const projectName = selectedProject ? selectedProject.name : '';
-
-                                                if (description) {
-                                                    description += ` for ${projectName}`;
-                                                } else {
-                                                    description = `Showing logs for ${projectName}`;
-                                                }
-                                            }
-
-                                            return description;
-                                        })()}
-                                    </CardDescription>
-                                )}
-                            </div>
-                        </div>
-                    </CardHeader>
                     <CardContent>
                         <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
                             <div className="grid gap-1">
@@ -189,7 +152,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                     }
                                 />
                             </div>
-
                             <div className="grid gap-1">
                                 <Label htmlFor="end_date" className="text-xs font-medium">
                                     End Date
@@ -210,7 +172,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                     }
                                 />
                             </div>
-
                             <div className="grid gap-1">
                                 <Label htmlFor="project_id" className="text-xs font-medium">
                                     Project
@@ -225,7 +186,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                     icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
                                 />
                             </div>
-
                             <div className="flex items-end gap-2">
                                 <Button type="submit" disabled={processing} className="flex items-center gap-1 h-9 px-3">
                                     <Search className="h-3.5 w-3.5" />
@@ -253,6 +213,39 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                 </Button>
                             </div>
                         </form>
+
+                        <p className={'mt-4 text-sm text-muted-foreground'}>
+                        {(data.start_date || data.end_date || data.project_id) && (
+                            <CardDescription>
+                                {(() => {
+                                    let description = '';
+
+                                    // Date range description
+                                    if (data.start_date && data.end_date) {
+                                        description = `Showing logs from ${data.start_date} to ${data.end_date}`;
+                                    } else if (data.start_date) {
+                                        description = `Showing logs from ${data.start_date}`;
+                                    } else if (data.end_date) {
+                                        description = `Showing logs until ${data.end_date}`;
+                                    }
+
+                                    // Project description
+                                    if (data.project_id) {
+                                        const selectedProject = projects.find((project) => project.id.toString() === data.project_id);
+                                        const projectName = selectedProject ? selectedProject.name : '';
+
+                                        if (description) {
+                                            description += ` for ${projectName}`;
+                                        } else {
+                                            description = `Showing logs for ${projectName}`;
+                                        }
+                                    }
+
+                                    return description;
+                                })()}
+                            </CardDescription>
+                        )}
+                        </p>
                     </CardContent>
                 </Card>
 

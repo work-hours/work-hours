@@ -154,55 +154,6 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
 
                 {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="text-xl">Filter Time Logs</CardTitle>
-                                {(data.start_date || data.end_date || data.team_member_id || data.project_id) && (
-                                    <CardDescription>
-                                        {(() => {
-                                            let description = '';
-
-                                            // Date range description
-                                            if (data.start_date && data.end_date) {
-                                                description = `Showing logs from ${data.start_date} to ${data.end_date}`;
-                                            } else if (data.start_date) {
-                                                description = `Showing logs from ${data.start_date}`;
-                                            } else if (data.end_date) {
-                                                description = `Showing logs until ${data.end_date}`;
-                                            }
-
-                                            // Team member description
-                                            if (data.team_member_id) {
-                                                const selectedMember = teamMembers.find((member) => member.id.toString() === data.team_member_id);
-                                                const memberName = selectedMember ? selectedMember.name : '';
-
-                                                if (description) {
-                                                    description += ` for ${memberName}`;
-                                                } else {
-                                                    description = `Showing logs for ${memberName}`;
-                                                }
-                                            }
-
-                                            // Project description
-                                            if (data.project_id) {
-                                                const selectedProject = projects.find((project) => project.id.toString() === data.project_id);
-                                                const projectName = selectedProject ? selectedProject.name : '';
-
-                                                if (description) {
-                                                    description += ` on ${projectName}`;
-                                                } else {
-                                                    description = `Showing logs for ${projectName}`;
-                                                }
-                                            }
-
-                                            return description;
-                                        })()}
-                                    </CardDescription>
-                                )}
-                            </div>
-                        </div>
-                    </CardHeader>
                     <CardContent>
                         <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
                             <div className="grid gap-1">
@@ -304,6 +255,51 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                                 </Button>
                             </div>
                         </form>
+
+                        <p className={'mt-4 text-sm text-muted-foreground'}>
+                        {(data.start_date || data.end_date || data.team_member_id || data.project_id) && (
+                            <CardDescription>
+                                {(() => {
+                                    let description = '';
+
+                                    // Date range description
+                                    if (data.start_date && data.end_date) {
+                                        description = `Showing logs from ${data.start_date} to ${data.end_date}`;
+                                    } else if (data.start_date) {
+                                        description = `Showing logs from ${data.start_date}`;
+                                    } else if (data.end_date) {
+                                        description = `Showing logs until ${data.end_date}`;
+                                    }
+
+                                    // Team member description
+                                    if (data.team_member_id) {
+                                        const selectedMember = teamMembers.find((member) => member.id.toString() === data.team_member_id);
+                                        const memberName = selectedMember ? selectedMember.name : '';
+
+                                        if (description) {
+                                            description += ` for ${memberName}`;
+                                        } else {
+                                            description = `Showing logs for ${memberName}`;
+                                        }
+                                    }
+
+                                    // Project description
+                                    if (data.project_id) {
+                                        const selectedProject = projects.find((project) => project.id.toString() === data.project_id);
+                                        const projectName = selectedProject ? selectedProject.name : '';
+
+                                        if (description) {
+                                            description += ` on ${projectName}`;
+                                        } else {
+                                            description = `Showing logs for ${projectName}`;
+                                        }
+                                    }
+
+                                    return description;
+                                })()}
+                            </CardDescription>
+                        )}
+                        </p>
                     </CardContent>
                 </Card>
 

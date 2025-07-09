@@ -121,22 +121,6 @@ export default function Team({ teamMembers, filters }: Props) {
 
                 {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="text-xl">Filter Team Data</CardTitle>
-                                {(data.start_date || data.end_date) && (
-                                    <CardDescription>
-                                        {data.start_date && data.end_date
-                                            ? `Showing team data from ${data.start_date} to ${data.end_date}`
-                                            : data.start_date
-                                              ? `Showing team data from ${data.start_date}`
-                                              : `Showing team data until ${data.end_date}`}
-                                    </CardDescription>
-                                )}
-                            </div>
-                        </div>
-                    </CardHeader>
                     <CardContent>
                         <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
                             <div className="grid gap-1">
@@ -224,6 +208,36 @@ export default function Team({ teamMembers, filters }: Props) {
                                 </Button>
                             </div>
                         </form>
+
+                        <p className={'mt-4 text-sm text-muted-foreground'}>
+                        {(data.start_date || data.end_date || data.search) && (
+                            <CardDescription>
+                                {(() => {
+                                    let description = '';
+
+                                    // Date range description
+                                    if (data.start_date && data.end_date) {
+                                        description = `Showing team data from ${data.start_date} to ${data.end_date}`;
+                                    } else if (data.start_date) {
+                                        description = `Showing team data from ${data.start_date}`;
+                                    } else if (data.end_date) {
+                                        description = `Showing team data until ${data.end_date}`;
+                                    }
+
+                                    // Search description
+                                    if (data.search) {
+                                        if (description) {
+                                            description += ` matching "${data.search}"`;
+                                        } else {
+                                            description = `Showing team members matching "${data.search}"`;
+                                        }
+                                    }
+
+                                    return description;
+                                })()}
+                            </CardDescription>
+                        )}
+                        </p>
                     </CardContent>
                 </Card>
 
