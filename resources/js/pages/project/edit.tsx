@@ -1,0 +1,136 @@
+import { Head, useForm } from '@inertiajs/react';
+import { ArrowLeft, FileText, LoaderCircle, Save, Text } from 'lucide-react';
+import { FormEventHandler } from 'react';
+
+import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+
+type ProjectForm = {
+    name: string;
+    description: string;
+};
+
+type Props = {
+    project: {
+        id: number;
+        name: string;
+        description: string | null;
+    };
+};
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Projects',
+        href: '/project',
+    },
+    {
+        title: 'Edit',
+        href: '/project/edit',
+    },
+];
+
+export default function EditProject({ project }: Props) {
+    const { data, setData, put, processing, errors } = useForm<ProjectForm>({
+        name: project.name,
+        description: project.description || '',
+    });
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+        put(route('project.update', project.id));
+    };
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Edit Project" />
+            <div className="flex flex-col gap-6 p-6">
+                {/* Header section */}
+                <section className="mb-2">
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Edit Project</h1>
+                    <p className="mt-1 text-gray-500 dark:text-gray-400">Update information for {project.name}</p>
+                </section>
+
+                <Card className="max-w-2xl overflow-hidden transition-all hover:shadow-md">
+                    <CardHeader>
+                        <CardTitle className="text-xl">Project Information</CardTitle>
+                        <CardDescription>Update the project's details</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form className="flex flex-col gap-6" onSubmit={submit}>
+                            <div className="grid gap-6">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="name" className="text-sm font-medium">
+                                        Project Name
+                                    </Label>
+                                    <div className="relative">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <FileText className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <Input
+                                            id="name"
+                                            type="text"
+                                            required
+                                            autoFocus
+                                            tabIndex={1}
+                                            value={data.name}
+                                            onChange={(e) => setData('name', e.target.value)}
+                                            disabled={processing}
+                                            placeholder="Project name"
+                                            className="pl-10"
+                                        />
+                                    </div>
+                                    <InputError message={errors.name} className="mt-1" />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="description" className="text-sm font-medium">
+                                        Description <span className="text-xs text-muted-foreground">(optional)</span>
+                                    </Label>
+                                    <div className="relative">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 top-0 flex items-center pt-2">
+                                            <Text className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <Textarea
+                                            id="description"
+                                            tabIndex={2}
+                                            value={data.description}
+                                            onChange={(e) => setData('description', e.target.value)}
+                                            disabled={processing}
+                                            placeholder="Project description"
+                                            className="min-h-[100px] pl-10"
+                                        />
+                                    </div>
+                                    <InputError message={errors.description} />
+                                </div>
+
+                                <div className="mt-4 flex justify-end gap-3">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => window.history.back()}
+                                        tabIndex={4}
+                                        disabled={processing}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <ArrowLeft className="h-4 w-4" />
+                                        Back
+                                    </Button>
+                                    <Button type="submit" tabIndex={3} disabled={processing} className="flex items-center gap-2">
+                                        {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                                        {processing ? 'Updating...' : 'Update Project'}
+                                    </Button>
+                                </div>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
+        </AppLayout>
+    );
+}
