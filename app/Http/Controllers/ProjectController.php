@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
+use App\Models\Team;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -17,6 +18,7 @@ class ProjectController extends Controller
     {
         $projects = Project::query()
             ->where('user_id', auth()->id())
+            ->with('teamMembers')
             ->get();
 
         return Inertia::render('project/index', [
@@ -26,7 +28,21 @@ class ProjectController extends Controller
 
     public function create()
     {
-        return Inertia::render('project/create');
+        $teamMembers = Team::query()
+            ->where('user_id', auth()->id())
+            ->with('member')
+            ->get()
+            ->map(function ($team) {
+                return [
+                    'id' => $team->member->id,
+                    'name' => $team->member->name,
+                    'email' => $team->member->email,
+                ];
+            });
+
+        return Inertia::render('project/create', [
+            'teamMembers' => $teamMembers,
+        ]);
     }
 
     /**
@@ -37,11 +53,17 @@ class ProjectController extends Controller
     {
         DB::beginTransaction();
         try {
-            Project::query()->create([
+            $project = Project::query()->create([
                 'user_id' => auth()->id(),
                 'name' => $request->input('name'),
                 'description' => $request->input('description'),
             ]);
+
+            // Sync team members
+            if ($request->has('team_members')) {
+                $project->teamMembers()->sync($request->input('team_members'));
+            }
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -56,8 +78,25 @@ class ProjectController extends Controller
             abort(403, 'You can only edit your own projects.');
         }
 
+        $teamMembers = Team::query()
+            ->where('user_id', auth()->id())
+            ->with('member')
+            ->get()
+            ->map(function ($team) {
+                return [
+                    'id' => $team->member->id,
+                    'name' => $team->member->name,
+                    'email' => $team->member->email,
+                ];
+            });
+
+        // Get the IDs of team members assigned to this project
+        $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
+
         return Inertia::render('project/edit', [
             'project' => $project,
+            'teamMembers' => $teamMembers,
+            'assignedTeamMembers' => $assignedTeamMembers,
         ]);
     }
 
@@ -74,7 +113,15 @@ class ProjectController extends Controller
 
         DB::beginTransaction();
         try {
-            $project->update($request->validated());
+            $project->update($request->only(['name', 'description']));
+
+            // Sync team members
+            if ($request->has('team_members')) {
+                $project->teamMembers()->sync($request->input('team_members'));
+            } else {
+                $project->teamMembers()->detach();
+            }
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

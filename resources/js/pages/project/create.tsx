@@ -1,19 +1,31 @@
 import { Head, useForm } from '@inertiajs/react';
-import { ArrowLeft, FileText, FolderPlus, LoaderCircle, Text } from 'lucide-react';
+import { ArrowLeft, FileText, FolderPlus, LoaderCircle, Text, Users } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 
+type TeamMember = {
+    id: number;
+    name: string;
+    email: string;
+};
+
 type ProjectForm = {
     name: string;
     description: string;
+    team_members: number[];
+};
+
+type Props = {
+    teamMembers: TeamMember[];
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -27,10 +39,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function CreateProject() {
+export default function CreateProject({ teamMembers }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<ProjectForm>({
         name: '',
         description: '',
+        team_members: [],
     });
 
     const submit: FormEventHandler = (e) => {
@@ -38,6 +51,21 @@ export default function CreateProject() {
         post(route('project.store'), {
             onFinish: () => reset(),
         });
+    };
+
+    const handleTeamMemberToggle = (memberId: number) => {
+        const currentMembers = [...data.team_members];
+        const index = currentMembers.indexOf(memberId);
+
+        if (index === -1) {
+            // Add member if not already selected
+            currentMembers.push(memberId);
+        } else {
+            // Remove member if already selected
+            currentMembers.splice(index, 1);
+        }
+
+        setData('team_members', currentMembers);
     };
 
     return (
@@ -101,6 +129,40 @@ export default function CreateProject() {
                                         />
                                     </div>
                                     <InputError message={errors.description} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label className="text-sm font-medium">
+                                        Team Members <span className="text-xs text-muted-foreground">(optional)</span>
+                                    </Label>
+                                    <div className="relative border rounded-md p-3">
+                                        <div className="pointer-events-none absolute top-3 left-3">
+                                            <Users className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <div className="pl-7 space-y-2">
+                                            {teamMembers && teamMembers.length > 0 ? (
+                                                teamMembers.map((member) => (
+                                                    <div key={member.id} className="flex items-center space-x-2">
+                                                        <Checkbox
+                                                            id={`member-${member.id}`}
+                                                            checked={data.team_members.includes(member.id)}
+                                                            onCheckedChange={() => handleTeamMemberToggle(member.id)}
+                                                            disabled={processing}
+                                                        />
+                                                        <Label
+                                                            htmlFor={`member-${member.id}`}
+                                                            className="text-sm cursor-pointer"
+                                                        >
+                                                            {member.name} ({member.email})
+                                                        </Label>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p className="text-sm text-muted-foreground">No team members available</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <InputError message={errors.team_members} />
                                 </div>
 
                                 <div className="mt-4 flex justify-end gap-3">

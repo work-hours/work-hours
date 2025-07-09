@@ -25,6 +25,8 @@ class UpdateProjectRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'team_members' => ['nullable', 'array'],
+            'team_members.*' => ['exists:users,id'],
         ];
     }
 }

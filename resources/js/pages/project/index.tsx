@@ -14,10 +14,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+type TeamMember = {
+    id: number;
+    name: string;
+    email: string;
+};
+
 type Project = {
     id: number;
     name: string;
     description: string | null;
+    team_members: TeamMember[];
 };
 
 type Props = {
@@ -60,6 +67,7 @@ export default function Projects({ projects }: Props) {
                                     <TableHeaderRow>
                                         <TableHead>Name</TableHead>
                                         <TableHead>Description</TableHead>
+                                        <TableHead>Team Members</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
@@ -69,6 +77,23 @@ export default function Projects({ projects }: Props) {
                                             <TableCell className="font-medium">{project.name}</TableCell>
                                             <TableCell className="text-muted-foreground">
                                                 {project.description || <span className="text-muted-foreground/50">No description</span>}
+                                            </TableCell>
+                                            <TableCell>
+                                                {project.team_members && project.team_members.length > 0 ? (
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {project.team_members.map((member) => (
+                                                            <span
+                                                                key={member.id}
+                                                                className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
+                                                                title={member.email}
+                                                            >
+                                                                {member.name}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-muted-foreground/50">No team members</span>
+                                                )}
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
