@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
 use App\Models\Project;
+use App\Models\Team;
 use App\Models\TimeLog;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
@@ -66,6 +67,16 @@ class TimeLogController extends Controller
         // Calculate unpaid hours
         $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
 
+        // Get the user's hourly rate and currency from their team information
+        $team = Team::query()
+            ->where('member_id', auth()->id())
+            ->first();
+
+        // Calculate unpaid amount
+        $hourlyRate = $team ? $team->hourly_rate : 0;
+        $unpaidAmount = round($unpaidHours * $hourlyRate, 2);
+        $currency = $team ? $team->currency : 'USD';
+
         // Calculate weekly average
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
@@ -83,6 +94,8 @@ class TimeLogController extends Controller
             'projects' => $projects,
             'totalDuration' => $totalDuration,
             'unpaidHours' => $unpaidHours,
+            'unpaidAmount' => $unpaidAmount,
+            'currency' => $currency,
             'weeklyAverage' => $weeklyAverage,
         ]);
     }

@@ -83,10 +83,12 @@ type Props = {
     projects: Project[];
     totalDuration: number;
     unpaidHours: number;
+    unpaidAmount: number;
+    currency: string;
     weeklyAverage: number;
 };
 
-export default function TimeLog({ timeLogs, filters, projects, totalDuration, unpaidHours, weeklyAverage }: Props) {
+export default function TimeLog({ timeLogs, filters, projects, totalDuration, unpaidHours, unpaidAmount, currency, weeklyAverage }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
@@ -161,7 +163,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
 
                 {/* Stats Cards */}
                 {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
@@ -191,6 +193,22 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                 </div>
                                 <div className="text-2xl font-bold">{unpaidHours}</div>
                                 <p className="text-xs text-muted-foreground">Hours pending payment</p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Unpaid amount card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Unpaid Amount</CardTitle>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-muted-foreground">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                                        <path d="M12 18V6" />
+                                    </svg>
+                                </div>
+                                <div className="text-2xl font-bold">{currency} {unpaidAmount}</div>
+                                <p className="text-xs text-muted-foreground">Amount pending payment</p>
                             </CardContent>
                         </Card>
 
