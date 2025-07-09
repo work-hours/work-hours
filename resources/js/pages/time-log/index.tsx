@@ -179,7 +179,7 @@ export default function TimeLog({ timeLogs, filters }: Props) {
                                             </TableCell>
                                             <TableCell>
                                                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                                                    {log.duration} minutes
+                                                    {log.duration}
                                                 </span>
                                             </TableCell>
                                             <TableCell className="text-right">

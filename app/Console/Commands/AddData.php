@@ -53,6 +53,7 @@ class AddData extends Command
         $this->info('Created team members:');
         foreach ($teamMembers as $member) {
             $this->line("- {$member->name} (ID: {$member->getKey()})");
+            Team::query()->create(['user_id' => $loggedInUser->getKey(), 'member_id' => $member->getKey()]);
         }
 
         $this->info('Adding 20 time log entries for each team member...');

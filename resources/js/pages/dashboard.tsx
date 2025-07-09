@@ -1,11 +1,19 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { CalendarIcon, ClockIcon, UsersIcon } from 'lucide-react';
 
 interface TeamStats {
     count: number;
+    totalHours: number;
+    weeklyAverage: number;
+    recentLogs: Array<{
+        date: string;
+        hours: number;
+        user: string;
+    }>;
+    allLogsLink: string;
 }
 
 interface DashboardProps {
@@ -20,17 +28,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Dashboard({ teamStats }: DashboardProps) {
-    // Mock data for demonstration - in a real app, this would come from the backend
-    const timeStats = {
-        totalHours: 128,
-        weeklyAverage: 32,
-        recentLogs: [
-            { date: '2023-11-15', hours: 8 },
-            { date: '2023-11-14', hours: 7.5 },
-            { date: '2023-11-13', hours: 8 },
-        ],
-    };
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -62,7 +59,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                             <ClockIcon className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{timeStats.totalHours}</div>
+                            <div className="text-2xl font-bold">{teamStats.totalHours}</div>
                             <p className="text-xs text-muted-foreground">Hours logged this month</p>
                         </CardContent>
                     </Card>
@@ -74,7 +71,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                             <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{timeStats.weeklyAverage}</div>
+                            <div className="text-2xl font-bold">{teamStats.weeklyAverage}</div>
                             <p className="text-xs text-muted-foreground">Hours per week</p>
                         </CardContent>
                     </Card>
@@ -85,12 +82,19 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                     {/* Recent time logs */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
                         <CardHeader>
-                            <CardTitle>Recent Time Logs</CardTitle>
-                            <CardDescription>Your team's latest activity</CardDescription>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <CardTitle>Recent Time Logs</CardTitle>
+                                    <CardDescription>Your team's latest activity</CardDescription>
+                                </div>
+                                <Link href={teamStats.allLogsLink} className="text-sm text-primary hover:underline">
+                                    View all logs
+                                </Link>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {timeStats.recentLogs.map((log, index) => (
+                                {teamStats.recentLogs.map((log, index) => (
                                     <div key={index} className="flex items-center justify-between border-b pb-2 last:border-0">
                                         <div className="flex items-center gap-2">
                                             <div className="rounded-full bg-primary/10 p-1">
@@ -98,6 +102,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium">
+                                                    {log.user} on {' '}
                                                     {new Date(log.date).toLocaleDateString('en-US', {
                                                         weekday: 'long',
                                                         month: 'short',
