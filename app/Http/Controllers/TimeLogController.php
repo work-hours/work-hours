@@ -41,6 +41,12 @@ class TimeLogController extends Controller
             }
         }
 
+        // Apply paid/unpaid filter if provided
+        if (request()->get('is_paid') && request('is_paid') !== '') {
+            $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
+            $query->where('is_paid', $isPaid);
+        }
+
         $timeLogs = $query->with('project')->get()
             ->map(function ($timeLog) {
                 return [
@@ -72,6 +78,7 @@ class TimeLogController extends Controller
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
                 'project_id' => request('project_id', ''),
+                'is_paid' => request('is_paid', ''),
             ],
             'projects' => $projects,
             'totalDuration' => $totalDuration,
@@ -265,6 +272,12 @@ class TimeLogController extends Controller
             }
         }
 
+        // Apply paid/unpaid filter if provided
+        if (request()->has('is_paid') && request('is_paid') !== '') {
+            $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
+            $query->where('is_paid', $isPaid);
+        }
+
         $timeLogs = $query->with('project')->get()
             ->map(function ($timeLog) {
                 return [
@@ -273,10 +286,11 @@ class TimeLogController extends Controller
                     'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                     'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
                     'duration' => round($timeLog->duration, 2),
+                    'is_paid' => $timeLog->is_paid,
                 ];
             });
 
-        $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)'];
+        $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Paid'];
         $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($timeLogs, $headers, $filename);

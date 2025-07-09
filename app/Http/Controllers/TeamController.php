@@ -264,6 +264,12 @@ class TeamController extends Controller
             }
         }
 
+        // Apply paid/unpaid filter if provided
+        if (request()->has('is_paid') && request('is_paid') !== '') {
+            $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
+            $query->where('is_paid', $isPaid);
+        }
+
         $timeLogs = $query->with('project')->get()
             ->map(function ($timeLog) {
                 return [
@@ -290,6 +296,7 @@ class TeamController extends Controller
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
                 'project_id' => request('project_id', ''),
+                'is_paid' => request('is_paid', ''),
             ],
             'projects' => $projects,
             'user' => $user,
@@ -350,6 +357,12 @@ class TeamController extends Controller
             }
         }
 
+        // Apply paid/unpaid filter if provided
+        if (request()->has('is_paid') && request('is_paid') !== '') {
+            $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
+            $query->where('is_paid', $isPaid);
+        }
+
         $timeLogs = $query->with(['user', 'project'])->get()
             ->map(function ($timeLog) {
                 return [
@@ -378,6 +391,7 @@ class TeamController extends Controller
                 'end_date' => request('end_date', ''),
                 'team_member_id' => request('team_member_id', ''),
                 'project_id' => request('project_id', ''),
+                'is_paid' => request('is_paid', ''),
             ],
             'projects' => $projects,
             'teamMembers' => $teamMembersList,
@@ -492,6 +506,12 @@ class TeamController extends Controller
             if (in_array(request('project_id'), $userProjects)) {
                 $query->where('project_id', request('project_id'));
             }
+        }
+
+        // Apply paid/unpaid filter if provided
+        if (request()->has('is_paid') && request('is_paid') !== '') {
+            $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
+            $query->where('is_paid', $isPaid);
         }
 
         $timeLogs = $query->with(['user', 'project'])->get()

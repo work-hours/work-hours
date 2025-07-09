@@ -28,6 +28,7 @@ type Filters = {
     end_date: string;
     team_member_id: string;
     project_id: string;
+    is_paid: string;
 };
 
 // Custom input component for DatePicker with icon
@@ -131,6 +132,7 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
         end_date: filters.end_date || '',
         team_member_id: filters.team_member_id || '',
         project_id: filters.project_id || '',
+        is_paid: filters.is_paid || '',
     });
 
     // Convert string dates to Date objects for DatePicker
@@ -184,7 +186,7 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                 {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardContent>
-                        <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+                        <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-6 gap-2">
                             <div className="grid gap-1">
                                 <Label htmlFor="start_date" className="text-xs font-medium">
                                     Start Date
@@ -256,6 +258,24 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                                 />
                             </div>
 
+                            <div className="grid gap-1">
+                                <Label htmlFor="is_paid" className="text-xs font-medium">
+                                    Payment Status
+                                </Label>
+                                <SearchableSelect
+                                    id="is_paid"
+                                    value={data.is_paid}
+                                    onChange={(value) => setData('is_paid', value)}
+                                    options={[
+                                        { id: '', name: 'All Statuses' },
+                                        { id: 'true', name: 'Paid' },
+                                        { id: 'false', name: 'Unpaid' }
+                                    ]}
+                                    placeholder="Select status"
+                                    disabled={processing}
+                                    icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
+                                />
+                            </div>
                             <div className="flex items-end gap-2">
                                 <Button type="submit" disabled={processing} className="flex items-center gap-1 h-9 px-3">
                                     <Search className="h-3.5 w-3.5" />
@@ -265,13 +285,14 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    disabled={processing || (!data.start_date && !data.end_date && !data.team_member_id && !data.project_id)}
+                                    disabled={processing || (!data.start_date && !data.end_date && !data.team_member_id && !data.project_id && !data.is_paid)}
                                     onClick={() => {
                                         setData({
                                             start_date: '',
                                             end_date: '',
                                             team_member_id: '',
                                             project_id: '',
+                                            is_paid: '',
                                         });
                                         get(route('team.all-time-logs'), {
                                             preserveState: true,
@@ -321,6 +342,17 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                                             description += ` on ${projectName}`;
                                         } else {
                                             description = `Showing logs for ${projectName}`;
+                                        }
+                                    }
+
+                                    // Payment status description
+                                    if (data.is_paid) {
+                                        const paymentStatus = data.is_paid === 'true' ? 'paid' : 'unpaid';
+
+                                        if (description) {
+                                            description += ` (${paymentStatus})`;
+                                        } else {
+                                            description = `Showing ${paymentStatus} logs`;
                                         }
                                     }
 

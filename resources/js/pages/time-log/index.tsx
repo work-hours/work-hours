@@ -69,6 +69,7 @@ type Filters = {
     start_date: string;
     end_date: string;
     project_id: string;
+    is_paid: string;
 };
 
 type Project = {
@@ -90,6 +91,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
         project_id: filters.project_id || '',
+        is_paid: filters.is_paid || '',
     });
 
     // State for selected time logs
@@ -157,10 +159,59 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage your work hours</p>
                 </section>
 
+                {/* Stats Cards */}
+                {timeLogs.length > 0 && (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        {/* Total hours card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
+                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{totalDuration}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {data.start_date && data.end_date
+                                        ? `Hours logged from ${data.start_date} to ${data.end_date}`
+                                        : data.start_date
+                                          ? `Hours logged from ${data.start_date}`
+                                          : data.end_date
+                                            ? `Hours logged until ${data.end_date}`
+                                            : 'Total hours logged'}
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Unpaid hours card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Unpaid Hours</CardTitle>
+                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{unpaidHours}</div>
+                                <p className="text-xs text-muted-foreground">Hours pending payment</p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Weekly average card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
+                                    <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{weeklyAverage}</div>
+                                <p className="text-xs text-muted-foreground">Hours per week</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+
                 {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardContent>
-                        <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+                        <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-2">
                             <div className="grid gap-1">
                                 <Label htmlFor="start_date" className="text-xs font-medium">
                                     Start Date
@@ -215,6 +266,24 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                     icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
                                 />
                             </div>
+                            <div className="grid gap-1">
+                                <Label htmlFor="is_paid" className="text-xs font-medium">
+                                    Payment Status
+                                </Label>
+                                <SearchableSelect
+                                    id="is_paid"
+                                    value={data.is_paid}
+                                    onChange={(value) => setData('is_paid', value)}
+                                    options={[
+                                        { id: '', name: 'All Statuses' },
+                                        { id: 'true', name: 'Paid' },
+                                        { id: 'false', name: 'Unpaid' }
+                                    ]}
+                                    placeholder="Select status"
+                                    disabled={processing}
+                                    icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
+                                />
+                            </div>
                             <div className="flex items-end gap-2">
                                 <Button type="submit" disabled={processing} className="flex items-center gap-1 h-9 px-3">
                                     <Search className="h-3.5 w-3.5" />
@@ -224,12 +293,13 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    disabled={processing || (!data.start_date && !data.end_date && !data.project_id)}
+                                    disabled={processing || (!data.start_date && !data.end_date && !data.project_id && !data.is_paid)}
                                     onClick={() => {
                                         setData({
                                             start_date: '',
                                             end_date: '',
                                             project_id: '',
+                                            is_paid: '',
                                         });
                                         get(route('time-log.index'), {
                                             preserveState: true,
@@ -244,88 +314,50 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                         </form>
 
                         <p className={'mt-4 text-sm text-muted-foreground'}>
-                        {(data.start_date || data.end_date || data.project_id) && (
-                            <CardDescription>
-                                {(() => {
-                                    let description = '';
+                            {(data.start_date || data.end_date || data.project_id) && (
+                                <CardDescription>
+                                    {(() => {
+                                        let description = '';
 
-                                    // Date range description
-                                    if (data.start_date && data.end_date) {
-                                        description = `Showing logs from ${data.start_date} to ${data.end_date}`;
-                                    } else if (data.start_date) {
-                                        description = `Showing logs from ${data.start_date}`;
-                                    } else if (data.end_date) {
-                                        description = `Showing logs until ${data.end_date}`;
-                                    }
-
-                                    // Project description
-                                    if (data.project_id) {
-                                        const selectedProject = projects.find((project) => project.id.toString() === data.project_id);
-                                        const projectName = selectedProject ? selectedProject.name : '';
-
-                                        if (description) {
-                                            description += ` for ${projectName}`;
-                                        } else {
-                                            description = `Showing logs for ${projectName}`;
+                                        // Date range description
+                                        if (data.start_date && data.end_date) {
+                                            description = `Showing logs from ${data.start_date} to ${data.end_date}`;
+                                        } else if (data.start_date) {
+                                            description = `Showing logs from ${data.start_date}`;
+                                        } else if (data.end_date) {
+                                            description = `Showing logs until ${data.end_date}`;
                                         }
-                                    }
 
-                                    return description;
-                                })()}
-                            </CardDescription>
-                        )}
+                                        // Project description
+                                        if (data.project_id) {
+                                            const selectedProject = projects.find((project) => project.id.toString() === data.project_id);
+                                            const projectName = selectedProject ? selectedProject.name : '';
+
+                                            if (description) {
+                                                description += ` for ${projectName}`;
+                                            } else {
+                                                description = `Showing logs for ${projectName}`;
+                                            }
+                                        }
+
+                                        // Payment status description
+                                        if (data.is_paid) {
+                                            const paymentStatus = data.is_paid === 'true' ? 'paid' : 'unpaid';
+
+                                            if (description) {
+                                                description += ` (${paymentStatus})`;
+                                            } else {
+                                                description = `Showing ${paymentStatus} logs`;
+                                            }
+                                        }
+
+                                        return description;
+                                    })()}
+                                </CardDescription>
+                            )}
                         </p>
                     </CardContent>
                 </Card>
-
-                {/* Stats Cards */}
-                {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        {/* Total hours card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
-                                    <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
-                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{totalDuration}</div>
-                                <p className="text-xs text-muted-foreground">
-                                    {data.start_date && data.end_date
-                                        ? `Hours logged from ${data.start_date} to ${data.end_date}`
-                                        : data.start_date
-                                          ? `Hours logged from ${data.start_date}`
-                                          : data.end_date
-                                            ? `Hours logged until ${data.end_date}`
-                                            : 'Total hours logged'}
-                                </p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Unpaid hours card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
-                                    <CardTitle className="text-sm font-medium">Unpaid Hours</CardTitle>
-                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{unpaidHours}</div>
-                                <p className="text-xs text-muted-foreground">Hours pending payment</p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Weekly average card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
-                                    <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
-                                    <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{weeklyAverage}</div>
-                                <p className="text-xs text-muted-foreground">Hours per week</p>
-                            </CardContent>
-                        </Card>
-                    </div>
-                )}
 
                 {/* Time Logs Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
