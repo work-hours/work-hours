@@ -1,5 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-export default function AppLogoIcon(props) {
-    return <img src={'/logo.png'} alt="App Logo" {...props} />;
+import { cn } from '@/lib/utils';
+import { type HTMLAttributes } from 'react';
+
+export default function AppLogoIcon({ className, ...props }: HTMLAttributes<HTMLImageElement>) {
+    return <img src={'/logo.png'} alt="App Logo" className={cn(className)} {...props} />;
 }
