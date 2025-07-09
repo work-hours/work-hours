@@ -33,7 +33,7 @@ class TimeLogController extends Controller
                     'id' => $timeLog->id,
                     'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                     'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                    'duration' => $timeLog->duration,
+                    'duration' => round($timeLog->duration, 2),
                 ];
             });
 
@@ -62,7 +62,7 @@ class TimeLogController extends Controller
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
 
-                $data['duration'] = abs($start->diffInMinutes($end));
+                $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
             }
 
             TimeLog::query()->create($data);
@@ -110,7 +110,7 @@ class TimeLogController extends Controller
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
 
-                $data['duration'] = abs($end->diffInMinutes($start));
+                $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
             }
 
             $timeLog->update($data);

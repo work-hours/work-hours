@@ -1,0 +1,117 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\Team;
+use App\Models\TimeLog;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
+
+class AddData extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:add-data {user_id? : The ID of the logged-in user}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Add sample data: 5 team members with 20 time log entries each, and 20 time log entries for the logged-in user';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        // Get or create the logged-in user
+        $loggedInUserId = $this->argument('user_id');
+
+        if (!$loggedInUserId) {
+            $this->error('No user ID provided. Please provide a user ID.');
+            return 1;
+        }
+
+        $loggedInUser = User::query()->find($loggedInUserId);
+
+        if (!$loggedInUser) {
+            $this->error('User not found with ID: ' . $loggedInUserId);
+            return 1;
+        }
+
+        $this->info('Creating 5 team members...');
+
+        // Create 5 team members
+        $teamMembers = User::factory()->count(5)->create();
+
+        $this->info('Created team members:');
+        foreach ($teamMembers as $member) {
+            $this->line("- {$member->name} (ID: {$member->getKey()})");
+        }
+
+        $this->info('Adding 20 time log entries for each team member...');
+
+        // Add 20 time log entries for each team member
+        foreach ($teamMembers as $member) {
+            $this->createTimeLogEntries($member, 20);
+        }
+
+        $this->info('Adding 20 time log entries for the logged-in user...');
+
+        // Add 20 time log entries for the logged-in user
+        $this->createTimeLogEntries($loggedInUser, 20);
+
+        $this->info('Data generation completed successfully!');
+
+        return 0;
+    }
+
+    /**
+     * Create time log entries for a user, distributed over the last 2 months
+     *
+     * @param User $user
+     * @param int $count
+     * @return void
+     */
+    private function createTimeLogEntries(User $user, int $count): void
+    {
+        // Get the date range for the last 2 months
+        $endDate = Carbon::now();
+        $startDate = Carbon::now()->subMonths(2);
+
+        // Calculate the interval between entries to distribute them evenly
+        $intervalDays = $endDate->diffInDays($startDate) / $count;
+
+        for ($i = 0; $i < $count; $i++) {
+            // Calculate the date for this entry
+            $entryDate = clone $startDate;
+            $entryDate->addDays(ceil($i * $intervalDays));
+
+            // Ensure the date is within working hours (9 AM to 5 PM)
+            $entryDate->setHour(rand(9, 16)); // Start between 9 AM and 4 PM
+            $entryDate->setMinute(rand(0, 59));
+            $entryDate->setSecond(rand(0, 59));
+
+            // Create a random duration between 30 minutes and 4 hours
+            $durationHours = rand(30, 240) / 60; // Convert minutes to hours
+
+            // Calculate end timestamp
+            $endTimestamp = clone $entryDate;
+            $endTimestamp->addMinutes($durationHours * 60);
+
+            // Create the time log entry
+            TimeLog::query()->create([
+                'user_id' => $user->id,
+                'start_timestamp' => $entryDate,
+                'end_timestamp' => $endTimestamp,
+                'duration' => round($durationHours, 2),
+            ]);
+        }
+    }
+}

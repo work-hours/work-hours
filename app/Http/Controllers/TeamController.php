@@ -169,7 +169,7 @@ class TeamController extends Controller
                     'id' => $timeLog->id,
                     'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                     'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                    'duration' => $timeLog->duration,
+                    'duration' => round($timeLog->duration, 2),
                 ];
             });
 
@@ -209,7 +209,7 @@ class TeamController extends Controller
                     'user_name' => $timeLog->user->name,
                     'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                     'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                    'duration' => $timeLog->duration,
+                    'duration' => round($timeLog->duration, 2),
                 ];
             });
 
