@@ -278,6 +278,7 @@ class TeamController extends Controller
             });
 
         $totalDuration = round($timeLogs->sum('duration'), 2);
+        $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
         // Get projects for the dropdown
@@ -293,6 +294,7 @@ class TeamController extends Controller
             'projects' => $projects,
             'user' => $user,
             'totalDuration' => $totalDuration,
+            'unpaidHours' => $unpaidHours,
             'weeklyAverage' => $weeklyAverage,
         ]);
     }
@@ -363,6 +365,7 @@ class TeamController extends Controller
             });
 
         $totalDuration = round($timeLogs->sum('duration'), 2);
+        $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
         // Get projects for the dropdown
@@ -379,6 +382,7 @@ class TeamController extends Controller
             'projects' => $projects,
             'teamMembers' => $teamMembersList,
             'totalDuration' => $totalDuration,
+            'unpaidHours' => $unpaidHours,
             'weeklyAverage' => $weeklyAverage,
         ]);
     }

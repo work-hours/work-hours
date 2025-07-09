@@ -30,10 +30,16 @@ class DashboardController extends Controller
             ->whereIn('user_id', $teamMembers)
             ->sum('duration');
 
+        $unpaidHours = TimeLog::query()
+            ->whereIn('user_id', $teamMembers)
+            ->where('is_paid', false)
+            ->sum('duration');
+
         return inertia('dashboard', [
             'teamStats' => [
                 'count' => $teamCount,
                 'totalHours' => $totalHours,
+                'unpaidHours' => $unpaidHours,
                 'weeklyAverage' => $teamCount > 0 ? round($totalHours / $teamCount, 2) : 0,
                 'recentLogs' => $last5Entries->map(function ($log) {
                     return [

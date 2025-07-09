@@ -81,10 +81,11 @@ type Props = {
     projects: Project[];
     user: User;
     totalDuration: number;
+    unpaidHours: number;
     weeklyAverage: number;
 };
 
-export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, totalDuration, weeklyAverage }: Props) {
+export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, totalDuration, unpaidHours, weeklyAverage }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Team',
@@ -303,7 +304,7 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, 
 
                 {/* Stats Cards */}
                 {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                         {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
@@ -321,6 +322,18 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, 
                                             ? `Hours logged until ${filters.end_date}`
                                             : 'Total hours logged'}
                                 </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Unpaid hours card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Unpaid Hours</CardTitle>
+                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{unpaidHours}</div>
+                                <p className="text-xs text-muted-foreground">Hours pending payment</p>
                             </CardContent>
                         </Card>
 

@@ -82,10 +82,11 @@ type Props = {
     teamMembers: TeamMember[];
     projects: Project[];
     totalDuration: number; // Total duration in minutes
+    unpaidHours: number; // Unpaid hours
     weeklyAverage: number; // Weekly average in hours
 };
 
-export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projects, totalDuration, weeklyAverage }: Props) {
+export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projects, totalDuration, unpaidHours, weeklyAverage }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Team',
@@ -333,7 +334,7 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
 
                 {/* Stats Cards */}
                 {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                         {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
@@ -371,6 +372,25 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
 
                                         return description;
                                     })()}
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Unpaid hours card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Unpaid Team Hours</CardTitle>
+                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{unpaidHours}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {filters.team_member_id
+                                        ? (() => {
+                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
+                                              return selectedMember ? `Hours pending payment for ${selectedMember.name}` : 'Hours pending payment';
+                                          })()
+                                        : 'Hours pending payment across all team members'}
                                 </p>
                             </CardContent>
                         </Card>

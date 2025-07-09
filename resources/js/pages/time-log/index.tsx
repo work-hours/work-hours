@@ -81,10 +81,11 @@ type Props = {
     filters: Filters;
     projects: Project[];
     totalDuration: number;
+    unpaidHours: number;
     weeklyAverage: number;
 };
 
-export default function TimeLog({ timeLogs, filters, projects, totalDuration, weeklyAverage }: Props) {
+export default function TimeLog({ timeLogs, filters, projects, totalDuration, unpaidHours, weeklyAverage }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
@@ -279,7 +280,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
 
                 {/* Stats Cards */}
                 {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                         {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
@@ -297,6 +298,18 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, we
                                             ? `Hours logged until ${data.end_date}`
                                             : 'Total hours logged'}
                                 </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Unpaid hours card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="flex flex-row items-center justify-between mb-2">
+                                    <CardTitle className="text-sm font-medium">Unpaid Hours</CardTitle>
+                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <div className="text-2xl font-bold">{unpaidHours}</div>
+                                <p className="text-xs text-muted-foreground">Hours pending payment</p>
                             </CardContent>
                         </Card>
 

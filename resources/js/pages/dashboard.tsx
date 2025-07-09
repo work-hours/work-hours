@@ -7,6 +7,7 @@ import { CalendarIcon, ClockIcon, UsersIcon } from 'lucide-react';
 interface TeamStats {
     count: number;
     totalHours: number;
+    unpaidHours: number;
     weeklyAverage: number;
     recentLogs: Array<{
         date: string;
@@ -73,6 +74,18 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                         <CardContent>
                             <div className="text-2xl font-bold">{teamStats.weeklyAverage}</div>
                             <p className="text-xs text-muted-foreground">Hours per week</p>
+                        </CardContent>
+                    </Card>
+
+                    {/* Unpaid hours card */}
+                    <Card className="overflow-hidden transition-all hover:shadow-md">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Unpaid Hours</CardTitle>
+                            <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{teamStats.unpaidHours}</div>
+                            <p className="text-xs text-muted-foreground">Hours pending payment</p>
                         </CardContent>
                     </Card>
                 </section>
