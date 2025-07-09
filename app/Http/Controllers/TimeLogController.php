@@ -219,7 +219,6 @@ class TimeLogController extends Controller
         try {
             // Ensure the time logs belong to the authenticated user
             $timeLogs = TimeLog::query()
-                ->where('user_id', auth()->id())
                 ->whereIn('id', $timeLogIds)
                 ->get();
 

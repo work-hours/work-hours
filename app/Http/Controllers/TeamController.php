@@ -273,6 +273,7 @@ class TeamController extends Controller
                     'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                     'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
                     'duration' => round($timeLog->duration, 2),
+                    'is_paid' => $timeLog->is_paid,
                 ];
             });
 
@@ -357,6 +358,7 @@ class TeamController extends Controller
                     'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                     'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
                     'duration' => round($timeLog->duration, 2),
+                    'is_paid' => $timeLog->is_paid,
                 ];
             });
 
@@ -497,10 +499,11 @@ class TeamController extends Controller
                     'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                     'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
                     'duration' => round($timeLog->duration, 2),
+                    'is_paid' => $timeLog->is_paid,
                 ];
             });
 
-        $headers = ['ID', 'Team Member', 'Project', 'Start Time', 'End Time', 'Duration (hours)'];
+        $headers = ['ID', 'Team Member', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Paid'];
         $filename = 'team_time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($timeLogs, $headers, $filename);
