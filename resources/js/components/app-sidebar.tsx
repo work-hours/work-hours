@@ -35,7 +35,6 @@ const footerNavItems: NavItem[] = [
         title: 'Sponsor',
         href: 'https://github.com/sponsors/msamgan',
         icon: Heart,
-        external: true,
     },
 ];
 

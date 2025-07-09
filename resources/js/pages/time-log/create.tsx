@@ -34,9 +34,7 @@ interface CustomInputProps {
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
     ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
         <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                {icon}
-            </div>
+            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
             <Input
                 id={id}
                 ref={ref}
@@ -52,7 +50,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
                 readOnly={!onChange}
             />
         </div>
-    )
+    ),
 );
 
 const breadcrumbs: BreadcrumbItem[] = [
