@@ -16,10 +16,23 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::query()
+        // Get projects where user is the owner
+        $ownedProjects = Project::query()
             ->where('user_id', auth()->id())
-            ->with('teamMembers')
+            ->with(['teamMembers', 'user'])
             ->get();
+
+        // Get projects where user is a team member
+        $assignedProjects = Project::query()
+            ->whereHas('teamMembers', function ($query) {
+                $query->where('users.id', auth()->id());
+            })
+            ->where('user_id', '!=', auth()->id())
+            ->with(['teamMembers', 'user'])
+            ->get();
+
+        // Combine both sets of projects
+        $projects = $ownedProjects->concat($assignedProjects);
 
         return Inertia::render('project/index', [
             'projects' => $projects,

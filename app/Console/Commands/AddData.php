@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
@@ -56,17 +57,49 @@ class AddData extends Command
             Team::query()->create(['user_id' => $loggedInUser->getKey(), 'member_id' => $member->getKey()]);
         }
 
+        $this->info('Creating projects for the logged-in user...');
+
+        // Create 3 projects for the logged-in user
+        $projects = [];
+        for ($i = 1; $i <= 3; $i++) {
+            $project = Project::query()->create([
+                'user_id' => $loggedInUser->getKey(),
+                'name' => "Project {$i}",
+                'description' => "Description for Project {$i}"
+            ]);
+            $projects[] = $project;
+
+            $this->line("- Created project: {$project->name} (ID: {$project->getKey()})");
+
+            // Assign random team members to this project
+            $randomMembers = $teamMembers->random(rand(1, 3));
+            foreach ($randomMembers as $member) {
+                $project->teamMembers()->attach($member->getKey());
+                $this->line("  - Assigned {$member->name} to {$project->name}");
+            }
+        }
+
         $this->info('Adding 20 time log entries for each team member...');
 
         // Add 20 time log entries for each team member
         foreach ($teamMembers as $member) {
-            $this->createTimeLogEntries($member, 20);
+            // Get projects this member is assigned to
+            $memberProjects = collect($projects)->filter(function ($project) use ($member) {
+                return $project->teamMembers->contains('id', $member->getKey());
+            })->values();
+
+            if ($memberProjects->isEmpty()) {
+                $this->warn("- {$member->name} is not assigned to any projects, skipping time logs");
+                continue;
+            }
+
+            $this->createTimeLogEntries($member, 20, $memberProjects);
         }
 
         $this->info('Adding 20 time log entries for the logged-in user...');
 
         // Add 20 time log entries for the logged-in user
-        $this->createTimeLogEntries($loggedInUser, 20);
+        $this->createTimeLogEntries($loggedInUser, 20, collect($projects));
 
         $this->info('Data generation completed successfully!');
 
@@ -78,9 +111,10 @@ class AddData extends Command
      *
      * @param User $user
      * @param int $count
+     * @param \Illuminate\Support\Collection $projects
      * @return void
      */
-    private function createTimeLogEntries(User $user, int $count): void
+    private function createTimeLogEntries(User $user, int $count, \Illuminate\Support\Collection $projects): void
     {
         // Get the date range for the last 2 months
         $endDate = Carbon::now();
@@ -106,9 +140,13 @@ class AddData extends Command
             $endTimestamp = clone $entryDate;
             $endTimestamp->addMinutes($durationHours * 60);
 
+            // Select a random project for this time log
+            $project = $projects->random();
+
             // Create the time log entry
             TimeLog::query()->create([
                 'user_id' => $user->id,
+                'project_id' => $project->id,
                 'start_timestamp' => $entryDate,
                 'end_timestamp' => $endTimestamp,
                 'duration' => round($durationHours, 2),

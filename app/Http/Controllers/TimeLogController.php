@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
+use App\Models\Project;
 use App\Models\TimeLog;
 use Carbon\Carbon;
 use Exception;
@@ -27,10 +28,12 @@ class TimeLogController extends Controller
             $query->whereDate('start_timestamp', '<=', request('end_date'));
         }
 
-        $timeLogs = $query->get()
+        $timeLogs = $query->with('project')->get()
             ->map(function ($timeLog) {
                 return [
                     'id' => $timeLog->id,
+                    'project_id' => $timeLog->project_id,
+                    'project_name' => $timeLog->project ? $timeLog->project->name : null,
                     'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                     'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
                     'duration' => round($timeLog->duration, 2),
@@ -83,7 +86,25 @@ class TimeLogController extends Controller
 
     public function create()
     {
-        return Inertia::render('time-log/create');
+        $projects = $this->getUserProjects();
+
+        return Inertia::render('time-log/create', [
+            'projects' => $projects,
+        ]);
+    }
+
+    /**
+     * Get projects created by or assigned to the current user
+     */
+    private function getUserProjects()
+    {
+        $userId = auth()->id();
+
+        return Project::where('user_id', $userId)
+            ->orWhereHas('teamMembers', function ($query) use ($userId) {
+                $query->where('member_id', $userId);
+            })
+            ->get(['id', 'name']);
     }
 
     public function edit(TimeLog $timeLog)
@@ -93,8 +114,17 @@ class TimeLogController extends Controller
             abort(403, 'You can only edit your own time logs.');
         }
 
+        $projects = $this->getUserProjects();
+
         return Inertia::render('time-log/edit', [
-            'timeLog' => $timeLog,
+            'timeLog' => [
+                'id' => $timeLog->id,
+                'project_id' => $timeLog->project_id,
+                'start_timestamp' => $timeLog->start_timestamp,
+                'end_timestamp' => $timeLog->end_timestamp,
+                'duration' => $timeLog->duration,
+            ],
+            'projects' => $projects,
         ]);
     }
 

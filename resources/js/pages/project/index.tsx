@@ -25,6 +25,11 @@ type Project = {
     name: string;
     description: string | null;
     team_members: TeamMember[];
+    user: {
+        id: number;
+        name: string;
+        email: string;
+    };
 };
 
 type Props = {
@@ -67,6 +72,7 @@ export default function Projects({ projects }: Props) {
                                     <TableHeaderRow>
                                         <TableHead>Name</TableHead>
                                         <TableHead>Description</TableHead>
+                                        <TableHead>Owner</TableHead>
                                         <TableHead>Team Members</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableHeaderRow>
@@ -77,6 +83,9 @@ export default function Projects({ projects }: Props) {
                                             <TableCell className="font-medium">{project.name}</TableCell>
                                             <TableCell className="text-muted-foreground">
                                                 {project.description || <span className="text-muted-foreground/50">No description</span>}
+                                            </TableCell>
+                                            <TableCell className="font-medium">
+                                                {project.user.name}
                                             </TableCell>
                                             <TableCell>
                                                 {project.team_members && project.team_members.length > 0 ? (

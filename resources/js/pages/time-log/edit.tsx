@@ -9,10 +9,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 
+type Project = {
+    id: number;
+    name: string;
+};
+
 type TimeLogForm = {
+    project_id: number;
     start_timestamp: string;
     end_timestamp: string;
 };
@@ -20,10 +27,12 @@ type TimeLogForm = {
 type Props = {
     timeLog: {
         id: number;
+        project_id: number;
         start_timestamp: string;
         end_timestamp: string;
         duration: number;
     };
+    projects: Project[];
 };
 
 // Custom input component for DatePicker with icon
@@ -73,8 +82,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function EditTimeLog({ timeLog }: Props) {
+export default function EditTimeLog({ timeLog, projects }: Props) {
     const { data, setData, put, processing, errors } = useForm<TimeLogForm>({
+        project_id: timeLog.project_id,
         start_timestamp: new Date(timeLog.start_timestamp).toISOString().slice(0, 16), // Format: YYYY-MM-DDTHH:MM
         end_timestamp: timeLog.end_timestamp ? new Date(timeLog.end_timestamp).toISOString().slice(0, 16) : '',
     });
@@ -121,6 +131,30 @@ export default function EditTimeLog({ timeLog }: Props) {
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="project_id" className="text-sm font-medium">
+                                        Project
+                                    </Label>
+                                    <Select
+                                        value={data.project_id ? data.project_id.toString() : ''}
+                                        onValueChange={(value) => setData('project_id', parseInt(value))}
+                                        disabled={processing}
+                                        required
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select a project" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {projects.map((project) => (
+                                                <SelectItem key={project.id} value={project.id.toString()}>
+                                                    {project.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <InputError message={errors.project_id} className="mt-1" />
+                                </div>
+
                                 <div className="grid gap-2">
                                     <Label htmlFor="start_timestamp" className="text-sm font-medium">
                                         Start Time

@@ -23,6 +23,7 @@ class UpdateTimeLogRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'project_id' => ['required', 'exists:projects,id'],
             'start_timestamp' => ['required', 'date'],
             'end_timestamp' => ['required', 'date', 'after_or_equal:start_timestamp'],
         ];
