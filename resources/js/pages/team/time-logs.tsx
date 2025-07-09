@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import { formatDateTime } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Calendar, CalendarIcon, CalendarRange, ClockIcon, Search, TimerReset } from 'lucide-react';
@@ -245,9 +246,9 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
                                 <TableBody>
                                     {timeLogs.map((log) => (
                                         <TableRow key={log.id}>
-                                            <TableCell className="font-medium">{new Date(log.start_timestamp).toLocaleString()}</TableCell>
+                                            <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
                                             <TableCell className="text-muted-foreground">
-                                                {log.end_timestamp ? new Date(log.end_timestamp).toLocaleString() : '-'}
+                                                {formatDateTime(log.end_timestamp)}
                                             </TableCell>
                                             <TableCell>
                                                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
