@@ -102,7 +102,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium">
-                                                    {log.user} on {' '}
+                                                    {log.user} on{' '}
                                                     {new Date(log.date).toLocaleDateString('en-US', {
                                                         weekday: 'long',
                                                         month: 'short',

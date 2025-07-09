@@ -8,7 +8,7 @@ import { formatDateTime } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Calendar, CalendarIcon, CalendarRange, ClockIcon, Search, TimerReset } from 'lucide-react';
-import { FormEventHandler, useMemo, forwardRef } from 'react';
+import { FormEventHandler, forwardRef, useMemo } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -70,9 +70,11 @@ type Props = {
     timeLogs: TimeLog[];
     filters: Filters;
     user: User;
+    totalDuration: number;
+    weeklyAverage: number;
 };
 
-export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
+export default function TeamMemberTimeLogs({ timeLogs, filters, user, totalDuration, weeklyAverage }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Team',
@@ -83,29 +85,6 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
             href: `/team/${user.id}/time-logs`,
         },
     ];
-
-    // Calculate total hours and weekly average
-    const { totalHours, weeklyAverage } = useMemo(() => {
-        // Convert minutes to hours and sum them up
-        const totalMinutes = timeLogs.reduce((sum, log) => sum + log.duration, 0);
-        const totalHours = Math.round((totalMinutes / 60) * 10) / 10; // Round to 1 decimal place
-
-        // Calculate weekly average based on the date range
-        let weeklyAverage = 0;
-
-        if (filters.start_date && filters.end_date) {
-            const startDate = new Date(filters.start_date);
-            const endDate = new Date(filters.end_date);
-            const daysDifference = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
-            const weeksDifference = Math.max(1, daysDifference / 7);
-            weeklyAverage = Math.round((totalHours / weeksDifference) * 10) / 10; // Round to 1 decimal place
-        } else {
-            // If no date range, use 4 weeks as default period
-            weeklyAverage = Math.round((totalHours / 4) * 10) / 10;
-        }
-
-        return { totalHours, weeklyAverage };
-    }, [timeLogs, filters]);
 
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
@@ -237,7 +216,9 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
                                             start_date: '',
                                             end_date: '',
                                         });
-                                        get(route('team.time-logs', user.id));
+                                        get(route('team.time-logs', user.id), {
+                                            preserveState: true,
+                                        });
                                     }}
                                     className="flex items-center gap-2"
                                 >
@@ -259,7 +240,7 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
                                 <ClockIcon className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{totalHours}</div>
+                                <div className="text-2xl font-bold">{totalDuration}</div>
                                 <p className="text-xs text-muted-foreground">
                                     {filters.start_date && filters.end_date
                                         ? `Hours logged from ${filters.start_date} to ${filters.end_date}`
@@ -310,9 +291,7 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, user }: Props) {
                                     {timeLogs.map((log) => (
                                         <TableRow key={log.id}>
                                             <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
-                                            <TableCell className="font-medium">
-                                                {formatDateTime(log.end_timestamp)}
-                                            </TableCell>
+                                            <TableCell className="font-medium">{formatDateTime(log.end_timestamp)}</TableCell>
                                             <TableCell>
                                                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                                                     {log.duration}

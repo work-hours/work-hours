@@ -14,24 +14,24 @@ export function NavUser() {
     const isMobile = useIsMobile();
 
     return (
-        <SidebarMenu className="px-2 mt-2">
+        <SidebarMenu className="mt-2 px-2">
             <SidebarSeparator className="mb-2" />
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
-                            className="group text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent rounded-lg border border-sidebar-border/30 shadow-sm hover:shadow transition-all duration-200"
+                            className="group rounded-lg border border-sidebar-border/30 text-sidebar-accent-foreground shadow-sm transition-all duration-200 hover:shadow data-[state=open]:bg-sidebar-accent"
                         >
                             <UserInfo user={auth.user} />
                             <Icon
                                 iconNode={ChevronsUpDown}
-                                className="ml-auto size-4 opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+                                className="ml-auto size-4 opacity-70 transition-opacity duration-200 group-hover:opacity-100"
                             />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
-                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg shadow-lg border-sidebar-border/50"
+                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg border-sidebar-border/50 shadow-lg"
                         align="end"
                         side={isMobile ? 'bottom' : state === 'collapsed' ? 'left' : 'bottom'}
                     >

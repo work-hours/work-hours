@@ -200,7 +200,9 @@ export default function TimeLog({ timeLogs, filters }: Props) {
                                             start_date: '',
                                             end_date: '',
                                         });
-                                        get(route('time-log.index'));
+                                        get(route('time-log.index'), {
+                                            preserveState: true,
+                                        });
                                     }}
                                     className="flex items-center gap-2"
                                 >
@@ -237,9 +239,7 @@ export default function TimeLog({ timeLogs, filters }: Props) {
                                     {timeLogs.map((log) => (
                                         <TableRow key={log.id}>
                                             <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
-                                            <TableCell className="font-medium">
-                                                {formatDateTime(log.end_timestamp)}
-                                            </TableCell>
+                                            <TableCell className="font-medium">{formatDateTime(log.end_timestamp)}</TableCell>
                                             <TableCell>
                                                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                                                     {log.duration}

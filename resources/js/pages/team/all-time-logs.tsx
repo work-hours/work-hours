@@ -2,13 +2,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateTime } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Calendar, CalendarIcon, CalendarRange, ClockIcon, Search, TimerReset } from 'lucide-react';
-import { FormEventHandler, useMemo, forwardRef } from 'react';
+import { FormEventHandler, forwardRef, useMemo } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -23,6 +24,7 @@ type TimeLog = {
 type Filters = {
     start_date: string;
     end_date: string;
+    team_member_id: string;
 };
 
 // Custom input component for DatePicker with icon
@@ -61,12 +63,20 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
     ),
 );
 
+type TeamMember = {
+    id: number;
+    name: string;
+};
+
 type Props = {
     timeLogs: TimeLog[];
     filters: Filters;
+    teamMembers: TeamMember[];
+    totalDuration: number; // Total duration in minutes
+    weeklyAverage: number; // Weekly average in hours
 };
 
-export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
+export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, totalDuration, weeklyAverage }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Team',
@@ -79,31 +89,10 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
     ];
 
     // Calculate total hours and weekly average
-    const { totalHours, weeklyAverage } = useMemo(() => {
-        // Convert minutes to hours and sum them up
-        const totalMinutes = timeLogs.reduce((sum, log) => sum + log.duration, 0);
-        const totalHours = Math.round((totalMinutes / 60) * 10) / 10; // Round to 1 decimal place
-
-        // Calculate weekly average based on the date range
-        let weeklyAverage = 0;
-
-        if (filters.start_date && filters.end_date) {
-            const startDate = new Date(filters.start_date);
-            const endDate = new Date(filters.end_date);
-            const daysDifference = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
-            const weeksDifference = Math.max(1, daysDifference / 7);
-            weeklyAverage = Math.round((totalHours / weeksDifference) * 10) / 10; // Round to 1 decimal place
-        } else {
-            // If no date range, use 4 weeks as default period
-            weeklyAverage = Math.round((totalHours / 4) * 10) / 10;
-        }
-
-        return { totalHours, weeklyAverage };
-    }, [timeLogs, filters]);
-
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
+        team_member_id: filters.team_member_id || '',
     });
 
     // Convert string dates to Date objects for DatePicker
@@ -160,13 +149,34 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Filter Time Logs</CardTitle>
-                                {(data.start_date || data.end_date) && (
+                                {(data.start_date || data.end_date || data.team_member_id) && (
                                     <CardDescription>
-                                        {data.start_date && data.end_date
-                                            ? `Showing logs from ${data.start_date} to ${data.end_date}`
-                                            : data.start_date
-                                              ? `Showing logs from ${data.start_date}`
-                                              : `Showing logs until ${data.end_date}`}
+                                        {(() => {
+                                            let description = '';
+
+                                            // Date range description
+                                            if (data.start_date && data.end_date) {
+                                                description = `Showing logs from ${data.start_date} to ${data.end_date}`;
+                                            } else if (data.start_date) {
+                                                description = `Showing logs from ${data.start_date}`;
+                                            } else if (data.end_date) {
+                                                description = `Showing logs until ${data.end_date}`;
+                                            }
+
+                                            // Team member description
+                                            if (data.team_member_id) {
+                                                const selectedMember = teamMembers.find((member) => member.id.toString() === data.team_member_id);
+                                                const memberName = selectedMember ? selectedMember.name : '';
+
+                                                if (description) {
+                                                    description += ` for ${memberName}`;
+                                                } else {
+                                                    description = `Showing logs for ${memberName}`;
+                                                }
+                                            }
+
+                                            return description;
+                                        })()}
                                     </CardDescription>
                                 )}
                             </div>
@@ -216,6 +226,20 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
                                 />
                             </div>
 
+                            <div className="grid gap-2">
+                                <Label htmlFor="team_member_id" className="text-sm font-medium">
+                                    Team Member
+                                </Label>
+                                <SearchableSelect
+                                    id="team_member_id"
+                                    value={data.team_member_id}
+                                    onChange={(value) => setData('team_member_id', value)}
+                                    options={[{ id: '', name: 'All Team Members' }, ...teamMembers]}
+                                    placeholder="Select team member"
+                                    disabled={processing}
+                                />
+                            </div>
+
                             <div className="flex gap-2">
                                 <Button type="submit" disabled={processing} className="flex items-center gap-2">
                                     <Search className="h-4 w-4" />
@@ -225,13 +249,16 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    disabled={processing || (!data.start_date && !data.end_date)}
+                                    disabled={processing || (!data.start_date && !data.end_date && !data.team_member_id)}
                                     onClick={() => {
                                         setData({
                                             start_date: '',
                                             end_date: '',
+                                            team_member_id: '',
                                         });
-                                        get(route('team.all-time-logs'));
+                                        get(route('team.all-time-logs'), {
+                                            preserveState: true,
+                                        });
                                     }}
                                     className="flex items-center gap-2"
                                 >
@@ -253,15 +280,36 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
                                 <ClockIcon className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{totalHours}</div>
+                                <div className="text-2xl font-bold">{totalDuration}</div>
                                 <p className="text-xs text-muted-foreground">
-                                    {filters.start_date && filters.end_date
-                                        ? `Hours logged from ${filters.start_date} to ${filters.end_date}`
-                                        : filters.start_date
-                                          ? `Hours logged from ${filters.start_date}`
-                                          : filters.end_date
-                                            ? `Hours logged until ${filters.end_date}`
-                                            : 'Total hours logged by all team members'}
+                                    {(() => {
+                                        let description = '';
+
+                                        // Date range description
+                                        if (filters.start_date && filters.end_date) {
+                                            description = `Hours logged from ${filters.start_date} to ${filters.end_date}`;
+                                        } else if (filters.start_date) {
+                                            description = `Hours logged from ${filters.start_date}`;
+                                        } else if (filters.end_date) {
+                                            description = `Hours logged until ${filters.end_date}`;
+                                        } else {
+                                            description = 'Total hours logged';
+                                        }
+
+                                        // Team member description
+                                        if (filters.team_member_id) {
+                                            const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
+                                            const memberName = selectedMember ? selectedMember.name : '';
+
+                                            if (memberName) {
+                                                description += ` by ${memberName}`;
+                                            }
+                                        } else {
+                                            description += ' by all team members';
+                                        }
+
+                                        return description;
+                                    })()}
                                 </p>
                             </CardContent>
                         </Card>
@@ -274,7 +322,14 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">{weeklyAverage}</div>
-                                <p className="text-xs text-muted-foreground">Hours per week across all team members</p>
+                                <p className="text-xs text-muted-foreground">
+                                    {filters.team_member_id
+                                        ? (() => {
+                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
+                                              return selectedMember ? `Hours per week for ${selectedMember.name}` : 'Hours per week';
+                                          })()
+                                        : 'Hours per week across all team members'}
+                                </p>
                             </CardContent>
                         </Card>
                     </div>
@@ -286,7 +341,20 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
                         <CardTitle className="text-xl">Team Time Logs</CardTitle>
                         <CardDescription>
                             {timeLogs.length > 0
-                                ? `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'} from all team members`
+                                ? (() => {
+                                      let description = `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`;
+
+                                      if (filters.team_member_id) {
+                                          const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id);
+                                          if (selectedMember) {
+                                              description += ` from ${selectedMember.name}`;
+                                          }
+                                      } else {
+                                          description += ' from all team members';
+                                      }
+
+                                      return description;
+                                  })()
                                 : 'No time logs found for the selected period'}
                         </CardDescription>
                     </CardHeader>
@@ -306,9 +374,7 @@ export default function AllTeamTimeLogs({ timeLogs, filters }: Props) {
                                         <TableRow key={log.id}>
                                             <TableCell className="font-medium">{log.user_name}</TableCell>
                                             <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
-                                            <TableCell className="font-medium">
-                                                {formatDateTime(log.end_timestamp)}
-                                            </TableCell>
+                                            <TableCell className="font-medium">{formatDateTime(log.end_timestamp)}</TableCell>
                                             <TableCell>
                                                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                                                     {log.duration}

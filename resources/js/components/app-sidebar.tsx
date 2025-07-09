@@ -1,7 +1,16 @@
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator } from '@/components/ui/sidebar';
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarSeparator,
+} from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { Folder, Heart, LayoutGrid, LucideServerCog, TimerIcon } from 'lucide-react';
@@ -40,19 +49,11 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     return (
-        <Sidebar
-            collapsible="icon"
-            variant="inset"
-            className="bg-gradient-to-b from-sidebar to-sidebar/95 shadow-xl"
-        >
+        <Sidebar collapsible="icon" variant="inset" className="bg-gradient-to-b from-sidebar to-sidebar/95 shadow-xl">
             <SidebarHeader className="py-4">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton
-                            size="lg"
-                            asChild
-                            className="hover:bg-sidebar-accent/30 transition-colors duration-300"
-                        >
+                        <SidebarMenuButton size="lg" asChild className="transition-colors duration-300 hover:bg-sidebar-accent/30">
                             <Link href="/dashboard" prefetch>
                                 <AppLogo />
                             </Link>

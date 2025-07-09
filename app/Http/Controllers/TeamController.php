@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Throwable;
 
 class TeamController extends Controller
@@ -155,11 +157,11 @@ class TeamController extends Controller
         $query = TimeLog::query()->where('user_id', $user->id);
 
         // Apply date filters if provided
-        if (request()->has('start_date')) {
+        if (request()->get('start_date')) {
             $query->whereDate('start_timestamp', '>=', request('start_date'));
         }
 
-        if (request()->has('end_date')) {
+        if (request()->get('end_date')) {
             $query->whereDate('start_timestamp', '<=', request('end_date'));
         }
 
@@ -173,6 +175,9 @@ class TeamController extends Controller
                 ];
             });
 
+        $totalDuration = round($timeLogs->sum('duration'), 2);
+        $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
+
         return Inertia::render('team/time-logs', [
             'timeLogs' => $timeLogs,
             'filters' => [
@@ -180,26 +185,51 @@ class TeamController extends Controller
                 'end_date' => request('end_date', ''),
             ],
             'user' => $user,
+            'totalDuration' => $totalDuration,
+            'weeklyAverage' => $weeklyAverage,
         ]);
     }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function allTimeLogs()
     {
         // Get all team members of the authenticated user
-        $teamMembers = Team::query()
+        $teamMembersQuery = Team::query()
             ->where('user_id', auth()->id())
-            ->with('member')
-            ->get()
-            ->pluck('member.id');
+            ->with('member');
 
-        $query = TimeLog::query()->whereIn('user_id', $teamMembers);
+        $teamMembersList = $teamMembersQuery->get()
+            ->map(function ($team) {
+                return [
+                    'id' => $team->member->id,
+                    'name' => $team->member->name,
+                ];
+            });
+
+        $teamMemberIds = $teamMembersList->pluck('id');
+
+        $query = TimeLog::query()->whereIn('user_id', $teamMemberIds);
 
         // Apply date filters if provided
-        if (request()->has('start_date')) {
+        if (request()->get('start_date')) {
             $query->whereDate('start_timestamp', '>=', request('start_date'));
         }
 
-        if (request()->has('end_date')) {
+        if (request()->get('end_date')) {
             $query->whereDate('start_timestamp', '<=', request('end_date'));
+        }
+
+        // Apply team member filter if provided
+        if (request()->get('team_member_id') && request('team_member_id')) {
+            // Validate that the team_member_id belongs to a team member of the authenticated user
+            if (!$teamMemberIds->contains(request('team_member_id'))) {
+                abort(403, 'You can only view time logs of members in your team.');
+            }
+
+            $query->where('user_id', request('team_member_id'));
         }
 
         $timeLogs = $query->with('user')->get()
@@ -213,12 +243,19 @@ class TeamController extends Controller
                 ];
             });
 
+        $totalDuration = round($timeLogs->sum('duration'), 2);
+        $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
+
         return Inertia::render('team/all-time-logs', [
             'timeLogs' => $timeLogs,
             'filters' => [
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
+                'team_member_id' => request('team_member_id', ''),
             ],
+            'teamMembers' => $teamMembersList,
+            'totalDuration' => $totalDuration,
+            'weeklyAverage' => $weeklyAverage,
         ]);
     }
 }
