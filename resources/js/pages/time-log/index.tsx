@@ -71,9 +71,11 @@ type Filters = {
 type Props = {
     timeLogs: TimeLog[];
     filters: Filters;
+    totalDuration: number;
+    weeklyAverage: number;
 };
 
-export default function TimeLog({ timeLogs, filters }: Props) {
+export default function TimeLog({ timeLogs, filters, totalDuration, weeklyAverage }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
@@ -223,6 +225,22 @@ export default function TimeLog({ timeLogs, filters }: Props) {
                                 ? `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`
                                 : 'No time logs found for the selected period'}
                         </CardDescription>
+                        {timeLogs.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-4">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Hours:</span>
+                                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary">
+                                        {totalDuration}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Weekly Average:</span>
+                                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary">
+                                        {weeklyAverage}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                     </CardHeader>
                     <CardContent>
                         {timeLogs.length > 0 ? (

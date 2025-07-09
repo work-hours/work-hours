@@ -37,12 +37,20 @@ class TimeLogController extends Controller
                 ];
             });
 
+        // Calculate total hours
+        $totalDuration = round($timeLogs->sum('duration'), 2);
+
+        // Calculate weekly average
+        $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
+
         return Inertia::render('time-log/index', [
             'timeLogs' => $timeLogs,
             'filters' => [
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
             ],
+            'totalDuration' => $totalDuration,
+            'weeklyAverage' => $weeklyAverage,
         ]);
     }
 
