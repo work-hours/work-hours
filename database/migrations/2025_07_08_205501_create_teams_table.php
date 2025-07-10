@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->unsignedInteger('member_id');
-            $table->foreign('member_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('member_id')->constrained('users')->onDelete('cascade');
             $table->decimal('hourly_rate', 10, 2)->default(0);
             $table->string('currency', 3)->default('USD');
             $table->timestamps();
