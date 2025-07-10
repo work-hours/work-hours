@@ -116,20 +116,22 @@ export default function Projects({ projects, auth }: Props) {
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     {project.user.id === auth.user.id && (
-                                                        <Link href={route('project.time-logs', project.id)}>
-                                                            <Button variant="outline" size="sm" className="h-8">
-                                                                <Clock className="mr-1 h-3.5 w-3.5" />
-                                                                Time Logs
-                                                            </Button>
-                                                        </Link>
+                                                        <>
+                                                            <Link href={route('project.time-logs', project.id)}>
+                                                                <Button variant="outline" size="sm" className="h-8">
+                                                                    <Clock className="mr-1 h-3.5 w-3.5" />
+                                                                    Time Logs
+                                                                </Button>
+                                                            </Link>
+                                                            <Link href={route('project.edit', project.id)}>
+                                                                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                                                                    <Edit className="h-3.5 w-3.5" />
+                                                                    <span className="sr-only">Edit</span>
+                                                                </Button>
+                                                            </Link>
+                                                            <DeleteProject projectId={project.id} />
+                                                        </>
                                                     )}
-                                                    <Link href={route('project.edit', project.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Edit className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Edit</span>
-                                                        </Button>
-                                                    </Link>
-                                                    <DeleteProject projectId={project.id} />
                                                 </div>
                                             </TableCell>
                                         </TableRow>

@@ -7,7 +7,6 @@ export default function Welcome() {
         <div className="min-h-screen bg-gradient-to-b from-background to-background/90">
             <Head title="Work Hours - Track Your Time Effortlessly" />
 
-            {/* Navigation */}
             <nav className="container mx-auto flex items-center justify-between px-6 py-6 lg:px-8">
                 <div className="flex items-center gap-2">
                     <AppLogoIcon className="h-16 w-16 text-primary transition-all hover:scale-105" />
@@ -26,7 +25,6 @@ export default function Welcome() {
                 </div>
             </nav>
 
-            {/* Hero Section */}
             <section className="container mx-auto mb-24 px-6 pt-12 lg:px-8 lg:pt-20">
                 <div className="mx-auto max-w-4xl text-center">
                     {/* Decorative elements */}
@@ -35,7 +33,7 @@ export default function Welcome() {
                     <div className="absolute bottom-40 left-20 h-48 w-48 rounded-full bg-primary/10 blur-3xl"></div>
 
                     <div className="mb-6 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-                        ✨ New: Automated Time Tracking & AI Insights
+                        ✨ New: Time Tracking & Insights
                     </div>
 
                     <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl">
@@ -62,7 +60,6 @@ export default function Welcome() {
                         </Link>
                     </div>
 
-                    {/* Stats */}
                     <div className="mt-16 grid grid-cols-2 gap-8 md:grid-cols-4">
                         <div className="flex flex-col items-center">
                             <span className="text-3xl font-bold text-foreground">10k+</span>
@@ -82,7 +79,6 @@ export default function Welcome() {
                         </div>
                     </div>
 
-                    {/* Trust badges */}
                     <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-muted-foreground">
                         <div className="flex items-center gap-2">
                             <CheckCircle className="h-5 w-5 text-primary" />
@@ -90,11 +86,7 @@ export default function Welcome() {
                         </div>
                         <div className="flex items-center gap-2">
                             <CheckCircle className="h-5 w-5 text-primary" />
-                            <span className="text-sm font-medium">Free for small teams</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <CheckCircle className="h-5 w-5 text-primary" />
-                            <span className="text-sm font-medium">Cancel anytime</span>
+                            <span className="text-sm font-medium">Free for all</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <CheckCircle className="h-5 w-5 text-primary" />
@@ -104,7 +96,6 @@ export default function Welcome() {
                 </div>
             </section>
 
-            {/* Features Section */}
             <section id="features" className="container mx-auto mb-24 px-6 lg:px-8">
                 <div className="mb-16 text-center">
                     <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">Powerful Features</h2>
@@ -114,7 +105,6 @@ export default function Welcome() {
                 </div>
 
                 <div className="grid gap-8 md:grid-cols-3">
-                    {/* Feature 1 */}
                     <div className="group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
                         <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
                             <Clock className="h-7 w-7 text-primary" />
@@ -126,7 +116,6 @@ export default function Welcome() {
                         </p>
                     </div>
 
-                    {/* Feature 2 */}
                     <div className="group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
                         <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
                             <BarChart2 className="h-7 w-7 text-primary" />
@@ -138,59 +127,19 @@ export default function Welcome() {
                         </p>
                     </div>
 
-                    {/* Feature 3 */}
                     <div className="group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
                         <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
                             <Users className="h-7 w-7 text-primary" />
                         </div>
                         <h3 className="mb-3 text-xl font-semibold text-foreground">Team Collaboration</h3>
                         <p className="text-muted-foreground">
-                            Manage your team's time, assign tasks, and track progress all in one place. Real-time updates and notifications keep
+                            Manage your team's time, assign project, and track progress all in one place. Real-time updates and notifications keep
                             everyone in sync.
-                        </p>
-                    </div>
-                </div>
-
-                <div className="mt-16 grid gap-8 md:grid-cols-3">
-                    {/* Feature 4 */}
-                    <div className="group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
-                        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
-                            <Calendar className="h-7 w-7 text-primary" />
-                        </div>
-                        <h3 className="mb-3 text-xl font-semibold text-foreground">Project Planning</h3>
-                        <p className="text-muted-foreground">
-                            Plan projects, set deadlines, and allocate resources efficiently. Our calendar view makes scheduling and time management
-                            intuitive.
-                        </p>
-                    </div>
-
-                    {/* Feature 5 */}
-                    <div className="group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
-                        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
-                            <Briefcase className="h-7 w-7 text-primary" />
-                        </div>
-                        <h3 className="mb-3 text-xl font-semibold text-foreground">Client Billing</h3>
-                        <p className="text-muted-foreground">
-                            Automatically generate invoices based on tracked time. Set different rates for clients, projects, or team members for
-                            accurate billing.
-                        </p>
-                    </div>
-
-                    {/* Feature 6 */}
-                    <div className="group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
-                        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
-                            <Shield className="h-7 w-7 text-primary" />
-                        </div>
-                        <h3 className="mb-3 text-xl font-semibold text-foreground">Data Security</h3>
-                        <p className="text-muted-foreground">
-                            Your data is protected with enterprise-grade security. Role-based access control ensures sensitive information stays
-                            private.
                         </p>
                     </div>
                 </div>
             </section>
 
-            {/* How It Works Section */}
             <section id="how-it-works" className="container mx-auto mb-24 px-6 lg:px-8">
                 <div className="mb-16 text-center">
                     <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">How It Works</h2>
@@ -198,7 +147,6 @@ export default function Welcome() {
                 </div>
 
                 <div className="grid gap-8 md:grid-cols-3">
-                    {/* Step 1 */}
                     <div className="flex flex-col items-center text-center">
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white">
                             <span className="text-xl font-bold">1</span>
@@ -209,7 +157,6 @@ export default function Welcome() {
                         </p>
                     </div>
 
-                    {/* Step 2 */}
                     <div className="flex flex-col items-center text-center">
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white">
                             <span className="text-xl font-bold">2</span>
@@ -220,7 +167,6 @@ export default function Welcome() {
                         </p>
                     </div>
 
-                    {/* Step 3 */}
                     <div className="flex flex-col items-center text-center">
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white">
                             <span className="text-xl font-bold">3</span>
@@ -236,97 +182,6 @@ export default function Welcome() {
                     <div className="flex items-center gap-2 rounded-full bg-primary/10 px-6 py-3">
                         <Zap className="h-5 w-5 text-primary" />
                         <span className="text-sm font-medium">Most users are up and running in less than 10 minutes!</span>
-                    </div>
-                </div>
-            </section>
-
-            {/* Testimonials Section */}
-            <section id="testimonials" className="bg-gradient-to-r from-primary/5 to-primary/10 py-16 md:py-24">
-                <div className="container mx-auto px-6 lg:px-8">
-                    <div className="mb-16 text-center">
-                        <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">What Our Users Say</h2>
-                        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">Trusted by thousands of teams and individuals worldwide</p>
-                    </div>
-
-                    <div className="grid gap-8 md:grid-cols-3">
-                        {/* Testimonial 1 */}
-                        <div className="rounded-xl bg-card p-8 shadow-md">
-                            <div className="mb-4 flex">
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                            </div>
-                            <p className="mb-6 text-muted-foreground italic">
-                                "Work Hours has transformed how our agency tracks time. The detailed reports have helped us identify inefficiencies
-                                and improve our billing accuracy by 30%."
-                            </p>
-                            <div className="flex items-center gap-4">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
-                                    <span className="text-lg font-bold">JD</span>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-foreground">Jane Doe</h4>
-                                    <p className="text-sm text-muted-foreground">Creative Director, Design Studio</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Testimonial 2 */}
-                        <div className="rounded-xl bg-card p-8 shadow-md">
-                            <div className="mb-4 flex">
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                            </div>
-                            <p className="mb-6 text-muted-foreground italic">
-                                "As a freelancer, keeping track of billable hours was always a challenge. Work Hours makes it simple and the automated
-                                invoicing feature saves me hours every month."
-                            </p>
-                            <div className="flex items-center gap-4">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
-                                    <span className="text-lg font-bold">MS</span>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-foreground">Michael Smith</h4>
-                                    <p className="text-sm text-muted-foreground">Independent Developer</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Testimonial 3 */}
-                        <div className="rounded-xl bg-card p-8 shadow-md">
-                            <div className="mb-4 flex">
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                                <Star className="h-5 w-5 text-yellow-500" />
-                            </div>
-                            <p className="mb-6 text-muted-foreground italic">
-                                "Our team of 50+ uses Work Hours daily. The collaboration features and project management tools have improved our
-                                productivity significantly."
-                            </p>
-                            <div className="flex items-center gap-4">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary">
-                                    <span className="text-lg font-bold">AJ</span>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-foreground">Alex Johnson</h4>
-                                    <p className="text-sm text-muted-foreground">Operations Manager, Tech Co.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="mt-12 flex justify-center">
-                        <div className="flex items-center gap-2 rounded-full bg-white/80 px-6 py-3 shadow-sm">
-                            <Award className="h-5 w-5 text-primary" />
-                            <span className="text-sm font-medium">Rated 4.9/5 stars by over 1,000 customers</span>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -350,7 +205,6 @@ export default function Welcome() {
                 </div>
             </section>
 
-            {/* Footer */}
             <footer className="border-t border-border/40 py-12">
                 <div className="container mx-auto px-6 lg:px-8">
                     <div className="grid gap-8 md:grid-cols-4">
@@ -394,68 +248,6 @@ export default function Welcome() {
                                     </svg>
                                 </a>
                             </div>
-                        </div>
-
-                        <div>
-                            <h3 className="mb-4 text-sm font-semibold text-foreground uppercase">Product</h3>
-                            <ul className="space-y-2 text-sm">
-                                <li>
-                                    <a href="#features" className="text-muted-foreground hover:text-primary">
-                                        Features
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" className="text-muted-foreground hover:text-primary">
-                                        Pricing
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" className="text-muted-foreground hover:text-primary">
-                                        Integrations
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" className="text-muted-foreground hover:text-primary">
-                                        Changelog
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" className="text-muted-foreground hover:text-primary">
-                                        Documentation
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h3 className="mb-4 text-sm font-semibold text-foreground uppercase">Company</h3>
-                            <ul className="space-y-2 text-sm">
-                                <li>
-                                    <a href="#" className="text-muted-foreground hover:text-primary">
-                                        About Us
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" className="text-muted-foreground hover:text-primary">
-                                        Careers
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#testimonials" className="text-muted-foreground hover:text-primary">
-                                        Customers
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" className="text-muted-foreground hover:text-primary">
-                                        Blog
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" className="text-muted-foreground hover:text-primary">
-                                        Contact
-                                    </a>
-                                </li>
-                            </ul>
                         </div>
 
                         <div>

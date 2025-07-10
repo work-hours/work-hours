@@ -212,11 +212,12 @@ final class ProjectController extends Controller
 
         $unpaidAmount = 0;
         $timeLogs->each(function (TimeLog $timeLog) use (&$unpaidAmount): void {
-            $hourlyRate = Team::hourlyRate(userId: $timeLog->project->user_id, memberId: $timeLog->user_id);
+            $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             if (! $timeLog['is_paid']) {
                 $unpaidAmount += $timeLog['duration'] * $hourlyRate;
             }
         });
+        $unpaidAmount = round($unpaidAmount, 2);
 
         $timeLogs = $timeLogs->map(fn ($timeLog): array => [
             'id' => $timeLog->id,
