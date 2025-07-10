@@ -48,7 +48,7 @@ export default function CreateTeamMember() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Team Member" />
-            <div className="flex flex-col gap-6 p-6 w-2/3 mx-auto">
+            <div className="mx-auto flex w-2/3 flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Add Team Member</h1>

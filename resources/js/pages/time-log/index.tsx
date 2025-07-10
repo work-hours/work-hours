@@ -1,9 +1,9 @@
+import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SearchableSelect } from '@/components/ui/searchable-select';
-import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, useForm } from '@inertiajs/react';
@@ -104,7 +104,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
         if (checked) {
             setSelectedLogs([...selectedLogs, id]);
         } else {
-            setSelectedLogs(selectedLogs.filter(logId => logId !== id));
+            setSelectedLogs(selectedLogs.filter((logId) => logId !== id));
         }
     };
 
@@ -114,13 +114,17 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
             return;
         }
 
-        router.post(route('time-log.mark-as-paid'), {
-            time_log_ids: selectedLogs
-        }, {
-            onSuccess: () => {
-                setSelectedLogs([]);
-            }
-        });
+        router.post(
+            route('time-log.mark-as-paid'),
+            {
+                time_log_ids: selectedLogs,
+            },
+            {
+                onSuccess: () => {
+                    setSelectedLogs([]);
+                },
+            },
+        );
     };
 
     // Convert string dates to Date objects for DatePicker
@@ -154,7 +158,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Time Log" />
-            <div className="flex flex-col gap-6 p-6 w-2/3 mx-auto">
+            <div className="mx-auto flex w-2/3 flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Time Logs</h1>
@@ -167,7 +171,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                         {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
+                                <div className="mb-2 flex flex-row items-center justify-between">
                                     <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
                                     <ClockIcon className="h-4 w-4 text-muted-foreground" />
                                 </div>
@@ -187,7 +191,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                         {/* Unpaid hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
+                                <div className="mb-2 flex flex-row items-center justify-between">
                                     <CardTitle className="text-sm font-medium">Unpaid Hours</CardTitle>
                                     <ClockIcon className="h-4 w-4 text-muted-foreground" />
                                 </div>
@@ -199,15 +203,28 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                         {/* Unpaid amount card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
+                                <div className="mb-2 flex flex-row items-center justify-between">
                                     <CardTitle className="text-sm font-medium">Unpaid Amount</CardTitle>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-muted-foreground">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="h-4 w-4 text-muted-foreground"
+                                    >
                                         <circle cx="12" cy="12" r="10" />
                                         <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
                                         <path d="M12 18V6" />
                                     </svg>
                                 </div>
-                                <div className="text-2xl font-bold">{currency} {unpaidAmount}</div>
+                                <div className="text-2xl font-bold">
+                                    {currency} {unpaidAmount}
+                                </div>
                                 <p className="text-xs text-muted-foreground">Amount pending payment</p>
                             </CardContent>
                         </Card>
@@ -215,7 +232,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                         {/* Weekly average card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
+                                <div className="mb-2 flex flex-row items-center justify-between">
                                     <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
                                     <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                                 </div>
@@ -229,7 +246,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                 {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardContent>
-                        <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-2">
+                        <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
                             <div className="grid gap-1">
                                 <Label htmlFor="start_date" className="text-xs font-medium">
                                     Start Date
@@ -295,7 +312,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                     options={[
                                         { id: '', name: 'All Statuses' },
                                         { id: 'true', name: 'Paid' },
-                                        { id: 'false', name: 'Unpaid' }
+                                        { id: 'false', name: 'Unpaid' },
                                     ]}
                                     placeholder="Select status"
                                     disabled={processing}
@@ -303,7 +320,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                 />
                             </div>
                             <div className="flex items-end gap-2">
-                                <Button type="submit" disabled={processing} className="flex items-center gap-1 h-9 px-3">
+                                <Button type="submit" disabled={processing} className="flex h-9 items-center gap-1 px-3">
                                     <Search className="h-3.5 w-3.5" />
                                     <span>Filter</span>
                                 </Button>
@@ -323,7 +340,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                             preserveState: true,
                                         });
                                     }}
-                                    className="flex items-center gap-1 h-9 px-3"
+                                    className="flex h-9 items-center gap-1 px-3"
                                 >
                                     <TimerReset className="h-3.5 w-3.5" />
                                     <span>Clear</span>
@@ -397,11 +414,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                     </Button>
                                 </a>
                                 {selectedLogs.length > 0 && (
-                                    <Button
-                                        onClick={markAsPaid}
-                                        variant="secondary"
-                                        className="flex items-center gap-2"
-                                    >
+                                    <Button onClick={markAsPaid} variant="secondary" className="flex items-center gap-2">
                                         <CheckCircle className="h-4 w-4" />
                                         <span>Mark as Paid ({selectedLogs.length})</span>
                                     </Button>

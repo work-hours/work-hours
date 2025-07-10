@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Folder, Heart, LayoutGrid, LucideServerCog, TimerIcon, LucideProjector } from 'lucide-react';
+import { Folder, Heart, LayoutGrid, LucideProjector, LucideServerCog, TimerIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [

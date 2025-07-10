@@ -40,7 +40,7 @@ export default function Projects({ projects }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Projects" />
-            <div className="flex flex-col gap-6 p-6 w-2/3 mx-auto">
+            <div className="mx-auto flex w-2/3 flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Project Management</h1>
@@ -90,16 +90,14 @@ export default function Projects({ projects }: Props) {
                                             <TableCell className="text-muted-foreground">
                                                 {project.description || <span className="text-muted-foreground/50">No description</span>}
                                             </TableCell>
-                                            <TableCell className="font-medium">
-                                                {project.user.name}
-                                            </TableCell>
+                                            <TableCell className="font-medium">{project.user.name}</TableCell>
                                             <TableCell>
                                                 {project.team_members && project.team_members.length > 0 ? (
                                                     <div className="flex flex-wrap gap-1">
                                                         {project.team_members.map((member) => (
                                                             <span
                                                                 key={member.id}
-                                                                className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
+                                                                className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
                                                                 title={member.email}
                                                             >
                                                                 {member.name}

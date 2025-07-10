@@ -2,30 +2,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import {
-    BarChart3,
-    ClockIcon,
-    DollarSign,
-    PlusCircle,
-    TrendingUp,
-    UsersIcon
-} from 'lucide-react';
+import { BarChart3, ClockIcon, DollarSign, PlusCircle, TrendingUp, UsersIcon } from 'lucide-react';
 
-import {
-    AreaChart,
-    Area,
-    BarChart,
-    Bar,
-    PieChart,
-    Pie,
-    Cell,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    ResponsiveContainer
-} from 'recharts';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 interface TeamStats {
     count: number;
@@ -82,9 +61,9 @@ export default function Dashboard({ teamStats }: DashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex flex-col gap-6 p-6 w-2/3 mx-auto">
+            <div className="mx-auto flex w-2/3 flex-col gap-6 p-6">
                 {/* Welcome section with quick actions */}
-                <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <section className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Welcome back!</h1>
                         <p className="mt-1 text-gray-500 dark:text-gray-400">Here's an overview of your team's activity</p>
@@ -94,7 +73,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                             <Link
                                 key={index}
                                 href={action.href}
-                                className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/90 transition-colors"
+                                className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90"
                             >
                                 {action.icon}
                                 {action.name}
@@ -151,7 +130,9 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{teamStats.currency} {teamStats.unpaidAmount}</div>
+                            <div className="text-2xl font-bold">
+                                {teamStats.currency} {teamStats.unpaidAmount}
+                            </div>
                             <div className="mt-1 flex items-center text-xs text-amber-500">
                                 <ClockIcon className="mr-1 h-3 w-3" />
                                 <span>{teamStats.unpaidHours} unpaid hours</span>
@@ -200,10 +181,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                         </CardHeader>
                         <CardContent className="h-80">
                             <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart
-                                    data={weeklyData}
-                                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                                >
+                                <AreaChart data={weeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="name" />
                                     <YAxis />
@@ -254,9 +232,9 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="text-center py-4 text-gray-500">
+                                    <div className="py-4 text-center text-gray-500">
                                         <p>No recent time logs found</p>
-                                        <Link href="/time-log/create" className="text-primary hover:underline mt-2 inline-block">
+                                        <Link href="/time-log/create" className="mt-2 inline-block text-primary hover:underline">
                                             Create your first time log
                                         </Link>
                                     </div>
@@ -290,10 +268,10 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                                     </BarChart>
                                 </ResponsiveContainer>
                             ) : (
-                                <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                                    <UsersIcon className="h-12 w-12 mb-2 opacity-50" />
+                                <div className="flex h-full flex-col items-center justify-center text-gray-500">
+                                    <UsersIcon className="mb-2 h-12 w-12 opacity-50" />
                                     <p>Add team members to see productivity insights</p>
-                                    <Link href="/team/create" className="text-primary hover:underline mt-2">
+                                    <Link href="/team/create" className="mt-2 text-primary hover:underline">
                                         Add team members
                                     </Link>
                                 </div>

@@ -116,7 +116,7 @@ export default function Team({ teamMembers, filters }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Team" />
-            <div className="flex flex-col gap-6 p-6 w-2/3 mx-auto">
+            <div className="mx-auto flex w-2/3 flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Team Management</h1>
@@ -126,7 +126,7 @@ export default function Team({ teamMembers, filters }: Props) {
                 {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardContent>
-                        <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+                        <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4">
                             <div className="grid gap-1">
                                 <Label htmlFor="search" className="text-xs font-medium">
                                     Search
@@ -186,7 +186,7 @@ export default function Team({ teamMembers, filters }: Props) {
                                 />
                             </div>
                             <div className="flex items-end gap-2">
-                                <Button type="submit" disabled={processing} className="flex items-center gap-1 h-9 px-3">
+                                <Button type="submit" disabled={processing} className="flex h-9 items-center gap-1 px-3">
                                     <Search className="h-3.5 w-3.5" />
                                     <span>Filter</span>
                                 </Button>
@@ -205,7 +205,7 @@ export default function Team({ teamMembers, filters }: Props) {
                                             preserveState: true,
                                         });
                                     }}
-                                    className="flex items-center gap-1 h-9 px-3"
+                                    className="flex h-9 items-center gap-1 px-3"
                                 >
                                     <TimerReset className="h-3.5 w-3.5" />
                                     <span>Clear</span>
@@ -214,33 +214,33 @@ export default function Team({ teamMembers, filters }: Props) {
                         </form>
 
                         <p className={'mt-4 text-sm text-muted-foreground'}>
-                        {(data.start_date || data.end_date || data.search) && (
-                            <CardDescription>
-                                {(() => {
-                                    let description = '';
+                            {(data.start_date || data.end_date || data.search) && (
+                                <CardDescription>
+                                    {(() => {
+                                        let description = '';
 
-                                    // Date range description
-                                    if (data.start_date && data.end_date) {
-                                        description = `Showing team data from ${data.start_date} to ${data.end_date}`;
-                                    } else if (data.start_date) {
-                                        description = `Showing team data from ${data.start_date}`;
-                                    } else if (data.end_date) {
-                                        description = `Showing team data until ${data.end_date}`;
-                                    }
-
-                                    // Search description
-                                    if (data.search) {
-                                        if (description) {
-                                            description += ` matching "${data.search}"`;
-                                        } else {
-                                            description = `Showing team members matching "${data.search}"`;
+                                        // Date range description
+                                        if (data.start_date && data.end_date) {
+                                            description = `Showing team data from ${data.start_date} to ${data.end_date}`;
+                                        } else if (data.start_date) {
+                                            description = `Showing team data from ${data.start_date}`;
+                                        } else if (data.end_date) {
+                                            description = `Showing team data until ${data.end_date}`;
                                         }
-                                    }
 
-                                    return description;
-                                })()}
-                            </CardDescription>
-                        )}
+                                        // Search description
+                                        if (data.search) {
+                                            if (description) {
+                                                description += ` matching "${data.search}"`;
+                                            } else {
+                                                description = `Showing team members matching "${data.search}"`;
+                                            }
+                                        }
+
+                                        return description;
+                                    })()}
+                                </CardDescription>
+                            )}
                         </p>
                     </CardContent>
                 </Card>
@@ -300,7 +300,9 @@ export default function Team({ teamMembers, filters }: Props) {
                                             <TableCell>{member.currency}</TableCell>
                                             <TableCell>{member.totalHours} hrs</TableCell>
                                             <TableCell>{member.unpaidHours} hrs</TableCell>
-                                            <TableCell>{member.currency} {member.unpaidAmount}</TableCell>
+                                            <TableCell>
+                                                {member.currency} {member.unpaidAmount}
+                                            </TableCell>
                                             <TableCell>{member.weeklyAverage} hrs</TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">

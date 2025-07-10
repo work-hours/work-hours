@@ -1,9 +1,9 @@
+import DeleteTimeLog from '@/components/delete-time-log';
+import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table';
 import { formatDateTime } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { Edit } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import DeleteTimeLog from '@/components/delete-time-log';
 
 export type TimeLogEntry = {
     id: number;
@@ -31,7 +31,7 @@ export default function TimeLogTable({
     showActions = false,
     showCheckboxes = false,
     selectedLogs = [],
-    onSelectLog
+    onSelectLog,
 }: TimeLogTableProps) {
     return (
         <Table>
