@@ -20,7 +20,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-// Custom input component for DatePicker with icon
 interface CustomInputProps {
     value?: string
     onClick?: () => void
@@ -86,11 +85,9 @@ export default function Team({ teamMembers, filters }: Props) {
         search: filters.search || '',
     })
 
-    // Convert string dates to Date objects for DatePicker
     const startDate = data.start_date ? new Date(data.start_date) : null
     const endDate = data.end_date ? new Date(data.end_date) : null
 
-    // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
             setData('start_date', date.toISOString().split('T')[0])
@@ -118,13 +115,11 @@ export default function Team({ teamMembers, filters }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Team" />
             <div className="mx-auto flex w-9/12 flex-col gap-6 p-6">
-                {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Team Management</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your team members and their time logs</p>
                 </section>
 
-                {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardContent>
                         <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4">
@@ -220,7 +215,6 @@ export default function Team({ teamMembers, filters }: Props) {
                                     {(() => {
                                         let description = ''
 
-                                        // Date range description
                                         if (data.start_date && data.end_date) {
                                             description = `Showing team data from ${data.start_date} to ${data.end_date}`
                                         } else if (data.start_date) {
@@ -229,7 +223,6 @@ export default function Team({ teamMembers, filters }: Props) {
                                             description = `Showing team data until ${data.end_date}`
                                         }
 
-                                        // Search description
                                         if (data.search) {
                                             if (description) {
                                                 description += ` matching "${data.search}"`
@@ -246,7 +239,6 @@ export default function Team({ teamMembers, filters }: Props) {
                     </CardContent>
                 </Card>
 
-                {/* Actions card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">

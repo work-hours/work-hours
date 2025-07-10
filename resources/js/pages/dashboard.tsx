@@ -33,18 +33,15 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-// Colors for charts
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
 
 export default function Dashboard({ teamStats }: DashboardProps) {
-    // Generate sample data for charts based on available stats
     const hoursData = [
         { name: 'Total', value: roundToTwoDecimals(teamStats.totalHours) },
         { name: 'Unpaid', value: roundToTwoDecimals(teamStats.unpaidHours) },
         { name: 'Paid', value: roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours) },
     ]
 
-    // Sample weekly data (for demonstration)
     const weeklyData = [
         { name: 'Week 1', hours: roundToTwoDecimals(teamStats.weeklyAverage * 0.9) },
         { name: 'Week 2', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.1) },
@@ -52,7 +49,6 @@ export default function Dashboard({ teamStats }: DashboardProps) {
         { name: 'Week 4', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.05) },
     ]
 
-    // Quick actions for the dashboard
     const quickActions = [
         { name: 'Log Time', icon: <ClockIcon className="h-5 w-5" />, href: '/time-log/create' },
         { name: 'Add Team Member', icon: <UsersIcon className="h-5 w-5" />, href: '/team/create' },
@@ -63,7 +59,6 @@ export default function Dashboard({ teamStats }: DashboardProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="mx-auto flex w-9/12 flex-col gap-6 p-6">
-                {/* Welcome section with quick actions */}
                 <section className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Welcome back!</h1>
@@ -83,9 +78,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                     </div>
                 </section>
 
-                {/* Stats overview */}
                 <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    {/* Team members card */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Team Members</CardTitle>
@@ -97,7 +90,6 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                         </CardContent>
                     </Card>
 
-                    {/* Total hours card */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
@@ -112,7 +104,6 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                         </CardContent>
                     </Card>
 
-                    {/* Weekly average card */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
@@ -124,7 +115,6 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                         </CardContent>
                     </Card>
 
-                    {/* Unpaid amount card */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Unpaid Amount</CardTitle>
@@ -142,9 +132,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                     </Card>
                 </section>
 
-                {/* Charts section */}
                 <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    {/* Hours distribution chart */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
                         <CardHeader>
                             <CardTitle>Hours Distribution</CardTitle>
@@ -174,7 +162,6 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                         </CardContent>
                     </Card>
 
-                    {/* Weekly trend chart */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
                         <CardHeader>
                             <CardTitle>Weekly Trend</CardTitle>
@@ -194,9 +181,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                     </Card>
                 </section>
 
-                {/* Recent activity and team overview */}
                 <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    {/* Recent time logs */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
                         <CardHeader>
                             <div className="flex items-center justify-between">
@@ -244,7 +229,6 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                         </CardContent>
                     </Card>
 
-                    {/* Team productivity insights */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
                         <CardHeader>
                             <CardTitle>Team Productivity</CardTitle>
