@@ -31,7 +31,6 @@ type Filters = {
     is_paid: string
 }
 
-// Custom input component for DatePicker with icon
 interface CustomInputProps {
     value?: string
     onClick?: () => void
@@ -82,11 +81,11 @@ type Props = {
     filters: Filters
     teamMembers: TeamMember[]
     projects: Project[]
-    totalDuration: number // Total duration in minutes
-    unpaidHours: number // Unpaid hours
-    unpaidAmount: number // Unpaid amount
-    currency: string // Currency for monetary values
-    weeklyAverage: number // Weekly average in hours
+    totalDuration: number
+    unpaidHours: number
+    unpaidAmount: number
+    currency: string
+    weeklyAverage: number
 }
 
 export default function AllTeamTimeLogs({
@@ -111,10 +110,8 @@ export default function AllTeamTimeLogs({
         },
     ]
 
-    // State for selected time logs
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
 
-    // Handle checkbox selection
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
             setSelectedLogs([...selectedLogs, id])
@@ -122,8 +119,6 @@ export default function AllTeamTimeLogs({
             setSelectedLogs(selectedLogs.filter((logId) => logId !== id))
         }
     }
-
-    // Mark selected logs as paid
     const markAsPaid = () => {
         if (selectedLogs.length === 0) {
             return
@@ -142,7 +137,6 @@ export default function AllTeamTimeLogs({
         )
     }
 
-    // Calculate total hours and weekly average
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
@@ -151,11 +145,8 @@ export default function AllTeamTimeLogs({
         is_paid: filters.is_paid || '',
     })
 
-    // Convert string dates to Date objects for DatePicker
     const startDate = data.start_date ? new Date(data.start_date) : null
     const endDate = data.end_date ? new Date(data.end_date) : null
-
-    // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
             setData('start_date', date.toISOString().split('T')[0])
@@ -199,10 +190,8 @@ export default function AllTeamTimeLogs({
                     </div>
                 </section>
 
-                {/* Stats Cards */}
                 {timeLogs.length > 0 && (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
                                 <div className="mb-2 flex flex-row items-center justify-between">
@@ -214,7 +203,6 @@ export default function AllTeamTimeLogs({
                                     {(() => {
                                         let description = ''
 
-                                        // Date range description
                                         if (filters.start_date && filters.end_date) {
                                             description = `Hours logged from ${filters.start_date} to ${filters.end_date}`
                                         } else if (filters.start_date) {
@@ -225,7 +213,6 @@ export default function AllTeamTimeLogs({
                                             description = 'Total hours logged'
                                         }
 
-                                        // Team member description
                                         if (filters.team_member_id) {
                                             const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id)
                                             const memberName = selectedMember ? selectedMember.name : ''
@@ -243,7 +230,6 @@ export default function AllTeamTimeLogs({
                             </CardContent>
                         </Card>
 
-                        {/* Unpaid hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
                                 <div className="mb-2 flex flex-row items-center justify-between">
