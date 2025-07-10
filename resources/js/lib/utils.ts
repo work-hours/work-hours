@@ -24,3 +24,11 @@ export function formatDateTime(dateString: string | null | undefined): string {
         })
         .toLowerCase();
 }
+
+/**
+ * Round a number to 2 decimal places
+ */
+export function roundToTwoDecimals(value: number | null | undefined): number {
+    if (value === null || value === undefined || isNaN(value)) return 0;
+    return Math.round((value + Number.EPSILON) * 100) / 100;
+}

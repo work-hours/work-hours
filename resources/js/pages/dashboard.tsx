@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { roundToTwoDecimals } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { BarChart3, ClockIcon, DollarSign, PlusCircle, TrendingUp, UsersIcon } from 'lucide-react';
@@ -38,17 +39,17 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 export default function Dashboard({ teamStats }: DashboardProps) {
     // Generate sample data for charts based on available stats
     const hoursData = [
-        { name: 'Total', value: teamStats.totalHours },
-        { name: 'Unpaid', value: teamStats.unpaidHours },
-        { name: 'Paid', value: teamStats.totalHours - teamStats.unpaidHours },
+        { name: 'Total', value: roundToTwoDecimals(teamStats.totalHours) },
+        { name: 'Unpaid', value: roundToTwoDecimals(teamStats.unpaidHours) },
+        { name: 'Paid', value: roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours) },
     ];
 
     // Sample weekly data (for demonstration)
     const weeklyData = [
-        { name: 'Week 1', hours: teamStats.weeklyAverage * 0.9 },
-        { name: 'Week 2', hours: teamStats.weeklyAverage * 1.1 },
-        { name: 'Week 3', hours: teamStats.weeklyAverage * 0.95 },
-        { name: 'Week 4', hours: teamStats.weeklyAverage * 1.05 },
+        { name: 'Week 1', hours: roundToTwoDecimals(teamStats.weeklyAverage * 0.9) },
+        { name: 'Week 2', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.1) },
+        { name: 'Week 3', hours: roundToTwoDecimals(teamStats.weeklyAverage * 0.95) },
+        { name: 'Week 4', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.05) },
     ];
 
     // Quick actions for the dashboard
@@ -103,10 +104,10 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                             <ClockIcon className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{teamStats.totalHours}</div>
+                            <div className="text-2xl font-bold">{roundToTwoDecimals(teamStats.totalHours)}</div>
                             <div className="mt-1 flex items-center text-xs text-green-500">
                                 <TrendingUp className="mr-1 h-3 w-3" />
-                                <span>+{Math.round(teamStats.weeklyAverage)} hrs this week</span>
+                                <span>+{roundToTwoDecimals(teamStats.weeklyAverage)} hrs this week</span>
                             </div>
                         </CardContent>
                     </Card>
@@ -118,7 +119,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                             <BarChart3 className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{teamStats.weeklyAverage}</div>
+                            <div className="text-2xl font-bold">{roundToTwoDecimals(teamStats.weeklyAverage)}</div>
                             <p className="text-xs text-muted-foreground">Hours per team member</p>
                         </CardContent>
                     </Card>
@@ -131,11 +132,11 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {teamStats.currency} {teamStats.unpaidAmount}
+                                {teamStats.currency} {roundToTwoDecimals(teamStats.unpaidAmount)}
                             </div>
                             <div className="mt-1 flex items-center text-xs text-amber-500">
                                 <ClockIcon className="mr-1 h-3 w-3" />
-                                <span>{teamStats.unpaidHours} unpaid hours</span>
+                                <span>{roundToTwoDecimals(teamStats.unpaidHours)} unpaid hours</span>
                             </div>
                         </CardContent>
                     </Card>
@@ -228,7 +229,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="text-sm font-medium">{log.hours} hours</div>
+                                            <div className="text-sm font-medium">{roundToTwoDecimals(log.hours)} hours</div>
                                         </div>
                                     ))
                                 ) : (
@@ -254,9 +255,9 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart
                                         data={[
-                                            { name: 'Average', hours: teamStats.weeklyAverage },
-                                            { name: 'This Week', hours: teamStats.weeklyAverage * 1.05 },
-                                            { name: 'Last Week', hours: teamStats.weeklyAverage * 0.95 },
+                                            { name: 'Average', hours: roundToTwoDecimals(teamStats.weeklyAverage) },
+                                            { name: 'This Week', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.05) },
+                                            { name: 'Last Week', hours: roundToTwoDecimals(teamStats.weeklyAverage * 0.95) },
                                         ]}
                                         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                                     >

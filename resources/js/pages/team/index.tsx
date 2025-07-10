@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import { roundToTwoDecimals } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Calendar, CalendarRange, Clock, Download, Edit, Search, TimerReset, UserPlus, Users } from 'lucide-react';
@@ -280,8 +281,7 @@ export default function Team({ teamMembers, filters }: Props) {
                             <Table>
                                 <TableHeader>
                                     <TableHeaderRow>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>Email</TableHead>
+                                        <TableHead>Name / Email</TableHead>
                                         <TableHead>Hourly Rate</TableHead>
                                         <TableHead>Currency</TableHead>
                                         <TableHead>Total Hours</TableHead>
@@ -294,16 +294,18 @@ export default function Team({ teamMembers, filters }: Props) {
                                 <TableBody>
                                     {teamMembers.map((member) => (
                                         <TableRow key={member.id}>
-                                            <TableCell className="font-medium">{member.name}</TableCell>
-                                            <TableCell className="text-muted-foreground">{member.email}</TableCell>
+                                            <TableCell>
+                                                <div className="font-medium">{member.name}</div>
+                                                <div className="text-xs text-muted-foreground">{member.email}</div>
+                                            </TableCell>
                                             <TableCell>{member.hourly_rate}</TableCell>
                                             <TableCell>{member.currency}</TableCell>
-                                            <TableCell>{member.totalHours} hrs</TableCell>
-                                            <TableCell>{member.unpaidHours} hrs</TableCell>
+                                            <TableCell>{roundToTwoDecimals(member.totalHours)}</TableCell>
+                                            <TableCell>{roundToTwoDecimals(member.unpaidHours)}</TableCell>
                                             <TableCell>
-                                                {member.currency} {member.unpaidAmount}
+                                                {member.currency} {roundToTwoDecimals(member.unpaidAmount)}
                                             </TableCell>
-                                            <TableCell>{member.weeklyAverage} hrs</TableCell>
+                                            <TableCell>{roundToTwoDecimals(member.weeklyAverage)}</TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <Link href={route('team.time-logs', member.id)}>
