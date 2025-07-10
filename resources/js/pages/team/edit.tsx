@@ -56,7 +56,7 @@ export default function EditTeamMember({ user }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Team Member" />
-            <div className="mx-auto flex w-2/3 flex-col gap-6 p-6">
+            <div className="mx-auto flex w-9/12 flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Edit Team Member</h1>
