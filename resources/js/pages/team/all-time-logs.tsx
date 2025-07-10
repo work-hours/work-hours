@@ -168,30 +168,30 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="All Team Time Logs" />
-            <div className="flex flex-col gap-6 p-6">
+            <div className="flex flex-col gap-4 p-4">
                 {/* Header section */}
-                <section className="mb-2">
-                    <div className="flex items-center gap-4">
+                <section className="mb-1">
+                    <div className="flex items-center gap-3">
                         <Link href={route('team.index')}>
-                            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                <ArrowLeft className="h-4 w-4" />
+                            <Button variant="outline" size="sm" className="h-7 w-7 p-0">
+                                <ArrowLeft className="h-3.5 w-3.5" />
                                 <span className="sr-only">Back to Team</span>
                             </Button>
                         </Link>
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">All Team Time Logs</h1>
-                            <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage work hours across all team members</p>
+                            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">All Team Time Logs</h1>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Track and manage work hours across all team members</p>
                         </div>
                     </div>
                 </section>
 
                 {/* Stats Cards */}
                 {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                         {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
+                            <CardContent className="p-4 pt-3">
+                                <div className="flex flex-row items-center justify-between mb-1">
                                     <CardTitle className="text-sm font-medium">Total Team Hours</CardTitle>
                                     <ClockIcon className="h-4 w-4 text-muted-foreground" />
                                 </div>
@@ -231,8 +231,8 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
 
                         {/* Unpaid hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
+                            <CardContent className="p-4 pt-3">
+                                <div className="flex flex-row items-center justify-between mb-1">
                                     <CardTitle className="text-sm font-medium">Unpaid Team Hours</CardTitle>
                                     <ClockIcon className="h-4 w-4 text-muted-foreground" />
                                 </div>
@@ -250,8 +250,8 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
 
                         {/* Unpaid amount card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
+                            <CardContent className="p-4 pt-3">
+                                <div className="flex flex-row items-center justify-between mb-1">
                                     <CardTitle className="text-sm font-medium">Unpaid Team Amount</CardTitle>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-muted-foreground">
                                         <circle cx="12" cy="12" r="10" />
@@ -294,7 +294,7 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
 
                 {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardContent>
+                    <CardContent className="p-4">
                         <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-6 gap-2">
                             <div className="grid gap-1">
                                 <Label htmlFor="start_date" className="text-xs font-medium">
@@ -385,8 +385,8 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                                     icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
                                 />
                             </div>
-                            <div className="flex items-end gap-2">
-                                <Button type="submit" disabled={processing} className="flex items-center gap-1 h-9 px-3">
+                            <div className="flex items-end gap-1.5">
+                                <Button type="submit" disabled={processing} className="flex items-center gap-1 h-9 px-2.5">
                                     <Search className="h-3.5 w-3.5" />
                                     <span>Filter</span>
                                 </Button>
@@ -407,7 +407,7 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                                             preserveState: true,
                                         });
                                     }}
-                                    className="flex items-center gap-1 h-9 px-3"
+                                    className="flex items-center gap-1 h-9 px-2.5"
                                 >
                                     <TimerReset className="h-3.5 w-3.5" />
                                     <span>Clear</span>
@@ -415,9 +415,9 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                             </div>
                         </form>
 
-                        <p className={'mt-4 text-sm text-muted-foreground'}>
+                        <p className={'mt-3 text-xs text-muted-foreground'}>
                         {(data.start_date || data.end_date || data.team_member_id || data.project_id) && (
-                            <CardDescription>
+                            <CardDescription className="text-xs">
                                 {(() => {
                                     let description = '';
 
@@ -475,11 +475,11 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
 
                 {/* Time Logs Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="pb-2 pt-3 px-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle className="text-xl">Team Time Logs</CardTitle>
-                                <CardDescription>
+                                <CardTitle className="text-base">Team Time Logs</CardTitle>
+                                <CardDescription className="text-xs">
                                     {timeLogs.length > 0
                                         ? (() => {
                                               let description = `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`;
@@ -498,10 +498,10 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                                         : 'No time logs found for the selected period'}
                                 </CardDescription>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5">
                                 <a href={route('team.export-time-logs') + window.location.search} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
+                                    <Button variant="outline" className="flex items-center gap-1.5 h-8 px-2.5 text-xs">
+                                        <Download className="h-3.5 w-3.5" />
                                         <span>Export</span>
                                     </Button>
                                 </a>
@@ -509,16 +509,16 @@ export default function AllTeamTimeLogs({ timeLogs, filters, teamMembers, projec
                                     <Button
                                         onClick={markAsPaid}
                                         variant="secondary"
-                                        className="flex items-center gap-2"
+                                        className="flex items-center gap-1.5 h-8 px-2.5 text-xs"
                                     >
-                                        <CheckCircle className="h-4 w-4" />
+                                        <CheckCircle className="h-3.5 w-3.5" />
                                         <span>Mark as Paid ({selectedLogs.length})</span>
                                     </Button>
                                 )}
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="px-4 pb-4">
                         {timeLogs.length > 0 ? (
                             <TimeLogTable
                                 timeLogs={timeLogs as TimeLogEntry[]}

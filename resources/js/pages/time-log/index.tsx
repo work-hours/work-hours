@@ -154,20 +154,20 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Time Log" />
-            <div className="flex flex-col gap-6 p-6">
+            <div className="flex flex-col gap-4 p-4">
                 {/* Header section */}
-                <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Time Logs</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage your work hours</p>
+                <section className="mb-1">
+                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Time Logs</h1>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Track and manage your work hours</p>
                 </section>
 
                 {/* Stats Cards */}
                 {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                         {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
+                            <CardContent className="p-4 pt-3">
+                                <div className="flex flex-row items-center justify-between mb-1">
                                     <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
                                     <ClockIcon className="h-4 w-4 text-muted-foreground" />
                                 </div>
@@ -186,8 +186,8 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
 
                         {/* Unpaid hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
+                            <CardContent className="p-4 pt-3">
+                                <div className="flex flex-row items-center justify-between mb-1">
                                     <CardTitle className="text-sm font-medium">Unpaid Hours</CardTitle>
                                     <ClockIcon className="h-4 w-4 text-muted-foreground" />
                                 </div>
@@ -198,8 +198,8 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
 
                         {/* Unpaid amount card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
+                            <CardContent className="p-4 pt-3">
+                                <div className="flex flex-row items-center justify-between mb-1">
                                     <CardTitle className="text-sm font-medium">Unpaid Amount</CardTitle>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-muted-foreground">
                                         <circle cx="12" cy="12" r="10" />
@@ -214,8 +214,8 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
 
                         {/* Weekly average card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="flex flex-row items-center justify-between mb-2">
+                            <CardContent className="p-4 pt-3">
+                                <div className="flex flex-row items-center justify-between mb-1">
                                     <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
                                     <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                                 </div>
@@ -228,7 +228,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
 
                 {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardContent>
+                    <CardContent className="p-4">
                         <form onSubmit={submit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-2">
                             <div className="grid gap-1">
                                 <Label htmlFor="start_date" className="text-xs font-medium">
@@ -302,8 +302,8 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                     icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
                                 />
                             </div>
-                            <div className="flex items-end gap-2">
-                                <Button type="submit" disabled={processing} className="flex items-center gap-1 h-9 px-3">
+                            <div className="flex items-end gap-1.5">
+                                <Button type="submit" disabled={processing} className="flex items-center gap-1 h-9 px-2.5">
                                     <Search className="h-3.5 w-3.5" />
                                     <span>Filter</span>
                                 </Button>
@@ -323,7 +323,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                             preserveState: true,
                                         });
                                     }}
-                                    className="flex items-center gap-1 h-9 px-3"
+                                    className="flex items-center gap-1 h-9 px-2.5"
                                 >
                                     <TimerReset className="h-3.5 w-3.5" />
                                     <span>Clear</span>
@@ -331,9 +331,9 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                             </div>
                         </form>
 
-                        <p className={'mt-4 text-sm text-muted-foreground'}>
+                        <p className={'mt-3 text-xs text-muted-foreground'}>
                             {(data.start_date || data.end_date || data.project_id) && (
-                                <CardDescription>
+                                <CardDescription className="text-xs">
                                     {(() => {
                                         let description = '';
 
@@ -379,20 +379,20 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
 
                 {/* Time Logs Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="pb-2 pt-3 px-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle className="text-xl">Your Time Logs</CardTitle>
-                                <CardDescription>
+                                <CardTitle className="text-base">Your Time Logs</CardTitle>
+                                <CardDescription className="text-xs">
                                     {timeLogs.length > 0
                                         ? `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`
                                         : 'No time logs found for the selected period'}
                                 </CardDescription>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-1.5">
                                 <a href={route('time-log.export') + window.location.search} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
+                                    <Button variant="outline" className="flex items-center gap-1.5 h-8 px-2.5 text-xs">
+                                        <Download className="h-3.5 w-3.5" />
                                         <span>Export</span>
                                     </Button>
                                 </a>
@@ -400,22 +400,22 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                     <Button
                                         onClick={markAsPaid}
                                         variant="secondary"
-                                        className="flex items-center gap-2"
+                                        className="flex items-center gap-1.5 h-8 px-2.5 text-xs"
                                     >
-                                        <CheckCircle className="h-4 w-4" />
+                                        <CheckCircle className="h-3.5 w-3.5" />
                                         <span>Mark as Paid ({selectedLogs.length})</span>
                                     </Button>
                                 )}
                                 <Link href={route('time-log.create')}>
-                                    <Button className="flex items-center gap-2">
-                                        <ClockIcon className="h-4 w-4" />
+                                    <Button className="flex items-center gap-1.5 h-8 px-2.5 text-xs">
+                                        <ClockIcon className="h-3.5 w-3.5" />
                                         <span>Log Time</span>
                                     </Button>
                                 </Link>
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="px-4 pb-4">
                         {timeLogs.length > 0 ? (
                             <TimeLogTable
                                 timeLogs={timeLogs as TimeLogEntry[]}
@@ -425,14 +425,14 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                 onSelectLog={handleSelectLog}
                             />
                         ) : (
-                            <div className="rounded-md border bg-muted/5 p-6">
-                                <div className="flex flex-col items-center justify-center py-12 text-center">
-                                    <ClockIcon className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                                    <h3 className="mb-1 text-lg font-medium">No Time Logs</h3>
-                                    <p className="mb-4 text-muted-foreground">You haven't added any time logs yet.</p>
+                            <div className="rounded-md border bg-muted/5 p-4">
+                                <div className="flex flex-col items-center justify-center py-8 text-center">
+                                    <ClockIcon className="mb-3 h-10 w-10 text-muted-foreground/50" />
+                                    <h3 className="mb-1 text-base font-medium">No Time Logs</h3>
+                                    <p className="mb-3 text-sm text-muted-foreground">You haven't added any time logs yet.</p>
                                     <Link href={route('time-log.create')}>
-                                        <Button className="flex items-center gap-2">
-                                            <PlusCircle className="h-4 w-4" />
+                                        <Button className="flex items-center gap-1.5 h-8 px-2.5 text-xs">
+                                            <PlusCircle className="h-3.5 w-3.5" />
                                             <span>Add Time Log</span>
                                         </Button>
                                     </Link>
