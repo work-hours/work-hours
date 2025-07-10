@@ -7,7 +7,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * Class Project
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property string $name
+ * @property string $description
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 final class Project extends Model
 {
     protected $fillable = ['user_id', 'name', 'description'];

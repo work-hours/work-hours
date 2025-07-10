@@ -15,6 +15,8 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class ProjectController extends Controller
@@ -178,6 +180,10 @@ final class ProjectController extends Controller
         return $this->exportToCsv($projectsData, $headers, $filename);
     }
 
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     */
     public function timeLogs(Project $project)
     {
         $isCreator = $project->user_id === auth()->id();
@@ -202,22 +208,29 @@ final class ProjectController extends Controller
             $query->where('is_paid', $isPaid);
         }
 
-        $timeLogs = $query->with('user')->get()
-            ->map(fn ($timeLog): array => [
-                'id' => $timeLog->id,
-                'user_id' => $timeLog->user_id,
-                'user_name' => $timeLog->user ? $timeLog->user->name : null,
-                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                'duration' => round($timeLog->duration, 2),
-                'is_paid' => $timeLog->is_paid,
-            ]);
+        $timeLogs = $query->with('user')->get();
+
+        $unpaidAmount = 0;
+        $timeLogs->each(function (TimeLog $timeLog) use (&$unpaidAmount): void {
+            $hourlyRate = Team::hourlyRate(userId: $timeLog->project->user_id, memberId: $timeLog->user_id);
+            if (! $timeLog['is_paid']) {
+                $unpaidAmount += $timeLog['duration'] * $hourlyRate;
+            }
+        });
+
+        $timeLogs = $timeLogs->map(fn ($timeLog): array => [
+            'id' => $timeLog->id,
+            'user_id' => $timeLog->user_id,
+            'user_name' => $timeLog->user ? $timeLog->user->name : null,
+            'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+            'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
+            'duration' => round($timeLog->duration, 2),
+            'is_paid' => $timeLog->is_paid,
+        ]);
 
         $totalDuration = round($timeLogs->sum('duration'), 2);
         $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
-
-        $unpaidAmount = round($unpaidHours * 0, 2);
 
         $teamMembers = $project->teamMembers()
             ->get()

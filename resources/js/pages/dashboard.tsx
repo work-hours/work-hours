@@ -5,6 +5,7 @@ import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
 import { BarChart3, ClockIcon, DollarSign, PlusCircle, TrendingUp, UsersIcon } from 'lucide-react'
 
+import { useEffect } from 'react'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface TeamStats {
@@ -37,7 +38,6 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
 
 export default function Dashboard({ teamStats }: DashboardProps) {
     const hoursData = [
-        { name: 'Total', value: roundToTwoDecimals(teamStats.totalHours) },
         { name: 'Unpaid', value: roundToTwoDecimals(teamStats.unpaidHours) },
         { name: 'Paid', value: roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours) },
     ]
@@ -54,6 +54,10 @@ export default function Dashboard({ teamStats }: DashboardProps) {
         { name: 'Add Team Member', icon: <UsersIcon className="h-5 w-5" />, href: '/team/create' },
         { name: 'Create Project', icon: <PlusCircle className="h-5 w-5" />, href: '/project/create' },
     ]
+
+    useEffect(() => {
+        console.log('hoursData', hoursData)
+    }, [])
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

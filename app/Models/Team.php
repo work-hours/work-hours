@@ -11,6 +11,13 @@ final class Team extends Model
 {
     protected $fillable = ['user_id', 'member_id'];
 
+    public static function memberHourlyRate(Project $project, int $memberId): ?float
+    {
+        $entry = self::query()->where('user_id', $project->user_id)->where('member_id', $memberId)->first();
+
+        return $entry ? (float) $entry->hourly_rate : 0;
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
