@@ -165,7 +165,7 @@ export default function TeamMemberTimeLogs({ timeLogs, filters, projects, user, 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${user.name}'s Time Logs`} />
-            <div className="flex flex-col gap-6 p-6">
+            <div className="flex flex-col gap-6 p-6 w-2/3 mx-auto">
                 {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">

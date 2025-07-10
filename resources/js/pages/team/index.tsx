@@ -116,7 +116,7 @@ export default function Team({ teamMembers, filters }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Team" />
-            <div className="flex flex-col gap-6 p-6">
+            <div className="flex flex-col gap-6 p-6 w-2/3 mx-auto">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Team Management</h1>

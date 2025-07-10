@@ -82,7 +82,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex flex-col gap-6 p-6">
+            <div className="flex flex-col gap-6 p-6 w-2/3 mx-auto">
                 {/* Welcome section with quick actions */}
                 <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
