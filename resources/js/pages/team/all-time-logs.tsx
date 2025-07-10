@@ -373,7 +373,7 @@ export default function AllTeamTimeLogs({
                                     id="team_member_id"
                                     value={data.team_member_id}
                                     onChange={(value) => setData('team_member_id', value)}
-                                    options={[{ id: '', name: 'All Team Members' }, ...teamMembers]}
+                                    options={[{ id: '', name: 'Team' }, ...teamMembers]}
                                     placeholder="Select team member"
                                     disabled={processing}
                                 />

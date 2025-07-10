@@ -334,7 +334,7 @@ export default function ProjectTimeLogs({
                                     id="user_id"
                                     value={data.user_id}
                                     onChange={(value) => setData('user_id', value)}
-                                    options={[{ id: '', name: 'All Team Members' }, ...teamMembers]}
+                                    options={[{ id: '', name: 'Team' }, ...teamMembers]}
                                     placeholder="Select team member"
                                     disabled={processing}
                                     icon={<User className="h-4 w-4 text-muted-foreground" />}
