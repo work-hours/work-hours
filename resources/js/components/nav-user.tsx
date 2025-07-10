@@ -1,17 +1,17 @@
-import { Icon } from '@/components/icon';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, useSidebar } from '@/components/ui/sidebar';
-import { UserInfo } from '@/components/user-info';
-import { UserMenuContent } from '@/components/user-menu-content';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { type SharedData } from '@/types';
-import { usePage } from '@inertiajs/react';
-import { ChevronsUpDown } from 'lucide-react';
+import { Icon } from '@/components/icon'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator, useSidebar } from '@/components/ui/sidebar'
+import { UserInfo } from '@/components/user-info'
+import { UserMenuContent } from '@/components/user-menu-content'
+import { useIsMobile } from '@/hooks/use-mobile'
+import { type SharedData } from '@/types'
+import { usePage } from '@inertiajs/react'
+import { ChevronsUpDown } from 'lucide-react'
 
 export function NavUser() {
-    const { auth } = usePage<SharedData>().props;
-    const { state } = useSidebar();
-    const isMobile = useIsMobile();
+    const { auth } = usePage<SharedData>().props
+    const { state } = useSidebar()
+    const isMobile = useIsMobile()
 
     return (
         <SidebarMenu className="mt-2 px-2">
@@ -40,5 +40,5 @@ export function NavUser() {
                 </DropdownMenu>
             </SidebarMenuItem>
         </SidebarMenu>
-    );
+    )
 }

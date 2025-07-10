@@ -1,41 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTeamMemberRequest;
 use App\Http\Requests\UpdateTeamMemberRequest;
+use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Msamgan\Lact\Attributes\Action;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
-class TeamController extends Controller
+final class TeamController extends Controller
 {
     use ExportableTrait;
-    /**
-     * Get projects created by or assigned to the current user
-     */
-    private function getUserProjects()
-    {
-        $userId = auth()->id();
 
-        return \App\Models\Project::where('user_id', $userId)
-            ->orWhereHas('teamMembers', function ($query) use ($userId) {
-                $query->where('member_id', $userId);
-            })
-            ->get(['id', 'name']);
-    }
     public function index()
     {
         $query = Team::query()
@@ -45,14 +35,14 @@ class TeamController extends Controller
         // Apply search filter if provided
         if (request()->get('search')) {
             $search = request('search');
-            $query->whereHas('member', function ($q) use ($search) {
+            $query->whereHas('member', function ($q) use ($search): void {
                 $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%');
+                    ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
 
         $teamMembers = $query->get()
-            ->map(function ($team) {
+            ->map(function ($team): array {
                 // Get time logs for this team member
                 $query = TimeLog::query()->where('user_id', $team->member->id);
 
@@ -113,7 +103,7 @@ class TeamController extends Controller
 
             $user = User::query()->where('email', $request->email)->first();
 
-            if (!$user) {
+            if (! $user) {
                 $userData = $request->safe()->except(['hourly_rate', 'currency']);
                 $user = User::query()->create($userData);
             }
@@ -122,7 +112,7 @@ class TeamController extends Controller
                 'user_id' => auth()->id(),
                 'member_id' => $user->getKey(),
                 'hourly_rate' => $request->get('hourly_rate') ?? 0,
-                'currency' => strtoupper($request->get('currency')) ?? 'USD'
+                'currency' => mb_strtoupper((string) $request->get('currency')) ?? 'USD',
             ];
 
             Team::query()->create($teamData);
@@ -147,9 +137,7 @@ class TeamController extends Controller
             ->where('member_id', $user->getKey())
             ->first();
 
-        if (!$team) {
-            abort(403, 'You can only edit members of your team.');
-        }
+        abort_unless($team, 403, 'You can only edit members of your team.');
 
         return Inertia::render('team/edit', [
             'user' => [
@@ -174,9 +162,7 @@ class TeamController extends Controller
             ->where('member_id', $user->getKey())
             ->exists();
 
-        if (!$isTeamMember) {
-            abort(403, 'You can only update members of your team.');
-        }
+        abort_unless($isTeamMember, 403, 'You can only update members of your team.');
 
         DB::beginTransaction();
         try {
@@ -192,7 +178,7 @@ class TeamController extends Controller
             // Extract team-related fields
             $teamData = [
                 'hourly_rate' => $data['hourly_rate'] ?? 0,
-                'currency' => $data['currency'] ?? 'USD'
+                'currency' => $data['currency'] ?? 'USD',
             ];
             unset($data['hourly_rate'], $data['currency']);
 
@@ -225,9 +211,7 @@ class TeamController extends Controller
             ->where('member_id', $user->id)
             ->exists();
 
-        if (!$isTeamMember) {
-            abort(403, 'You can only delete members of your team.');
-        }
+        abort_unless($isTeamMember, 403, 'You can only delete members of your team.');
 
         DB::beginTransaction();
         try {
@@ -248,9 +232,7 @@ class TeamController extends Controller
             ->where('member_id', $user->id)
             ->exists();
 
-        if (!$isTeamMember) {
-            abort(403, 'You can only view time logs of members in your team.');
-        }
+        abort_unless($isTeamMember, 403, 'You can only view time logs of members in your team.');
 
         $query = TimeLog::query()->where('user_id', $user->id);
 
@@ -279,17 +261,15 @@ class TeamController extends Controller
         }
 
         $timeLogs = $query->with('project')->get()
-            ->map(function ($timeLog) {
-                return [
-                    'id' => $timeLog->id,
-                    'project_id' => $timeLog->project_id,
-                    'project_name' => $timeLog->project ? $timeLog->project->name : null,
-                    'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                    'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                    'duration' => round($timeLog->duration, 2),
-                    'is_paid' => $timeLog->is_paid,
-                ];
-            });
+            ->map(fn ($timeLog): array => [
+                'id' => $timeLog->id,
+                'project_id' => $timeLog->project_id,
+                'project_name' => $timeLog->project ? $timeLog->project->name : null,
+                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
+                'duration' => round($timeLog->duration, 2),
+                'is_paid' => $timeLog->is_paid,
+            ]);
 
         $totalDuration = round($timeLogs->sum('duration'), 2);
         $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
@@ -339,12 +319,10 @@ class TeamController extends Controller
             ->with('member');
 
         $teamMembersList = $teamMembersQuery->get()
-            ->map(function ($team) {
-                return [
-                    'id' => $team->member->id,
-                    'name' => $team->member->name,
-                ];
-            });
+            ->map(fn ($team): array => [
+                'id' => $team->member->id,
+                'name' => $team->member->name,
+            ]);
 
         $teamMemberIds = $teamMembersList->pluck('id');
 
@@ -362,9 +340,7 @@ class TeamController extends Controller
         // Apply team member filter if provided
         if (request()->get('team_member_id') && request('team_member_id')) {
             // Validate that the team_member_id belongs to a team member of the authenticated user
-            if (!$teamMemberIds->contains(request('team_member_id'))) {
-                abort(403, 'You can only view time logs of members in your team.');
-            }
+            abort_unless($teamMemberIds->contains(request('team_member_id')), 403, 'You can only view time logs of members in your team.');
 
             $query->where('user_id', request('team_member_id'));
         }
@@ -385,18 +361,16 @@ class TeamController extends Controller
         }
 
         $timeLogs = $query->with(['user', 'project'])->get()
-            ->map(function ($timeLog) {
-                return [
-                    'id' => $timeLog->id,
-                    'user_name' => $timeLog->user->name,
-                    'project_id' => $timeLog->project_id,
-                    'project_name' => $timeLog->project ? $timeLog->project->name : null,
-                    'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                    'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                    'duration' => round($timeLog->duration, 2),
-                    'is_paid' => $timeLog->is_paid,
-                ];
-            });
+            ->map(fn ($timeLog): array => [
+                'id' => $timeLog->id,
+                'user_name' => $timeLog->user->name,
+                'project_id' => $timeLog->project_id,
+                'project_name' => $timeLog->project ? $timeLog->project->name : null,
+                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
+                'duration' => round($timeLog->duration, 2),
+                'is_paid' => $timeLog->is_paid,
+            ]);
 
         $totalDuration = round($timeLogs->sum('duration'), 2);
         $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
@@ -408,15 +382,15 @@ class TeamController extends Controller
         // Group unpaid logs by user
         $unpaidLogsByUser = [];
         foreach ($timeLogs as $timeLog) {
-            if (!$timeLog['is_paid']) {
+            if (! $timeLog['is_paid']) {
                 // Get the user ID from the original query
-                $userId = TimeLog::find($timeLog['id'])->user_id;
+                $userId = TimeLog::query()->find($timeLog['id'])->user_id;
                 $userName = $timeLog['user_name'];
 
-                if (!isset($unpaidLogsByUser[$userId])) {
+                if (! isset($unpaidLogsByUser[$userId])) {
                     $unpaidLogsByUser[$userId] = [
                         'name' => $userName,
-                        'hours' => 0
+                        'hours' => 0,
                     ];
                 }
 
@@ -471,8 +445,6 @@ class TeamController extends Controller
 
     /**
      * Export team members to CSV
-     *
-     * @return StreamedResponse
      */
     #[Action(method: 'get', name: 'team.export', middleware: ['auth', 'verified'])]
     public function export(): StreamedResponse
@@ -484,14 +456,14 @@ class TeamController extends Controller
         // Apply search filter if provided
         if (request()->get('search')) {
             $search = request('search');
-            $query->whereHas('member', function ($q) use ($search) {
+            $query->whereHas('member', function ($q) use ($search): void {
                 $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%');
+                    ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
 
         $teamMembers = $query->get()
-            ->map(function ($team) {
+            ->map(function ($team): array {
                 // Get time logs for this team member
                 $query = TimeLog::query()->where('user_id', $team->member->id);
 
@@ -540,7 +512,6 @@ class TeamController extends Controller
     /**
      * Export time logs of all team members to CSV
      *
-     * @return StreamedResponse
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
@@ -568,9 +539,7 @@ class TeamController extends Controller
         // Apply team member filter if provided
         if (request()->get('team_member_id') && request('team_member_id')) {
             // Validate that the team_member_id belongs to a team member of the authenticated user
-            if (!$teamMemberIds->contains(request('team_member_id'))) {
-                abort(403, 'You can only view time logs of members in your team.');
-            }
+            abort_unless($teamMemberIds->contains(request('team_member_id')), 403, 'You can only view time logs of members in your team.');
 
             $query->where('user_id', request('team_member_id'));
         }
@@ -591,21 +560,33 @@ class TeamController extends Controller
         }
 
         $timeLogs = $query->with(['user', 'project'])->get()
-            ->map(function ($timeLog) {
-                return [
-                    'id' => $timeLog->id,
-                    'user_name' => $timeLog->user->name,
-                    'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
-                    'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                    'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
-                    'duration' => round($timeLog->duration, 2),
-                    'is_paid' => $timeLog->is_paid,
-                ];
-            });
+            ->map(fn ($timeLog): array => [
+                'id' => $timeLog->id,
+                'user_name' => $timeLog->user->name,
+                'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
+                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
+                'duration' => round($timeLog->duration, 2),
+                'is_paid' => $timeLog->is_paid,
+            ]);
 
         $headers = ['ID', 'Team Member', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Paid'];
         $filename = 'team_time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($timeLogs, $headers, $filename);
+    }
+
+    /**
+     * Get projects created by or assigned to the current user
+     */
+    private function getUserProjects()
+    {
+        $userId = auth()->id();
+
+        return Project::query()->where('user_id', $userId)
+            ->orWhereHas('teamMembers', function ($query) use ($userId): void {
+                $query->where('member_id', $userId);
+            })
+            ->get(['id', 'name']);
     }
 }

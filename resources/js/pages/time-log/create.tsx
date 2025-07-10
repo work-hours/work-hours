@@ -1,41 +1,41 @@
-import { Head, useForm } from '@inertiajs/react';
-import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react';
-import { FormEventHandler, forwardRef } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import { Head, useForm } from '@inertiajs/react'
+import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
+import { FormEventHandler, forwardRef } from 'react'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
-import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { SearchableSelect } from '@/components/ui/searchable-select';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import InputError from '@/components/input-error'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { SearchableSelect } from '@/components/ui/searchable-select'
+import AppLayout from '@/layouts/app-layout'
+import { type BreadcrumbItem } from '@/types'
 
 type Project = {
-    id: number;
-    name: string;
-};
+    id: number
+    name: string
+}
 
 type TimeLogForm = {
-    project_id: number;
-    start_timestamp: string;
-    end_timestamp: string;
-};
+    project_id: number
+    start_timestamp: string
+    end_timestamp: string
+}
 
 // Custom input component for DatePicker with icon
 interface CustomInputProps {
-    value?: string;
-    onClick?: () => void;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    icon: React.ReactNode;
-    placeholder?: string;
-    disabled?: boolean;
-    required?: boolean;
-    autoFocus?: boolean;
-    tabIndex?: number;
-    id: string;
+    value?: string
+    onClick?: () => void
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+    icon: React.ReactNode
+    placeholder?: string
+    disabled?: boolean
+    required?: boolean
+    autoFocus?: boolean
+    tabIndex?: number
+    id: string
 }
 
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
@@ -58,7 +58,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
             />
         </div>
     ),
-);
+)
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -69,44 +69,44 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Create',
         href: '/time-log/create',
     },
-];
+]
 
 type Props = {
-    projects: Project[];
-};
+    projects: Project[]
+}
 
 export default function CreateTimeLog({ projects }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<Required<TimeLogForm>>({
         project_id: 0,
         start_timestamp: new Date().toISOString().slice(0, 16), // Default to now, format: YYYY-MM-DDTHH:MM
         end_timestamp: '',
-    });
+    })
 
     // Convert string timestamps to Date objects for DatePicker
-    const startDate = data.start_timestamp ? new Date(data.start_timestamp) : new Date();
-    const endDate = data.end_timestamp ? new Date(data.end_timestamp) : null;
+    const startDate = data.start_timestamp ? new Date(data.start_timestamp) : new Date()
+    const endDate = data.end_timestamp ? new Date(data.end_timestamp) : null
 
     // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
-            setData('start_timestamp', date.toISOString().slice(0, 16));
+            setData('start_timestamp', date.toISOString().slice(0, 16))
         }
-    };
+    }
 
     const handleEndDateChange = (date: Date | null) => {
         if (date) {
-            setData('end_timestamp', date.toISOString().slice(0, 16));
+            setData('end_timestamp', date.toISOString().slice(0, 16))
         } else {
-            setData('end_timestamp', '');
+            setData('end_timestamp', '')
         }
-    };
+    }
 
     const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+        e.preventDefault()
         post(route('time-log.store'), {
             onFinish: () => reset(),
-        });
-    };
+        })
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -218,5 +218,5 @@ export default function CreateTimeLog({ projects }: Props) {
                 </Card>
             </div>
         </AppLayout>
-    );
+    )
 }

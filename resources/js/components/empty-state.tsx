@@ -1,11 +1,11 @@
-import { Button } from '@/components/ui/button';
-import { Link } from '@inertiajs/react';
+import { Button } from '@/components/ui/button'
+import { Link } from '@inertiajs/react'
 
 interface EmptyStateProps {
-    title: string;
-    description?: string;
-    actionLabel?: string;
-    actionRoute?: string;
+    title: string
+    description?: string
+    actionLabel?: string
+    actionRoute?: string
 }
 
 export default function EmptyState({ title, description, actionLabel, actionRoute }: EmptyStateProps) {
@@ -35,5 +35,5 @@ export default function EmptyState({ title, description, actionLabel, actionRout
                 </Button>
             )}
         </div>
-    );
+    )
 }

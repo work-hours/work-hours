@@ -1,19 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Team;
 use App\Models\TimeLog;
 use Inertia\Response;
 
-class DashboardController extends Controller
+final class DashboardController extends Controller
 {
     public function index(): Response
     {
         $teamCount = Team::query()->where('user_id', auth()->id())->count();
         $teamMembers = Team::query()->where('user_id', auth()->id())->pluck('member_id');
         $teamMembers = $teamMembers->merge([auth()->id()]);
-
 
         $last5Entries = TimeLog::query()
             ->whereIn('user_id', $teamMembers)
@@ -71,13 +72,11 @@ class DashboardController extends Controller
                 'unpaidAmount' => round($unpaidAmount, 2),
                 'currency' => $currency,
                 'weeklyAverage' => $teamCount > 0 ? round($totalHours / $teamCount, 2) : 0,
-                'recentLogs' => $last5Entries->map(function ($log) {
-                    return [
-                        'date' => $log->start_timestamp->format('Y-m-d H:i:s'),
-                        'user' => $log->user->name ?? 'Unknown User',
-                        'hours' => $log->duration,
-                    ];
-                }),
+                'recentLogs' => $last5Entries->map(fn ($log): array => [
+                    'date' => $log->start_timestamp->format('Y-m-d H:i:s'),
+                    'user' => $log->user->name ?? 'Unknown User',
+                    'hours' => $log->duration,
+                ]),
                 'allLogsLink' => route('team.all-time-logs'),
             ],
         ]);

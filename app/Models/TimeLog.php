@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TimeLog extends Model
+final class TimeLog extends Model
 {
     protected $fillable = [
         'user_id',
@@ -15,20 +18,23 @@ class TimeLog extends Model
         'is_paid',
     ];
 
-    protected $casts = [
-        'start_timestamp' => 'datetime',
-        'end_timestamp' => 'datetime',
-        'duration' => 'float',
-        'is_paid' => 'boolean',
-    ];
-
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function project(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'start_timestamp' => 'datetime',
+            'end_timestamp' => 'datetime',
+            'duration' => 'float',
+            'is_paid' => 'boolean',
+        ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Models\Project;
@@ -8,9 +10,9 @@ use App\Models\TimeLog;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
 
-class AddData extends Command
+final class AddData extends Command
 {
     /**
      * The name and signature of the console command.
@@ -29,20 +31,22 @@ class AddData extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         // Get or create the logged-in user
         $loggedInUserId = $this->argument('user_id');
 
-        if (!$loggedInUserId) {
+        if (! $loggedInUserId) {
             $this->error('No user ID provided. Please provide a user ID.');
+
             return 1;
         }
 
         $loggedInUser = User::query()->find($loggedInUserId);
 
-        if (!$loggedInUser) {
+        if (! $loggedInUser) {
             $this->error('User not found with ID: ' . $loggedInUserId);
+
             return 1;
         }
 
@@ -57,8 +61,8 @@ class AddData extends Command
             Team::query()->create([
                 'user_id' => $loggedInUser->getKey(),
                 'member_id' => $member->getKey(),
-                'hourly_rate' => rand(10, 100), // Random hourly rate between 10 and 100
-                'currency' => 'USD' // Default currency
+                'hourly_rate' => random_int(10, 100), // Random hourly rate between 10 and 100
+                'currency' => 'USD', // Default currency
             ]);
         }
 
@@ -70,14 +74,14 @@ class AddData extends Command
             $project = Project::query()->create([
                 'user_id' => $loggedInUser->getKey(),
                 'name' => "Project {$i}",
-                'description' => "Description for Project {$i}"
+                'description' => "Description for Project {$i}",
             ]);
             $projects[] = $project;
 
             $this->line("- Created project: {$project->name} (ID: {$project->getKey()})");
 
             // Assign random team members to this project
-            $randomMembers = $teamMembers->random(rand(1, 3));
+            $randomMembers = $teamMembers->random(random_int(1, 3));
             foreach ($randomMembers as $member) {
                 $project->teamMembers()->attach($member->getKey());
                 $this->line("  - Assigned {$member->name} to {$project->name}");
@@ -89,12 +93,11 @@ class AddData extends Command
         // Add 20 time log entries for each team member
         foreach ($teamMembers as $member) {
             // Get projects this member is assigned to
-            $memberProjects = collect($projects)->filter(function ($project) use ($member) {
-                return $project->teamMembers->contains('id', $member->getKey());
-            })->values();
+            $memberProjects = collect($projects)->filter(fn ($project) => $project->teamMembers->contains('id', $member->getKey()))->values();
 
             if ($memberProjects->isEmpty()) {
                 $this->warn("- {$member->name} is not assigned to any projects, skipping time logs");
+
                 continue;
             }
 
@@ -113,13 +116,8 @@ class AddData extends Command
 
     /**
      * Create time log entries for a user, distributed over the last 2 months
-     *
-     * @param User $user
-     * @param int $count
-     * @param \Illuminate\Support\Collection $projects
-     * @return void
      */
-    private function createTimeLogEntries(User $user, int $count, \Illuminate\Support\Collection $projects): void
+    private function createTimeLogEntries(User $user, int $count, Collection $projects): void
     {
         // Get the date range for the last 2 months
         $endDate = Carbon::now();
@@ -134,12 +132,12 @@ class AddData extends Command
             $entryDate->addDays(ceil($i * $intervalDays));
 
             // Ensure the date is within working hours (9 AM to 5 PM)
-            $entryDate->setHour(rand(9, 16)); // Start between 9 AM and 4 PM
-            $entryDate->setMinute(rand(0, 59));
-            $entryDate->setSecond(rand(0, 59));
+            $entryDate->setHour(random_int(9, 16)); // Start between 9 AM and 4 PM
+            $entryDate->setMinute(random_int(0, 59));
+            $entryDate->setSecond(random_int(0, 59));
 
             // Create a random duration between 30 minutes and 4 hours
-            $durationHours = rand(30, 240) / 60; // Convert minutes to hours
+            $durationHours = random_int(30, 240) / 60; // Convert minutes to hours
 
             // Calculate end timestamp
             $endTimestamp = clone $entryDate;
@@ -155,7 +153,7 @@ class AddData extends Command
                 'start_timestamp' => $entryDate,
                 'end_timestamp' => $endTimestamp,
                 'duration' => round($durationHours, 2),
-                'is_paid' => (bool) rand(0, 1), // Randomly set as paid or unpaid
+                'is_paid' => (bool) random_int(0, 1), // Randomly set as paid or unpaid
             ]);
         }
     }

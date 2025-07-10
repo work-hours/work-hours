@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
@@ -10,16 +12,15 @@ use App\Models\TimeLog;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Msamgan\Lact\Attributes\Action;
-use Throwable;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ProjectController extends Controller
+final class ProjectController extends Controller
 {
     use ExportableTrait;
+
     public function index()
     {
         $ownedProjects = Project::query()
@@ -28,7 +29,7 @@ class ProjectController extends Controller
             ->get();
 
         $assignedProjects = Project::query()
-            ->whereHas('teamMembers', function ($query) {
+            ->whereHas('teamMembers', function ($query): void {
                 $query->where('users.id', auth()->id());
             })
             ->where('user_id', '!=', auth()->id())
@@ -51,13 +52,11 @@ class ProjectController extends Controller
             ->where('user_id', auth()->id())
             ->with('member')
             ->get()
-            ->map(function ($team) {
-                return [
-                    'id' => $team->member->id,
-                    'name' => $team->member->name,
-                    'email' => $team->member->email,
-                ];
-            });
+            ->map(fn ($team): array => [
+                'id' => $team->member->id,
+                'name' => $team->member->name,
+                'email' => $team->member->email,
+            ]);
 
         return Inertia::render('project/create', [
             'teamMembers' => $teamMembers,
@@ -88,21 +87,17 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        if ($project->user_id !== auth()->id()) {
-            abort(403, 'You can only edit your own projects.');
-        }
+        abort_if($project->user_id !== auth()->id(), 403, 'You can only edit your own projects.');
 
         $teamMembers = Team::query()
             ->where('user_id', auth()->id())
             ->with('member')
             ->get()
-            ->map(function ($team) {
-                return [
-                    'id' => $team->member->id,
-                    'name' => $team->member->name,
-                    'email' => $team->member->email,
-                ];
-            });
+            ->map(fn ($team): array => [
+                'id' => $team->member->id,
+                'name' => $team->member->name,
+                'email' => $team->member->email,
+            ]);
 
         $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
 
@@ -116,9 +111,7 @@ class ProjectController extends Controller
     #[Action(method: 'put', name: 'project.update', params: ['project'], middleware: ['auth', 'verified'])]
     public function update(UpdateProjectRequest $request, Project $project): void
     {
-        if ($project->user_id !== auth()->id()) {
-            abort(403, 'You can only update your own projects.');
-        }
+        abort_if($project->user_id !== auth()->id(), 403, 'You can only update your own projects.');
 
         DB::beginTransaction();
         try {
@@ -140,9 +133,7 @@ class ProjectController extends Controller
     #[Action(method: 'delete', name: 'project.destroy', params: ['project'], middleware: ['auth', 'verified'])]
     public function destroy(Project $project): void
     {
-        if ($project->user_id !== auth()->id()) {
-            abort(403, 'You can only delete your own projects.');
-        }
+        abort_if($project->user_id !== auth()->id(), 403, 'You can only delete your own projects.');
 
         DB::beginTransaction();
         try {
@@ -163,7 +154,7 @@ class ProjectController extends Controller
             ->get();
 
         $assignedProjects = Project::query()
-            ->whereHas('teamMembers', function ($query) {
+            ->whereHas('teamMembers', function ($query): void {
                 $query->where('users.id', auth()->id());
             })
             ->where('user_id', '!=', auth()->id())
@@ -172,16 +163,14 @@ class ProjectController extends Controller
 
         $projects = $ownedProjects->concat($assignedProjects);
 
-        $projectsData = $projects->map(function ($project) {
-            return [
-                'id' => $project->id,
-                'name' => $project->name,
-                'description' => $project->description,
-                'owner' => $project->user->name,
-                'team_members' => $project->teamMembers->pluck('name')->implode(', '),
-                'created_at' => Carbon::parse($project->created_at)->toDateTimeString(),
-            ];
-        });
+        $projectsData = $projects->map(fn ($project): array => [
+            'id' => $project->id,
+            'name' => $project->name,
+            'description' => $project->description,
+            'owner' => $project->user->name,
+            'team_members' => $project->teamMembers->pluck('name')->implode(', '),
+            'created_at' => Carbon::parse($project->created_at)->toDateTimeString(),
+        ]);
 
         $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Created At'];
         $filename = 'projects_' . Carbon::now()->format('Y-m-d') . '.csv';
@@ -193,9 +182,7 @@ class ProjectController extends Controller
     {
         $isCreator = $project->user_id === auth()->id();
 
-        if (!$isCreator) {
-            abort(403, 'You do not have access to this project.');
-        }
+        abort_unless($isCreator, 403, 'You do not have access to this project.');
 
         $query = TimeLog::query()->where('project_id', $project->id);
         if (request()->get('start_date')) {
@@ -216,17 +203,15 @@ class ProjectController extends Controller
         }
 
         $timeLogs = $query->with('user')->get()
-            ->map(function ($timeLog) {
-                return [
-                    'id' => $timeLog->id,
-                    'user_id' => $timeLog->user_id,
-                    'user_name' => $timeLog->user ? $timeLog->user->name : null,
-                    'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                    'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                    'duration' => round($timeLog->duration, 2),
-                    'is_paid' => $timeLog->is_paid,
-                ];
-            });
+            ->map(fn ($timeLog): array => [
+                'id' => $timeLog->id,
+                'user_id' => $timeLog->user_id,
+                'user_name' => $timeLog->user ? $timeLog->user->name : null,
+                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
+                'duration' => round($timeLog->duration, 2),
+                'is_paid' => $timeLog->is_paid,
+            ]);
 
         $totalDuration = round($timeLogs->sum('duration'), 2);
         $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
@@ -238,20 +223,16 @@ class ProjectController extends Controller
         // Get team members for the dropdown
         $teamMembers = $project->teamMembers()
             ->get()
-            ->map(function ($member) {
-                return [
-                    'id' => $member->id,
-                    'name' => $member->name,
-                    'email' => $member->email,
-                ];
-            });
+            ->map(fn ($member): array => [
+                'id' => $member->id,
+                'name' => $member->name,
+                'email' => $member->email,
+            ]);
 
         // Add the project creator to the team members list if not already included
-        $creatorIncluded = $teamMembers->contains(function ($member) use ($project) {
-            return $member['id'] === $project->user_id;
-        });
+        $creatorIncluded = $teamMembers->contains(fn ($member): bool => $member['id'] === $project->user_id);
 
-        if (!$creatorIncluded) {
+        if (! $creatorIncluded) {
             $teamMembers->push([
                 'id' => $project->user->id,
                 'name' => $project->user->name,
@@ -279,8 +260,6 @@ class ProjectController extends Controller
 
     /**
      * Export project time logs to CSV
-     *
-     * @return StreamedResponse
      */
     #[Action(method: 'get', name: 'project.export-time-logs', middleware: ['auth', 'verified'])]
     public function exportTimeLogs(): StreamedResponse
@@ -290,15 +269,13 @@ class ProjectController extends Controller
             'project_id' => 'required|exists:projects,id',
         ]);
 
-        $project = Project::findOrFail(request('project_id'));
+        $project = Project::query()->findOrFail(request('project_id'));
 
         // Check if the user has access to the project (either as creator or team member)
         $isCreator = $project->user_id === auth()->id();
         $isTeamMember = $project->teamMembers()->where('users.id', auth()->id())->exists();
 
-        if (!$isCreator && !$isTeamMember) {
-            abort(403, 'You do not have access to this project.');
-        }
+        abort_if(! $isCreator && ! $isTeamMember, 403, 'You do not have access to this project.');
 
         $query = TimeLog::query()->where('project_id', $project->id);
 
@@ -331,16 +308,14 @@ class ProjectController extends Controller
 
         $timeLogs = $query->with(['user'])->get();
 
-        $timeLogsData = $timeLogs->map(function ($timeLog) {
-            return [
-                'id' => $timeLog->id,
-                'user_name' => $timeLog->user ? $timeLog->user->name : 'Unknown',
-                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : 'In Progress',
-                'duration' => round($timeLog->duration, 2),
-                'is_paid' => $timeLog->is_paid ? 'Paid' : 'Unpaid',
-            ];
-        });
+        $timeLogsData = $timeLogs->map(fn ($timeLog): array => [
+            'id' => $timeLog->id,
+            'user_name' => $timeLog->user ? $timeLog->user->name : 'Unknown',
+            'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+            'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : 'In Progress',
+            'duration' => round($timeLog->duration, 2),
+            'is_paid' => $timeLog->is_paid ? 'Paid' : 'Unpaid',
+        ]);
 
         $headers = ['ID', 'Team Member', 'Start Time', 'End Time', 'Duration (hours)', 'Payment Status'];
         $filename = 'project_time_logs_' . $project->id . '_' . Carbon::now()->format('Y-m-d') . '.csv';

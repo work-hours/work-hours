@@ -1,34 +1,34 @@
-import { useForm } from '@inertiajs/react';
-import { FormEventHandler, useRef } from 'react';
+import { useForm } from '@inertiajs/react'
+import { FormEventHandler, useRef } from 'react'
 
-import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import InputError from '@/components/input-error'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
-import HeadingSmall from '@/components/heading-small';
+import HeadingSmall from '@/components/heading-small'
 
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
 export default function DeleteUser() {
-    const passwordInput = useRef<HTMLInputElement>(null);
-    const { data, setData, delete: destroy, processing, reset, errors, clearErrors } = useForm<Required<{ password: string }>>({ password: '' });
+    const passwordInput = useRef<HTMLInputElement>(null)
+    const { data, setData, delete: destroy, processing, reset, errors, clearErrors } = useForm<Required<{ password: string }>>({ password: '' })
 
     const deleteUser: FormEventHandler = (e) => {
-        e.preventDefault();
+        e.preventDefault()
 
         destroy(route('profile.destroy'), {
             preserveScroll: true,
             onSuccess: () => closeModal(),
             onError: () => passwordInput.current?.focus(),
             onFinish: () => reset(),
-        });
-    };
+        })
+    }
 
     const closeModal = () => {
-        clearErrors();
-        reset();
-    };
+        clearErrors()
+        reset()
+    }
 
     return (
         <div className="space-y-6">
@@ -85,5 +85,5 @@ export default function DeleteUser() {
                 </Dialog>
             </div>
         </div>
-    );
+    )
 }

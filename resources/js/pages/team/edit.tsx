@@ -1,32 +1,32 @@
-import { Head, useForm } from '@inertiajs/react';
-import { ArrowLeft, LoaderCircle, Lock, Mail, Save, User } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { Head, useForm } from '@inertiajs/react'
+import { ArrowLeft, LoaderCircle, Lock, Mail, Save, User } from 'lucide-react'
+import { FormEventHandler } from 'react'
 
-import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import InputError from '@/components/input-error'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import AppLayout from '@/layouts/app-layout'
+import { type BreadcrumbItem } from '@/types'
 
 type TeamMemberForm = {
-    name: string;
-    email: string;
-    password?: string; // Password is optional for editing
-    hourly_rate: number | string;
-    currency: string;
-};
+    name: string
+    email: string
+    password?: string // Password is optional for editing
+    hourly_rate: number | string
+    currency: string
+}
 
 type Props = {
     user: {
-        id: number;
-        name: string;
-        email: string;
-        hourly_rate: number;
-        currency: string;
-    };
-};
+        id: number
+        name: string
+        email: string
+        hourly_rate: number
+        currency: string
+    }
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -37,7 +37,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Edit',
         href: '/team/edit',
     },
-];
+]
 
 export default function EditTeamMember({ user }: Props) {
     const { data, setData, put, processing, errors } = useForm<TeamMemberForm>({
@@ -46,12 +46,12 @@ export default function EditTeamMember({ user }: Props) {
         password: '', // Empty by default since it's optional
         hourly_rate: user.hourly_rate,
         currency: user.currency,
-    });
+    })
 
     const submit: FormEventHandler = (e) => {
-        e.preventDefault();
-        put(route('team.update', user.id));
-    };
+        e.preventDefault()
+        put(route('team.update', user.id))
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -213,5 +213,5 @@ export default function EditTeamMember({ user }: Props) {
                 </Card>
             </div>
         </AppLayout>
-    );
+    )
 }

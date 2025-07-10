@@ -1,29 +1,29 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import AppLayout from '@/layouts/app-layout';
-import { roundToTwoDecimals } from '@/lib/utils';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
-import { BarChart3, ClockIcon, DollarSign, PlusCircle, TrendingUp, UsersIcon } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import AppLayout from '@/layouts/app-layout'
+import { roundToTwoDecimals } from '@/lib/utils'
+import { type BreadcrumbItem } from '@/types'
+import { Head, Link } from '@inertiajs/react'
+import { BarChart3, ClockIcon, DollarSign, PlusCircle, TrendingUp, UsersIcon } from 'lucide-react'
 
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface TeamStats {
-    count: number;
-    totalHours: number;
-    unpaidHours: number;
-    unpaidAmount: number;
-    currency: string;
-    weeklyAverage: number;
+    count: number
+    totalHours: number
+    unpaidHours: number
+    unpaidAmount: number
+    currency: string
+    weeklyAverage: number
     recentLogs: Array<{
-        date: string;
-        hours: number;
-        user: string;
-    }>;
-    allLogsLink: string;
+        date: string
+        hours: number
+        user: string
+    }>
+    allLogsLink: string
 }
 
 interface DashboardProps {
-    teamStats: TeamStats;
+    teamStats: TeamStats
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -31,10 +31,10 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Dashboard',
         href: '/dashboard',
     },
-];
+]
 
 // Colors for charts
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
 
 export default function Dashboard({ teamStats }: DashboardProps) {
     // Generate sample data for charts based on available stats
@@ -42,7 +42,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
         { name: 'Total', value: roundToTwoDecimals(teamStats.totalHours) },
         { name: 'Unpaid', value: roundToTwoDecimals(teamStats.unpaidHours) },
         { name: 'Paid', value: roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours) },
-    ];
+    ]
 
     // Sample weekly data (for demonstration)
     const weeklyData = [
@@ -50,14 +50,14 @@ export default function Dashboard({ teamStats }: DashboardProps) {
         { name: 'Week 2', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.1) },
         { name: 'Week 3', hours: roundToTwoDecimals(teamStats.weeklyAverage * 0.95) },
         { name: 'Week 4', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.05) },
-    ];
+    ]
 
     // Quick actions for the dashboard
     const quickActions = [
         { name: 'Log Time', icon: <ClockIcon className="h-5 w-5" />, href: '/time-log/create' },
         { name: 'Add Team Member', icon: <UsersIcon className="h-5 w-5" />, href: '/team/create' },
         { name: 'Create Project', icon: <PlusCircle className="h-5 w-5" />, href: '/project/create' },
-    ];
+    ]
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -282,5 +282,5 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                 </section>
             </div>
         </AppLayout>
-    );
+    )
 }

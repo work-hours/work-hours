@@ -1,8 +1,8 @@
-import { cn } from '@/lib/utils';
-import { type HTMLAttributes } from 'react';
-import AppLogoIcon from './app-logo-icon';
+import { cn } from '@/lib/utils'
+import { type HTMLAttributes } from 'react'
+import AppLogoIcon from './app-logo-icon'
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
 
 export default function AppLogo({ className }: HTMLAttributes<HTMLDivElement>) {
     return (
@@ -15,5 +15,5 @@ export default function AppLogo({ className }: HTMLAttributes<HTMLDivElement>) {
                 <span className="text-xs text-sidebar-foreground/70">Time Tracking</span>
             </div>
         </>
-    );
+    )
 }

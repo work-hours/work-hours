@@ -1,12 +1,12 @@
-import Heading from '@/components/heading';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { KeyRound, Palette, User } from 'lucide-react';
-import { type PropsWithChildren } from 'react';
+import Heading from '@/components/heading'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
+import { type NavItem } from '@/types'
+import { Link } from '@inertiajs/react'
+import { KeyRound, Palette, User } from 'lucide-react'
+import { type PropsWithChildren } from 'react'
 
 const sidebarNavItems: NavItem[] = [
     {
@@ -24,15 +24,15 @@ const sidebarNavItems: NavItem[] = [
         href: '/settings/appearance',
         icon: Palette,
     },
-];
+]
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
-        return null;
+        return null
     }
 
-    const currentPath = window.location.pathname;
+    const currentPath = window.location.pathname
 
     return (
         <div className="mx-auto w-2/3 px-6 py-6">
@@ -43,7 +43,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                     <Card className="overflow-hidden transition-all hover:shadow-sm">
                         <nav className="flex flex-col p-2">
                             {sidebarNavItems.map((item, index) => {
-                                const Icon = item.icon;
+                                const Icon = item.icon
                                 return (
                                     <Button
                                         key={`${item.href}-${index}`}
@@ -60,7 +60,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                             <span>{item.title}</span>
                                         </Link>
                                     </Button>
-                                );
+                                )
                             })}
                         </nav>
                     </Card>
@@ -75,5 +75,5 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                 </div>
             </div>
         </div>
-    );
+    )
 }

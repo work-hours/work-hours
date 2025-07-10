@@ -1,37 +1,37 @@
-import DeleteTeamMember from '@/components/delete-team-member';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
-import { roundToTwoDecimals } from '@/lib/utils';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { Calendar, CalendarRange, Clock, Download, Edit, Search, TimerReset, UserPlus, Users } from 'lucide-react';
-import { FormEventHandler, forwardRef } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import DeleteTeamMember from '@/components/delete-team-member'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
+import AppLayout from '@/layouts/app-layout'
+import { roundToTwoDecimals } from '@/lib/utils'
+import { type BreadcrumbItem } from '@/types'
+import { Head, Link, useForm } from '@inertiajs/react'
+import { Calendar, CalendarRange, Clock, Download, Edit, Search, TimerReset, UserPlus, Users } from 'lucide-react'
+import { FormEventHandler, forwardRef } from 'react'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Team',
         href: '/team',
     },
-];
+]
 
 // Custom input component for DatePicker with icon
 interface CustomInputProps {
-    value?: string;
-    onClick?: () => void;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    icon: React.ReactNode;
-    placeholder?: string;
-    disabled?: boolean;
-    required?: boolean;
-    autoFocus?: boolean;
-    tabIndex?: number;
-    id: string;
+    value?: string
+    onClick?: () => void
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+    icon: React.ReactNode
+    placeholder?: string
+    disabled?: boolean
+    required?: boolean
+    autoFocus?: boolean
+    tabIndex?: number
+    id: string
 }
 
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
@@ -54,65 +54,65 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
             />
         </div>
     ),
-);
+)
 
 type TeamMember = {
-    id: number;
-    name: string;
-    email: string;
-    hourly_rate: number;
-    currency: string;
-    totalHours: number;
-    weeklyAverage: number;
-    unpaidHours: number;
-    unpaidAmount: number;
-};
+    id: number
+    name: string
+    email: string
+    hourly_rate: number
+    currency: string
+    totalHours: number
+    weeklyAverage: number
+    unpaidHours: number
+    unpaidAmount: number
+}
 
 type Filters = {
-    start_date: string;
-    end_date: string;
-    search: string;
-};
+    start_date: string
+    end_date: string
+    search: string
+}
 
 type Props = {
-    teamMembers: TeamMember[];
-    filters: Filters;
-};
+    teamMembers: TeamMember[]
+    filters: Filters
+}
 
 export default function Team({ teamMembers, filters }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
         search: filters.search || '',
-    });
+    })
 
     // Convert string dates to Date objects for DatePicker
-    const startDate = data.start_date ? new Date(data.start_date) : null;
-    const endDate = data.end_date ? new Date(data.end_date) : null;
+    const startDate = data.start_date ? new Date(data.start_date) : null
+    const endDate = data.end_date ? new Date(data.end_date) : null
 
     // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
-            setData('start_date', date.toISOString().split('T')[0]);
+            setData('start_date', date.toISOString().split('T')[0])
         } else {
-            setData('start_date', '');
+            setData('start_date', '')
         }
-    };
+    }
 
     const handleEndDateChange = (date: Date | null) => {
         if (date) {
-            setData('end_date', date.toISOString().split('T')[0]);
+            setData('end_date', date.toISOString().split('T')[0])
         } else {
-            setData('end_date', '');
+            setData('end_date', '')
         }
-    };
+    }
 
     const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+        e.preventDefault()
         get(route('team.index'), {
             preserveState: true,
-        });
-    };
+        })
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -201,10 +201,10 @@ export default function Team({ teamMembers, filters }: Props) {
                                             start_date: '',
                                             end_date: '',
                                             search: '',
-                                        });
+                                        })
                                         get(route('team.index'), {
                                             preserveState: true,
-                                        });
+                                        })
                                     }}
                                     className="flex h-9 items-center gap-1 px-3"
                                 >
@@ -218,27 +218,27 @@ export default function Team({ teamMembers, filters }: Props) {
                             {(data.start_date || data.end_date || data.search) && (
                                 <CardDescription>
                                     {(() => {
-                                        let description = '';
+                                        let description = ''
 
                                         // Date range description
                                         if (data.start_date && data.end_date) {
-                                            description = `Showing team data from ${data.start_date} to ${data.end_date}`;
+                                            description = `Showing team data from ${data.start_date} to ${data.end_date}`
                                         } else if (data.start_date) {
-                                            description = `Showing team data from ${data.start_date}`;
+                                            description = `Showing team data from ${data.start_date}`
                                         } else if (data.end_date) {
-                                            description = `Showing team data until ${data.end_date}`;
+                                            description = `Showing team data until ${data.end_date}`
                                         }
 
                                         // Search description
                                         if (data.search) {
                                             if (description) {
-                                                description += ` matching "${data.search}"`;
+                                                description += ` matching "${data.search}"`
                                             } else {
-                                                description = `Showing team members matching "${data.search}"`;
+                                                description = `Showing team members matching "${data.search}"`
                                             }
                                         }
 
-                                        return description;
+                                        return description
                                     })()}
                                 </CardDescription>
                             )}
@@ -346,5 +346,5 @@ export default function Team({ teamMembers, filters }: Props) {
                 </Card>
             </div>
         </AppLayout>
-    );
+    )
 }

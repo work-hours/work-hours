@@ -1,24 +1,24 @@
-import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, Lock, Mail } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { Head, useForm } from '@inertiajs/react'
+import { LoaderCircle, Lock, Mail } from 'lucide-react'
+import { FormEventHandler } from 'react'
 
-import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import AuthLayout from '@/layouts/auth-layout';
+import InputError from '@/components/input-error'
+import TextLink from '@/components/text-link'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import AuthLayout from '@/layouts/auth-layout'
 
 type LoginForm = {
-    email: string;
-    password: string;
-    remember: boolean;
-};
+    email: string
+    password: string
+    remember: boolean
+}
 
 interface LoginProps {
-    status?: string;
-    canResetPassword: boolean;
+    status?: string
+    canResetPassword: boolean
 }
 
 export default function Login({ status, canResetPassword }: LoginProps) {
@@ -26,14 +26,14 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         email: '',
         password: '',
         remember: false,
-    });
+    })
 
     const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+        e.preventDefault()
         post(route('login'), {
             onFinish: () => reset('password'),
-        });
-    };
+        })
+    }
 
     return (
         <AuthLayout title="Welcome back" description="Enter your credentials to access your account">
@@ -144,5 +144,5 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                 </div>
             </form>
         </AuthLayout>
-    );
+    )
 }

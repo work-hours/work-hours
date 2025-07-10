@@ -1,45 +1,45 @@
-import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Transition } from '@headlessui/react';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { CheckCircle, LoaderCircle, Mail, User } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { type BreadcrumbItem, type SharedData } from '@/types'
+import { Transition } from '@headlessui/react'
+import { Head, Link, useForm, usePage } from '@inertiajs/react'
+import { CheckCircle, LoaderCircle, Mail, User } from 'lucide-react'
+import { FormEventHandler } from 'react'
 
-import DeleteUser from '@/components/delete-user';
-import HeadingSmall from '@/components/heading-small';
-import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import AppLayout from '@/layouts/app-layout';
-import SettingsLayout from '@/layouts/settings/layout';
+import DeleteUser from '@/components/delete-user'
+import HeadingSmall from '@/components/heading-small'
+import InputError from '@/components/input-error'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import AppLayout from '@/layouts/app-layout'
+import SettingsLayout from '@/layouts/settings/layout'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Profile settings',
         href: '/settings/profile',
     },
-];
+]
 
 type ProfileForm = {
-    name: string;
-    email: string;
-};
+    name: string
+    email: string
+}
 
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
-    const { auth } = usePage<SharedData>().props;
+    const { auth } = usePage<SharedData>().props
 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
         name: auth.user.name,
         email: auth.user.email,
-    });
+    })
 
     const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+        e.preventDefault()
 
         patch(route('profile.update'), {
             preserveScroll: true,
-        });
-    };
+        })
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -160,5 +160,5 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                 <DeleteUser />
             </SettingsLayout>
         </AppLayout>
-    );
+    )
 }

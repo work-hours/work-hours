@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTimeLogRequest;
@@ -10,16 +12,16 @@ use App\Models\TimeLog;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Msamgan\Lact\Attributes\Action;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
-class TimeLogController extends Controller
+final class TimeLogController extends Controller
 {
     use ExportableTrait;
+
     public function index()
     {
         $query = TimeLog::query()->where('user_id', auth()->id());
@@ -49,17 +51,15 @@ class TimeLogController extends Controller
         }
 
         $timeLogs = $query->with('project')->get()
-            ->map(function ($timeLog) {
-                return [
-                    'id' => $timeLog->id,
-                    'project_id' => $timeLog->project_id,
-                    'project_name' => $timeLog->project ? $timeLog->project->name : null,
-                    'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                    'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                    'duration' => round($timeLog->duration, 2),
-                    'is_paid' => $timeLog->is_paid,
-                ];
-            });
+            ->map(fn ($timeLog): array => [
+                'id' => $timeLog->id,
+                'project_id' => $timeLog->project_id,
+                'project_name' => $timeLog->project ? $timeLog->project->name : null,
+                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
+                'duration' => round($timeLog->duration, 2),
+                'is_paid' => $timeLog->is_paid,
+            ]);
 
         // Calculate total hours
         $totalDuration = round($timeLogs->sum('duration'), 2);
@@ -112,7 +112,7 @@ class TimeLogController extends Controller
             $data['user_id'] = auth()->id();
 
             // Calculate duration in minutes
-            if (!empty($data['start_timestamp']) && !empty($data['end_timestamp'])) {
+            if (! empty($data['start_timestamp']) && ! empty($data['end_timestamp'])) {
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
 
@@ -136,26 +136,10 @@ class TimeLogController extends Controller
         ]);
     }
 
-    /**
-     * Get projects created by or assigned to the current user
-     */
-    private function getUserProjects()
-    {
-        $userId = auth()->id();
-
-        return Project::query()->where('user_id', $userId)
-            ->orWhereHas('teamMembers', function ($query) use ($userId) {
-                $query->where('member_id', $userId);
-            })
-            ->get(['id', 'name']);
-    }
-
     public function edit(TimeLog $timeLog)
     {
         // Check if the time log belongs to the authenticated user
-        if ($timeLog->user_id !== auth()->id()) {
-            abort(403, 'You can only edit your own time logs.');
-        }
+        abort_if($timeLog->user_id !== auth()->id(), 403, 'You can only edit your own time logs.');
 
         $projects = $this->getUserProjects();
 
@@ -178,16 +162,14 @@ class TimeLogController extends Controller
     public function update(UpdateTimeLogRequest $request, TimeLog $timeLog): void
     {
         // Check if the time log belongs to the authenticated user
-        if ($timeLog->user_id !== auth()->id()) {
-            abort(403, 'You can only update your own time logs.');
-        }
+        abort_if($timeLog->user_id !== auth()->id(), 403, 'You can only update your own time logs.');
 
         DB::beginTransaction();
         try {
             $data = $request->validated();
 
             // Calculate duration in minutes
-            if (!empty($data['start_timestamp']) && !empty($data['end_timestamp'])) {
+            if (! empty($data['start_timestamp']) && ! empty($data['end_timestamp'])) {
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
 
@@ -211,9 +193,7 @@ class TimeLogController extends Controller
     public function destroy(TimeLog $timeLog): void
     {
         // Check if the time log belongs to the authenticated user
-        if ($timeLog->user_id !== auth()->id()) {
-            abort(403, 'You can only delete your own time logs.');
-        }
+        abort_if($timeLog->user_id !== auth()->id(), 403, 'You can only delete your own time logs.');
 
         DB::beginTransaction();
         try {
@@ -235,9 +215,7 @@ class TimeLogController extends Controller
     {
         $timeLogIds = request('time_log_ids', []);
 
-        if (empty($timeLogIds)) {
-            abort(400, 'No time logs selected.');
-        }
+        abort_if(empty($timeLogIds), 400, 'No time logs selected.');
 
         DB::beginTransaction();
         try {
@@ -259,8 +237,6 @@ class TimeLogController extends Controller
 
     /**
      * Export time logs to CSV
-     *
-     * @return StreamedResponse
      */
     #[Action(method: 'get', name: 'time-log.export', middleware: ['auth', 'verified'])]
     public function export(): StreamedResponse
@@ -292,20 +268,32 @@ class TimeLogController extends Controller
         }
 
         $timeLogs = $query->with('project')->get()
-            ->map(function ($timeLog) {
-                return [
-                    'id' => $timeLog->id,
-                    'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
-                    'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                    'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
-                    'duration' => round($timeLog->duration, 2),
-                    'is_paid' => $timeLog->is_paid,
-                ];
-            });
+            ->map(fn ($timeLog): array => [
+                'id' => $timeLog->id,
+                'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
+                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
+                'duration' => round($timeLog->duration, 2),
+                'is_paid' => $timeLog->is_paid,
+            ]);
 
         $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Paid'];
         $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($timeLogs, $headers, $filename);
+    }
+
+    /**
+     * Get projects created by or assigned to the current user
+     */
+    private function getUserProjects()
+    {
+        $userId = auth()->id();
+
+        return Project::query()->where('user_id', $userId)
+            ->orWhereHas('teamMembers', function ($query) use ($userId): void {
+                $query->where('member_id', $userId);
+            })
+            ->get(['id', 'name']);
     }
 }

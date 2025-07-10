@@ -1,32 +1,32 @@
-import { useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { useForm } from '@inertiajs/react'
+import { FormEventHandler } from 'react'
 
-import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button'
+import { Trash2 } from 'lucide-react'
 
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
 interface DeleteTimeLogProps {
-    timeLogId: number;
+    timeLogId: number
 }
 
 export default function DeleteTimeLog({ timeLogId }: DeleteTimeLogProps) {
-    const { delete: destroy, processing, reset, clearErrors } = useForm({});
+    const { delete: destroy, processing, reset, clearErrors } = useForm({})
 
     const deleteTimeLog: FormEventHandler = (e) => {
-        e.preventDefault();
+        e.preventDefault()
 
         destroy(route('time-log.destroy', timeLogId), {
             preserveScroll: true,
             onSuccess: () => closeModal(),
             onFinish: () => reset(),
-        });
-    };
+        })
+    }
 
     const closeModal = () => {
-        clearErrors();
-        reset();
-    };
+        clearErrors()
+        reset()
+    }
 
     return (
         <Dialog>
@@ -56,5 +56,5 @@ export default function DeleteTimeLog({ timeLogId }: DeleteTimeLogProps) {
                 </form>
             </DialogContent>
         </Dialog>
-    );
+    )
 }

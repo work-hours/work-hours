@@ -1,57 +1,57 @@
-import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { SearchableSelect } from '@/components/ui/searchable-select';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router, useForm } from '@inertiajs/react';
-import { ArrowLeft, Briefcase, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset } from 'lucide-react';
-import { FormEventHandler, forwardRef, useState } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { SearchableSelect } from '@/components/ui/searchable-select'
+import AppLayout from '@/layouts/app-layout'
+import { type BreadcrumbItem } from '@/types'
+import { Head, Link, router, useForm } from '@inertiajs/react'
+import { ArrowLeft, Briefcase, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset } from 'lucide-react'
+import { FormEventHandler, forwardRef, useState } from 'react'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 type TimeLog = {
-    id: number;
-    project_id: number;
-    project_name: string | null;
-    start_timestamp: string;
-    end_timestamp: string;
-    duration: number;
-    is_paid: boolean;
-};
+    id: number
+    project_id: number
+    project_name: string | null
+    start_timestamp: string
+    end_timestamp: string
+    duration: number
+    is_paid: boolean
+}
 
 type Filters = {
-    start_date: string;
-    end_date: string;
-    project_id: string;
-    is_paid: string;
-};
+    start_date: string
+    end_date: string
+    project_id: string
+    is_paid: string
+}
 
 type User = {
-    id: number;
-    name: string;
-    email: string;
-};
+    id: number
+    name: string
+    email: string
+}
 
 type Project = {
-    id: number;
-    name: string;
-};
+    id: number
+    name: string
+}
 
 // Custom input component for DatePicker with icon
 interface CustomInputProps {
-    value?: string;
-    onClick?: () => void;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    icon: React.ReactNode;
-    placeholder?: string;
-    disabled?: boolean;
-    required?: boolean;
-    autoFocus?: boolean;
-    tabIndex?: number;
-    id: string;
+    value?: string
+    onClick?: () => void
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+    icon: React.ReactNode
+    placeholder?: string
+    disabled?: boolean
+    required?: boolean
+    autoFocus?: boolean
+    tabIndex?: number
+    id: string
 }
 
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
@@ -74,19 +74,19 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
             />
         </div>
     ),
-);
+)
 
 type Props = {
-    timeLogs: TimeLog[];
-    filters: Filters;
-    projects: Project[];
-    user: User;
-    totalDuration: number;
-    unpaidHours: number;
-    unpaidAmount: number;
-    currency: string;
-    weeklyAverage: number;
-};
+    timeLogs: TimeLog[]
+    filters: Filters
+    projects: Project[]
+    user: User
+    totalDuration: number
+    unpaidHours: number
+    unpaidAmount: number
+    currency: string
+    weeklyAverage: number
+}
 
 export default function TeamMemberTimeLogs({
     timeLogs,
@@ -108,24 +108,24 @@ export default function TeamMemberTimeLogs({
             title: user.name,
             href: `/team/${user.id}/time-logs`,
         },
-    ];
+    ]
 
     // State for selected time logs
-    const [selectedLogs, setSelectedLogs] = useState<number[]>([]);
+    const [selectedLogs, setSelectedLogs] = useState<number[]>([])
 
     // Handle checkbox selection
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
-            setSelectedLogs([...selectedLogs, id]);
+            setSelectedLogs([...selectedLogs, id])
         } else {
-            setSelectedLogs(selectedLogs.filter((logId) => logId !== id));
+            setSelectedLogs(selectedLogs.filter((logId) => logId !== id))
         }
-    };
+    }
 
     // Mark selected logs as paid
     const markAsPaid = () => {
         if (selectedLogs.length === 0) {
-            return;
+            return
         }
 
         router.post(
@@ -135,46 +135,46 @@ export default function TeamMemberTimeLogs({
             },
             {
                 onSuccess: () => {
-                    setSelectedLogs([]);
+                    setSelectedLogs([])
                 },
             },
-        );
-    };
+        )
+    }
 
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
         project_id: filters.project_id || '',
         is_paid: filters.is_paid || '',
-    });
+    })
 
     // Convert string dates to Date objects for DatePicker
-    const startDate = data.start_date ? new Date(data.start_date) : null;
-    const endDate = data.end_date ? new Date(data.end_date) : null;
+    const startDate = data.start_date ? new Date(data.start_date) : null
+    const endDate = data.end_date ? new Date(data.end_date) : null
 
     // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
-            setData('start_date', date.toISOString().split('T')[0]);
+            setData('start_date', date.toISOString().split('T')[0])
         } else {
-            setData('start_date', '');
+            setData('start_date', '')
         }
-    };
+    }
 
     const handleEndDateChange = (date: Date | null) => {
         if (date) {
-            setData('end_date', date.toISOString().split('T')[0]);
+            setData('end_date', date.toISOString().split('T')[0])
         } else {
-            setData('end_date', '');
+            setData('end_date', '')
         }
-    };
+    }
 
     const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+        e.preventDefault()
         get(route('team.time-logs', user.id), {
             preserveState: true,
-        });
-    };
+        })
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -369,10 +369,10 @@ export default function TeamMemberTimeLogs({
                                             end_date: '',
                                             project_id: '',
                                             is_paid: '',
-                                        });
+                                        })
                                         get(route('team.time-logs', user.id), {
                                             preserveState: true,
-                                        });
+                                        })
                                     }}
                                     className="flex h-9 items-center gap-1 px-3"
                                 >
@@ -386,41 +386,41 @@ export default function TeamMemberTimeLogs({
                             {(data.start_date || data.end_date || data.project_id) && (
                                 <CardDescription>
                                     {(() => {
-                                        let description = '';
+                                        let description = ''
 
                                         // Date range description
                                         if (data.start_date && data.end_date) {
-                                            description = `Showing logs from ${data.start_date} to ${data.end_date}`;
+                                            description = `Showing logs from ${data.start_date} to ${data.end_date}`
                                         } else if (data.start_date) {
-                                            description = `Showing logs from ${data.start_date}`;
+                                            description = `Showing logs from ${data.start_date}`
                                         } else if (data.end_date) {
-                                            description = `Showing logs until ${data.end_date}`;
+                                            description = `Showing logs until ${data.end_date}`
                                         }
 
                                         // Project description
                                         if (data.project_id) {
-                                            const selectedProject = projects.find((project) => project.id.toString() === data.project_id);
-                                            const projectName = selectedProject ? selectedProject.name : '';
+                                            const selectedProject = projects.find((project) => project.id.toString() === data.project_id)
+                                            const projectName = selectedProject ? selectedProject.name : ''
 
                                             if (description) {
-                                                description += ` for ${projectName}`;
+                                                description += ` for ${projectName}`
                                             } else {
-                                                description = `Showing logs for ${projectName}`;
+                                                description = `Showing logs for ${projectName}`
                                             }
                                         }
 
                                         // Payment status description
                                         if (data.is_paid) {
-                                            const paymentStatus = data.is_paid === 'true' ? 'paid' : 'unpaid';
+                                            const paymentStatus = data.is_paid === 'true' ? 'paid' : 'unpaid'
 
                                             if (description) {
-                                                description += ` (${paymentStatus})`;
+                                                description += ` (${paymentStatus})`
                                             } else {
-                                                description = `Showing ${paymentStatus} logs`;
+                                                description = `Showing ${paymentStatus} logs`
                                             }
                                         }
 
-                                        return description;
+                                        return description
                                     })()}
                                 </CardDescription>
                             )}
@@ -480,5 +480,5 @@ export default function TeamMemberTimeLogs({
                 </Card>
             </div>
         </AppLayout>
-    );
+    )
 }

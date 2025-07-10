@@ -1,32 +1,32 @@
-import { Head, useForm } from '@inertiajs/react';
-import { ArrowLeft, FileText, FolderPlus, LoaderCircle, Text, Users } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { Head, useForm } from '@inertiajs/react'
+import { ArrowLeft, FileText, FolderPlus, LoaderCircle, Text, Users } from 'lucide-react'
+import { FormEventHandler } from 'react'
 
-import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import InputError from '@/components/input-error'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import AppLayout from '@/layouts/app-layout'
+import { type BreadcrumbItem } from '@/types'
 
 type TeamMember = {
-    id: number;
-    name: string;
-    email: string;
-};
+    id: number
+    name: string
+    email: string
+}
 
 type ProjectForm = {
-    name: string;
-    description: string;
-    team_members: number[];
-};
+    name: string
+    description: string
+    team_members: number[]
+}
 
 type Props = {
-    teamMembers: TeamMember[];
-};
+    teamMembers: TeamMember[]
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -37,36 +37,36 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Create',
         href: '/project/create',
     },
-];
+]
 
 export default function CreateProject({ teamMembers }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<ProjectForm>({
         name: '',
         description: '',
         team_members: [],
-    });
+    })
 
     const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+        e.preventDefault()
         post(route('project.store'), {
             onFinish: () => reset(),
-        });
-    };
+        })
+    }
 
     const handleTeamMemberToggle = (memberId: number) => {
-        const currentMembers = [...data.team_members];
-        const index = currentMembers.indexOf(memberId);
+        const currentMembers = [...data.team_members]
+        const index = currentMembers.indexOf(memberId)
 
         if (index === -1) {
             // Add member if not already selected
-            currentMembers.push(memberId);
+            currentMembers.push(memberId)
         } else {
             // Remove member if already selected
-            currentMembers.splice(index, 1);
+            currentMembers.splice(index, 1)
         }
 
-        setData('team_members', currentMembers);
-    };
+        setData('team_members', currentMembers)
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -185,5 +185,5 @@ export default function CreateProject({ teamMembers }: Props) {
                 </Card>
             </div>
         </AppLayout>
-    );
+    )
 }

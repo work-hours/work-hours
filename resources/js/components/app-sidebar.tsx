@@ -1,6 +1,6 @@
-import { NavFooter } from '@/components/nav-footer';
-import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
+import { NavFooter } from '@/components/nav-footer'
+import { NavMain } from '@/components/nav-main'
+import { NavUser } from '@/components/nav-user'
 import {
     Sidebar,
     SidebarContent,
@@ -10,11 +10,11 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarSeparator,
-} from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { Folder, Heart, LayoutGrid, LucideProjector, LucideServerCog, TimerIcon } from 'lucide-react';
-import AppLogo from './app-logo';
+} from '@/components/ui/sidebar'
+import { type NavItem } from '@/types'
+import { Link } from '@inertiajs/react'
+import { Folder, Heart, LayoutGrid, LucideProjector, LucideServerCog, TimerIcon } from 'lucide-react'
+import AppLogo from './app-logo'
 
 const mainNavItems: NavItem[] = [
     {
@@ -37,7 +37,7 @@ const mainNavItems: NavItem[] = [
         href: '/time-log',
         icon: TimerIcon,
     },
-];
+]
 
 const footerNavItems: NavItem[] = [
     {
@@ -50,7 +50,7 @@ const footerNavItems: NavItem[] = [
         href: 'https://github.com/sponsors/msamgan',
         icon: Heart,
     },
-];
+]
 
 export function AppSidebar() {
     return (
@@ -77,5 +77,5 @@ export function AppSidebar() {
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
-    );
+    )
 }

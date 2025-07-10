@@ -1,32 +1,32 @@
-import { useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { useForm } from '@inertiajs/react'
+import { FormEventHandler } from 'react'
 
-import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button'
+import { Trash2 } from 'lucide-react'
 
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
 interface DeleteTeamMemberProps {
-    userId: number;
+    userId: number
 }
 
 export default function DeleteTeamMember({ userId }: DeleteTeamMemberProps) {
-    const { delete: destroy, processing, reset, clearErrors } = useForm({});
+    const { delete: destroy, processing, reset, clearErrors } = useForm({})
 
     const deleteTeamMember: FormEventHandler = (e) => {
-        e.preventDefault();
+        e.preventDefault()
 
         destroy(route('team.destroy', userId), {
             preserveScroll: true,
             onSuccess: () => closeModal(),
             onFinish: () => reset(),
-        });
-    };
+        })
+    }
 
     const closeModal = () => {
-        clearErrors();
-        reset();
-    };
+        clearErrors()
+        reset()
+    }
 
     return (
         <Dialog>
@@ -56,5 +56,5 @@ export default function DeleteTeamMember({ userId }: DeleteTeamMemberProps) {
                 </form>
             </DialogContent>
         </Dialog>
-    );
+    )
 }

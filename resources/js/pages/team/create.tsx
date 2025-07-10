@@ -1,22 +1,22 @@
-import { Head, useForm } from '@inertiajs/react';
-import { ArrowLeft, LoaderCircle, Lock, Mail, User, UserPlus } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { Head, useForm } from '@inertiajs/react'
+import { ArrowLeft, LoaderCircle, Lock, Mail, User, UserPlus } from 'lucide-react'
+import { FormEventHandler } from 'react'
 
-import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import InputError from '@/components/input-error'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import AppLayout from '@/layouts/app-layout'
+import { type BreadcrumbItem } from '@/types'
 
 type TeamMemberForm = {
-    name: string;
-    email: string;
-    password: string;
-    hourly_rate: number | string;
-    currency: string;
-};
+    name: string
+    email: string
+    password: string
+    hourly_rate: number | string
+    currency: string
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -27,7 +27,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Create',
         href: '/team/create',
     },
-];
+]
 
 export default function CreateTeamMember() {
     const { data, setData, post, processing, errors, reset } = useForm<Required<TeamMemberForm>>({
@@ -36,14 +36,14 @@ export default function CreateTeamMember() {
         password: '',
         hourly_rate: 0,
         currency: 'USD',
-    });
+    })
 
     const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+        e.preventDefault()
         post(route('team.store'), {
             onFinish: () => reset(),
-        });
-    };
+        })
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -206,5 +206,5 @@ export default function CreateTeamMember() {
                 </Card>
             </div>
         </AppLayout>
-    );
+    )
 }

@@ -1,45 +1,45 @@
-import DeleteProject from '@/components/delete-project';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
-import { Clock, Download, Edit, FolderPlus, Folders } from 'lucide-react';
+import DeleteProject from '@/components/delete-project'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
+import AppLayout from '@/layouts/app-layout'
+import { type BreadcrumbItem } from '@/types'
+import { Head, Link } from '@inertiajs/react'
+import { Clock, Download, Edit, FolderPlus, Folders } from 'lucide-react'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Projects',
         href: '/project',
     },
-];
+]
 
 type TeamMember = {
-    id: number;
-    name: string;
-    email: string;
-};
+    id: number
+    name: string
+    email: string
+}
 
 type Project = {
-    id: number;
-    name: string;
-    description: string | null;
-    team_members: TeamMember[];
+    id: number
+    name: string
+    description: string | null
+    team_members: TeamMember[]
     user: {
-        id: number;
-        name: string;
-        email: string;
-    };
-};
+        id: number
+        name: string
+        email: string
+    }
+}
 
 type Props = {
-    projects: Project[];
+    projects: Project[]
     auth: {
         user: {
-            id: number;
-        };
-    };
-};
+            id: number
+        }
+    }
+}
 
 export default function Projects({ projects, auth }: Props) {
     return (
@@ -155,5 +155,5 @@ export default function Projects({ projects, auth }: Props) {
                 </Card>
             </div>
         </AppLayout>
-    );
+    )
 }

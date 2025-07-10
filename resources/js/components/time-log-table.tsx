@@ -1,29 +1,29 @@
-import DeleteTimeLog from '@/components/delete-time-log';
-import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table';
-import { formatDateTime } from '@/lib/utils';
-import { Link } from '@inertiajs/react';
-import { Edit } from 'lucide-react';
+import DeleteTimeLog from '@/components/delete-time-log'
+import { Button } from '@/components/ui/button'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
+import { formatDateTime } from '@/lib/utils'
+import { Link } from '@inertiajs/react'
+import { Edit } from 'lucide-react'
 
 export type TimeLogEntry = {
-    id: number;
-    project_id?: number;
-    project_name: string | null;
-    start_timestamp: string;
-    end_timestamp: string;
-    duration: number;
-    user_name?: string;
-    is_paid?: boolean;
-};
+    id: number
+    project_id?: number
+    project_name: string | null
+    start_timestamp: string
+    end_timestamp: string
+    duration: number
+    user_name?: string
+    is_paid?: boolean
+}
 
 type TimeLogTableProps = {
-    timeLogs: TimeLogEntry[];
-    showTeamMember?: boolean;
-    showActions?: boolean;
-    showCheckboxes?: boolean;
-    selectedLogs?: number[];
-    onSelectLog?: (id: number, checked: boolean) => void;
-};
+    timeLogs: TimeLogEntry[]
+    showTeamMember?: boolean
+    showActions?: boolean
+    showCheckboxes?: boolean
+    selectedLogs?: number[]
+    onSelectLog?: (id: number, checked: boolean) => void
+}
 
 export default function TimeLogTable({
     timeLogs,
@@ -98,5 +98,5 @@ export default function TimeLogTable({
                 ))}
             </TableBody>
         </Table>
-    );
+    )
 }

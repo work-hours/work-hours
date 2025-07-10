@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
-use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -11,14 +12,13 @@ trait ExportableTrait
     /**
      * Export data to CSV
      *
-     * @param Collection $data The data to export
-     * @param array $headers The headers for the CSV file
-     * @param string $filename The name of the file to download
-     * @return StreamedResponse
+     * @param  Collection  $data  The data to export
+     * @param  array  $headers  The headers for the CSV file
+     * @param  string  $filename  The name of the file to download
      */
     public function exportToCsv(Collection $data, array $headers, string $filename): StreamedResponse
     {
-        $callback = function() use ($data, $headers) {
+        $callback = function () use ($data, $headers): void {
             $file = fopen('php://output', 'w');
 
             // Add headers

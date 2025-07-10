@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreTimeLogRequest extends FormRequest
+final class StoreTimeLogRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +27,7 @@ class StoreTimeLogRequest extends FormRequest
         return [
             'project_id' => ['required', 'exists:projects,id'],
             'start_timestamp' => ['required', 'date'],
-            'end_timestamp' => ['date', 'after_or_equal:start_timestamp', 'nullable']
+            'end_timestamp' => ['date', 'after_or_equal:start_timestamp', 'nullable'],
         ];
     }
 }

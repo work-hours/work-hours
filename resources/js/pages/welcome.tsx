@@ -1,6 +1,6 @@
-import AppLogoIcon from '@/components/app-logo-icon';
-import { Head, Link } from '@inertiajs/react';
-import { ArrowRight, BarChart2, CheckCircle, Clock, Users } from 'lucide-react';
+import AppLogoIcon from '@/components/app-logo-icon'
+import { Head, Link } from '@inertiajs/react'
+import { ArrowRight, BarChart2, CheckCircle, Clock, Users } from 'lucide-react'
 
 export default function Welcome() {
     return (
@@ -144,5 +144,5 @@ export default function Welcome() {
                 </div>
             </footer>
         </div>
-    );
+    )
 }
