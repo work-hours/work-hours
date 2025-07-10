@@ -82,19 +82,19 @@ export default function Dashboard({ teamStats }: DashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex flex-col gap-4 p-4">
+            <div className="flex flex-col gap-6 p-6">
                 {/* Welcome section with quick actions */}
-                <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-1">
+                <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Welcome back!</h1>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Here's an overview of your team's activity</p>
+                        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Welcome back!</h1>
+                        <p className="mt-1 text-gray-500 dark:text-gray-400">Here's an overview of your team's activity</p>
                     </div>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-2">
                         {quickActions.map((action, index) => (
                             <Link
                                 key={index}
                                 href={action.href}
-                                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-primary/90 transition-colors"
+                                className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/90 transition-colors"
                             >
                                 {action.icon}
                                 {action.name}
@@ -104,14 +104,14 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                 </section>
 
                 {/* Stats overview */}
-                <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                     {/* Team members card */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-4">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Team Members</CardTitle>
                             <UsersIcon className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
-                        <CardContent className="px-4 pb-3 pt-0">
+                        <CardContent>
                             <div className="text-2xl font-bold">{teamStats.count}</div>
                             <p className="text-xs text-muted-foreground">Active members in your team</p>
                         </CardContent>
@@ -119,13 +119,13 @@ export default function Dashboard({ teamStats }: DashboardProps) {
 
                     {/* Total hours card */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-4">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
                             <ClockIcon className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
-                        <CardContent className="px-4 pb-3 pt-0">
+                        <CardContent>
                             <div className="text-2xl font-bold">{teamStats.totalHours}</div>
-                            <div className="flex items-center text-xs text-green-500">
+                            <div className="mt-1 flex items-center text-xs text-green-500">
                                 <TrendingUp className="mr-1 h-3 w-3" />
                                 <span>+{Math.round(teamStats.weeklyAverage)} hrs this week</span>
                             </div>
@@ -134,11 +134,11 @@ export default function Dashboard({ teamStats }: DashboardProps) {
 
                     {/* Weekly average card */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-4">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
                             <BarChart3 className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
-                        <CardContent className="px-4 pb-3 pt-0">
+                        <CardContent>
                             <div className="text-2xl font-bold">{teamStats.weeklyAverage}</div>
                             <p className="text-xs text-muted-foreground">Hours per team member</p>
                         </CardContent>
@@ -146,13 +146,13 @@ export default function Dashboard({ teamStats }: DashboardProps) {
 
                     {/* Unpaid amount card */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-4">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Unpaid Amount</CardTitle>
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
-                        <CardContent className="px-4 pb-3 pt-0">
+                        <CardContent>
                             <div className="text-2xl font-bold">{teamStats.currency} {teamStats.unpaidAmount}</div>
-                            <div className="flex items-center text-xs text-amber-500">
+                            <div className="mt-1 flex items-center text-xs text-amber-500">
                                 <ClockIcon className="mr-1 h-3 w-3" />
                                 <span>{teamStats.unpaidHours} unpaid hours</span>
                             </div>
@@ -161,14 +161,14 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                 </section>
 
                 {/* Charts section */}
-                <section className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     {/* Hours distribution chart */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
-                        <CardHeader className="pb-2 pt-3 px-4">
-                            <CardTitle className="text-base">Hours Distribution</CardTitle>
-                            <CardDescription className="text-xs">Breakdown of total vs. unpaid hours</CardDescription>
+                        <CardHeader>
+                            <CardTitle>Hours Distribution</CardTitle>
+                            <CardDescription>Breakdown of total vs. unpaid hours</CardDescription>
                         </CardHeader>
-                        <CardContent className="h-72 px-2">
+                        <CardContent className="h-80">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
@@ -194,11 +194,11 @@ export default function Dashboard({ teamStats }: DashboardProps) {
 
                     {/* Weekly trend chart */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
-                        <CardHeader className="pb-2 pt-3 px-4">
-                            <CardTitle className="text-base">Weekly Trend</CardTitle>
-                            <CardDescription className="text-xs">Hours logged over the past weeks</CardDescription>
+                        <CardHeader>
+                            <CardTitle>Weekly Trend</CardTitle>
+                            <CardDescription>Hours logged over the past weeks</CardDescription>
                         </CardHeader>
-                        <CardContent className="h-72 px-2">
+                        <CardContent className="h-80">
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart
                                     data={weeklyData}
@@ -216,31 +216,31 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                 </section>
 
                 {/* Recent activity and team overview */}
-                <section className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     {/* Recent time logs */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
-                        <CardHeader className="pb-2 pt-3 px-4">
+                        <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <CardTitle className="text-base">Recent Time Logs</CardTitle>
-                                    <CardDescription className="text-xs">Your team's latest activity</CardDescription>
+                                    <CardTitle>Recent Time Logs</CardTitle>
+                                    <CardDescription>Your team's latest activity</CardDescription>
                                 </div>
-                                <Link href={teamStats.allLogsLink} className="text-xs text-primary hover:underline">
+                                <Link href={teamStats.allLogsLink} className="text-sm text-primary hover:underline">
                                     View all logs
                                 </Link>
                             </div>
                         </CardHeader>
-                        <CardContent className="px-4 pb-3">
-                            <div className="space-y-2">
+                        <CardContent>
+                            <div className="space-y-4">
                                 {teamStats.recentLogs.length > 0 ? (
                                     teamStats.recentLogs.map((log, index) => (
                                         <div key={index} className="flex items-center justify-between border-b pb-2 last:border-0">
                                             <div className="flex items-center gap-2">
                                                 <div className="rounded-full bg-primary/10 p-1">
-                                                    <ClockIcon className="h-3.5 w-3.5 text-primary" />
+                                                    <ClockIcon className="h-4 w-4 text-primary" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-xs font-medium">
+                                                    <p className="text-sm font-medium">
                                                         {log.user} on{' '}
                                                         {new Date(log.date).toLocaleDateString('en-US', {
                                                             weekday: 'long',
@@ -250,13 +250,13 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="text-xs font-medium">{log.hours} hours</div>
+                                            <div className="text-sm font-medium">{log.hours} hours</div>
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="text-center py-3 text-gray-500">
-                                        <p className="text-sm">No recent time logs found</p>
-                                        <Link href="/time-log/create" className="text-primary hover:underline mt-1 inline-block text-xs">
+                                    <div className="text-center py-4 text-gray-500">
+                                        <p>No recent time logs found</p>
+                                        <Link href="/time-log/create" className="text-primary hover:underline mt-2 inline-block">
                                             Create your first time log
                                         </Link>
                                     </div>
@@ -267,11 +267,11 @@ export default function Dashboard({ teamStats }: DashboardProps) {
 
                     {/* Team productivity insights */}
                     <Card className="overflow-hidden transition-all hover:shadow-md">
-                        <CardHeader className="pb-2 pt-3 px-4">
-                            <CardTitle className="text-base">Team Productivity</CardTitle>
-                            <CardDescription className="text-xs">Hours logged by team members</CardDescription>
+                        <CardHeader>
+                            <CardTitle>Team Productivity</CardTitle>
+                            <CardDescription>Hours logged by team members</CardDescription>
                         </CardHeader>
-                        <CardContent className="h-[280px] px-2">
+                        <CardContent className="h-[300px]">
                             {teamStats.count > 0 ? (
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart
@@ -291,9 +291,9 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                                 </ResponsiveContainer>
                             ) : (
                                 <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                                    <UsersIcon className="h-10 w-10 mb-2 opacity-50" />
-                                    <p className="text-sm">Add team members to see productivity insights</p>
-                                    <Link href="/team/create" className="text-primary hover:underline mt-1 text-xs">
+                                    <UsersIcon className="h-12 w-12 mb-2 opacity-50" />
+                                    <p>Add team members to see productivity insights</p>
+                                    <Link href="/team/create" className="text-primary hover:underline mt-2">
                                         Add team members
                                     </Link>
                                 </div>
