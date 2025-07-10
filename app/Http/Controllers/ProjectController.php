@@ -217,10 +217,8 @@ final class ProjectController extends Controller
         $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
-        // Calculate unpaid amount (this would need to be adjusted based on your business logic)
-        $unpaidAmount = round($unpaidHours * 0, 2); // Placeholder, adjust as needed
+        $unpaidAmount = round($unpaidHours * 0, 2);
 
-        // Get team members for the dropdown
         $teamMembers = $project->teamMembers()
             ->get()
             ->map(fn ($member): array => [
@@ -229,7 +227,6 @@ final class ProjectController extends Controller
                 'email' => $member->email,
             ]);
 
-        // Add the project creator to the team members list if not already included
         $creatorIncluded = $teamMembers->contains(fn ($member): bool => $member['id'] === $project->user_id);
 
         if (! $creatorIncluded) {
@@ -258,20 +255,15 @@ final class ProjectController extends Controller
         ]);
     }
 
-    /**
-     * Export project time logs to CSV
-     */
     #[Action(method: 'get', name: 'project.export-time-logs', middleware: ['auth', 'verified'])]
     public function exportTimeLogs(): StreamedResponse
     {
-        // Validate project_id parameter
         request()->validate([
             'project_id' => 'required|exists:projects,id',
         ]);
 
         $project = Project::query()->findOrFail(request('project_id'));
 
-        // Check if the user has access to the project (either as creator or team member)
         $isCreator = $project->user_id === auth()->id();
         $isTeamMember = $project->teamMembers()->where('users.id', auth()->id())->exists();
 
@@ -279,7 +271,6 @@ final class ProjectController extends Controller
 
         $query = TimeLog::query()->where('project_id', $project->id);
 
-        // Apply date filters if provided
         if (request()->get('start_date')) {
             $query->whereDate('start_timestamp', '>=', request('start_date'));
         }
@@ -288,20 +279,15 @@ final class ProjectController extends Controller
             $query->whereDate('start_timestamp', '<=', request('end_date'));
         }
 
-        // Apply team member filter if provided
         if (request()->get('user_id') && request('user_id')) {
-            // Validate that the user is either the project creator or a team member
             if ($isCreator) {
-                // Project creator can see all team members' logs
                 $query->where('user_id', request('user_id'));
             } else {
-                // Team members can only see their own logs
                 $query->where('user_id', auth()->id());
             }
         }
 
-        // Apply paid/unpaid filter if provided
-        if (request()->has('is_paid') && request('is_paid') !== '') {
+        if (request()->get('is_paid') && request('is_paid') !== '') {
             $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
             $query->where('is_paid', $isPaid);
         }

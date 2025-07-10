@@ -25,8 +25,6 @@ final class TimeLogController extends Controller
     public function index()
     {
         $query = TimeLog::query()->where('user_id', auth()->id());
-
-        // Apply date filters if provided
         if (request()->get('start_date')) {
             $query->whereDate('start_timestamp', '>=', request('start_date'));
         }
@@ -34,17 +32,13 @@ final class TimeLogController extends Controller
         if (request()->get('end_date')) {
             $query->whereDate('start_timestamp', '<=', request('end_date'));
         }
-
-        // Apply project filter if provided
         if (request()->get('project_id') && request('project_id')) {
-            // Validate that the project belongs to the logged-in user
             $userProjects = $this->getUserProjects()->pluck('id')->toArray();
             if (in_array(request('project_id'), $userProjects)) {
                 $query->where('project_id', request('project_id'));
             }
         }
 
-        // Apply paid/unpaid filter if provided
         if (request()->get('is_paid') && request('is_paid') !== '') {
             $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
             $query->where('is_paid', $isPaid);

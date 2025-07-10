@@ -31,8 +31,6 @@ final class TeamController extends Controller
         $query = Team::query()
             ->where('user_id', auth()->id())
             ->with('member');
-
-        // Apply search filter if provided
         if (request()->get('search')) {
             $search = request('search');
             $query->whereHas('member', function ($q) use ($search): void {
