@@ -11,7 +11,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Random\RandomException;
 
 final class AddData extends Command
 {
@@ -133,7 +132,7 @@ final class AddData extends Command
                 'start_timestamp' => $entryDate,
                 'end_timestamp' => $endTimestamp,
                 'duration' => round($durationHours, 2),
-                'is_paid' => (bool) random_int(0, 1)
+                'is_paid' => (bool) random_int(0, 1),
             ]);
         }
     }
