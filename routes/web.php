@@ -25,6 +25,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('project', [ProjectController::class, 'index'])->name('project.index');
     Route::get('project/create', [ProjectController::class, 'create'])->name('project.create');
     Route::get('project/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
+    Route::get('project/{project}/time-logs', [ProjectController::class, 'timeLogs'])->name('project.time-logs');
+    Route::get('project/export-time-logs', [ProjectController::class, 'exportTimeLogs'])->name('project.export-time-logs');
 
     // Time Log routes
     Route::get('time-log', [TimeLogController::class, 'index'])->name('time-log.index');

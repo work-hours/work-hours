@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { Download, Edit, FolderPlus, Folders } from 'lucide-react';
+import { Clock, Download, Edit, FolderPlus, Folders } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -34,9 +34,14 @@ type Project = {
 
 type Props = {
     projects: Project[];
+    auth: {
+        user: {
+            id: number;
+        };
+    };
 };
 
-export default function Projects({ projects }: Props) {
+export default function Projects({ projects, auth }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Projects" />
@@ -110,6 +115,14 @@ export default function Projects({ projects }: Props) {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
+                                                    {project.user.id === auth.user.id && (
+                                                        <Link href={route('project.time-logs', project.id)}>
+                                                            <Button variant="outline" size="sm" className="h-8">
+                                                                <Clock className="mr-1 h-3.5 w-3.5" />
+                                                                Time Logs
+                                                            </Button>
+                                                        </Link>
+                                                    )}
                                                     <Link href={route('project.edit', project.id)}>
                                                         <Button variant="outline" size="sm" className="h-8 w-8 p-0">
                                                             <Edit className="h-3.5 w-3.5" />
