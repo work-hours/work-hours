@@ -8,14 +8,10 @@ use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display the dashboard.
-     */
     public function index(): Response
     {
         $teamCount = Team::query()->where('user_id', auth()->id())->count();
         $teamMembers = Team::query()->where('user_id', auth()->id())->pluck('member_id');
-        // merge the authenticated user into the team members list
         $teamMembers = $teamMembers->merge([auth()->id()]);
 
 
@@ -35,7 +31,6 @@ class DashboardController extends Controller
             ->where('is_paid', false)
             ->sum('duration');
 
-        // Calculate unpaid amount
         $unpaidAmount = 0;
         $teamMembersWithUnpaidHours = TimeLog::query()
             ->whereIn('user_id', $teamMembers)
@@ -58,10 +53,8 @@ class DashboardController extends Controller
             $unpaidAmount += $memberUnpaidHours * $hourlyRate;
         }
 
-        // Get default currency (USD) or determine a common currency
         $currency = 'USD';
 
-        // Try to get the currency of the authenticated user if they are part of a team
         $authUserCurrency = Team::query()
             ->where('member_id', auth()->id())
             ->value('currency');

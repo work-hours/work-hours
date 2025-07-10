@@ -22,13 +22,11 @@ class ProjectController extends Controller
     use ExportableTrait;
     public function index()
     {
-        // Get projects where user is the owner
         $ownedProjects = Project::query()
             ->where('user_id', auth()->id())
             ->with(['teamMembers', 'user'])
             ->get();
 
-        // Get projects where user is a team member
         $assignedProjects = Project::query()
             ->whereHas('teamMembers', function ($query) {
                 $query->where('users.id', auth()->id());
@@ -37,7 +35,6 @@ class ProjectController extends Controller
             ->with(['teamMembers', 'user'])
             ->get();
 
-        // Combine both sets of projects
         $projects = $ownedProjects->concat($assignedProjects);
 
         return Inertia::render('project/index', [
@@ -67,9 +64,6 @@ class ProjectController extends Controller
         ]);
     }
 
-    /**
-     * @throws Throwable
-     */
     #[Action(method: 'post', name: 'project.store', middleware: ['auth', 'verified'])]
     public function store(StoreProjectRequest $request): void
     {
@@ -81,7 +75,6 @@ class ProjectController extends Controller
                 'description' => $request->input('description'),
             ]);
 
-            // Sync team members
             if ($request->has('team_members')) {
                 $project->teamMembers()->sync($request->input('team_members'));
             }
@@ -95,7 +88,6 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        // Check if the project belongs to the authenticated user
         if ($project->user_id !== auth()->id()) {
             abort(403, 'You can only edit your own projects.');
         }
@@ -112,7 +104,6 @@ class ProjectController extends Controller
                 ];
             });
 
-        // Get the IDs of team members assigned to this project
         $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
 
         return Inertia::render('project/edit', [
@@ -122,13 +113,9 @@ class ProjectController extends Controller
         ]);
     }
 
-    /**
-     * @throws Throwable
-     */
     #[Action(method: 'put', name: 'project.update', params: ['project'], middleware: ['auth', 'verified'])]
     public function update(UpdateProjectRequest $request, Project $project): void
     {
-        // Check if the project belongs to the authenticated user
         if ($project->user_id !== auth()->id()) {
             abort(403, 'You can only update your own projects.');
         }
@@ -137,7 +124,6 @@ class ProjectController extends Controller
         try {
             $project->update($request->only(['name', 'description']));
 
-            // Sync team members
             if ($request->has('team_members')) {
                 $project->teamMembers()->sync($request->input('team_members'));
             } else {
@@ -151,15 +137,9 @@ class ProjectController extends Controller
         }
     }
 
-    /**
-     * Delete the specified project.
-     *
-     * @throws Throwable
-     */
     #[Action(method: 'delete', name: 'project.destroy', params: ['project'], middleware: ['auth', 'verified'])]
     public function destroy(Project $project): void
     {
-        // Check if the project belongs to the authenticated user
         if ($project->user_id !== auth()->id()) {
             abort(403, 'You can only delete your own projects.');
         }
@@ -174,21 +154,14 @@ class ProjectController extends Controller
         }
     }
 
-    /**
-     * Export projects to CSV
-     *
-     * @return StreamedResponse
-     */
     #[Action(method: 'get', name: 'project.export', middleware: ['auth', 'verified'])]
     public function export(): StreamedResponse
     {
-        // Get projects where user is the owner
         $ownedProjects = Project::query()
             ->where('user_id', auth()->id())
             ->with(['teamMembers', 'user'])
             ->get();
 
-        // Get projects where user is a team member
         $assignedProjects = Project::query()
             ->whereHas('teamMembers', function ($query) {
                 $query->where('users.id', auth()->id());
@@ -197,7 +170,6 @@ class ProjectController extends Controller
             ->with(['teamMembers', 'user'])
             ->get();
 
-        // Combine both sets of projects
         $projects = $ownedProjects->concat($assignedProjects);
 
         $projectsData = $projects->map(function ($project) {
@@ -219,7 +191,6 @@ class ProjectController extends Controller
 
     public function timeLogs(Project $project)
     {
-        // Check if the user has access to the project (either as creator or team member)
         $isCreator = $project->user_id === auth()->id();
 
         if (!$isCreator) {
@@ -227,8 +198,6 @@ class ProjectController extends Controller
         }
 
         $query = TimeLog::query()->where('project_id', $project->id);
-
-        // Apply date filters if provided
         if (request()->get('start_date')) {
             $query->whereDate('start_timestamp', '>=', request('start_date'));
         }
@@ -237,13 +206,10 @@ class ProjectController extends Controller
             $query->whereDate('start_timestamp', '<=', request('end_date'));
         }
 
-        // Apply team member filter if provided
         if (request()->get('user_id') && request('user_id')) {
-            // Validate that the user is either the project creator or a team member
             $query->where('user_id', request('user_id'));
         }
 
-        // Apply paid/unpaid filter if provided
         if (request()->get('is_paid') && request('is_paid') !== '') {
             $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
             $query->where('is_paid', $isPaid);
