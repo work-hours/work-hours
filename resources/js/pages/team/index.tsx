@@ -10,8 +10,7 @@ import { type BreadcrumbItem } from '@/types'
 import { Head, Link, useForm } from '@inertiajs/react'
 import { Calendar, CalendarRange, Clock, Download, Edit, Search, TimerReset, UserPlus, Users } from 'lucide-react'
 import { FormEventHandler, forwardRef } from 'react'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
+import DatePicker from '@/components/ui/date-picker'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

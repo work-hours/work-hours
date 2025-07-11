@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-@import './datepicker-custom.css';
 
 @plugin 'tailwindcss-animate';
 

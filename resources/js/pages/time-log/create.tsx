@@ -1,8 +1,7 @@
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
 import { FormEventHandler, forwardRef } from 'react'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
+import DatePicker from '@/components/ui/date-picker'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
