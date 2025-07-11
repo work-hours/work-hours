@@ -85,7 +85,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function EditTimeLog({ timeLog, projects }: Props) {
     const { data, setData, put, processing, errors } = useForm<TimeLogForm>({
         project_id: timeLog.project_id,
-        start_timestamp: new Date(timeLog.start_timestamp).toISOString(), // Store full ISO string
+        start_timestamp: new Date(timeLog.start_timestamp).toISOString(),
         end_timestamp: timeLog.end_timestamp ? new Date(timeLog.end_timestamp).toISOString() : '',
     })
 

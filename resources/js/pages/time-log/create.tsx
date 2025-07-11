@@ -89,7 +89,6 @@ export default function CreateTimeLog({ projects }: Props) {
     // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
-            // Store the exact selected date/time without timezone conversion
             const localDate = new Date(
                 date.getFullYear(),
                 date.getMonth(),
@@ -104,7 +103,6 @@ export default function CreateTimeLog({ projects }: Props) {
 
     const handleEndDateChange = (date: Date | null) => {
         if (date) {
-            // Store the exact selected date/time without timezone conversion
             const localDate = new Date(
                 date.getFullYear(),
                 date.getMonth(),
