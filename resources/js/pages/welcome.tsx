@@ -8,7 +8,7 @@ import { Head } from '@inertiajs/react'
 
 export default function Welcome() {
     return (
-        <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background to-background/90">
+        <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background to-background/90 w-9/12 mx-auto">
             {/* Decorative background elements */}
             <div className="animate-float absolute top-1/4 right-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
             <div className="animate-float absolute bottom-1/3 left-1/3 h-48 w-48 rounded-full bg-primary/5 blur-3xl [animation-delay:2s]"></div>
