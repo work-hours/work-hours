@@ -3,8 +3,8 @@ import { ArrowRight, CheckCircle } from 'lucide-react'
 
 export default function Hero() {
     return (
-        <section className="mb-24 pt-12 lg:pt-20 w-full">
-            <div className="w-9/12 mx-auto">
+        <section className="mb-24 w-full pt-12 lg:pt-20">
+            <div className="mx-auto w-9/12">
                 <div className="mx-auto max-w-4xl text-center">
                     <div className="absolute top-40 -left-10 h-64 w-64 animate-pulse rounded-full bg-primary/5 blur-3xl"></div>
                     <div className="absolute top-60 right-10 h-64 w-64 animate-pulse rounded-full bg-primary/10 blur-3xl [animation-delay:1s]"></div>

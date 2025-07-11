@@ -97,13 +97,7 @@ export default function EditTimeLog({ timeLog, projects }: Props) {
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
             // Store the exact selected date/time without timezone conversion
-            const localDate = new Date(
-                date.getFullYear(),
-                date.getMonth(),
-                date.getDate(),
-                date.getHours(),
-                date.getMinutes()
-            )
+            const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes())
             setData('start_timestamp', localDate.toISOString())
         }
     }
@@ -111,13 +105,7 @@ export default function EditTimeLog({ timeLog, projects }: Props) {
     const handleEndDateChange = (date: Date | null) => {
         if (date) {
             // Store the exact selected date/time without timezone conversion
-            const localDate = new Date(
-                date.getFullYear(),
-                date.getMonth(),
-                date.getDate(),
-                date.getHours(),
-                date.getMinutes()
-            )
+            const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes())
             setData('end_timestamp', localDate.toISOString())
         } else {
             setData('end_timestamp', '')

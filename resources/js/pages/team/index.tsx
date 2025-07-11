@@ -116,10 +116,13 @@ export default function Team({ teamMembers, filters }: Props) {
             <Head title="Team" />
             <div className="mx-auto flex w-9/12 flex-col gap-6 p-6">
                 <section className="mb-2">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="mb-2 flex items-center justify-between">
                         <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Team Management</h1>
                         <Link href={route('team.all-time-logs')}>
-                            <Button variant="outline" className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 border-blue-200 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 dark:border-blue-800">
+                            <Button
+                                variant="outline"
+                                className="flex items-center gap-2 border-blue-200 bg-blue-50 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/20 dark:hover:bg-blue-900/30"
+                            >
                                 <Clock className="h-4 w-4" />
                                 <span>All Time Logs</span>
                             </Button>

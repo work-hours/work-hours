@@ -3,8 +3,8 @@ import { ArrowRight } from 'lucide-react'
 
 export default function CTA() {
     return (
-        <section className="animate-background-shine bg-gradient-to-r from-primary/10 to-primary/5 py-16 md:py-24 w-full">
-            <div className="w-9/12 mx-auto">
+        <section className="animate-background-shine w-full bg-gradient-to-r from-primary/10 to-primary/5 py-16 md:py-24">
+            <div className="mx-auto w-9/12">
                 <div className="text-center">
                     <h2 className="animate-fade-up animate-once mb-6 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
                         Ready to Optimize Your Time?

@@ -15,16 +15,16 @@ export default function Welcome() {
             <div className="animate-float absolute top-2/3 right-1/3 h-56 w-56 rounded-full bg-primary/5 blur-3xl [animation-delay:4s]"></div>
 
             <Head title="Work Hours - Track Your Time Effortlessly" />
-            <div className="w-9/12 mx-auto">
+            <div className="mx-auto w-9/12">
                 <Navbar />
             </div>
             <Hero />
-            <div className="w-9/12 mx-auto">
+            <div className="mx-auto w-9/12">
                 <Features />
                 <HowItWorks />
             </div>
             <CTA />
-            <div className="w-9/12 mx-auto">
+            <div className="mx-auto w-9/12">
                 <Footer />
             </div>
         </div>
