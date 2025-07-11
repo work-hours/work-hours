@@ -265,7 +265,7 @@ final class TeamController extends Controller
                 'project_name' => $timeLog->project ? $timeLog->project->name : null,
                 'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                 'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                'duration' => round($timeLog->duration, 2),
+                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
                 'is_paid' => $timeLog->is_paid,
             ]);
 
@@ -366,7 +366,7 @@ final class TeamController extends Controller
                 'project_name' => $timeLog->project ? $timeLog->project->name : null,
                 'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                 'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                'duration' => round($timeLog->duration, 2),
+                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
                 'is_paid' => $timeLog->is_paid,
             ]);
 
@@ -564,7 +564,7 @@ final class TeamController extends Controller
                 'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
                 'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                 'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
-                'duration' => round($timeLog->duration, 2),
+                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
                 'is_paid' => $timeLog->is_paid,
             ]);
 
