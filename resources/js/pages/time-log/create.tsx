@@ -97,6 +97,7 @@ export default function CreateTimeLog({ projects }: Props) {
                 date.getHours(),
                 date.getMinutes()
             )
+
             setData('start_timestamp', localDate.toISOString())
         }
     }
@@ -165,9 +166,9 @@ export default function CreateTimeLog({ projects }: Props) {
                                         selected={startDate}
                                         onChange={handleStartDateChange}
                                         showTimeSelect
-                                        timeFormat="hh:mm a"
+                                        timeFormat="HH:mm"
                                         timeIntervals={15}
-                                        dateFormat="yyyy-MM-dd hh:mm a"
+                                        dateFormat="yyyy-MM-dd HH:mm"
                                         required
                                         disabled={processing}
                                         customInput={
@@ -192,9 +193,9 @@ export default function CreateTimeLog({ projects }: Props) {
                                         selected={endDate}
                                         onChange={handleEndDateChange}
                                         showTimeSelect
-                                        timeFormat="hh:mm a"
+                                        timeFormat="HH:mm"
                                         timeIntervals={15}
-                                        dateFormat="yyyy-MM-dd hh:mm a"
+                                        dateFormat="yyyy-MM-dd HH:mm"
                                         disabled={processing}
                                         isClearable
                                         placeholderText="Select end time (optional)"
