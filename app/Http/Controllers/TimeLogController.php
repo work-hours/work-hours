@@ -135,6 +135,9 @@ final class TimeLogController extends Controller
         // Check if the time log belongs to the authenticated user
         abort_if($timeLog->user_id !== auth()->id(), 403, 'You can only edit your own time logs.');
 
+        // Check if the time log is paid
+        abort_if($timeLog->is_paid, 403, 'You cannot edit a paid time log.');
+
         $projects = $this->getUserProjects();
 
         return Inertia::render('time-log/edit', [
@@ -157,6 +160,9 @@ final class TimeLogController extends Controller
     {
         // Check if the time log belongs to the authenticated user
         abort_if($timeLog->user_id !== auth()->id(), 403, 'You can only update your own time logs.');
+
+        // Check if the time log is paid
+        abort_if($timeLog->is_paid, 403, 'You cannot update a paid time log.');
 
         DB::beginTransaction();
         try {
@@ -188,6 +194,9 @@ final class TimeLogController extends Controller
     {
         // Check if the time log belongs to the authenticated user
         abort_if($timeLog->user_id !== auth()->id(), 403, 'You can only delete your own time logs.');
+
+        // Check if the time log is paid
+        abort_if($timeLog->is_paid, 403, 'You cannot delete a paid time log.');
 
         DB::beginTransaction();
         try {

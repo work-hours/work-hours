@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { formatDateTime } from '@/lib/utils'
 import { Link } from '@inertiajs/react'
-import { Edit } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 
 export type TimeLogEntry = {
     id: number
@@ -84,13 +84,27 @@ export default function TimeLogTable({
                         {showActions && (
                             <TableCell className="text-right">
                                 <div className="flex justify-end gap-2">
-                                    <Link href={route('time-log.edit', log.id)}>
-                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                                    {!log.is_paid ? (
+                                        <Link href={route('time-log.edit', log.id)}>
+                                            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                                                <Edit className="h-3.5 w-3.5" />
+                                                <span className="sr-only">Edit</span>
+                                            </Button>
+                                        </Link>
+                                    ) : (
+                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be edited">
                                             <Edit className="h-3.5 w-3.5" />
                                             <span className="sr-only">Edit</span>
                                         </Button>
-                                    </Link>
-                                    <DeleteTimeLog timeLogId={log.id} />
+                                    )}
+                                    {!log.is_paid ? (
+                                        <DeleteTimeLog timeLogId={log.id} />
+                                    ) : (
+                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be deleted">
+                                            <Trash2 className="h-4 w-4" />
+                                            <span className="sr-only">Delete</span>
+                                        </Button>
+                                    )}
                                 </div>
                             </TableCell>
                         )}
