@@ -85,8 +85,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function EditTimeLog({ timeLog, projects }: Props) {
     const { data, setData, put, processing, errors } = useForm<TimeLogForm>({
         project_id: timeLog.project_id,
-        start_timestamp: new Date(timeLog.start_timestamp).toISOString().slice(0, 16), // Format: YYYY-MM-DDTHH:MM
-        end_timestamp: timeLog.end_timestamp ? new Date(timeLog.end_timestamp).toISOString().slice(0, 16) : '',
+        start_timestamp: new Date(timeLog.start_timestamp).toISOString(), // Store full ISO string
+        end_timestamp: timeLog.end_timestamp ? new Date(timeLog.end_timestamp).toISOString() : '',
     })
 
     // Convert string timestamps to Date objects for DatePicker
@@ -96,13 +96,29 @@ export default function EditTimeLog({ timeLog, projects }: Props) {
     // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
-            setData('start_timestamp', date.toISOString().slice(0, 16))
+            // Store the exact selected date/time without timezone conversion
+            const localDate = new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate(),
+                date.getHours(),
+                date.getMinutes()
+            )
+            setData('start_timestamp', localDate.toISOString())
         }
     }
 
     const handleEndDateChange = (date: Date | null) => {
         if (date) {
-            setData('end_timestamp', date.toISOString().slice(0, 16))
+            // Store the exact selected date/time without timezone conversion
+            const localDate = new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate(),
+                date.getHours(),
+                date.getMinutes()
+            )
+            setData('end_timestamp', localDate.toISOString())
         } else {
             setData('end_timestamp', '')
         }
@@ -154,9 +170,9 @@ export default function EditTimeLog({ timeLog, projects }: Props) {
                                         selected={startDate}
                                         onChange={handleStartDateChange}
                                         showTimeSelect
-                                        timeFormat="HH:mm"
+                                        timeFormat="hh:mm a"
                                         timeIntervals={15}
-                                        dateFormat="yyyy-MM-dd HH:mm"
+                                        dateFormat="yyyy-MM-dd hh:mm a"
                                         required
                                         disabled={processing}
                                         customInput={
@@ -181,9 +197,9 @@ export default function EditTimeLog({ timeLog, projects }: Props) {
                                         selected={endDate}
                                         onChange={handleEndDateChange}
                                         showTimeSelect
-                                        timeFormat="HH:mm"
+                                        timeFormat="hh:mm a"
                                         timeIntervals={15}
-                                        dateFormat="yyyy-MM-dd HH:mm"
+                                        dateFormat="yyyy-MM-dd hh:mm a"
                                         disabled={processing}
                                         isClearable
                                         placeholderText="Select end time (optional)"
