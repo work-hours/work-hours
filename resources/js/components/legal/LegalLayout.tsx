@@ -1,7 +1,6 @@
-import { Head } from '@inertiajs/react'
-import { Link } from '@inertiajs/react'
-import Navbar from '@/components/landing/Navbar'
 import Footer from '@/components/landing/Footer'
+import Navbar from '@/components/landing/Navbar'
+import { Head, Link } from '@inertiajs/react'
 import { ReactNode } from 'react'
 
 interface LegalLayoutProps {
@@ -15,7 +14,7 @@ export default function LegalLayout({ title, children }: LegalLayoutProps) {
         { name: 'Terms of Service', route: 'terms-of-service' },
         { name: 'Cookie Policy', route: 'cookie-policy' },
         { name: 'GDPR Compliance', route: 'gdpr-compliance' },
-        { name: 'Security', route: 'security' }
+        { name: 'Security', route: 'security' },
     ]
 
     return (
@@ -36,7 +35,7 @@ export default function LegalLayout({ title, children }: LegalLayoutProps) {
                                         href={route(page.route)}
                                         className={`block rounded-md px-3 py-2 text-sm transition-colors ${
                                             route().current(page.route)
-                                                ? 'bg-primary/10 text-primary font-medium'
+                                                ? 'bg-primary/10 font-medium text-primary'
                                                 : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                         }`}
                                     >

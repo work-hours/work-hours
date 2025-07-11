@@ -20,7 +20,6 @@ use Illuminate\Support\Carbon;
  * @property bool $is_paid
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @property Project $project
  */
 final class TimeLog extends Model
