@@ -1,4 +1,5 @@
 import AppLogoIcon from '@/components/app-logo-icon'
+import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 
@@ -14,6 +15,8 @@ export default function Navbar() {
                 <span className="text-xl font-bold tracking-tight text-foreground">Work Hours</span>
             </div>
             <div className="flex items-center gap-6 md:gap-8">
+                <AppearanceToggleDropdown className="animate-fade-left animate-once" />
+
                 {isLoggedIn ? (
                     <Link
                         href="/dashboard"
