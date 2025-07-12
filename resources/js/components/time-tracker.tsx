@@ -119,18 +119,18 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
         <>
             {activeTimeLog ? (
                 <Card className="overflow-hidden bg-primary/5 transition-all hover:shadow-md">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
+                    <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
                             <div>
-                                <CardTitle className="flex items-center gap-2 text-xl">
+                                <CardTitle className="flex items-center gap-2 text-xl text-left">
                                     <ClockIcon className="h-5 w-5 animate-pulse text-primary" />
                                     <span>Time Tracking Active</span>
                                 </CardTitle>
                                 <CardDescription>
                                     {activeTimeLog.project_name ? `Tracking time for ${activeTimeLog.project_name}` : 'Tracking time'}
                                 </CardDescription>
-                                <div className="mt-4 text-3xl font-bold text-primary">{formatElapsedTime(activeTimeLog.elapsed)}</div>
-                                <div className="mt-1 text-sm text-muted-foreground">
+                                <div className="mt-2 text-3xl font-bold text-primary">{formatElapsedTime(activeTimeLog.elapsed)}</div>
+                                <div className="text-sm text-muted-foreground">
                                     Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
                                 </div>
                             </div>
@@ -145,15 +145,15 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
                 </Card>
             ) : (
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardContent className="p-6">
-                        <div className="flex flex-col gap-4">
+                    <CardContent className="p-4">
+                        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
                             <div>
-                                <CardTitle className="text-xl">Quick Time Tracking</CardTitle>
+                                <CardTitle className="text-xl text-left">Quick Time Tracking</CardTitle>
                                 <CardDescription>Select a project and start tracking your time</CardDescription>
                             </div>
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-2 md:w-1/2">
                                 <div>
-                                    <Label htmlFor="tracking_project" className="mb-2 block text-sm font-medium">
+                                    <Label htmlFor="tracking_project" className="mb-1 block text-sm font-medium">
                                         Project
                                     </Label>
                                     <SearchableSelect
@@ -165,7 +165,7 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
                                         icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
                                     />
                                 </div>
-                                <div className="flex items-end">
+                                <div>
                                     <Button
                                         onClick={startTimeLog}
                                         variant="default"
