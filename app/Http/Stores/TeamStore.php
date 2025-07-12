@@ -18,4 +18,12 @@ final class TeamStore
     {
         return Team::query()->where('user_id', $userId)->count();
     }
+
+    public static function teamMembers(int $userId): \Illuminate\Database\Eloquent\Collection
+    {
+        return Team::query()
+            ->where('user_id', $userId)
+            ->with('member')
+            ->get();
+    }
 }

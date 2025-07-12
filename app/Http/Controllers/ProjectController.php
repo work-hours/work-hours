@@ -7,18 +7,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Stores\ProjectStore;
+use App\Http\Stores\TeamStore;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 final class ProjectController extends Controller
 {
@@ -26,31 +29,18 @@ final class ProjectController extends Controller
 
     public function index()
     {
-        return Inertia::render('project/index', [
-            'projects' => ProjectStore::userProjects(userId: auth()->id()),
-            'auth' => [
-                'user' => auth()->user(),
-            ],
-        ]);
+        return Inertia::render('project/index');
     }
 
-    public function create()
+    #[Action(method: 'get', name: 'project.list', middleware: ['auth', 'verified'])]
+    public function projects(): Collection
     {
-        $teamMembers = Team::query()
-            ->where('user_id', auth()->id())
-            ->with('member')
-            ->get()
-            ->map(fn ($team): array => [
-                'id' => $team->member->id,
-                'name' => $team->member->name,
-                'email' => $team->member->email,
-            ]);
-
-        return Inertia::render('project/create', [
-            'teamMembers' => $teamMembers,
-        ]);
+        return ProjectStore::userProjects(userId: auth()->id());
     }
 
+    /**
+     * @throws Throwable
+     */
     #[Action(method: 'post', name: 'project.store', middleware: ['auth', 'verified'])]
     public function store(StoreProjectRequest $request): void
     {
@@ -73,14 +63,25 @@ final class ProjectController extends Controller
         }
     }
 
+    public function create()
+    {
+        $teamMembers = TeamStore::teamMembers(userId: auth()->id())
+            ->map(fn ($team): array => [
+                'id' => $team->member->id,
+                'name' => $team->member->name,
+                'email' => $team->member->email,
+            ]);
+
+        return Inertia::render('project/create', [
+            'teamMembers' => $teamMembers,
+        ]);
+    }
+
     public function edit(Project $project)
     {
         abort_if($project->user_id !== auth()->id(), 403, 'You can only edit your own projects.');
 
-        $teamMembers = Team::query()
-            ->where('user_id', auth()->id())
-            ->with('member')
-            ->get()
+        $teamMembers = TeamStore::teamMembers(userId: auth()->id())
             ->map(fn ($team): array => [
                 'id' => $team->member->id,
                 'name' => $team->member->name,
@@ -96,6 +97,9 @@ final class ProjectController extends Controller
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     #[Action(method: 'put', name: 'project.update', params: ['project'], middleware: ['auth', 'verified'])]
     public function update(UpdateProjectRequest $request, Project $project): void
     {
@@ -118,6 +122,9 @@ final class ProjectController extends Controller
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     #[Action(method: 'delete', name: 'project.destroy', params: ['project'], middleware: ['auth', 'verified'])]
     public function destroy(Project $project): void
     {
@@ -134,36 +141,19 @@ final class ProjectController extends Controller
     }
 
     #[Action(method: 'get', name: 'project.export', middleware: ['auth', 'verified'])]
-    public function export(): StreamedResponse
+    public function projectExport(): StreamedResponse
     {
-        $ownedProjects = Project::query()
-            ->where('user_id', auth()->id())
-            ->with(['teamMembers', 'user'])
-            ->get();
+        $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Created At'];
+        $filename = 'projects_' . Carbon::now()->format('Y-m-d') . '.csv';
 
-        $assignedProjects = Project::query()
-            ->whereHas('teamMembers', function ($query): void {
-                $query->where('users.id', auth()->id());
-            })
-            ->where('user_id', '!=', auth()->id())
-            ->with(['teamMembers', 'user'])
-            ->get();
-
-        $projects = $ownedProjects->concat($assignedProjects);
-
-        $projectsData = $projects->map(fn ($project): array => [
+        return $this->exportToCsv(ProjectStore::userProjects(userId: auth()->id())->map(fn ($project): array => [
             'id' => $project->id,
             'name' => $project->name,
             'description' => $project->description,
             'owner' => $project->user->name,
             'team_members' => $project->teamMembers->pluck('name')->implode(', '),
             'created_at' => Carbon::parse($project->created_at)->toDateTimeString(),
-        ]);
-
-        $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Created At'];
-        $filename = 'projects_' . Carbon::now()->format('Y-m-d') . '.csv';
-
-        return $this->exportToCsv($projectsData, $headers, $filename);
+        ]), $headers, $filename);
     }
 
     /**
