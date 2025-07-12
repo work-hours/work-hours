@@ -4,11 +4,14 @@ import StatsCards from '@/components/dashboard/StatsCards'
 import TeamProductivity from '@/components/dashboard/TeamProductivity'
 import WeeklyTrend from '@/components/dashboard/WeeklyTrend'
 import WelcomeSection from '@/components/dashboard/WelcomeSection'
+import TimeTracker from '@/components/time-tracker'
 import Loader from '@/components/ui/loader'
 import AppLayout from '@/layouts/app-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
-import { stats } from '@actions/DashboardController'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import { projects, stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
 
@@ -19,6 +22,11 @@ interface TeamStats {
     unpaidAmount: number
     currency: string
     weeklyAverage: number
+}
+
+interface Project {
+    id: number
+    name: string
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -38,6 +46,7 @@ export default function Dashboard() {
         currency: 'USD',
         weeklyAverage: 0,
     })
+    const [userProjects, setUserProjects] = useState<Project[]>([])
 
     const getStats = async (): Promise<void> => {
         try {
@@ -51,8 +60,18 @@ export default function Dashboard() {
         }
     }
 
+    const getProjects = async (): Promise<void> => {
+        try {
+            const response = await projects.data({})
+            setUserProjects(response.projects)
+        } catch (error: unknown) {
+            console.error('Failed to fetch projects:', error)
+        }
+    }
+
     useEffect(() => {
         getStats().then()
+        getProjects().then()
     }, [])
 
     const hoursData = [
@@ -70,8 +89,14 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="mx-auto flex w-11/12 md:w-10/12 lg:w-9/12 flex-col gap-4 p-4">
+            <div className="mx-auto flex w-11/12 flex-col gap-4 p-4 md:w-10/12 lg:w-9/12">
                 <WelcomeSection />
+
+                {!loading && (
+                    <section className="mb-4">
+                        <TimeTracker projects={userProjects} />
+                    </section>
+                )}
 
                 {loading ? (
                     <>

@@ -1,4 +1,5 @@
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
+import TimeTracker from '@/components/time-tracker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
@@ -9,14 +10,13 @@ import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
 import { Briefcase, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, PlusCircle, Search, TimerReset } from 'lucide-react'
-import { FormEventHandler, forwardRef, useState } from 'react'
+import { ChangeEvent, FormEventHandler, forwardRef, ReactNode, useState } from 'react'
 
-// Custom input component for DatePicker with icon
 interface CustomInputProps {
     value?: string
     onClick?: () => void
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-    icon: React.ReactNode
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+    icon: ReactNode
     placeholder?: string
     disabled?: boolean
     required?: boolean
@@ -95,10 +95,8 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
         is_paid: filters.is_paid || '',
     })
 
-    // State for selected time logs
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
 
-    // Handle checkbox selection
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
             setSelectedLogs([...selectedLogs, id])
@@ -107,7 +105,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
         }
     }
 
-    // Mark selected logs as paid
     const markAsPaid = () => {
         if (selectedLogs.length === 0) {
             return
@@ -126,11 +123,9 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
         )
     }
 
-    // Convert string dates to Date objects for DatePicker
     const startDate = data.start_date ? new Date(data.start_date) : null
     const endDate = data.end_date ? new Date(data.end_date) : null
 
-    // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
             setData('start_date', date.toISOString().split('T')[0])
@@ -158,16 +153,13 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Time Log" />
             <div className="mx-auto flex w-9/12 flex-col gap-6 p-6">
-                {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Time Logs</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage your work hours</p>
                 </section>
 
-                {/* Stats Cards */}
                 {timeLogs.length > 0 && (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
                                 <div className="mb-2 flex flex-row items-center justify-between">
@@ -187,7 +179,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                             </CardContent>
                         </Card>
 
-                        {/* Unpaid hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
                                 <div className="mb-2 flex flex-row items-center justify-between">
@@ -199,7 +190,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                             </CardContent>
                         </Card>
 
-                        {/* Unpaid amount card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
                                 <div className="mb-2 flex flex-row items-center justify-between">
@@ -228,7 +218,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                             </CardContent>
                         </Card>
 
-                        {/* Weekly average card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
                                 <div className="mb-2 flex flex-row items-center justify-between">
@@ -242,7 +231,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                     </div>
                 )}
 
-                {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardContent>
                         <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
@@ -353,7 +341,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                     {(() => {
                                         let description = ''
 
-                                        // Date range description
                                         if (data.start_date && data.end_date) {
                                             description = `Showing logs from ${data.start_date} to ${data.end_date}`
                                         } else if (data.start_date) {
@@ -362,7 +349,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                             description = `Showing logs until ${data.end_date}`
                                         }
 
-                                        // Project description
                                         if (data.project_id) {
                                             const selectedProject = projects.find((project) => project.id.toString() === data.project_id)
                                             const projectName = selectedProject ? selectedProject.name : ''
@@ -374,7 +360,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                             }
                                         }
 
-                                        // Payment status description
                                         if (data.is_paid) {
                                             const paymentStatus = data.is_paid === 'true' ? 'paid' : 'unpaid'
 
@@ -393,7 +378,8 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                     </CardContent>
                 </Card>
 
-                {/* Time Logs Card */}
+                <TimeTracker projects={projects} />
+
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">

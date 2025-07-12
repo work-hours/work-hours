@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
 use Inertia\Response;
@@ -47,6 +48,14 @@ final class DashboardController extends Controller
             'unpaidAmount' => round($unpaidAmount, 2),
             'currency' => 'USD',
             'weeklyAverage' => $teamCount > 0 ? round($totalHours / $teamCount, 2) : 0,
+        ];
+    }
+
+    #[Action(method: 'get', name: 'dashboard.projects', middleware: ['auth', 'verified'])]
+    public function projects(): array
+    {
+        return [
+            'projects' => ProjectStore::userProjects(userId: auth()->id()),
         ];
     }
 }
