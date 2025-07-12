@@ -151,24 +151,20 @@ final class TeamController extends Controller
         try {
             $data = $request->validated();
 
-            // Only update password if provided
             if (empty($data['password'])) {
                 unset($data['password']);
             } else {
                 $data['password'] = Hash::make($data['password']);
             }
 
-            // Extract team-related fields
             $teamData = [
                 'hourly_rate' => $data['hourly_rate'] ?? 0,
                 'currency' => $data['currency'] ?? 'USD',
             ];
             unset($data['hourly_rate'], $data['currency']);
 
-            // Update user data
             $user->update($data);
 
-            // Update team data
             Team::query()
                 ->where('user_id', auth()->id())
                 ->where('member_id', $user->getKey())
@@ -188,7 +184,6 @@ final class TeamController extends Controller
     #[Action(method: 'delete', name: 'team.destroy', params: ['user'], middleware: ['auth', 'verified'])]
     public function destroy(User $user): void
     {
-        // Check if the user is a member of the authenticated user's team
         $isTeamMember = Team::query()
             ->where('user_id', auth()->id())
             ->where('member_id', $user->id)
@@ -198,7 +193,6 @@ final class TeamController extends Controller
 
         DB::beginTransaction();
         try {
-            // Find and delete the team relationship
             Team::query()->where('member_id', $user->getKey())->where('user_id', auth()->id())->delete();
             DB::commit();
         } catch (Exception $e) {
