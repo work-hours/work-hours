@@ -4,8 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
+import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link } from '@inertiajs/react'
-import { Clock, Download, Edit, FolderPlus, Folders } from 'lucide-react'
+import { Clock, Download, Edit, FolderPlus, Folders, Loader2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -41,7 +43,28 @@ type Props = {
     }
 }
 
-export default function Projects({ projects, auth }: Props) {
+export default function Projects({ auth }: Props) {
+    const [projects, setProjects] = useState<Project[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
+    const [error, setError] = useState<boolean>(false)
+
+    const getProjects = async () => {
+        setLoading(true)
+        setError(false)
+        try {
+            setProjects(await _projects.data({}))
+        } catch (error) {
+            console.error('Error fetching projects:', error)
+            setError(true)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        getProjects().then()
+    }, [])
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Projects" />
@@ -58,7 +81,9 @@ export default function Projects({ projects, auth }: Props) {
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Projects</CardTitle>
-                                <CardDescription>You have {projects.length} projects</CardDescription>
+                                <CardDescription>
+                                    {loading ? 'Loading projects...' : error ? 'Failed to load projects' : `You have ${projects.length} projects`}
+                                </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
                                 <a href={route('project.export')} className="inline-block">
@@ -77,7 +102,25 @@ export default function Projects({ projects, auth }: Props) {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        {projects.length > 0 ? (
+                        {loading ? (
+                            <div className="flex flex-col items-center justify-center py-12 text-center">
+                                <Loader2 className="mb-4 h-12 w-12 animate-spin text-muted-foreground/50" />
+                                <h3 className="mb-1 text-lg font-medium">Loading Projects</h3>
+                                <p className="mb-4 text-muted-foreground">Please wait while we fetch your projects...</p>
+                            </div>
+                        ) : error ? (
+                            <div className="rounded-md border border-red-200 bg-red-50 p-6 dark:border-red-800 dark:bg-red-900/20">
+                                <div className="flex flex-col items-center justify-center py-12 text-center">
+                                    <Folders className="mb-4 h-12 w-12 text-red-500" />
+                                    <h3 className="mb-1 text-lg font-medium text-red-700 dark:text-red-400">Failed to Load Projects</h3>
+                                    <p className="mb-4 text-red-600 dark:text-red-300">There was an error loading your projects. Please try again.</p>
+                                    <Button onClick={() => getProjects()} className="flex items-center gap-2">
+                                        <Loader2 className="h-4 w-4" />
+                                        <span>Retry</span>
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : projects.length > 0 ? (
                             <Table>
                                 <TableHeader>
                                     <TableHeaderRow>

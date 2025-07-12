@@ -465,9 +465,10 @@ export default function ProjectTimeLogs({
                     <CardContent>
                         {timeLogs.length > 0 ? (
                             <TimeLogTable
-                                timeLogs={timeLogs as TimeLogEntry[]}
+                                timeLogs={timeLogs as unknown as TimeLogEntry[]}
                                 showCheckboxes={isCreator}
                                 showTeamMember={true}
+                                showProject={false}
                                 selectedLogs={selectedLogs}
                                 onSelectLog={handleSelectLog}
                             />

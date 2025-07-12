@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -18,6 +19,8 @@ use Illuminate\Support\Carbon;
  * @property string $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property User $user
+ * @property Collection|User[] $teamMembers
  */
 final class Project extends Model
 {
@@ -32,5 +35,10 @@ final class Project extends Model
     {
         return $this->belongsToMany(User::class, 'project_team', 'project_id', 'member_id')
             ->withTimestamps();
+    }
+
+    public function isCreator(int $userId): bool
+    {
+        return $this->user_id === $userId;
     }
 }
