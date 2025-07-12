@@ -6,33 +6,35 @@ import { Link, usePage } from '@inertiajs/react'
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage()
     return (
-        <SidebarGroup className="px-3 py-3">
-            <SidebarGroupLabel className="mb-2 text-[11px] font-semibold tracking-wider text-sidebar-foreground/80 uppercase">
+        <SidebarGroup className="px-4 py-4">
+            <SidebarGroupLabel className="mb-3 text-[11px] font-semibold tracking-wider text-sidebar-foreground/90 uppercase">
                 Platform
             </SidebarGroupLabel>
-            <SidebarMenu className="space-y-2">
+            <SidebarMenu className="space-y-2.5">
                 {items.map((item) => (
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                             asChild
                             isActive={page.url.startsWith(item.href)}
                             tooltip={{ children: item.title }}
-                            className={`font-medium transition-all duration-300 ${
-                                page.url.startsWith(item.href) ? 'bg-sidebar-accent/80 shadow-sm' : 'hover:translate-x-1'
+                            className={`rounded-lg font-medium transition-all duration-300 ${
+                                page.url.startsWith(item.href)
+                                    ? 'bg-sidebar-accent/80 shadow-md'
+                                    : 'hover:translate-x-1.5 hover:bg-sidebar-accent/20 hover:shadow-sm'
                             }`}
                         >
                             <Link href={item.href} prefetch>
                                 {item.icon && (
                                     <Icon
                                         iconNode={item.icon}
-                                        className={`mr-3 transition-all duration-300 ${
+                                        className={`mr-3.5 transition-all duration-300 ${
                                             page.url.startsWith(item.href)
-                                                ? 'scale-110 text-sidebar-accent-foreground'
-                                                : 'text-sidebar-foreground/70 group-hover:scale-110 group-hover:text-sidebar-accent-foreground'
+                                                ? 'scale-115 text-sidebar-accent-foreground'
+                                                : 'text-sidebar-foreground/80 group-hover:scale-115 group-hover:text-sidebar-accent-foreground'
                                         }`}
                                     />
                                 )}
-                                <span>{item.title}</span>
+                                <span className="font-medium">{item.title}</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
