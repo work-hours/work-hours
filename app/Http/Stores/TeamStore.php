@@ -8,6 +8,7 @@ use App\Http\QueryFilters\ProjectTimeLog\EndDateFilter;
 use App\Http\QueryFilters\ProjectTimeLog\IsPaidFilter;
 use App\Http\QueryFilters\ProjectTimeLog\ProjectIdFilter;
 use App\Http\QueryFilters\ProjectTimeLog\StartDateFilter;
+use App\Http\QueryFilters\ProjectTimeLog\TeamMemberIdFilter;
 use App\Models\Team;
 use App\Models\TimeLog;
 use Carbon\Carbon;
@@ -31,6 +32,22 @@ final class TeamStore
         return Team::query()
             ->where('user_id', $userId)
             ->with('member')
+            ->get();
+    }
+
+    public static function allTeamMemberTimeLogs(Collection $teamMemberIds): Collection
+    {
+        return app(Pipeline::class)
+            ->send(TimeLog::query()->whereIn('user_id', $teamMemberIds))
+            ->through([
+                StartDateFilter::class,
+                EndDateFilter::class,
+                TeamMemberIdFilter::class,
+                ProjectIdFilter::class,
+                IsPaidFilter::class,
+            ])
+            ->thenReturn()
+            ->with(['user', 'project'])
             ->get();
     }
 
