@@ -8,15 +8,14 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
-import { Briefcase, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, PlusCircle, Search, TimerReset } from 'lucide-react'
-import { FormEventHandler, forwardRef, useState } from 'react'
+import { Briefcase, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, PauseCircle, PlayCircle, PlusCircle, Search, TimerReset } from 'lucide-react'
+import { ChangeEvent, FormEventHandler, forwardRef, ReactNode, useEffect, useState } from 'react'
 
-// Custom input component for DatePicker with icon
 interface CustomInputProps {
     value?: string
     onClick?: () => void
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-    icon: React.ReactNode
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+    icon: ReactNode
     placeholder?: string
     disabled?: boolean
     required?: boolean
@@ -95,10 +94,107 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
         is_paid: filters.is_paid || '',
     })
 
-    // State for selected time logs
+    const [selectedProject, setSelectedProject] = useState<number | null>(projects.length > 0 ? projects[0].id : null)
+
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
 
-    // Handle checkbox selection
+    const [activeTimeLog, setActiveTimeLog] = useState<{
+        id: number | null;
+        project_id: number | null;
+        project_name: string | null;
+        start_timestamp: string | null;
+        elapsed: number;
+    } | null>(null)
+
+    const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null)
+
+    useEffect(() => {
+        const savedTimeLog = localStorage.getItem('activeTimeLog')
+        if (savedTimeLog) {
+            try {
+                const parsedTimeLog = JSON.parse(savedTimeLog)
+                setActiveTimeLog(parsedTimeLog)
+            } catch (e) {
+                console.error('Failed to parse saved time log', e)
+                localStorage.removeItem('activeTimeLog')
+            }
+        }
+    }, [])
+
+    useEffect(() => {
+        if (activeTimeLog) {
+            // Save to localStorage
+            localStorage.setItem('activeTimeLog', JSON.stringify(activeTimeLog))
+
+            const interval = setInterval(() => {
+                setActiveTimeLog((prev) => {
+                    if (!prev) return null
+                    const startTime = prev.start_timestamp ? new Date(prev.start_timestamp).getTime() : Date.now()
+                    const elapsed = (Date.now() - startTime) / 1000 / 60 / 60 // Convert to hours
+                    const updatedTimeLog = { ...prev, elapsed }
+
+                    localStorage.setItem('activeTimeLog', JSON.stringify(updatedTimeLog))
+
+                    return updatedTimeLog
+                })
+            }, 1000)
+            setTimerInterval(interval)
+            return () => clearInterval(interval)
+        } else if (timerInterval) {
+            clearInterval(timerInterval)
+            setTimerInterval(null)
+            localStorage.removeItem('activeTimeLog')
+        }
+    }, [activeTimeLog])
+
+    const startTimeLog = () => {
+        const project = projects.find(p => p.id === selectedProject) || null
+
+        const now = new Date().toISOString()
+        const newTimeLog = {
+            id: null,
+            project_id: project?.id || null,
+            project_name: project?.name || null,
+            start_timestamp: now,
+            elapsed: 0
+        }
+
+        setActiveTimeLog(newTimeLog)
+        localStorage.setItem('activeTimeLog', JSON.stringify(newTimeLog))
+    }
+
+    const stopTimeLog = () => {
+        if (!activeTimeLog) return
+
+        router.post(
+            route('time-log.store'),
+            {
+                project_id: activeTimeLog.project_id,
+                start_timestamp: activeTimeLog.start_timestamp,
+                end_timestamp: new Date().toISOString(),
+            },
+            {
+                onSuccess: () => {
+                    setActiveTimeLog(null)
+                    localStorage.removeItem('activeTimeLog')
+
+                    if (timerInterval) {
+                        clearInterval(timerInterval)
+                        setTimerInterval(null)
+                    }
+                },
+            },
+        )
+    }
+
+    const formatElapsedTime = (hours: number): string => {
+        const totalSeconds = Math.floor(hours * 60 * 60)
+        const h = Math.floor(totalSeconds / 3600)
+        const m = Math.floor((totalSeconds % 3600) / 60)
+        const s = totalSeconds % 60
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+    }
+
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
             setSelectedLogs([...selectedLogs, id])
@@ -107,7 +203,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
         }
     }
 
-    // Mark selected logs as paid
     const markAsPaid = () => {
         if (selectedLogs.length === 0) {
             return
@@ -126,11 +221,9 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
         )
     }
 
-    // Convert string dates to Date objects for DatePicker
     const startDate = data.start_date ? new Date(data.start_date) : null
     const endDate = data.end_date ? new Date(data.end_date) : null
 
-    // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
             setData('start_date', date.toISOString().split('T')[0])
@@ -158,16 +251,13 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Time Log" />
             <div className="mx-auto flex w-9/12 flex-col gap-6 p-6">
-                {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Time Logs</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage your work hours</p>
                 </section>
 
-                {/* Stats Cards */}
                 {timeLogs.length > 0 && (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
                                 <div className="mb-2 flex flex-row items-center justify-between">
@@ -187,7 +277,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                             </CardContent>
                         </Card>
 
-                        {/* Unpaid hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
                                 <div className="mb-2 flex flex-row items-center justify-between">
@@ -199,7 +288,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                             </CardContent>
                         </Card>
 
-                        {/* Unpaid amount card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
                                 <div className="mb-2 flex flex-row items-center justify-between">
@@ -228,7 +316,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                             </CardContent>
                         </Card>
 
-                        {/* Weekly average card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
                                 <div className="mb-2 flex flex-row items-center justify-between">
@@ -242,7 +329,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                     </div>
                 )}
 
-                {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardContent>
                         <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
@@ -353,7 +439,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                     {(() => {
                                         let description = ''
 
-                                        // Date range description
                                         if (data.start_date && data.end_date) {
                                             description = `Showing logs from ${data.start_date} to ${data.end_date}`
                                         } else if (data.start_date) {
@@ -362,7 +447,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                             description = `Showing logs until ${data.end_date}`
                                         }
 
-                                        // Project description
                                         if (data.project_id) {
                                             const selectedProject = projects.find((project) => project.id.toString() === data.project_id)
                                             const projectName = selectedProject ? selectedProject.name : ''
@@ -374,7 +458,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                             }
                                         }
 
-                                        // Payment status description
                                         if (data.is_paid) {
                                             const paymentStatus = data.is_paid === 'true' ? 'paid' : 'unpaid'
 
@@ -393,7 +476,76 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                     </CardContent>
                 </Card>
 
-                {/* Time Logs Card */}
+                {activeTimeLog ? (
+                    <Card className="overflow-hidden transition-all hover:shadow-md bg-primary/5">
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <CardTitle className="text-xl flex items-center gap-2">
+                                        <ClockIcon className="h-5 w-5 text-primary animate-pulse" />
+                                        <span>Time Tracking Active</span>
+                                    </CardTitle>
+                                    <CardDescription>
+                                        {activeTimeLog.project_name ? `Tracking time for ${activeTimeLog.project_name}` : 'Tracking time'}
+                                    </CardDescription>
+                                    <div className="mt-4 text-3xl font-bold text-primary">
+                                        {formatElapsedTime(activeTimeLog.elapsed)}
+                                    </div>
+                                    <div className="mt-1 text-sm text-muted-foreground">
+                                        Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
+                                    </div>
+                                </div>
+                                <div>
+                                    <Button onClick={stopTimeLog} variant="default" size="lg" className="flex items-center gap-2">
+                                        <PauseCircle className="h-5 w-5" />
+                                        <span>Stop Tracking</span>
+                                    </Button>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <Card className="overflow-hidden transition-all hover:shadow-md">
+                        <CardContent className="p-6">
+                            <div className="flex flex-col gap-4">
+                                <div>
+                                    <CardTitle className="text-xl">Quick Time Tracking</CardTitle>
+                                    <CardDescription>
+                                        Select a project and start tracking your time
+                                    </CardDescription>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <Label htmlFor="tracking_project" className="text-sm font-medium mb-2 block">
+                                            Project
+                                        </Label>
+                                        <SearchableSelect
+                                            id="tracking_project"
+                                            value={selectedProject?.toString() || ''}
+                                            onChange={(value) => setSelectedProject(value ? parseInt(value) : null)}
+                                            options={projects}
+                                            placeholder="Select project"
+                                            icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                        />
+                                    </div>
+                                    <div className="flex items-end">
+                                        <Button
+                                            onClick={startTimeLog}
+                                            variant="default"
+                                            size="lg"
+                                            className="flex items-center gap-2 w-full"
+                                            disabled={selectedProject === null}
+                                        >
+                                            <PlayCircle className="h-5 w-5" />
+                                            <span>Start Tracking</span>
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
