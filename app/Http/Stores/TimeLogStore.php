@@ -104,6 +104,8 @@ final class TimeLogStore
             'id' => $timeLog->id,
             'user_id' => $timeLog->user_id,
             'user_name' => $timeLog->user ? $timeLog->user->name : null,
+            'project_id' => $timeLog->project_id,
+            'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
             'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
             'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
             'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
