@@ -468,6 +468,7 @@ export default function ProjectTimeLogs({
                                 timeLogs={timeLogs as TimeLogEntry[]}
                                 showCheckboxes={isCreator}
                                 showTeamMember={true}
+                                showProject={false}
                                 selectedLogs={selectedLogs}
                                 onSelectLog={handleSelectLog}
                             />

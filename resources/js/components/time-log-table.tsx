@@ -21,6 +21,7 @@ type TimeLogTableProps = {
     showTeamMember?: boolean
     showActions?: boolean
     showCheckboxes?: boolean
+    showProject?: boolean
     selectedLogs?: number[]
     onSelectLog?: (id: number, checked: boolean) => void
 }
@@ -30,6 +31,7 @@ export default function TimeLogTable({
     showTeamMember = false,
     showActions = false,
     showCheckboxes = false,
+    showProject = true,
     selectedLogs = [],
     onSelectLog,
 }: TimeLogTableProps) {
@@ -39,7 +41,7 @@ export default function TimeLogTable({
                 <TableHeaderRow>
                     {showCheckboxes && <TableHead className="w-[50px]">Select</TableHead>}
                     {showTeamMember && <TableHead>Team Member</TableHead>}
-                    <TableHead>Project</TableHead>
+                    {showProject && <TableHead>Project</TableHead>}
                     <TableHead>Start Time</TableHead>
                     <TableHead>End Time</TableHead>
                     <TableHead>Duration</TableHead>
@@ -62,7 +64,7 @@ export default function TimeLogTable({
                             </TableCell>
                         )}
                         {showTeamMember && <TableCell className="font-medium">{log.user_name}</TableCell>}
-                        <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>
+                        {showProject && <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>}
                         <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
                         <TableCell className="font-medium">{formatDateTime(log.end_timestamp)}</TableCell>
                         <TableCell>
