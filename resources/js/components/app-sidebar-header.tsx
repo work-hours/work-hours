@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/breadcrumbs'
+import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types'
 
@@ -9,6 +10,9 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                 <SidebarTrigger className="-ml-1 transition-colors duration-200 hover:bg-sidebar-accent/10 hover:text-sidebar-accent" />
                 <div className="mx-1 h-4 w-px bg-sidebar-border/30" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
+            </div>
+            <div className="ml-auto">
+                <AppearanceToggleDropdown />
             </div>
         </header>
     )
