@@ -1,3 +1,4 @@
+import RecentTimeLogs from '@/components/dashboard/RecentTimeLogs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import AppLayout from '@/layouts/app-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
@@ -5,7 +6,6 @@ import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
 import { BarChart3, ClockIcon, DollarSign, PlusCircle, TrendingUp, UsersIcon } from 'lucide-react'
 
-import { useEffect } from 'react'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface TeamStats {
@@ -50,14 +50,11 @@ export default function Dashboard({ teamStats }: DashboardProps) {
     ]
 
     const quickActions = [
-        { name: 'Log Time', icon: <ClockIcon className="h-5 w-5" />, href: '/time-log/create' },
-        { name: 'Add Team Member', icon: <UsersIcon className="h-5 w-5" />, href: '/team/create' },
-        { name: 'Create Project', icon: <PlusCircle className="h-5 w-5" />, href: '/project/create' },
+        { name: 'Log Time', icon: <ClockIcon className="h-5 w-5" />, href: route('time-log.create') },
+        { name: 'Add Team Member', icon: <UsersIcon className="h-5 w-5" />, href: route('team.create') },
+        { name: 'Create Project', icon: <PlusCircle className="h-5 w-5" />, href: route('project.create') },
+        { name: 'All Team Log', icon: <BarChart3 className="h-5 w-5" />, href: route('team.all-time-logs') },
     ]
-
-    useEffect(() => {
-        console.log('hoursData', hoursData)
-    }, [])
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -186,52 +183,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                 </section>
 
                 <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <Card className="overflow-hidden transition-all hover:shadow-md">
-                        <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <CardTitle>Recent Time Logs</CardTitle>
-                                    <CardDescription>Your team's latest activity</CardDescription>
-                                </div>
-                                <Link href={teamStats.allLogsLink} className="text-sm text-primary hover:underline">
-                                    View all logs
-                                </Link>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {teamStats.recentLogs.length > 0 ? (
-                                    teamStats.recentLogs.map((log, index) => (
-                                        <div key={index} className="flex items-center justify-between border-b pb-2 last:border-0">
-                                            <div className="flex items-center gap-2">
-                                                <div className="rounded-full bg-primary/10 p-1">
-                                                    <ClockIcon className="h-4 w-4 text-primary" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-medium">
-                                                        {log.user} on{' '}
-                                                        {new Date(log.date).toLocaleDateString('en-US', {
-                                                            weekday: 'long',
-                                                            month: 'short',
-                                                            day: 'numeric',
-                                                        })}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="text-sm font-medium">{roundToTwoDecimals(log.hours)} hours</div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="py-4 text-center text-gray-500">
-                                        <p>No recent time logs found</p>
-                                        <Link href="/time-log/create" className="mt-2 inline-block text-primary hover:underline">
-                                            Create your first time log
-                                        </Link>
-                                    </div>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <RecentTimeLogs />
 
                     <Card className="overflow-hidden transition-all hover:shadow-md">
                         <CardHeader>

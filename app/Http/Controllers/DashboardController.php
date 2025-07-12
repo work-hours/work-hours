@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Stores\TeamStore;
+use App\Http\Stores\TimeLogStore;
 use App\Models\Team;
 use App\Models\TimeLog;
 use Inertia\Response;
+use Msamgan\Lact\Attributes\Action;
 
 final class DashboardController extends Controller
 {
     public function index(): Response
     {
         $teamCount = Team::query()->where('user_id', auth()->id())->count();
-        $teamMembers = Team::query()->where('user_id', auth()->id())->pluck('member_id');
+        $teamMembers = TeamStore::teamMembersIds(userId: auth()->id());
         $teamMembers = $teamMembers->merge([auth()->id()]);
 
         $last5Entries = TimeLog::query()
@@ -80,5 +83,25 @@ final class DashboardController extends Controller
                 'allLogsLink' => route('team.all-time-logs'),
             ],
         ]);
+    }
+
+    #[Action(method: 'get', name: 'dashboard.recent-logs', middleware: ['auth', 'verified'])]
+    public function recentLogs(): array
+    {
+        sleep(5);
+
+        $teamMembers = TeamStore::teamMembersIds(userId: auth()->id());
+        $teamMembers = $teamMembers->merge([auth()->id()]);
+
+        return [
+            'entries' => TimeLogStore::recentTeamLogs(
+                teamMembersIds: $teamMembers->toArray(),
+            )->map(fn ($log): array => [
+                'date' => $log->start_timestamp->format('Y-m-d H:i:s'),
+                'user' => $log->user->name ?? 'Unknown User',
+                'hours' => $log->duration,
+            ]),
+            'allLogsLink' => route('team.all-time-logs'),
+        ];
     }
 }
