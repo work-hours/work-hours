@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Stores\ProjectStore;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
@@ -25,23 +26,8 @@ final class ProjectController extends Controller
 
     public function index()
     {
-        $ownedProjects = Project::query()
-            ->where('user_id', auth()->id())
-            ->with(['teamMembers', 'user'])
-            ->get();
-
-        $assignedProjects = Project::query()
-            ->whereHas('teamMembers', function ($query): void {
-                $query->where('users.id', auth()->id());
-            })
-            ->where('user_id', '!=', auth()->id())
-            ->with(['teamMembers', 'user'])
-            ->get();
-
-        $projects = $ownedProjects->concat($assignedProjects);
-
         return Inertia::render('project/index', [
-            'projects' => $projects,
+            'projects' => ProjectStore::userProjects(userId: auth()->id()),
             'auth' => [
                 'user' => auth()->user(),
             ],
