@@ -19,13 +19,6 @@ final class DashboardController extends Controller
         $teamMembers = TeamStore::teamMembersIds(userId: auth()->id());
         $teamMembers = $teamMembers->merge([auth()->id()]);
 
-        $last5Entries = TimeLog::query()
-            ->whereIn('user_id', $teamMembers)
-            ->orderBy('start_timestamp', 'desc')
-            ->with('user')
-            ->take(5)
-            ->get(['start_timestamp', 'end_timestamp', 'duration', 'user_id']);
-
         $totalHours = TimeLog::query()
             ->whereIn('user_id', $teamMembers)
             ->sum('duration');
@@ -75,12 +68,6 @@ final class DashboardController extends Controller
                 'unpaidAmount' => round($unpaidAmount, 2),
                 'currency' => $currency,
                 'weeklyAverage' => $teamCount > 0 ? round($totalHours / $teamCount, 2) : 0,
-                'recentLogs' => $last5Entries->map(fn ($log): array => [
-                    'date' => $log->start_timestamp->format('Y-m-d H:i:s'),
-                    'user' => $log->user->name ?? 'Unknown User',
-                    'hours' => $log->duration,
-                ]),
-                'allLogsLink' => route('team.all-time-logs'),
             ],
         ]);
     }
@@ -88,14 +75,9 @@ final class DashboardController extends Controller
     #[Action(method: 'get', name: 'dashboard.recent-logs', middleware: ['auth', 'verified'])]
     public function recentLogs(): array
     {
-        sleep(5);
-
-        $teamMembers = TeamStore::teamMembersIds(userId: auth()->id());
-        $teamMembers = $teamMembers->merge([auth()->id()]);
-
         return [
             'entries' => TimeLogStore::recentTeamLogs(
-                teamMembersIds: $teamMembers->toArray(),
+                teamMembersIds: (TeamStore::teamMembersIds(userId: auth()->id())->merge([auth()->id()])->toArray()),
             )->map(fn ($log): array => [
                 'date' => $log->start_timestamp->format('Y-m-d H:i:s'),
                 'user' => $log->user->name ?? 'Unknown User',

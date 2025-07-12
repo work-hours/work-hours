@@ -1,10 +1,11 @@
 import RecentTimeLogs from '@/components/dashboard/RecentTimeLogs'
+import QuickActions from '@/components/dashboard/QuickActions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import AppLayout from '@/layouts/app-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
-import { BarChart3, ClockIcon, DollarSign, PlusCircle, TrendingUp, UsersIcon } from 'lucide-react'
+import { BarChart3, ClockIcon, DollarSign, TrendingUp, UsersIcon } from 'lucide-react'
 
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
@@ -15,12 +16,6 @@ interface TeamStats {
     unpaidAmount: number
     currency: string
     weeklyAverage: number
-    recentLogs: Array<{
-        date: string
-        hours: number
-        user: string
-    }>
-    allLogsLink: string
 }
 
 interface DashboardProps {
@@ -49,12 +44,6 @@ export default function Dashboard({ teamStats }: DashboardProps) {
         { name: 'Week 4', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.05) },
     ]
 
-    const quickActions = [
-        { name: 'Log Time', icon: <ClockIcon className="h-5 w-5" />, href: route('time-log.create') },
-        { name: 'Add Team Member', icon: <UsersIcon className="h-5 w-5" />, href: route('team.create') },
-        { name: 'Create Project', icon: <PlusCircle className="h-5 w-5" />, href: route('project.create') },
-        { name: 'All Team Log', icon: <BarChart3 className="h-5 w-5" />, href: route('team.all-time-logs') },
-    ]
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -65,18 +54,7 @@ export default function Dashboard({ teamStats }: DashboardProps) {
                         <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Welcome back!</h1>
                         <p className="mt-1 text-gray-500 dark:text-gray-400">Here's an overview of your team's activity</p>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                        {quickActions.map((action, index) => (
-                            <Link
-                                key={index}
-                                href={action.href}
-                                className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90"
-                            >
-                                {action.icon}
-                                {action.name}
-                            </Link>
-                        ))}
-                    </div>
+                    <QuickActions />
                 </section>
 
                 <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

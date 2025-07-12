@@ -6,25 +6,30 @@ import { Link } from '@inertiajs/react'
 import { ClockIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+interface TimeLogEntry {
+    user: string
+    date: string
+    hours: number
+}
+
+interface RecentLogsData {
+    entries: TimeLogEntry[]
+    allLogsLink: string
+}
+
 export default function RecentTimeLogs() {
-    const [recentLogs, setRecentLogs] = useState({
-        entries: [
-            {
-                user: 'John Doe',
-                date: new Date().toISOString(),
-                hours: 2.5,
-            },
-        ],
+    const [recentLogs, setRecentLogs] = useState<RecentLogsData>({
+        entries: [],
         allLogsLink: '',
     })
     const [loading, setLoading] = useState(true)
 
-    const getRecentLogs = async () => {
+    const getRecentLogs = async (): Promise<void> => {
         try {
             setLoading(true)
-            const data = await _recentLogs.data({})
+            const data: RecentLogsData = await _recentLogs.data({})
             setRecentLogs(data)
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Failed to fetch recent logs:', error)
         } finally {
             setLoading(false)
@@ -55,7 +60,7 @@ export default function RecentTimeLogs() {
                     {loading ? (
                         <Loader message="Loading recent logs..." />
                     ) : recentLogs.entries.length > 0 ? (
-                        recentLogs.entries.map((log, index) => (
+                        recentLogs.entries.map((log: TimeLogEntry, index: number) => (
                             <div key={index} className="flex items-center justify-between border-b pb-2 last:border-0">
                                 <div className="flex items-center gap-2">
                                     <div className="rounded-full bg-primary/10 p-1">
