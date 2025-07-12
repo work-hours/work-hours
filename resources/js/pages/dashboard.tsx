@@ -8,6 +8,8 @@ import AppLayout from '@/layouts/app-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/react'
+import { useEffect, useState } from 'react'
+import { stats } from '@actions/DashboardController'
 
 interface TeamStats {
     count: number
@@ -29,7 +31,29 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-export default function Dashboard({ teamStats }: DashboardProps) {
+export default function Dashboard() {
+    const [teamStats setTeamStats] = useState<TeamStats>({
+        count: 10,
+        totalHours: 1200,
+        unpaidHours: 300,
+        unpaidAmount: 1500,
+        currency: 'USD',
+        weeklyAverage: 30,
+    })
+
+    const getStats = async (): Promise<void> => {
+        try {
+            const response = await stats.data({})
+            setTeamStats(response)
+        } catch (error: unknown) {
+            console.error('Failed to fetch team stats:', error)
+        }
+    }
+
+    useEffect(() => {
+        getStats().then()
+    }, [])
+
     const hoursData = [
         { name: 'Unpaid', value: roundToTwoDecimals(teamStats.unpaidHours) },
         { name: 'Paid', value: roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours) },
