@@ -13,4 +13,9 @@ final class TeamStore
     {
         return Team::query()->where('user_id', $userId)->pluck('member_id');
     }
+
+    public static function teamMemberCount(int $userId): int
+    {
+        return Team::query()->where('user_id', $userId)->count();
+    }
 }
