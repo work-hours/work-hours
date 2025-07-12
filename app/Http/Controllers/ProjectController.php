@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -76,7 +77,7 @@ final class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        abort_if($project->user_id !== auth()->id(), 403, 'You can only edit your own projects.');
+        Gate::authorize('update', $project);
 
         $teamMembers = TeamStore::teamMembers(userId: auth()->id())
             ->map(fn ($team): array => [
@@ -100,7 +101,7 @@ final class ProjectController extends Controller
     #[Action(method: 'put', name: 'project.update', params: ['project'], middleware: ['auth', 'verified'])]
     public function update(UpdateProjectRequest $request, Project $project): void
     {
-        abort_if($project->user_id !== auth()->id(), 403, 'You can only update your own projects.');
+        Gate::authorize('update', $project);
 
         DB::beginTransaction();
         try {
@@ -125,7 +126,7 @@ final class ProjectController extends Controller
     #[Action(method: 'delete', name: 'project.destroy', params: ['project'], middleware: ['auth', 'verified'])]
     public function destroy(Project $project): void
     {
-        abort_if($project->user_id !== auth()->id(), 403, 'You can only delete your own projects.');
+        Gate::authorize('delete', $project);
 
         DB::beginTransaction();
         try {
@@ -155,9 +156,7 @@ final class ProjectController extends Controller
 
     public function timeLogs(Project $project)
     {
-        $isCreator = $project->isCreator(userId: auth()->id());
-
-        abort_unless($isCreator, 403, 'You do not have access to this project.');
+        Gate::authorize('viewTimeLogs', $project);
 
         $timeLogs = ProjectStore::timeLogs(project: $project);
         $unpaidAmount = ProjectStore::unpaidAmount(timeLogs: $timeLogs);
@@ -183,7 +182,6 @@ final class ProjectController extends Controller
             'unpaidHours' => $unpaidHours,
             'unpaidAmount' => $unpaidAmount,
             'weeklyAverage' => $weeklyAverage,
-            'isCreator' => $isCreator,
         ]);
     }
 
