@@ -58,7 +58,11 @@ export function AppSidebar() {
             <SidebarHeader className="py-6">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild className="rounded-xl transition-all duration-300 hover:scale-105 hover:bg-sidebar-accent/30 hover:shadow-md">
+                        <SidebarMenuButton
+                            size="lg"
+                            asChild
+                            className="rounded-xl transition-all duration-300 hover:scale-105 hover:bg-sidebar-accent/30 hover:shadow-md"
+                        >
                             <Link href="/dashboard" prefetch>
                                 <AppLogo />
                             </Link>
