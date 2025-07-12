@@ -1,15 +1,16 @@
-import RecentTimeLogs from '@/components/dashboard/RecentTimeLogs'
 import HoursDistribution from '@/components/dashboard/HoursDistribution'
+import RecentTimeLogs from '@/components/dashboard/RecentTimeLogs'
 import StatsCards from '@/components/dashboard/StatsCards'
 import TeamProductivity from '@/components/dashboard/TeamProductivity'
 import WeeklyTrend from '@/components/dashboard/WeeklyTrend'
 import WelcomeSection from '@/components/dashboard/WelcomeSection'
+import Loader from '@/components/ui/loader'
 import AppLayout from '@/layouts/app-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
+import { stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
-import { stats } from '@actions/DashboardController'
 
 interface TeamStats {
     count: number
@@ -20,10 +21,6 @@ interface TeamStats {
     weeklyAverage: number
 }
 
-interface DashboardProps {
-    teamStats: TeamStats
-}
-
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
@@ -32,21 +29,25 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function Dashboard() {
-    const [teamStats setTeamStats] = useState<TeamStats>({
-        count: 10,
-        totalHours: 1200,
-        unpaidHours: 300,
-        unpaidAmount: 1500,
+    const [loading, setLoading] = useState(true)
+    const [teamStats, setTeamStats] = useState<TeamStats>({
+        count: 0,
+        totalHours: 0,
+        unpaidHours: 0,
+        unpaidAmount: 0,
         currency: 'USD',
-        weeklyAverage: 30,
+        weeklyAverage: 0,
     })
 
     const getStats = async (): Promise<void> => {
         try {
+            setLoading(true)
             const response = await stats.data({})
             setTeamStats(response)
         } catch (error: unknown) {
             console.error('Failed to fetch team stats:', error)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -71,17 +72,26 @@ export default function Dashboard() {
             <Head title="Dashboard" />
             <div className="mx-auto flex w-9/12 flex-col gap-6 p-6">
                 <WelcomeSection />
-                <StatsCards teamStats={teamStats} />
 
-                <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <HoursDistribution hoursData={hoursData} />
-                    <WeeklyTrend weeklyData={weeklyData} />
-                </section>
+                {loading ? (
+                    <>
+                        <Loader message="Loading dashboard data..." className="h-60" />
+                    </>
+                ) : (
+                    <>
+                        <StatsCards teamStats={teamStats} />
 
-                <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <RecentTimeLogs />
-                    <TeamProductivity teamStats={teamStats} />
-                </section>
+                        <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <HoursDistribution hoursData={hoursData} />
+                            <WeeklyTrend weeklyData={weeklyData} />
+                        </section>
+
+                        <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <RecentTimeLogs />
+                            <TeamProductivity teamStats={teamStats} />
+                        </section>
+                    </>
+                )}
             </div>
         </AppLayout>
     )

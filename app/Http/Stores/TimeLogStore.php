@@ -49,7 +49,7 @@ final class TimeLogStore
         $unpaidAmount = 0;
         foreach ($teamMembersIds as $memberId) {
             $unpaidLogs = self::unpaidTimeLog(teamMemberId: $memberId);
-            $unpaidLogs->each(function ($log) use (&$unpaidAmount, $memberId) {
+            $unpaidLogs->each(function ($log) use (&$unpaidAmount, $memberId): void {
                 $memberUnpaidHours = $log->duration;
                 $hourlyRate = Team::memberHourlyRate(project: $log->project, memberId: $memberId);
 

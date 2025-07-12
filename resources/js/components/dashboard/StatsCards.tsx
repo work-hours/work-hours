@@ -32,7 +32,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 trend={{
                     icon: <TrendingUp className="mr-1 h-3 w-3" />,
                     text: `+${roundToTwoDecimals(teamStats.weeklyAverage)} hrs this week`,
-                    color: "text-green-500"
+                    color: 'text-green-500',
                 }}
             />
 
@@ -50,7 +50,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 trend={{
                     icon: <ClockIcon className="mr-1 h-3 w-3" />,
                     text: `${roundToTwoDecimals(teamStats.unpaidHours)} unpaid hours`,
-                    color: "text-amber-500"
+                    color: 'text-amber-500',
                 }}
             />
         </section>
