@@ -124,7 +124,7 @@ final class TeamController extends Controller
 
             $user = User::query()->where('email', $request->email)->first();
 
-            if (!$user) {
+            if (! $user) {
                 $userData = $request->safe()->except(['hourly_rate', 'currency']);
                 $user = User::query()->create($userData);
             }
@@ -133,7 +133,7 @@ final class TeamController extends Controller
                 'user_id' => auth()->id(),
                 'member_id' => $user->getKey(),
                 'hourly_rate' => $request->get('hourly_rate') ?? 0,
-                'currency' => mb_strtoupper((string)$request->get('currency')) ?? 'USD',
+                'currency' => mb_strtoupper((string) $request->get('currency')) ?? 'USD',
             ];
 
             Team::query()->create($teamData);
@@ -315,7 +315,7 @@ final class TeamController extends Controller
     public function exportTimeLogs(): StreamedResponse
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->whereIn('user_id', TeamStore::teamMembersIds(userId: auth()->id())));
-        $mappedTimeLogs = $timeLogs->map(fn($timeLog): array => [
+        $mappedTimeLogs = $timeLogs->map(fn ($timeLog): array => [
             'id' => $timeLog->id,
             'user_name' => $timeLog->user->name,
             'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',

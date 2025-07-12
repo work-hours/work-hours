@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Stores;
 
 use App\Models\Team;
-use App\Models\TimeLog;
 use Illuminate\Support\Collection;
 
 final class TeamStore
