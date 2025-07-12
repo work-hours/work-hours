@@ -4,15 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Stores;
 
-use App\Http\QueryFilters\TimeLog\EndDateFilter;
-use App\Http\QueryFilters\TimeLog\IsPaidFilter;
-use App\Http\QueryFilters\TimeLog\ProjectIdFilter;
-use App\Http\QueryFilters\TimeLog\StartDateFilter;
-use App\Http\QueryFilters\TimeLog\TeamMemberIdFilter;
 use App\Models\Team;
 use App\Models\TimeLog;
-use Carbon\Carbon;
-use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 
 final class TeamStore
@@ -35,37 +28,6 @@ final class TeamStore
             ->get();
     }
 
-    public static function allTeamMemberTimeLogs(Collection $teamMemberIds): Collection
-    {
-        return app(Pipeline::class)
-            ->send(TimeLog::query()->whereIn('user_id', $teamMemberIds))
-            ->through([
-                StartDateFilter::class,
-                EndDateFilter::class,
-                TeamMemberIdFilter::class,
-                ProjectIdFilter::class,
-                IsPaidFilter::class,
-            ])
-            ->thenReturn()
-            ->with(['user', 'project'])
-            ->get();
-    }
-
-    public static function teamMemberTimeLogs(int $memberId): Collection
-    {
-        return app(Pipeline::class)
-            ->send(TimeLog::query()->where('user_id', $memberId))
-            ->through([
-                StartDateFilter::class,
-                EndDateFilter::class,
-                ProjectIdFilter::class,
-                IsPaidFilter::class,
-            ])
-            ->thenReturn()
-            ->with('project')
-            ->get();
-    }
-
     public static function unpaidAmount(Collection $timeLogs, float $hourlyRate): float
     {
         $unpaidAmount = 0;
@@ -78,17 +40,11 @@ final class TeamStore
         return round($unpaidAmount, 2);
     }
 
-    public static function timeLogMapper(Collection $timeLogs): Collection
+    public static function teamEntry(int $userId, int $memberId): ?Team
     {
-        return $timeLogs->map(fn ($timeLog): array => [
-            'id' => $timeLog->id,
-            'user_id' => $timeLog->user_id,
-            'project_id' => $timeLog->project_id,
-            'project_name' => $timeLog->project ? $timeLog->project->name : null,
-            'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-            'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-            'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-            'is_paid' => $timeLog->is_paid,
-        ]);
+        return Team::query()
+            ->where('user_id', $userId)
+            ->where('member_id', $memberId)
+            ->first();
     }
 }
