@@ -122,7 +122,7 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
                     <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                             <div>
-                                <CardTitle className="flex items-center gap-2 text-xl text-left">
+                                <CardTitle className="flex items-center gap-2 text-left text-xl">
                                     <ClockIcon className="h-5 w-5 animate-pulse text-primary" />
                                     <span>Time Tracking Active</span>
                                 </CardTitle>
@@ -146,9 +146,9 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
             ) : (
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardContent className="p-4">
-                        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
+                        <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                             <div>
-                                <CardTitle className="text-xl text-left">Quick Time Tracking</CardTitle>
+                                <CardTitle className="text-left text-xl">Quick Time Tracking</CardTitle>
                                 <CardDescription>Select a project and start tracking your time</CardDescription>
                             </div>
                             <div className="grid grid-cols-1 gap-2 md:w-1/2">
