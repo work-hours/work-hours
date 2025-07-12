@@ -12,7 +12,7 @@ export default function WeeklyTrend({ weeklyData }: WeeklyTrendProps) {
                 <CardTitle>Weekly Trend</CardTitle>
                 <CardDescription>Hours logged over the past weeks</CardDescription>
             </CardHeader>
-            <CardContent className="h-80">
+            <CardContent className="h-60">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={weeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" />
