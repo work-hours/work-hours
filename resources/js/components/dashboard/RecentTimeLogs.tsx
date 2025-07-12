@@ -56,12 +56,12 @@ export default function RecentTimeLogs() {
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-2">
                     {loading ? (
                         <Loader message="Loading recent logs..." />
                     ) : recentLogs.entries.length > 0 ? (
                         recentLogs.entries.map((log: TimeLogEntry, index: number) => (
-                            <div key={index} className="flex items-center justify-between border-b pb-2 last:border-0">
+                            <div key={index} className="flex items-center justify-between border-b pb-1 last:border-0">
                                 <div className="flex items-center gap-2">
                                     <div className="rounded-full bg-primary/10 p-1">
                                         <ClockIcon className="h-4 w-4 text-primary" />

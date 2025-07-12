@@ -70,23 +70,23 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="mx-auto flex w-9/12 flex-col gap-6 p-6">
+            <div className="mx-auto flex w-11/12 md:w-10/12 lg:w-9/12 flex-col gap-4 p-4">
                 <WelcomeSection />
 
                 {loading ? (
                     <>
-                        <Loader message="Loading dashboard data..." className="h-60" />
+                        <Loader message="Loading dashboard data..." className="h-40" />
                     </>
                 ) : (
                     <>
                         <StatsCards teamStats={teamStats} />
 
-                        <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <HoursDistribution hoursData={hoursData} />
                             <WeeklyTrend weeklyData={weeklyData} />
                         </section>
 
-                        <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <RecentTimeLogs />
                             <TeamProductivity teamStats={teamStats} />
                         </section>

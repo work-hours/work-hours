@@ -17,7 +17,7 @@ interface StatsCardsProps {
 
 export default function StatsCards({ teamStats }: StatsCardsProps) {
     return (
-        <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <StatsCard
                 title="Team Members"
                 icon={<UsersIcon className="h-4 w-4 text-muted-foreground" />}
