@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Policies\TeamPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -15,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property User $user
  * @property User $member
  */
+#[UsePolicy(TeamPolicy::class)]
 final class Team extends Model
 {
     protected $fillable = ['user_id', 'member_id'];

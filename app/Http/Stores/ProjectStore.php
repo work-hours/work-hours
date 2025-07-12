@@ -4,15 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Stores;
 
-use App\Http\QueryFilters\ProjectTimeLog\EndDateFilter;
-use App\Http\QueryFilters\ProjectTimeLog\IsPaidFilter;
-use App\Http\QueryFilters\ProjectTimeLog\StartDateFilter;
-use App\Http\QueryFilters\ProjectTimeLog\UserIdFilter;
 use App\Models\Project;
-use App\Models\Team;
-use App\Models\TimeLog;
 use Carbon\Carbon;
-use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 
 final class ProjectStore
@@ -58,43 +51,27 @@ final class ProjectStore
         return $teamMembers;
     }
 
-    public static function timeLogs(Project $project): Collection
-    {
-        return app(Pipeline::class)
-            ->send(TimeLog::query()->where('project_id', $project->getKey()))
-            ->through([
-                StartDateFilter::class,
-                EndDateFilter::class,
-                UserIdFilter::class,
-                IsPaidFilter::class,
-            ])
-            ->thenReturn()
-            ->with('user')->get();
-    }
-
-    public static function unpaidAmount(Collection $timeLogs): float
-    {
-        $unpaidAmount = 0;
-        $timeLogs->each(function (TimeLog $timeLog) use (&$unpaidAmount): void {
-            $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
-            if (! $timeLog['is_paid']) {
-                $unpaidAmount += $timeLog['duration'] * $hourlyRate;
-            }
-        });
-
-        return round($unpaidAmount, 2);
-    }
-
-    public static function timeLogMapper(Collection $timeLogs): Collection
+    public static function exportTimeLogsMapper(Collection $timeLogs): Collection
     {
         return $timeLogs->map(fn ($timeLog): array => [
             'id' => $timeLog->id,
-            'user_id' => $timeLog->user_id,
-            'user_name' => $timeLog->user ? $timeLog->user->name : null,
+            'user_name' => $timeLog->user ? $timeLog->user->name : 'Unknown',
             'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-            'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
+            'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : 'In Progress',
             'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-            'is_paid' => $timeLog->is_paid,
+            'is_paid' => $timeLog->is_paid ? 'Paid' : 'Unpaid',
+        ]);
+    }
+
+    public static function projectExportMapper(Collection $projects): Collection
+    {
+        return $projects->map(fn ($project): array => [
+            'id' => $project->id,
+            'name' => $project->name,
+            'description' => $project->description,
+            'owner' => $project->user->name,
+            'team_members' => $project->teamMembers->pluck('name')->implode(', '),
+            'created_at' => Carbon::parse($project->created_at)->toDateTimeString(),
         ]);
     }
 }

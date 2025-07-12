@@ -6,13 +6,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
-use App\Models\Project;
+use App\Http\Stores\ProjectStore;
+use App\Http\Stores\TeamStore;
+use App\Http\Stores\TimeLogStore;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -24,61 +27,18 @@ final class TimeLogController extends Controller
 
     public function index()
     {
-        $query = TimeLog::query()->where('user_id', auth()->id());
-        if (request()->get('start_date')) {
-            $query->whereDate('start_timestamp', '>=', request('start_date'));
-        }
-
-        if (request()->get('end_date')) {
-            $query->whereDate('start_timestamp', '<=', request('end_date'));
-        }
-        if (request()->get('project_id') && request('project_id')) {
-            $userProjects = $this->getUserProjects()->pluck('id')->toArray();
-            if (in_array(request('project_id'), $userProjects)) {
-                $query->where('project_id', request('project_id'));
-            }
-        }
-
-        if (request()->get('is_paid') && request('is_paid') !== '') {
-            $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
-            $query->where('is_paid', $isPaid);
-        }
-
-        $timeLogs = $query->with('project')->get()
-            ->map(fn ($timeLog): array => [
-                'id' => $timeLog->id,
-                'project_id' => $timeLog->project_id,
-                'project_name' => $timeLog->project ? $timeLog->project->name : null,
-                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-                'is_paid' => $timeLog->is_paid,
-            ]);
-
-        // Calculate total hours
-        $totalDuration = round($timeLogs->sum('duration'), 2);
-
-        // Calculate unpaid hours
-        $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
-
-        // Get the user's hourly rate and currency from their team information
-        $team = Team::query()
-            ->where('member_id', auth()->id())
-            ->first();
-
-        // Calculate unpaid amount
-        $hourlyRate = $team ? $team->hourly_rate : 0;
-        $unpaidAmount = round($unpaidHours * $hourlyRate, 2);
-        $currency = $team ? $team->currency : 'USD';
-
-        // Calculate weekly average
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
+        $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
+        $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
+        $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
+        $team = TeamStore::teamEntry(userId: auth()->id(), memberId: auth()->id());
+        $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
+        $currency = $team instanceof Team ? $team->currency : 'USD';
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
-
-        // Get projects for the dropdown
-        $projects = $this->getUserProjects();
+        $projects = ProjectStore::userProjects(userId: auth()->id());
 
         return Inertia::render('time-log/index', [
-            'timeLogs' => $timeLogs,
+            'timeLogs' => $mappedTimeLogs,
             'filters' => [
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
@@ -105,7 +65,6 @@ final class TimeLogController extends Controller
             $data = $request->validated();
             $data['user_id'] = auth()->id();
 
-            // Calculate duration in minutes
             if (! empty($data['start_timestamp']) && ! empty($data['end_timestamp'])) {
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
@@ -123,7 +82,7 @@ final class TimeLogController extends Controller
 
     public function create()
     {
-        $projects = $this->getUserProjects();
+        $projects = ProjectStore::userProjects(userId: auth()->id());
 
         return Inertia::render('time-log/create', [
             'projects' => $projects,
@@ -132,13 +91,9 @@ final class TimeLogController extends Controller
 
     public function edit(TimeLog $timeLog)
     {
-        // Check if the time log belongs to the authenticated user
-        abort_if($timeLog->user_id !== auth()->id(), 403, 'You can only edit your own time logs.');
+        Gate::authorize('update', $timeLog);
 
-        // Check if the time log is paid
-        abort_if($timeLog->is_paid, 403, 'You cannot edit a paid time log.');
-
-        $projects = $this->getUserProjects();
+        $projects = ProjectStore::userProjects(userId: auth()->id());
 
         return Inertia::render('time-log/edit', [
             'timeLog' => [
@@ -158,17 +113,12 @@ final class TimeLogController extends Controller
     #[Action(method: 'put', name: 'time-log.update', params: ['timeLog'], middleware: ['auth', 'verified'])]
     public function update(UpdateTimeLogRequest $request, TimeLog $timeLog): void
     {
-        // Check if the time log belongs to the authenticated user
-        abort_if($timeLog->user_id !== auth()->id(), 403, 'You can only update your own time logs.');
-
-        // Check if the time log is paid
-        abort_if($timeLog->is_paid, 403, 'You cannot update a paid time log.');
+        Gate::authorize('update', $timeLog);
 
         DB::beginTransaction();
         try {
             $data = $request->validated();
 
-            // Calculate duration in minutes
             if (! empty($data['start_timestamp']) && ! empty($data['end_timestamp'])) {
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
@@ -192,11 +142,7 @@ final class TimeLogController extends Controller
     #[Action(method: 'delete', name: 'time-log.destroy', params: ['timeLog'], middleware: ['auth', 'verified'])]
     public function destroy(TimeLog $timeLog): void
     {
-        // Check if the time log belongs to the authenticated user
-        abort_if($timeLog->user_id !== auth()->id(), 403, 'You can only delete your own time logs.');
-
-        // Check if the time log is paid
-        abort_if($timeLog->is_paid, 403, 'You cannot delete a paid time log.');
+        Gate::authorize('delete', $timeLog);
 
         DB::beginTransaction();
         try {
@@ -222,7 +168,6 @@ final class TimeLogController extends Controller
 
         DB::beginTransaction();
         try {
-            // Ensure the time logs belong to the authenticated user
             $timeLogs = TimeLog::query()
                 ->whereIn('id', $timeLogIds)
                 ->get();
@@ -244,59 +189,20 @@ final class TimeLogController extends Controller
     #[Action(method: 'get', name: 'time-log.export', middleware: ['auth', 'verified'])]
     public function export(): StreamedResponse
     {
-        $query = TimeLog::query()->where('user_id', auth()->id());
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
 
-        // Apply date filters if provided
-        if (request()->get('start_date')) {
-            $query->whereDate('start_timestamp', '>=', request('start_date'));
-        }
-
-        if (request()->get('end_date')) {
-            $query->whereDate('start_timestamp', '<=', request('end_date'));
-        }
-
-        // Apply project filter if provided
-        if (request()->get('project_id') && request('project_id')) {
-            // Validate that the project belongs to the logged-in user
-            $userProjects = $this->getUserProjects()->pluck('id')->toArray();
-            if (in_array(request('project_id'), $userProjects)) {
-                $query->where('project_id', request('project_id'));
-            }
-        }
-
-        // Apply paid/unpaid filter if provided
-        if (request()->has('is_paid') && request('is_paid') !== '') {
-            $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
-            $query->where('is_paid', $isPaid);
-        }
-
-        $timeLogs = $query->with('project')->get()
-            ->map(fn ($timeLog): array => [
-                'id' => $timeLog->id,
-                'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
-                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
-                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-                'is_paid' => $timeLog->is_paid,
-            ]);
+        $mappedTimeLogs = $timeLogs->map(fn ($timeLog): array => [
+            'id' => $timeLog->id,
+            'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
+            'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+            'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
+            'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
+            'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
+        ]);
 
         $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Paid'];
         $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
-        return $this->exportToCsv($timeLogs, $headers, $filename);
-    }
-
-    /**
-     * Get projects created by or assigned to the current user
-     */
-    private function getUserProjects()
-    {
-        $userId = auth()->id();
-
-        return Project::query()->where('user_id', $userId)
-            ->orWhereHas('teamMembers', function ($query) use ($userId): void {
-                $query->where('member_id', $userId);
-            })
-            ->get(['id', 'name']);
+        return $this->exportToCsv($mappedTimeLogs, $headers, $filename);
     }
 }

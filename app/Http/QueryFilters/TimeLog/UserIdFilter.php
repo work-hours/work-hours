@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\QueryFilters\ProjectTimeLog;
+namespace App\Http\QueryFilters\TimeLog;
 
 use Closure;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-final class EndDateFilter
+final class UserIdFilter
 {
     /**
      * @throws ContainerExceptionInterface
@@ -18,8 +18,8 @@ final class EndDateFilter
     {
         $builder = $next($request);
 
-        if (request()->get('end_date')) {
-            $builder->whereDate('start_timestamp', '<=', request('end_date'));
+        if (request()->get('user_id') && request('user_id')) {
+            $builder->where('user_id', request('user_id'));
         }
 
         return $builder;

@@ -4,9 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Stores;
 
+use App\Http\QueryFilters\TimeLog\EndDateFilter;
+use App\Http\QueryFilters\TimeLog\IsPaidFilter;
+use App\Http\QueryFilters\TimeLog\ProjectIdFilter;
+use App\Http\QueryFilters\TimeLog\StartDateFilter;
+use App\Http\QueryFilters\TimeLog\UserIdFilter;
 use App\Models\Team;
 use App\Models\TimeLog;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pipeline\Pipeline;
 
 final class TimeLogStore
 {
@@ -35,15 +43,6 @@ final class TimeLogStore
             ->sum('duration');
     }
 
-    public static function unpaidTimeLog(int $teamMemberId): Collection
-    {
-        return TimeLog::query()
-            ->with('project')
-            ->where('user_id', $teamMemberId)
-            ->where('is_paid', false)
-            ->get();
-    }
-
     public static function unpaidAmount(array $teamMembersIds): float
     {
         $unpaidAmount = 0;
@@ -60,5 +59,57 @@ final class TimeLogStore
         }
 
         return round($unpaidAmount, 2);
+    }
+
+    public static function unpaidTimeLog(int $teamMemberId): Collection
+    {
+        return TimeLog::query()
+            ->with('project')
+            ->where('user_id', $teamMemberId)
+            ->where('is_paid', false)
+            ->get();
+    }
+
+    public static function unpaidAmountFromLogs(\Illuminate\Support\Collection $timeLogs): float
+    {
+        $unpaidAmount = 0;
+        $timeLogs->each(function (TimeLog $timeLog) use (&$unpaidAmount): void {
+            $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+            if (! $timeLog['is_paid']) {
+                $unpaidAmount += $timeLog['duration'] * $hourlyRate;
+            }
+        });
+
+        return round($unpaidAmount, 2);
+    }
+
+    public static function timeLogs(Builder $baseQuery)
+    {
+        return app(Pipeline::class)
+            ->send($baseQuery)
+            ->through([
+                StartDateFilter::class,
+                EndDateFilter::class,
+                UserIdFilter::class,
+                IsPaidFilter::class,
+                ProjectIdFilter::class,
+            ])
+            ->thenReturn()
+            ->with(['user', 'project'])->get();
+    }
+
+    public static function timeLogMapper(\Illuminate\Support\Collection $timeLogs): \Illuminate\Support\Collection
+    {
+        return $timeLogs->map(fn ($timeLog): array => [
+            'id' => $timeLog->id,
+            'user_id' => $timeLog->user_id,
+            'user_name' => $timeLog->user ? $timeLog->user->name : null,
+            'project_id' => $timeLog->project_id,
+            'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
+            'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+            'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
+            'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
+            'is_paid' => $timeLog->is_paid,
+        ]);
     }
 }

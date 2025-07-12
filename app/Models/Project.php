@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Policies\ProjectPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property User $user
  * @property Collection|User[] $teamMembers
  */
+#[UsePolicy(ProjectPolicy::class)]
 final class Project extends Model
 {
     protected $fillable = ['user_id', 'name', 'description'];
