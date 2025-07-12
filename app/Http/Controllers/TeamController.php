@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTeamMemberRequest;
 use App\Http\Requests\UpdateTeamMemberRequest;
+use App\Http\Stores\TeamStore;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
@@ -26,45 +27,30 @@ final class TeamController extends Controller
 {
     use ExportableTrait;
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function index()
     {
         $query = Team::query()
             ->where('user_id', auth()->id())
-            ->with('member');
-        if (request()->get('search')) {
-            $search = request('search');
-            $query->whereHas('member', function ($q) use ($search): void {
-                $q->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('email', 'like', '%' . $search . '%');
+            ->with('member')
+            ->when(request()->get('search'), function ($query): void {
+                $search = request('search');
+                $query->whereHas('member', function ($q) use ($search): void {
+                    $q->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                });
             });
-        }
 
         $teamMembers = $query->get()
             ->map(function ($team): array {
-                // Get time logs for this team member
-                $query = TimeLog::query()->where('user_id', $team->member->id);
-
-                // Apply date filters if provided
-                if (request()->get('start_date')) {
-                    $query->whereDate('start_timestamp', '>=', request('start_date'));
-                }
-
-                if (request()->get('end_date')) {
-                    $query->whereDate('start_timestamp', '<=', request('end_date'));
-                }
-
-                $timeLogs = $query->get();
-
-                // Calculate total hours
-                $totalDuration = round($timeLogs->sum('duration'), 2);
-
-                // Calculate unpaid hours
-                $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
-
-                // Calculate unpaid amount
-                $unpaidAmount = round($unpaidHours * $team->hourly_rate, 2);
-
-                // Calculate weekly average
+                $timeLogs = TeamStore::teamMemberTimeLogs($team->member->getkey());
+                $mappedTimeLogs = TeamStore::timeLogMapper($timeLogs);
+                $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
+                $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
+                $unpaidAmount = TeamStore::unpaidAmount($timeLogs, (float) $team->hourly_rate);
                 $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
                 return [
@@ -129,7 +115,6 @@ final class TeamController extends Controller
 
     public function edit(User $user)
     {
-        // Check if the user is a member of the authenticated user's team
         $team = Team::query()
             ->where('user_id', auth()->id())
             ->where('member_id', $user->getKey())
@@ -224,7 +209,6 @@ final class TeamController extends Controller
 
     public function timeLogs(User $user)
     {
-        // Check if the user is a member of the authenticated user's team
         $isTeamMember = Team::query()
             ->where('user_id', auth()->id())
             ->where('member_id', $user->id)
@@ -232,63 +216,32 @@ final class TeamController extends Controller
 
         abort_unless($isTeamMember, 403, 'You can only view time logs of members in your team.');
 
-        $query = TimeLog::query()->where('user_id', $user->id);
-
-        // Apply date filters if provided
-        if (request()->get('start_date')) {
-            $query->whereDate('start_timestamp', '>=', request('start_date'));
-        }
-
-        if (request()->get('end_date')) {
-            $query->whereDate('start_timestamp', '<=', request('end_date'));
-        }
-
-        // Apply project filter if provided
+        // Validate project_id if provided
         if (request()->get('project_id') && request('project_id')) {
-            // Validate that the project belongs to the logged-in user
             $userProjects = $this->getUserProjects()->pluck('id')->toArray();
-            if (in_array(request('project_id'), $userProjects)) {
-                $query->where('project_id', request('project_id'));
-            }
+            abort_unless(in_array(request('project_id'), $userProjects), 403, 'You do not have access to this project.');
         }
 
-        // Apply paid/unpaid filter if provided
-        if (request()->has('is_paid') && request('is_paid') !== '') {
-            $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
-            $query->where('is_paid', $isPaid);
-        }
+        $timeLogs = TeamStore::teamMemberTimeLogs($user->id);
+        $mappedTimeLogs = TeamStore::timeLogMapper($timeLogs);
 
-        $timeLogs = $query->with('project')->get()
-            ->map(fn ($timeLog): array => [
-                'id' => $timeLog->id,
-                'project_id' => $timeLog->project_id,
-                'project_name' => $timeLog->project ? $timeLog->project->name : null,
-                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-                'is_paid' => $timeLog->is_paid,
-            ]);
-
-        $totalDuration = round($timeLogs->sum('duration'), 2);
-        $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
+        $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
+        $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
-        // Get the team member's hourly rate
         $team = Team::query()
             ->where('user_id', auth()->id())
             ->where('member_id', $user->id)
             ->first();
 
-        // Calculate unpaid amount
         $hourlyRate = $team ? $team->hourly_rate : 0;
-        $unpaidAmount = round($unpaidHours * $hourlyRate, 2);
+        $unpaidAmount = TeamStore::unpaidAmount($timeLogs, (float) $hourlyRate);
         $currency = $team ? $team->currency : 'USD';
 
-        // Get projects for the dropdown
         $projects = $this->getUserProjects();
 
         return Inertia::render('team/time-logs', [
-            'timeLogs' => $timeLogs,
+            'timeLogs' => $mappedTimeLogs,
             'filters' => [
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),

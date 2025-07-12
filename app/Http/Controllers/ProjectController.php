@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Http\QueryFilters\ProjectTimeLog\EndDateFilter;
-use App\Http\QueryFilters\ProjectTimeLog\IsPaidFilter;
-use App\Http\QueryFilters\ProjectTimeLog\StartDateFilter;
-use App\Http\QueryFilters\ProjectTimeLog\UserIdFilter;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Stores\ProjectStore;
@@ -17,13 +13,10 @@ use App\Models\TimeLog;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -70,7 +63,7 @@ final class ProjectController extends Controller
     public function create()
     {
         $teamMembers = TeamStore::teamMembers(userId: auth()->id())
-            ->map(fn($team): array => [
+            ->map(fn ($team): array => [
                 'id' => $team->member->id,
                 'name' => $team->member->name,
                 'email' => $team->member->email,
@@ -86,7 +79,7 @@ final class ProjectController extends Controller
         abort_if($project->user_id !== auth()->id(), 403, 'You can only edit your own projects.');
 
         $teamMembers = TeamStore::teamMembers(userId: auth()->id())
-            ->map(fn($team): array => [
+            ->map(fn ($team): array => [
                 'id' => $team->member->id,
                 'name' => $team->member->name,
                 'email' => $team->member->email,
@@ -150,7 +143,7 @@ final class ProjectController extends Controller
         $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Created At'];
         $filename = 'projects_' . Carbon::now()->format('Y-m-d') . '.csv';
 
-        return $this->exportToCsv(ProjectStore::userProjects(userId: auth()->id())->map(fn($project): array => [
+        return $this->exportToCsv(ProjectStore::userProjects(userId: auth()->id())->map(fn ($project): array => [
             'id' => $project->id,
             'name' => $project->name,
             'description' => $project->description,
@@ -206,7 +199,7 @@ final class ProjectController extends Controller
         $isCreator = $project->user_id === auth()->id();
         $isTeamMember = $project->teamMembers()->where('users.id', auth()->id())->exists();
 
-        abort_if(!$isCreator && !$isTeamMember, 403, 'You do not have access to this project.');
+        abort_if(! $isCreator && ! $isTeamMember, 403, 'You do not have access to this project.');
 
         $query = TimeLog::query()->where('project_id', $project->id);
 
@@ -233,7 +226,7 @@ final class ProjectController extends Controller
 
         $timeLogs = $query->with(['user'])->get();
 
-        $timeLogsData = $timeLogs->map(fn($timeLog): array => [
+        $timeLogsData = $timeLogs->map(fn ($timeLog): array => [
             'id' => $timeLog->id,
             'user_name' => $timeLog->user ? $timeLog->user->name : 'Unknown',
             'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),

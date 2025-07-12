@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\QueryFilters\ProjectTimeLog;
 
 use Closure;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class StartDateFilter
+final class StartDateFilter
 {
     /**
      * @throws ContainerExceptionInterface

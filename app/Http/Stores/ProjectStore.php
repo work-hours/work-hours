@@ -39,13 +39,13 @@ final class ProjectStore
     {
         $teamMembers = $project->teamMembers()
             ->get()
-            ->map(fn($member): array => [
+            ->map(fn ($member): array => [
                 'id' => $member->id,
                 'name' => $member->name,
                 'email' => $member->email,
             ]);
 
-        $creatorIncluded = $teamMembers->contains(fn($member): bool => $member['id'] === $project->user_id);
+        $creatorIncluded = $teamMembers->contains(fn ($member): bool => $member['id'] === $project->user_id);
 
         if (! $creatorIncluded && $includeCreator) {
             $teamMembers->push([

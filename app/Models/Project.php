@@ -19,7 +19,6 @@ use Illuminate\Support\Carbon;
  * @property string $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @property User $user
  * @property Collection|User[] $teamMembers
  */

@@ -8,7 +8,7 @@ use Closure;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-final class UserIdFilter
+final class ProjectIdFilter
 {
     /**
      * @throws ContainerExceptionInterface
@@ -18,8 +18,8 @@ final class UserIdFilter
     {
         $builder = $next($request);
 
-        if (request()->get('user_id') && request('user_id')) {
-            $builder->where('user_id', request('user_id'));
+        if (request()->get('project_id') && request('project_id')) {
+            $builder->where('project_id', request('project_id'));
         }
 
         return $builder;
