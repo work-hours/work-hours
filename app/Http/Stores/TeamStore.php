@@ -28,18 +28,6 @@ final class TeamStore
             ->get();
     }
 
-    public static function unpaidAmount(Collection $timeLogs, float $hourlyRate): float
-    {
-        $unpaidAmount = 0;
-        $timeLogs->each(function (TimeLog $timeLog) use (&$unpaidAmount, $hourlyRate): void {
-            if (! $timeLog['is_paid']) {
-                $unpaidAmount += $timeLog['duration'] * $hourlyRate;
-            }
-        });
-
-        return round($unpaidAmount, 2);
-    }
-
     public static function teamEntry(int $userId, int $memberId): ?Team
     {
         return Team::query()

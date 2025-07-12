@@ -90,9 +90,7 @@ final class TeamController extends Controller
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
         $team = TeamStore::teamEntry(userId: auth()->id(), memberId: $user->getKey());
-
-        $hourlyRate = $team instanceof Team ? $team->hourly_rate : 0;
-        $unpaidAmount = TeamStore::unpaidAmount($timeLogs, (float)$hourlyRate);
+        $unpaidAmount = TimeLogStore::unpaidAmountFromLogs($timeLogs);
         $currency = $team instanceof Team ? $team->currency : 'USD';
 
         $projects = ProjectStore::userProjects(userId: auth()->id());
@@ -281,24 +279,11 @@ final class TeamController extends Controller
 
         $teamMembers = $query->get()
             ->map(function ($team): array {
-                $query = TimeLog::query()->where('user_id', $team->member->id);
-
-                if (request()->get('start_date')) {
-                    $query->whereDate('start_timestamp', '>=', request('start_date'));
-                }
-
-                if (request()->get('end_date')) {
-                    $query->whereDate('start_timestamp', '<=', request('end_date'));
-                }
-
-                $timeLogs = $query->get();
-
-                $totalDuration = round($timeLogs->sum('duration'), 2);
-
-                $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
-
-                $unpaidAmount = round($unpaidHours * $team->hourly_rate, 2);
-
+                $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', $team->member->id));
+                $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
+                $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
+                $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
+                $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
                 $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
                 return [
@@ -329,53 +314,20 @@ final class TeamController extends Controller
     #[Action(method: 'get', name: 'team.export-time-logs', middleware: ['auth', 'verified'])]
     public function exportTimeLogs(): StreamedResponse
     {
-        $teamMembersQuery = Team::query()
-            ->where('user_id', auth()->id())
-            ->with('member');
-
-        $teamMemberIds = $teamMembersQuery->get()->pluck('member.id');
-
-        $query = TimeLog::query()->whereIn('user_id', $teamMemberIds);
-
-        if (request()->get('start_date')) {
-            $query->whereDate('start_timestamp', '>=', request('start_date'));
-        }
-
-        if (request()->get('end_date')) {
-            $query->whereDate('start_timestamp', '<=', request('end_date'));
-        }
-
-        if (request()->get('team_member_id') && request('team_member_id')) {
-            abort_unless($teamMemberIds->contains(request('team_member_id')), 403, 'You can only view time logs of members in your team.');
-            $query->where('user_id', request('team_member_id'));
-        }
-
-        if (request()->get('project_id') && request('project_id')) {
-            $userProjects = ProjectStore::userProjects(userId: auth()->id())->pluck('id')->toArray();
-            if (in_array(request('project_id'), $userProjects)) {
-                $query->where('project_id', request('project_id'));
-            }
-        }
-
-        if (request()->has('is_paid') && request('is_paid') !== '') {
-            $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
-            $query->where('is_paid', $isPaid);
-        }
-
-        $timeLogs = $query->with(['user', 'project'])->get()
-            ->map(fn($timeLog): array => [
-                'id' => $timeLog->id,
-                'user_name' => $timeLog->user->name,
-                'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
-                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
-                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-                'is_paid' => $timeLog->is_paid,
-            ]);
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->whereIn('user_id', TeamStore::teamMembersIds(userId: auth()->id())));
+        $mappedTimeLogs = $timeLogs->map(fn($timeLog): array => [
+            'id' => $timeLog->id,
+            'user_name' => $timeLog->user->name,
+            'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
+            'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+            'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
+            'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
+            'is_paid' => $timeLog->is_paid,
+        ]);
 
         $headers = ['ID', 'Team Member', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Paid'];
         $filename = 'team_time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
-        return $this->exportToCsv($timeLogs, $headers, $filename);
+        return $this->exportToCsv($mappedTimeLogs, $headers, $filename);
     }
 }
