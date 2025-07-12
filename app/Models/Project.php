@@ -37,4 +37,9 @@ final class Project extends Model
         return $this->belongsToMany(User::class, 'project_team', 'project_id', 'member_id')
             ->withTimestamps();
     }
+
+    public function isCreator(int $userId): bool
+    {
+        return $this->user_id === $userId;
+    }
 }
