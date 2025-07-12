@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\QueryFilters\ProjectTimeLog;
+namespace App\Http\QueryFilters\TimeLog;
 
 use Closure;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-final class UserIdFilter
+final class TeamMemberIdFilter
 {
     /**
      * @throws ContainerExceptionInterface
@@ -18,8 +18,8 @@ final class UserIdFilter
     {
         $builder = $next($request);
 
-        if (request()->get('user_id') && request('user_id')) {
-            $builder->where('user_id', request('user_id'));
+        if (request()->get('team_member_id') && request('team_member_id')) {
+            $builder->where('user_id', request('team_member_id'));
         }
 
         return $builder;

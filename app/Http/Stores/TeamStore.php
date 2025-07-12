@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Stores;
 
-use App\Http\QueryFilters\ProjectTimeLog\EndDateFilter;
-use App\Http\QueryFilters\ProjectTimeLog\IsPaidFilter;
-use App\Http\QueryFilters\ProjectTimeLog\ProjectIdFilter;
-use App\Http\QueryFilters\ProjectTimeLog\StartDateFilter;
-use App\Http\QueryFilters\ProjectTimeLog\TeamMemberIdFilter;
+use App\Http\QueryFilters\TimeLog\EndDateFilter;
+use App\Http\QueryFilters\TimeLog\IsPaidFilter;
+use App\Http\QueryFilters\TimeLog\ProjectIdFilter;
+use App\Http\QueryFilters\TimeLog\StartDateFilter;
+use App\Http\QueryFilters\TimeLog\TeamMemberIdFilter;
 use App\Models\Team;
 use App\Models\TimeLog;
 use Carbon\Carbon;

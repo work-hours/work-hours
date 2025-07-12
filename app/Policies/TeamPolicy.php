@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
+use App\Http\Stores\ProjectStore;
 use App\Models\Team;
 use App\Models\User;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
-class TeamPolicy
+final class TeamPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -36,15 +41,15 @@ class TeamPolicy
      */
     public function update(User $user, User $member): bool
     {
-        return true;
+        return Team::query()->where('user_id', $user->getKey())->where('member_id', $member->getKey())->exists();
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Team $team): bool
+    public function delete(User $user, User $member): bool
     {
-        return false;
+        return Team::query()->where('user_id', $user->getKey())->where('member_id', $member->getKey())->exists();
     }
 
     /**
@@ -61,5 +66,23 @@ class TeamPolicy
     public function forceDelete(User $user, Team $team): bool
     {
         return false;
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function viewTimeLogs(User $user, User $member): bool
+    {
+        $response = true;
+        if (request()->get('project_id') && request('project_id')) {
+            $response = in_array(request('project_id'), ProjectStore::userProjects(userId: $user->getKey())->pluck('id')->toArray());
+        }
+
+        if (! $response) {
+            return false;
+        }
+
+        return Team::query()->where('user_id', $user->getKey())->where('member_id', $member->getKey())->exists();
     }
 }

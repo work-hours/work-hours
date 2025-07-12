@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\QueryFilters\ProjectTimeLog;
+namespace App\Http\QueryFilters\TimeLog;
 
 use Closure;
 use Psr\Container\ContainerExceptionInterface;

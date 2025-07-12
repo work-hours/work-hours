@@ -116,12 +116,12 @@ final class TeamController extends Controller
 
     public function edit(User $user)
     {
+        Gate::authorize('update', $user);
+
         $team = Team::query()
             ->where('user_id', auth()->id())
             ->where('member_id', $user->getKey())
             ->first();
-
-        abort_unless($team, 403, 'You can only edit members of your team.');
 
         return Inertia::render('team/edit', [
             'user' => [
@@ -140,13 +140,7 @@ final class TeamController extends Controller
     #[Action(method: 'put', name: 'team.update', params: ['user'], middleware: ['auth', 'verified'])]
     public function update(UpdateTeamMemberRequest $request, User $user): void
     {
-        // Check if the user is a member of the authenticated user's team
-        $isTeamMember = Team::query()
-            ->where('user_id', auth()->id())
-            ->where('member_id', $user->getKey())
-            ->exists();
-
-        abort_unless($isTeamMember, 403, 'You can only update members of your team.');
+        Gate::authorize('update', $user);
 
         DB::beginTransaction();
         try {
@@ -170,6 +164,7 @@ final class TeamController extends Controller
                 ->where('user_id', auth()->id())
                 ->where('member_id', $user->getKey())
                 ->update($teamData);
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -185,12 +180,7 @@ final class TeamController extends Controller
     #[Action(method: 'delete', name: 'team.destroy', params: ['user'], middleware: ['auth', 'verified'])]
     public function destroy(User $user): void
     {
-        $isTeamMember = Team::query()
-            ->where('user_id', auth()->id())
-            ->where('member_id', $user->id)
-            ->exists();
-
-        abort_unless($isTeamMember, 403, 'You can only delete members of your team.');
+        Gate::authorize('delete', $user);
 
         DB::beginTransaction();
         try {
@@ -202,23 +192,9 @@ final class TeamController extends Controller
         }
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     public function timeLogs(User $user)
     {
-        $isTeamMember = Team::query()
-            ->where('user_id', auth()->id())
-            ->where('member_id', $user->id)
-            ->exists();
-
-        abort_unless($isTeamMember, 403, 'You can only view time logs of members in your team.');
-
-        if (request()->get('project_id') && request('project_id')) {
-            $userProjects = ProjectStore::userProjects(userId: auth()->id())->pluck('id')->toArray();
-            abort_unless(in_array(request('project_id'), $userProjects), 403, 'You do not have access to this project.');
-        }
+        Gate::authorize('viewTimeLogs', $user);
 
         $timeLogs = TeamStore::teamMemberTimeLogs($user->id);
         $mappedTimeLogs = TeamStore::timeLogMapper($timeLogs);
@@ -311,17 +287,16 @@ final class TeamController extends Controller
             }
         }
 
-
         $timeLogs = $timeLogs->map(fn ($timeLog): array => [
-                'id' => $timeLog->id,
-                'user_name' => $timeLog->user->name,
-                'project_id' => $timeLog->project_id,
-                'project_name' => $timeLog->project ? $timeLog->project->name : null,
-                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-                'is_paid' => $timeLog->is_paid,
-            ]);
+            'id' => $timeLog->id,
+            'user_name' => $timeLog->user->name,
+            'project_id' => $timeLog->project_id,
+            'project_name' => $timeLog->project ? $timeLog->project->name : null,
+            'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+            'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
+            'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
+            'is_paid' => $timeLog->is_paid,
+        ]);
 
         $totalDuration = round($timeLogs->sum('duration'), 2);
         $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);

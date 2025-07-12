@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\QueryFilters\ProjectTimeLog;
+namespace App\Http\QueryFilters\TimeLog;
 
 use Closure;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-final class IsPaidFilter
+final class EndDateFilter
 {
     /**
      * @throws ContainerExceptionInterface
@@ -18,9 +18,8 @@ final class IsPaidFilter
     {
         $builder = $next($request);
 
-        if (request()->get('is_paid') && request('is_paid') !== '') {
-            $isPaid = request('is_paid') === 'true' || request('is_paid') === '1';
-            $builder->where('is_paid', $isPaid);
+        if (request()->get('end_date')) {
+            $builder->whereDate('start_timestamp', '<=', request('end_date'));
         }
 
         return $builder;
