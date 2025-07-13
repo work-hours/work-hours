@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { router } from '@inertiajs/react'
@@ -24,7 +25,10 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
         project_name: string | null
         start_timestamp: string | null
         elapsed: number
+        note?: string
     } | null>(null)
+
+    const [note, setNote] = useState('')
 
     const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null)
 
@@ -77,14 +81,21 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
             project_name: project?.name || null,
             start_timestamp: now,
             elapsed: 0,
+            note: '',
         }
 
         setActiveTimeLog(newTimeLog)
+        setNote('')
         localStorage.setItem('activeTimeLog', JSON.stringify(newTimeLog))
     }
 
     const stopTimeLog = () => {
         if (!activeTimeLog) return
+
+        if (!note.trim()) {
+            alert('Please enter a note before stopping time tracking')
+            return
+        }
 
         router.post(
             route('time-log.store'),
@@ -92,10 +103,12 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
                 project_id: activeTimeLog.project_id,
                 start_timestamp: activeTimeLog.start_timestamp,
                 end_timestamp: new Date().toISOString(),
+                note: note,
             },
             {
                 onSuccess: () => {
                     setActiveTimeLog(null)
+                    setNote('')
                     localStorage.removeItem('activeTimeLog')
 
                     if (timerInterval) {
@@ -134,8 +147,27 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
                                     Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
                                 </div>
                             </div>
-                            <div>
-                                <Button onClick={stopTimeLog} variant="default" size="lg" className="flex items-center gap-2">
+                            <div className="flex flex-col gap-2 md:w-1/2">
+                                <div>
+                                    <Label htmlFor="note" className="mb-1 block text-sm font-medium">
+                                        Note (required)
+                                    </Label>
+                                    <Input
+                                        id="note"
+                                        value={note}
+                                        onChange={(e) => setNote(e.target.value)}
+                                        placeholder="What did you work on?"
+                                        required
+                                        className="w-full"
+                                    />
+                                </div>
+                                <Button
+                                    onClick={stopTimeLog}
+                                    variant="default"
+                                    size="lg"
+                                    className="flex w-full items-center gap-2"
+                                    disabled={!note.trim()}
+                                >
                                     <PauseCircle className="h-5 w-5" />
                                     <span>Stop Tracking</span>
                                 </Button>

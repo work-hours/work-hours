@@ -109,6 +109,7 @@ final class TimeLogStore
             'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
             'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
             'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
+            'note' => $timeLog->note,
             'is_paid' => $timeLog->is_paid,
         ]);
     }

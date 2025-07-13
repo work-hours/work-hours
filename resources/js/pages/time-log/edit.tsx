@@ -21,6 +21,7 @@ type TimeLogForm = {
     project_id: number
     start_timestamp: string
     end_timestamp: string
+    note: string
 }
 
 type Props = {
@@ -30,6 +31,7 @@ type Props = {
         start_timestamp: string
         end_timestamp: string
         duration: number
+        note: string
     }
     projects: Project[]
 }
@@ -86,6 +88,7 @@ export default function EditTimeLog({ timeLog, projects }: Props) {
         project_id: timeLog.project_id,
         start_timestamp: new Date(timeLog.start_timestamp).toISOString(),
         end_timestamp: timeLog.end_timestamp ? new Date(timeLog.end_timestamp).toISOString() : '',
+        note: timeLog.note,
     })
 
     // Convert string timestamps to Date objects for DatePicker
@@ -203,19 +206,35 @@ export default function EditTimeLog({ timeLog, projects }: Props) {
                                     <p className="text-xs text-muted-foreground">Leave end time empty if you're still working</p>
                                 </div>
 
+                                <div className="grid gap-2">
+                                    <Label htmlFor="note" className="text-sm font-medium">
+                                        Note
+                                    </Label>
+                                    <Input
+                                        id="note"
+                                        value={data.note}
+                                        onChange={(e) => setData('note', e.target.value)}
+                                        placeholder="Enter a note about this time log"
+                                        required
+                                        disabled={processing}
+                                        tabIndex={3}
+                                    />
+                                    <InputError message={errors.note} className="mt-1" />
+                                </div>
+
                                 <div className="mt-4 flex justify-end gap-3">
                                     <Button
                                         type="button"
                                         variant="outline"
                                         onClick={() => window.history.back()}
-                                        tabIndex={4}
+                                        tabIndex={5}
                                         disabled={processing}
                                         className="flex items-center gap-2"
                                     >
                                         <ArrowLeft className="h-4 w-4" />
                                         Back
                                     </Button>
-                                    <Button type="submit" tabIndex={3} disabled={processing} className="flex items-center gap-2">
+                                    <Button type="submit" tabIndex={4} disabled={processing} className="flex items-center gap-2">
                                         {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                                         {processing ? 'Updating...' : 'Update Time Log'}
                                     </Button>

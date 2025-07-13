@@ -14,6 +14,7 @@ export type TimeLogEntry = {
     duration: number
     user_name?: string
     is_paid?: boolean
+    note?: string
 }
 
 type TimeLogTableProps = {
@@ -45,6 +46,7 @@ export default function TimeLogTable({
                     <TableHead>Start Time</TableHead>
                     <TableHead>End Time</TableHead>
                     <TableHead>Duration</TableHead>
+                    <TableHead>Note</TableHead>
                     <TableHead>Status</TableHead>
                     {showActions && <TableHead className="text-right">Actions</TableHead>}
                 </TableHeaderRow>
@@ -71,6 +73,9 @@ export default function TimeLogTable({
                             <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                                 {log.duration}
                             </span>
+                        </TableCell>
+                        <TableCell className="max-w-xs truncate" title={log.note}>
+                            {log.note}
                         </TableCell>
                         <TableCell>
                             {log.is_paid ? (
