@@ -102,6 +102,7 @@ final class TimeLogController extends Controller
                 'start_timestamp' => $timeLog->start_timestamp,
                 'end_timestamp' => $timeLog->end_timestamp,
                 'duration' => $timeLog->duration,
+                'note' => $timeLog->note,
             ],
             'projects' => $projects,
         ]);
@@ -197,10 +198,11 @@ final class TimeLogController extends Controller
             'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
             'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
             'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
+            'note' => $timeLog->note,
             'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
         ]);
 
-        $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Paid'];
+        $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Note', 'Paid'];
         $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);

@@ -20,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $end_timestamp
  * @property float $duration
  * @property bool $is_paid
+ * @property string $note
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Project $project
@@ -34,6 +35,7 @@ final class TimeLog extends Model
         'end_timestamp',
         'duration',
         'is_paid',
+        'note',
     ];
 
     public function user(): BelongsTo
