@@ -28,6 +28,7 @@ export interface SharedData {
     auth: Auth
     ziggy: Config & { location: string }
     sidebarOpen: boolean
+    isGitHubIntegrated?: boolean
     [key: string]: unknown
 }
 

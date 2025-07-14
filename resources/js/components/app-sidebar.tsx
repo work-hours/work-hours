@@ -47,7 +47,7 @@ const mainNavItems: NavItem[] = [
 
 const integrationNavItems: NavItem[] = [
     {
-        title: 'GitHub Repos',
+        title: 'GitHub',
         href: '/github/repositories',
         icon: Github,
     },
