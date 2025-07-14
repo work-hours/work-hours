@@ -51,7 +51,6 @@ final class GitHubAdapter
     public function getOrganizationRepositories(string $token)
     {
         try {
-            // First, get the user's organizations
             $orgsResponse = Http::withToken($token)
                 ->get('https://api.github.com/user/orgs', [
                     'per_page' => 100,
@@ -64,7 +63,6 @@ final class GitHubAdapter
             $organizations = $orgsResponse->json();
             $allOrgRepos = [];
 
-            // For each organization, get its repositories
             foreach ($organizations as $org) {
                 $reposResponse = Http::withToken($token)
                     ->get("https://api.github.com/orgs/{$org['login']}/repos", [
@@ -121,7 +119,6 @@ final class GitHubAdapter
             ]);
         }
 
-        // Return the user and token for the controller to handle session storage
         return [
             'user' => $user,
             'token' => $githubUser->token,
