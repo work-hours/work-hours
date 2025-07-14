@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 
 use App\Adapters\GitHubAdapter;
 use App\Models\Project;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -34,12 +33,10 @@ final class GitHubRepositoryController extends Controller
 
             $repositories = $this->githubAdapter->getPersonalRepositories($token);
 
-            // If the adapter returned a JsonResponse (error case), return it directly
             if ($repositories instanceof JsonResponse) {
                 return $repositories;
             }
 
-            // Mark repositories that are already imported
             foreach ($repositories as &$repo) {
                 $repo['is_imported'] = $this->isRepositoryImported($repo['full_name']);
             }
@@ -71,7 +68,6 @@ final class GitHubRepositoryController extends Controller
                 return $repositories;
             }
 
-            // Mark repositories that are already imported
             foreach ($repositories as &$repo) {
                 $repo['is_imported'] = $this->isRepositoryImported($repo['full_name']);
             }
@@ -106,7 +102,6 @@ final class GitHubRepositoryController extends Controller
             ]);
 
             $user = Auth::user();
-            $token = $user->github_token;
 
             if ($this->isRepositoryImported($request->input('full_name'))) {
                 return response()->json([
@@ -120,27 +115,6 @@ final class GitHubRepositoryController extends Controller
                 'name' => $request->input('full_name'),
                 'description' => $request->input('description') . "\n\nGitHub Repository: " . $request->input('html_url'),
             ]);
-
-            if ($token) {
-                [$owner, $repo] = explode('/', (string) $request->input('full_name'));
-                $collaborators = $this->githubAdapter->getRepositoryCollaborators($token, $owner, $repo);;
-
-                if ($collaborators->getStatusCode() !== 500) {
-                    foreach ($collaborators as $collaborator) {
-                        $teamMember = User::query()
-                            ->where('email', $collaborator['email'] ?? '')
-                            ->orWhere('name', $collaborator['login'] ?? '')
-                            ->first();
-
-                        if (
-                            $teamMember && $teamMember->id !== $user->id &&
-                            ! $project->teamMembers()->where('member_id', $teamMember->id)->exists()
-                        ) {
-                            $project->teamMembers()->attach($teamMember->id);
-                        }
-                    }
-                }
-            }
 
             return response()->json([
                 'success' => true,
