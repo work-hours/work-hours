@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property User $user
  * @property Collection|User[] $teamMembers
+ * @property Collection|GitHubRepository[] $githubRepositories
  */
 #[UsePolicy(ProjectPolicy::class)]
 final class Project extends Model
@@ -43,5 +44,10 @@ final class Project extends Model
     public function isCreator(int $userId): bool
     {
         return $this->user_id === $userId;
+    }
+
+    public function githubRepositories(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(GitHubRepository::class);
     }
 }

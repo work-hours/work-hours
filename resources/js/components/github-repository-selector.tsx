@@ -1,0 +1,355 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Github, Search, Check, X, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+
+type Repository = {
+  id: string;
+  name: string;
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  private: boolean;
+  organization?: string;
+  selected?: boolean;
+};
+
+type SavedRepository = {
+  id: number;
+  repo_id: string;
+  name: string;
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  is_private: boolean;
+  is_organization: boolean;
+  organization_name: string | null;
+};
+
+type GitHubRepositorySelectorProps = {
+  projectId: number;
+  onRepositoriesSaved: () => void;
+};
+
+export default function GitHubRepositorySelector({ projectId, onRepositoriesSaved }: GitHubRepositorySelectorProps) {
+  const [personalRepos, setPersonalRepos] = useState<Repository[]>([]);
+  const [orgRepos, setOrgRepos] = useState<Repository[]>([]);
+  const [selectedRepos, setSelectedRepos] = useState<Repository[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('personal');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user is authenticated with GitHub
+    const checkGitHubAuth = async () => {
+      try {
+        await axios.get(route('github.repositories.personal'));
+        setIsAuthenticated(true);
+        fetchRepositories();
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          setIsAuthenticated(false);
+        } else {
+          setError('An error occurred while checking GitHub authentication.');
+        }
+      }
+    };
+
+    checkGitHubAuth();
+  }, []);
+
+  const fetchRepositories = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Fetch personal repositories
+      const personalResponse = await axios.get(route('github.repositories.personal'));
+      setPersonalRepos(personalResponse.data);
+
+      // Fetch organization repositories
+      const orgResponse = await axios.get(route('github.repositories.organization'));
+      setOrgRepos(orgResponse.data);
+
+      // Fetch already saved repositories for this project
+      const projectReposResponse = await axios.get(route('github.repositories.project', { project: projectId }));
+      const savedRepos = projectReposResponse.data as SavedRepository[];
+
+      // Mark repositories as selected if they're already saved
+      if (savedRepos.length > 0) {
+        const savedRepoIds = savedRepos.map((repo) => repo.repo_id);
+
+        setPersonalRepos(prev =>
+          prev.map(repo => ({
+            ...repo,
+            selected: savedRepoIds.includes(repo.id.toString())
+          }))
+        );
+
+        setOrgRepos(prev =>
+          prev.map(repo => ({
+            ...repo,
+            selected: savedRepoIds.includes(repo.id.toString())
+          }))
+        );
+
+        // Initialize selectedRepos with already saved repositories
+        const initialSelectedRepos = [
+          ...personalResponse.data.filter((repo: Repository) => savedRepoIds.includes(repo.id.toString())),
+          ...orgResponse.data.filter((repo: Repository) => savedRepoIds.includes(repo.id.toString()))
+        ];
+
+        setSelectedRepos(initialSelectedRepos);
+      }
+    } catch (error) {
+      setError('Failed to fetch repositories. Please try again.');
+      console.error('Error fetching repositories:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRepositoryToggle = (repo: Repository) => {
+    // Update the selected state in the appropriate list
+    if (activeTab === 'personal') {
+      setPersonalRepos(prev =>
+        prev.map(r =>
+          r.id === repo.id ? { ...r, selected: !r.selected } : r
+        )
+      );
+    } else {
+      setOrgRepos(prev =>
+        prev.map(r =>
+          r.id === repo.id ? { ...r, selected: !r.selected } : r
+        )
+      );
+    }
+
+    // Update the selectedRepos list
+    const isAlreadySelected = selectedRepos.some(r => r.id === repo.id);
+
+    if (isAlreadySelected) {
+      setSelectedRepos(prev => prev.filter(r => r.id !== repo.id));
+    } else {
+      setSelectedRepos(prev => [...prev, { ...repo, selected: true }]);
+    }
+  };
+
+  const saveRepositories = async () => {
+    if (selectedRepos.length === 0) {
+      setError('Please select at least one repository.');
+      return;
+    }
+
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      await axios.post(route('github.repositories.save'), {
+        project_id: projectId,
+        repositories: selectedRepos
+      });
+
+      onRepositoriesSaved();
+    } catch (error) {
+      setError('Failed to save repositories. Please try again.');
+      console.error('Error saving repositories:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const filteredPersonalRepos = personalRepos.filter(repo =>
+    repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (repo.description && repo.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  const filteredOrgRepos = orgRepos.filter(repo =>
+    repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (repo.description && repo.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (repo.organization && repo.organization.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  if (!isAuthenticated) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Github className="h-5 w-5" />
+            GitHub Repositories
+          </CardTitle>
+          <CardDescription>Connect your GitHub account to add repositories to this project</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-6">
+            <Github className="h-12 w-12 mb-4 text-muted-foreground" />
+            <p className="text-center mb-4">You need to authenticate with GitHub to access your repositories.</p>
+            <Button asChild>
+              <a href={route('auth.github')}>
+                <Github className="mr-2 h-4 w-4" />
+                Connect GitHub Account
+              </a>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-xl flex items-center gap-2">
+          <Github className="h-5 w-5" />
+          GitHub Repositories
+        </CardTitle>
+        <CardDescription>Select repositories to add to this project</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {error && (
+          <div className="bg-destructive/15 text-destructive rounded-md p-3 mb-4">
+            {error}
+          </div>
+        )}
+
+        <div className="mb-4">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search repositories..."
+              className="pl-8"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {selectedRepos.length > 0 && (
+          <div className="mb-4">
+            <h3 className="text-sm font-medium mb-2">Selected Repositories ({selectedRepos.length})</h3>
+            <div className="flex flex-wrap gap-2">
+              {selectedRepos.map(repo => (
+                <Badge key={repo.id} variant="secondary" className="flex items-center gap-1">
+                  {repo.name}
+                  <button
+                    type="button"
+                    onClick={() => handleRepositoryToggle(repo)}
+                    className="ml-1 rounded-full hover:bg-muted p-0.5"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <Tabs defaultValue="personal" onValueChange={setActiveTab}>
+          <TabsList className="mb-4">
+            <TabsTrigger value="personal">Personal</TabsTrigger>
+            <TabsTrigger value="organization">Organization</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="personal">
+            {isLoading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : filteredPersonalRepos.length > 0 ? (
+              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                {filteredPersonalRepos.map(repo => (
+                  <div key={repo.id} className="flex items-start space-x-3 p-3 border rounded-md hover:bg-muted/50">
+                    <Checkbox
+                      id={`repo-${repo.id}`}
+                      checked={repo.selected || false}
+                      onCheckedChange={() => handleRepositoryToggle(repo)}
+                    />
+                    <div className="flex-1">
+                      <Label htmlFor={`repo-${repo.id}`} className="font-medium cursor-pointer">
+                        {repo.name}
+                        {repo.private && <Badge variant="outline" className="ml-2 text-xs">Private</Badge>}
+                      </Label>
+                      {repo.description && (
+                        <p className="text-sm text-muted-foreground mt-1">{repo.description}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                {searchTerm ? 'No repositories match your search' : 'No personal repositories found'}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="organization">
+            {isLoading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : filteredOrgRepos.length > 0 ? (
+              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                {filteredOrgRepos.map(repo => (
+                  <div key={repo.id} className="flex items-start space-x-3 p-3 border rounded-md hover:bg-muted/50">
+                    <Checkbox
+                      id={`repo-${repo.id}`}
+                      checked={repo.selected || false}
+                      onCheckedChange={() => handleRepositoryToggle(repo)}
+                    />
+                    <div className="flex-1">
+                      <Label htmlFor={`repo-${repo.id}`} className="font-medium cursor-pointer">
+                        {repo.name}
+                        {repo.private && <Badge variant="outline" className="ml-2 text-xs">Private</Badge>}
+                      </Label>
+                      {repo.organization && (
+                        <Badge variant="secondary" className="ml-2 text-xs">{repo.organization}</Badge>
+                      )}
+                      {repo.description && (
+                        <p className="text-sm text-muted-foreground mt-1">{repo.description}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                {searchTerm ? 'No repositories match your search' : 'No organization repositories found'}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        <div className="mt-4 flex justify-end">
+          <Button
+            onClick={saveRepositories}
+            disabled={isSaving || selectedRepos.length === 0}
+            className="flex items-center gap-2"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Check className="h-4 w-4" />
+                Save Repositories
+              </>
+            )}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
