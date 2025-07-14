@@ -1,6 +1,7 @@
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, FileText, FolderPlus, LoaderCircle, Text, Users } from 'lucide-react'
 import { FormEventHandler } from 'react'
+import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
@@ -49,7 +50,13 @@ export default function CreateProject({ teamMembers }: Props) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
         post(route('project.store'), {
-            onFinish: () => reset(),
+            onSuccess: () => {
+                toast.success('Project created successfully')
+                reset()
+            },
+            onError: () => {
+                toast.error('Failed to create project')
+            }
         })
     }
 

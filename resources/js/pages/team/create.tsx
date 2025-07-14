@@ -1,6 +1,7 @@
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, LoaderCircle, Lock, Mail, User, UserPlus } from 'lucide-react'
 import { FormEventHandler } from 'react'
+import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
@@ -41,7 +42,13 @@ export default function CreateTeamMember() {
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
         post(route('team.store'), {
-            onFinish: () => reset(),
+            onSuccess: () => {
+                toast.success('Team member created successfully')
+                reset()
+            },
+            onError: () => {
+                toast.error('Failed to create team member')
+            }
         })
     }
 

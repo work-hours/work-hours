@@ -2,6 +2,7 @@ import DatePicker from '@/components/ui/date-picker'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
 import { FormEventHandler, forwardRef } from 'react'
+import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
@@ -116,7 +117,14 @@ export default function EditTimeLog({ timeLog, projects }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        put(route('time-log.update', timeLog.id))
+        put(route('time-log.update', timeLog.id), {
+            onSuccess: () => {
+                toast.success('Time log updated successfully')
+            },
+            onError: () => {
+                toast.error('Failed to update time log')
+            }
+        })
     }
 
     return (

@@ -6,6 +6,7 @@ import { Transition } from '@headlessui/react'
 import { Head, useForm } from '@inertiajs/react'
 import { CheckCircle, KeyRound, LoaderCircle, Lock } from 'lucide-react'
 import { FormEventHandler, useRef } from 'react'
+import { toast } from 'sonner'
 
 import HeadingSmall from '@/components/heading-small'
 import { Button } from '@/components/ui/button'
@@ -34,8 +35,13 @@ export default function Password() {
 
         put(route('password.update'), {
             preserveScroll: true,
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                toast.success('Password updated successfully')
+                reset()
+            },
             onError: (errors) => {
+                toast.error('Failed to update password')
+
                 if (errors.password) {
                     reset('password', 'password_confirmation')
                     passwordInput.current?.focus()

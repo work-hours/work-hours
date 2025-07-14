@@ -2,6 +2,7 @@ import DatePicker from '@/components/ui/date-picker'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
 import { FormEventHandler, forwardRef } from 'react'
+import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
@@ -108,7 +109,13 @@ export default function CreateTimeLog({ projects }: Props) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
         post(route('time-log.store'), {
-            onFinish: () => reset(),
+            onSuccess: () => {
+                toast.success('Time log created successfully')
+                reset()
+            },
+            onError: () => {
+                toast.error('Failed to create time log')
+            }
         })
     }
 
