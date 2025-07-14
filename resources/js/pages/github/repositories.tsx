@@ -59,7 +59,6 @@ export default function GitHubRepositories() {
                 html_url: repo.html_url,
             })
 
-            // Check if the response indicates success
             if (response.data.success === false) {
                 if (response.data.error) {
                     toast.error(response.data.error)
