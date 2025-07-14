@@ -60,10 +60,10 @@ export default function Integration({ isGitHubIntegrated }: Props) {
                                     Connect your GitHub account to access and manage your repositories.
                                 </p>
                                 <Button asChild>
-                                    <Link href="/auth/github">
+                                    <a href="/auth/github">
                                         <Github className="mr-2 h-4 w-4" />
                                         Connect with GitHub
-                                    </Link>
+                                    </a>
                                 </Button>
                             </div>
                         )}
