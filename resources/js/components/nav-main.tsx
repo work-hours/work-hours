@@ -3,7 +3,7 @@ import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, Sideba
 import { type NavItem } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 
-export function NavMain({ items = [], title = 'Platform' }: { items: NavItem[], title?: string }) {
+export function NavMain({ items = [], title = 'Platform' }: { items: NavItem[]; title?: string }) {
     const page = usePage()
     return (
         <SidebarGroup className="px-4 py-4">

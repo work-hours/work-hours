@@ -13,12 +13,8 @@ use Illuminate\Support\Facades\Log;
 
 final class GitHubAuthController extends Controller
 {
-    private GitHubAdapter $githubAdapter;
+    public function __construct(private readonly GitHubAdapter $githubAdapter) {}
 
-    public function __construct(GitHubAdapter $githubAdapter)
-    {
-        $this->githubAdapter = $githubAdapter;
-    }
     /**
      * Redirect the user to the GitHub authentication page.
      */

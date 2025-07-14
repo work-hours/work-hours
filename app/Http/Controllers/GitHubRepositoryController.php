@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Adapters\GitHubAdapter;
 use App\Models\Project;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,12 +17,8 @@ use Inertia\Response;
 
 final class GitHubRepositoryController extends Controller
 {
-    private GitHubAdapter $githubAdapter;
+    public function __construct(private readonly GitHubAdapter $githubAdapter) {}
 
-    public function __construct(GitHubAdapter $githubAdapter)
-    {
-        $this->githubAdapter = $githubAdapter;
-    }
     /**
      * Get the authenticated user's personal repositories from GitHub.
      */
@@ -44,7 +41,7 @@ final class GitHubRepositoryController extends Controller
 
             // Mark repositories that are already imported
             foreach ($repositories as &$repo) {
-                $repo['is_imported'] = $this->isRepositoryImported($repo['html_url']);
+                $repo['is_imported'] = $this->isRepositoryImported($repo['full_name']);
             }
 
             return response()->json($repositories);
@@ -76,7 +73,7 @@ final class GitHubRepositoryController extends Controller
 
             // Mark repositories that are already imported
             foreach ($repositories as &$repo) {
-                $repo['is_imported'] = $this->isRepositoryImported($repo['html_url']);
+                $repo['is_imported'] = $this->isRepositoryImported($repo['full_name']);
             }
 
             return response()->json($repositories);
@@ -86,20 +83,6 @@ final class GitHubRepositoryController extends Controller
             return response()->json(['error' => 'An error occurred while fetching organization repositories.'], 500);
         }
     }
-
-    /**
-     * Check if a repository is already imported as a project.
-     *
-     * @param string $repoUrl The GitHub repository URL
-     * @return bool True if the repository is already imported, false otherwise
-     */
-    private function isRepositoryImported(string $repoUrl): bool
-    {
-        return Project::query()
-            ->where('description', 'like', '%GitHub Repository: ' . $repoUrl . '%')
-            ->exists();
-    }
-
 
     /**
      * Display the GitHub repositories page.
@@ -125,8 +108,7 @@ final class GitHubRepositoryController extends Controller
             $user = Auth::user();
             $token = $user->github_token;
 
-            // Check if repository is already imported
-            if ($this->isRepositoryImported($request->input('html_url'))) {
+            if ($this->isRepositoryImported($request->input('full_name'))) {
                 return response()->json([
                     'success' => false,
                     'error' => 'Repository is already imported as a project.',
@@ -135,36 +117,26 @@ final class GitHubRepositoryController extends Controller
 
             $project = Project::query()->create([
                 'user_id' => $user->getKey(),
-                'name' => $request->input('name'),
+                'name' => $request->input('full_name'),
                 'description' => $request->input('description') . "\n\nGitHub Repository: " . $request->input('html_url'),
             ]);
 
-            // Add repository collaborators to the project team
             if ($token) {
-                // Parse owner and repo name from full_name (format: "owner/repo")
-                $fullName = $request->input('full_name');
-                $parts = explode('/', $fullName);
+                [$owner, $repo] = explode('/', (string) $request->input('full_name'));
+                $collaborators = $this->githubAdapter->getRepositoryCollaborators($token, $owner, $repo);;
 
-                if (count($parts) === 2) {
-                    $owner = $parts[0];
-                    $repo = $parts[1];
+                if ($collaborators->getStatusCode() !== 500) {
+                    foreach ($collaborators as $collaborator) {
+                        $teamMember = User::query()
+                            ->where('email', $collaborator['email'] ?? '')
+                            ->orWhere('name', $collaborator['login'] ?? '')
+                            ->first();
 
-                    $collaborators = $this->githubAdapter->getRepositoryCollaborators($token, $owner, $repo);
-
-                    if (!($collaborators instanceof JsonResponse)) {
-                        foreach ($collaborators as $collaborator) {
-                            // Try to find user by GitHub username or email
-                            $teamMember = User::query()
-                                ->where('email', $collaborator['email'] ?? '')
-                                ->orWhere('name', $collaborator['login'] ?? '')
-                                ->first();
-
-                            if ($teamMember && $teamMember->id !== $user->id) {
-                                // Add to team if not already a member
-                                if (!$project->teamMembers()->where('member_id', $teamMember->id)->exists()) {
-                                    $project->teamMembers()->attach($teamMember->id);
-                                }
-                            }
+                        if (
+                            $teamMember && $teamMember->id !== $user->id &&
+                            ! $project->teamMembers()->where('member_id', $teamMember->id)->exists()
+                        ) {
+                            $project->teamMembers()->attach($teamMember->id);
                         }
                     }
                 }
@@ -177,10 +149,24 @@ final class GitHubRepositoryController extends Controller
             ]);
         } catch (Exception $e) {
             Log::error('Error importing GitHub repository: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'error' => 'Failed to import repository: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Check if a repository is already imported as a project.
+     *
+     * @param  string  $name  The GitHub repository name
+     * @return bool True if the repository is already imported, false otherwise
+     */
+    private function isRepositoryImported(string $name): bool
+    {
+        return Project::query()
+            ->where('name', $name)
+            ->exists();
     }
 }

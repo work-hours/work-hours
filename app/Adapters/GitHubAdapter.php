@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Adapters;
 
-use App\Models\Project;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +18,7 @@ final class GitHubAdapter
     /**
      * Get the authenticated user's personal repositories from GitHub.
      *
-     * @param string $token The GitHub access token
+     * @param  string  $token  The GitHub access token
      * @return array|JsonResponse The repositories or an error response
      */
     public function getPersonalRepositories(string $token)
@@ -39,6 +37,7 @@ final class GitHubAdapter
             return $response->json();
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json(['error' => 'An error occurred while fetching repositories.'], 500);
         }
     }
@@ -46,7 +45,7 @@ final class GitHubAdapter
     /**
      * Get the authenticated user's organization repositories from GitHub.
      *
-     * @param string $token The GitHub access token
+     * @param  string  $token  The GitHub access token
      * @return array|JsonResponse The repositories or an error response
      */
     public function getOrganizationRepositories(string $token)
@@ -85,15 +84,13 @@ final class GitHubAdapter
             return $allOrgRepos;
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json(['error' => 'An error occurred while fetching organization repositories.'], 500);
         }
     }
 
-
     /**
      * Redirect the user to the GitHub authentication page.
-     *
-     * @return RedirectResponse
      */
     public function redirectToGitHub(): RedirectResponse
     {
@@ -106,6 +103,7 @@ final class GitHubAdapter
      * Handle the GitHub callback and authenticate the user.
      *
      * @return array{user: User, token: string}
+     *
      * @throws Exception
      */
     public function handleGitHubCallback(): array
@@ -133,12 +131,12 @@ final class GitHubAdapter
     /**
      * Get collaborators for a repository.
      *
-     * @param string $token The GitHub access token
-     * @param string $owner The repository owner (username or organization)
-     * @param string $repo The repository name
+     * @param  string  $token  The GitHub access token
+     * @param  string  $owner  The repository owner (username or organization)
+     * @param  string  $repo  The repository name
      * @return array|JsonResponse The collaborators or an error response
      */
-    public function getRepositoryCollaborators(string $token, string $owner, string $repo)
+    public function getRepositoryCollaborators(string $token, string $owner, string $repo): JsonResponse|array
     {
         try {
             $response = Http::withToken($token)
@@ -153,6 +151,7 @@ final class GitHubAdapter
             return $response->json();
         } catch (Exception $e) {
             Log::error($e);
+
             return response()->json(['error' => 'An error occurred while fetching collaborators.'], 500);
         }
     }

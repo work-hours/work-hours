@@ -11,10 +11,9 @@ import {
     SidebarMenuItem,
     SidebarSeparator,
 } from '@/components/ui/sidebar'
-import { type NavItem } from '@/types'
+import { type NavItem, type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 import { Folder, Github, Heart, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
-import { type SharedData } from '@/types'
 import AppLogo from './app-logo'
 
 const mainNavItems: NavItem[] = [
@@ -91,9 +90,7 @@ export function AppSidebar() {
             <SidebarContent className="pt-3">
                 <NavMain items={mainNavItems} title="Platform" />
 
-                {isGitHubIntegrated && (
-                    <NavMain items={integrationNavItems} title="Integration" />
-                )}
+                {isGitHubIntegrated && <NavMain items={integrationNavItems} title="Integration" />}
             </SidebarContent>
 
             <SidebarFooter className="pb-5">

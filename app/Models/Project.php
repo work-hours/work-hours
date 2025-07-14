@@ -44,5 +44,4 @@ final class Project extends Model
     {
         return $this->user_id === $userId;
     }
-
 }

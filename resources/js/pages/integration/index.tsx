@@ -24,12 +24,8 @@ export default function Integration({ isGitHubIntegrated }: Props) {
             <div className="mx-auto flex w-full flex-col gap-6 p-6 md:w-10/12">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-                        Integration
-                    </h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">
-                        Manage your integrations with external services
-                    </p>
+                    <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Integration</h1>
+                    <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your integrations with external services</p>
                 </section>
 
                 <Card className="overflow-hidden transition-all hover:shadow-md">
@@ -38,27 +34,19 @@ export default function Integration({ isGitHubIntegrated }: Props) {
                             <Github className="h-6 w-6" />
                             GitHub Integration
                         </CardTitle>
-                        <CardDescription>
-                            Connect your GitHub account to access and manage repositories
-                        </CardDescription>
+                        <CardDescription>Connect your GitHub account to access and manage repositories</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {isGitHubIntegrated ? (
                             <div className="flex flex-row items-center justify-between">
-                                <p className="text-green-600 dark:text-green-400">
-                                    Your account is integrated with GitHub.
-                                </p>
+                                <p className="text-green-600 dark:text-green-400">Your account is integrated with GitHub.</p>
                                 <Button asChild variant="outline">
-                                    <Link href="/github/repositories">
-                                        Manage Repositories
-                                    </Link>
+                                    <Link href="/github/repositories">Manage Repositories</Link>
                                 </Button>
                             </div>
                         ) : (
                             <div className="flex flex-row items-center justify-between">
-                                <p className="text-muted-foreground">
-                                    Connect your GitHub account to access and manage your repositories.
-                                </p>
+                                <p className="text-muted-foreground">Connect your GitHub account to access and manage your repositories.</p>
                                 <Button asChild>
                                     <a href="/auth/github">
                                         <Github className="mr-2 h-4 w-4" />

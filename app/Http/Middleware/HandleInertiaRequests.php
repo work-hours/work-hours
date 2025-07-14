@@ -56,7 +56,7 @@ final class HandleInertiaRequests extends Middleware
                 'location' => $request->url(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'isGitHubIntegrated' => $request->user() ? !empty($request->user()->github_token) : false,
+            'isGitHubIntegrated' => $request->user() && ! empty($request->user()->github_token),
         ];
     }
 }
