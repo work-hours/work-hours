@@ -15,7 +15,6 @@ final class IntegrationController extends Controller
      */
     public function index(): Response
     {
-        // Check if GitHub is integrated by checking if the user has a github_token
         $user = Auth::user();
         $isGitHubIntegrated = ! empty($user->github_token);
 
