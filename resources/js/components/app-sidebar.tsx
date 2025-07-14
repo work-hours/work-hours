@@ -12,8 +12,9 @@ import {
     SidebarSeparator,
 } from '@/components/ui/sidebar'
 import { type NavItem } from '@/types'
-import { Link } from '@inertiajs/react'
+import { Link, usePage } from '@inertiajs/react'
 import { Folder, Github, Heart, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
+import { type SharedData } from '@/types'
 import AppLogo from './app-logo'
 
 const mainNavItems: NavItem[] = [
@@ -42,6 +43,9 @@ const mainNavItems: NavItem[] = [
         href: '/integration',
         icon: Settings,
     },
+]
+
+const integrationNavItems: NavItem[] = [
     {
         title: 'GitHub Repos',
         href: '/github/repositories',
@@ -63,6 +67,8 @@ const footerNavItems: NavItem[] = [
 ]
 
 export function AppSidebar() {
+    const { isGitHubIntegrated } = usePage<SharedData>().props
+
     return (
         <Sidebar collapsible="icon" variant="inset" className="bg-gradient-to-b from-sidebar via-sidebar/98 to-sidebar/90 shadow-2xl">
             <SidebarHeader className="py-6">
@@ -83,7 +89,11 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent className="pt-3">
-                <NavMain items={mainNavItems} />
+                <NavMain items={mainNavItems} title="Platform" />
+
+                {isGitHubIntegrated && (
+                    <NavMain items={integrationNavItems} title="Integration" />
+                )}
             </SidebarContent>
 
             <SidebarFooter className="pb-5">
