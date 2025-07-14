@@ -136,7 +136,15 @@ export default function Projects({ auth }: Props) {
                                         <TableRow key={project.id}>
                                             <TableCell className="font-medium">{project.name}</TableCell>
                                             <TableCell className="text-muted-foreground">
-                                                {project.description || <span className="text-muted-foreground/50">No description</span>}
+                                                {project.description ? (
+                                                    project.description.length > 50 ? (
+                                                        project.description.substring(0, 50) + '...'
+                                                    ) : (
+                                                        project.description
+                                                    )
+                                                ) : (
+                                                    <span className="text-muted-foreground/50">No description</span>
+                                                )}
                                             </TableCell>
                                             <TableCell className="font-medium">{project.user.name}</TableCell>
                                             <TableCell>

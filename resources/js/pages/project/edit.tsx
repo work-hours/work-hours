@@ -1,6 +1,7 @@
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, FileText, LoaderCircle, Save, Text, Users } from 'lucide-react'
 import { FormEventHandler } from 'react'
+import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
@@ -54,7 +55,14 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers 
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        put(route('project.update', project.id))
+        put(route('project.update', project.id), {
+            onSuccess: () => {
+                toast.success('Project updated successfully')
+            },
+            onError: () => {
+                toast.error('Failed to update project')
+            },
+        })
     }
 
     const handleTeamMemberToggle = (memberId: number) => {

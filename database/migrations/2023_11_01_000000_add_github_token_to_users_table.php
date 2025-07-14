@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('time_logs', function (Blueprint $table) {
-            $table->text('note')->after('is_paid')->nullable(false);
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('github_token')->nullable()->after('remember_token');
         });
     }
 
@@ -23,8 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('time_logs', function (Blueprint $table) {
-            $table->dropColumn('note');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('github_token');
         });
     }
 };

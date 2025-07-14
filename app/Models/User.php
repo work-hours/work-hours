@@ -9,6 +9,7 @@ use App\Policies\TeamPolicy;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -22,6 +23,7 @@ use Illuminate\Support\Carbon;
  * @property string $password
  * @property Carbon|null $email_verified_at
  * @property string|null $remember_token
+ * @property string|null $github_token
  */
 #[UsePolicy(TeamPolicy::class)]
 final class User extends Authenticatable
@@ -38,6 +40,7 @@ final class User extends Authenticatable
         'name',
         'email',
         'password',
+        'github_token',
     ];
 
     /**
@@ -49,6 +52,11 @@ final class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
 
     /**
      * Get the attributes that should be cast.
