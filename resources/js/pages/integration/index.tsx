@@ -44,31 +44,27 @@ export default function Integration({ isGitHubIntegrated }: Props) {
                     </CardHeader>
                     <CardContent>
                         {isGitHubIntegrated ? (
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-row items-center justify-between">
                                 <p className="text-green-600 dark:text-green-400">
                                     Your account is integrated with GitHub.
                                 </p>
-                                <div className="flex gap-4">
-                                    <Button asChild variant="outline">
-                                        <Link href="/github/repositories">
-                                            Manage Repositories
-                                        </Link>
-                                    </Button>
-                                </div>
+                                <Button asChild variant="outline">
+                                    <Link href="/github/repositories">
+                                        Manage Repositories
+                                    </Link>
+                                </Button>
                             </div>
                         ) : (
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-row items-center justify-between">
                                 <p className="text-muted-foreground">
                                     Connect your GitHub account to access and manage your repositories.
                                 </p>
-                                <div>
-                                    <Button asChild>
-                                        <Link href="/auth/github">
-                                            <Github className="mr-2 h-4 w-4" />
-                                            Connect with GitHub
-                                        </Link>
-                                    </Button>
-                                </div>
+                                <Button asChild>
+                                    <Link href="/auth/github">
+                                        <Github className="mr-2 h-4 w-4" />
+                                        Connect with GitHub
+                                    </Link>
+                                </Button>
                             </div>
                         )}
                     </CardContent>
