@@ -22,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property string $password
  * @property Carbon|null $email_verified_at
  * @property string|null $remember_token
+ * @property string|null $github_token
  */
 #[UsePolicy(TeamPolicy::class)]
 final class User extends Authenticatable

@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react'
 import { useState, useEffect } from 'react'
-import { Github, Search, Loader2, ExternalLink } from 'lucide-react'
+import { Github, Search, Loader2, ExternalLink, Download } from 'lucide-react'
 import axios from 'axios'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem, type NavItem } from '@/types'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 type Repository = {
     id: string
@@ -44,6 +45,31 @@ export default function GitHubRepositories() {
     const [activeTab, setActiveTab] = useState('personal')
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [isCheckingAuth, setIsCheckingAuth] = useState(true)
+    const [importingRepo, setImportingRepo] = useState<string | null>(null)
+
+    const handleImportRepository = async (repo: Repository) => {
+        try {
+            setImportingRepo(repo.id)
+            await axios.post(route('github.repositories.import'), {
+                repo_id: repo.id,
+                name: repo.name,
+                description: repo.description || `Imported from GitHub: ${repo.full_name}`,
+                full_name: repo.full_name,
+                html_url: repo.html_url
+            })
+
+            toast.success('Repository successfully imported as a project!')
+        } catch (error) {
+            console.error('Error importing repository:', error)
+            if (axios.isAxiosError(error) && error.response?.data?.error) {
+                toast.error(error.response.data.error)
+            } else {
+                toast.error('Failed to import repository. Please try again.')
+            }
+        } finally {
+            setImportingRepo(null)
+        }
+    }
 
     const generateSidebarNavItems = (): NavItem[] => {
         const navItems: NavItem[] = [
@@ -187,21 +213,42 @@ export default function GitHubRepositories() {
                                         <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{repo.description}</p>
                                     )}
                                 </div>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    asChild
-                                    className="ml-2 text-muted-foreground hover:text-foreground"
-                                >
-                                    <a
-                                        href={repo.html_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        title="Open in GitHub"
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="text-muted-foreground hover:text-foreground"
+                                        onClick={() => handleImportRepository(repo)}
+                                        disabled={importingRepo === repo.id}
                                     >
-                                        <ExternalLink className="h-4 w-4" />
-                                    </a>
-                                </Button>
+                                        {importingRepo === repo.id ? (
+                                            <>
+                                                <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                                                Importing...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Download className="h-4 w-4 mr-1" />
+                                                Import
+                                            </>
+                                        )}
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        asChild
+                                        className="text-muted-foreground hover:text-foreground"
+                                    >
+                                        <a
+                                            href={repo.html_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            title="Open in GitHub"
+                                        >
+                                            <ExternalLink className="h-4 w-4" />
+                                        </a>
+                                    </Button>
+                                </div>
                             </div>
                             <Separator className="my-3" />
                             <div className="flex items-center text-xs text-muted-foreground">

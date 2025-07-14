@@ -16,4 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('github/repositories/organization', [GitHubRepositoryController::class, 'getOrganizationRepositories'])
         ->name('github.repositories.organization');
 
+    Route::post('github/repositories/import', [GitHubRepositoryController::class, 'importRepository'])
+        ->name('github.repositories.import');
+
 });

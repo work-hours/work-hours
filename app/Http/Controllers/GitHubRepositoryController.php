@@ -65,7 +65,6 @@ final class GitHubRepositoryController extends Controller
 
             $repositories = $this->githubAdapter->getOrganizationRepositories($token);
 
-            // If the adapter returned a JsonResponse (error case), return it directly
             if ($repositories instanceof JsonResponse) {
                 return $repositories;
             }
@@ -85,5 +84,40 @@ final class GitHubRepositoryController extends Controller
     public function index(): Response
     {
         return Inertia::render('github/repositories');
+    }
+
+    /**
+     * Import a GitHub repository as a project.
+     */
+    public function importRepository(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'name' => 'required|string',
+                'html_url' => 'required|string|url',
+            ]);
+
+            $user = Auth::user();
+
+            $project = Project::query()->create([
+                'user_id' => $user->getKey(),
+                'name' => $request->input('name'),
+                'description' => $request->input('description') . "\n\nGitHub Repository: " . $request->input('html_url'),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Repository successfully imported as a project',
+                'id' => $project->getKey(),
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error importing GitHub repository: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to import repository: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }
