@@ -11,7 +11,7 @@ export default function Footer() {
                             <AppLogoIcon className="h-10 w-10 text-primary transition-all hover:scale-110 hover:rotate-3" />
                             <span className="text-lg font-bold text-foreground">WorkHours</span>
                         </div>
-                        <p className="mb-4 text-sm text-muted-foreground">Simplifying time tracking for teams and individuals since 2023.</p>
+                        <p className="mb-4 text-sm text-muted-foreground">Simplifying time tracking for teams and individuals since 2025.</p>
                     </div>
 
                     <div className="animate-fade-up animate-once animate-delay-300">
@@ -65,14 +65,14 @@ export default function Footer() {
                                     Cookie Policy
                                 </Link>
                             </li>
-                            <li className="transition-all hover:translate-x-1">
+                            {/*<li className="transition-all hover:translate-x-1">
                                 <Link
                                     href={route('gdpr-compliance')}
                                     className="text-muted-foreground underline-offset-4 hover:text-primary hover:underline"
                                 >
                                     GDPR Compliance
                                 </Link>
-                            </li>
+                            </li>*/}
                             <li className="transition-all hover:translate-x-1">
                                 <Link
                                     href={route('security')}

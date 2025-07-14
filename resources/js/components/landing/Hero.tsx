@@ -3,15 +3,15 @@ import { ArrowRight, CheckCircle } from 'lucide-react'
 
 export default function Hero() {
     return (
-        <section className="mb-24 w-full pt-12 lg:pt-20">
+        <section className="mb-24 w-full pt-12 lg:pt-20" aria-label="Hero section">
             <div className="mx-auto w-9/12">
                 <div className="mx-auto max-w-4xl text-center">
-                    <div className="absolute top-40 -left-10 h-64 w-64 animate-pulse rounded-full bg-primary/5 blur-3xl"></div>
-                    <div className="absolute top-60 right-10 h-64 w-64 animate-pulse rounded-full bg-primary/10 blur-3xl [animation-delay:1s]"></div>
-                    <div className="absolute bottom-40 left-20 h-48 w-48 animate-pulse rounded-full bg-primary/10 blur-3xl [animation-delay:2s]"></div>
+                    <div className="absolute top-40 -left-10 h-64 w-64 animate-pulse rounded-full bg-primary/5 blur-3xl" aria-hidden="true"></div>
+                    <div className="absolute top-60 right-10 h-64 w-64 animate-pulse rounded-full bg-primary/10 blur-3xl [animation-delay:1s]" aria-hidden="true"></div>
+                    <div className="absolute bottom-40 left-20 h-48 w-48 animate-pulse rounded-full bg-primary/10 blur-3xl [animation-delay:2s]" aria-hidden="true"></div>
 
-                    <div className="animate-fade-down animate-once mb-6 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-                        ✨ New: Time Tracking & Insights
+                    <div className="animate-fade-down animate-once mb-6 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary" role="note">
+                        <span role="img" aria-label="Sparkles">✨</span> New: Time Tracking & Insights
                     </div>
 
                     <h1 className="animate-fade-up animate-once mb-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl">
@@ -28,20 +28,22 @@ export default function Hero() {
                         <Link
                             href={route('register')}
                             className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-base font-medium text-white shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
+                            aria-label="Start using Work Hours for free"
                         >
-                            <span className="animate-pulse-glow absolute inset-0 -z-10 rounded-full"></span>
+                            <span className="animate-pulse-glow absolute inset-0 -z-10 rounded-full" aria-hidden="true"></span>
                             Start for free
-                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                         </Link>
                         <Link
                             href="#features"
                             className="inline-flex items-center justify-center gap-2 rounded-full border border-border/60 bg-card px-8 py-3.5 text-base font-medium text-foreground shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
+                            aria-label="Learn more about Work Hours features"
                         >
                             Explore features
                         </Link>
                     </div>
 
-                    <div className="mt-16 grid grid-cols-2 gap-8 md:grid-cols-4">
+                    <div className="mt-16 grid grid-cols-2 gap-8 md:grid-cols-4" aria-label="Key statistics">
                         <div className="animate-fade-right animate-once animate-delay-700 flex flex-col items-center">
                             <span className="animate-count-up text-3xl font-bold text-foreground">10k+</span>
                             <span className="text-sm text-muted-foreground">Active Users</span>
@@ -60,17 +62,17 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-muted-foreground">
+                    <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-muted-foreground" aria-label="Key benefits">
                         <div className="animate-fade-up animate-once animate-delay-[1100ms] flex items-center gap-2">
-                            <CheckCircle className="h-5 w-5 text-primary" />
+                            <CheckCircle className="h-5 w-5 text-primary" aria-hidden="true" />
                             <span className="text-sm font-medium">No credit card required</span>
                         </div>
                         <div className="animate-fade-up animate-once animate-delay-[1200ms] flex items-center gap-2">
-                            <CheckCircle className="h-5 w-5 text-primary" />
+                            <CheckCircle className="h-5 w-5 text-primary" aria-hidden="true" />
                             <span className="text-sm font-medium">Free for all</span>
                         </div>
                         <div className="animate-fade-up animate-once animate-delay-[1300ms] flex items-center gap-2">
-                            <CheckCircle className="h-5 w-5 text-primary" />
+                            <CheckCircle className="h-5 w-5 text-primary" aria-hidden="true" />
                             <span className="text-sm font-medium">24/7 Support</span>
                         </div>
                     </div>
