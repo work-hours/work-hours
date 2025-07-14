@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react'
+import { Head } from '@inertiajs/react'
 import { useState, useEffect } from 'react'
 import { Github, Search, Loader2, ExternalLink } from 'lucide-react'
 import axios from 'axios'
@@ -302,16 +302,24 @@ export default function GitHubRepositories() {
                                             key={`${item.href}-${index}`}
                                             size="sm"
                                             variant="ghost"
-                                            asChild
                                             className={cn('mb-1 w-full justify-start', {
                                                 'bg-primary/10 text-primary hover:bg-primary/15': isActive,
                                                 'hover:bg-muted/80': !isActive,
                                             })}
+                                            onClick={() => {
+                                                // Update the active tab
+                                                setActiveTab(item.title.toLowerCase());
+
+                                                // Update URL without page reload
+                                                const url = new URL(window.location.href);
+                                                url.searchParams.set('tab', item.title.toLowerCase());
+                                                window.history.pushState({}, '', url);
+                                            }}
                                         >
-                                            <Link href={item.href} className="flex items-center gap-2">
+                                            <div className="flex items-center gap-2">
                                                 {Icon && <Icon className="h-4 w-4" />}
                                                 <span>{item.title}</span>
-                                            </Link>
+                                            </div>
                                         </Button>
                                     );
                                 })}
