@@ -21,24 +21,12 @@ type Repository = {
   selected?: boolean;
 };
 
-type SavedRepository = {
-  id: number;
-  repo_id: string;
-  name: string;
-  full_name: string;
-  description: string | null;
-  html_url: string;
-  is_private: boolean;
-  is_organization: boolean;
-  organization_name: string | null;
-};
 
 type GitHubRepositorySelectorProps = {
-  projectId: number;
   onRepositoriesSaved: () => void;
 };
 
-export default function GitHubRepositorySelector({ projectId, onRepositoriesSaved }: GitHubRepositorySelectorProps) {
+export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHubRepositorySelectorProps) {
   const [personalRepos, setPersonalRepos] = useState<Repository[]>([]);
   // orgRepos is kept for backward compatibility with existing code
   // but we now primarily use orgReposByOrg for organization repositories
@@ -109,48 +97,8 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
       setOrgReposByOrg(reposByOrg);
       setOrganizations(orgs);
 
-      // Fetch already saved repositories for this project
-      const projectReposResponse = await axios.get(route('github.repositories.project', { project: projectId }));
-      const savedRepos = projectReposResponse.data as SavedRepository[];
-
-      // Mark repositories as selected if they're already saved
-      if (savedRepos.length > 0) {
-        const savedRepoIds = savedRepos.map((repo) => repo.repo_id);
-
-        setPersonalRepos(prev =>
-          prev.map(repo => ({
-            ...repo,
-            selected: savedRepoIds.includes(repo.id.toString())
-          }))
-        );
-
-        setOrgRepos(prev =>
-          prev.map(repo => ({
-            ...repo,
-            selected: savedRepoIds.includes(repo.id.toString())
-          }))
-        );
-
-        // Update the grouped organization repositories with selected state
-        const updatedReposByOrg: Record<string, Repository[]> = {};
-        Object.keys(reposByOrg).forEach(org => {
-          updatedReposByOrg[org] = reposByOrg[org].map(repo => ({
-            ...repo,
-            selected: savedRepoIds.includes(repo.id.toString())
-          }));
-        });
-        setOrgReposByOrg(updatedReposByOrg);
-
-        // Initialize selectedRepos with already saved repositories
-        const initialSelectedRepos = [
-          ...personalResponse.data.filter((repo: Repository) => savedRepoIds.includes(repo.id.toString())),
-          ...orgResponse.data.filter((repo: Repository) => savedRepoIds.includes(repo.id.toString()))
-        ];
-
-        setSelectedRepos(initialSelectedRepos);
-      } else {
-        setOrgReposByOrg(reposByOrg);
-      }
+      // No need to fetch saved repositories anymore
+      setOrgReposByOrg(reposByOrg);
     } catch (error) {
       // Display the specific error message from the backend if available
       if (axios.isAxiosError(error) && error.response?.data?.error) {
@@ -212,20 +160,12 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
     setError(null);
 
     try {
-      await axios.post(route('github.repositories.save'), {
-        project_id: projectId,
-        repositories: selectedRepos
-      });
-
+      // The repositories are no longer saved to the database
+      // Just call the callback to indicate that repositories were "saved"
       onRepositoriesSaved();
     } catch (error) {
-      // Display the specific error message from the backend if available
-      if (axios.isAxiosError(error) && error.response?.data?.error) {
-        setError(error.response.data.error);
-      } else {
-        setError('Failed to save repositories. Please try again.');
-      }
-      console.error('Error saving repositories:', error);
+      console.error('Error handling repositories:', error);
+      setError('An error occurred while processing repositories.');
     } finally {
       setIsSaving(false);
     }

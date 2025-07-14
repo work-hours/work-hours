@@ -22,7 +22,6 @@ use Illuminate\Support\Carbon;
  * @property string $password
  * @property Carbon|null $email_verified_at
  * @property string|null $remember_token
- * @property Collection|GitHubRepository[] $githubRepositories
  */
 #[UsePolicy(TeamPolicy::class)]
 final class User extends Authenticatable
@@ -65,10 +64,6 @@ final class User extends Authenticatable
         ];
     }
 
-    public function githubRepositories(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(GitHubRepository::class);
-    }
 
     public function projects(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

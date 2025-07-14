@@ -16,12 +16,4 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('github/repositories/organization', [GitHubRepositoryController::class, 'getOrganizationRepositories'])
         ->name('github.repositories.organization');
 
-    Route::post('github/repositories/save', [GitHubRepositoryController::class, 'saveRepositories'])
-        ->name('github.repositories.save');
-
-    Route::get('github/repositories/project/{project}', [GitHubRepositoryController::class, 'getProjectRepositories'])
-        ->name('github.repositories.project');
-
-    Route::delete('github/repositories/{repository}', [GitHubRepositoryController::class, 'removeRepository'])
-        ->name('github.repositories.remove');
 });

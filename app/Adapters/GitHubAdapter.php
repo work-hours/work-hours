@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Adapters;
 
-use App\Models\GitHubRepository;
 use App\Models\Project;
 use App\Models\User;
 use Exception;
@@ -90,63 +89,6 @@ final class GitHubAdapter
         }
     }
 
-    /**
-     * Save selected repositories to a project.
-     *
-     * @param Project $project The project to save repositories to
-     * @param array $repositories The repositories to save
-     * @param int $userId The ID of the user saving the repositories
-     * @return array The saved repositories
-     */
-    public function saveRepositories(Project $project, array $repositories, int $userId): array
-    {
-        $savedRepos = [];
-
-        foreach ($repositories as $repo) {
-            $githubRepo = GitHubRepository::updateOrCreate(
-                [
-                    'user_id' => $userId,
-                    'repo_id' => (string) $repo['id'],
-                ],
-                [
-                    'project_id' => $project->id,
-                    'name' => $repo['name'],
-                    'full_name' => $repo['full_name'],
-                    'description' => $repo['description'] ?? null,
-                    'html_url' => $repo['html_url'],
-                    'is_private' => $repo['private'],
-                    'is_organization' => isset($repo['organization']),
-                    'organization_name' => $repo['organization'] ?? null,
-                ]
-            );
-
-            $savedRepos[] = $githubRepo;
-        }
-
-        return $savedRepos;
-    }
-
-    /**
-     * Get repositories for a project.
-     *
-     * @param Project $project The project to get repositories for
-     * @return array The project repositories
-     */
-    public function getProjectRepositories(Project $project): array
-    {
-        return $project->githubRepositories->toArray();
-    }
-
-    /**
-     * Remove a repository.
-     *
-     * @param GitHubRepository $repository The repository to remove
-     * @return bool True if the repository was removed successfully
-     */
-    public function removeRepository(GitHubRepository $repository): bool
-    {
-        return $repository->delete();
-    }
 
     /**
      * Redirect the user to the GitHub authentication page.
