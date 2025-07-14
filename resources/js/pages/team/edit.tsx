@@ -57,7 +57,7 @@ export default function EditTeamMember({ user }: Props) {
             },
             onError: () => {
                 toast.error('Failed to update team member')
-            }
+            },
         })
     }
 

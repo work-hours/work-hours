@@ -44,7 +44,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
             },
             onError: () => {
                 toast.error('Failed to update profile')
-            }
+            },
         })
     }
 

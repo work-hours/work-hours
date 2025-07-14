@@ -61,7 +61,7 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers 
             },
             onError: () => {
                 toast.error('Failed to update project')
-            }
+            },
         })
     }
 

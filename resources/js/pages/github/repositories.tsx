@@ -70,7 +70,6 @@ export default function GitHubRepositories() {
                 repo.is_imported = true
             }
         } catch (error) {
-            console.error('Error importing repository:', error)
             if (axios.isAxiosError(error) && error.response?.data?.error) {
                 toast.error(error.response.data.error)
             } else {

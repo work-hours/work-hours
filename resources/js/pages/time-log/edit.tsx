@@ -123,7 +123,7 @@ export default function EditTimeLog({ timeLog, projects }: Props) {
             },
             onError: () => {
                 toast.error('Failed to update time log')
-            }
+            },
         })
     }
 

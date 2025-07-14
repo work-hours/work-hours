@@ -115,7 +115,7 @@ export default function CreateTimeLog({ projects }: Props) {
             },
             onError: () => {
                 toast.error('Failed to create time log')
-            }
+            },
         })
     }
 

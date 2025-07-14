@@ -48,7 +48,7 @@ export default function CreateTeamMember() {
             },
             onError: () => {
                 toast.error('Failed to create team member')
-            }
+            },
         })
     }
 

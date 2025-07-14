@@ -56,7 +56,7 @@ export default function CreateProject({ teamMembers }: Props) {
             },
             onError: () => {
                 toast.error('Failed to create project')
-            }
+            },
         })
     }
 

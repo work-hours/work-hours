@@ -124,5 +124,4 @@ final class GitHubAdapter
             'token' => $githubUser->token,
         ];
     }
-
 }
