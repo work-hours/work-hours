@@ -155,7 +155,9 @@ final class GitHubAdapter
      */
     public function redirectToGitHub(): RedirectResponse
     {
-        return Socialite::driver('github')->redirect();
+        return Socialite::driver('github')
+            ->scopes(['repo', 'read:org', 'user:email'])
+            ->redirect();
     }
 
     /**
