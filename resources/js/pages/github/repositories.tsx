@@ -1,15 +1,17 @@
-import { Head } from '@inertiajs/react'
+import { Head, Link } from '@inertiajs/react'
 import { useState, useEffect } from 'react'
-import { Github, Search, Loader2 } from 'lucide-react'
+import { Github, Search, Loader2, ExternalLink } from 'lucide-react'
 import axios from 'axios'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import AppLayout from '@/layouts/app-layout'
-import { type BreadcrumbItem } from '@/types'
+import { type BreadcrumbItem, type NavItem } from '@/types'
+import { cn } from '@/lib/utils'
 
 type Repository = {
     id: string
@@ -39,9 +41,30 @@ export default function GitHubRepositories() {
     const [searchTerm, setSearchTerm] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    // activeTab is used in the Tabs component to track the current tab
     const [activeTab, setActiveTab] = useState('personal')
     const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+    // Generate sidebar navigation items
+    const generateSidebarNavItems = (): NavItem[] => {
+        const navItems: NavItem[] = [
+            {
+                title: 'Personal',
+                href: '/github/repositories?tab=personal',
+                icon: Github,
+            }
+        ]
+
+        // Add organization tabs
+        organizations.forEach(org => {
+            navItems.push({
+                title: org,
+                href: `/github/repositories?tab=${org}`,
+                icon: Github,
+            })
+        })
+
+        return navItems
+    }
 
     useEffect(() => {
         // Check if user is authenticated with GitHub
@@ -50,6 +73,13 @@ export default function GitHubRepositories() {
                 await axios.get(route('github.repositories.personal'))
                 setIsAuthenticated(true)
                 fetchRepositories()
+
+                // Check for tab parameter in URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const tabParam = urlParams.get('tab');
+                if (tabParam) {
+                    setActiveTab(tabParam);
+                }
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response?.status === 401) {
                     setIsAuthenticated(false)
@@ -118,41 +148,69 @@ export default function GitHubRepositories() {
 
         if (isLoading) {
             return (
-                <div className="flex justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <div className="flex flex-col items-center justify-center py-12">
+                    <Loader2 className="h-10 w-10 animate-spin text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">Loading repositories...</p>
                 </div>
             )
         }
 
         if (filteredRepos.length === 0) {
             return (
-                <div className="text-center py-8 text-muted-foreground">
-                    {searchTerm ? 'No repositories match your search' : 'No repositories found'}
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                    <Github className="h-12 w-12 mb-4 opacity-20" />
+                    <p className="text-lg font-medium mb-1">
+                        {searchTerm ? 'No repositories match your search' : 'No repositories found'}
+                    </p>
+                    <p className="text-sm">
+                        {searchTerm ? 'Try a different search term' : 'Connect more repositories to get started'}
+                    </p>
                 </div>
             )
         }
 
         return (
-            <ScrollArea className="h-[400px] pr-2">
-                <div className="space-y-3">
+            <ScrollArea className="h-[450px] pr-2">
+                <div className="space-y-4">
                     {filteredRepos.map(repo => (
-                        <div key={repo.id} className="flex items-start space-x-3 p-3 border rounded-md hover:bg-muted/50">
-                            <div className="flex-1">
-                                <div className="font-medium">
-                                    {repo.name}
-                                    {repo.private && <Badge variant="outline" className="ml-2 text-xs">Private</Badge>}
+                        <div
+                            key={repo.id}
+                            className="flex flex-col p-4 border rounded-lg shadow-sm hover:bg-muted/30 transition-colors"
+                        >
+                            <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2 font-medium text-lg">
+                                        <Github className="h-4 w-4" />
+                                        {repo.name}
+                                        {repo.private && (
+                                            <Badge variant="outline" className="ml-1 text-xs font-normal">
+                                                Private
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    {repo.description && (
+                                        <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{repo.description}</p>
+                                    )}
                                 </div>
-                                {repo.description && (
-                                    <p className="text-sm text-muted-foreground mt-1">{repo.description}</p>
-                                )}
-                                <a
-                                    href={repo.html_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-xs text-blue-500 hover:underline mt-1 inline-block"
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    asChild
+                                    className="ml-2 text-muted-foreground hover:text-foreground"
                                 >
-                                    {repo.full_name}
-                                </a>
+                                    <a
+                                        href={repo.html_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        title="Open in GitHub"
+                                    >
+                                        <ExternalLink className="h-4 w-4" />
+                                    </a>
+                                </Button>
+                            </div>
+                            <Separator className="my-3" />
+                            <div className="flex items-center text-xs text-muted-foreground">
+                                <span>{repo.full_name}</span>
                             </div>
                         </div>
                     ))}
@@ -201,6 +259,20 @@ export default function GitHubRepositories() {
         )
     }
 
+    // Get the current tab
+    const currentTab = activeTab;
+
+    // Generate sidebar navigation items
+    const sidebarNavItems = generateSidebarNavItems();
+
+    // Determine which repositories to display based on the active tab
+    const getRepositoriesToDisplay = () => {
+        if (currentTab === 'personal') {
+            return personalRepos;
+        }
+        return orgReposByOrg[currentTab] || [];
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="GitHub Repositories" />
@@ -216,55 +288,78 @@ export default function GitHubRepositories() {
                     </p>
                 </section>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-xl flex items-center gap-2">
-                            <Github className="h-5 w-5" />
-                            GitHub Repositories
-                        </CardTitle>
-                        <CardDescription>Browse your personal and organization repositories</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {error && (
-                            <div className="bg-destructive/15 text-destructive rounded-md p-3 mb-4">
-                                {error}
-                            </div>
-                        )}
+                <div className="mt-6 flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
+                    {/* Sidebar */}
+                    <aside className="w-full max-w-xl lg:w-56">
+                        <Card className="overflow-hidden transition-all hover:shadow-sm">
+                            <nav className="flex flex-col p-2">
+                                {sidebarNavItems.map((item, index) => {
+                                    const Icon = item.icon;
+                                    const isActive = item.title.toLowerCase() === currentTab.toLowerCase();
 
-                        <div className="mb-4">
-                            <div className="relative">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    type="search"
-                                    placeholder="Search repositories..."
-                                    className="pl-8"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                            </div>
-                        </div>
+                                    return (
+                                        <Button
+                                            key={`${item.href}-${index}`}
+                                            size="sm"
+                                            variant="ghost"
+                                            asChild
+                                            className={cn('mb-1 w-full justify-start', {
+                                                'bg-primary/10 text-primary hover:bg-primary/15': isActive,
+                                                'hover:bg-muted/80': !isActive,
+                                            })}
+                                        >
+                                            <Link href={item.href} className="flex items-center gap-2">
+                                                {Icon && <Icon className="h-4 w-4" />}
+                                                <span>{item.title}</span>
+                                            </Link>
+                                        </Button>
+                                    );
+                                })}
+                            </nav>
+                        </Card>
+                    </aside>
 
-                        <Tabs defaultValue="personal" onValueChange={setActiveTab}>
-                            <TabsList className="mb-4 flex flex-wrap">
-                                <TabsTrigger value="personal">Personal</TabsTrigger>
-                                {organizations.map(org => (
-                                    <TabsTrigger key={org} value={org}>{org}</TabsTrigger>
-                                ))}
-                            </TabsList>
+                    <Separator className="my-6 md:hidden" />
 
-                            <TabsContent value="personal">
-                                {renderRepositoryList(personalRepos)}
-                            </TabsContent>
+                    {/* Main content */}
+                    <div className="flex-1 md:max-w-2xl">
+                        <Card className="overflow-hidden transition-all hover:shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="text-xl flex items-center gap-2">
+                                    <Github className="h-5 w-5" />
+                                    {currentTab === 'personal' ? 'Personal Repositories' : `${currentTab} Repositories`}
+                                </CardTitle>
+                                <CardDescription>
+                                    {currentTab === 'personal'
+                                        ? 'Browse your personal GitHub repositories'
+                                        : `Browse repositories from the ${currentTab} organization`}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                {error && (
+                                    <div className="bg-destructive/15 text-destructive rounded-md p-3 mb-4">
+                                        {error}
+                                    </div>
+                                )}
 
-                            {/* Dynamic tabs for each organization */}
-                            {organizations.map(org => (
-                                <TabsContent key={org} value={org}>
-                                    {renderRepositoryList(orgReposByOrg[org] || [])}
-                                </TabsContent>
-                            ))}
-                        </Tabs>
-                    </CardContent>
-                </Card>
+                                <div className="mb-4">
+                                    <div className="relative">
+                                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            type="search"
+                                            placeholder="Search repositories..."
+                                            className="pl-8"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                {renderRepositoryList(getRepositoriesToDisplay())}
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
             </div>
         </AppLayout>
     )
