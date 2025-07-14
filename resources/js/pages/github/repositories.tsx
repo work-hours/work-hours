@@ -43,8 +43,8 @@ export default function GitHubRepositories() {
     const [error, setError] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState('personal')
     const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true)
 
-    // Generate sidebar navigation items
     const generateSidebarNavItems = (): NavItem[] => {
         const navItems: NavItem[] = [
             {
@@ -54,7 +54,6 @@ export default function GitHubRepositories() {
             }
         ]
 
-        // Add organization tabs
         organizations.forEach(org => {
             navItems.push({
                 title: org,
@@ -67,14 +66,13 @@ export default function GitHubRepositories() {
     }
 
     useEffect(() => {
-        // Check if user is authenticated with GitHub
         const checkGitHubAuth = async () => {
+            setIsCheckingAuth(true)
             try {
                 await axios.get(route('github.repositories.personal'))
                 setIsAuthenticated(true)
-                fetchRepositories()
+                fetchRepositories().then()
 
-                // Check for tab parameter in URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const tabParam = urlParams.get('tab');
                 if (tabParam) {
@@ -84,17 +82,18 @@ export default function GitHubRepositories() {
                 if (axios.isAxiosError(error) && error.response?.status === 401) {
                     setIsAuthenticated(false)
                 } else {
-                    // Display the specific error message from the backend if available
                     if (axios.isAxiosError(error) && error.response?.data?.error) {
                         setError(error.response.data.error)
                     } else {
                         setError('An error occurred while checking GitHub authentication.')
                     }
                 }
+            } finally {
+                setIsCheckingAuth(false)
             }
         }
 
-        checkGitHubAuth()
+        checkGitHubAuth().then()
     }, [])
 
     const fetchRepositories = async () => {
@@ -102,15 +101,12 @@ export default function GitHubRepositories() {
         setError(null)
 
         try {
-            // Fetch personal repositories
             const personalResponse = await axios.get(route('github.repositories.personal'))
             setPersonalRepos(personalResponse.data)
 
-            // Fetch organization repositories
             const orgResponse = await axios.get(route('github.repositories.organization'))
             const orgReposData = orgResponse.data
 
-            // Group organization repositories by organization
             const reposByOrg: Record<string, Repository[]> = {}
             const orgs: string[] = []
 
@@ -127,7 +123,6 @@ export default function GitHubRepositories() {
             setOrgReposByOrg(reposByOrg)
             setOrganizations(orgs)
         } catch (error) {
-            // Display the specific error message from the backend if available
             if (axios.isAxiosError(error) && error.response?.data?.error) {
                 setError(error.response.data.error)
             } else {
@@ -219,6 +214,35 @@ export default function GitHubRepositories() {
         )
     }
 
+    if (isCheckingAuth) {
+        return (
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="GitHub Repositories" />
+                <div className="mx-auto flex w-full flex-col gap-6 p-6 md:w-10/12">
+                    {/* Header section */}
+                    <section className="mb-2">
+                        <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+                            <Github className="h-8 w-8" />
+                            GitHub Repositories
+                        </h1>
+                        <p className="mt-1 text-gray-500 dark:text-gray-400">
+                            Loading GitHub repositories
+                        </p>
+                    </section>
+
+                    <Card>
+                        <CardContent>
+                            <div className="flex flex-col items-center justify-center py-12">
+                                <Loader2 className="h-10 w-10 animate-spin text-muted-foreground mb-4" />
+                                <p className="text-muted-foreground">Checking GitHub connection...</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </AppLayout>
+        )
+    }
+
     if (!isAuthenticated) {
         return (
             <AppLayout breadcrumbs={breadcrumbs}>
@@ -259,13 +283,10 @@ export default function GitHubRepositories() {
         )
     }
 
-    // Get the current tab
     const currentTab = activeTab;
 
-    // Generate sidebar navigation items
     const sidebarNavItems = generateSidebarNavItems();
 
-    // Determine which repositories to display based on the active tab
     const getRepositoriesToDisplay = () => {
         if (currentTab === 'personal') {
             return personalRepos;
@@ -277,7 +298,6 @@ export default function GitHubRepositories() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="GitHub Repositories" />
             <div className="mx-auto flex w-full flex-col gap-6 p-6 md:w-10/12">
-                {/* Header section */}
                 <section className="mb-2">
                     <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
                         <Github className="h-8 w-8" />
@@ -289,7 +309,6 @@ export default function GitHubRepositories() {
                 </section>
 
                 <div className="mt-6 flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
-                    {/* Sidebar */}
                     <aside className="w-full max-w-xl lg:w-56">
                         <Card className="overflow-hidden transition-all hover:shadow-sm">
                             <nav className="flex flex-col p-2">
@@ -307,10 +326,8 @@ export default function GitHubRepositories() {
                                                 'hover:bg-muted/80': !isActive,
                                             })}
                                             onClick={() => {
-                                                // Update the active tab
                                                 setActiveTab(item.title.toLowerCase());
 
-                                                // Update URL without page reload
                                                 const url = new URL(window.location.href);
                                                 url.searchParams.set('tab', item.title.toLowerCase());
                                                 window.history.pushState({}, '', url);
@@ -329,7 +346,6 @@ export default function GitHubRepositories() {
 
                     <Separator className="my-6 md:hidden" />
 
-                    {/* Main content */}
                     <div className="flex-1 md:max-w-2xl">
                         <Card className="overflow-hidden transition-all hover:shadow-sm">
                             <CardHeader>
