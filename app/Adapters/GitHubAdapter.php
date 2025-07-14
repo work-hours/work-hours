@@ -23,23 +23,13 @@ final class GitHubAdapter
      */
     public function getPersonalRepositories(string $token)
     {
-        try {
-            $response = Http::withToken($token)
-                ->get('https://api.github.com/user/repos', [
-                    'per_page' => 100,
-                    'sort' => 'updated',
-                ]);
-
-            if ($response->failed()) {
-                return response()->json(['error' => 'Failed to fetch repositories from GitHub.'], 500);
-            }
-
-            return $response->json();
-        } catch (Exception $e) {
-            Log::error($e);
-
-            return response()->json(['error' => 'An error occurred while fetching repositories.'], 500);
-        }
+        return $this->makeGitHubRequest(
+            $token,
+            'https://api.github.com/user/repos',
+            ['per_page' => 100, 'sort' => 'updated'],
+            'Failed to fetch repositories from GitHub.',
+            'repositories'
+        );
     }
 
     /**
@@ -50,40 +40,81 @@ final class GitHubAdapter
      */
     public function getOrganizationRepositories(string $token)
     {
-        try {
-            $orgsResponse = Http::withToken($token)
-                ->get('https://api.github.com/user/orgs', [
-                    'per_page' => 100,
-                ]);
+        $orgsResponse = $this->makeGitHubRequest(
+            $token,
+            'https://api.github.com/user/orgs',
+            ['per_page' => 100],
+            'Failed to fetch organizations from GitHub.',
+            'organizations'
+        );
 
-            if ($orgsResponse->failed()) {
-                return response()->json(['error' => 'Failed to fetch organizations from GitHub.'], 500);
-            }
+        if ($orgsResponse instanceof JsonResponse) {
+            return $orgsResponse;
+        }
 
-            $organizations = $orgsResponse->json();
-            $allOrgRepos = [];
+        $organizations = $orgsResponse;
+        $allOrgRepos = [];
 
-            foreach ($organizations as $org) {
-                $reposResponse = Http::withToken($token)
-                    ->get("https://api.github.com/orgs/{$org['login']}/repos", [
-                        'per_page' => 100,
-                        'sort' => 'updated',
-                    ]);
+        foreach ($organizations as $org) {
+            $reposResponse = $this->makeGitHubRequest(
+                $token,
+                "https://api.github.com/orgs/{$org['login']}/repos",
+                ['per_page' => 100, 'sort' => 'updated'],
+                null,
+                null,
+                false
+            );
 
-                if ($reposResponse->successful()) {
-                    $repos = $reposResponse->json();
-                    foreach ($repos as $repo) {
-                        $repo['organization'] = $org['login'];
-                        $allOrgRepos[] = $repo;
-                    }
+            if ($reposResponse && !($reposResponse instanceof JsonResponse)) {
+                $repos = $reposResponse;
+                foreach ($repos as $repo) {
+                    $repo['organization'] = $org['login'];
+                    $allOrgRepos[] = $repo;
                 }
             }
+        }
 
-            return $allOrgRepos;
+        return $allOrgRepos;
+    }
+
+    /**
+     * Make a request to the GitHub API with error handling.
+     *
+     * @param  string  $token  The GitHub access token
+     * @param  string  $url  The API endpoint URL
+     * @param  array  $params  The query parameters
+     * @param  string|null  $errorMessage  Custom error message on failure
+     * @param  string|null  $resourceType  Type of resource being fetched (for error logging)
+     * @param  bool  $returnErrorResponse  Whether to return an error response on failure
+     * @return array|JsonResponse The response data or an error response
+     */
+    private function makeGitHubRequest(
+        string $token,
+        string $url,
+        array $params = [],
+        ?string $errorMessage = null,
+        ?string $resourceType = null,
+        bool $returnErrorResponse = true
+    ) {
+        try {
+            $response = Http::withToken($token)->get($url, $params);
+
+            if ($response->failed() && $returnErrorResponse) {
+                $message = $errorMessage ?? 'Failed to fetch data from GitHub.';
+                return response()->json(['error' => $message], 500);
+            }
+
+            return $response->successful() ? $response->json() : null;
         } catch (Exception $e) {
-            Log::error($e);
+            Log::error("Error fetching GitHub {$resourceType}: " . $e->getMessage());
 
-            return response()->json(['error' => 'An error occurred while fetching organization repositories.'], 500);
+            if ($returnErrorResponse) {
+                return response()->json([
+                    'error' => 'An error occurred while fetching ' . ($resourceType ?? 'data') . '.'
+                ], 500);
+            }
+
+            return null;
         }
     }
 

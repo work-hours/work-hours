@@ -23,30 +23,7 @@ final class GitHubRepositoryController extends Controller
      */
     public function getPersonalRepositories(): JsonResponse
     {
-        try {
-            $user = Auth::user();
-            $token = $user->github_token;
-
-            if (! $token) {
-                return response()->json(['error' => 'GitHub token not found. Please authenticate with GitHub.'], 401);
-            }
-
-            $repositories = $this->githubAdapter->getPersonalRepositories($token);
-
-            if ($repositories instanceof JsonResponse) {
-                return $repositories;
-            }
-
-            foreach ($repositories as &$repo) {
-                $repo['is_imported'] = $this->isRepositoryImported($repo['full_name']);
-            }
-
-            return response()->json($repositories);
-        } catch (Exception $e) {
-            Log::error($e);
-
-            return response()->json(['error' => 'An error occurred while fetching repositories.'], 500);
-        }
+        return $this->fetchRepositories('personal');
     }
 
     /**
@@ -54,15 +31,29 @@ final class GitHubRepositoryController extends Controller
      */
     public function getOrganizationRepositories(): JsonResponse
     {
-        try {
-            $user = Auth::user();
-            $token = $user->github_token;
+        return $this->fetchRepositories('organization');
+    }
 
-            if (! $token) {
-                return response()->json(['error' => 'GitHub token not found. Please authenticate with GitHub.'], 401);
+    /**
+     * Fetch repositories from GitHub based on the specified type.
+     *
+     * @param string $type The type of repositories to fetch ('personal' or 'organization')
+     * @return JsonResponse The repositories or an error response
+     */
+    private function fetchRepositories(string $type): JsonResponse
+    {
+        try {
+            $token = $this->getGitHubToken();
+
+            if ($token instanceof JsonResponse) {
+                return $token;
             }
 
-            $repositories = $this->githubAdapter->getOrganizationRepositories($token);
+            $method = $type === 'personal'
+                ? 'getPersonalRepositories'
+                : 'getOrganizationRepositories';
+
+            $repositories = $this->githubAdapter->$method($token);
 
             if ($repositories instanceof JsonResponse) {
                 return $repositories;
@@ -74,10 +65,28 @@ final class GitHubRepositoryController extends Controller
 
             return response()->json($repositories);
         } catch (Exception $e) {
-            Log::error($e);
+            $errorContext = $type === 'personal' ? 'repositories' : 'organization repositories';
+            Log::error("Error fetching GitHub {$errorContext}: " . $e->getMessage());
 
-            return response()->json(['error' => 'An error occurred while fetching organization repositories.'], 500);
+            return response()->json(['error' => "An error occurred while fetching {$errorContext}."], 500);
         }
+    }
+
+    /**
+     * Get the authenticated user's GitHub token.
+     *
+     * @return string|JsonResponse The GitHub token or an error response
+     */
+    private function getGitHubToken()
+    {
+        $user = Auth::user();
+        $token = $user->github_token;
+
+        if (! $token) {
+            return response()->json(['error' => 'GitHub token not found. Please authenticate with GitHub.'], 401);
+        }
+
+        return $token;
     }
 
     /**
@@ -94,27 +103,13 @@ final class GitHubRepositoryController extends Controller
     public function importRepository(Request $request): JsonResponse
     {
         try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'full_name' => 'required|string',
-                'html_url' => 'required|string|url',
-            ]);
+            $validatedData = $this->validateRepositoryData($request);
 
-            $user = Auth::user();
-
-            if ($this->isRepositoryImported($request->input('full_name'))) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Repository is already imported as a project.',
-                ], 400);
+            if ($this->isRepositoryImported($validatedData['full_name'])) {
+                return $this->errorResponse('Repository is already imported as a project.', 400);
             }
 
-            $project = Project::query()->create([
-                'user_id' => $user->getKey(),
-                'name' => $request->input('full_name'),
-                'description' => $request->input('description') . "\n\nGitHub Repository: " . $request->input('html_url'),
-            ]);
+            $project = $this->createProjectFromRepository($validatedData);
 
             return response()->json([
                 'success' => true,
@@ -124,11 +119,56 @@ final class GitHubRepositoryController extends Controller
         } catch (Exception $e) {
             Log::error('Error importing GitHub repository: ' . $e->getMessage());
 
-            return response()->json([
-                'success' => false,
-                'error' => 'Failed to import repository: ' . $e->getMessage(),
-            ], 500);
+            return $this->errorResponse('Failed to import repository: ' . $e->getMessage(), 500);
         }
+    }
+
+    /**
+     * Validate repository data from the request.
+     *
+     * @param Request $request The HTTP request
+     * @return array The validated data
+     */
+    private function validateRepositoryData(Request $request): array
+    {
+        return $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'full_name' => 'required|string',
+            'html_url' => 'required|string|url',
+        ]);
+    }
+
+    /**
+     * Create a new project from repository data.
+     *
+     * @param array $data The repository data
+     * @return Project The created project
+     */
+    private function createProjectFromRepository(array $data): Project
+    {
+        $user = Auth::user();
+
+        return Project::query()->create([
+            'user_id' => $user->getKey(),
+            'name' => $data['full_name'],
+            'description' => $data['description'] . "\n\nGitHub Repository: " . $data['html_url'],
+        ]);
+    }
+
+    /**
+     * Create an error JSON response.
+     *
+     * @param string $message The error message
+     * @param int $statusCode The HTTP status code
+     * @return JsonResponse The error response
+     */
+    private function errorResponse(string $message, int $statusCode = 400): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'error' => $message,
+        ], $statusCode);
     }
 
     /**
