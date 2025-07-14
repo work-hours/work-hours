@@ -29,7 +29,8 @@ final class GitHubRepositoryController extends Controller
     public function getPersonalRepositories(): JsonResponse
     {
         try {
-            $token = session('github_token');
+            $user = Auth::user();
+            $token = $user->github_token;
 
             if (! $token) {
                 return response()->json(['error' => 'GitHub token not found. Please authenticate with GitHub.'], 401);
@@ -56,7 +57,8 @@ final class GitHubRepositoryController extends Controller
     public function getOrganizationRepositories(): JsonResponse
     {
         try {
-            $token = session('github_token');
+            $user = Auth::user();
+            $token = $user->github_token;
 
             if (! $token) {
                 return response()->json(['error' => 'GitHub token not found. Please authenticate with GitHub.'], 401);
