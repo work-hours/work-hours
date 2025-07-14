@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type Repository = {
   id: string;
@@ -39,7 +40,12 @@ type GitHubRepositorySelectorProps = {
 
 export default function GitHubRepositorySelector({ projectId, onRepositoriesSaved }: GitHubRepositorySelectorProps) {
   const [personalRepos, setPersonalRepos] = useState<Repository[]>([]);
+  // orgRepos is kept for backward compatibility with existing code
+  // but we now primarily use orgReposByOrg for organization repositories
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [orgRepos, setOrgRepos] = useState<Repository[]>([]);
+  const [orgReposByOrg, setOrgReposByOrg] = useState<Record<string, Repository[]>>({});
+  const [organizations, setOrganizations] = useState<string[]>([]);
   const [selectedRepos, setSelectedRepos] = useState<Repository[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +65,12 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
         if (axios.isAxiosError(error) && error.response?.status === 401) {
           setIsAuthenticated(false);
         } else {
-          setError('An error occurred while checking GitHub authentication.');
+          // Display the specific error message from the backend if available
+          if (axios.isAxiosError(error) && error.response?.data?.error) {
+            setError(error.response.data.error);
+          } else {
+            setError('An error occurred while checking GitHub authentication.');
+          }
         }
       }
     };
@@ -78,7 +89,25 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
 
       // Fetch organization repositories
       const orgResponse = await axios.get(route('github.repositories.organization'));
-      setOrgRepos(orgResponse.data);
+      const orgReposData = orgResponse.data;
+      setOrgRepos(orgReposData);
+
+      // Group organization repositories by organization
+      const reposByOrg: Record<string, Repository[]> = {};
+      const orgs: string[] = [];
+
+      orgReposData.forEach((repo: Repository) => {
+        if (repo.organization) {
+          if (!reposByOrg[repo.organization]) {
+            reposByOrg[repo.organization] = [];
+            orgs.push(repo.organization);
+          }
+          reposByOrg[repo.organization].push(repo);
+        }
+      });
+
+      setOrgReposByOrg(reposByOrg);
+      setOrganizations(orgs);
 
       // Fetch already saved repositories for this project
       const projectReposResponse = await axios.get(route('github.repositories.project', { project: projectId }));
@@ -102,6 +131,16 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
           }))
         );
 
+        // Update the grouped organization repositories with selected state
+        const updatedReposByOrg: Record<string, Repository[]> = {};
+        Object.keys(reposByOrg).forEach(org => {
+          updatedReposByOrg[org] = reposByOrg[org].map(repo => ({
+            ...repo,
+            selected: savedRepoIds.includes(repo.id.toString())
+          }));
+        });
+        setOrgReposByOrg(updatedReposByOrg);
+
         // Initialize selectedRepos with already saved repositories
         const initialSelectedRepos = [
           ...personalResponse.data.filter((repo: Repository) => savedRepoIds.includes(repo.id.toString())),
@@ -109,9 +148,16 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
         ];
 
         setSelectedRepos(initialSelectedRepos);
+      } else {
+        setOrgReposByOrg(reposByOrg);
       }
     } catch (error) {
-      setError('Failed to fetch repositories. Please try again.');
+      // Display the specific error message from the backend if available
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        setError(error.response.data.error);
+      } else {
+        setError('Failed to fetch repositories. Please try again.');
+      }
       console.error('Error fetching repositories:', error);
     } finally {
       setIsLoading(false);
@@ -126,7 +172,19 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
           r.id === repo.id ? { ...r, selected: !r.selected } : r
         )
       );
-    } else {
+    } else if (repo.organization) {
+      // Update in the organization-specific list
+      setOrgReposByOrg(prev => {
+        const org = repo.organization as string;
+        return {
+          ...prev,
+          [org]: prev[org].map(r =>
+            r.id === repo.id ? { ...r, selected: !r.selected } : r
+          )
+        };
+      });
+
+      // Also update in the combined list for backward compatibility
       setOrgRepos(prev =>
         prev.map(r =>
           r.id === repo.id ? { ...r, selected: !r.selected } : r
@@ -161,7 +219,12 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
 
       onRepositoriesSaved();
     } catch (error) {
-      setError('Failed to save repositories. Please try again.');
+      // Display the specific error message from the backend if available
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        setError(error.response.data.error);
+      } else {
+        setError('Failed to save repositories. Please try again.');
+      }
       console.error('Error saving repositories:', error);
     } finally {
       setIsSaving(false);
@@ -171,12 +234,6 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
   const filteredPersonalRepos = personalRepos.filter(repo =>
     repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (repo.description && repo.description.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-
-  const filteredOrgRepos = orgRepos.filter(repo =>
-    repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (repo.description && repo.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (repo.organization && repo.organization.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   if (!isAuthenticated) {
@@ -255,9 +312,11 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
         )}
 
         <Tabs defaultValue="personal" onValueChange={setActiveTab}>
-          <TabsList className="mb-4">
+          <TabsList className="mb-4 flex flex-wrap">
             <TabsTrigger value="personal">Personal</TabsTrigger>
-            <TabsTrigger value="organization">Organization</TabsTrigger>
+            {organizations.map(org => (
+              <TabsTrigger key={org} value={org}>{org}</TabsTrigger>
+            ))}
           </TabsList>
 
           <TabsContent value="personal">
@@ -266,26 +325,28 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
             ) : filteredPersonalRepos.length > 0 ? (
-              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-                {filteredPersonalRepos.map(repo => (
-                  <div key={repo.id} className="flex items-start space-x-3 p-3 border rounded-md hover:bg-muted/50">
-                    <Checkbox
-                      id={`repo-${repo.id}`}
-                      checked={repo.selected || false}
-                      onCheckedChange={() => handleRepositoryToggle(repo)}
-                    />
-                    <div className="flex-1">
-                      <Label htmlFor={`repo-${repo.id}`} className="font-medium cursor-pointer">
-                        {repo.name}
-                        {repo.private && <Badge variant="outline" className="ml-2 text-xs">Private</Badge>}
-                      </Label>
-                      {repo.description && (
-                        <p className="text-sm text-muted-foreground mt-1">{repo.description}</p>
-                      )}
+              <ScrollArea className="h-[400px] pr-2">
+                <div className="space-y-3">
+                  {filteredPersonalRepos.map(repo => (
+                    <div key={repo.id} className="flex items-start space-x-3 p-3 border rounded-md hover:bg-muted/50">
+                      <Checkbox
+                        id={`repo-${repo.id}`}
+                        checked={repo.selected || false}
+                        onCheckedChange={() => handleRepositoryToggle(repo)}
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor={`repo-${repo.id}`} className="font-medium cursor-pointer">
+                          {repo.name}
+                          {repo.private && <Badge variant="outline" className="ml-2 text-xs">Private</Badge>}
+                        </Label>
+                        {repo.description && (
+                          <p className="text-sm text-muted-foreground mt-1">{repo.description}</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              </ScrollArea>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 {searchTerm ? 'No repositories match your search' : 'No personal repositories found'}
@@ -293,41 +354,51 @@ export default function GitHubRepositorySelector({ projectId, onRepositoriesSave
             )}
           </TabsContent>
 
-          <TabsContent value="organization">
-            {isLoading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : filteredOrgRepos.length > 0 ? (
-              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-                {filteredOrgRepos.map(repo => (
-                  <div key={repo.id} className="flex items-start space-x-3 p-3 border rounded-md hover:bg-muted/50">
-                    <Checkbox
-                      id={`repo-${repo.id}`}
-                      checked={repo.selected || false}
-                      onCheckedChange={() => handleRepositoryToggle(repo)}
-                    />
-                    <div className="flex-1">
-                      <Label htmlFor={`repo-${repo.id}`} className="font-medium cursor-pointer">
-                        {repo.name}
-                        {repo.private && <Badge variant="outline" className="ml-2 text-xs">Private</Badge>}
-                      </Label>
-                      {repo.organization && (
-                        <Badge variant="secondary" className="ml-2 text-xs">{repo.organization}</Badge>
-                      )}
-                      {repo.description && (
-                        <p className="text-sm text-muted-foreground mt-1">{repo.description}</p>
-                      )}
-                    </div>
+          {/* Dynamic tabs for each organization */}
+          {organizations.map(org => {
+            const orgRepos = orgReposByOrg[org] || [];
+            const filteredOrgRepos = orgRepos.filter(repo =>
+              repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              (repo.description && repo.description.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+
+            return (
+              <TabsContent key={org} value={org}>
+                {isLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                {searchTerm ? 'No repositories match your search' : 'No organization repositories found'}
-              </div>
-            )}
-          </TabsContent>
+                ) : filteredOrgRepos.length > 0 ? (
+                  <ScrollArea className="h-[400px] pr-2">
+                    <div className="space-y-3">
+                      {filteredOrgRepos.map(repo => (
+                        <div key={repo.id} className="flex items-start space-x-3 p-3 border rounded-md hover:bg-muted/50">
+                          <Checkbox
+                            id={`repo-${repo.id}`}
+                            checked={repo.selected || false}
+                            onCheckedChange={() => handleRepositoryToggle(repo)}
+                          />
+                          <div className="flex-1">
+                            <Label htmlFor={`repo-${repo.id}`} className="font-medium cursor-pointer">
+                              {repo.name}
+                              {repo.private && <Badge variant="outline" className="ml-2 text-xs">Private</Badge>}
+                            </Label>
+                            {repo.description && (
+                              <p className="text-sm text-muted-foreground mt-1">{repo.description}</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    {searchTerm ? 'No repositories match your search' : `No repositories found for ${org}`}
+                  </div>
+                )}
+              </TabsContent>
+            );
+          })}
         </Tabs>
 
         <div className="mt-4 flex justify-end">

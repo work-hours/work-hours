@@ -167,10 +167,6 @@ final class GitHubRepositoryController extends Controller
      */
     public function index(): Response
     {
-        $projects = Auth::user()->projects()->get();
-
-        return Inertia::render('github/repositories', [
-            'projects' => $projects,
-        ]);
+        return Inertia::render('github/repositories');
     }
 }
