@@ -129,4 +129,31 @@ final class GitHubAdapter
             'token' => $githubUser->token,
         ];
     }
+
+    /**
+     * Get collaborators for a repository.
+     *
+     * @param string $token The GitHub access token
+     * @param string $owner The repository owner (username or organization)
+     * @param string $repo The repository name
+     * @return array|JsonResponse The collaborators or an error response
+     */
+    public function getRepositoryCollaborators(string $token, string $owner, string $repo)
+    {
+        try {
+            $response = Http::withToken($token)
+                ->get("https://api.github.com/repos/{$owner}/{$repo}/collaborators", [
+                    'per_page' => 100,
+                ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Failed to fetch collaborators from GitHub.'], 500);
+            }
+
+            return $response->json();
+        } catch (Exception $e) {
+            Log::error($e);
+            return response()->json(['error' => 'An error occurred while fetching collaborators.'], 500);
+        }
+    }
 }

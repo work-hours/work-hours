@@ -22,6 +22,7 @@ type Repository = {
     html_url: string
     private: boolean
     organization?: string
+    is_imported?: boolean
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -59,6 +60,8 @@ export default function GitHubRepositories() {
             })
 
             toast.success('Repository successfully imported as a project!')
+
+            repo.is_imported = true
         } catch (error) {
             console.error('Error importing repository:', error)
             if (axios.isAxiosError(error) && error.response?.data?.error) {
@@ -214,25 +217,31 @@ export default function GitHubRepositories() {
                                     )}
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="text-muted-foreground hover:text-foreground"
-                                        onClick={() => handleImportRepository(repo)}
-                                        disabled={importingRepo === repo.id}
-                                    >
-                                        {importingRepo === repo.id ? (
-                                            <>
-                                                <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                                                Importing...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Download className="h-4 w-4 mr-1" />
-                                                Import
-                                            </>
-                                        )}
-                                    </Button>
+                                    {!repo.is_imported ? (
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-muted-foreground hover:text-foreground"
+                                            onClick={() => handleImportRepository(repo)}
+                                            disabled={importingRepo === repo.id}
+                                        >
+                                            {importingRepo === repo.id ? (
+                                                <>
+                                                    <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                                                    Importing...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Download className="h-4 w-4 mr-1" />
+                                                    Import
+                                                </>
+                                            )}
+                                        </Button>
+                                    ) : (
+                                        <Badge variant="secondary" className="mr-2">
+                                            Imported
+                                        </Badge>
+                                    )}
                                     <Button
                                         variant="ghost"
                                         size="icon"

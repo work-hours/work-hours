@@ -42,6 +42,11 @@ final class GitHubRepositoryController extends Controller
                 return $repositories;
             }
 
+            // Mark repositories that are already imported
+            foreach ($repositories as &$repo) {
+                $repo['is_imported'] = $this->isRepositoryImported($repo['html_url']);
+            }
+
             return response()->json($repositories);
         } catch (Exception $e) {
             Log::error($e);
@@ -69,12 +74,30 @@ final class GitHubRepositoryController extends Controller
                 return $repositories;
             }
 
+            // Mark repositories that are already imported
+            foreach ($repositories as &$repo) {
+                $repo['is_imported'] = $this->isRepositoryImported($repo['html_url']);
+            }
+
             return response()->json($repositories);
         } catch (Exception $e) {
             Log::error($e);
 
             return response()->json(['error' => 'An error occurred while fetching organization repositories.'], 500);
         }
+    }
+
+    /**
+     * Check if a repository is already imported as a project.
+     *
+     * @param string $repoUrl The GitHub repository URL
+     * @return bool True if the repository is already imported, false otherwise
+     */
+    private function isRepositoryImported(string $repoUrl): bool
+    {
+        return Project::query()
+            ->where('description', 'like', '%GitHub Repository: ' . $repoUrl . '%')
+            ->exists();
     }
 
 
@@ -95,17 +118,57 @@ final class GitHubRepositoryController extends Controller
             $request->validate([
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
-                'name' => 'required|string',
+                'full_name' => 'required|string',
                 'html_url' => 'required|string|url',
             ]);
 
             $user = Auth::user();
+            $token = $user->github_token;
+
+            // Check if repository is already imported
+            if ($this->isRepositoryImported($request->input('html_url'))) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Repository is already imported as a project.',
+                ], 400);
+            }
 
             $project = Project::query()->create([
                 'user_id' => $user->getKey(),
                 'name' => $request->input('name'),
                 'description' => $request->input('description') . "\n\nGitHub Repository: " . $request->input('html_url'),
             ]);
+
+            // Add repository collaborators to the project team
+            if ($token) {
+                // Parse owner and repo name from full_name (format: "owner/repo")
+                $fullName = $request->input('full_name');
+                $parts = explode('/', $fullName);
+
+                if (count($parts) === 2) {
+                    $owner = $parts[0];
+                    $repo = $parts[1];
+
+                    $collaborators = $this->githubAdapter->getRepositoryCollaborators($token, $owner, $repo);
+
+                    if (!($collaborators instanceof JsonResponse)) {
+                        foreach ($collaborators as $collaborator) {
+                            // Try to find user by GitHub username or email
+                            $teamMember = User::query()
+                                ->where('email', $collaborator['email'] ?? '')
+                                ->orWhere('name', $collaborator['login'] ?? '')
+                                ->first();
+
+                            if ($teamMember && $teamMember->id !== $user->id) {
+                                // Add to team if not already a member
+                                if (!$project->teamMembers()->where('member_id', $teamMember->id)->exists()) {
+                                    $project->teamMembers()->attach($teamMember->id);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             return response()->json([
                 'success' => true,
