@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Notifications\DatabaseNotification;
 use Inertia\Response;
-use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 final class NotificationsController extends Controller
 {
     /**
-     * Display the notifications page.
+     * Display the notification page.
      */
     public function index(): Response
     {
@@ -30,35 +31,15 @@ final class NotificationsController extends Controller
         $user = auth()->user();
 
         return [
-            'notifications' => $user->notifications()->paginate(10)->through(function ($notification) {
-                return [
-                    'id' => $notification->id,
-                    'type' => class_basename($notification->type),
-                    'data' => $notification->data,
-                    'read_at' => $notification->read_at,
-                    'created_at' => $notification->created_at->diffForHumans(),
-                ];
-            }),
+            'notifications' => $user->notifications()->paginate(10)->through(fn ($notification): array => [
+                'id' => $notification->id,
+                'type' => class_basename($notification->type),
+                'data' => $notification->data,
+                'read_at' => $notification->read_at,
+                'created_at' => $notification->created_at->diffForHumans(),
+            ]),
             'unread_count' => $user->unreadNotifications()->count(),
         ];
-    }
-
-    /**
-     * Mark a specific notification as read.
-     */
-    #[Action(method: 'post', name: 'notifications.mark-as-read', middleware: ['auth', 'verified'])]
-    public function markAsRead(string $id): JsonResponse
-    {
-        $notification = DatabaseNotification::findOrFail($id);
-
-        // Check if the notification belongs to the authenticated user
-        if ($notification->notifiable_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $notification->markAsRead();
-
-        return response()->json(['message' => 'Notification marked as read']);
     }
 
     /**
@@ -71,5 +52,28 @@ final class NotificationsController extends Controller
         $user->unreadNotifications->markAsRead();
 
         return response()->json(['message' => 'All notifications marked as read']);
+    }
+
+    /**
+     * Mark a specific notification as read.
+     */
+    #[Action(method: 'post', name: 'notifications.mark-as-read', middleware: ['auth', 'verified'])]
+    public function markAsRead(): JsonResponse
+    {
+        try {
+            $notification = DatabaseNotification::query()->findOrFail(request()->get('id'));
+
+            if ($notification->notifiable_id !== auth()->id()) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+
+            $notification->markAsRead();
+
+            return response()->json(['message' => 'Notification marked as read']);
+        } catch (NotFoundExceptionInterface|ContainerExceptionInterface) {
+            return response()->json(['message' => 'Notification not found'], 404);
+        } catch (Exception) {
+            return response()->json(['message' => 'An error occurred while marking the notification as read'], 500);
+        }
     }
 }
