@@ -20,6 +20,8 @@ type TimeLog = {
     end_timestamp: string
     duration: number
     is_paid: boolean
+    hourly_rate?: number
+    paid_amount?: number
 }
 
 type Filters = {

@@ -40,12 +40,14 @@ final class DashboardController extends Controller
         $totalHours = TimeLogStore::totalHours(teamMembersIds: $teamMembers->toArray());
         $unpaidHours = TimeLogStore::unpaidHours(teamMembersIds: $teamMembers->toArray());
         $unpaidAmount = TimeLogStore::unpaidAmount(teamMembersIds: $teamMembers->toArray());
+        $paidAmount = TimeLogStore::paidAmount(teamMembersIds: $teamMembers->toArray());
 
         return [
             'count' => $teamCount,
             'totalHours' => $totalHours,
             'unpaidHours' => $unpaidHours,
             'unpaidAmount' => round($unpaidAmount, 2),
+            'paidAmount' => round($paidAmount, 2),
             'currency' => 'USD',
             'weeklyAverage' => $teamCount > 0 ? round($totalHours / $teamCount, 2) : 0,
         ];

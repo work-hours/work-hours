@@ -61,12 +61,39 @@ final class TimeLogStore
         return round($unpaidAmount, 2);
     }
 
+    public static function paidAmount(array $teamMembersIds): float
+    {
+        $paidAmount = 0;
+        foreach ($teamMembersIds as $memberId) {
+            $paidLogs = self::paidTimeLog(teamMemberId: $memberId);
+            $paidLogs->each(function ($log) use (&$paidAmount, $memberId): void {
+                $memberPaidHours = $log->duration;
+                $hourlyRate = Team::memberHourlyRate(project: $log->project, memberId: $memberId);
+
+                if ($hourlyRate) {
+                    $paidAmount += $memberPaidHours * $hourlyRate;
+                }
+            });
+        }
+
+        return round($paidAmount, 2);
+    }
+
     public static function unpaidTimeLog(int $teamMemberId): Collection
     {
         return TimeLog::query()
             ->with('project')
             ->where('user_id', $teamMemberId)
             ->where('is_paid', false)
+            ->get();
+    }
+
+    public static function paidTimeLog(int $teamMemberId): Collection
+    {
+        return TimeLog::query()
+            ->with('project')
+            ->where('user_id', $teamMemberId)
+            ->where('is_paid', true)
             ->get();
     }
 
@@ -101,7 +128,7 @@ final class TimeLogStore
     public static function timeLogMapper(\Illuminate\Support\Collection $timeLogs): \Illuminate\Support\Collection
     {
         return $timeLogs->map(function ($timeLog): array {
-            $hourlyRate = $timeLog->hourly_rate ?? Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+            $hourlyRate = (float) $timeLog->hourly_rate ?? Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
 
             return [

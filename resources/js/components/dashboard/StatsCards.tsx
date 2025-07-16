@@ -7,6 +7,7 @@ interface TeamStats {
     totalHours: number
     unpaidHours: number
     unpaidAmount: number
+    paidAmount: number
     currency: string
     weeklyAverage: number
 }
@@ -17,7 +18,7 @@ interface StatsCardsProps {
 
 export default function StatsCards({ teamStats }: StatsCardsProps) {
     return (
-        <section className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <StatsCard
                 title="Team Members"
                 icon={<UsersIcon className="h-4 w-4 text-muted-foreground" />}
@@ -41,6 +42,17 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />}
                 value={roundToTwoDecimals(teamStats.weeklyAverage)}
                 description="Hours per team member"
+            />
+
+            <StatsCard
+                title="Paid Amount"
+                icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
+                value={`${teamStats.currency} ${roundToTwoDecimals(teamStats.paidAmount)}`}
+                trend={{
+                    icon: <ClockIcon className="mr-1 h-3 w-3" />,
+                    text: `Paid earnings`,
+                    color: 'text-green-500',
+                }}
             />
 
             <StatsCard
