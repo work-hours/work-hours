@@ -7,11 +7,23 @@ export default function Hero() {
             <div className="mx-auto w-9/12">
                 <div className="mx-auto max-w-4xl text-center">
                     <div className="absolute top-40 -left-10 h-64 w-64 animate-pulse rounded-full bg-primary/5 blur-3xl" aria-hidden="true"></div>
-                    <div className="absolute top-60 right-10 h-64 w-64 animate-pulse rounded-full bg-primary/10 blur-3xl [animation-delay:1s]" aria-hidden="true"></div>
-                    <div className="absolute bottom-40 left-20 h-48 w-48 animate-pulse rounded-full bg-primary/10 blur-3xl [animation-delay:2s]" aria-hidden="true"></div>
+                    <div
+                        className="absolute top-60 right-10 h-64 w-64 animate-pulse rounded-full bg-primary/10 blur-3xl [animation-delay:1s]"
+                        aria-hidden="true"
+                    ></div>
+                    <div
+                        className="absolute bottom-40 left-20 h-48 w-48 animate-pulse rounded-full bg-primary/10 blur-3xl [animation-delay:2s]"
+                        aria-hidden="true"
+                    ></div>
 
-                    <div className="animate-fade-down animate-once mb-6 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary" role="note">
-                        <span role="img" aria-label="Sparkles">✨</span> New: Time Tracking & Insights
+                    <div
+                        className="animate-fade-down animate-once mb-6 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary"
+                        role="note"
+                    >
+                        <span role="img" aria-label="Sparkles">
+                            ✨
+                        </span>{' '}
+                        New: Time Tracking & Insights
                     </div>
 
                     <h1 className="animate-fade-up animate-once mb-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl">

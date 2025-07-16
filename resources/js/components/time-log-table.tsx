@@ -15,6 +15,8 @@ export type TimeLogEntry = {
     user_name?: string
     is_paid?: boolean
     note?: string
+    hourly_rate?: number
+    paid_amount?: number
 }
 
 type TimeLogTableProps = {
@@ -46,6 +48,8 @@ export default function TimeLogTable({
                     <TableHead>Start Time</TableHead>
                     <TableHead>End Time</TableHead>
                     <TableHead>Duration</TableHead>
+                    <TableHead>Hourly Rate</TableHead>
+                    <TableHead>Paid Amount</TableHead>
                     <TableHead>Note</TableHead>
                     <TableHead>Status</TableHead>
                     {showActions && <TableHead className="text-right">Actions</TableHead>}
@@ -74,8 +78,26 @@ export default function TimeLogTable({
                                 {log.duration}
                             </span>
                         </TableCell>
-                        <TableCell className="max-w-xs truncate" title={log.note}>
-                            {log.note}
+                        <TableCell>
+                            {log.hourly_rate !== undefined && log.hourly_rate !== null && typeof log.hourly_rate === 'number' ? (
+                                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-100">
+                                    {log.hourly_rate.toFixed(2)}
+                                </span>
+                            ) : (
+                                <span className="text-gray-500">-</span>
+                            )}
+                        </TableCell>
+                        <TableCell>
+                            {log.paid_amount !== undefined && log.paid_amount !== null && typeof log.paid_amount === 'number' && log.is_paid ? (
+                                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                    {log.paid_amount.toFixed(2)}
+                                </span>
+                            ) : (
+                                <span className="text-gray-500">-</span>
+                            )}
+                        </TableCell>
+                        <TableCell className="max-w-xs break-words whitespace-normal" title={log.note}>
+                            <div className="max-h-20 overflow-y-auto">{log.note}</div>
                         </TableCell>
                         <TableCell>
                             {log.is_paid ? (

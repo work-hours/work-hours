@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateTimeLogRequest;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
+use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Traits\ExportableTrait;
@@ -109,33 +110,6 @@ final class TimeLogController extends Controller
     }
 
     /**
-     * @throws Throwable
-     */
-    #[Action(method: 'put', name: 'time-log.update', params: ['timeLog'], middleware: ['auth', 'verified'])]
-    public function update(UpdateTimeLogRequest $request, TimeLog $timeLog): void
-    {
-        Gate::authorize('update', $timeLog);
-
-        DB::beginTransaction();
-        try {
-            $data = $request->validated();
-
-            if (! empty($data['start_timestamp']) && ! empty($data['end_timestamp'])) {
-                $start = Carbon::parse($data['start_timestamp']);
-                $end = Carbon::parse($data['end_timestamp']);
-
-                $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
-            }
-
-            $timeLog->update($data);
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
-
-    /**
      * Delete the specified time log.
      *
      * @throws Throwable
@@ -173,10 +147,58 @@ final class TimeLogController extends Controller
                 ->whereIn('id', $timeLogIds)
                 ->get();
 
+            $projectAmounts = [];
             foreach ($timeLogs as $timeLog) {
-                $timeLog->update(['is_paid' => true]);
+                $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+                $timeLog->update([
+                    'is_paid' => true,
+                    'hourly_rate' => $hourlyRate,
+                ]);
+
+                $amount = $timeLog->duration * $hourlyRate;
+
+                if (! isset($projectAmounts[$timeLog->project_id])) {
+                    $projectAmounts[$timeLog->project_id] = 0;
+                }
+
+                $projectAmounts[$timeLog->project_id] += $amount;
             }
 
+            foreach ($projectAmounts as $projectId => $amount) {
+                $project = Project::query()->find($projectId);
+                if ($project) {
+                    $project->paid_amount += $amount;
+                    $project->save();
+                }
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Action(method: 'put', name: 'time-log.update', params: ['timeLog'], middleware: ['auth', 'verified'])]
+    public function update(UpdateTimeLogRequest $request, TimeLog $timeLog): void
+    {
+        Gate::authorize('update', $timeLog);
+
+        DB::beginTransaction();
+        try {
+            $data = $request->validated();
+
+            if (! empty($data['start_timestamp']) && ! empty($data['end_timestamp'])) {
+                $start = Carbon::parse($data['start_timestamp']);
+                $end = Carbon::parse($data['end_timestamp']);
+
+                $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
+            }
+
+            $timeLog->update($data);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -192,17 +214,24 @@ final class TimeLogController extends Controller
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
 
-        $mappedTimeLogs = $timeLogs->map(fn ($timeLog): array => [
-            'id' => $timeLog->id,
-            'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
-            'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-            'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
-            'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-            'note' => $timeLog->note,
-            'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
-        ]);
+        $mappedTimeLogs = $timeLogs->map(function ($timeLog): array {
+            $hourlyRate = $timeLog->hourly_rate ?? Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+            $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
 
-        $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Note', 'Paid'];
+            return [
+                'id' => $timeLog->id,
+                'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
+                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
+                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
+                'hourly_rate' => $hourlyRate,
+                'paid_amount' => $paidAmount,
+                'note' => $timeLog->note,
+                'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
+            ];
+        });
+
+        $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Hourly Rate', 'Paid Amount', 'Note', 'Paid'];
         $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);

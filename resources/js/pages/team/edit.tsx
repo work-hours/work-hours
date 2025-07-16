@@ -1,6 +1,6 @@
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, LoaderCircle, Lock, Mail, Save, User } from 'lucide-react'
-import { FormEventHandler } from 'react'
+import React, { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
@@ -46,8 +46,15 @@ export default function EditTeamMember({ user }: Props) {
         email: user.email,
         password: '', // Empty by default since it's optional
         hourly_rate: user.hourly_rate,
-        currency: user.currency,
+        currency: 'USD', // Fixed to USD and non-changeable
     })
+
+    // Ensure currency is always USD
+    React.useEffect(() => {
+        if (data.currency !== 'USD') {
+            setData('currency', 'USD')
+        }
+    }, [data.currency])
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
@@ -64,7 +71,7 @@ export default function EditTeamMember({ user }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Team Member" />
-            <div className="mx-auto flex w-9/12 flex-col gap-6 p-6">
+            <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Edit Team Member</h1>
@@ -183,19 +190,9 @@ export default function EditTeamMember({ user }: Props) {
                                         <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                             <span className="h-4 w-4 text-muted-foreground">¤</span>
                                         </div>
-                                        <Input
-                                            id="currency"
-                                            type="text"
-                                            maxLength={3}
-                                            tabIndex={5}
-                                            value={data.currency}
-                                            onChange={(e) => setData('currency', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="USD"
-                                            className="pl-10"
-                                        />
+                                        <Input id="currency" type="text" value="USD" disabled={true} className="bg-gray-100 pl-10 dark:bg-gray-800" />
                                     </div>
-                                    <InputError message={errors.currency} />
+                                    <p className="text-xs text-muted-foreground">Currency is fixed to USD</p>
                                 </div>
 
                                 <div className="mt-4 flex justify-end gap-3">

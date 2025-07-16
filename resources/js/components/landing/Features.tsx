@@ -1,6 +1,6 @@
-import { BarChart2, Clock, Github, Users } from 'lucide-react'
-import { usePage } from '@inertiajs/react'
 import { type SharedData } from '@/types'
+import { usePage } from '@inertiajs/react'
+import { BarChart2, Clock, Github, Users } from 'lucide-react'
 
 export default function Features() {
     const { auth } = usePage<SharedData>().props
@@ -9,7 +9,9 @@ export default function Features() {
         <>
             <section id="features" className="container mx-auto mb-16 px-6 lg:px-8" aria-label="Product features">
                 <div className="mb-16 text-center">
-                    <h2 className="animate-fade-up animate-once mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">Powerful Features</h2>
+                    <h2 className="animate-fade-up animate-once mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                        Powerful Features
+                    </h2>
                     <p className="animate-fade-up animate-once animate-delay-300 mx-auto max-w-2xl text-lg text-muted-foreground">
                         Everything you need to track, analyze, and optimize your work hours.
                     </p>
@@ -22,8 +24,8 @@ export default function Features() {
                         </div>
                         <h3 className="mb-3 text-xl font-semibold text-foreground">Time Tracking</h3>
                         <p className="text-muted-foreground">
-                            Track time with a single click. Add notes and categorize your activities for better insights. Set timers, track breaks, and
-                            monitor overtime automatically.
+                            Track time with a single click. Add notes and categorize your activities for better insights. Set timers, track breaks,
+                            and monitor overtime automatically.
                         </p>
                     </article>
 
@@ -33,8 +35,8 @@ export default function Features() {
                         </div>
                         <h3 className="mb-3 text-xl font-semibold text-foreground">Detailed Reports</h3>
                         <p className="text-muted-foreground">
-                            Generate comprehensive reports to analyze your productivity and identify improvement areas. Export data in multiple formats
-                            for seamless integration with other tools.
+                            Generate comprehensive reports to analyze your productivity and identify improvement areas. Export data in multiple
+                            formats for seamless integration with other tools.
                         </p>
                     </article>
 
@@ -63,11 +65,16 @@ export default function Features() {
                         <div className="md:w-3/4">
                             <h2 className="mb-4 text-2xl font-bold tracking-tight text-foreground md:text-3xl">GitHub Integration</h2>
                             <p className="text-lg text-muted-foreground">
-                                Connect your GitHub account to import repositories as projects. Track time spent on specific repositories and streamline your development workflow.
-                                Our seamless GitHub integration allows you to automatically sync your repositories and measure productivity across your development projects.
+                                Connect your GitHub account to import repositories as projects. Track time spent on specific repositories and
+                                streamline your development workflow. Our seamless GitHub integration allows you to automatically sync your
+                                repositories and measure productivity across your development projects.
                             </p>
                             <div className="mt-6">
-                                <a href="/integration" className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90" aria-label={isLoggedIn ? 'Connect your account with GitHub' : 'Get started with Work Hours'}>
+                                <a
+                                    href="/integration"
+                                    className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                                    aria-label={isLoggedIn ? 'Connect your account with GitHub' : 'Get started with Work Hours'}
+                                >
                                     {isLoggedIn ? 'Connect with GitHub' : 'Get Started'}
                                 </a>
                             </div>

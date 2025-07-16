@@ -100,17 +100,24 @@ final class TimeLogStore
 
     public static function timeLogMapper(\Illuminate\Support\Collection $timeLogs): \Illuminate\Support\Collection
     {
-        return $timeLogs->map(fn ($timeLog): array => [
-            'id' => $timeLog->id,
-            'user_id' => $timeLog->user_id,
-            'user_name' => $timeLog->user ? $timeLog->user->name : null,
-            'project_id' => $timeLog->project_id,
-            'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
-            'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-            'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
-            'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-            'note' => $timeLog->note,
-            'is_paid' => $timeLog->is_paid,
-        ]);
+        return $timeLogs->map(function ($timeLog): array {
+            $hourlyRate = $timeLog->hourly_rate ?? Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+            $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
+
+            return [
+                'id' => $timeLog->id,
+                'user_id' => $timeLog->user_id,
+                'user_name' => $timeLog->user ? $timeLog->user->name : null,
+                'project_id' => $timeLog->project_id,
+                'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
+                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
+                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
+                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
+                'note' => $timeLog->note,
+                'is_paid' => $timeLog->is_paid,
+                'hourly_rate' => $hourlyRate,
+                'paid_amount' => $paidAmount,
+            ];
+        });
     }
 }
