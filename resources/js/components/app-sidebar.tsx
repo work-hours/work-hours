@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sidebar'
 import { type NavItem, type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
-import { Bell, Folder, Github, Heart, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
+import { Folder, Github, Heart, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
 import AppLogo from './app-logo'
 
 const mainNavItems: NavItem[] = [
@@ -36,11 +36,6 @@ const mainNavItems: NavItem[] = [
         title: 'Time Log',
         href: '/time-log',
         icon: TimerIcon,
-    },
-    {
-        title: 'Notifications',
-        href: '/notifications',
-        icon: Bell,
     },
     {
         title: 'Integration',
