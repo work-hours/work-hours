@@ -162,7 +162,14 @@ final class TimeLogController extends Controller
 
             $currentUser = auth()->user();
             $projectAmounts = [];
+            $invalidLogs = [];
+
             foreach ($timeLogs as $timeLog) {
+                if (empty($timeLog->start_timestamp) || empty($timeLog->end_timestamp)) {
+                    $invalidLogs[] = $timeLog->id;
+                    continue;
+                }
+
                 $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
                 $timeLog->update([
                     'is_paid' => true,
@@ -201,6 +208,16 @@ final class TimeLogController extends Controller
             }
 
             DB::commit();
+
+            // If there were any invalid logs, flash a message to the user
+            if (!empty($invalidLogs)) {
+                $count = count($invalidLogs);
+                $message = $count === 1
+                    ? "1 time log entry was skipped because it doesn't have both start and end timestamps."
+                    : "$count time log entries were skipped because they don't have both start and end timestamps.";
+
+                session()->flash('warning', $message);
+            }
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
