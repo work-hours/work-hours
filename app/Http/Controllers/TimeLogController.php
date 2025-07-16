@@ -149,9 +149,12 @@ final class TimeLogController extends Controller
 
             $projectAmounts = [];
             foreach ($timeLogs as $timeLog) {
-                $timeLog->update(['is_paid' => true]);
-
                 $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+                $timeLog->update([
+                    'is_paid' => true,
+                    'hourly_rate' => $hourlyRate
+                ]);
+
                 $amount = $timeLog->duration * $hourlyRate;
 
                 if (! isset($projectAmounts[$timeLog->project_id])) {
