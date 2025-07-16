@@ -190,13 +190,7 @@ export default function EditTeamMember({ user }: Props) {
                                         <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                                             <span className="h-4 w-4 text-muted-foreground">¤</span>
                                         </div>
-                                        <Input
-                                            id="currency"
-                                            type="text"
-                                            value="USD"
-                                            disabled={true}
-                                            className="pl-10 bg-gray-100 dark:bg-gray-800"
-                                        />
+                                        <Input id="currency" type="text" value="USD" disabled={true} className="bg-gray-100 pl-10 dark:bg-gray-800" />
                                     </div>
                                     <p className="text-xs text-muted-foreground">Currency is fixed to USD</p>
                                 </div>

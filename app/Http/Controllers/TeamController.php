@@ -133,7 +133,7 @@ final class TeamController extends Controller
                 'user_id' => auth()->id(),
                 'member_id' => $user->getKey(),
                 'hourly_rate' => $request->get('hourly_rate') ?? 0,
-                'currency' => 'USD'
+                'currency' => 'USD',
             ];
 
             Team::query()->create($teamData);

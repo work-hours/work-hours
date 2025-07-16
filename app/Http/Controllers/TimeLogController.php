@@ -152,7 +152,7 @@ final class TimeLogController extends Controller
                 $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
                 $timeLog->update([
                     'is_paid' => true,
-                    'hourly_rate' => $hourlyRate
+                    'hourly_rate' => $hourlyRate,
                 ]);
 
                 $amount = $timeLog->duration * $hourlyRate;

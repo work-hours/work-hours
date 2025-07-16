@@ -406,8 +406,7 @@ export default function AllTeamTimeLogs({
                                     type="button"
                                     variant="outline"
                                     disabled={
-                                        processing ||
-                                        (!data.start_date && !data.end_date && !data.user_id && !data.project_id && !data.is_paid)
+                                        processing || (!data.start_date && !data.end_date && !data.user_id && !data.project_id && !data.is_paid)
                                     }
                                     onClick={() => {
                                         setData({
