@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Policies\TeamPolicy;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,9 +24,10 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $email_verified_at
  * @property string|null $remember_token
  * @property string|null $github_token
+ * @property mixed $unreadNotifications
  */
 #[UsePolicy(TeamPolicy::class)]
-final class User extends Authenticatable
+final class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -52,6 +53,11 @@ final class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public static function teamLeader(Project $project): self
+    {
+        return self::query()->where('id', $project->user_id)->firstOrFail();
+    }
 
     public function projects(): HasMany
     {

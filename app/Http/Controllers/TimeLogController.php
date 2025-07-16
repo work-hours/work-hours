@@ -12,6 +12,9 @@ use App\Http\Stores\TimeLogStore;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
+use App\Models\User;
+use App\Notifications\TimeLogEntry;
+use App\Notifications\TimeLogPaid;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
@@ -62,19 +65,29 @@ final class TimeLogController extends Controller
     public function store(StoreTimeLogRequest $request): void
     {
         DB::beginTransaction();
+
         try {
             $data = $request->validated();
             $data['user_id'] = auth()->id();
 
-            if (! empty($data['start_timestamp']) && ! empty($data['end_timestamp'])) {
+            $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
+
+            if ($isLogCompleted) {
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
 
                 $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
             }
 
-            TimeLog::query()->create($data);
+            $timeLog = TimeLog::query()->create($data);
             DB::commit();
+
+            if ($isLogCompleted) {
+                $teamLeader = User::teamLeader(project: $timeLog->project);
+                if (auth()->id() !== $teamLeader->getKey()) {
+                    $teamLeader->notify(new TimeLogEntry($timeLog, auth()->user()));
+                }
+            }
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -147,6 +160,7 @@ final class TimeLogController extends Controller
                 ->whereIn('id', $timeLogIds)
                 ->get();
 
+            $currentUser = auth()->user();
             $projectAmounts = [];
             foreach ($timeLogs as $timeLog) {
                 $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
@@ -162,6 +176,20 @@ final class TimeLogController extends Controller
                 }
 
                 $projectAmounts[$timeLog->project_id] += $amount;
+
+                // Send notifications
+                $teamLeader = User::teamLeader(project: $timeLog->project);
+                $timeLogOwner = User::query()->find($timeLog->user_id);
+
+                // If current user is team leader, notify the team member
+                if ($currentUser->id === $teamLeader->id && $currentUser->id !== $timeLogOwner->id) {
+                    $timeLogOwner->notify(new TimeLogPaid($timeLog, $currentUser));
+                }
+
+                // If current user is team member, notify the team leader
+                if ($currentUser->id !== $teamLeader->id && $currentUser->id === $timeLogOwner->id) {
+                    $teamLeader->notify(new TimeLogPaid($timeLog, $currentUser));
+                }
             }
 
             foreach ($projectAmounts as $projectId => $amount) {
@@ -190,8 +218,9 @@ final class TimeLogController extends Controller
         DB::beginTransaction();
         try {
             $data = $request->validated();
+            $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
-            if (! empty($data['start_timestamp']) && ! empty($data['end_timestamp'])) {
+            if ($isLogCompleted) {
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
 
@@ -200,6 +229,14 @@ final class TimeLogController extends Controller
 
             $timeLog->update($data);
             DB::commit();
+
+            if ($isLogCompleted) {
+                $teamLeader = User::teamLeader(project: $timeLog->project);
+                if (auth()->id() !== $teamLeader->getKey()) {
+                    $teamLeader->notify(new TimeLogEntry($timeLog));
+                }
+            }
+
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
