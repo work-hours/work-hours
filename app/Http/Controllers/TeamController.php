@@ -12,6 +12,7 @@ use App\Http\Stores\TimeLogStore;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
+use App\Notifications\TeamMemberAdded;
 use App\Notifications\TeamMemberCreated;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
@@ -125,7 +126,10 @@ final class TeamController extends Controller
         try {
             $user = User::query()->where('email', $request->email)->first();
             $userData = $request->safe()->except(['hourly_rate', 'currency']);
+            $isNewUser = false;
+
             if (! $user) {
+                $isNewUser = true;
                 $user = User::query()->create($userData);
             }
 
@@ -138,11 +142,12 @@ final class TeamController extends Controller
 
             Team::query()->create($teamData);
 
-            // Send a notification to the team member with login information
-            $creator = auth()->user();
-            $user->notify(new TeamMemberCreated($user, $creator, $userData['password']));
-
             DB::commit();
+
+            $creator = auth()->user();
+            $isNewUser
+                ? $user->notify(new TeamMemberCreated($user, $creator, $userData['password']))
+                : $user->notify(new TeamMemberAdded($user, $creator));
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
