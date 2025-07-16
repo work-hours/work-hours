@@ -89,7 +89,7 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="mx-auto flex w-11/12 flex-col gap-4 p-4 md:w-10/12 lg:w-9/12">
+            <div className="mx-auto flex w-10/12 flex-col gap-4 p-4">
                 <WelcomeSection />
 
                 {!loading && (
