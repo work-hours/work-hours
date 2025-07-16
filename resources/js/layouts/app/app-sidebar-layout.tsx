@@ -2,6 +2,7 @@ import { AppContent } from '@/components/app-content'
 import { AppShell } from '@/components/app-shell'
 import { AppSidebar } from '@/components/app-sidebar'
 import { AppSidebarHeader } from '@/components/app-sidebar-header'
+import { HourlyRateStatusBar } from '@/components/hourly-rate-status-bar'
 import { type BreadcrumbItem } from '@/types'
 import { type PropsWithChildren } from 'react'
 import { Toaster } from 'sonner'
@@ -12,6 +13,7 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWi
             <AppSidebar />
             <AppContent variant="sidebar" className="overflow-x-hidden">
                 <AppSidebarHeader breadcrumbs={breadcrumbs} />
+                <HourlyRateStatusBar />
                 {children}
             </AppContent>
             <Toaster position="top-right" />

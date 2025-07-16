@@ -1,7 +1,7 @@
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { Transition } from '@headlessui/react'
 import { Head, Link, useForm, usePage } from '@inertiajs/react'
-import { CheckCircle, LoaderCircle, Mail, User } from 'lucide-react'
+import { CheckCircle, DollarSign, LoaderCircle, Mail, User } from 'lucide-react'
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
@@ -24,6 +24,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 type ProfileForm = {
     name: string
     email: string
+    hourly_rate: string
 }
 
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
@@ -32,6 +33,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
         name: auth.user.name,
         email: auth.user.email,
+        hourly_rate: auth.user.hourly_rate !== null ? String(auth.user.hourly_rate) : '',
     })
 
     const submit: FormEventHandler = (e) => {
@@ -98,6 +100,29 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 />
                             </div>
                             <InputError className="mt-1" message={errors.email} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="hourly_rate" className="text-sm font-medium">
+                                Hourly Rate
+                            </Label>
+                            <div className="relative">
+                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <Input
+                                    id="hourly_rate"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    className="pl-10"
+                                    value={data.hourly_rate}
+                                    onChange={(e) => setData('hourly_rate', e.target.value)}
+                                    required
+                                    placeholder="Hourly rate"
+                                />
+                            </div>
+                            <InputError className="mt-1" message={errors.hourly_rate} />
                         </div>
 
                         {mustVerifyEmail && auth.user.email_verified_at === null && (
