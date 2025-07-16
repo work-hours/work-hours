@@ -96,8 +96,10 @@ export default function TimeLogTable({
                                 <span className="text-gray-500">-</span>
                             )}
                         </TableCell>
-                        <TableCell className="max-w-xs truncate" title={log.note}>
-                            {log.note}
+                        <TableCell className="max-w-xs whitespace-normal break-words" title={log.note}>
+                            <div className="max-h-20 overflow-y-auto">
+                                {log.note}
+                            </div>
                         </TableCell>
                         <TableCell>
                             {log.is_paid ? (
