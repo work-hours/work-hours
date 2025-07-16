@@ -33,7 +33,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
         name: auth.user.name,
         email: auth.user.email,
-        hourly_rate: auth.user.hourly_rate || '',
+        hourly_rate: auth.user.hourly_rate !== null ? String(auth.user.hourly_rate) : '',
     })
 
     const submit: FormEventHandler = (e) => {
