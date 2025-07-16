@@ -2390,16 +2390,16 @@
         },
         {
             "name": "msamgan/lact",
-            "version": "v1.2.1",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/msamgan/lact.git",
-                "reference": "ebad1f608f40902e04b28b68fdb73382d49268d9"
+                "reference": "a3e59f18682916f2053f236add3d8197e016933d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/msamgan/lact/zipball/ebad1f608f40902e04b28b68fdb73382d49268d9",
-                "reference": "ebad1f608f40902e04b28b68fdb73382d49268d9",
+                "url": "https://api.github.com/repos/msamgan/lact/zipball/a3e59f18682916f2053f236add3d8197e016933d",
+                "reference": "a3e59f18682916f2053f236add3d8197e016933d",
                 "shasum": ""
             },
             "require": {
@@ -2456,7 +2456,7 @@
             ],
             "support": {
                 "issues": "https://github.com/msamgan/lact/issues",
-                "source": "https://github.com/msamgan/lact/tree/v1.2.1"
+                "source": "https://github.com/msamgan/lact/tree/v1.2.2"
             },
             "funding": [
                 {
@@ -2464,7 +2464,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-21T23:09:14+00:00"
+            "time": "2025-07-15T22:50:18+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -3857,16 +3857,16 @@
         },
         {
             "name": "spatie/laravel-package-tools",
-            "version": "1.92.4",
+            "version": "1.92.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-package-tools.git",
-                "reference": "d20b1969f836d210459b78683d85c9cd5c5f508c"
+                "reference": "afa90e37741a953d33728e7106a1f24a13fdd808"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-package-tools/zipball/d20b1969f836d210459b78683d85c9cd5c5f508c",
-                "reference": "d20b1969f836d210459b78683d85c9cd5c5f508c",
+                "url": "https://api.github.com/repos/spatie/laravel-package-tools/zipball/afa90e37741a953d33728e7106a1f24a13fdd808",
+                "reference": "afa90e37741a953d33728e7106a1f24a13fdd808",
                 "shasum": ""
             },
             "require": {
@@ -3906,7 +3906,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-package-tools/issues",
-                "source": "https://github.com/spatie/laravel-package-tools/tree/1.92.4"
+                "source": "https://github.com/spatie/laravel-package-tools/tree/1.92.6"
             },
             "funding": [
                 {
@@ -3914,7 +3914,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-04-11T15:27:14+00:00"
+            "time": "2025-07-14T08:02:47+00:00"
         },
         {
             "name": "symfony/clock",

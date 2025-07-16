@@ -25,7 +25,7 @@ type TimeLog = {
 type Filters = {
     start_date: string
     end_date: string
-    team_member_id: string
+    user_id: string
     project_id: string
     is_paid: string
 }
@@ -139,7 +139,7 @@ export default function AllTeamTimeLogs({
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
-        team_member_id: filters.team_member_id || '',
+        user_id: filters.user_id || '',
         project_id: filters.project_id || '',
         is_paid: filters.is_paid || '',
     })
@@ -172,7 +172,7 @@ export default function AllTeamTimeLogs({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="All Team Time Logs" />
-            <div className="mx-auto flex w-9/12 flex-col gap-6 p-6">
+            <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
@@ -212,8 +212,8 @@ export default function AllTeamTimeLogs({
                                             description = 'Total hours logged'
                                         }
 
-                                        if (filters.team_member_id) {
-                                            const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id)
+                                        if (filters.user_id) {
+                                            const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
                                             const memberName = selectedMember ? selectedMember.name : ''
 
                                             if (memberName) {
@@ -237,9 +237,9 @@ export default function AllTeamTimeLogs({
                                 </div>
                                 <div className="text-2xl font-bold">{unpaidHours}</div>
                                 <p className="text-xs text-muted-foreground">
-                                    {filters.team_member_id
+                                    {filters.user_id
                                         ? (() => {
-                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id)
+                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
                                               return selectedMember ? `Hours pending payment for ${selectedMember.name}` : 'Hours pending payment'
                                           })()
                                         : 'Hours pending payment across all team members'}
@@ -273,9 +273,9 @@ export default function AllTeamTimeLogs({
                                     {currency} {unpaidAmount}
                                 </div>
                                 <p className="text-xs text-muted-foreground">
-                                    {filters.team_member_id
+                                    {filters.user_id
                                         ? (() => {
-                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id)
+                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
                                               return selectedMember ? `Amount pending payment for ${selectedMember.name}` : 'Amount pending payment'
                                           })()
                                         : 'Amount pending payment across all team members'}
@@ -292,9 +292,9 @@ export default function AllTeamTimeLogs({
                                 </div>
                                 <div className="text-2xl font-bold">{weeklyAverage}</div>
                                 <p className="text-xs text-muted-foreground">
-                                    {filters.team_member_id
+                                    {filters.user_id
                                         ? (() => {
-                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id)
+                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
                                               return selectedMember ? `Hours per week for ${selectedMember.name}` : 'Hours per week'
                                           })()
                                         : 'Hours per week across all team members'}
@@ -304,7 +304,6 @@ export default function AllTeamTimeLogs({
                     </div>
                 )}
 
-                {/* Filter Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardContent>
                         <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-6">
@@ -351,13 +350,13 @@ export default function AllTeamTimeLogs({
                             </div>
 
                             <div className="grid gap-1">
-                                <Label htmlFor="team_member_id" className="text-xs font-medium">
+                                <Label htmlFor="user_id" className="text-xs font-medium">
                                     Team Member
                                 </Label>
                                 <SearchableSelect
-                                    id="team_member_id"
-                                    value={data.team_member_id}
-                                    onChange={(value) => setData('team_member_id', value)}
+                                    id="user_id"
+                                    value={data.user_id}
+                                    onChange={(value) => setData('user_id', value)}
                                     options={[{ id: '', name: 'Team' }, ...teamMembers]}
                                     placeholder="Select team member"
                                     disabled={processing}
@@ -407,14 +406,13 @@ export default function AllTeamTimeLogs({
                                     type="button"
                                     variant="outline"
                                     disabled={
-                                        processing ||
-                                        (!data.start_date && !data.end_date && !data.team_member_id && !data.project_id && !data.is_paid)
+                                        processing || (!data.start_date && !data.end_date && !data.user_id && !data.project_id && !data.is_paid)
                                     }
                                     onClick={() => {
                                         setData({
                                             start_date: '',
                                             end_date: '',
-                                            team_member_id: '',
+                                            user_id: '',
                                             project_id: '',
                                             is_paid: '',
                                         })
@@ -431,7 +429,7 @@ export default function AllTeamTimeLogs({
                         </form>
 
                         <p className={'mt-4 text-sm text-muted-foreground'}>
-                            {(data.start_date || data.end_date || data.team_member_id || data.project_id) && (
+                            {(data.start_date || data.end_date || data.user_id || data.project_id) && (
                                 <CardDescription>
                                     {(() => {
                                         let description = ''
@@ -446,8 +444,8 @@ export default function AllTeamTimeLogs({
                                         }
 
                                         // Team member description
-                                        if (data.team_member_id) {
-                                            const selectedMember = teamMembers.find((member) => member.id.toString() === data.team_member_id)
+                                        if (data.user_id) {
+                                            const selectedMember = teamMembers.find((member) => member.id.toString() === data.user_id)
                                             const memberName = selectedMember ? selectedMember.name : ''
 
                                             if (description) {
@@ -499,8 +497,8 @@ export default function AllTeamTimeLogs({
                                         ? (() => {
                                               let description = `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`
 
-                                              if (filters.team_member_id) {
-                                                  const selectedMember = teamMembers.find((member) => member.id.toString() === filters.team_member_id)
+                                              if (filters.user_id) {
+                                                  const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
                                                   if (selectedMember) {
                                                       description += ` from ${selectedMember.name}`
                                                   }

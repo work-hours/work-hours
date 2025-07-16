@@ -11,16 +11,31 @@ export default function Welcome() {
         <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background to-background/90">
             {/* Decorative background elements */}
             <div className="animate-float absolute top-1/4 right-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl" aria-hidden="true"></div>
-            <div className="animate-float absolute bottom-1/3 left-1/3 h-48 w-48 rounded-full bg-primary/5 blur-3xl [animation-delay:2s]" aria-hidden="true"></div>
-            <div className="animate-float absolute top-2/3 right-1/3 h-56 w-56 rounded-full bg-primary/5 blur-3xl [animation-delay:4s]" aria-hidden="true"></div>
+            <div
+                className="animate-float absolute bottom-1/3 left-1/3 h-48 w-48 rounded-full bg-primary/5 blur-3xl [animation-delay:2s]"
+                aria-hidden="true"
+            ></div>
+            <div
+                className="animate-float absolute top-2/3 right-1/3 h-56 w-56 rounded-full bg-primary/5 blur-3xl [animation-delay:4s]"
+                aria-hidden="true"
+            ></div>
 
             <Head>
                 <title>Work Hours - Track Your Time Effortlessly | Time Tracking Software</title>
-                <meta name="description" content="A simple, intuitive time tracking solution for teams and individuals. Boost productivity, improve billing accuracy, and gain valuable insights into how you spend your time." />
-                <meta name="keywords" content="time tracking, work hours, productivity, team collaboration, project management, time management, GitHub integration" />
+                <meta
+                    name="description"
+                    content="A simple, intuitive time tracking solution for teams and individuals. Boost productivity, improve billing accuracy, and gain valuable insights into how you spend your time."
+                />
+                <meta
+                    name="keywords"
+                    content="time tracking, work hours, productivity, team collaboration, project management, time management, GitHub integration"
+                />
                 <meta name="author" content="Work Hours | Mohammed Samgan Khan (msamgan)" />
                 <meta property="og:title" content="Work Hours - Track Your Time Effortlessly" />
-                <meta property="og:description" content="A simple, intuitive time tracking solution for teams and individuals. Boost productivity and gain valuable insights." />
+                <meta
+                    property="og:description"
+                    content="A simple, intuitive time tracking solution for teams and individuals. Boost productivity and gain valuable insights."
+                />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://workhours.us" />
                 <meta property="og:image" content="/logo.png" />
@@ -31,22 +46,23 @@ export default function Welcome() {
                 <link rel="canonical" href="https://workhours.us" />
                 <script type="application/ld+json">
                     {JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "SoftwareApplication",
-                        "name": "Work Hours",
-                        "applicationCategory": "BusinessApplication",
-                        "operatingSystem": "Web",
-                        "offers": {
-                            "@type": "Offer",
-                            "price": "0",
-                            "priceCurrency": "USD"
+                        '@context': 'https://schema.org',
+                        '@type': 'SoftwareApplication',
+                        name: 'Work Hours',
+                        applicationCategory: 'BusinessApplication',
+                        operatingSystem: 'Web',
+                        offers: {
+                            '@type': 'Offer',
+                            price: '0',
+                            priceCurrency: 'USD',
                         },
-                        "aggregateRating": {
-                            "@type": "AggregateRating",
-                            "ratingValue": "4.9",
-                            "ratingCount": "10000"
+                        aggregateRating: {
+                            '@type': 'AggregateRating',
+                            ratingValue: '4.9',
+                            ratingCount: '10000',
                         },
-                        "description": "A simple, intuitive time tracking solution for teams and individuals. Boost productivity, improve billing accuracy, and gain valuable insights into how you spend your time."
+                        description:
+                            'A simple, intuitive time tracking solution for teams and individuals. Boost productivity, improve billing accuracy, and gain valuable insights into how you spend your time.',
                     })}
                 </script>
             </Head>
