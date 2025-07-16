@@ -12,6 +12,7 @@ use App\Http\Stores\TimeLogStore;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
+use App\Notifications\PasswordChanged;
 use App\Notifications\TeamMemberAdded;
 use App\Notifications\TeamMemberCreated;
 use App\Traits\ExportableTrait;
@@ -188,19 +189,27 @@ final class TeamController extends Controller
         try {
             $data = $request->validated();
 
+            $passwordChanged = false;
+            $plainPassword = null;
             if (empty($data['password'])) {
                 unset($data['password']);
             } else {
+                $plainPassword = $data['password'];
                 $data['password'] = Hash::make($data['password']);
+                $passwordChanged = true;
             }
 
             $teamData = [
                 'hourly_rate' => $data['hourly_rate'] ?? 0,
-                'currency' => 'USD', // Fixed to USD and non-changeable
+                'currency' => 'USD',
             ];
             unset($data['hourly_rate'], $data['currency']);
 
             $user->update($data);
+
+            if ($passwordChanged) {
+                $user->notify(new PasswordChanged($user, auth()->user(), $plainPassword));
+            }
 
             Team::query()
                 ->where('user_id', auth()->id())
