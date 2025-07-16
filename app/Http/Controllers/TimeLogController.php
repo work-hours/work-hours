@@ -14,6 +14,7 @@ use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
 use App\Notifications\TimeLogEntry;
+use App\Notifications\TimeLogPaid;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
@@ -159,6 +160,7 @@ final class TimeLogController extends Controller
                 ->whereIn('id', $timeLogIds)
                 ->get();
 
+            $currentUser = auth()->user();
             $projectAmounts = [];
             foreach ($timeLogs as $timeLog) {
                 $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
@@ -174,6 +176,20 @@ final class TimeLogController extends Controller
                 }
 
                 $projectAmounts[$timeLog->project_id] += $amount;
+
+                // Send notifications
+                $teamLeader = User::teamLeader(project: $timeLog->project);
+                $timeLogOwner = User::query()->find($timeLog->user_id);
+
+                // If current user is team leader, notify the team member
+                if ($currentUser->id === $teamLeader->id && $currentUser->id !== $timeLogOwner->id) {
+                    $timeLogOwner->notify(new TimeLogPaid($timeLog, $currentUser));
+                }
+
+                // If current user is team member, notify the team leader
+                if ($currentUser->id !== $teamLeader->id && $currentUser->id === $timeLogOwner->id) {
+                    $teamLeader->notify(new TimeLogPaid($timeLog, $currentUser));
+                }
             }
 
             foreach ($projectAmounts as $projectId => $amount) {

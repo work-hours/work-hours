@@ -102,7 +102,7 @@ export default function Notifications() {
 
     const handleMarkAsRead = async (id: string): Promise<void> => {
         try {
-            await markAsRead.call({ id })
+            await markAsRead.call({ data: { id } })
             toast.success('Notification marked as read')
             await fetchNotifications(currentPage)
         } catch {
