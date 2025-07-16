@@ -12,12 +12,14 @@ use App\Http\Stores\TimeLogStore;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
+use App\Notifications\TeamMemberCreated;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
 use Psr\Container\ContainerExceptionInterface;
@@ -121,11 +123,9 @@ final class TeamController extends Controller
     {
         DB::beginTransaction();
         try {
-
             $user = User::query()->where('email', $request->email)->first();
-
+            $userData = $request->safe()->except(['hourly_rate', 'currency']);
             if (! $user) {
-                $userData = $request->safe()->except(['hourly_rate', 'currency']);
                 $user = User::query()->create($userData);
             }
 
@@ -137,6 +137,10 @@ final class TeamController extends Controller
             ];
 
             Team::query()->create($teamData);
+
+            // Send a notification to the team member with login information
+            $creator = auth()->user();
+            $user->notify(new TeamMemberCreated($user, $creator, $userData['password']));
 
             DB::commit();
         } catch (Exception $e) {
