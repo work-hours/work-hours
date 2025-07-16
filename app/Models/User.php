@@ -24,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $email_verified_at
  * @property string|null $remember_token
  * @property string|null $github_token
+ * @property mixed $unreadNotifications
  */
 #[UsePolicy(TeamPolicy::class)]
 final class User extends Authenticatable implements MustVerifyEmail

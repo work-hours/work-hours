@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IntegrationController;
+use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TimeLogController;
@@ -20,6 +21,8 @@ Route::get('/security', fn () => Inertia::render('legal/Security'))->name('secur
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('notifications', [NotificationsController::class, 'index'])->name('notifications.index');
 
     Route::get('integration', [IntegrationController::class, 'index'])->name('integration.index');
 
