@@ -1,6 +1,6 @@
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, LoaderCircle, Lock, Mail, Save, User } from 'lucide-react'
-import { FormEventHandler } from 'react'
+import React, { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
@@ -46,8 +46,15 @@ export default function EditTeamMember({ user }: Props) {
         email: user.email,
         password: '', // Empty by default since it's optional
         hourly_rate: user.hourly_rate,
-        currency: user.currency,
+        currency: 'USD', // Fixed to USD and non-changeable
     })
+
+    // Ensure currency is always USD
+    React.useEffect(() => {
+        if (data.currency !== 'USD') {
+            setData('currency', 'USD')
+        }
+    }, [data.currency])
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
@@ -186,16 +193,12 @@ export default function EditTeamMember({ user }: Props) {
                                         <Input
                                             id="currency"
                                             type="text"
-                                            maxLength={3}
-                                            tabIndex={5}
-                                            value={data.currency}
-                                            onChange={(e) => setData('currency', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="USD"
-                                            className="pl-10"
+                                            value="USD"
+                                            disabled={true}
+                                            className="pl-10 bg-gray-100 dark:bg-gray-800"
                                         />
                                     </div>
-                                    <InputError message={errors.currency} />
+                                    <p className="text-xs text-muted-foreground">Currency is fixed to USD</p>
                                 </div>
 
                                 <div className="mt-4 flex justify-end gap-3">

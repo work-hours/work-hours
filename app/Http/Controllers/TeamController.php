@@ -133,7 +133,7 @@ final class TeamController extends Controller
                 'user_id' => auth()->id(),
                 'member_id' => $user->getKey(),
                 'hourly_rate' => $request->get('hourly_rate') ?? 0,
-                'currency' => mb_strtoupper((string) $request->get('currency')) ?? 'USD',
+                'currency' => 'USD'
             ];
 
             Team::query()->create($teamData);
@@ -187,7 +187,7 @@ final class TeamController extends Controller
 
             $teamData = [
                 'hourly_rate' => $data['hourly_rate'] ?? 0,
-                'currency' => $data['currency'] ?? 'USD',
+                'currency' => 'USD', // Fixed to USD and non-changeable
             ];
             unset($data['hourly_rate'], $data['currency']);
 
