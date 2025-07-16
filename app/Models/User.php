@@ -53,6 +53,11 @@ final class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
+    public static function teamLeader(Project $project): self
+    {
+        return self::query()->where('id', $project->user_id)->firstOrFail();
+    }
+
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
