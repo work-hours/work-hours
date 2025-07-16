@@ -252,7 +252,12 @@ final class TimeLogController extends Controller
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
 
         $mappedTimeLogs = $timeLogs->map(function ($timeLog): array {
-            $hourlyRate = $timeLog->hourly_rate ?? Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+            if ($timeLog->hourly_rate) {
+                $hourlyRate = $timeLog->hourly_rate;
+            } else {
+                $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+            }
+
             $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
 
             return [

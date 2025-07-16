@@ -43,13 +43,13 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
             </div>
             <div className="ml-auto flex items-center gap-2">
                 <Link href="/notifications">
-                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-md relative">
+                    <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-md">
                         <Bell className="h-5 w-5" />
                         <span className="sr-only">Notifications</span>
                         {unreadCount > 0 && (
                             <Badge
                                 variant="default"
-                                className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center p-0 px-1 text-xs"
+                                className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center p-0 px-1 text-xs"
                             >
                                 {unreadCount > 99 ? '99+' : unreadCount}
                             </Badge>

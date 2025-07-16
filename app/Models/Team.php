@@ -24,6 +24,10 @@ final class Team extends Model
 
     public static function memberHourlyRate(Project $project, int $memberId): ?float
     {
+        if ($project->user_id === $memberId) {
+            return (float) $project->user->hourly_rate ?? 0;
+        }
+
         $entry = self::query()->where('user_id', $project->user_id)->where('member_id', $memberId)->first();
 
         return $entry ? (float) $entry->hourly_rate : 0;
