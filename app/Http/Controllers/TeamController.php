@@ -12,12 +12,16 @@ use App\Http\Stores\TimeLogStore;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
+use App\Notifications\PasswordChanged;
+use App\Notifications\TeamMemberAdded;
+use App\Notifications\TeamMemberCreated;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
 use Psr\Container\ContainerExceptionInterface;
@@ -121,11 +125,12 @@ final class TeamController extends Controller
     {
         DB::beginTransaction();
         try {
-
             $user = User::query()->where('email', $request->email)->first();
+            $userData = $request->safe()->except(['hourly_rate', 'currency']);
+            $isNewUser = false;
 
             if (! $user) {
-                $userData = $request->safe()->except(['hourly_rate', 'currency']);
+                $isNewUser = true;
                 $user = User::query()->create($userData);
             }
 
@@ -139,6 +144,11 @@ final class TeamController extends Controller
             Team::query()->create($teamData);
 
             DB::commit();
+
+            $creator = auth()->user();
+            $isNewUser
+                ? $user->notify(new TeamMemberCreated($user, $creator, $userData['password']))
+                : $user->notify(new TeamMemberAdded($user, $creator));
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -179,19 +189,27 @@ final class TeamController extends Controller
         try {
             $data = $request->validated();
 
+            $passwordChanged = false;
+            $plainPassword = null;
             if (empty($data['password'])) {
                 unset($data['password']);
             } else {
+                $plainPassword = $data['password'];
                 $data['password'] = Hash::make($data['password']);
+                $passwordChanged = true;
             }
 
             $teamData = [
                 'hourly_rate' => $data['hourly_rate'] ?? 0,
-                'currency' => 'USD', // Fixed to USD and non-changeable
+                'currency' => 'USD',
             ];
             unset($data['hourly_rate'], $data['currency']);
 
             $user->update($data);
+
+            if ($passwordChanged) {
+                $user->notify(new PasswordChanged($user, auth()->user(), $plainPassword));
+            }
 
             Team::query()
                 ->where('user_id', auth()->id())
