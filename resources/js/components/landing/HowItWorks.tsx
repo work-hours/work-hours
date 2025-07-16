@@ -12,7 +12,10 @@ export default function HowItWorks() {
 
             <ol className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
                 <li className="animate-fade-up animate-once animate-delay-500 flex flex-col items-center text-center">
-                    <div className="animate-bounce-slow mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white" aria-hidden="true">
+                    <div
+                        className="animate-bounce-slow mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white"
+                        aria-hidden="true"
+                    >
                         <span className="text-xl font-bold">1</span>
                     </div>
                     <h3 className="mb-3 text-xl font-semibold text-foreground">Create Your Account</h3>
@@ -22,7 +25,10 @@ export default function HowItWorks() {
                 </li>
 
                 <li className="animate-fade-up animate-once animate-delay-700 flex flex-col items-center text-center">
-                    <div className="animate-bounce-slow mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white [animation-delay:200ms]" aria-hidden="true">
+                    <div
+                        className="animate-bounce-slow mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white [animation-delay:200ms]"
+                        aria-hidden="true"
+                    >
                         <span className="text-xl font-bold">2</span>
                     </div>
                     <h3 className="mb-3 text-xl font-semibold text-foreground">Set Up Your Projects</h3>
@@ -30,7 +36,10 @@ export default function HowItWorks() {
                 </li>
 
                 <li className="animate-fade-up animate-once animate-delay-900 flex flex-col items-center text-center">
-                    <div className="animate-bounce-slow mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white [animation-delay:400ms]" aria-hidden="true">
+                    <div
+                        className="animate-bounce-slow mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white [animation-delay:400ms]"
+                        aria-hidden="true"
+                    >
                         <span className="text-xl font-bold">3</span>
                     </div>
                     <h3 className="mb-3 text-xl font-semibold text-foreground">Build Your Team</h3>
@@ -40,7 +49,10 @@ export default function HowItWorks() {
                 </li>
 
                 <li className="animate-fade-up animate-once animate-delay-[1100ms] flex flex-col items-center text-center">
-                    <div className="animate-bounce-slow mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white [animation-delay:600ms]" aria-hidden="true">
+                    <div
+                        className="animate-bounce-slow mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white [animation-delay:600ms]"
+                        aria-hidden="true"
+                    >
                         <span className="text-xl font-bold">4</span>
                     </div>
                     <h3 className="mb-3 text-xl font-semibold text-foreground">Start Tracking Time</h3>
@@ -51,7 +63,10 @@ export default function HowItWorks() {
             </ol>
 
             <div className="mt-16 flex justify-center">
-                <div className="animate-fade-up animate-once animate-delay-[1300ms] flex items-center gap-2 rounded-full bg-primary/10 px-6 py-3 transition-transform hover:scale-105" role="note">
+                <div
+                    className="animate-fade-up animate-once animate-delay-[1300ms] flex items-center gap-2 rounded-full bg-primary/10 px-6 py-3 transition-transform hover:scale-105"
+                    role="note"
+                >
                     <Zap className="h-5 w-5 animate-pulse text-primary" aria-hidden="true" />
                     <span className="text-sm font-medium">Most users are up and running in less than 10 minutes!</span>
                 </div>

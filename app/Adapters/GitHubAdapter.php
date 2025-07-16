@@ -65,7 +65,7 @@ final class GitHubAdapter
                 false
             );
 
-            if ($reposResponse && !($reposResponse instanceof JsonResponse)) {
+            if ($reposResponse && ! ($reposResponse instanceof JsonResponse)) {
                 $repos = $reposResponse;
                 foreach ($repos as $repo) {
                     $repo['organization'] = $org['login'];
@@ -75,47 +75,6 @@ final class GitHubAdapter
         }
 
         return $allOrgRepos;
-    }
-
-    /**
-     * Make a request to the GitHub API with error handling.
-     *
-     * @param  string  $token  The GitHub access token
-     * @param  string  $url  The API endpoint URL
-     * @param  array  $params  The query parameters
-     * @param  string|null  $errorMessage  Custom error message on failure
-     * @param  string|null  $resourceType  Type of resource being fetched (for error logging)
-     * @param  bool  $returnErrorResponse  Whether to return an error response on failure
-     * @return array|JsonResponse The response data or an error response
-     */
-    private function makeGitHubRequest(
-        string $token,
-        string $url,
-        array $params = [],
-        ?string $errorMessage = null,
-        ?string $resourceType = null,
-        bool $returnErrorResponse = true
-    ) {
-        try {
-            $response = Http::withToken($token)->get($url, $params);
-
-            if ($response->failed() && $returnErrorResponse) {
-                $message = $errorMessage ?? 'Failed to fetch data from GitHub.';
-                return response()->json(['error' => $message], 500);
-            }
-
-            return $response->successful() ? $response->json() : null;
-        } catch (Exception $e) {
-            Log::error("Error fetching GitHub {$resourceType}: " . $e->getMessage());
-
-            if ($returnErrorResponse) {
-                return response()->json([
-                    'error' => 'An error occurred while fetching ' . ($resourceType ?? 'data') . '.'
-                ], 500);
-            }
-
-            return null;
-        }
     }
 
     /**
@@ -154,5 +113,47 @@ final class GitHubAdapter
             'user' => $user,
             'token' => $githubUser->token,
         ];
+    }
+
+    /**
+     * Make a request to the GitHub API with error handling.
+     *
+     * @param  string  $token  The GitHub access token
+     * @param  string  $url  The API endpoint URL
+     * @param  array  $params  The query parameters
+     * @param  string|null  $errorMessage  Custom error message on failure
+     * @param  string|null  $resourceType  Type of resource being fetched (for error logging)
+     * @param  bool  $returnErrorResponse  Whether to return an error response on failure
+     * @return array|JsonResponse The response data or an error response
+     */
+    private function makeGitHubRequest(
+        string $token,
+        string $url,
+        array $params = [],
+        ?string $errorMessage = null,
+        ?string $resourceType = null,
+        bool $returnErrorResponse = true
+    ) {
+        try {
+            $response = Http::withToken($token)->get($url, $params);
+
+            if ($response->failed() && $returnErrorResponse) {
+                $message = $errorMessage ?? 'Failed to fetch data from GitHub.';
+
+                return response()->json(['error' => $message], 500);
+            }
+
+            return $response->successful() ? $response->json() : null;
+        } catch (Exception $e) {
+            Log::error("Error fetching GitHub {$resourceType}: " . $e->getMessage());
+
+            if ($returnErrorResponse) {
+                return response()->json([
+                    'error' => 'An error occurred while fetching ' . ($resourceType ?? 'data') . '.',
+                ], 500);
+            }
+
+            return null;
+        }
     }
 }

@@ -32,6 +32,7 @@ type Project = {
     id: number
     name: string
     description: string | null
+    paid_amount: number
     user: {
         id: number
         name: string
@@ -203,7 +204,7 @@ export default function ProjectTimeLogs({
 
                 {/* Stats Cards */}
                 {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
                         {/* Total hours card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardContent>
@@ -260,6 +261,33 @@ export default function ProjectTimeLogs({
                                 </div>
                                 <div className="text-2xl font-bold">{unpaidAmount}</div>
                                 <p className="text-xs text-muted-foreground">Amount pending payment</p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Paid amount card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardContent>
+                                <div className="mb-2 flex flex-row items-center justify-between">
+                                    <CardTitle className="text-sm font-medium">Paid Amount</CardTitle>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="h-4 w-4 text-muted-foreground"
+                                    >
+                                        <circle cx="12" cy="12" r="10" />
+                                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                                        <path d="M12 18V6" />
+                                    </svg>
+                                </div>
+                                <div className="text-2xl font-bold">{project.paid_amount}</div>
+                                <p className="text-xs text-muted-foreground">Amount already paid</p>
                             </CardContent>
                         </Card>
 

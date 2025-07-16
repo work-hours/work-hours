@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property int $user_id
  * @property string $name
  * @property string $description
+ * @property float $paid_amount
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property User $user
@@ -27,7 +28,7 @@ use Illuminate\Support\Carbon;
 #[UsePolicy(ProjectPolicy::class)]
 final class Project extends Model
 {
-    protected $fillable = ['user_id', 'name', 'description'];
+    protected $fillable = ['user_id', 'name', 'description', 'paid_amount'];
 
     public function user(): BelongsTo
     {

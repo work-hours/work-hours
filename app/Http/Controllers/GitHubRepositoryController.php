@@ -35,9 +35,43 @@ final class GitHubRepositoryController extends Controller
     }
 
     /**
+     * Display the GitHub repositories page.
+     */
+    public function index(): Response
+    {
+        return Inertia::render('github/repositories');
+    }
+
+    /**
+     * Import a GitHub repository as a project.
+     */
+    public function importRepository(Request $request): JsonResponse
+    {
+        try {
+            $validatedData = $this->validateRepositoryData($request);
+
+            if ($this->isRepositoryImported($validatedData['full_name'])) {
+                return $this->errorResponse('Repository is already imported as a project.', 400);
+            }
+
+            $project = $this->createProjectFromRepository($validatedData);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Repository successfully imported as a project',
+                'id' => $project->getKey(),
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error importing GitHub repository: ' . $e->getMessage());
+
+            return $this->errorResponse('Failed to import repository: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
      * Fetch repositories from GitHub based on the specified type.
      *
-     * @param string $type The type of repositories to fetch ('personal' or 'organization')
+     * @param  string  $type  The type of repositories to fetch ('personal' or 'organization')
      * @return JsonResponse The repositories or an error response
      */
     private function fetchRepositories(string $type): JsonResponse
@@ -90,43 +124,9 @@ final class GitHubRepositoryController extends Controller
     }
 
     /**
-     * Display the GitHub repositories page.
-     */
-    public function index(): Response
-    {
-        return Inertia::render('github/repositories');
-    }
-
-    /**
-     * Import a GitHub repository as a project.
-     */
-    public function importRepository(Request $request): JsonResponse
-    {
-        try {
-            $validatedData = $this->validateRepositoryData($request);
-
-            if ($this->isRepositoryImported($validatedData['full_name'])) {
-                return $this->errorResponse('Repository is already imported as a project.', 400);
-            }
-
-            $project = $this->createProjectFromRepository($validatedData);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Repository successfully imported as a project',
-                'id' => $project->getKey(),
-            ]);
-        } catch (Exception $e) {
-            Log::error('Error importing GitHub repository: ' . $e->getMessage());
-
-            return $this->errorResponse('Failed to import repository: ' . $e->getMessage(), 500);
-        }
-    }
-
-    /**
      * Validate repository data from the request.
      *
-     * @param Request $request The HTTP request
+     * @param  Request  $request  The HTTP request
      * @return array The validated data
      */
     private function validateRepositoryData(Request $request): array
@@ -142,7 +142,7 @@ final class GitHubRepositoryController extends Controller
     /**
      * Create a new project from repository data.
      *
-     * @param array $data The repository data
+     * @param  array  $data  The repository data
      * @return Project The created project
      */
     private function createProjectFromRepository(array $data): Project
@@ -159,8 +159,8 @@ final class GitHubRepositoryController extends Controller
     /**
      * Create an error JSON response.
      *
-     * @param string $message The error message
-     * @param int $statusCode The HTTP status code
+     * @param  string  $message  The error message
+     * @param  int  $statusCode  The HTTP status code
      * @return JsonResponse The error response
      */
     private function errorResponse(string $message, int $statusCode = 400): JsonResponse

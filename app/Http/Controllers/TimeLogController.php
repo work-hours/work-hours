@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateTimeLogRequest;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
+use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Traits\ExportableTrait;
@@ -109,33 +110,6 @@ final class TimeLogController extends Controller
     }
 
     /**
-     * @throws Throwable
-     */
-    #[Action(method: 'put', name: 'time-log.update', params: ['timeLog'], middleware: ['auth', 'verified'])]
-    public function update(UpdateTimeLogRequest $request, TimeLog $timeLog): void
-    {
-        Gate::authorize('update', $timeLog);
-
-        DB::beginTransaction();
-        try {
-            $data = $request->validated();
-
-            if (! empty($data['start_timestamp']) && ! empty($data['end_timestamp'])) {
-                $start = Carbon::parse($data['start_timestamp']);
-                $end = Carbon::parse($data['end_timestamp']);
-
-                $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
-            }
-
-            $timeLog->update($data);
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
-
-    /**
      * Delete the specified time log.
      *
      * @throws Throwable
@@ -173,10 +147,55 @@ final class TimeLogController extends Controller
                 ->whereIn('id', $timeLogIds)
                 ->get();
 
+            $projectAmounts = [];
             foreach ($timeLogs as $timeLog) {
                 $timeLog->update(['is_paid' => true]);
+
+                $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+                $amount = $timeLog->duration * $hourlyRate;
+
+                if (! isset($projectAmounts[$timeLog->project_id])) {
+                    $projectAmounts[$timeLog->project_id] = 0;
+                }
+
+                $projectAmounts[$timeLog->project_id] += $amount;
             }
 
+            foreach ($projectAmounts as $projectId => $amount) {
+                $project = Project::query()->find($projectId);
+                if ($project) {
+                    $project->paid_amount += $amount;
+                    $project->save();
+                }
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Action(method: 'put', name: 'time-log.update', params: ['timeLog'], middleware: ['auth', 'verified'])]
+    public function update(UpdateTimeLogRequest $request, TimeLog $timeLog): void
+    {
+        Gate::authorize('update', $timeLog);
+
+        DB::beginTransaction();
+        try {
+            $data = $request->validated();
+
+            if (! empty($data['start_timestamp']) && ! empty($data['end_timestamp'])) {
+                $start = Carbon::parse($data['start_timestamp']);
+                $end = Carbon::parse($data['end_timestamp']);
+
+                $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
+            }
+
+            $timeLog->update($data);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
