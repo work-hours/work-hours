@@ -185,7 +185,7 @@ export default function ProjectTimeLogs({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${project.name} - Time Logs`} />
-            <div className="mx-auto flex w-9/12 flex-col gap-6 p-6">
+            <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
