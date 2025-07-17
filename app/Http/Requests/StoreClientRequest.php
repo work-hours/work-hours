@@ -7,7 +7,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class UpdateProjectRequest extends FormRequest
+final class StoreClientRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,10 +26,11 @@ final class UpdateProjectRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'client_id' => ['nullable', 'exists:clients,id'],
-            'team_members' => ['nullable', 'array'],
-            'team_members.*' => ['exists:users,id'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'contact_person' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'address' => ['nullable', 'string'],
+            'notes' => ['nullable', 'string'],
         ];
     }
 }
