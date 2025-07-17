@@ -1,6 +1,6 @@
 import { type SharedData } from '@/types'
 import { usePage } from '@inertiajs/react'
-import { BarChart2, Clock, Github, Upload, Users } from 'lucide-react'
+import { BarChart2, Briefcase, Clock, Github, Upload, Users } from 'lucide-react'
 
 export default function Features() {
     const { auth } = usePage<SharedData>().props
@@ -17,7 +17,7 @@ export default function Features() {
                     </p>
                 </div>
 
-                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
                     <article className="animate-fade-up animate-once animate-delay-500 group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
                         <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
                             <Clock className="h-7 w-7 text-primary" aria-hidden="true" />
@@ -52,6 +52,17 @@ export default function Features() {
                     </article>
 
                     <article className="animate-fade-up animate-once animate-delay-[1100ms] group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+                        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
+                            <Briefcase className="h-7 w-7 text-primary" aria-hidden="true" />
+                        </div>
+                        <h3 className="mb-3 text-xl font-semibold text-foreground">Client Management</h3>
+                        <p className="text-muted-foreground">
+                            Organize and manage your clients effortlessly. Track client projects, store contact information, and maintain detailed
+                            records for better client relationships and billing accuracy.
+                        </p>
+                    </article>
+
+                    <article className="animate-fade-up animate-once animate-delay-[1300ms] group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
                         <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
                             <Upload className="h-7 w-7 text-primary" aria-hidden="true" />
                         </div>
