@@ -27,6 +27,7 @@ final class UpdateProjectRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'client_id' => ['nullable', 'exists:clients,id'],
             'team_members' => ['nullable', 'array'],
             'team_members.*' => ['exists:users,id'],
         ];

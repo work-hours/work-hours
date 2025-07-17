@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Stores\ClientStore;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
@@ -49,6 +50,7 @@ final class ProjectController extends Controller
                 'user_id' => auth()->id(),
                 'name' => $request->input('name'),
                 'description' => $request->input('description'),
+                'client_id' => $request->input('client_id'),
             ]);
 
             if ($request->has('team_members')) {
@@ -71,8 +73,15 @@ final class ProjectController extends Controller
                 'email' => $team->member->email,
             ]);
 
+        $clients = ClientStore::userClients(auth()->id())
+            ->map(fn ($client): array => [
+                'id' => $client->id,
+                'name' => $client->name,
+            ]);
+
         return Inertia::render('project/create', [
             'teamMembers' => $teamMembers,
+            'clients' => $clients,
         ]);
     }
 
@@ -89,10 +98,17 @@ final class ProjectController extends Controller
 
         $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
 
+        $clients = ClientStore::userClients(auth()->id())
+            ->map(fn ($client): array => [
+                'id' => $client->id,
+                'name' => $client->name,
+            ]);
+
         return Inertia::render('project/edit', [
             'project' => $project,
             'teamMembers' => $teamMembers,
             'assignedTeamMembers' => $assignedTeamMembers,
+            'clients' => $clients,
         ]);
     }
 
@@ -106,7 +122,7 @@ final class ProjectController extends Controller
 
         DB::beginTransaction();
         try {
-            $project->update($request->only(['name', 'description']));
+            $project->update($request->only(['name', 'description', 'client_id']));
 
             if ($request->has('team_members')) {
                 $project->teamMembers()->sync($request->input('team_members'));

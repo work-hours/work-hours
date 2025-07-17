@@ -1,5 +1,6 @@
 import { Head, useForm } from '@inertiajs/react'
-import { ArrowLeft, FileText, FolderPlus, LoaderCircle, Text, Users } from 'lucide-react'
+import { ArrowLeft, Building, FileText, FolderPlus, LoaderCircle, Text, Users } from 'lucide-react'
+import { SearchableSelect } from '@/components/ui/searchable-select'
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
@@ -19,14 +20,21 @@ type TeamMember = {
     email: string
 }
 
+type Client = {
+    id: number
+    name: string
+}
+
 type ProjectForm = {
     name: string
     description: string
+    client_id: string
     team_members: number[]
 }
 
 type Props = {
     teamMembers: TeamMember[]
+    clients: Client[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -40,10 +48,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-export default function CreateProject({ teamMembers }: Props) {
+export default function CreateProject({ teamMembers, clients }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<ProjectForm>({
         name: '',
         description: '',
+        client_id: '',
         team_members: [],
     })
 
@@ -136,6 +145,22 @@ export default function CreateProject({ teamMembers }: Props) {
                                         />
                                     </div>
                                     <InputError message={errors.description} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="client_id" className="text-sm font-medium">
+                                        Client <span className="text-xs text-muted-foreground">(optional)</span>
+                                    </Label>
+                                    <SearchableSelect
+                                        id="client_id"
+                                        value={data.client_id}
+                                        onChange={(value) => setData('client_id', value)}
+                                        options={clients}
+                                        placeholder="Select a client"
+                                        disabled={processing}
+                                        icon={<Building className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                    <InputError message={errors.client_id} />
                                 </div>
 
                                 <div className="grid gap-2">

@@ -28,7 +28,6 @@ type Client = {
     notes: string | null
 }
 
-
 export default function Clients() {
     const [clients, setClients] = useState<Client[]>([])
     const [loading, setLoading] = useState<boolean>(true)
