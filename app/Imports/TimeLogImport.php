@@ -45,14 +45,7 @@ class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
                 continue;
             }
 
-            $validator = Validator::make($row, [
-                'project' => ['required', Rule::in(array_keys($this->projects))],
-                'start_timestamp' => ['required', 'date_format:Y-m-d H:i:s'],
-                'end_timestamp' => ['required', 'date_format:Y-m-d H:i:s', 'after:start_timestamp'],
-                'note' => ['required', 'string', 'max:255'],
-            ], [
-                'end_timestamp.after' => 'End timestamp must be after to start timestamp.',
-            ]);
+            $validator = Validator::make($row, $this->rules(), $this->customValidationMessages());
 
             if ($validator->fails()) {
                 $this->errors[] = "Row #" . ($index + 2) . ": " . implode(', ', $validator->errors()->all());
@@ -83,6 +76,36 @@ class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
                 $this->errors[] = "Row #" . ($index + 2) . ": " . $e->getMessage();
             }
         }
+    }
+
+    /**
+     * Get validation rules
+     */
+    public function rules(): array
+    {
+        return [
+            'project' => ['required', Rule::in(array_values($this->projects))],
+            'start_timestamp' => ['required', 'date_format:Y-m-d H:i:s'],
+            'end_timestamp' => ['nullable', 'date_format:Y-m-d H:i:s', 'after:start_timestamp'],
+            'note' => ['required', 'string', 'max:255'],
+        ];
+    }
+
+    /**
+     * Get custom validation messages
+     */
+    public function customValidationMessages(): array
+    {
+        return [
+            'project.required' => 'Project is required.',
+            'project.in' => 'Project not found or you don\'t have access to it.',
+            'start_timestamp.required' => 'Start timestamp is required.',
+            'start_timestamp.date_format' => 'Start timestamp must be in Y-m-d H:i:s format.',
+            'end_timestamp.date_format' => 'End timestamp must be in Y-m-d H:i:s format.',
+            'end_timestamp.after' => 'End timestamp must be after start timestamp.',
+            'note.required' => 'Note is required.',
+            'note.max' => 'Note cannot be longer than 255 characters.',
+        ];
     }
 
     /**
