@@ -1,6 +1,6 @@
 import { type SharedData } from '@/types'
 import { usePage } from '@inertiajs/react'
-import { BarChart2, Clock, Github, Users } from 'lucide-react'
+import { BarChart2, Clock, Github, Upload, Users } from 'lucide-react'
 
 export default function Features() {
     const { auth } = usePage<SharedData>().props
@@ -17,7 +17,7 @@ export default function Features() {
                     </p>
                 </div>
 
-                <div className="grid gap-8 md:grid-cols-3">
+                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
                     <article className="animate-fade-up animate-once animate-delay-500 group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
                         <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
                             <Clock className="h-7 w-7 text-primary" aria-hidden="true" />
@@ -48,6 +48,17 @@ export default function Features() {
                         <p className="text-muted-foreground">
                             Manage your team's time, assign projects, and track progress all in one place. Real-time updates and notifications keep
                             everyone in sync.
+                        </p>
+                    </article>
+
+                    <article className="animate-fade-up animate-once animate-delay-[1100ms] group rounded-xl border border-border/40 bg-card p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+                        <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
+                            <Upload className="h-7 w-7 text-primary" aria-hidden="true" />
+                        </div>
+                        <h3 className="mb-3 text-xl font-semibold text-foreground">Bulk Upload</h3>
+                        <p className="text-muted-foreground">
+                            Save time by importing multiple time logs at once. Download a template, fill it with your data, and upload it to quickly
+                            record all your work hours in one go.
                         </p>
                     </article>
                 </div>
