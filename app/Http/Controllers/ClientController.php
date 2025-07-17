@@ -8,6 +8,8 @@ use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Stores\ClientStore;
 use App\Models\Client;
+use App\Traits\ExportableTrait;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -16,10 +18,12 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Msamgan\Lact\Attributes\Action;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 final class ClientController extends Controller
 {
+    use ExportableTrait;
     /**
      * Display a listing of the resource.
      */
@@ -131,5 +135,21 @@ final class ClientController extends Controller
     public function clientProjects(Client $client): Collection
     {
         return ClientStore::clientProjects($client);
+    }
+
+    /**
+     * Export clients to CSV
+     */
+    #[Action(method: 'get', name: 'client.export', middleware: ['auth', 'verified'])]
+    public function clientExport(): StreamedResponse
+    {
+        $headers = ['ID', 'Name', 'Email', 'Contact Person', 'Phone', 'Address', 'Notes', 'Created At'];
+        $filename = 'clients_' . Carbon::now()->format('Y-m-d') . '.csv';
+
+        return $this->exportToCsv(
+            ClientStore::clientExportMapper(ClientStore::userClients(Auth::id())),
+            $headers,
+            $filename
+        );
     }
 }

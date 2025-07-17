@@ -8,7 +8,7 @@ import { type BreadcrumbItem } from '@/types'
 // @ts-expect-error
 import { clients as _clients } from '@actions/ClientController'
 import { Head, Link } from '@inertiajs/react'
-import { Edit, Folder, Loader2, Plus, Users } from 'lucide-react'
+import { Download, Edit, Folder, Loader2, Plus, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -69,6 +69,12 @@ export default function Clients() {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
+                                <a href={route('client.export')} className="inline-block">
+                                    <Button variant="outline" className="flex items-center gap-2">
+                                        <Download className="h-4 w-4" />
+                                        <span>Export</span>
+                                    </Button>
+                                </a>
                                 <Link href={route('client.create')}>
                                     <Button className="flex items-center gap-2">
                                         <Plus className="h-4 w-4" />
