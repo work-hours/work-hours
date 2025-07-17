@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\NotificationsController;
@@ -36,6 +37,11 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('project/create', [ProjectController::class, 'create'])->name('project.create');
     Route::get('project/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
     Route::get('project/{project}/time-logs', [ProjectController::class, 'timeLogs'])->name('project.time-logs');
+
+    Route::get('client', [ClientController::class, 'index'])->name('client.index');
+    Route::get('client/create', [ClientController::class, 'create'])->name('client.create');
+    Route::get('client/{client}/edit', [ClientController::class, 'edit'])->name('client.edit');
+    Route::get('client/{client}/projects', [ClientController::class, 'projects'])->name('client.projects');
 
     Route::get('time-log', [TimeLogController::class, 'index'])->name('time-log.index');
     Route::get('time-log/create', [TimeLogController::class, 'create'])->name('time-log.create');
