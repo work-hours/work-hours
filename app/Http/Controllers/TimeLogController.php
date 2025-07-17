@@ -360,12 +360,14 @@ final class TimeLogController extends Controller
         $sheet->setCellValue('C1', 'End Timestamp');
         $sheet->setCellValue('D1', 'Note');
 
-        $validation = $sheet->getCell('A2')->getDataValidation();
-        $validation->setType(DataValidation::TYPE_LIST);
-        $validation->setErrorStyle(DataValidation::STYLE_INFORMATION);
-        $validation->setAllowBlank(false);
-        $validation->setShowDropDown(true);
-        $validation->setFormula1('"' . implode(',', $projects) . '"');
+        for($row = 2; $row <= 100; $row++) {
+            $validation = $sheet->getCell('A' . $row)->getDataValidation();
+            $validation->setType(DataValidation::TYPE_LIST);
+            $validation->setErrorStyle(DataValidation::STYLE_INFORMATION);
+            $validation->setAllowBlank(false);
+            $validation->setShowDropDown(true);
+            $validation->setFormula1('"' . implode(',', $projects) . '"');
+        }
 
         $sheet->setCellValue('A2', $projects[0] ?? '');
         $sheet->setCellValue('B2', Carbon::now()->format('Y-m-d H:i:s'));
@@ -375,15 +377,6 @@ final class TimeLogController extends Controller
         foreach (range('A', 'D') as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
-
-        $row = 1;
-        $sheet->setCellValue('H' . $row, 'Project List');
-        $row++;
-        foreach ($projects as $project) {
-            $sheet->setCellValue('H' . $row, $project);
-            $row++;
-        }
-        $sheet->getColumnDimension('H')->setAutoSize(true);
 
         $writer = new Xlsx($spreadsheet);
         $filename = 'time_log_template_' . Carbon::now()->format('Y-m-d') . '.xlsx';
