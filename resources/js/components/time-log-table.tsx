@@ -65,7 +65,11 @@ export default function TimeLogTable({
                                     checked={selectedLogs.includes(log.id)}
                                     onChange={(e) => onSelectLog && onSelectLog(log.id, e.target.checked)}
                                     disabled={log.is_paid || !log.start_timestamp || !log.end_timestamp}
-                                    title={!log.start_timestamp || !log.end_timestamp ? "Time logs without both start and end timestamps cannot be marked as paid" : ""}
+                                    title={
+                                        !log.start_timestamp || !log.end_timestamp
+                                            ? 'Time logs without both start and end timestamps cannot be marked as paid'
+                                            : ''
+                                    }
                                     className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                                 />
                             </TableCell>

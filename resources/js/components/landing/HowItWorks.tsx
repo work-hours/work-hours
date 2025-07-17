@@ -32,7 +32,9 @@ export default function HowItWorks() {
                         <span className="text-xl font-bold">2</span>
                     </div>
                     <h3 className="mb-3 text-xl font-semibold text-foreground">Set Up / Import Your Projects</h3>
-                    <p className="text-muted-foreground">Create or Import projects and customize your workspace to match your workflow and business needs.</p>
+                    <p className="text-muted-foreground">
+                        Create or Import projects and customize your workspace to match your workflow and business needs.
+                    </p>
                 </li>
 
                 <li className="animate-fade-up animate-once animate-delay-900 flex flex-col items-center text-center">

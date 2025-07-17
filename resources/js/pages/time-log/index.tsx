@@ -1,16 +1,33 @@
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import TimeTracker from '@/components/time-tracker'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
-import { Briefcase, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, PlusCircle, Search, TimerReset } from 'lucide-react'
-import { ChangeEvent, FormEventHandler, forwardRef, ReactNode, useState } from 'react'
+import axios from 'axios'
+import {
+    AlertCircle,
+    Briefcase,
+    Calendar,
+    CalendarIcon,
+    CalendarRange,
+    CheckCircle,
+    ClockIcon,
+    Download,
+    FileSpreadsheet,
+    PlusCircle,
+    Search,
+    TimerReset,
+    Upload,
+} from 'lucide-react'
+import { ChangeEvent, FormEventHandler, forwardRef, ReactNode, useRef, useState } from 'react'
 
 interface CustomInputProps {
     value?: string
@@ -98,6 +115,12 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
     })
 
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
+    const [importDialogOpen, setImportDialogOpen] = useState(false)
+    const [importFile, setImportFile] = useState<File | null>(null)
+    const [importing, setImporting] = useState(false)
+    const [importSuccess, setImportSuccess] = useState<string | null>(null)
+    const [importErrors, setImportErrors] = useState<string[]>([])
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
@@ -105,6 +128,78 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
         } else {
             setSelectedLogs(selectedLogs.filter((logId) => logId !== id))
         }
+    }
+
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setImportFile(e.target.files[0])
+        }
+    }
+
+    const handleImport = async () => {
+        if (!importFile) return
+
+        setImporting(true)
+        setImportSuccess(null)
+        setImportErrors([])
+
+        const formData = new FormData()
+        formData.append('file', importFile)
+
+        try {
+            const response = await axios.post(route('time-log.import'), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
+
+            setImportSuccess(response.data.message)
+
+            if (response.data.errors && response.data.errors.length > 0) {
+                setImportErrors(response.data.errors)
+            } else {
+                setTimeout(() => resetImport(), 1000)
+            }
+
+            setTimeout(() => {
+                get(route('time-log.index'), { preserveState: true })
+            }, 2000)
+        } catch (error) {
+            const axiosError = error as {
+                response?: {
+                    data?: {
+                        errors?: string[]
+                        message?: string
+                    }
+                }
+            }
+
+            if (axiosError.response && axiosError.response.data) {
+                if (axiosError.response.data.errors) {
+                    setImportErrors(axiosError.response.data.errors)
+                } else if (axiosError.response.data.message) {
+                    setImportErrors([axiosError.response.data.message])
+                }
+            } else {
+                setImportErrors(['An unexpected error occurred. Please try again.'])
+            }
+        } finally {
+            setImporting(false)
+        }
+    }
+
+    const resetImport = () => {
+        setImportFile(null)
+        setImportSuccess(null)
+        setImportErrors([])
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+        }
+    }
+
+    const closeImportDialog = () => {
+        setImportDialogOpen(false)
+        resetImport()
     }
 
     const markAsPaid = () => {
@@ -400,6 +495,16 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                         <span>Export</span>
                                     </Button>
                                 </a>
+                                <a href={route('time-log.template')} className="inline-block">
+                                    <Button variant="outline" className="flex items-center gap-2">
+                                        <FileSpreadsheet className="h-4 w-4" />
+                                        <span>Template</span>
+                                    </Button>
+                                </a>
+                                <Button variant="outline" className="flex items-center gap-2" onClick={() => setImportDialogOpen(true)}>
+                                    <Upload className="h-4 w-4" />
+                                    <span>Import</span>
+                                </Button>
                                 {selectedLogs.length > 0 && (
                                     <Button onClick={markAsPaid} variant="secondary" className="flex items-center gap-2">
                                         <CheckCircle className="h-4 w-4" />
@@ -441,6 +546,65 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                         )}
                     </CardContent>
                 </Card>
+
+                {/* Import Dialog */}
+                <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Import Time Logs</DialogTitle>
+                            <DialogDescription>
+                                Upload an Excel file with time logs to import.
+                                <a href={route('time-log.template')} className="ml-1 text-primary hover:underline">
+                                    Download template
+                                </a>
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                            <div className="grid w-full max-w-sm items-center gap-1.5">
+                                <Label htmlFor="file-upload">Excel File</Label>
+                                <Input
+                                    id="file-upload"
+                                    type="file"
+                                    accept=".xlsx,.xls"
+                                    onChange={handleFileChange}
+                                    ref={fileInputRef}
+                                    disabled={importing}
+                                />
+                                <p className="text-sm text-muted-foreground">Only .xlsx and .xls files are supported (max 2MB)</p>
+                            </div>
+
+                            {importSuccess && (
+                                <Alert className="border-green-200 bg-green-50 dark:border-green-900/30 dark:bg-green-900/20">
+                                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                                    <AlertTitle className="text-green-800 dark:text-green-400">Success</AlertTitle>
+                                    <AlertDescription className="text-green-700 dark:text-green-400">{importSuccess}</AlertDescription>
+                                </Alert>
+                            )}
+
+                            {importErrors.length > 0 && (
+                                <Alert className="border-red-200 bg-red-50 dark:border-red-900/30 dark:bg-red-900/20">
+                                    <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                                    <AlertTitle className="text-red-800 dark:text-red-400">Error</AlertTitle>
+                                    <AlertDescription className="text-red-700 dark:text-red-400">
+                                        <ul className="mt-2 list-disc space-y-1 pl-5">
+                                            {importErrors.map((error, index) => (
+                                                <li key={index}>{error}</li>
+                                            ))}
+                                        </ul>
+                                    </AlertDescription>
+                                </Alert>
+                            )}
+                        </div>
+                        <DialogFooter className="sm:justify-between">
+                            <Button type="button" variant="secondary" onClick={closeImportDialog} disabled={importing}>
+                                Cancel
+                            </Button>
+                            <Button type="button" onClick={handleImport} disabled={!importFile || importing}>
+                                {importing ? 'Importing...' : 'Import'}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </AppLayout>
     )
