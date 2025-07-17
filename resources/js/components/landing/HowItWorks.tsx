@@ -32,7 +32,7 @@ export default function HowItWorks() {
                         >
                             <div className="flex items-center justify-center">
                                 <span className="absolute text-xl font-bold opacity-20">1</span>
-                                <UserPlus className="h-8 w-8 animate-pulse" />
+                                <UserPlus className="h-8 w-8" />
                             </div>
                         </div>
                         <h3 className="mb-3 text-xl font-semibold text-foreground">Create Your Account</h3>
@@ -48,7 +48,7 @@ export default function HowItWorks() {
                         >
                             <div className="flex items-center justify-center">
                                 <span className="absolute text-xl font-bold opacity-20">2</span>
-                                <FolderPlus className="h-8 w-8 animate-pulse [animation-delay:200ms]" />
+                                <FolderPlus className="h-8 w-8" />
                             </div>
                         </div>
                         <h3 className="mb-3 text-xl font-semibold text-foreground">Set Up Your Projects</h3>
@@ -64,7 +64,7 @@ export default function HowItWorks() {
                         >
                             <div className="flex items-center justify-center">
                                 <span className="absolute text-xl font-bold opacity-20">3</span>
-                                <Users className="h-8 w-8 animate-pulse [animation-delay:400ms]" />
+                                <Users className="h-8 w-8" />
                             </div>
                         </div>
                         <h3 className="mb-3 text-xl font-semibold text-foreground">Build Your Team</h3>
@@ -80,7 +80,7 @@ export default function HowItWorks() {
                         >
                             <div className="flex items-center justify-center">
                                 <span className="absolute text-xl font-bold opacity-20">4</span>
-                                <Clock className="h-8 w-8 animate-pulse [animation-delay:600ms]" />
+                                <Clock className="h-8 w-8" />
                             </div>
                         </div>
                         <h3 className="mb-3 text-xl font-semibold text-foreground">Start Tracking Time</h3>
@@ -96,7 +96,7 @@ export default function HowItWorks() {
                     className="animate-fade-up animate-once animate-delay-[1300ms] flex items-center gap-2 rounded-full bg-gradient-to-r from-primary/10 to-primary/20 px-6 py-3 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md"
                     role="note"
                 >
-                    <Zap className="h-5 w-5 animate-pulse text-primary" aria-hidden="true" />
+                    <Zap className="h-5 w-5 text-primary" aria-hidden="true" />
                     <span className="text-sm font-medium">Most users are up and running in less than 10 minutes!</span>
                 </div>
             </div>
