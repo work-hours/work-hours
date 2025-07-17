@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateTimeLogRequest;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
+use App\Imports\TimeLogImport;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
@@ -18,10 +19,17 @@ use App\Notifications\TimeLogPaid;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Writers\CellWriter;
 use Msamgan\Lact\Attributes\Action;
+use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -291,5 +299,99 @@ final class TimeLogController extends Controller
         $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);
+    }
+
+    /**
+     * Import time logs from Excel
+     */
+    #[Action(method: 'post', name: 'time-log.import', middleware: ['auth', 'verified'])]
+    public function import(Request $request): JsonResponse
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls|max:2048',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $import = new TimeLogImport();
+            Excel::import($import, $request->file('file'));
+
+            $errors = $import->getErrors();
+            $successCount = $import->getSuccessCount();
+
+            if (count($errors) > 0 && $successCount === 0) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Import failed. No records were imported.',
+                    'errors' => $errors,
+                ], 422);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => $successCount . ' time logs imported successfully.',
+                'errors' => $errors,
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Import failed: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Generate a sample Excel template for time log import
+     */
+    #[Action(method: 'get', name: 'time-log.template', middleware: ['auth', 'verified'])]
+    public function template(): StreamedResponse
+    {
+        $projects = ProjectStore::userProjects(userId: auth()->id())->pluck('name')->toArray();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'Project');
+        $sheet->setCellValue('B1', 'Start Timestamp');
+        $sheet->setCellValue('C1', 'End Timestamp');
+        $sheet->setCellValue('D1', 'Note');
+
+        $validation = $sheet->getCell('A2')->getDataValidation();
+        $validation->setType(DataValidation::TYPE_LIST);
+        $validation->setErrorStyle(DataValidation::STYLE_INFORMATION);
+        $validation->setAllowBlank(false);
+        $validation->setShowDropDown(true);
+        $validation->setFormula1('"' . implode(',', $projects) . '"');
+
+        $sheet->setCellValue('A2', $projects[0] ?? '');
+        $sheet->setCellValue('B2', Carbon::now()->format('Y-m-d H:i:s'));
+        $sheet->setCellValue('C2', Carbon::now()->addHours(2)->format('Y-m-d H:i:s'));
+        $sheet->setCellValue('D2', 'Example note');
+
+        foreach (range('A', 'D') as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        $row = 1;
+        $sheet->setCellValue('H' . $row, 'Project List');
+        $row++;
+        foreach ($projects as $project) {
+            $sheet->setCellValue('H' . $row, $project);
+            $row++;
+        }
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'time_log_template_' . Carbon::now()->format('Y-m-d') . '.xlsx';
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 }
