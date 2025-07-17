@@ -60,6 +60,25 @@ final class TimeLogImport implements ToCollection, WithHeadingRow, WithValidatio
                     $duration = round(abs($startTimestamp->diffInMinutes($endTimestamp)) / 60, 2);
                 }
 
+                // Check for duplicate entries
+                $existingEntry = TimeLog::query()
+                    ->where('user_id', Auth::id())
+                    ->where('project_id', $projectId)
+                    ->where('start_timestamp', $startTimestamp)
+                    ->where(function ($query) use ($endTimestamp) {
+                        if ($endTimestamp === null) {
+                            $query->whereNull('end_timestamp');
+                        } else {
+                            $query->where('end_timestamp', $endTimestamp);
+                        }
+                    })
+                    ->first();
+
+                if ($existingEntry) {
+                    $this->errors[] = 'Row #' . ($index + 2) . ': Duplicate entry. A time log with the same project, start time, and end time already exists.';
+                    continue;
+                }
+
                 TimeLog::query()->create([
                     'user_id' => Auth::id(),
                     'project_id' => $projectId,
