@@ -157,12 +157,12 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
 
             if (response.data.errors && response.data.errors.length > 0) {
                 setImportErrors(response.data.errors)
+            } else {
+                setTimeout(() => resetImport(), 1000)
             }
 
             setTimeout(() => {
-                get(route('time-log.index'), {
-                    preserveState: true,
-                })
+                get(route('time-log.index'), { preserveState: true })
             }, 2000)
         } catch (error) {
             const axiosError = error as {
