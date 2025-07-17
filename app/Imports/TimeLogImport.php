@@ -45,7 +45,7 @@ class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
                 continue;
             }
 
-            $validator = Validator::make($row, $this->rules(), $this->customValidationMessages());
+            $validator = Validator::make($row->toArray(), $this->rules(), $this->customValidationMessages());
 
             if ($validator->fails()) {
                 $this->errors[] = "Row #" . ($index + 2) . ": " . implode(', ', $validator->errors()->all());
@@ -86,7 +86,7 @@ class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
         return [
             'project' => ['required', Rule::in(array_values($this->projects))],
             'start_timestamp' => ['required', 'date_format:Y-m-d H:i:s'],
-            'end_timestamp' => ['nullable', 'date_format:Y-m-d H:i:s', 'after:start_timestamp'],
+            'end_timestamp' => ['required', 'date_format:Y-m-d H:i:s', 'after:start_timestamp'],
             'note' => ['required', 'string', 'max:255'],
         ];
     }
@@ -101,6 +101,7 @@ class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
             'project.in' => 'Project not found or you don\'t have access to it.',
             'start_timestamp.required' => 'Start timestamp is required.',
             'start_timestamp.date_format' => 'Start timestamp must be in Y-m-d H:i:s format.',
+            'end_timestamp.required' => 'End timestamp is required.',
             'end_timestamp.date_format' => 'End timestamp must be in Y-m-d H:i:s format.',
             'end_timestamp.after' => 'End timestamp must be after start timestamp.',
             'note.required' => 'Note is required.',
