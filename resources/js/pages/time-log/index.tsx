@@ -145,7 +145,6 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                 setImportErrors(response.data.errors)
             }
 
-            // Refresh the page after successful import
             setTimeout(() => {
                 get(route('time-log.index'), {
                     preserveState: true,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Imports;
 
+use App\Http\Stores\ProjectStore;
 use App\Models\Project;
 use App\Models\TimeLog;
 use Carbon\Carbon;
@@ -23,29 +24,38 @@ class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
 
     public function __construct()
     {
-        // Get all projects that the user has access to
-        $this->projects = Project::query()
-            ->where('user_id', Auth::id())
-            ->orWhereHas('teamMembers', function ($query) {
-                $query->where('member_id', Auth::id());
-            })
-            ->pluck('id', 'name')
+        $this->projects = ProjectStore::userProjects(userId: auth()->id())
+            ->pluck('name', 'id')
             ->toArray();
     }
 
-    public function collection(Collection $rows): void
+    public function collection(Collection $collection): void
     {
-        foreach ($rows as $index => $row) {
+        foreach ($collection as $index => $row) {
             if (empty($row['project']) || empty($row['start_timestamp']) || empty($row['note'])) {
                 $this->errors[] = "Row #" . ($index + 2) . ": Missing required fields.";
                 continue;
             }
 
             $projectName = trim($row['project']);
-            $projectId = array_search($projectName, array_flip($this->projects));
+            $projectId = array_search($projectName, $this->projects, true);
 
             if (!$projectId) {
                 $this->errors[] = "Row #" . ($index + 2) . ": Project '{$projectName}' not found or you don't have access to it.";
+                continue;
+            }
+
+            $validator = Validator::make($row, [
+                'project' => ['required', Rule::in(array_keys($this->projects))],
+                'start_timestamp' => ['required', 'date_format:Y-m-d H:i:s'],
+                'end_timestamp' => ['required', 'date_format:Y-m-d H:i:s', 'after:start_timestamp'],
+                'note' => ['required', 'string', 'max:255'],
+            ], [
+                'end_timestamp.after' => 'End timestamp must be after to start timestamp.',
+            ]);
+
+            if ($validator->fails()) {
+                $this->errors[] = "Row #" . ($index + 2) . ": " . implode(', ', $validator->errors()->all());
                 continue;
             }
 
@@ -73,34 +83,6 @@ class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
                 $this->errors[] = "Row #" . ($index + 2) . ": " . $e->getMessage();
             }
         }
-    }
-
-    /**
-     * Get validation rules
-     */
-    public function rules(): array
-    {
-        return [
-            '*.project' => ['required', 'string'],
-            '*.start_timestamp' => ['required', 'date'],
-            '*.end_timestamp' => ['nullable', 'date', 'after_or_equal:*.start_timestamp'],
-            '*.note' => ['required', 'string'],
-        ];
-    }
-
-    /**
-     * Get custom validation messages
-     */
-    public function customValidationMessages(): array
-    {
-        return [
-            '*.project.required' => 'Project is required.',
-            '*.start_timestamp.required' => 'Start timestamp is required.',
-            '*.start_timestamp.date' => 'Start timestamp must be a valid date.',
-            '*.end_timestamp.date' => 'End timestamp must be a valid date.',
-            '*.end_timestamp.after_or_equal' => 'End timestamp must be after or equal to start timestamp.',
-            '*.note.required' => 'Note is required.',
-        ];
     }
 
     /**

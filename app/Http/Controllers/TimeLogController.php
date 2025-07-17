@@ -303,13 +303,12 @@ final class TimeLogController extends Controller
 
     /**
      * Import time logs from Excel
+     * @throws Throwable
      */
     #[Action(method: 'post', name: 'time-log.import', middleware: ['auth', 'verified'])]
     public function import(Request $request): JsonResponse
     {
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls|max:2048',
-        ]);
+        $request->validate(['file' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:2048']]);
 
         DB::beginTransaction();
         try {
@@ -319,7 +318,7 @@ final class TimeLogController extends Controller
             $errors = $import->getErrors();
             $successCount = $import->getSuccessCount();
 
-            if (count($errors) > 0 && $successCount === 0) {
+            if (count($errors) > 0) {
                 DB::rollBack();
                 return response()->json([
                     'success' => false,
