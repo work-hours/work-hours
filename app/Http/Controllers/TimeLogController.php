@@ -25,7 +25,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Writers\CellWriter;
 use Msamgan\Lact\Attributes\Action;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -175,6 +174,7 @@ final class TimeLogController extends Controller
             foreach ($timeLogs as $timeLog) {
                 if (empty($timeLog->start_timestamp) || empty($timeLog->end_timestamp)) {
                     $invalidLogs[] = $timeLog->id;
+
                     continue;
                 }
 
@@ -218,7 +218,7 @@ final class TimeLogController extends Controller
             DB::commit();
 
             // If there were any invalid logs, flash a message to the user
-            if (!empty($invalidLogs)) {
+            if ($invalidLogs !== []) {
                 $count = count($invalidLogs);
                 $message = $count === 1
                     ? "1 time log entry was skipped because it doesn't have both start and end timestamps."
@@ -303,6 +303,7 @@ final class TimeLogController extends Controller
 
     /**
      * Import time logs from Excel
+     *
      * @throws Throwable
      */
     #[Action(method: 'post', name: 'time-log.import', middleware: ['auth', 'verified'])]
@@ -320,6 +321,7 @@ final class TimeLogController extends Controller
 
             if (count($errors) > 0) {
                 DB::rollBack();
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Import failed. No records were imported.',
@@ -336,6 +338,7 @@ final class TimeLogController extends Controller
             ]);
         } catch (Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
                 'message' => 'Import failed: ' . $e->getMessage(),
@@ -359,7 +362,7 @@ final class TimeLogController extends Controller
         $sheet->setCellValue('C1', 'End Timestamp');
         $sheet->setCellValue('D1', 'Note');
 
-        for($row = 2; $row <= 100; $row++) {
+        for ($row = 2; $row <= 100; $row++) {
             $validation = $sheet->getCell('A' . $row)->getDataValidation();
             $validation->setType(DataValidation::TYPE_LIST);
             $validation->setErrorStyle(DataValidation::STYLE_INFORMATION);
@@ -380,7 +383,7 @@ final class TimeLogController extends Controller
         $writer = new Xlsx($spreadsheet);
         $filename = 'time_log_template_' . Carbon::now()->format('Y-m-d') . '.xlsx';
 
-        return response()->streamDownload(function () use ($writer) {
+        return response()->streamDownload(function () use ($writer): void {
             $writer->save('php://output');
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

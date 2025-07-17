@@ -12,7 +12,21 @@ import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
 import axios from 'axios'
-import { AlertCircle, Briefcase, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, FileSpreadsheet, PlusCircle, Search, TimerReset, Upload } from 'lucide-react'
+import {
+    AlertCircle,
+    Briefcase,
+    Calendar,
+    CalendarIcon,
+    CalendarRange,
+    CheckCircle,
+    ClockIcon,
+    Download,
+    FileSpreadsheet,
+    PlusCircle,
+    Search,
+    TimerReset,
+    Upload,
+} from 'lucide-react'
 import { ChangeEvent, FormEventHandler, forwardRef, ReactNode, useRef, useState } from 'react'
 
 interface CustomInputProps {
@@ -136,7 +150,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
             const response = await axios.post(route('time-log.import'), formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                }
+                },
             })
 
             setImportSuccess(response.data.message)
@@ -154,7 +168,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
             const axiosError = error as {
                 response?: {
                     data?: {
-                        errors?: string[],
+                        errors?: string[]
                         message?: string
                     }
                 }
@@ -487,11 +501,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                         <span>Template</span>
                                     </Button>
                                 </a>
-                                <Button
-                                    variant="outline"
-                                    className="flex items-center gap-2"
-                                    onClick={() => setImportDialogOpen(true)}
-                                >
+                                <Button variant="outline" className="flex items-center gap-2" onClick={() => setImportDialogOpen(true)}>
                                     <Upload className="h-4 w-4" />
                                     <span>Import</span>
                                 </Button>
@@ -544,10 +554,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                             <DialogTitle>Import Time Logs</DialogTitle>
                             <DialogDescription>
                                 Upload an Excel file with time logs to import.
-                                <a
-                                    href={route('time-log.template')}
-                                    className="text-primary hover:underline ml-1"
-                                >
+                                <a href={route('time-log.template')} className="ml-1 text-primary hover:underline">
                                     Download template
                                 </a>
                             </DialogDescription>
@@ -563,27 +570,23 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                     ref={fileInputRef}
                                     disabled={importing}
                                 />
-                                <p className="text-sm text-muted-foreground">
-                                    Only .xlsx and .xls files are supported (max 2MB)
-                                </p>
+                                <p className="text-sm text-muted-foreground">Only .xlsx and .xls files are supported (max 2MB)</p>
                             </div>
 
                             {importSuccess && (
-                                <Alert className="bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-900/30">
+                                <Alert className="border-green-200 bg-green-50 dark:border-green-900/30 dark:bg-green-900/20">
                                     <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                                     <AlertTitle className="text-green-800 dark:text-green-400">Success</AlertTitle>
-                                    <AlertDescription className="text-green-700 dark:text-green-400">
-                                        {importSuccess}
-                                    </AlertDescription>
+                                    <AlertDescription className="text-green-700 dark:text-green-400">{importSuccess}</AlertDescription>
                                 </Alert>
                             )}
 
                             {importErrors.length > 0 && (
-                                <Alert className="bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-900/30">
+                                <Alert className="border-red-200 bg-red-50 dark:border-red-900/30 dark:bg-red-900/20">
                                     <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
                                     <AlertTitle className="text-red-800 dark:text-red-400">Error</AlertTitle>
                                     <AlertDescription className="text-red-700 dark:text-red-400">
-                                        <ul className="list-disc pl-5 space-y-1 mt-2">
+                                        <ul className="mt-2 list-disc space-y-1 pl-5">
                                             {importErrors.map((error, index) => (
                                                 <li key={index}>{error}</li>
                                             ))}
@@ -593,19 +596,10 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                             )}
                         </div>
                         <DialogFooter className="sm:justify-between">
-                            <Button
-                                type="button"
-                                variant="secondary"
-                                onClick={closeImportDialog}
-                                disabled={importing}
-                            >
+                            <Button type="button" variant="secondary" onClick={closeImportDialog} disabled={importing}>
                                 Cancel
                             </Button>
-                            <Button
-                                type="button"
-                                onClick={handleImport}
-                                disabled={!importFile || importing}
-                            >
+                            <Button type="button" onClick={handleImport} disabled={!importFile || importing}>
                                 {importing ? 'Importing...' : 'Import'}
                             </Button>
                         </DialogFooter>

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Imports;
 
 use App\Http\Stores\ProjectStore;
-use App\Models\Project;
 use App\Models\TimeLog;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -16,12 +16,13 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
+final class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
 {
-    private array $projects;
+    private readonly array $projects;
+
     private array $errors = [];
+
     private int $successCount = 0;
-    private int $currentRowIndex = 0;
 
     public function __construct()
     {
@@ -33,33 +34,29 @@ class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
     public function collection(Collection $collection): void
     {
         foreach ($collection as $index => $row) {
-            $this->currentRowIndex = $index + 2; // +2 because of the header row and 0-based index
             if (empty($row['project']) || empty($row['start_timestamp']) || empty($row['note'])) {
-                $this->errors[] = "Row #" . ($index + 2) . ": Missing required fields.";
+                $this->errors[] = 'Row #' . ($index + 2) . ': Missing required fields.';
+
                 continue;
             }
 
-            $projectName = trim($row['project']);
+            $projectName = mb_trim((string) $row['project']);
             $projectId = array_search($projectName, $this->projects, true);
 
-            if (!$projectId) {
-                $this->errors[] = "Row #" . ($index + 2) . ": Project '{$projectName}' not found or you don't have access to it.";
+            if (! $projectId) {
+                $this->errors[] = 'Row #' . ($index + 2) . ": Project '{$projectName}' not found or you don't have access to it.";
+
                 continue;
             }
 
             $validator = Validator::make($row->toArray(), $this->rules(), $this->customValidationMessages());
 
-            if ($validator->fails()) {
-                $this->errors[] = implode(', ', $validator->errors()->all());
-                continue;
-            }
-
             try {
                 $startTimestamp = Carbon::parse($row['start_timestamp']);
-                $endTimestamp = !empty($row['end_timestamp']) ? Carbon::parse($row['end_timestamp']) : null;
+                $endTimestamp = empty($row['end_timestamp']) ? null : Carbon::parse($row['end_timestamp']);
 
                 $duration = null;
-                if ($startTimestamp && $endTimestamp) {
+                if ($endTimestamp instanceof Carbon) {
                     $duration = round(abs($startTimestamp->diffInMinutes($endTimestamp)) / 60, 2);
                 }
 
@@ -74,8 +71,8 @@ class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
                 ]);
 
                 $this->successCount++;
-            } catch (\Exception $e) {
-                $this->errors[] = "Row #" . ($index + 2) . ": " . $e->getMessage();
+            } catch (Exception $e) {
+                $this->errors[] = 'Row #' . ($index + 2) . ': ' . $e->getMessage();
             }
         }
     }
@@ -98,18 +95,16 @@ class TimeLogImport implements ToCollection, WithHeadingRow, WithValidation
      */
     public function customValidationMessages(): array
     {
-        $rowPrefix = "Row #{$this->currentRowIndex}: ";
-
         return [
-            'project.required' => $rowPrefix . 'Project is required.',
-            'project.in' => $rowPrefix . 'Project not found or you don\'t have access to it.',
-            'start_timestamp.required' => $rowPrefix . 'Start timestamp is required.',
-            'start_timestamp.date_format' => $rowPrefix . 'Start timestamp must be in Y-m-d H:i:s format.',
-            'end_timestamp.required' => $rowPrefix . 'End timestamp is required.',
-            'end_timestamp.date_format' => $rowPrefix . 'End timestamp must be in Y-m-d H:i:s format.',
-            'end_timestamp.after' => $rowPrefix . 'End timestamp must be after start timestamp.',
-            'note.required' => $rowPrefix . 'Note is required.',
-            'note.max' => $rowPrefix . 'Note cannot be longer than 255 characters.',
+            'project.required' => 'Project is required.',
+            'project.in' => 'Project not found or you don\'t have access to it.',
+            'start_timestamp.required' => 'Start timestamp is required.',
+            'start_timestamp.date_format' => 'Start timestamp must be in Y-m-d H:i:s format.',
+            'end_timestamp.required' => 'End timestamp is required.',
+            'end_timestamp.date_format' => 'End timestamp must be in Y-m-d H:i:s format.',
+            'end_timestamp.after' => 'End timestamp must be after start timestamp.',
+            'note.required' => 'Note is required.',
+            'note.max' => 'Note cannot be longer than 255 characters.',
         ];
     }
 
