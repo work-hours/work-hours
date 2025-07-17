@@ -131,7 +131,7 @@ final class ClientController extends Controller
         ]);
     }
 
-    #[Action(method: 'get', name: 'client.projects', params: ['client'], middleware: ['auth', 'verified'])]
+    #[Action(method: 'get', params: ['client'], middleware: ['auth', 'verified'])]
     public function clientProjects(Client $client): Collection
     {
         return ClientStore::clientProjects($client);
