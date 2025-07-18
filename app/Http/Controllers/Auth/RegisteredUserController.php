@@ -46,6 +46,8 @@ final class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $user->currencies()->create(['code' => 'USD']);
+
         event(new Registered($user));
 
         Auth::login($user);

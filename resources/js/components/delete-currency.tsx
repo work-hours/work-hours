@@ -50,9 +50,7 @@ export default function DeleteCurrency({ currencyId, currencyCode }: DeleteCurre
             </DialogTrigger>
             <DialogContent>
                 <DialogTitle>Delete Currency</DialogTitle>
-                <DialogDescription>
-                    Are you sure you want to delete the currency "{currencyCode}"? This action cannot be undone.
-                </DialogDescription>
+                <DialogDescription>Are you sure you want to delete the currency "{currencyCode}"? This action cannot be undone.</DialogDescription>
                 <form className="space-y-6" onSubmit={deleteCurrency}>
                     <DialogFooter className="gap-2">
                         <DialogClose asChild>
