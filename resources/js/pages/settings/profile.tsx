@@ -11,6 +11,7 @@ import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import AppLayout from '@/layouts/app-layout'
 import SettingsLayout from '@/layouts/settings/layout'
 
@@ -25,15 +26,19 @@ type ProfileForm = {
     name: string
     email: string
     hourly_rate: string
+    currency: string
 }
 
-export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
+export default function Profile({ mustVerifyEmail, status, currencies }: { mustVerifyEmail: boolean; status?: string; currencies: string[] }) {
     const { auth } = usePage<SharedData>().props
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
         name: auth.user.name,
         email: auth.user.email,
         hourly_rate: auth.user.hourly_rate !== null ? String(auth.user.hourly_rate) : '',
+        currency: auth.user.currency || 'USD',
     })
 
     const submit: FormEventHandler = (e) => {
@@ -123,6 +128,25 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 />
                             </div>
                             <InputError className="mt-1" message={errors.hourly_rate} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="currency" className="text-sm font-medium">
+                                Currency
+                            </Label>
+                            <Select value={data.currency} onValueChange={(value) => setData('currency', value)}>
+                                <SelectTrigger id="currency">
+                                    <SelectValue placeholder="Select currency" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {currencies.map((code: string) => (
+                                        <SelectItem key={code} value={code}>
+                                            {code}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <InputError className="mt-1" message={errors.currency} />
                         </div>
 
                         {mustVerifyEmail && auth.user.email_verified_at === null && (

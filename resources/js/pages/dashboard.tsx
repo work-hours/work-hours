@@ -20,8 +20,12 @@ interface TeamStats {
     totalHours: number
     unpaidHours: number
     unpaidAmount: number
+    unpaidAmountsByCurrency: Record<string, number>
+    paidAmount: number
+    paidAmountsByCurrency: Record<string, number>
     currency: string
     weeklyAverage: number
+    clientCount: number
 }
 
 interface Project {
@@ -43,8 +47,12 @@ export default function Dashboard() {
         totalHours: 0,
         unpaidHours: 0,
         unpaidAmount: 0,
+        unpaidAmountsByCurrency: {},
+        paidAmount: 0,
+        paidAmountsByCurrency: {},
         currency: 'USD',
         weeklyAverage: 0,
+        clientCount: 0,
     })
     const [userProjects, setUserProjects] = useState<Project[]>([])
 
@@ -104,16 +112,25 @@ export default function Dashboard() {
                     </>
                 ) : (
                     <>
-                        <StatsCards teamStats={teamStats} />
-
-                        <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <HoursDistribution hoursData={hoursData} />
-                            <WeeklyTrend weeklyData={weeklyData} />
+                        <section className="mb-4">
+                            <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
+                            <StatsCards teamStats={teamStats} />
                         </section>
 
-                        <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <RecentTimeLogs />
-                            <TeamProductivity teamStats={teamStats} />
+                        <section className="mb-4">
+                            <h3 className="mb-2 text-sm font-medium text-muted-foreground">Analytics</h3>
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <HoursDistribution hoursData={hoursData} />
+                                <WeeklyTrend weeklyData={weeklyData} />
+                            </div>
+                        </section>
+
+                        <section className="mb-4">
+                            <h3 className="mb-2 text-sm font-medium text-muted-foreground">Activity</h3>
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <RecentTimeLogs />
+                                <TeamProductivity teamStats={teamStats} />
+                            </div>
                         </section>
                     </>
                 )}

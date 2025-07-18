@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
-            $table->foreignId('client_id')->nullable()->constrained()->onDelete('set null');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('currency', 10)->default('USD')->after('hourly_rate');
         });
     }
 
@@ -23,9 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
-            $table->dropForeign(['client_id']);
-            $table->dropColumn('client_id');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('currency');
         });
     }
 };

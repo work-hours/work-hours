@@ -22,7 +22,7 @@ export default function Features() {
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     <article className="animate-fade-up animate-once animate-delay-500 group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
+                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                             <Clock className="h-8 w-8 text-primary" aria-hidden="true" />
                         </div>
@@ -34,7 +34,7 @@ export default function Features() {
                     </article>
 
                     <article className="animate-fade-up animate-once animate-delay-700 group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
+                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                             <BarChart2 className="h-8 w-8 text-primary" aria-hidden="true" />
                         </div>
@@ -46,7 +46,7 @@ export default function Features() {
                     </article>
 
                     <article className="animate-fade-up animate-once animate-delay-900 group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
+                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                             <Users className="h-8 w-8 text-primary" aria-hidden="true" />
                         </div>
@@ -58,7 +58,7 @@ export default function Features() {
                     </article>
 
                     <article className="animate-fade-up animate-once animate-delay-[1100ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
+                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                             <Briefcase className="h-8 w-8 text-primary" aria-hidden="true" />
                         </div>
@@ -70,7 +70,7 @@ export default function Features() {
                     </article>
 
                     <article className="animate-fade-up animate-once animate-delay-[1300ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
+                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                             <Upload className="h-8 w-8 text-primary" aria-hidden="true" />
                         </div>
@@ -82,14 +82,14 @@ export default function Features() {
                     </article>
 
                     <article className="animate-fade-up animate-once animate-delay-[1500ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
+                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                             <Github className="h-8 w-8 text-primary" aria-hidden="true" />
                         </div>
                         <h3 className="mb-3 text-2xl font-bold text-foreground">GitHub Integration</h3>
                         <p className="text-muted-foreground">
-                            Connect your GitHub account to import repositories as projects. Track time spent on specific repositories and
-                            streamline your development workflow.
+                            Connect your GitHub account to import repositories as projects. Track time spent on specific repositories and streamline
+                            your development workflow.
                         </p>
                     </article>
                 </div>
@@ -98,9 +98,9 @@ export default function Features() {
             {/* Highlighted Integration Section */}
             <section id="integration" className="container mx-auto mb-24 px-6 lg:px-8" aria-label="GitHub integration">
                 <div className="animate-fade-up animate-once relative overflow-hidden rounded-2xl border-2 border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10 p-8 shadow-lg">
-                    <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/5 opacity-70 blur-3xl"></div>
-                    <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-primary/5 opacity-70 blur-3xl"></div>
-                    <div className="flex flex-col md:flex-row md:items-center md:gap-12 relative z-10">
+                    <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-primary/5 opacity-70 blur-3xl"></div>
+                    <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-primary/5 opacity-70 blur-3xl"></div>
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-center md:gap-12">
                         <div className="mb-8 md:mb-0 md:w-1/4">
                             <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-2xl bg-primary/20 shadow-md transition-colors">
                                 <Github className="h-12 w-12 text-primary" aria-label="GitHub logo" />

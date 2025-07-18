@@ -25,6 +25,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $remember_token
  * @property string|null $github_token
  * @property float|null $hourly_rate
+ * @property string|null $currency
  * @property mixed $unreadNotifications
  */
 #[UsePolicy(TeamPolicy::class)]
@@ -44,6 +45,7 @@ final class User extends Authenticatable implements MustVerifyEmail
         'password',
         'github_token',
         'hourly_rate',
+        'currency',
     ];
 
     /**
@@ -64,6 +66,11 @@ final class User extends Authenticatable implements MustVerifyEmail
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
+    }
+
+    public function currencies(): HasMany
+    {
+        return $this->hasMany(Currency::class)->orderBy('created_at', 'ASC');
     }
 
     /**

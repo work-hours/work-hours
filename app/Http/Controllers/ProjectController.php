@@ -174,6 +174,7 @@ final class ProjectController extends Controller
 
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('project_id', $project->getKey()));
         $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
+        $paidAmount = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
 
         $mappedTimeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
         $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
@@ -195,6 +196,7 @@ final class ProjectController extends Controller
             'totalDuration' => $totalDuration,
             'unpaidHours' => $unpaidHours,
             'unpaidAmount' => $unpaidAmount,
+            'paidAmount' => $paidAmount,
             'weeklyAverage' => $weeklyAverage,
         ]);
     }

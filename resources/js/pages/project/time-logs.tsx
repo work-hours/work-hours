@@ -1,4 +1,5 @@
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
+import StatsCards from '@/components/dashboard/StatsCards'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
@@ -8,19 +9,22 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
-import { ArrowLeft, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset, User } from 'lucide-react'
+import { ArrowLeft, Calendar, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset, User } from 'lucide-react'
 import { FormEventHandler, forwardRef, useState } from 'react'
 
 type TimeLog = {
     id: number
     user_id: number
     user_name: string
+    project_name?: string | null
     start_timestamp: string
     end_timestamp: string
     duration: number
     is_paid: boolean
+    note?: string
     hourly_rate?: number
     paid_amount?: number
+    currency?: string
 }
 
 type Filters = {
@@ -91,7 +95,8 @@ type Props = {
     teamMembers: TeamMember[]
     totalDuration: number
     unpaidHours: number
-    unpaidAmount: number
+    unpaidAmount: Record<string, number>
+    paidAmount: Record<string, number>
     weeklyAverage: number
     isCreator: boolean
 }
@@ -104,6 +109,7 @@ export default function ProjectTimeLogs({
     totalDuration,
     unpaidHours,
     unpaidAmount,
+    paidAmount,
     weeklyAverage,
     isCreator,
 }: Props) {
@@ -118,10 +124,8 @@ export default function ProjectTimeLogs({
         },
     ]
 
-    // State for selected time logs
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
 
-    // Handle checkbox selection
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
             setSelectedLogs([...selectedLogs, id])
@@ -130,7 +134,6 @@ export default function ProjectTimeLogs({
         }
     }
 
-    // Mark selected logs as paid
     const markAsPaid = () => {
         if (selectedLogs.length === 0) {
             return
@@ -156,11 +159,9 @@ export default function ProjectTimeLogs({
         is_paid: filters.is_paid || '',
     })
 
-    // Convert string dates to Date objects for DatePicker
     const startDate = data.start_date ? new Date(data.start_date) : null
     const endDate = data.end_date ? new Date(data.end_date) : null
 
-    // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
             setData('start_date', date.toISOString().split('T')[0])
@@ -188,7 +189,6 @@ export default function ProjectTimeLogs({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${project.name} - Time Logs`} />
             <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
-                {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
                         <Link href={route('project.index')}>
@@ -204,107 +204,24 @@ export default function ProjectTimeLogs({
                     </div>
                 </section>
 
-                {/* Stats Cards */}
                 {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                        {/* Total hours card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="mb-2 flex flex-row items-center justify-between">
-                                    <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
-                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{totalDuration}</div>
-                                <p className="text-xs text-muted-foreground">
-                                    {filters.start_date && filters.end_date
-                                        ? `Hours logged from ${filters.start_date} to ${filters.end_date}`
-                                        : filters.start_date
-                                          ? `Hours logged from ${filters.start_date}`
-                                          : filters.end_date
-                                            ? `Hours logged until ${filters.end_date}`
-                                            : 'Total hours logged'}
-                                </p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Unpaid hours card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="mb-2 flex flex-row items-center justify-between">
-                                    <CardTitle className="text-sm font-medium">Unpaid Hours</CardTitle>
-                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{unpaidHours}</div>
-                                <p className="text-xs text-muted-foreground">Hours pending payment</p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Unpaid amount card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="mb-2 flex flex-row items-center justify-between">
-                                    <CardTitle className="text-sm font-medium">Unpaid Amount</CardTitle>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="h-4 w-4 text-muted-foreground"
-                                    >
-                                        <circle cx="12" cy="12" r="10" />
-                                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                        <path d="M12 18V6" />
-                                    </svg>
-                                </div>
-                                <div className="text-2xl font-bold">{unpaidAmount}</div>
-                                <p className="text-xs text-muted-foreground">Amount pending payment</p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Paid amount card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="mb-2 flex flex-row items-center justify-between">
-                                    <CardTitle className="text-sm font-medium">Paid Amount</CardTitle>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="h-4 w-4 text-muted-foreground"
-                                    >
-                                        <circle cx="12" cy="12" r="10" />
-                                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                        <path d="M12 18V6" />
-                                    </svg>
-                                </div>
-                                <div className="text-2xl font-bold">{project.paid_amount}</div>
-                                <p className="text-xs text-muted-foreground">Amount already paid</p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Weekly average card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="mb-2 flex flex-row items-center justify-between">
-                                    <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
-                                    <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                                </div>
-                                <div className="text-2xl font-bold">{weeklyAverage}</div>
-                                <p className="text-xs text-muted-foreground">Hours per week</p>
-                            </CardContent>
-                        </Card>
-                    </div>
+                    <section className="mb-4">
+                        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
+                        <StatsCards
+                            teamStats={{
+                                count: -1,
+                                totalHours: totalDuration,
+                                unpaidHours: unpaidHours,
+                                unpaidAmount: Object.values(unpaidAmount).reduce((sum, amount) => sum + amount, 0),
+                                unpaidAmountsByCurrency: unpaidAmount,
+                                paidAmount: Object.values(paidAmount).reduce((sum, amount) => sum + amount, 0),
+                                paidAmountsByCurrency: paidAmount,
+                                currency: Object.keys(unpaidAmount)[0] || Object.keys(paidAmount)[0] || 'USD',
+                                weeklyAverage: weeklyAverage,
+                                clientCount: -1,
+                            }}
+                        />
+                    </section>
                 )}
 
                 {/* Filter Card */}
@@ -495,7 +412,7 @@ export default function ProjectTimeLogs({
                     <CardContent>
                         {timeLogs.length > 0 ? (
                             <TimeLogTable
-                                timeLogs={timeLogs as unknown as TimeLogEntry[]}
+                                timeLogs={timeLogs as TimeLogEntry[]}
                                 showCheckboxes={isCreator}
                                 showTeamMember={true}
                                 showProject={false}

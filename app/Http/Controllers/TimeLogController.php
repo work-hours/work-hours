@@ -42,8 +42,10 @@ final class TimeLogController extends Controller
         $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
         $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
         $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
+        $paidHours = round($mappedTimeLogs->where('is_paid', true)->sum('duration'), 2);
         $team = TeamStore::teamEntry(userId: auth()->id(), memberId: auth()->id());
         $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
+        $paidAmount = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
         $currency = $team instanceof Team ? $team->currency : 'USD';
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
         $projects = ProjectStore::userProjects(userId: auth()->id());
@@ -59,7 +61,9 @@ final class TimeLogController extends Controller
             'projects' => $projects,
             'totalDuration' => $totalDuration,
             'unpaidHours' => $unpaidHours,
+            'paidHours' => $paidHours,
             'unpaidAmount' => $unpaidAmount,
+            'paidAmount' => $paidAmount,
             'currency' => $currency,
             'weeklyAverage' => $weeklyAverage,
         ]);
@@ -76,6 +80,11 @@ final class TimeLogController extends Controller
         try {
             $data = $request->validated();
             $data['user_id'] = auth()->id();
+
+            $project = Project::query()->find($data['project_id']);
+
+            $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
+            $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
 
             $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
@@ -243,6 +252,11 @@ final class TimeLogController extends Controller
         DB::beginTransaction();
         try {
             $data = $request->validated();
+
+            $project = Project::query()->find($data['project_id']);
+            $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
+            $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
+
             $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
             if ($isLogCompleted) {
@@ -258,7 +272,7 @@ final class TimeLogController extends Controller
             if ($isLogCompleted) {
                 $teamLeader = User::teamLeader(project: $timeLog->project);
                 if (auth()->id() !== $teamLeader->getKey()) {
-                    $teamLeader->notify(new TimeLogEntry($timeLog));
+                    $teamLeader->notify(new TimeLogEntry($timeLog , auth()->user()));
                 }
             }
 

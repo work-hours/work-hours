@@ -41,21 +41,21 @@ export default function RecentTimeLogs() {
     }, [])
 
     return (
-        <Card className="overflow-hidden transition-all hover:shadow-md">
-            <CardHeader>
+        <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
+            <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                     <div>
-                        <CardTitle>Recent Time Logs</CardTitle>
-                        <CardDescription>Your team's latest activity</CardDescription>
+                        <CardTitle className="text-xs font-medium">Recent Time Logs</CardTitle>
+                        <CardDescription className="text-[10px]">Your team's latest activity</CardDescription>
                     </div>
                     {!loading && (
-                        <Link href={recentLogs.allLogsLink} className="text-sm text-primary hover:underline">
+                        <Link href={recentLogs.allLogsLink} className="text-xs text-primary hover:underline">
                             View all logs
                         </Link>
                     )}
                 </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="py-1">
                 <div className="space-y-2">
                     {loading ? (
                         <Loader message="Loading recent logs..." />
