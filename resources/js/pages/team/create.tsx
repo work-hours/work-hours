@@ -1,6 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import { ArrowLeft, LoaderCircle, Lock, Mail, User, UserPlus } from 'lucide-react'
-import React, { FormEventHandler } from 'react'
+import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'

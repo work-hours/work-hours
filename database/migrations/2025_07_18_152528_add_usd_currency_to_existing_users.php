@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Models\Currency;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -49,7 +48,7 @@ return new class extends Migration
             $query->where('code', '!=', 'USD');
         })->pluck('id')->toArray();
 
-        if (!empty($usersWithMultipleCurrencies)) {
+        if (! empty($usersWithMultipleCurrencies)) {
             Currency::whereIn('user_id', $usersWithMultipleCurrencies)
                 ->where('code', 'USD')
                 ->delete();

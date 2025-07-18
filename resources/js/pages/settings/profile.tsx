@@ -29,11 +29,7 @@ type ProfileForm = {
     currency: string
 }
 
-export default function Profile({ mustVerifyEmail, status, currencies }: {
-    mustVerifyEmail: boolean;
-    status?: string;
-    currencies: string[];
-}) {
+export default function Profile({ mustVerifyEmail, status, currencies }: { mustVerifyEmail: boolean; status?: string; currencies: string[] }) {
     const { auth } = usePage<SharedData>().props
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -138,10 +134,7 @@ export default function Profile({ mustVerifyEmail, status, currencies }: {
                             <Label htmlFor="currency" className="text-sm font-medium">
                                 Currency
                             </Label>
-                            <Select
-                                value={data.currency}
-                                onValueChange={(value) => setData('currency', value)}
-                            >
+                            <Select value={data.currency} onValueChange={(value) => setData('currency', value)}>
                                 <SelectTrigger id="currency">
                                     <SelectValue placeholder="Select currency" />
                                 </SelectTrigger>
