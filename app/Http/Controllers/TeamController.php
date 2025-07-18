@@ -152,6 +152,7 @@ final class TeamController extends Controller
             ];
 
             Team::query()->create($teamData);
+            $user->currencies()->create(['code' => 'USD']);
 
             DB::commit();
 
