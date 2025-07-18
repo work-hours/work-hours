@@ -133,6 +133,22 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     />
 
                     <StatsCard
+                        title="Unpaid Hours"
+                        icon={<ClockIcon className="h-4 w-4 text-muted-foreground" />}
+                        value={roundToTwoDecimals(teamStats.unpaidHours)}
+                        description="Hours pending payment"
+                        borderColor="amber-500"
+                    />
+
+                    <StatsCard
+                        title="Paid Hours"
+                        icon={<ClockIcon className="h-4 w-4 text-muted-foreground" />}
+                        value={roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours)}
+                        description="Hours already paid"
+                        borderColor="green-500"
+                    />
+
+                    <StatsCard
                         title="Weekly Average"
                         icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />}
                         value={roundToTwoDecimals(teamStats.weeklyAverage)}
