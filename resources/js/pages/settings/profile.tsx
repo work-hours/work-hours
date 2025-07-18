@@ -32,7 +32,7 @@ type ProfileForm = {
 export default function Profile({ mustVerifyEmail, status, currencies }: {
     mustVerifyEmail: boolean;
     status?: string;
-    currencies: Record<string, string>;
+    currencies: string[];
 }) {
     const { auth } = usePage<SharedData>().props
 
@@ -144,9 +144,9 @@ export default function Profile({ mustVerifyEmail, status, currencies }: {
                                     <SelectValue placeholder="Select currency" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {Object.entries(currencies).map(([code, name]) => (
+                                    {currencies.map((code) => (
                                         <SelectItem key={code} value={code}>
-                                            {code} - {name}
+                                            {code}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

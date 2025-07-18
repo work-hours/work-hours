@@ -20,24 +20,10 @@ final class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        // Common currency codes
-        $currencies = [
-            'USD' => 'US Dollar',
-            'EUR' => 'Euro',
-            'GBP' => 'British Pound',
-            'JPY' => 'Japanese Yen',
-            'CAD' => 'Canadian Dollar',
-            'AUD' => 'Australian Dollar',
-            'CHF' => 'Swiss Franc',
-            'CNY' => 'Chinese Yuan',
-            'INR' => 'Indian Rupee',
-            'SGD' => 'Singapore Dollar',
-        ];
-
         return Inertia::render('settings/profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
-            'currencies' => $currencies,
+            'currencies' => $request->user()->currencies()->pluck('code')->toArray(),
         ]);
     }
 
