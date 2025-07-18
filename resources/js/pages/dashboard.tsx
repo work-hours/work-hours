@@ -20,8 +20,11 @@ interface TeamStats {
     totalHours: number
     unpaidHours: number
     unpaidAmount: number
+    unpaidAmountsByCurrency: Record<string, number>
+    paidAmount: number
     currency: string
     weeklyAverage: number
+    clientCount: number
 }
 
 interface Project {
@@ -43,8 +46,11 @@ export default function Dashboard() {
         totalHours: 0,
         unpaidHours: 0,
         unpaidAmount: 0,
+        unpaidAmountsByCurrency: {},
+        paidAmount: 0,
         currency: 'USD',
         weeklyAverage: 0,
+        clientCount: 0,
     })
     const [userProjects, setUserProjects] = useState<Project[]>([])
 
