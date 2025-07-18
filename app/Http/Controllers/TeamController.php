@@ -137,7 +137,7 @@ final class TeamController extends Controller
                 'user_id' => auth()->id(),
                 'member_id' => $user->getKey(),
                 'hourly_rate' => $request->get('hourly_rate') ?? 0,
-                'currency' => 'USD',
+                'currency' => $request->get('currency'),
             ];
 
             Team::query()->create($teamData);
@@ -156,7 +156,9 @@ final class TeamController extends Controller
 
     public function create()
     {
-        return Inertia::render('team/create');
+        return Inertia::render('team/create', [
+            'currencies' => auth()->user()->currencies,
+        ]);
     }
 
     public function edit(User $user)
@@ -173,6 +175,7 @@ final class TeamController extends Controller
                 'hourly_rate' => $team->hourly_rate,
                 'currency' => $team->currency,
             ],
+            'currencies' => auth()->user()->currencies,
         ]);
     }
 
@@ -200,7 +203,7 @@ final class TeamController extends Controller
 
             $teamData = [
                 'hourly_rate' => $data['hourly_rate'] ?? 0,
-                'currency' => 'USD',
+                'currency' => $data['currency'],
             ];
             unset($data['hourly_rate'], $data['currency']);
 

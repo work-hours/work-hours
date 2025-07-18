@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 
@@ -17,6 +18,18 @@ type TeamMemberForm = {
     password: string
     hourly_rate: number | string
     currency: string
+}
+
+type Currency = {
+    id: number
+    user_id: number
+    code: string
+    created_at: string
+    updated_at: string
+}
+
+type Props = {
+    currencies: Currency[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -30,21 +43,14 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-export default function CreateTeamMember() {
+export default function CreateTeamMember({ currencies }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<Required<TeamMemberForm>>({
         name: '',
         email: '',
         password: '',
         hourly_rate: 0,
-        currency: 'USD', // Fixed to USD and non-changeable
+        currency: currencies.length > 0 ? currencies[0].code : 'USD',
     })
-
-    // Ensure currency is always USD
-    React.useEffect(() => {
-        if (data.currency !== 'USD') {
-            setData('currency', 'USD')
-        }
-    }, [data.currency])
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
@@ -178,13 +184,28 @@ export default function CreateTeamMember() {
                                     <Label htmlFor="currency" className="text-sm font-medium">
                                         Currency
                                     </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <span className="h-4 w-4 text-muted-foreground">¤</span>
-                                        </div>
-                                        <Input id="currency" type="text" value="USD" disabled={true} className="bg-gray-100 pl-10 dark:bg-gray-800" />
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">Currency is fixed to USD</p>
+                                    <Select
+                                        value={data.currency}
+                                        onValueChange={(value) => setData('currency', value)}
+                                        disabled={processing || currencies.length === 0}
+                                    >
+                                        <SelectTrigger id="currency" className="w-full">
+                                            <SelectValue placeholder="Select a currency" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {currencies.map((currency) => (
+                                                <SelectItem key={currency.id} value={currency.code}>
+                                                    {currency.code}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {currencies.length === 0 && (
+                                        <p className="text-xs text-muted-foreground">
+                                            No currencies available. Please add currencies in the settings.
+                                        </p>
+                                    )}
+                                    <InputError message={errors.currency} />
                                 </div>
 
                                 <div className="mt-4 flex justify-end gap-3">
