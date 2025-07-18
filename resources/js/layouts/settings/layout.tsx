@@ -20,14 +20,14 @@ const sidebarNavItems: NavItem[] = [
         icon: KeyRound,
     },
     {
-        title: 'Appearance',
-        href: '/settings/appearance',
-        icon: Palette,
-    },
-    {
         title: 'Currency',
         href: '/settings/currency',
         icon: DollarSign,
+    },
+    {
+        title: 'Appearance',
+        href: '/settings/appearance',
+        icon: Palette,
     },
 ]
 
