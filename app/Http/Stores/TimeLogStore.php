@@ -80,22 +80,31 @@ final class TimeLogStore
             ->get();
     }
 
-    public static function paidAmount(array $teamMembersIds): float
+    public static function paidAmount(array $teamMembersIds): array
     {
-        $paidAmount = 0;
+        $paidAmounts = [];
         foreach ($teamMembersIds as $memberId) {
             $paidLogs = self::paidTimeLog(teamMemberId: $memberId);
-            $paidLogs->each(function ($log) use (&$paidAmount, $memberId): void {
+            $paidLogs->each(function ($log) use (&$paidAmounts, $memberId): void {
                 $memberPaidHours = $log->duration;
                 $hourlyRate = Team::memberHourlyRate(project: $log->project, memberId: $memberId);
+                $currency = $log->currency ?? 'USD';
 
                 if ($hourlyRate) {
-                    $paidAmount += $memberPaidHours * $hourlyRate;
+                    if (!isset($paidAmounts[$currency])) {
+                        $paidAmounts[$currency] = 0;
+                    }
+                    $paidAmounts[$currency] += $memberPaidHours * $hourlyRate;
                 }
             });
         }
 
-        return round($paidAmount, 2);
+        // Round all amounts to 2 decimal places
+        foreach ($paidAmounts as $currency => $amount) {
+            $paidAmounts[$currency] = round($amount, 2);
+        }
+
+        return $paidAmounts;
     }
 
     public static function paidTimeLog(int $teamMemberId): Collection
@@ -129,6 +138,30 @@ final class TimeLogStore
         }
 
         return $unpaidAmounts;
+    }
+
+    public static function paidAmountFromLogs(\Illuminate\Support\Collection $timeLogs): array
+    {
+        $paidAmounts = [];
+
+        $timeLogs->each(function (TimeLog $timeLog) use (&$paidAmounts): void {
+            $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+            $currency = $timeLog->currency ?? 'USD';
+
+            if ($timeLog['is_paid']) {
+                if (!isset($paidAmounts[$currency])) {
+                    $paidAmounts[$currency] = 0;
+                }
+                $paidAmounts[$currency] += $timeLog['duration'] * $hourlyRate;
+            }
+        });
+
+        // Round all amounts to 2 decimal places
+        foreach ($paidAmounts as $currency => $amount) {
+            $paidAmounts[$currency] = round($amount, 2);
+        }
+
+        return $paidAmounts;
     }
 
     public static function timeLogs(Builder $baseQuery)

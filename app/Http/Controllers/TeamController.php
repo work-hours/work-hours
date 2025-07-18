@@ -90,14 +90,18 @@ final class TeamController extends Controller
 
         $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
         $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
+        $paidHours = round($mappedTimeLogs->where('is_paid', true)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
         $team = TeamStore::teamEntry(userId: auth()->id(), memberId: $user->getKey());
         $unpaidAmountsByCurrency = TimeLogStore::unpaidAmountFromLogs($timeLogs);
+        $paidAmountsByCurrency = TimeLogStore::paidAmountFromLogs($timeLogs);
         $defaultCurrency = $team instanceof Team ? $team->currency : 'USD';
 
         // For backward compatibility, calculate total unpaid amount
         $totalUnpaidAmount = array_sum($unpaidAmountsByCurrency);
+        // For backward compatibility, calculate total paid amount
+        $totalPaidAmount = array_sum($paidAmountsByCurrency);
 
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
@@ -113,8 +117,11 @@ final class TeamController extends Controller
             'user' => $user,
             'totalDuration' => $totalDuration,
             'unpaidHours' => $unpaidHours,
+            'paidHours' => $paidHours,
             'unpaidAmount' => round($totalUnpaidAmount, 2),
             'unpaidAmountsByCurrency' => $unpaidAmountsByCurrency,
+            'paidAmount' => round($totalPaidAmount, 2),
+            'paidAmountsByCurrency' => $paidAmountsByCurrency,
             'currency' => $defaultCurrency,
             'weeklyAverage' => $weeklyAverage,
         ]);
@@ -253,9 +260,11 @@ final class TeamController extends Controller
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->whereIn('user_id', TeamStore::teamMembersIds(userId: auth()->id())));
         $unpaidAmountsByCurrency = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
+        $paidAmountsByCurrency = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
         $timeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
         $totalDuration = round($timeLogs->sum('duration'), 2);
         $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
+        $paidHours = round($timeLogs->where('is_paid', true)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
         $defaultCurrency = 'USD';
@@ -266,6 +275,8 @@ final class TeamController extends Controller
 
         // For backward compatibility, calculate total unpaid amount
         $totalUnpaidAmount = array_sum($unpaidAmountsByCurrency);
+        // For backward compatibility, calculate total paid amount
+        $totalPaidAmount = array_sum($paidAmountsByCurrency);
 
         return Inertia::render('team/all-time-logs', [
             'timeLogs' => $timeLogs,
@@ -280,8 +291,11 @@ final class TeamController extends Controller
             'teamMembers' => $teamMembersList,
             'totalDuration' => $totalDuration,
             'unpaidHours' => $unpaidHours,
+            'paidHours' => $paidHours,
             'unpaidAmount' => round($totalUnpaidAmount, 2),
             'unpaidAmountsByCurrency' => $unpaidAmountsByCurrency,
+            'paidAmount' => round($totalPaidAmount, 2),
+            'paidAmountsByCurrency' => $paidAmountsByCurrency,
             'currency' => $defaultCurrency,
             'weeklyAverage' => $weeklyAverage,
         ]);

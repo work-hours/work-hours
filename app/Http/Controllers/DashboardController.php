@@ -41,11 +41,13 @@ final class DashboardController extends Controller
         $totalHours = TimeLogStore::totalHours(teamMembersIds: $teamMembers->toArray());
         $unpaidHours = TimeLogStore::unpaidHours(teamMembersIds: $teamMembers->toArray());
         $unpaidAmountsByCurrency = TimeLogStore::unpaidAmount(teamMembersIds: $teamMembers->toArray());
-        $paidAmount = TimeLogStore::paidAmount(teamMembersIds: $teamMembers->toArray());
+        $paidAmountsByCurrency = TimeLogStore::paidAmount(teamMembersIds: $teamMembers->toArray());
         $clientCount = ClientStore::userClients(userId: auth()->id())->count();
 
         // For backward compatibility, calculate total unpaid amount
         $totalUnpaidAmount = array_sum($unpaidAmountsByCurrency);
+        // For backward compatibility, calculate total paid amount
+        $totalPaidAmount = array_sum($paidAmountsByCurrency);
 
         return [
             'count' => $teamCount,
@@ -53,7 +55,8 @@ final class DashboardController extends Controller
             'unpaidHours' => $unpaidHours,
             'unpaidAmount' => round($totalUnpaidAmount, 2),
             'unpaidAmountsByCurrency' => $unpaidAmountsByCurrency,
-            'paidAmount' => round($paidAmount, 2),
+            'paidAmount' => round($totalPaidAmount, 2),
+            'paidAmountsByCurrency' => $paidAmountsByCurrency,
             'currency' => 'USD',
             'weeklyAverage' => $teamCount > 0 ? round($totalHours / $teamCount, 2) : 0,
             'clientCount' => $clientCount,
