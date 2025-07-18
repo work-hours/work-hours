@@ -44,22 +44,31 @@ final class TimeLogStore
             ->sum('duration');
     }
 
-    public static function unpaidAmount(array $teamMembersIds): float
+    public static function unpaidAmount(array $teamMembersIds): array
     {
-        $unpaidAmount = 0;
+        $unpaidAmounts = [];
         foreach ($teamMembersIds as $memberId) {
             $unpaidLogs = self::unpaidTimeLog(teamMemberId: $memberId);
-            $unpaidLogs->each(function ($log) use (&$unpaidAmount, $memberId): void {
+            $unpaidLogs->each(function ($log) use (&$unpaidAmounts, $memberId): void {
                 $memberUnpaidHours = $log->duration;
                 $hourlyRate = Team::memberHourlyRate(project: $log->project, memberId: $memberId);
+                $currency = $log->currency ?? 'USD';
 
                 if ($hourlyRate) {
-                    $unpaidAmount += $memberUnpaidHours * $hourlyRate;
+                    if (!isset($unpaidAmounts[$currency])) {
+                        $unpaidAmounts[$currency] = 0;
+                    }
+                    $unpaidAmounts[$currency] += $memberUnpaidHours * $hourlyRate;
                 }
             });
         }
 
-        return round($unpaidAmount, 2);
+        // Round all amounts to 2 decimal places
+        foreach ($unpaidAmounts as $currency => $amount) {
+            $unpaidAmounts[$currency] = round($amount, 2);
+        }
+
+        return $unpaidAmounts;
     }
 
     public static function unpaidTimeLog(int $teamMemberId): Collection

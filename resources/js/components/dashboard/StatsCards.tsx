@@ -7,6 +7,7 @@ interface TeamStats {
     totalHours: number
     unpaidHours: number
     unpaidAmount: number
+    unpaidAmountsByCurrency: Record<string, number>
     paidAmount: number
     currency: string
     weeklyAverage: number
@@ -18,6 +19,40 @@ interface StatsCardsProps {
 }
 
 export default function StatsCards({ teamStats }: StatsCardsProps) {
+    // Generate unpaid amount cards for each currency
+    const renderUnpaidAmountCards = () => {
+        if (!teamStats.unpaidAmountsByCurrency || Object.keys(teamStats.unpaidAmountsByCurrency).length === 0) {
+            // Fallback to the default card if no currency-specific amounts are available
+            return (
+                <StatsCard
+                    title="Unpaid Amount"
+                    icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
+                    value={`${teamStats.currency} ${roundToTwoDecimals(teamStats.unpaidAmount)}`}
+                    trend={{
+                        icon: <ClockIcon className="mr-1 h-3 w-3" />,
+                        text: `${roundToTwoDecimals(teamStats.unpaidHours)} unpaid hours`,
+                        color: 'text-amber-500',
+                    }}
+                />
+            );
+        }
+
+        // Create a card for each currency
+        return Object.entries(teamStats.unpaidAmountsByCurrency).map(([currencyCode, amount]) => (
+            <StatsCard
+                key={currencyCode}
+                title={`Unpaid Amount (${currencyCode})`}
+                icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
+                value={`${currencyCode} ${roundToTwoDecimals(amount)}`}
+                trend={{
+                    icon: <ClockIcon className="mr-1 h-3 w-3" />,
+                    text: `${roundToTwoDecimals(teamStats.unpaidHours)} unpaid hours`,
+                    color: 'text-amber-500',
+                }}
+            />
+        ));
+    };
+
     return (
         <section className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-6">
             <StatsCard
@@ -63,16 +98,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 }}
             />
 
-            <StatsCard
-                title="Unpaid Amount"
-                icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
-                value={`${teamStats.currency} ${roundToTwoDecimals(teamStats.unpaidAmount)}`}
-                trend={{
-                    icon: <ClockIcon className="mr-1 h-3 w-3" />,
-                    text: `${roundToTwoDecimals(teamStats.unpaidHours)} unpaid hours`,
-                    color: 'text-amber-500',
-                }}
-            />
+            {renderUnpaidAmountCards()}
         </section>
     )
 }
