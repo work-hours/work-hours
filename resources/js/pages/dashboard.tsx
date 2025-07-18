@@ -22,6 +22,7 @@ interface TeamStats {
     unpaidAmount: number
     unpaidAmountsByCurrency: Record<string, number>
     paidAmount: number
+    paidAmountsByCurrency: Record<string, number>
     currency: string
     weeklyAverage: number
     clientCount: number
@@ -48,6 +49,7 @@ export default function Dashboard() {
         unpaidAmount: 0,
         unpaidAmountsByCurrency: {},
         paidAmount: 0,
+        paidAmountsByCurrency: {},
         currency: 'USD',
         weeklyAverage: 0,
         clientCount: 0,
