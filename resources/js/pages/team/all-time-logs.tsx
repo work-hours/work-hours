@@ -197,14 +197,14 @@ export default function AllTeamTimeLogs({
 
                 {timeLogs.length > 0 && (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="mb-2 flex flex-row items-center justify-between">
-                                    <CardTitle className="text-sm font-medium">Total Team Hours</CardTitle>
-                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                        <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
+                            <CardContent className="py-1">
+                                <div className="flex flex-row items-center justify-between">
+                                    <CardTitle className="text-xs font-medium">Total Team Hours</CardTitle>
+                                    <ClockIcon className="h-3 w-3 text-muted-foreground" />
                                 </div>
-                                <div className="text-2xl font-bold">{totalDuration}</div>
-                                <p className="text-xs text-muted-foreground">
+                                <div className="text-lg font-bold">{totalDuration}</div>
+                                <p className="text-[10px] text-muted-foreground">
                                     {(() => {
                                         let description = ''
 
@@ -235,14 +235,14 @@ export default function AllTeamTimeLogs({
                             </CardContent>
                         </Card>
 
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="mb-2 flex flex-row items-center justify-between">
-                                    <CardTitle className="text-sm font-medium">Unpaid Team Hours</CardTitle>
-                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                        <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
+                            <CardContent className="py-1">
+                                <div className="flex flex-row items-center justify-between">
+                                    <CardTitle className="text-xs font-medium">Unpaid Team Hours</CardTitle>
+                                    <ClockIcon className="h-3 w-3 text-muted-foreground" />
                                 </div>
-                                <div className="text-2xl font-bold">{unpaidHours}</div>
-                                <p className="text-xs text-muted-foreground">
+                                <div className="text-lg font-bold">{unpaidHours}</div>
+                                <p className="text-[10px] text-muted-foreground">
                                     {filters.user_id
                                         ? (() => {
                                               const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
@@ -253,14 +253,14 @@ export default function AllTeamTimeLogs({
                             </CardContent>
                         </Card>
 
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="mb-2 flex flex-row items-center justify-between">
-                                    <CardTitle className="text-sm font-medium">Paid Team Hours</CardTitle>
-                                    <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                        <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
+                            <CardContent className="py-1">
+                                <div className="flex flex-row items-center justify-between">
+                                    <CardTitle className="text-xs font-medium">Paid Team Hours</CardTitle>
+                                    <ClockIcon className="h-3 w-3 text-muted-foreground" />
                                 </div>
-                                <div className="text-2xl font-bold">{paidHours}</div>
-                                <p className="text-xs text-muted-foreground">
+                                <div className="text-lg font-bold">{paidHours}</div>
+                                <p className="text-[10px] text-muted-foreground">
                                     {filters.user_id
                                         ? (() => {
                                               const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
@@ -274,31 +274,31 @@ export default function AllTeamTimeLogs({
                         {/* Unpaid amount cards - one for each currency */}
                         {Object.keys(unpaidAmountsByCurrency).length > 0 ? (
                             Object.entries(unpaidAmountsByCurrency).map(([currencyCode, amount]) => (
-                                <Card key={currencyCode} className="overflow-hidden transition-all hover:shadow-md">
-                                    <CardContent>
-                                        <div className="mb-2 flex flex-row items-center justify-between">
-                                            <CardTitle className="text-sm font-medium">Unpaid Team Amount ({currencyCode})</CardTitle>
+                                <Card key={currencyCode} className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
+                                    <CardContent className="py-1">
+                                        <div className="flex flex-row items-center justify-between">
+                                            <CardTitle className="text-xs font-medium">Unpaid Team Amount ({currencyCode})</CardTitle>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
-                                                width="16"
-                                                height="16"
+                                                width="12"
+                                                height="12"
                                                 viewBox="0 0 24 24"
                                                 fill="none"
                                                 stroke="currentColor"
                                                 strokeWidth="2"
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
-                                                className="h-4 w-4 text-muted-foreground"
+                                                className="h-3 w-3 text-muted-foreground"
                                             >
                                                 <circle cx="12" cy="12" r="10" />
                                                 <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
                                                 <path d="M12 18V6" />
                                             </svg>
                                         </div>
-                                        <div className="text-2xl font-bold">
+                                        <div className="text-lg font-bold">
                                             {currencyCode} {amount}
                                         </div>
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-[10px] text-muted-foreground">
                                             {filters.user_id
                                                 ? (() => {
                                                       const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
@@ -310,31 +310,31 @@ export default function AllTeamTimeLogs({
                                 </Card>
                             ))
                         ) : (
-                            <Card className="overflow-hidden transition-all hover:shadow-md">
-                                <CardContent>
-                                    <div className="mb-2 flex flex-row items-center justify-between">
-                                        <CardTitle className="text-sm font-medium">Unpaid Team Amount</CardTitle>
+                            <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
+                                <CardContent className="py-1">
+                                    <div className="flex flex-row items-center justify-between">
+                                        <CardTitle className="text-xs font-medium">Unpaid Team Amount</CardTitle>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
+                                            width="12"
+                                            height="12"
                                             viewBox="0 0 24 24"
                                             fill="none"
                                             stroke="currentColor"
                                             strokeWidth="2"
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
-                                            className="h-4 w-4 text-muted-foreground"
+                                            className="h-3 w-3 text-muted-foreground"
                                         >
                                             <circle cx="12" cy="12" r="10" />
                                             <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
                                             <path d="M12 18V6" />
                                         </svg>
                                     </div>
-                                    <div className="text-2xl font-bold">
+                                    <div className="text-lg font-bold">
                                         {currency} 0
                                     </div>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-[10px] text-muted-foreground">
                                         No unpaid amounts found
                                     </p>
                                 </CardContent>
@@ -344,31 +344,31 @@ export default function AllTeamTimeLogs({
                         {/* Paid amount cards - one for each currency */}
                         {Object.keys(paidAmountsByCurrency).length > 0 ? (
                             Object.entries(paidAmountsByCurrency).map(([currencyCode, amount]) => (
-                                <Card key={currencyCode} className="overflow-hidden transition-all hover:shadow-md">
-                                    <CardContent>
-                                        <div className="mb-2 flex flex-row items-center justify-between">
-                                            <CardTitle className="text-sm font-medium">Paid Team Amount ({currencyCode})</CardTitle>
+                                <Card key={currencyCode} className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
+                                    <CardContent className="py-1">
+                                        <div className="flex flex-row items-center justify-between">
+                                            <CardTitle className="text-xs font-medium">Paid Team Amount ({currencyCode})</CardTitle>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
-                                                width="16"
-                                                height="16"
+                                                width="12"
+                                                height="12"
                                                 viewBox="0 0 24 24"
                                                 fill="none"
                                                 stroke="currentColor"
                                                 strokeWidth="2"
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
-                                                className="h-4 w-4 text-muted-foreground"
+                                                className="h-3 w-3 text-muted-foreground"
                                             >
                                                 <circle cx="12" cy="12" r="10" />
                                                 <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
                                                 <path d="M12 18V6" />
                                             </svg>
                                         </div>
-                                        <div className="text-2xl font-bold">
+                                        <div className="text-lg font-bold">
                                             {currencyCode} {amount}
                                         </div>
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-[10px] text-muted-foreground">
                                             {filters.user_id
                                                 ? (() => {
                                                       const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
@@ -380,44 +380,44 @@ export default function AllTeamTimeLogs({
                                 </Card>
                             ))
                         ) : (
-                            <Card className="overflow-hidden transition-all hover:shadow-md">
-                                <CardContent>
-                                    <div className="mb-2 flex flex-row items-center justify-between">
-                                        <CardTitle className="text-sm font-medium">Paid Team Amount</CardTitle>
+                            <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
+                                <CardContent className="py-1">
+                                    <div className="flex flex-row items-center justify-between">
+                                        <CardTitle className="text-xs font-medium">Paid Team Amount</CardTitle>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
+                                            width="12"
+                                            height="12"
                                             viewBox="0 0 24 24"
                                             fill="none"
                                             stroke="currentColor"
                                             strokeWidth="2"
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
-                                            className="h-4 w-4 text-muted-foreground"
+                                            className="h-3 w-3 text-muted-foreground"
                                         >
                                             <circle cx="12" cy="12" r="10" />
                                             <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
                                             <path d="M12 18V6" />
                                         </svg>
                                     </div>
-                                    <div className="text-2xl font-bold">
+                                    <div className="text-lg font-bold">
                                         {currency} 0
                                     </div>
-                                    <p className="text-xs text-muted-foreground">No paid amounts found</p>
+                                    <p className="text-[10px] text-muted-foreground">No paid amounts found</p>
                                 </CardContent>
                             </Card>
                         )}
 
                         {/* Weekly average card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="mb-2 flex flex-row items-center justify-between">
-                                    <CardTitle className="text-sm font-medium">Team Weekly Average</CardTitle>
-                                    <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                        <Card className="overflow-hidden border-l-4 border-l-purple-500 dark:border-l-purple-400 transition-all hover:shadow-md">
+                            <CardContent className="py-1">
+                                <div className="flex flex-row items-center justify-between">
+                                    <CardTitle className="text-xs font-medium">Team Weekly Average</CardTitle>
+                                    <CalendarIcon className="h-3 w-3 text-muted-foreground" />
                                 </div>
-                                <div className="text-2xl font-bold">{weeklyAverage}</div>
-                                <p className="text-xs text-muted-foreground">
+                                <div className="text-lg font-bold">{weeklyAverage}</div>
+                                <p className="text-[10px] text-muted-foreground">
                                     {filters.user_id
                                         ? (() => {
                                               const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
