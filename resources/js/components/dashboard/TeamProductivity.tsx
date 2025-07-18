@@ -15,12 +15,12 @@ interface TeamProductivityProps {
 
 export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
     return (
-        <Card className="overflow-hidden transition-all hover:shadow-md">
-            <CardHeader>
-                <CardTitle>Team Productivity</CardTitle>
-                <CardDescription>Hours logged by team members</CardDescription>
+        <Card className="overflow-hidden border-l-4 border-l-purple-500 dark:border-l-purple-400 transition-all hover:shadow-md">
+            <CardHeader className="pb-2">
+                <CardTitle className="text-xs font-medium">Team Productivity</CardTitle>
+                <CardDescription className="text-[10px]">Hours logged by team members</CardDescription>
             </CardHeader>
-            <CardContent className="h-60">
+            <CardContent className="h-60 py-1">
                 {teamStats.count > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart

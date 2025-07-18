@@ -9,12 +9,12 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
 
 export default function HoursDistribution({ hoursData }: HoursDistributionProps) {
     return (
-        <Card className="overflow-hidden transition-all hover:shadow-md">
-            <CardHeader>
-                <CardTitle>Hours Distribution</CardTitle>
-                <CardDescription>Breakdown of total vs. unpaid hours</CardDescription>
+        <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
+            <CardHeader className="pb-2">
+                <CardTitle className="text-xs font-medium">Hours Distribution</CardTitle>
+                <CardDescription className="text-[10px]">Breakdown of total vs. unpaid hours</CardDescription>
             </CardHeader>
-            <CardContent className="h-60">
+            <CardContent className="h-60 py-1">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie

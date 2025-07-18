@@ -33,6 +33,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                         text: `${roundToTwoDecimals(teamStats.unpaidHours)} unpaid hours`,
                         color: 'text-amber-500',
                     }}
+                    borderColor="green-500"
                 />
             );
         }
@@ -49,6 +50,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     text: `${roundToTwoDecimals(teamStats.unpaidHours)} unpaid hours`,
                     color: 'text-amber-500',
                 }}
+                borderColor="green-500"
             />
         ));
     };
@@ -60,6 +62,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 icon={<UsersIcon className="h-4 w-4 text-muted-foreground" />}
                 value={teamStats.count}
                 description="Active members in your team"
+                borderColor="purple-500"
             />
 
             <StatsCard
@@ -67,6 +70,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 icon={<BriefcaseIcon className="h-4 w-4 text-muted-foreground" />}
                 value={teamStats.clientCount}
                 description="Total active clients"
+                borderColor="purple-500"
             />
 
             <StatsCard
@@ -78,6 +82,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     text: `+${roundToTwoDecimals(teamStats.weeklyAverage)} hrs this week`,
                     color: 'text-green-500',
                 }}
+                borderColor="blue-500"
             />
 
             <StatsCard
@@ -85,6 +90,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />}
                 value={roundToTwoDecimals(teamStats.weeklyAverage)}
                 description="Hours per team member"
+                borderColor="blue-500"
             />
 
             <StatsCard
@@ -96,6 +102,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     text: `Paid earnings`,
                     color: 'text-green-500',
                 }}
+                borderColor="green-500"
             />
 
             {renderUnpaidAmountCards()}
