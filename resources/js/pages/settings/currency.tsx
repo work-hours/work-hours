@@ -30,11 +30,13 @@ type Currency = {
 }
 
 export default function Currency({ currencies }: { currencies: Currency[] }) {
-    const [isDeleting, setIsDeleting] = useState<number | null>(null)
+    const [deletingId, setDeletingId] = useState<number | null>(null)
 
     const { data, setData, post, errors, processing, reset } = useForm<CurrencyForm>({
         code: '',
     })
+
+    const { delete: destroy } = useForm({})
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
@@ -52,19 +54,19 @@ export default function Currency({ currencies }: { currencies: Currency[] }) {
     }
 
     const deleteCurrency = (id: number) => {
-        setIsDeleting(id)
+        setDeletingId(id)
 
-        window.axios
-            .delete(route('currency.destroy', { currency: id }))
-            .then(() => {
+        destroy(route('currency.destroy', { currency: id }), {
+            preserveScroll: true,
+            onSuccess: () => {
                 toast.success('Currency deleted successfully')
-            })
-            .catch(() => {
+                setDeletingId(null)
+            },
+            onError: () => {
                 toast.error('Failed to delete currency')
-            })
-            .finally(() => {
-                setIsDeleting(null)
-            })
+                setDeletingId(null)
+            },
+        })
     }
 
     return (
@@ -130,9 +132,9 @@ export default function Currency({ currencies }: { currencies: Currency[] }) {
                                                     variant="ghost"
                                                     size="icon"
                                                     onClick={() => deleteCurrency(currency.id)}
-                                                    disabled={isDeleting === currency.id}
+                                                    disabled={deletingId === currency.id}
                                                 >
-                                                    {isDeleting === currency.id ? (
+                                                    {deletingId === currency.id ? (
                                                         <LoaderCircle className="h-4 w-4 animate-spin" />
                                                     ) : (
                                                         <Trash2 className="h-4 w-4 text-destructive" />
