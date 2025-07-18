@@ -1,4 +1,5 @@
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
+import StatsCards from '@/components/dashboard/StatsCards'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
@@ -8,7 +9,7 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
-import { ArrowLeft, Briefcase, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset } from 'lucide-react'
+import { ArrowLeft, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset } from 'lucide-react'
 import { FormEventHandler, forwardRef, useState } from 'react'
 
 type TimeLog = {
@@ -196,238 +197,23 @@ export default function AllTeamTimeLogs({
                 </section>
 
                 {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
-                            <CardContent className="py-1">
-                                <div className="flex flex-row items-center justify-between">
-                                    <CardTitle className="text-xs font-medium">Total Team Hours</CardTitle>
-                                    <ClockIcon className="h-3 w-3 text-muted-foreground" />
-                                </div>
-                                <div className="text-lg font-bold">{totalDuration}</div>
-                                <p className="text-[10px] text-muted-foreground">
-                                    {(() => {
-                                        let description = ''
-
-                                        if (filters.start_date && filters.end_date) {
-                                            description = `Hours logged from ${filters.start_date} to ${filters.end_date}`
-                                        } else if (filters.start_date) {
-                                            description = `Hours logged from ${filters.start_date}`
-                                        } else if (filters.end_date) {
-                                            description = `Hours logged until ${filters.end_date}`
-                                        } else {
-                                            description = 'Total hours logged'
-                                        }
-
-                                        if (filters.user_id) {
-                                            const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
-                                            const memberName = selectedMember ? selectedMember.name : ''
-
-                                            if (memberName) {
-                                                description += ` by ${memberName}`
-                                            }
-                                        } else {
-                                            description += ' by all team members'
-                                        }
-
-                                        return description
-                                    })()}
-                                </p>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
-                            <CardContent className="py-1">
-                                <div className="flex flex-row items-center justify-between">
-                                    <CardTitle className="text-xs font-medium">Unpaid Team Hours</CardTitle>
-                                    <ClockIcon className="h-3 w-3 text-muted-foreground" />
-                                </div>
-                                <div className="text-lg font-bold">{unpaidHours}</div>
-                                <p className="text-[10px] text-muted-foreground">
-                                    {filters.user_id
-                                        ? (() => {
-                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
-                                              return selectedMember ? `Hours pending payment for ${selectedMember.name}` : 'Hours pending payment'
-                                          })()
-                                        : 'Hours pending payment across all team members'}
-                                </p>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
-                            <CardContent className="py-1">
-                                <div className="flex flex-row items-center justify-between">
-                                    <CardTitle className="text-xs font-medium">Paid Team Hours</CardTitle>
-                                    <ClockIcon className="h-3 w-3 text-muted-foreground" />
-                                </div>
-                                <div className="text-lg font-bold">{paidHours}</div>
-                                <p className="text-[10px] text-muted-foreground">
-                                    {filters.user_id
-                                        ? (() => {
-                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
-                                              return selectedMember ? `Hours already paid for ${selectedMember.name}` : 'Hours already paid'
-                                          })()
-                                        : 'Hours already paid across all team members'}
-                                </p>
-                            </CardContent>
-                        </Card>
-
-                        {/* Unpaid amount cards - one for each currency */}
-                        {Object.keys(unpaidAmountsByCurrency).length > 0 ? (
-                            Object.entries(unpaidAmountsByCurrency).map(([currencyCode, amount]) => (
-                                <Card key={currencyCode} className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
-                                    <CardContent className="py-1">
-                                        <div className="flex flex-row items-center justify-between">
-                                            <CardTitle className="text-xs font-medium">Unpaid Team Amount ({currencyCode})</CardTitle>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="12"
-                                                height="12"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="h-3 w-3 text-muted-foreground"
-                                            >
-                                                <circle cx="12" cy="12" r="10" />
-                                                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                                <path d="M12 18V6" />
-                                            </svg>
-                                        </div>
-                                        <div className="text-lg font-bold">
-                                            {currencyCode} {amount}
-                                        </div>
-                                        <p className="text-[10px] text-muted-foreground">
-                                            {filters.user_id
-                                                ? (() => {
-                                                      const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
-                                                      return selectedMember ? `Amount pending payment for ${selectedMember.name}` : 'Amount pending payment'
-                                                  })()
-                                                : 'Amount pending payment across all team members'}
-                                        </p>
-                                    </CardContent>
-                                </Card>
-                            ))
-                        ) : (
-                            <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
-                                <CardContent className="py-1">
-                                    <div className="flex flex-row items-center justify-between">
-                                        <CardTitle className="text-xs font-medium">Unpaid Team Amount</CardTitle>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="12"
-                                            height="12"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            className="h-3 w-3 text-muted-foreground"
-                                        >
-                                            <circle cx="12" cy="12" r="10" />
-                                            <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                            <path d="M12 18V6" />
-                                        </svg>
-                                    </div>
-                                    <div className="text-lg font-bold">
-                                        {currency} 0
-                                    </div>
-                                    <p className="text-[10px] text-muted-foreground">
-                                        No unpaid amounts found
-                                    </p>
-                                </CardContent>
-                            </Card>
-                        )}
-
-                        {/* Paid amount cards - one for each currency */}
-                        {Object.keys(paidAmountsByCurrency).length > 0 ? (
-                            Object.entries(paidAmountsByCurrency).map(([currencyCode, amount]) => (
-                                <Card key={currencyCode} className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
-                                    <CardContent className="py-1">
-                                        <div className="flex flex-row items-center justify-between">
-                                            <CardTitle className="text-xs font-medium">Paid Team Amount ({currencyCode})</CardTitle>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="12"
-                                                height="12"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="h-3 w-3 text-muted-foreground"
-                                            >
-                                                <circle cx="12" cy="12" r="10" />
-                                                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                                <path d="M12 18V6" />
-                                            </svg>
-                                        </div>
-                                        <div className="text-lg font-bold">
-                                            {currencyCode} {amount}
-                                        </div>
-                                        <p className="text-[10px] text-muted-foreground">
-                                            {filters.user_id
-                                                ? (() => {
-                                                      const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
-                                                      return selectedMember ? `Amount already paid for ${selectedMember.name}` : 'Amount already paid'
-                                                  })()
-                                                : 'Amount already paid across all team members'}
-                                        </p>
-                                    </CardContent>
-                                </Card>
-                            ))
-                        ) : (
-                            <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
-                                <CardContent className="py-1">
-                                    <div className="flex flex-row items-center justify-between">
-                                        <CardTitle className="text-xs font-medium">Paid Team Amount</CardTitle>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="12"
-                                            height="12"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            className="h-3 w-3 text-muted-foreground"
-                                        >
-                                            <circle cx="12" cy="12" r="10" />
-                                            <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                            <path d="M12 18V6" />
-                                        </svg>
-                                    </div>
-                                    <div className="text-lg font-bold">
-                                        {currency} 0
-                                    </div>
-                                    <p className="text-[10px] text-muted-foreground">No paid amounts found</p>
-                                </CardContent>
-                            </Card>
-                        )}
-
-                        {/* Weekly average card */}
-                        <Card className="overflow-hidden border-l-4 border-l-purple-500 dark:border-l-purple-400 transition-all hover:shadow-md">
-                            <CardContent className="py-1">
-                                <div className="flex flex-row items-center justify-between">
-                                    <CardTitle className="text-xs font-medium">Team Weekly Average</CardTitle>
-                                    <CalendarIcon className="h-3 w-3 text-muted-foreground" />
-                                </div>
-                                <div className="text-lg font-bold">{weeklyAverage}</div>
-                                <p className="text-[10px] text-muted-foreground">
-                                    {filters.user_id
-                                        ? (() => {
-                                              const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user_id)
-                                              return selectedMember ? `Hours per week for ${selectedMember.name}` : 'Hours per week'
-                                          })()
-                                        : 'Hours per week across all team members'}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </div>
+                    <section className="mb-4">
+                        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
+                        <StatsCards
+                            teamStats={{
+                                count: -1,
+                                totalHours: totalDuration,
+                                unpaidHours: unpaidHours,
+                                unpaidAmount: Object.values(unpaidAmountsByCurrency).reduce((sum, amount) => sum + amount, 0),
+                                unpaidAmountsByCurrency: unpaidAmountsByCurrency,
+                                paidAmount: Object.values(paidAmountsByCurrency).reduce((sum, amount) => sum + amount, 0),
+                                paidAmountsByCurrency: paidAmountsByCurrency,
+                                currency: currency,
+                                weeklyAverage: weeklyAverage,
+                                clientCount: -1,
+                            }}
+                        />
+                    </section>
                 )}
 
                 <Card className="overflow-hidden transition-all hover:shadow-md">
