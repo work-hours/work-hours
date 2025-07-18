@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Stores\ClientStore;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
@@ -41,6 +42,7 @@ final class DashboardController extends Controller
         $unpaidHours = TimeLogStore::unpaidHours(teamMembersIds: $teamMembers->toArray());
         $unpaidAmount = TimeLogStore::unpaidAmount(teamMembersIds: $teamMembers->toArray());
         $paidAmount = TimeLogStore::paidAmount(teamMembersIds: $teamMembers->toArray());
+        $clientCount = ClientStore::userClients(userId: auth()->id())->count();
 
         return [
             'count' => $teamCount,
@@ -50,6 +52,7 @@ final class DashboardController extends Controller
             'paidAmount' => round($paidAmount, 2),
             'currency' => 'USD',
             'weeklyAverage' => $teamCount > 0 ? round($totalHours / $teamCount, 2) : 0,
+            'clientCount' => $clientCount,
         ];
     }
 

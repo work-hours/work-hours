@@ -1,5 +1,5 @@
 import { roundToTwoDecimals } from '@/lib/utils'
-import { BarChart3, ClockIcon, DollarSign, TrendingUp, UsersIcon } from 'lucide-react'
+import { BarChart3, BriefcaseIcon, ClockIcon, DollarSign, TrendingUp, UsersIcon } from 'lucide-react'
 import StatsCard from './StatsCard'
 
 interface TeamStats {
@@ -10,6 +10,7 @@ interface TeamStats {
     paidAmount: number
     currency: string
     weeklyAverage: number
+    clientCount: number
 }
 
 interface StatsCardsProps {
@@ -18,12 +19,19 @@ interface StatsCardsProps {
 
 export default function StatsCards({ teamStats }: StatsCardsProps) {
     return (
-        <section className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <section className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-6">
             <StatsCard
                 title="Team Members"
                 icon={<UsersIcon className="h-4 w-4 text-muted-foreground" />}
                 value={teamStats.count}
                 description="Active members in your team"
+            />
+
+            <StatsCard
+                title="Clients"
+                icon={<BriefcaseIcon className="h-4 w-4 text-muted-foreground" />}
+                value={teamStats.clientCount}
+                description="Total active clients"
             />
 
             <StatsCard
