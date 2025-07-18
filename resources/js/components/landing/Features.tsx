@@ -1,6 +1,6 @@
 import { type SharedData } from '@/types'
 import { usePage } from '@inertiajs/react'
-import { BarChart2, Briefcase, Clock, Github, Upload, Users } from 'lucide-react'
+import { BarChart2, Briefcase, Clock, DollarSign, Github, Upload, Users } from 'lucide-react'
 
 export default function Features() {
     const { auth } = usePage<SharedData>().props
@@ -120,6 +120,44 @@ export default function Features() {
                                     aria-label={isLoggedIn ? 'Connect your account with GitHub' : 'Get started with Work Hours'}
                                 >
                                     {isLoggedIn ? 'Connect with GitHub' : 'Get Started'}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Multiple Currency Management Section */}
+            <section id="currency-management" className="container mx-auto mb-24 px-6 lg:px-8" aria-label="Multiple currency management">
+                <div className="animate-fade-up animate-once relative overflow-hidden rounded-3xl bg-gradient-to-b from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20 p-10 shadow-xl">
+                    {/* Decorative currency symbols */}
+                    <div className="absolute top-6 right-8 text-blue-300/30 text-6xl font-bold">$</div>
+                    <div className="absolute top-12 right-20 text-green-300/20 text-4xl font-bold">€</div>
+                    <div className="absolute bottom-8 left-12 text-amber-300/20 text-5xl font-bold">¥</div>
+                    <div className="absolute bottom-16 left-28 text-purple-300/20 text-4xl font-bold">£</div>
+
+                    <div className="relative z-10">
+                        <div className="text-center mb-8">
+                            <div className="mx-auto inline-flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40 shadow-inner mb-4">
+                                <DollarSign className="h-10 w-10 text-blue-600 dark:text-blue-400" aria-label="Currency icon" />
+                            </div>
+                            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Multiple Currency Management</h2>
+                        </div>
+
+                        <div className="max-w-3xl mx-auto">
+                            <p className="text-lg text-center text-muted-foreground mb-8">
+                                Work with multiple currencies seamlessly across your projects and teams. Set different currencies for different clients,
+                                track earnings in various currencies, and generate reports with accurate currency conversions. Our flexible currency
+                                management system adapts to your global business needs, making international collaboration and billing effortless.
+                            </p>
+
+                            <div className="flex justify-center">
+                                <a
+                                    href={isLoggedIn ? "/settings/currency" : "/register"}
+                                    className="inline-flex items-center rounded-full bg-blue-600 dark:bg-blue-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all duration-300 hover:bg-blue-700 dark:hover:bg-blue-600 hover:shadow-md"
+                                    aria-label={isLoggedIn ? 'Manage your currencies' : 'Get started with Work Hours'}
+                                >
+                                    {isLoggedIn ? 'Manage Currencies' : 'Get Started'}
                                 </a>
                             </div>
                         </div>
