@@ -21,7 +21,25 @@ export default function Features() {
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <article className="animate-fade-up animate-once animate-delay-500 group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
+                    {/* GitHub Integration - Moved to first position and enhanced */}
+                    <article className="animate-fade-up animate-once animate-delay-500 group relative overflow-hidden rounded-2xl border-2 border-primary/40 bg-gradient-to-b from-primary/5 to-card/95 p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/10">
+                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/10 opacity-80 blur-2xl transition-all duration-300 group-hover:bg-primary/20 group-hover:opacity-100"></div>
+                        <div className="mb-6 flex h-18 w-18 items-center justify-center rounded-2xl bg-primary/15 transition-colors duration-300 group-hover:bg-primary/25">
+                            <Github className="h-10 w-10 text-primary" aria-hidden="true" />
+                        </div>
+                        <h3 className="mb-3 text-2xl font-bold text-foreground flex items-center">
+                            GitHub Integration
+                            <span className="ml-2 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                                Popular
+                            </span>
+                        </h3>
+                        <p className="text-muted-foreground">
+                            Connect your GitHub account to import repositories as projects. Track time spent on specific repositories and streamline
+                            your development workflow with our powerful integration.
+                        </p>
+                    </article>
+
+                    <article className="animate-fade-up animate-once animate-delay-700 group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
                         <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                             <Clock className="h-8 w-8 text-primary" aria-hidden="true" />
@@ -33,7 +51,7 @@ export default function Features() {
                         </p>
                     </article>
 
-                    <article className="animate-fade-up animate-once animate-delay-700 group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
+                    <article className="animate-fade-up animate-once animate-delay-900 group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
                         <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                             <BarChart2 className="h-8 w-8 text-primary" aria-hidden="true" />
@@ -45,7 +63,7 @@ export default function Features() {
                         </p>
                     </article>
 
-                    <article className="animate-fade-up animate-once animate-delay-900 group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
+                    <article className="animate-fade-up animate-once animate-delay-[1100ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
                         <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                             <Users className="h-8 w-8 text-primary" aria-hidden="true" />
@@ -57,7 +75,7 @@ export default function Features() {
                         </p>
                     </article>
 
-                    <article className="animate-fade-up animate-once animate-delay-[1100ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
+                    <article className="animate-fade-up animate-once animate-delay-[1300ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
                         <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                             <Briefcase className="h-8 w-8 text-primary" aria-hidden="true" />
@@ -69,7 +87,7 @@ export default function Features() {
                         </p>
                     </article>
 
-                    <article className="animate-fade-up animate-once animate-delay-[1300ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
+                    <article className="animate-fade-up animate-once animate-delay-[1500ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
                         <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
                         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
                             <Upload className="h-8 w-8 text-primary" aria-hidden="true" />
@@ -80,47 +98,69 @@ export default function Features() {
                             record all your work hours in one go.
                         </p>
                     </article>
-
-                    <article className="animate-fade-up animate-once animate-delay-[1500ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
-                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
-                            <Github className="h-8 w-8 text-primary" aria-hidden="true" />
-                        </div>
-                        <h3 className="mb-3 text-2xl font-bold text-foreground">GitHub Integration</h3>
-                        <p className="text-muted-foreground">
-                            Connect your GitHub account to import repositories as projects. Track time spent on specific repositories and streamline
-                            your development workflow.
-                        </p>
-                    </article>
                 </div>
             </section>
 
-            {/* Highlighted Integration Section */}
+            {/* Enhanced GitHub Integration Section */}
             <section id="integration" className="container mx-auto mb-24 px-6 lg:px-8" aria-label="GitHub integration">
-                <div className="animate-fade-up animate-once relative overflow-hidden rounded-2xl border-2 border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10 p-8 shadow-lg">
-                    <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-primary/5 opacity-70 blur-3xl"></div>
-                    <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-primary/5 opacity-70 blur-3xl"></div>
-                    <div className="relative z-10 flex flex-col md:flex-row md:items-center md:gap-12">
-                        <div className="mb-8 md:mb-0 md:w-1/4">
-                            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-2xl bg-primary/20 shadow-md transition-colors">
-                                <Github className="h-12 w-12 text-primary" aria-label="GitHub logo" />
+                <div className="animate-fade-up animate-once relative overflow-hidden rounded-3xl border-2 border-primary/50 bg-gradient-to-r from-primary/10 to-primary/5 p-10 shadow-xl">
+                    {/* Decorative elements */}
+                    <div className="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-primary/10 opacity-80 blur-3xl"></div>
+                    <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-primary/10 opacity-80 blur-3xl"></div>
+
+                    {/* GitHub-like decorative elements */}
+                    <div className="absolute top-10 right-10 h-16 w-16 rounded-full border-4 border-dashed border-primary/20 opacity-50"></div>
+                    <div className="absolute bottom-20 left-40 h-24 w-24 rounded-full border-4 border-dotted border-primary/20 opacity-50"></div>
+                    <div className="absolute top-40 left-20 h-12 w-12 rounded-full border-4 border-primary/20 opacity-50"></div>
+
+                    <div className="relative z-10">
+                        <div className="flex flex-col md:flex-row md:items-center md:gap-12">
+                            <div className="mb-10 md:mb-0 md:w-1/3 flex justify-center">
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-primary/5 blur-xl rounded-full transform scale-150"></div>
+                                    <div className="relative flex h-32 w-32 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-primary/20">
+                                        <Github className="h-16 w-16 text-primary" aria-label="GitHub logo" />
+                                    </div>
+                                    <div className="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">
+                                        <span>★</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div className="md:w-3/4">
-                            <h2 className="mb-4 text-2xl font-bold tracking-tight text-foreground md:text-3xl lg:text-4xl">GitHub Integration</h2>
-                            <p className="text-lg text-muted-foreground">
-                                Connect your GitHub account to import repositories as projects. Track time spent on specific repositories and
-                                streamline your development workflow. Our seamless GitHub integration allows you to automatically sync your
-                                repositories and measure productivity across your development projects.
-                            </p>
-                            <div className="mt-8">
-                                <a
-                                    href="/integration"
-                                    className="inline-flex items-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-all duration-300 hover:bg-primary/90 hover:shadow-md hover:shadow-primary/10"
-                                    aria-label={isLoggedIn ? 'Connect your account with GitHub' : 'Get started with Work Hours'}
-                                >
-                                    {isLoggedIn ? 'Connect with GitHub' : 'Get Started'}
-                                </a>
+                            <div className="md:w-2/3">
+                                <div className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-4">
+                                    <span className="mr-1">★</span> Featured Integration
+                                </div>
+                                <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
+                                    Seamless GitHub Integration
+                                </h2>
+                                <p className="text-lg text-muted-foreground mb-6">
+                                    Connect your GitHub account to import repositories as projects. Track time spent on specific repositories and
+                                    streamline your development workflow. Our powerful GitHub integration allows you to:
+                                </p>
+                                <ul className="space-y-2 mb-8">
+                                    <li className="flex items-start">
+                                        <span className="mr-2 text-primary">✓</span>
+                                        <span>Automatically sync your repositories as projects</span>
+                                    </li>
+                                    <li className="flex items-start">
+                                        <span className="mr-2 text-primary">✓</span>
+                                        <span>Track time spent on specific repositories and branches</span>
+                                    </li>
+                                    <li className="flex items-start">
+                                        <span className="mr-2 text-primary">✓</span>
+                                        <span>Measure productivity across your development projects</span>
+                                    </li>
+                                </ul>
+                                <div className="mt-8">
+                                    <a
+                                        href="/integration"
+                                        className="inline-flex items-center rounded-lg bg-primary px-6 py-3 text-base font-medium text-primary-foreground shadow-md transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20"
+                                        aria-label={isLoggedIn ? 'Connect your account with GitHub' : 'Get started with Work Hours'}
+                                    >
+                                        <Github className="mr-2 h-5 w-5" />
+                                        {isLoggedIn ? 'Connect with GitHub' : 'Get Started with GitHub'}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
