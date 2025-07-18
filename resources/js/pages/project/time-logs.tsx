@@ -208,11 +208,11 @@ export default function ProjectTimeLogs({
 
                 {/* Stats Cards */}
                 {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
-                        {/* Time Metrics */}
-                        <div className="lg:col-span-3">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        {/* Time and Periodic Metrics */}
+                        <div className="lg:col-span-2">
                             <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Time Metrics</h3>
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                                 <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
                                     <CardContent className="py-1">
                                         <div className="flex flex-row items-center justify-between">
@@ -251,6 +251,20 @@ export default function ProjectTimeLogs({
                                         </div>
                                         <div className="text-lg font-bold">{unpaidHours}</div>
                                         <p className="text-[10px] text-muted-foreground">Hours pending payment</p>
+                                    </CardContent>
+                                </Card>
+                            </div>
+
+                            <div className="mt-4">
+                                <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Periodic Metrics</h3>
+                                <Card className="overflow-hidden border-l-4 border-l-purple-500 dark:border-l-purple-400 transition-all hover:shadow-md">
+                                    <CardContent className="py-1">
+                                        <div className="flex flex-row items-center justify-between">
+                                            <CardTitle className="text-xs font-medium">Weekly Average</CardTitle>
+                                            <CalendarIcon className="h-3 w-3 text-muted-foreground" />
+                                        </div>
+                                        <div className="text-lg font-bold">{weeklyAverage}</div>
+                                        <p className="text-[10px] text-muted-foreground">Hours per week</p>
                                     </CardContent>
                                 </Card>
                             </div>
@@ -384,21 +398,6 @@ export default function ProjectTimeLogs({
                                     )}
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Periodic Metrics */}
-                        <div className="lg:col-span-1">
-                            <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Periodic Metrics</h3>
-                            <Card className="overflow-hidden border-l-4 border-l-purple-500 dark:border-l-purple-400 transition-all hover:shadow-md">
-                                <CardContent className="py-1">
-                                    <div className="flex flex-row items-center justify-between">
-                                        <CardTitle className="text-xs font-medium">Weekly Average</CardTitle>
-                                        <CalendarIcon className="h-3 w-3 text-muted-foreground" />
-                                    </div>
-                                    <div className="text-lg font-bold">{weeklyAverage}</div>
-                                    <p className="text-[10px] text-muted-foreground">Hours per week</p>
-                                </CardContent>
-                            </Card>
                         </div>
                     </div>
                 )}
