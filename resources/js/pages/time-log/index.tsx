@@ -81,6 +81,7 @@ type TimeLog = {
     is_paid: boolean
     hourly_rate?: number
     paid_amount?: number
+    currency?: string
 }
 
 type Filters = {

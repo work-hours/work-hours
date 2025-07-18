@@ -145,6 +145,7 @@ final class TimeLogStore
                 'is_paid' => $timeLog->is_paid,
                 'hourly_rate' => $hourlyRate,
                 'paid_amount' => $paidAmount,
+                'currency' => $timeLog->currency ?? 'USD',
             ];
         });
     }
