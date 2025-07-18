@@ -92,6 +92,7 @@ type Props = {
     totalDuration: number
     unpaidHours: number
     unpaidAmount: Record<string, number>
+    paidAmount: Record<string, number>
     weeklyAverage: number
     isCreator: boolean
 }
@@ -104,6 +105,7 @@ export default function ProjectTimeLogs({
     totalDuration,
     unpaidHours,
     unpaidAmount,
+    paidAmount,
     weeklyAverage,
     isCreator,
 }: Props) {
@@ -258,61 +260,129 @@ export default function ProjectTimeLogs({
                         <div className="lg:col-span-2">
                             <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Financial Metrics</h3>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
-                                    <CardContent className="py-1">
-                                        <div className="flex flex-row items-center justify-between">
-                                            <CardTitle className="text-xs font-medium">Paid Amount</CardTitle>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="12"
-                                                height="12"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="h-3 w-3 text-muted-foreground"
-                                            >
-                                                <circle cx="12" cy="12" r="10" />
-                                                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                                <path d="M12 18V6" />
-                                            </svg>
+                                {/* Paid by Currency */}
+                                <div>
+                                    <h4 className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">Paid by Currency</h4>
+                                    {Object.keys(paidAmount).length > 0 ? (
+                                        <div className="space-y-2">
+                                            {Object.entries(paidAmount).map(([currencyCode, amount]) => (
+                                                <Card key={currencyCode} className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
+                                                    <CardContent className="py-1">
+                                                        <div className="flex flex-row items-center justify-between">
+                                                            <CardTitle className="text-xs font-medium">{currencyCode}</CardTitle>
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="12"
+                                                                height="12"
+                                                                viewBox="0 0 24 24"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                strokeWidth="2"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                className="h-3 w-3 text-muted-foreground"
+                                                            >
+                                                                <circle cx="12" cy="12" r="10" />
+                                                                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                                                                <path d="M12 18V6" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="text-lg font-bold">{amount}</div>
+                                                        <p className="text-[10px] text-muted-foreground">Amount already paid</p>
+                                                    </CardContent>
+                                                </Card>
+                                            ))}
                                         </div>
-                                        <div className="text-lg font-bold">{project.paid_amount}</div>
-                                        <p className="text-[10px] text-muted-foreground">Amount already paid</p>
-                                    </CardContent>
-                                </Card>
+                                    ) : (
+                                        <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
+                                            <CardContent className="py-1">
+                                                <div className="flex flex-row items-center justify-between">
+                                                    <CardTitle className="text-xs font-medium">No Paid Amount</CardTitle>
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="12"
+                                                        height="12"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="h-3 w-3 text-muted-foreground"
+                                                    >
+                                                        <circle cx="12" cy="12" r="10" />
+                                                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                                                        <path d="M12 18V6" />
+                                                    </svg>
+                                                </div>
+                                                <div className="text-lg font-bold">0</div>
+                                                <p className="text-[10px] text-muted-foreground">No paid amount yet</p>
+                                            </CardContent>
+                                        </Card>
+                                    )}
+                                </div>
 
-                                <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
-                                    <CardContent className="py-1">
-                                        <div className="flex flex-row items-center justify-between">
-                                            <CardTitle className="text-xs font-medium">Unpaid Amount</CardTitle>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="12"
-                                                height="12"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="h-3 w-3 text-muted-foreground"
-                                            >
-                                                <circle cx="12" cy="12" r="10" />
-                                                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                                <path d="M12 18V6" />
-                                            </svg>
+                                {/* Unpaid by Currency */}
+                                <div>
+                                    <h4 className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">Unpaid by Currency</h4>
+                                    {Object.keys(unpaidAmount).length > 0 ? (
+                                        <div className="space-y-2">
+                                            {Object.entries(unpaidAmount).map(([currencyCode, amount]) => (
+                                                <Card key={currencyCode} className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
+                                                    <CardContent className="py-1">
+                                                        <div className="flex flex-row items-center justify-between">
+                                                            <CardTitle className="text-xs font-medium">{currencyCode}</CardTitle>
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="12"
+                                                                height="12"
+                                                                viewBox="0 0 24 24"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                strokeWidth="2"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                className="h-3 w-3 text-muted-foreground"
+                                                            >
+                                                                <circle cx="12" cy="12" r="10" />
+                                                                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                                                                <path d="M12 18V6" />
+                                                            </svg>
+                                                        </div>
+                                                        <div className="text-lg font-bold">{amount}</div>
+                                                        <p className="text-[10px] text-muted-foreground">Amount pending payment</p>
+                                                    </CardContent>
+                                                </Card>
+                                            ))}
                                         </div>
-                                        <div className="text-lg font-bold">
-                                            {Object.keys(unpaidAmount).length > 0
-                                                ? `${Object.keys(unpaidAmount)[0]} ${unpaidAmount[Object.keys(unpaidAmount)[0]]}`
-                                                : '0'}
-                                        </div>
-                                        <p className="text-[10px] text-muted-foreground">Amount pending payment</p>
-                                    </CardContent>
-                                </Card>
+                                    ) : (
+                                        <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
+                                            <CardContent className="py-1">
+                                                <div className="flex flex-row items-center justify-between">
+                                                    <CardTitle className="text-xs font-medium">No Unpaid Amount</CardTitle>
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="12"
+                                                        height="12"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="h-3 w-3 text-muted-foreground"
+                                                    >
+                                                        <circle cx="12" cy="12" r="10" />
+                                                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                                                        <path d="M12 18V6" />
+                                                    </svg>
+                                                </div>
+                                                <div className="text-lg font-bold">0</div>
+                                                <p className="text-[10px] text-muted-foreground">No unpaid amount</p>
+                                            </CardContent>
+                                        </Card>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
