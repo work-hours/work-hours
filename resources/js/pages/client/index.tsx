@@ -121,12 +121,8 @@ export default function Clients() {
                                             <TableCell>
                                                 {client.contact_person || <span className="text-muted-foreground/50">Not specified</span>}
                                             </TableCell>
-                                            <TableCell>
-                                                {client.email || <span className="text-muted-foreground/50">Not specified</span>}
-                                            </TableCell>
-                                            <TableCell>
-                                                {client.phone || <span className="text-muted-foreground/50">Not specified</span>}
-                                            </TableCell>
+                                            <TableCell>{client.email || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
+                                            <TableCell>{client.phone || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <Link href={route('client.projects', client.id)}>

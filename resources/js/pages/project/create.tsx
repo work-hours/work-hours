@@ -1,6 +1,6 @@
+import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Building, FileText, FolderPlus, LoaderCircle, Text, Users } from 'lucide-react'
-import { SearchableSelect } from '@/components/ui/searchable-select'
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 

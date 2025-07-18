@@ -66,6 +66,11 @@ final class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Project::class);
     }
 
+    public function currencies(): HasMany
+    {
+        return $this->hasMany(Currency::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

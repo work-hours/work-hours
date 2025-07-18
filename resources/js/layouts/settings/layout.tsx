@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/react'
-import { KeyRound, Palette, User } from 'lucide-react'
+import { DollarSign, KeyRound, Palette, User } from 'lucide-react'
 import { type PropsWithChildren } from 'react'
 
 const sidebarNavItems: NavItem[] = [
@@ -23,6 +23,11 @@ const sidebarNavItems: NavItem[] = [
         title: 'Appearance',
         href: '/settings/appearance',
         icon: Palette,
+    },
+    {
+        title: 'Currency',
+        href: '/settings/currency',
+        icon: DollarSign,
     },
 ]
 

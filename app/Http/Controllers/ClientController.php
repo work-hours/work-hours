@@ -11,7 +11,6 @@ use App\Models\Client;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +23,7 @@ use Throwable;
 final class ClientController extends Controller
 {
     use ExportableTrait;
+
     /**
      * Display a listing of the resource.
      */

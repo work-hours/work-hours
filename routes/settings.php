@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -18,4 +19,8 @@ Route::middleware('auth')->group(function (): void {
     Route::put('settings/password', [PasswordController::class, 'update'])->name('password.update');
 
     Route::get('settings/appearance', fn () => Inertia::render('settings/appearance'))->name('appearance');
+
+    Route::get('settings/currency', [CurrencyController::class, 'edit'])->name('currency.edit');
+    Route::post('settings/currency', [CurrencyController::class, 'store'])->name('currency.store');
+    Route::delete('settings/currency/{currency}', [CurrencyController::class, 'destroy'])->name('currency.destroy');
 });

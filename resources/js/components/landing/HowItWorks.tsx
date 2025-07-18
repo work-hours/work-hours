@@ -2,10 +2,10 @@ import { Clock, FolderPlus, UserPlus, Users, Zap } from 'lucide-react'
 
 export default function HowItWorks() {
     return (
-        <section id="how-it-works" className="container relative mx-auto mb-24 px-6 lg:px-8" aria-label="How to use Work Hours">
+        <section id="how-it-works" className="relative container mx-auto mb-24 px-6 lg:px-8" aria-label="How to use Work Hours">
             {/* Background decorative elements */}
             <div className="absolute inset-0 -z-10 overflow-hidden">
-                <div className="absolute -left-4 top-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl" aria-hidden="true"></div>
+                <div className="absolute top-1/4 -left-4 h-64 w-64 rounded-full bg-primary/5 blur-3xl" aria-hidden="true"></div>
                 <div className="absolute -right-4 bottom-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl" aria-hidden="true"></div>
             </div>
 
@@ -19,10 +19,16 @@ export default function HowItWorks() {
             {/* Process steps with connecting lines */}
             <div className="relative">
                 {/* Connecting line for desktop */}
-                <div className="absolute left-1/2 top-24 hidden h-[calc(100%-120px)] w-0.5 -translate-x-1/2 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/10 lg:block" aria-hidden="true"></div>
+                <div
+                    className="absolute top-24 left-1/2 hidden h-[calc(100%-120px)] w-0.5 -translate-x-1/2 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/10 lg:block"
+                    aria-hidden="true"
+                ></div>
 
                 {/* Connecting lines for tablet */}
-                <div className="absolute left-1/2 top-24 hidden h-[calc(100%-120px)] w-0.5 -translate-x-1/2 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/10 md:block lg:hidden" aria-hidden="true"></div>
+                <div
+                    className="absolute top-24 left-1/2 hidden h-[calc(100%-120px)] w-0.5 -translate-x-1/2 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/10 md:block lg:hidden"
+                    aria-hidden="true"
+                ></div>
 
                 <ol className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
                     <li className="animate-fade-up animate-once animate-delay-500 group relative flex flex-col items-center text-center">

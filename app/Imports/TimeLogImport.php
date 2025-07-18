@@ -65,8 +65,8 @@ final class TimeLogImport implements ToCollection, WithHeadingRow, WithValidatio
                     ->where('user_id', Auth::id())
                     ->where('project_id', $projectId)
                     ->where('start_timestamp', $startTimestamp)
-                    ->where(function ($query) use ($endTimestamp) {
-                        if ($endTimestamp === null) {
+                    ->where(function ($query) use ($endTimestamp): void {
+                        if (! $endTimestamp instanceof Carbon) {
                             $query->whereNull('end_timestamp');
                         } else {
                             $query->where('end_timestamp', $endTimestamp);
@@ -76,6 +76,7 @@ final class TimeLogImport implements ToCollection, WithHeadingRow, WithValidatio
 
                 if ($existingEntry) {
                     $this->errors[] = 'Row #' . ($index + 2) . ': Duplicate entry. A time log with the same project, start time, and end time already exists.';
+
                     continue;
                 }
 
