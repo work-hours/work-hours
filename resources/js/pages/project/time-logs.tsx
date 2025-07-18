@@ -91,7 +91,7 @@ type Props = {
     teamMembers: TeamMember[]
     totalDuration: number
     unpaidHours: number
-    unpaidAmount: number
+    unpaidAmount: Record<string, number>
     weeklyAverage: number
     isCreator: boolean
 }
@@ -261,7 +261,11 @@ export default function ProjectTimeLogs({
                                         <path d="M12 18V6" />
                                     </svg>
                                 </div>
-                                <div className="text-2xl font-bold">{unpaidAmount}</div>
+                                <div className="text-2xl font-bold">
+                                    {Object.keys(unpaidAmount).length > 0
+                                        ? `${Object.keys(unpaidAmount)[0]} ${unpaidAmount[Object.keys(unpaidAmount)[0]]}`
+                                        : '0'}
+                                </div>
                                 <p className="text-xs text-muted-foreground">Amount pending payment</p>
                             </CardContent>
                         </Card>

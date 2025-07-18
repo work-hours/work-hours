@@ -101,7 +101,7 @@ type Props = {
     projects: Project[]
     totalDuration: number
     unpaidHours: number
-    unpaidAmount: number
+    unpaidAmount: Record<string, number>
     currency: string
     weeklyAverage: number
 }
@@ -309,7 +309,7 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                     </svg>
                                 </div>
                                 <div className="text-2xl font-bold">
-                                    {currency} {unpaidAmount}
+                                    {currency} {unpaidAmount[currency] || 0}
                                 </div>
                                 <p className="text-xs text-muted-foreground">Amount pending payment</p>
                             </CardContent>
