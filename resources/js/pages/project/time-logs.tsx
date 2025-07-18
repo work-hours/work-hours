@@ -1,4 +1,5 @@
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
+import StatsCards from '@/components/dashboard/StatsCards'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
@@ -8,7 +9,7 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import AppLayout from '@/layouts/app-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
-import { ArrowLeft, Calendar, CalendarIcon, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset, User } from 'lucide-react'
+import { ArrowLeft, Calendar, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset, User } from 'lucide-react'
 import { FormEventHandler, forwardRef, useState } from 'react'
 
 type TimeLog = {
@@ -120,10 +121,8 @@ export default function ProjectTimeLogs({
         },
     ]
 
-    // State for selected time logs
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
 
-    // Handle checkbox selection
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
             setSelectedLogs([...selectedLogs, id])
@@ -132,7 +131,6 @@ export default function ProjectTimeLogs({
         }
     }
 
-    // Mark selected logs as paid
     const markAsPaid = () => {
         if (selectedLogs.length === 0) {
             return
@@ -158,11 +156,9 @@ export default function ProjectTimeLogs({
         is_paid: filters.is_paid || '',
     })
 
-    // Convert string dates to Date objects for DatePicker
     const startDate = data.start_date ? new Date(data.start_date) : null
     const endDate = data.end_date ? new Date(data.end_date) : null
 
-    // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
             setData('start_date', date.toISOString().split('T')[0])
@@ -190,7 +186,6 @@ export default function ProjectTimeLogs({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${project.name} - Time Logs`} />
             <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
-                {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
                         <Link href={route('project.index')}>
@@ -206,196 +201,22 @@ export default function ProjectTimeLogs({
                     </div>
                 </section>
 
-                {/* Stats Cards */}
                 {timeLogs.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {/* Time Metrics */}
-                        <div className="lg:col-span-2">
-                            <h4 className="mb-2 text-xs font-medium text-muted-foreground">Time Metrics</h4>
-                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
-                                <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
-                                    <CardContent className="py-1">
-                                        <div className="flex flex-row items-center justify-between">
-                                            <CardTitle className="text-xs font-medium">Total Hours</CardTitle>
-                                            <ClockIcon className="h-3 w-3 text-muted-foreground" />
-                                        </div>
-                                        <div className="text-lg font-bold">{totalDuration}</div>
-                                        <p className="text-[10px] text-muted-foreground">
-                                            {filters.start_date && filters.end_date
-                                                ? `Hours logged from ${filters.start_date} to ${filters.end_date}`
-                                                : filters.start_date
-                                                ? `Hours logged from ${filters.start_date}`
-                                                : filters.end_date
-                                                    ? `Hours logged until ${filters.end_date}`
-                                                    : 'Total hours logged'}
-                                        </p>
-                                    </CardContent>
-                                </Card>
-
-                                <Card className="overflow-hidden border-l-4 border-l-amber-500 dark:border-l-amber-400 transition-all hover:shadow-md">
-                                    <CardContent className="py-1">
-                                        <div className="flex flex-row items-center justify-between">
-                                            <CardTitle className="text-xs font-medium">Unpaid Hours</CardTitle>
-                                            <ClockIcon className="h-3 w-3 text-muted-foreground" />
-                                        </div>
-                                        <div className="text-lg font-bold">{unpaidHours}</div>
-                                        <p className="text-[10px] text-muted-foreground">Hours pending payment</p>
-                                    </CardContent>
-                                </Card>
-
-                                <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
-                                    <CardContent className="py-1">
-                                        <div className="flex flex-row items-center justify-between">
-                                            <CardTitle className="text-xs font-medium">Paid Hours</CardTitle>
-                                            <ClockIcon className="h-3 w-3 text-muted-foreground" />
-                                        </div>
-                                        <div className="text-lg font-bold">{totalDuration - unpaidHours}</div>
-                                        <p className="text-[10px] text-muted-foreground">Hours already paid</p>
-                                    </CardContent>
-                                </Card>
-
-                                <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
-                                    <CardContent className="py-1">
-                                        <div className="flex flex-row items-center justify-between">
-                                            <CardTitle className="text-xs font-medium">Weekly Average</CardTitle>
-                                            <CalendarIcon className="h-3 w-3 text-muted-foreground" />
-                                        </div>
-                                        <div className="text-lg font-bold">{weeklyAverage}</div>
-                                        <p className="text-[10px] text-muted-foreground">Hours per week</p>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </div>
-
-                        {/* Financial Summary */}
-                        <div className="lg:col-span-2">
-                            <h4 className="mb-2 text-xs font-medium text-muted-foreground">Financial Summary</h4>
-                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                {/* Paid Amount */}
-                                <div>
-                                    {Object.keys(paidAmount).length > 0 ? (
-                                        <div className="space-y-2">
-                                            {Object.entries(paidAmount).map(([currencyCode, amount]) => (
-                                                <Card key={currencyCode} className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
-                                                    <CardContent className="py-1">
-                                                        <div className="flex flex-row items-center justify-between">
-                                                            <CardTitle className="text-xs font-medium">Paid Amount ({currencyCode})</CardTitle>
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                width="12"
-                                                                height="12"
-                                                                viewBox="0 0 24 24"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                strokeWidth="2"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                className="h-3 w-3 text-muted-foreground"
-                                                            >
-                                                                <circle cx="12" cy="12" r="10" />
-                                                                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                                                <path d="M12 18V6" />
-                                                            </svg>
-                                                        </div>
-                                                        <div className="text-lg font-bold">{amount}</div>
-                                                        <p className="text-[10px] text-muted-foreground">Paid earnings</p>
-                                                    </CardContent>
-                                                </Card>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
-                                            <CardContent className="py-1">
-                                                <div className="flex flex-row items-center justify-between">
-                                                    <CardTitle className="text-xs font-medium">Paid Amount</CardTitle>
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        width="12"
-                                                        height="12"
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        className="h-3 w-3 text-muted-foreground"
-                                                    >
-                                                        <circle cx="12" cy="12" r="10" />
-                                                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                                        <path d="M12 18V6" />
-                                                    </svg>
-                                                </div>
-                                                <div className="text-lg font-bold">0</div>
-                                                <p className="text-[10px] text-muted-foreground">Paid earnings</p>
-                                            </CardContent>
-                                        </Card>
-                                    )}
-                                </div>
-
-                                {/* Unpaid Amount */}
-                                <div>
-                                    <h4 className="mb-2 text-xs font-medium text-muted-foreground">Unpaid Amount</h4>
-                                    {Object.keys(unpaidAmount).length > 0 ? (
-                                        <div className="space-y-2">
-                                            {Object.entries(unpaidAmount).map(([currencyCode, amount]) => (
-                                                <Card key={currencyCode} className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
-                                                    <CardContent className="py-1">
-                                                        <div className="flex flex-row items-center justify-between">
-                                                            <CardTitle className="text-xs font-medium">Unpaid Amount ({currencyCode})</CardTitle>
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                width="12"
-                                                                height="12"
-                                                                viewBox="0 0 24 24"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                strokeWidth="2"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                className="h-3 w-3 text-muted-foreground"
-                                                            >
-                                                                <circle cx="12" cy="12" r="10" />
-                                                                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                                                <path d="M12 18V6" />
-                                                            </svg>
-                                                        </div>
-                                                        <div className="text-lg font-bold">{amount}</div>
-                                                        <p className="text-[10px] text-muted-foreground">{unpaidHours} unpaid hours</p>
-                                                    </CardContent>
-                                                </Card>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
-                                            <CardContent className="py-1">
-                                                <div className="flex flex-row items-center justify-between">
-                                                    <CardTitle className="text-xs font-medium">Unpaid Amount</CardTitle>
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        width="12"
-                                                        height="12"
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        className="h-3 w-3 text-muted-foreground"
-                                                    >
-                                                        <circle cx="12" cy="12" r="10" />
-                                                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                                        <path d="M12 18V6" />
-                                                    </svg>
-                                                </div>
-                                                <div className="text-lg font-bold">0</div>
-                                                <p className="text-[10px] text-muted-foreground">{unpaidHours} unpaid hours</p>
-                                            </CardContent>
-                                        </Card>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <section className="mb-4">
+                        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
+                        <StatsCards
+                            teamStats={{
+                                totalHours: totalDuration,
+                                unpaidHours: unpaidHours,
+                                unpaidAmount: Object.values(unpaidAmount).reduce((sum, amount) => sum + amount, 0),
+                                unpaidAmountsByCurrency: unpaidAmount,
+                                paidAmount: Object.values(paidAmount).reduce((sum, amount) => sum + amount, 0),
+                                paidAmountsByCurrency: paidAmount,
+                                currency: Object.keys(unpaidAmount)[0] || Object.keys(paidAmount)[0] || 'USD',
+                                weeklyAverage: weeklyAverage,
+                            }}
+                        />
+                    </section>
                 )}
 
                 {/* Filter Card */}

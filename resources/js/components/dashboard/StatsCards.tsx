@@ -20,7 +20,6 @@ interface StatsCardsProps {
 }
 
 export default function StatsCards({ teamStats }: StatsCardsProps) {
-    // Generate unpaid amount cards for each currency
     const renderUnpaidAmountCards = () => {
         if (!teamStats.unpaidAmountsByCurrency || Object.keys(teamStats.unpaidAmountsByCurrency).length === 0) {
             // Fallback to the default card if no currency-specific amounts are available
@@ -56,7 +55,6 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
         ));
     };
 
-    // Generate paid amount cards for each currency
     const renderPaidAmountCards = () => {
         if (!teamStats.paidAmountsByCurrency || Object.keys(teamStats.paidAmountsByCurrency).length === 0) {
             // Fallback to the default card if no currency-specific amounts are available
@@ -94,29 +92,6 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
 
     return (
         <div className="space-y-4">
-            {/* Team Stats Section */}
-            <div>
-                <h4 className="mb-2 text-xs font-medium text-muted-foreground">Team Information</h4>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
-                    <StatsCard
-                        title="Team Members"
-                        icon={<UsersIcon className="h-4 w-4 text-muted-foreground" />}
-                        value={teamStats.count}
-                        description="Active members in your team"
-                        borderColor="purple-500"
-                    />
-
-                    <StatsCard
-                        title="Clients"
-                        icon={<BriefcaseIcon className="h-4 w-4 text-muted-foreground" />}
-                        value={teamStats.clientCount}
-                        description="Total active clients"
-                        borderColor="purple-500"
-                    />
-                </div>
-            </div>
-
-            {/* Time Stats Section */}
             <div>
                 <h4 className="mb-2 text-xs font-medium text-muted-foreground">Time Metrics</h4>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
