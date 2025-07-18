@@ -1,9 +1,8 @@
 import { roundToTwoDecimals } from '@/lib/utils'
-import { BarChart3, BriefcaseIcon, ClockIcon, DollarSign, TrendingUp, UsersIcon } from 'lucide-react'
+import { BarChart3, ClockIcon, DollarSign, TrendingUp } from 'lucide-react'
 import StatsCard from './StatsCard'
 
 interface TeamStats {
-    count: number
     totalHours: number
     unpaidHours: number
     unpaidAmount: number
@@ -12,7 +11,6 @@ interface TeamStats {
     paidAmountsByCurrency: Record<string, number>
     currency: string
     weeklyAverage: number
-    clientCount: number
 }
 
 interface StatsCardsProps {
