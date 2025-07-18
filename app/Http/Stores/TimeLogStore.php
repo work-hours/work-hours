@@ -9,6 +9,7 @@ use App\Http\QueryFilters\TimeLog\IsPaidFilter;
 use App\Http\QueryFilters\TimeLog\ProjectIdFilter;
 use App\Http\QueryFilters\TimeLog\StartDateFilter;
 use App\Http\QueryFilters\TimeLog\UserIdFilter;
+use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
 use Carbon\Carbon;
@@ -61,6 +62,15 @@ final class TimeLogStore
         return round($unpaidAmount, 2);
     }
 
+    public static function unpaidTimeLog(int $teamMemberId): Collection
+    {
+        return TimeLog::query()
+            ->with('project')
+            ->where('user_id', $teamMemberId)
+            ->where('is_paid', false)
+            ->get();
+    }
+
     public static function paidAmount(array $teamMembersIds): float
     {
         $paidAmount = 0;
@@ -77,15 +87,6 @@ final class TimeLogStore
         }
 
         return round($paidAmount, 2);
-    }
-
-    public static function unpaidTimeLog(int $teamMemberId): Collection
-    {
-        return TimeLog::query()
-            ->with('project')
-            ->where('user_id', $teamMemberId)
-            ->where('is_paid', false)
-            ->get();
     }
 
     public static function paidTimeLog(int $teamMemberId): Collection
@@ -146,5 +147,12 @@ final class TimeLogStore
                 'paid_amount' => $paidAmount,
             ];
         });
+    }
+
+    public static function currency(Project $project)
+    {
+        $team = TeamStore::teamEntry(userId: $project->user_id, memberId: auth()->id());
+
+        return $team instanceof Team ? $team->currency : auth()->user()->currency;
     }
 }

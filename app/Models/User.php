@@ -25,6 +25,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $remember_token
  * @property string|null $github_token
  * @property float|null $hourly_rate
+ * @property string|null $currency
  * @property mixed $unreadNotifications
  */
 #[UsePolicy(TeamPolicy::class)]

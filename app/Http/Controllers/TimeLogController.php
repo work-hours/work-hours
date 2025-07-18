@@ -77,6 +77,12 @@ final class TimeLogController extends Controller
             $data = $request->validated();
             $data['user_id'] = auth()->id();
 
+            $data['currency'] = auth()->user()->currency;
+            if (! empty($data['project_id'])) {
+                $project = Project::query()->find($data['project_id']);
+                $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
+            }
+
             $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
             if ($isLogCompleted) {
@@ -243,6 +249,13 @@ final class TimeLogController extends Controller
         DB::beginTransaction();
         try {
             $data = $request->validated();
+
+            $data['currency'] = auth()->user()->currency;
+            if (! empty($data['project_id'])) {
+                $project = Project::query()->find($data['project_id']);
+                $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
+            }
+
             $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
             if ($isLogCompleted) {
