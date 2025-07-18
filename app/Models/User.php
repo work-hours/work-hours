@@ -44,6 +44,7 @@ final class User extends Authenticatable implements MustVerifyEmail
         'password',
         'github_token',
         'hourly_rate',
+        'currency',
     ];
 
     /**
@@ -68,7 +69,7 @@ final class User extends Authenticatable implements MustVerifyEmail
 
     public function currencies(): HasMany
     {
-        return $this->hasMany(Currency::class);
+        return $this->hasMany(Currency::class)->orderBy('created_at', 'ASC');
     }
 
     /**

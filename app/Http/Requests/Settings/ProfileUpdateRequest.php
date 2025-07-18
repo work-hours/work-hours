@@ -36,6 +36,12 @@ final class ProfileUpdateRequest extends FormRequest
                 'min:0',
                 'decimal:0,2',
             ],
+
+            'currency' => [
+                'required',
+                'string',
+                'max:10',
+            ],
         ];
     }
 }

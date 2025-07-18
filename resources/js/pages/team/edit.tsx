@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react'
+import { Head, Link, useForm } from '@inertiajs/react'
 import { ArrowLeft, LoaderCircle, Lock, Mail, Save, User } from 'lucide-react'
 import React, { FormEventHandler } from 'react'
 import { toast } from 'sonner'
@@ -187,7 +187,10 @@ export default function EditTeamMember({ user, currencies }: Props) {
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="currency" className="text-sm font-medium">
-                                        Currency
+                                        Currency{' '}
+                                        <Link href={route('currency.edit')} className="text-xs text-blue-500 hover:underline">
+                                            (create new currency)
+                                        </Link>
                                     </Label>
                                     <Select
                                         value={data.currency}
