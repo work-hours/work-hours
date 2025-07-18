@@ -77,11 +77,10 @@ final class TimeLogController extends Controller
             $data = $request->validated();
             $data['user_id'] = auth()->id();
 
-            $data['currency'] = auth()->user()->currency;
-            if (! empty($data['project_id'])) {
-                $project = Project::query()->find($data['project_id']);
-                $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
-            }
+            $project = Project::query()->find($data['project_id']);
+
+            $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
+            $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
 
             $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
@@ -250,11 +249,9 @@ final class TimeLogController extends Controller
         try {
             $data = $request->validated();
 
-            $data['currency'] = auth()->user()->currency;
-            if (! empty($data['project_id'])) {
-                $project = Project::query()->find($data['project_id']);
-                $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
-            }
+            $project = Project::query()->find($data['project_id']);
+            $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
+            $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
 
             $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
@@ -271,7 +268,7 @@ final class TimeLogController extends Controller
             if ($isLogCompleted) {
                 $teamLeader = User::teamLeader(project: $timeLog->project);
                 if (auth()->id() !== $teamLeader->getKey()) {
-                    $teamLeader->notify(new TimeLogEntry($timeLog));
+                    $teamLeader->notify(new TimeLogEntry($timeLog , auth()->user()));
                 }
             }
 
