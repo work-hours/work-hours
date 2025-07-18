@@ -332,10 +332,10 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                 </CardContent>
                             </Card>
 
-                            <Card className="overflow-hidden bg-green-50 dark:bg-green-950/30 border-green-100 dark:border-green-900/50 transition-all hover:shadow-md">
+                            <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
                                 <CardContent className="py-1">
                                     <div className="flex flex-row items-center justify-between">
-                                        <CardTitle className="text-xs font-medium text-green-700 dark:text-green-300">Paid Amount</CardTitle>
+                                        <CardTitle className="text-xs font-medium">Paid Amount</CardTitle>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="12"
@@ -346,29 +346,29 @@ export default function TimeLog({ timeLogs, filters, projects, totalDuration, un
                                             strokeWidth="2"
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
-                                            className="h-3 w-3 text-green-500 dark:text-green-400"
+                                            className="h-3 w-3 text-muted-foreground"
                                         >
                                             <circle cx="12" cy="12" r="10" />
                                             <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
                                             <path d="M12 18V6" />
                                         </svg>
                                     </div>
-                                    <div className="text-lg font-bold text-green-800 dark:text-green-200">
+                                    <div className="text-lg font-bold">
                                         {currency} {paidAmount[currency] || 0}
                                     </div>
-                                    <p className="text-[10px] text-green-600 dark:text-green-400">Amount already paid</p>
+                                    <p className="text-[10px] text-muted-foreground">Amount already paid</p>
                                 </CardContent>
                             </Card>
 
                             {/* Periodic Metrics */}
-                            <Card className="overflow-hidden bg-purple-50 dark:bg-purple-950/30 border-purple-100 dark:border-purple-900/50 transition-all hover:shadow-md">
+                            <Card className="overflow-hidden border-l-4 border-l-purple-500 dark:border-l-purple-400 transition-all hover:shadow-md">
                                 <CardContent className="py-1">
                                     <div className="flex flex-row items-center justify-between">
-                                        <CardTitle className="text-xs font-medium text-purple-700 dark:text-purple-300">Weekly Average</CardTitle>
-                                        <CalendarIcon className="h-3 w-3 text-purple-500 dark:text-purple-400" />
+                                        <CardTitle className="text-xs font-medium">Weekly Average</CardTitle>
+                                        <CalendarIcon className="h-3 w-3 text-muted-foreground" />
                                     </div>
-                                    <div className="text-lg font-bold text-purple-800 dark:text-purple-200">{weeklyAverage}</div>
-                                    <p className="text-[10px] text-purple-600 dark:text-purple-400">Hours per week</p>
+                                    <div className="text-lg font-bold">{weeklyAverage}</div>
+                                    <p className="text-[10px] text-muted-foreground">Hours per week</p>
                                 </CardContent>
                             </Card>
                         </div>
