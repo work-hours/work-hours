@@ -1,9 +1,10 @@
 import { type BreadcrumbItem } from '@/types'
 import { Head, useForm } from '@inertiajs/react'
-import { DollarSign, LoaderCircle, Trash2 } from 'lucide-react'
-import { FormEventHandler, useState } from 'react'
+import { DollarSign, LoaderCircle } from 'lucide-react'
+import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
+import DeleteCurrency from '@/components/delete-currency'
 import HeadingSmall from '@/components/heading-small'
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
@@ -30,13 +31,9 @@ type Currency = {
 }
 
 export default function Currency({ currencies }: { currencies: Currency[] }) {
-    const [deletingId, setDeletingId] = useState<number | null>(null)
-
     const { data, setData, post, errors, processing, reset } = useForm<CurrencyForm>({
         code: '',
     })
-
-    const { delete: destroy } = useForm({})
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
@@ -49,22 +46,6 @@ export default function Currency({ currencies }: { currencies: Currency[] }) {
             },
             onError: () => {
                 toast.error('Failed to add currency')
-            },
-        })
-    }
-
-    const deleteCurrency = (id: number) => {
-        setDeletingId(id)
-
-        destroy(route('currency.destroy', { currency: id }), {
-            preserveScroll: true,
-            onSuccess: () => {
-                toast.success('Currency deleted successfully')
-                setDeletingId(null)
-            },
-            onError: () => {
-                toast.error('Failed to delete currency')
-                setDeletingId(null)
             },
         })
     }
@@ -128,18 +109,7 @@ export default function Currency({ currencies }: { currencies: Currency[] }) {
                                         <TableRow key={currency.id}>
                                             <TableCell>{currency.code}</TableCell>
                                             <TableCell>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() => deleteCurrency(currency.id)}
-                                                    disabled={deletingId === currency.id}
-                                                >
-                                                    {deletingId === currency.id ? (
-                                                        <LoaderCircle className="h-4 w-4 animate-spin" />
-                                                    ) : (
-                                                        <Trash2 className="h-4 w-4 text-destructive" />
-                                                    )}
-                                                </Button>
+                                                <DeleteCurrency currencyId={currency.id} currencyCode={currency.code} />
                                             </TableCell>
                                         </TableRow>
                                     ))}
