@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Rules\UnauthorizedEmailProviders;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -27,7 +28,7 @@ final class UpdateTeamMemberRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore(request('email'), 'email')],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore(request('email'), 'email'), new UnauthorizedEmailProviders()],
             'password' => ['nullable', 'string', 'min:8'],
             'hourly_rate' => ['nullable', 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'max:3'],

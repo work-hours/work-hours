@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Rules\UnauthorizedEmailProviders;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,7 +27,7 @@ final class StoreTeamMemberRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
+            'email' => ['required', 'email', 'max:255', new UnauthorizedEmailProviders()],
             'password' => ['required', 'string', 'min:8'],
             'hourly_rate' => ['nullable', 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'max:3'],
