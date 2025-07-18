@@ -209,6 +209,7 @@ export default function ProjectTimeLogs({
                         <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
                         <StatsCards
                             teamStats={{
+                                count: -1,
                                 totalHours: totalDuration,
                                 unpaidHours: unpaidHours,
                                 unpaidAmount: Object.values(unpaidAmount).reduce((sum, amount) => sum + amount, 0),
@@ -217,6 +218,7 @@ export default function ProjectTimeLogs({
                                 paidAmountsByCurrency: paidAmount,
                                 currency: Object.keys(unpaidAmount)[0] || Object.keys(paidAmount)[0] || 'USD',
                                 weeklyAverage: weeklyAverage,
+                                clientCount: -1,
                             }}
                         />
                     </section>
