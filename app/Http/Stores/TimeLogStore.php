@@ -98,17 +98,28 @@ final class TimeLogStore
             ->get();
     }
 
-    public static function unpaidAmountFromLogs(\Illuminate\Support\Collection $timeLogs): float
+    public static function unpaidAmountFromLogs(\Illuminate\Support\Collection $timeLogs): array
     {
-        $unpaidAmount = 0;
-        $timeLogs->each(function (TimeLog $timeLog) use (&$unpaidAmount): void {
+        $unpaidAmounts = [];
+
+        $timeLogs->each(function (TimeLog $timeLog) use (&$unpaidAmounts): void {
             $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+            $currency = $timeLog->currency ?? 'USD';
+
             if (! $timeLog['is_paid']) {
-                $unpaidAmount += $timeLog['duration'] * $hourlyRate;
+                if (!isset($unpaidAmounts[$currency])) {
+                    $unpaidAmounts[$currency] = 0;
+                }
+                $unpaidAmounts[$currency] += $timeLog['duration'] * $hourlyRate;
             }
         });
 
-        return round($unpaidAmount, 2);
+        // Round all amounts to 2 decimal places
+        foreach ($unpaidAmounts as $currency => $amount) {
+            $unpaidAmounts[$currency] = round($amount, 2);
+        }
+
+        return $unpaidAmounts;
     }
 
     public static function timeLogs(Builder $baseQuery)

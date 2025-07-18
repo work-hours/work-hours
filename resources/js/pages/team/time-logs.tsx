@@ -84,7 +84,7 @@ type Props = {
     user: User
     totalDuration: number
     unpaidHours: number
-    unpaidAmount: number
+    unpaidAmountsByCurrency: Record<string, number>
     currency: string
     weeklyAverage: number
 }
@@ -96,7 +96,7 @@ export default function TeamMemberTimeLogs({
     user,
     totalDuration,
     unpaidHours,
-    unpaidAmount,
+    unpaidAmountsByCurrency,
     currency,
     weeklyAverage,
 }: Props) {
@@ -232,34 +232,66 @@ export default function TeamMemberTimeLogs({
                             </CardContent>
                         </Card>
 
-                        {/* Unpaid amount card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
-                            <CardContent>
-                                <div className="mb-2 flex flex-row items-center justify-between">
-                                    <CardTitle className="text-sm font-medium">Unpaid Amount</CardTitle>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="h-4 w-4 text-muted-foreground"
-                                    >
-                                        <circle cx="12" cy="12" r="10" />
-                                        <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                                        <path d="M12 18V6" />
-                                    </svg>
-                                </div>
-                                <div className="text-2xl font-bold">
-                                    {currency} {unpaidAmount}
-                                </div>
-                                <p className="text-xs text-muted-foreground">Amount pending payment</p>
-                            </CardContent>
-                        </Card>
+                        {/* Unpaid amount cards - one for each currency */}
+                        {Object.keys(unpaidAmountsByCurrency).length > 0 ? (
+                            Object.entries(unpaidAmountsByCurrency).map(([currencyCode, amount]) => (
+                                <Card key={currencyCode} className="overflow-hidden transition-all hover:shadow-md">
+                                    <CardContent>
+                                        <div className="mb-2 flex flex-row items-center justify-between">
+                                            <CardTitle className="text-sm font-medium">Unpaid Amount ({currencyCode})</CardTitle>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="16"
+                                                height="16"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                className="h-4 w-4 text-muted-foreground"
+                                            >
+                                                <circle cx="12" cy="12" r="10" />
+                                                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                                                <path d="M12 18V6" />
+                                            </svg>
+                                        </div>
+                                        <div className="text-2xl font-bold">
+                                            {currencyCode} {amount}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">Amount pending payment</p>
+                                    </CardContent>
+                                </Card>
+                            ))
+                        ) : (
+                            <Card className="overflow-hidden transition-all hover:shadow-md">
+                                <CardContent>
+                                    <div className="mb-2 flex flex-row items-center justify-between">
+                                        <CardTitle className="text-sm font-medium">Unpaid Amount</CardTitle>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="h-4 w-4 text-muted-foreground"
+                                        >
+                                            <circle cx="12" cy="12" r="10" />
+                                            <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                                            <path d="M12 18V6" />
+                                        </svg>
+                                    </div>
+                                    <div className="text-2xl font-bold">
+                                        {currency} 0
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">No unpaid amounts found</p>
+                                </CardContent>
+                            </Card>
+                        )}
 
                         {/* Weekly average card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
