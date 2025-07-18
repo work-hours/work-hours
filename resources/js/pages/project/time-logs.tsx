@@ -238,6 +238,17 @@ export default function ProjectTimeLogs({
                             </CardContent>
                         </Card>
 
+                        <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
+                            <CardContent className="py-1">
+                                <div className="flex flex-row items-center justify-between">
+                                    <CardTitle className="text-xs font-medium">Paid Hours</CardTitle>
+                                    <ClockIcon className="h-3 w-3 text-muted-foreground" />
+                                </div>
+                                <div className="text-lg font-bold">{totalDuration - unpaidHours}</div>
+                                <p className="text-[10px] text-muted-foreground">Hours paid</p>
+                            </CardContent>
+                        </Card>
+
                         {/* Financial Metrics */}
                         <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
                             <CardContent className="py-1">
