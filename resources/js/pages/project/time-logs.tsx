@@ -16,12 +16,15 @@ type TimeLog = {
     id: number
     user_id: number
     user_name: string
+    project_name?: string | null
     start_timestamp: string
     end_timestamp: string
     duration: number
     is_paid: boolean
+    note?: string
     hourly_rate?: number
     paid_amount?: number
+    currency?: string
 }
 
 type Filters = {
@@ -407,7 +410,7 @@ export default function ProjectTimeLogs({
                     <CardContent>
                         {timeLogs.length > 0 ? (
                             <TimeLogTable
-                                timeLogs={timeLogs as unknown as TimeLogEntry[]}
+                                timeLogs={timeLogs as TimeLogEntry[]}
                                 showCheckboxes={isCreator}
                                 showTeamMember={true}
                                 showProject={false}
