@@ -41,6 +41,12 @@ final class CurrencyController extends Controller
     {
         abort_if($currency->user_id !== $request->user()->id, 403);
 
+        // Check if this is the user's last currency
+        $currencyCount = $request->user()->currencies()->count();
+        if ($currencyCount <= 1) {
+            return back()->withErrors(['currency' => 'You cannot delete your last currency. At least one currency is required.']);
+        }
+
         $currency->delete();
 
         return to_route('currency.edit');

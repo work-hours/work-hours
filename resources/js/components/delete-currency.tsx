@@ -24,8 +24,13 @@ export default function DeleteCurrency({ currencyId, currencyCode }: DeleteCurre
                 toast.success('Currency deleted successfully')
                 closeModal()
             },
-            onError: () => {
-                toast.error('Failed to delete currency')
+            onError: (errors) => {
+                if (errors.currency) {
+                    toast.error(errors.currency)
+                } else {
+                    toast.error('Failed to delete currency')
+                }
+                closeModal()
             },
         })
     }
