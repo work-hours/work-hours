@@ -209,10 +209,10 @@ export default function ProjectTimeLogs({
                 {/* Stats Cards */}
                 {timeLogs.length > 0 && (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {/* Time and Periodic Metrics */}
+                        {/* Time Metrics */}
                         <div className="lg:col-span-2">
-                            <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Time Metrics</h3>
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                            <h4 className="mb-2 text-xs font-medium text-muted-foreground">Time Metrics</h4>
+                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
                                 <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
                                     <CardContent className="py-1">
                                         <div className="flex flex-row items-center justify-between">
@@ -232,18 +232,7 @@ export default function ProjectTimeLogs({
                                     </CardContent>
                                 </Card>
 
-                                <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
-                                    <CardContent className="py-1">
-                                        <div className="flex flex-row items-center justify-between">
-                                            <CardTitle className="text-xs font-medium">Paid Hours</CardTitle>
-                                            <ClockIcon className="h-3 w-3 text-muted-foreground" />
-                                        </div>
-                                        <div className="text-lg font-bold">{totalDuration - unpaidHours}</div>
-                                        <p className="text-[10px] text-muted-foreground">Hours paid</p>
-                                    </CardContent>
-                                </Card>
-
-                                <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
+                                <Card className="overflow-hidden border-l-4 border-l-amber-500 dark:border-l-amber-400 transition-all hover:shadow-md">
                                     <CardContent className="py-1">
                                         <div className="flex flex-row items-center justify-between">
                                             <CardTitle className="text-xs font-medium">Unpaid Hours</CardTitle>
@@ -253,11 +242,19 @@ export default function ProjectTimeLogs({
                                         <p className="text-[10px] text-muted-foreground">Hours pending payment</p>
                                     </CardContent>
                                 </Card>
-                            </div>
 
-                            <div className="mt-4">
-                                <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Periodic Metrics</h3>
-                                <Card className="overflow-hidden border-l-4 border-l-purple-500 dark:border-l-purple-400 transition-all hover:shadow-md">
+                                <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
+                                    <CardContent className="py-1">
+                                        <div className="flex flex-row items-center justify-between">
+                                            <CardTitle className="text-xs font-medium">Paid Hours</CardTitle>
+                                            <ClockIcon className="h-3 w-3 text-muted-foreground" />
+                                        </div>
+                                        <div className="text-lg font-bold">{totalDuration - unpaidHours}</div>
+                                        <p className="text-[10px] text-muted-foreground">Hours already paid</p>
+                                    </CardContent>
+                                </Card>
+
+                                <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-all hover:shadow-md">
                                     <CardContent className="py-1">
                                         <div className="flex flex-row items-center justify-between">
                                             <CardTitle className="text-xs font-medium">Weekly Average</CardTitle>
@@ -270,20 +267,19 @@ export default function ProjectTimeLogs({
                             </div>
                         </div>
 
-                        {/* Financial Metrics */}
+                        {/* Financial Summary */}
                         <div className="lg:col-span-2">
-                            <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Financial Metrics</h3>
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                {/* Paid by Currency */}
+                            <h4 className="mb-2 text-xs font-medium text-muted-foreground">Financial Summary</h4>
+                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                {/* Paid Amount */}
                                 <div>
-                                    <h4 className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">Paid by Currency</h4>
                                     {Object.keys(paidAmount).length > 0 ? (
                                         <div className="space-y-2">
                                             {Object.entries(paidAmount).map(([currencyCode, amount]) => (
                                                 <Card key={currencyCode} className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
                                                     <CardContent className="py-1">
                                                         <div className="flex flex-row items-center justify-between">
-                                                            <CardTitle className="text-xs font-medium">{currencyCode}</CardTitle>
+                                                            <CardTitle className="text-xs font-medium">Paid Amount ({currencyCode})</CardTitle>
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
                                                                 width="12"
@@ -302,7 +298,7 @@ export default function ProjectTimeLogs({
                                                             </svg>
                                                         </div>
                                                         <div className="text-lg font-bold">{amount}</div>
-                                                        <p className="text-[10px] text-muted-foreground">Amount already paid</p>
+                                                        <p className="text-[10px] text-muted-foreground">Paid earnings</p>
                                                     </CardContent>
                                                 </Card>
                                             ))}
@@ -311,7 +307,7 @@ export default function ProjectTimeLogs({
                                         <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
                                             <CardContent className="py-1">
                                                 <div className="flex flex-row items-center justify-between">
-                                                    <CardTitle className="text-xs font-medium">No Paid Amount</CardTitle>
+                                                    <CardTitle className="text-xs font-medium">Paid Amount</CardTitle>
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         width="12"
@@ -330,22 +326,22 @@ export default function ProjectTimeLogs({
                                                     </svg>
                                                 </div>
                                                 <div className="text-lg font-bold">0</div>
-                                                <p className="text-[10px] text-muted-foreground">No paid amount yet</p>
+                                                <p className="text-[10px] text-muted-foreground">Paid earnings</p>
                                             </CardContent>
                                         </Card>
                                     )}
                                 </div>
 
-                                {/* Unpaid by Currency */}
+                                {/* Unpaid Amount */}
                                 <div>
-                                    <h4 className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">Unpaid by Currency</h4>
+                                    <h4 className="mb-2 text-xs font-medium text-muted-foreground">Unpaid Amount</h4>
                                     {Object.keys(unpaidAmount).length > 0 ? (
                                         <div className="space-y-2">
                                             {Object.entries(unpaidAmount).map(([currencyCode, amount]) => (
                                                 <Card key={currencyCode} className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
                                                     <CardContent className="py-1">
                                                         <div className="flex flex-row items-center justify-between">
-                                                            <CardTitle className="text-xs font-medium">{currencyCode}</CardTitle>
+                                                            <CardTitle className="text-xs font-medium">Unpaid Amount ({currencyCode})</CardTitle>
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
                                                                 width="12"
@@ -364,7 +360,7 @@ export default function ProjectTimeLogs({
                                                             </svg>
                                                         </div>
                                                         <div className="text-lg font-bold">{amount}</div>
-                                                        <p className="text-[10px] text-muted-foreground">Amount pending payment</p>
+                                                        <p className="text-[10px] text-muted-foreground">{unpaidHours} unpaid hours</p>
                                                     </CardContent>
                                                 </Card>
                                             ))}
@@ -373,7 +369,7 @@ export default function ProjectTimeLogs({
                                         <Card className="overflow-hidden border-l-4 border-l-green-500 dark:border-l-green-400 transition-all hover:shadow-md">
                                             <CardContent className="py-1">
                                                 <div className="flex flex-row items-center justify-between">
-                                                    <CardTitle className="text-xs font-medium">No Unpaid Amount</CardTitle>
+                                                    <CardTitle className="text-xs font-medium">Unpaid Amount</CardTitle>
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         width="12"
@@ -392,7 +388,7 @@ export default function ProjectTimeLogs({
                                                     </svg>
                                                 </div>
                                                 <div className="text-lg font-bold">0</div>
-                                                <p className="text-[10px] text-muted-foreground">No unpaid amount</p>
+                                                <p className="text-[10px] text-muted-foreground">{unpaidHours} unpaid hours</p>
                                             </CardContent>
                                         </Card>
                                     )}
