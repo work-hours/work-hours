@@ -21,21 +21,20 @@ export default function Features() {
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {/* GitHub Integration - Moved to first position and enhanced */}
-                    <article className="animate-fade-up animate-once animate-delay-500 group relative overflow-hidden rounded-2xl border-2 border-primary/40 bg-gradient-to-b from-primary/5 to-card/95 p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/10">
-                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/10 opacity-80 blur-2xl transition-all duration-300 group-hover:bg-primary/20 group-hover:opacity-100"></div>
-                        <div className="mb-6 flex h-18 w-18 items-center justify-center rounded-2xl bg-primary/15 transition-colors duration-300 group-hover:bg-primary/25">
-                            <Github className="h-10 w-10 text-primary" aria-hidden="true" />
+                    {/* GitHub Integration - Compact but prominent */}
+                    <article className="animate-fade-up animate-once animate-delay-500 group relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-b from-primary/5 to-card/95 p-6 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5">
+                        <div className="absolute -top-4 -right-4 h-16 w-16 rounded-full bg-primary/10 opacity-70 blur-xl transition-all duration-300 group-hover:opacity-100"></div>
+                        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 transition-colors duration-300 group-hover:bg-primary/20">
+                            <Github className="h-6 w-6 text-primary" aria-hidden="true" />
                         </div>
-                        <h3 className="mb-3 text-2xl font-bold text-foreground flex items-center">
+                        <h3 className="mb-2 text-xl font-bold text-foreground flex items-center">
                             GitHub Integration
-                            <span className="ml-2 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                            <span className="ml-2 inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
                                 Popular
                             </span>
                         </h3>
-                        <p className="text-muted-foreground">
-                            Connect your GitHub account to import repositories as projects. Track time spent on specific repositories and streamline
-                            your development workflow with our powerful integration.
+                        <p className="text-sm text-muted-foreground">
+                            Connect GitHub to import repositories as projects and track development time efficiently.
                         </p>
                     </article>
 
@@ -101,64 +100,53 @@ export default function Features() {
                 </div>
             </section>
 
-            {/* Enhanced GitHub Integration Section */}
-            <section id="integration" className="container mx-auto mb-24 px-6 lg:px-8" aria-label="GitHub integration">
-                <div className="animate-fade-up animate-once relative overflow-hidden rounded-3xl border-2 border-primary/50 bg-gradient-to-r from-primary/10 to-primary/5 p-10 shadow-xl">
-                    {/* Decorative elements */}
-                    <div className="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-primary/10 opacity-80 blur-3xl"></div>
-                    <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-primary/10 opacity-80 blur-3xl"></div>
-
-                    {/* GitHub-like decorative elements */}
-                    <div className="absolute top-10 right-10 h-16 w-16 rounded-full border-4 border-dashed border-primary/20 opacity-50"></div>
-                    <div className="absolute bottom-20 left-40 h-24 w-24 rounded-full border-4 border-dotted border-primary/20 opacity-50"></div>
-                    <div className="absolute top-40 left-20 h-12 w-12 rounded-full border-4 border-primary/20 opacity-50"></div>
+            {/* Compact GitHub Integration Section */}
+            <section id="integration" className="container mx-auto mb-16 px-6 lg:px-8" aria-label="GitHub integration">
+                <div className="animate-fade-up animate-once relative overflow-hidden rounded-xl border border-primary/30 bg-gradient-to-r from-primary/5 to-transparent p-6 shadow-md">
+                    {/* Minimal decorative elements */}
+                    <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-primary/5 opacity-50 blur-2xl"></div>
 
                     <div className="relative z-10">
-                        <div className="flex flex-col md:flex-row md:items-center md:gap-12">
-                            <div className="mb-10 md:mb-0 md:w-1/3 flex justify-center">
+                        <div className="flex flex-col md:flex-row md:items-center md:gap-8">
+                            <div className="mb-6 md:mb-0 md:w-1/4 flex justify-center">
                                 <div className="relative">
-                                    <div className="absolute inset-0 bg-primary/5 blur-xl rounded-full transform scale-150"></div>
-                                    <div className="relative flex h-32 w-32 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-primary/20">
-                                        <Github className="h-16 w-16 text-primary" aria-label="GitHub logo" />
+                                    <div className="relative flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md">
+                                        <Github className="h-8 w-8 text-primary" aria-label="GitHub logo" />
                                     </div>
-                                    <div className="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">
+                                    <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">
                                         <span>★</span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="md:w-2/3">
-                                <div className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-4">
-                                    <span className="mr-1">★</span> Featured Integration
+                            <div className="md:w-3/4">
+                                <div className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary mb-2">
+                                    <span className="mr-1">★</span> Featured
                                 </div>
-                                <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
-                                    Seamless GitHub Integration
+                                <h2 className="mb-2 text-2xl font-bold tracking-tight text-foreground">
+                                    GitHub Integration
                                 </h2>
-                                <p className="text-lg text-muted-foreground mb-6">
-                                    Connect your GitHub account to import repositories as projects. Track time spent on specific repositories and
-                                    streamline your development workflow. Our powerful GitHub integration allows you to:
+                                <p className="text-sm text-muted-foreground mb-3">
+                                    Connect GitHub to import repositories as projects and track development time efficiently.
                                 </p>
-                                <ul className="space-y-2 mb-8">
-                                    <li className="flex items-start">
-                                        <span className="mr-2 text-primary">✓</span>
-                                        <span>Automatically sync your repositories as projects</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <span className="mr-2 text-primary">✓</span>
-                                        <span>Track time spent on specific repositories and branches</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <span className="mr-2 text-primary">✓</span>
-                                        <span>Measure productivity across your development projects</span>
-                                    </li>
-                                </ul>
-                                <div className="mt-8">
+                                <div className="flex flex-wrap gap-3 mb-4 text-xs">
+                                    <span className="inline-flex items-center rounded-full bg-primary/5 px-2 py-1">
+                                        <span className="mr-1 text-primary">✓</span> Repository sync
+                                    </span>
+                                    <span className="inline-flex items-center rounded-full bg-primary/5 px-2 py-1">
+                                        <span className="mr-1 text-primary">✓</span> Repository Import
+                                    </span>
+                                    <span className="inline-flex items-center rounded-full bg-primary/5 px-2 py-1">
+                                        <span className="mr-1 text-primary">✓</span> Productivity metrics
+                                    </span>
+                                </div>
+                                <div>
                                     <a
                                         href="/integration"
-                                        className="inline-flex items-center rounded-lg bg-primary px-6 py-3 text-base font-medium text-primary-foreground shadow-md transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20"
+                                        className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-all duration-300 hover:bg-primary/90"
                                         aria-label={isLoggedIn ? 'Connect your account with GitHub' : 'Get started with Work Hours'}
                                     >
-                                        <Github className="mr-2 h-5 w-5" />
-                                        {isLoggedIn ? 'Connect with GitHub' : 'Get Started with GitHub'}
+                                        <Github className="mr-1.5 h-4 w-4" />
+                                        {isLoggedIn ? 'Connect with GitHub' : 'Get Started'}
                                     </a>
                                 </div>
                             </div>
@@ -167,39 +155,42 @@ export default function Features() {
                 </div>
             </section>
 
-            {/* Multiple Currency Management Section */}
-            <section id="currency-management" className="container mx-auto mb-24 px-6 lg:px-8" aria-label="Multiple currency management">
-                <div className="animate-fade-up animate-once relative overflow-hidden rounded-3xl bg-gradient-to-b from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20 p-10 shadow-xl">
-                    {/* Decorative currency symbols */}
-                    <div className="absolute top-6 right-8 text-blue-300/30 text-6xl font-bold">$</div>
-                    <div className="absolute top-12 right-20 text-green-300/20 text-4xl font-bold">€</div>
-                    <div className="absolute bottom-8 left-12 text-amber-300/20 text-5xl font-bold">¥</div>
-                    <div className="absolute bottom-16 left-28 text-purple-300/20 text-4xl font-bold">£</div>
+            {/* Compact Currency Management Section */}
+            <section id="currency-management" className="container mx-auto mb-16 px-6 lg:px-8" aria-label="Multiple currency management">
+                <div className="animate-fade-up animate-once relative overflow-hidden rounded-xl bg-gradient-to-b from-blue-50/50 to-blue-100/30 dark:from-blue-950/20 dark:to-blue-900/10 p-6 shadow-md">
+                    {/* Minimal decorative currency symbols */}
+                    <div className="absolute top-4 right-6 text-blue-300/20 text-4xl font-bold">$</div>
+                    <div className="absolute bottom-4 left-6 text-green-300/10 text-3xl font-bold">€</div>
 
-                    <div className="relative z-10">
-                        <div className="text-center mb-8">
-                            <div className="mx-auto inline-flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40 shadow-inner mb-4">
-                                <DollarSign className="h-10 w-10 text-blue-600 dark:text-blue-400" aria-label="Currency icon" />
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-center md:gap-8">
+                        <div className="mb-6 md:mb-0 md:w-1/4 flex justify-center">
+                            <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-100/70 dark:bg-blue-900/30 shadow-sm">
+                                <DollarSign className="h-7 w-7 text-blue-600 dark:text-blue-400" aria-label="Currency icon" />
                             </div>
-                            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Multiple Currency Management</h2>
                         </div>
-
-                        <div className="max-w-3xl mx-auto">
-                            <p className="text-lg text-center text-muted-foreground mb-8">
-                                Work with multiple currencies seamlessly across your projects and teams. Set different currencies for different clients,
-                                track earnings in various currencies, and generate reports with accurate currency conversions. Our flexible currency
-                                management system adapts to your global business needs, making international collaboration and billing effortless.
+                        <div className="md:w-3/4">
+                            <h2 className="mb-2 text-2xl font-bold tracking-tight text-foreground">Multiple Currency Management</h2>
+                            <p className="text-sm text-muted-foreground mb-4">
+                                Work with multiple currencies across projects and clients. Track earnings in various currencies and generate reports with accurate conversions.
                             </p>
-
-                            <div className="flex justify-center">
-                                <a
-                                    href={isLoggedIn ? "/settings/currency" : "/register"}
-                                    className="inline-flex items-center rounded-full bg-blue-600 dark:bg-blue-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all duration-300 hover:bg-blue-700 dark:hover:bg-blue-600 hover:shadow-md"
-                                    aria-label={isLoggedIn ? 'Manage your currencies' : 'Get started with Work Hours'}
-                                >
-                                    {isLoggedIn ? 'Manage Currencies' : 'Get Started'}
-                                </a>
+                            <div className="flex flex-wrap gap-3 mb-4 text-xs">
+                                <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-900/20 px-2 py-1">
+                                    <span className="mr-1 text-blue-600 dark:text-blue-400">✓</span> Multi-currency billing
+                                </span>
+                                <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-900/20 px-2 py-1">
+                                    <span className="mr-1 text-blue-600 dark:text-blue-400">✓</span> Currency conversion
+                                </span>
+                                <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-900/20 px-2 py-1">
+                                    <span className="mr-1 text-blue-600 dark:text-blue-400">✓</span> Global reporting
+                                </span>
                             </div>
+                            <a
+                                href={isLoggedIn ? "/settings/currency" : "/register"}
+                                className="inline-flex items-center rounded-md bg-blue-600 dark:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-300 hover:bg-blue-700 dark:hover:bg-blue-600"
+                                aria-label={isLoggedIn ? 'Manage your currencies' : 'Get started with Work Hours'}
+                            >
+                                {isLoggedIn ? 'Manage Currencies' : 'Get Started'}
+                            </a>
                         </div>
                     </div>
                 </div>
