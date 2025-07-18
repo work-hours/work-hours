@@ -36,6 +36,8 @@ export default function Profile({ mustVerifyEmail, status, currencies }: {
 }) {
     const { auth } = usePage<SharedData>().props
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
         name: auth.user.name,
         email: auth.user.email,
@@ -144,7 +146,7 @@ export default function Profile({ mustVerifyEmail, status, currencies }: {
                                     <SelectValue placeholder="Select currency" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {currencies.map((code) => (
+                                    {currencies.map((code: string) => (
                                         <SelectItem key={code} value={code}>
                                             {code}
                                         </SelectItem>
