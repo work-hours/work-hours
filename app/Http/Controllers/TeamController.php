@@ -272,7 +272,11 @@ final class TeamController extends Controller
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
         $teamMembersList = TeamStore::teamMembers(userId: auth()->id())
-            ->map(fn ($teamMember): array => ['id' => $teamMember->id, 'name' => $teamMember->member->name, 'email' => $teamMember->member->email]);
+            ->map(fn ($teamMember): array => [
+                'id' => $teamMember->member->getKey(),
+                'name' => $teamMember->member->name,
+                'email' => $teamMember->member->email
+            ]);
 
         // For backward compatibility, calculate total unpaid amount
         $totalUnpaidAmount = array_sum($unpaidAmountsByCurrency);
