@@ -33,6 +33,7 @@ export default defineConfig({
         alias: {
             'ziggy-js': resolve(__dirname, 'vendor/tightenco/ziggy'),
             '@actions': resolve(__dirname, 'vendor/msamgan/lact/resources/actions'),
+            '@': resolve(__dirname, 'resources/js'),
         },
     },
 });

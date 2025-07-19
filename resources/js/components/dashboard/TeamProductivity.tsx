@@ -15,10 +15,10 @@ interface TeamProductivityProps {
 
 export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
     return (
-        <Card className="overflow-hidden border-l-4 border-l-purple-500 dark:border-l-purple-400 transition-all hover:shadow-md">
+        <Card className="overflow-hidden border-l-4 border-l-purple-500 transition-colors dark:border-l-purple-400">
             <CardHeader className="pb-2">
-                <CardTitle className="text-xs font-medium">Team Productivity</CardTitle>
-                <CardDescription className="text-[10px]">Hours logged by team members</CardDescription>
+                <CardTitle className="text-xs font-bold uppercase">Team Productivity</CardTitle>
+                <CardDescription className="font-['Courier_New',monospace] text-[10px]">Hours logged by team members</CardDescription>
             </CardHeader>
             <CardContent className="h-60 py-1">
                 {teamStats.count > 0 ? (
@@ -39,10 +39,13 @@ export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
                         </BarChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="flex h-full flex-col items-center justify-center text-gray-500">
+                    <div className="flex h-full flex-col items-center justify-center text-gray-700 dark:text-gray-300">
                         <UsersIcon className="mb-2 h-12 w-12 opacity-50" />
-                        <p>Add team members to see productivity insights</p>
-                        <Link href="/team/create" className="mt-2 text-primary hover:underline">
+                        <p className="font-['Courier_New',monospace]">Add team members to see productivity insights</p>
+                        <Link
+                            href="/team/create"
+                            className="mt-2 border-b border-gray-400 dark:border-gray-600 pb-0.5 font-['Courier_New',monospace] font-bold text-gray-700 dark:text-gray-300 hover:border-gray-700 dark:hover:border-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                        >
                             Add team members
                         </Link>
                     </div>

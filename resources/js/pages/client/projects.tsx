@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
 import { ArrowLeft, Clock, Edit, FolderPlus, Users } from 'lucide-react'
@@ -50,9 +50,9 @@ export default function ClientProjects({ client, projects }: Props) {
     ]
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title={`${client.name} - Projects`} />
-            <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
@@ -207,6 +207,6 @@ export default function ClientProjects({ client, projects }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

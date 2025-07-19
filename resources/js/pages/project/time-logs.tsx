@@ -1,12 +1,12 @@
-import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import StatsCards from '@/components/dashboard/StatsCards'
+import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
 import { ArrowLeft, Calendar, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset, User } from 'lucide-react'
@@ -186,9 +186,9 @@ export default function ProjectTimeLogs({
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title={`${project.name} - Time Logs`} />
-            <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-6 p-6">
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
                         <Link href={route('project.index')}>
@@ -431,6 +431,6 @@ export default function ProjectTimeLogs({
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

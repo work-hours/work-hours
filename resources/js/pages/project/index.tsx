@@ -2,8 +2,10 @@ import DeleteProject from '@/components/delete-project'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link } from '@inertiajs/react'
 import { Clock, Download, Edit, FolderPlus, Folders, Loader2 } from 'lucide-react'
@@ -66,9 +68,9 @@ export default function Projects({ auth }: Props) {
     }, [])
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Projects" />
-            <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Project Management</h1>
@@ -207,6 +209,6 @@ export default function Projects({ auth }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

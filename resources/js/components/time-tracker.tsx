@@ -131,25 +131,27 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
     return (
         <>
             {activeTimeLog ? (
-                <Card className="overflow-hidden bg-primary/5 transition-all hover:shadow-md">
+                <Card className="overflow-hidden bg-primary/5 dark:bg-primary/10 transition-colors">
                     <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                             <div>
-                                <CardTitle className="flex items-center gap-2 text-left text-xl">
+                                <CardTitle className="flex items-center gap-2 text-left font-['Courier_New',monospace] text-xl font-bold uppercase">
                                     <ClockIcon className="h-5 w-5 animate-pulse text-primary" />
                                     <span>Time Tracking Active</span>
                                 </CardTitle>
-                                <CardDescription>
+                                <CardDescription className="font-['Courier_New',monospace]">
                                     {activeTimeLog.project_name ? `Tracking time for ${activeTimeLog.project_name}` : 'Tracking time'}
                                 </CardDescription>
-                                <div className="mt-2 text-3xl font-bold text-primary">{formatElapsedTime(activeTimeLog.elapsed)}</div>
-                                <div className="text-sm text-muted-foreground">
+                                <div className="mt-2 font-['Courier_New',monospace] text-3xl font-bold text-primary">
+                                    {formatElapsedTime(activeTimeLog.elapsed)}
+                                </div>
+                                <div className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
                                     Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2 md:w-1/2">
                                 <div>
-                                    <Label htmlFor="note" className="mb-1 block text-sm font-medium">
+                                    <Label htmlFor="note" className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 dark:text-gray-200 uppercase">
                                         Note (required)
                                     </Label>
                                     <Input
@@ -176,16 +178,23 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
                     </CardContent>
                 </Card>
             ) : (
-                <Card className="overflow-hidden transition-all hover:shadow-md">
+                <Card className="overflow-hidden transition-colors">
                     <CardContent className="p-4">
                         <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                             <div>
-                                <CardTitle className="text-left text-xl">Quick Time Tracking</CardTitle>
-                                <CardDescription>Select a project and start tracking your time</CardDescription>
+                                <CardTitle className="text-left font-['Courier_New',monospace] text-xl font-bold uppercase">
+                                    Quick Time Tracking
+                                </CardTitle>
+                                <CardDescription className="font-['Courier_New',monospace]">
+                                    Select a project and start tracking your time
+                                </CardDescription>
                             </div>
                             <div className="grid grid-cols-1 gap-2 md:w-1/2">
                                 <div>
-                                    <Label htmlFor="tracking_project" className="mb-1 block text-sm font-medium">
+                                    <Label
+                                        htmlFor="tracking_project"
+                                        className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 dark:text-gray-200 uppercase"
+                                    >
                                         Project
                                     </Label>
                                     <SearchableSelect

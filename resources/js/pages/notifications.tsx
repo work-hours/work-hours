@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Loader from '@/components/ui/loader'
 import { Separator } from '@/components/ui/separator'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
@@ -125,9 +125,9 @@ export default function Notifications() {
     }, [])
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Notifications" />
-            <div className="mx-auto flex w-10/12 flex-col gap-4 p-4">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 <div className="mb-6 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <Bell className="h-8 w-8 text-primary" />
@@ -183,7 +183,7 @@ export default function Notifications() {
                                         <Card
                                             key={notification.id}
                                             className={`transition-all ${
-                                                notification.read_at ? 'border-gray-200 bg-gray-50/50' : 'border-l-4 border-l-primary shadow-md'
+                                                notification.read_at ? 'border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50' : 'border-l-4 border-l-primary shadow-md'
                                             }`}
                                         >
                                             <CardHeader className="pb-1">
@@ -191,7 +191,7 @@ export default function Notifications() {
                                                     <div className="flex items-center gap-2">
                                                         <div
                                                             className={`rounded-full p-1.5 ${
-                                                                notification.read_at ? 'bg-gray-100 text-gray-500' : 'bg-primary/10 text-primary'
+                                                                notification.read_at ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400' : 'bg-primary/10 text-primary'
                                                             }`}
                                                         >
                                                             <NotificationIcon className="h-4 w-4" />
@@ -205,7 +205,7 @@ export default function Notifications() {
                                                 </div>
                                             </CardHeader>
                                             <div className="flex items-center justify-between px-6 py-2">
-                                                <p className="text-sm text-gray-700">{notification.data?.message || 'No message content'}</p>
+                                                <p className="text-sm text-gray-700 dark:text-gray-300">{notification.data?.message || 'No message content'}</p>
                                                 {!notification.read_at ? (
                                                     <Button
                                                         variant="outline"
@@ -314,6 +314,6 @@ export default function Notifications() {
                     </>
                 )}
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

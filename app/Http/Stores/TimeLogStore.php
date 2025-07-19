@@ -55,7 +55,7 @@ final class TimeLogStore
                 $currency = $log->currency ?? 'USD';
 
                 if ($hourlyRate) {
-                    if (!isset($unpaidAmounts[$currency])) {
+                    if (! isset($unpaidAmounts[$currency])) {
                         $unpaidAmounts[$currency] = 0;
                     }
                     $unpaidAmounts[$currency] += $memberUnpaidHours * $hourlyRate;
@@ -91,7 +91,7 @@ final class TimeLogStore
                 $currency = $log->currency ?? 'USD';
 
                 if ($hourlyRate) {
-                    if (!isset($paidAmounts[$currency])) {
+                    if (! isset($paidAmounts[$currency])) {
                         $paidAmounts[$currency] = 0;
                     }
                     $paidAmounts[$currency] += $memberPaidHours * $hourlyRate;
@@ -125,7 +125,7 @@ final class TimeLogStore
             $currency = $timeLog->currency ?? 'USD';
 
             if (! $timeLog['is_paid']) {
-                if (!isset($unpaidAmounts[$currency])) {
+                if (! isset($unpaidAmounts[$currency])) {
                     $unpaidAmounts[$currency] = 0;
                 }
                 $unpaidAmounts[$currency] += $timeLog['duration'] * $hourlyRate;
@@ -149,7 +149,7 @@ final class TimeLogStore
             $currency = $timeLog->currency ?? 'USD';
 
             if ($timeLog['is_paid']) {
-                if (!isset($paidAmounts[$currency])) {
+                if (! isset($paidAmounts[$currency])) {
                     $paidAmounts[$currency] = 0;
                 }
                 $paidAmounts[$currency] += $timeLog['duration'] * $hourlyRate;

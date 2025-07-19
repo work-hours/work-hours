@@ -1,6 +1,6 @@
+import StatsCards from '@/components/dashboard/StatsCards'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import TimeTracker from '@/components/time-tracker'
-import StatsCards from '@/components/dashboard/StatsCards'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
 import axios from 'axios'
@@ -260,9 +260,9 @@ export default function TimeLog({
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Time Log" />
-            <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-6 p-6">
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Time Logs</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage your work hours</p>
@@ -566,6 +566,6 @@ export default function TimeLog({
                     </DialogContent>
                 </Dialog>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

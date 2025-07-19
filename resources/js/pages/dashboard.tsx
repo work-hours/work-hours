@@ -6,13 +6,14 @@ import WeeklyTrend from '@/components/dashboard/WeeklyTrend'
 import WelcomeSection from '@/components/dashboard/WelcomeSection'
 import TimeTracker from '@/components/time-tracker'
 import Loader from '@/components/ui/loader'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { projects, stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
+import { BarChart2, Clock, LayoutGrid } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface TeamStats {
@@ -95,38 +96,63 @@ export default function Dashboard() {
     ]
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="mx-auto flex w-10/12 flex-col gap-4 p-4">
-                <WelcomeSection />
+            <div className="relative flex flex-col gap-6 mx-auto">
+                <div className="relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+                    <WelcomeSection />
+                </div>
 
-                {!loading && (
-                    <section className="mb-4">
-                        <TimeTracker projects={userProjects} />
-                    </section>
-                )}
+                {!loading && <TimeTracker projects={userProjects} />}
 
                 {loading ? (
-                    <>
+                    <div className="relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
                         <Loader message="Loading dashboard data..." className="h-40" />
-                    </>
+                    </div>
                 ) : (
                     <>
-                        <section className="mb-4">
-                            <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
+                        <section className="relative mb-6 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+                            {/* Form-like header */}
+                            <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                                <div className="flex items-center">
+                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                        <LayoutGrid className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
+                                    </div>
+                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">Metrics Dashboard</h3>
+                                </div>
+                            </div>
+
                             <StatsCards teamStats={teamStats} />
                         </section>
 
-                        <section className="mb-4">
-                            <h3 className="mb-2 text-sm font-medium text-muted-foreground">Analytics</h3>
+                        <section className="relative mb-6 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+                            {/* Form-like header */}
+                            <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                                <div className="flex items-center">
+                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                        <BarChart2 className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
+                                    </div>
+                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">Analytics</h3>
+                                </div>
+                            </div>
+
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <HoursDistribution hoursData={hoursData} />
                                 <WeeklyTrend weeklyData={weeklyData} />
                             </div>
                         </section>
 
-                        <section className="mb-4">
-                            <h3 className="mb-2 text-sm font-medium text-muted-foreground">Activity</h3>
+                        <section className="relative mb-6 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+                            {/* Form-like header */}
+                            <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                                <div className="flex items-center">
+                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                        <Clock className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
+                                    </div>
+                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">Activity</h3>
+                                </div>
+                            </div>
+
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <RecentTimeLogs />
                                 <TeamProductivity teamStats={teamStats} />
@@ -135,6 +161,6 @@ export default function Dashboard() {
                     </>
                 )}
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

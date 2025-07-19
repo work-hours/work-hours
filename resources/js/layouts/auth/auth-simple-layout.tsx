@@ -10,46 +10,85 @@ interface AuthLayoutProps {
 
 export default function AuthSimpleLayout({ children, title, description }: PropsWithChildren<AuthLayoutProps>) {
     return (
-        <div className="flex min-h-svh flex-col items-center justify-center bg-gradient-to-b from-background to-background/80 p-6 md:p-10">
-            <div className="relative w-full max-w-md">
-                {/* Background decorative elements */}
-                <div className="absolute -top-6 -left-6 h-12 w-12 rounded-full bg-primary/5 blur-xl"></div>
-                <div className="absolute -right-8 -bottom-8 h-16 w-16 rounded-full bg-primary/10 blur-xl"></div>
+        <div className="relative flex min-h-svh flex-col items-center justify-center bg-[#f8f6e9] dark:bg-gray-900 p-6 font-['Courier_New',monospace] md:p-10">
+            {/* Paper texture overlay */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPgogIDxmaWx0ZXIgaWQ9Im5vaXNlIj4KICAgIDxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVCbGVuZCBtb2RlPSJtdWx0aXBseSIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2UiLz4KICA8L2ZpbHRlcj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+Cjwvc3ZnPg==')] opacity-100 dark:opacity-30"></div>
 
-                {/* Card container */}
-                <div className="relative z-10 rounded-xl border border-border/40 bg-card/95 p-8 shadow-lg backdrop-blur-sm">
-                    <div className="flex flex-col gap-8">
-                        <div className="flex flex-col items-center gap-4">
-                            <Link href={route('home')} className="flex flex-col items-center gap-2 font-medium transition-transform hover:scale-105">
-                                <div className="mb-1 flex h-9 w-28 items-center justify-center rounded-md">
-                                    <AppLogoIcon className="size-28 fill-current text-primary dark:text-primary" />
+            {/* Horizontal lines like a timesheet */}
+            <div
+                className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:100%_2rem]"
+                aria-hidden="true"
+            ></div>
+
+            {/* Vertical lines like a timesheet */}
+            <div
+                className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:2rem_100%]"
+                aria-hidden="true"
+            ></div>
+
+            {/* Punch card holes */}
+            <div
+                className="absolute top-0 bottom-0 left-4 w-4 bg-[radial-gradient(circle,rgba(0,0,0,0.1)_3px,transparent_3px)] dark:bg-[radial-gradient(circle,rgba(255,255,255,0.1)_3px,transparent_3px)] bg-[length:8px_24px] bg-[position:center] bg-repeat-y"
+                aria-hidden="true"
+            ></div>
+
+            {/* Red margin line */}
+            <div className="absolute top-0 bottom-0 left-12 w-[1px] bg-red-400/30 dark:bg-red-500/20" aria-hidden="true"></div>
+
+            <div className="relative z-10 w-full max-w-md">
+                {/* Card container - styled like a paper form */}
+                <div className="relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-8">
+                    {/* Timesheet header stamp */}
+                    <div className="absolute -top-4 right-4 rotate-6 border-2 border-red-800/30 dark:border-red-400/30 px-4 py-2 text-sm font-bold tracking-wider text-red-800/70 dark:text-red-400/80 uppercase">
+                        Form
+                    </div>
+
+                    {/* Form header */}
+                    <div className="mb-6 border-b border-gray-400/40 dark:border-gray-600/40 pb-4">
+                        <div className="flex flex-col gap-8">
+                            <div className="flex flex-col items-center gap-4">
+                                <Link href={route('home')} className="flex items-center gap-3">
+                                    <div className="flex h-14 w-14 items-center justify-center border-2 border-gray-700 dark:border-gray-400 bg-white dark:bg-gray-800">
+                                        <AppLogoIcon className="h-8 w-8 text-gray-700 dark:text-gray-300" />
+                                    </div>
+                                    <div>
+                                        <span className="font-['Courier_New',monospace] text-xl font-bold tracking-wider text-gray-800 dark:text-gray-200 uppercase">
+                                            Work Hours
+                                        </span>
+                                        <div className="mt-1 h-1 w-full bg-gray-300 dark:bg-gray-600"></div>
+                                    </div>
+                                </Link>
+
+                                <div className="mt-4 space-y-2 text-center">
+                                    <h1 className="font-['Courier_New',monospace] text-2xl font-bold tracking-wide text-gray-800 dark:text-gray-200 uppercase">
+                                        {title}
+                                    </h1>
+                                    <p className="text-center font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">{description}</p>
                                 </div>
-                                <span className="sr-only">{title}</span>
-                            </Link>
-
-                            <div className="space-y-2 text-center">
-                                <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
-                                <p className="text-center text-sm text-muted-foreground">{description}</p>
                             </div>
+                            {children}
                         </div>
-                        {children}
                     </div>
                 </div>
             </div>
 
-            {/* Footer */}
+            {/* Footer - styled like the landing page footer */}
             <div className="mt-8 text-center text-sm">
                 <div className="mb-2">
                     <a
                         href="https://github.com/sponsors/msamgan"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-primary transition-colors hover:text-primary/80"
+                        className="border-b border-gray-400 dark:border-gray-600 pb-1 font-['Courier_New',monospace] text-gray-700 dark:text-gray-300 hover:border-gray-700 dark:hover:border-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                     >
                         Sponsor this project
                     </a>
                 </div>
-                <div className="text-muted-foreground">&copy; {new Date().getFullYear()} WorkHours. All rights reserved.</div>
+                <div className="inline-block border border-gray-300/40 dark:border-gray-700/40 bg-[#f8f6e9]/90 dark:bg-gray-800/90 px-4 py-1">
+                    <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
+                        &copy; {new Date().getFullYear()} Work Hours. All rights reserved.
+                    </p>
+                </div>
             </div>
         </div>
     )

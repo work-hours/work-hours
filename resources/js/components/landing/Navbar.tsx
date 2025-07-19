@@ -9,18 +9,28 @@ export default function Navbar() {
     const isLoggedIn = auth && auth.user
 
     return (
-        <nav className="container mx-auto flex items-center justify-between px-6 py-6 lg:px-8">
-            <div className="animate-fade-right animate-once flex items-center gap-2">
-                <AppLogoIcon className="h-16 w-16 text-primary transition-all hover:scale-110 hover:rotate-3" />
-                <span className="text-xl font-bold tracking-tight text-foreground">Work Hours</span>
-            </div>
+        <nav className="relative z-20 container mx-auto flex items-center justify-between px-6 py-6 lg:px-8">
+            {/* Logo with timesheet-style container */}
+            <Link href="/" className="flex items-center gap-3">
+                <div className="flex h-14 w-14 items-center justify-center border-2 border-gray-700 dark:border-gray-400 bg-white dark:bg-gray-800">
+                    <AppLogoIcon className="h-8 w-8 text-gray-700 dark:text-gray-300" />
+                </div>
+                <div>
+                    <span className="font-['Courier_New',monospace] text-xl font-bold tracking-wider text-gray-800 dark:text-gray-200 uppercase">Work Hours</span>
+                    <div className="mt-1 h-1 w-full bg-gray-300 dark:bg-gray-600"></div>
+                </div>
+            </Link>
+
             <div className="flex items-center gap-6 md:gap-8">
-                <AppearanceToggleDropdown className="animate-fade-left animate-once" />
+                {/* Appearance toggle with paper-like styling */}
+                <div className="relative z-10 cursor-pointer border border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-800 p-1">
+                    <AppearanceToggleDropdown />
+                </div>
 
                 {isLoggedIn ? (
                     <Link
                         href="/dashboard"
-                        className="animate-fade-left animate-once animate-delay-300 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-md"
+                        className="inline-flex items-center justify-center border-2 border-blue-900 dark:border-blue-700 bg-blue-900 dark:bg-blue-700 px-5 py-2 font-['Courier_New',monospace] text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:hover:bg-blue-600"
                     >
                         Dashboard
                     </Link>
@@ -28,13 +38,13 @@ export default function Navbar() {
                     <>
                         <Link
                             href={route('login')}
-                            className="animate-fade-left animate-once animate-delay-300 text-sm font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-primary hover:underline"
+                            className="relative z-10 cursor-pointer border-b-2 border-gray-400 dark:border-gray-600 pb-1 font-['Courier_New',monospace] text-sm font-bold text-gray-700 dark:text-gray-300 hover:border-gray-700 dark:hover:border-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                         >
                             Sign in
                         </Link>
                         <Link
                             href={route('register')}
-                            className="animate-fade-left animate-once animate-delay-500 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-md"
+                            className="relative z-10 inline-flex cursor-pointer items-center justify-center border-2 border-blue-900 dark:border-blue-700 bg-blue-900 dark:bg-blue-700 px-5 py-2 font-['Courier_New',monospace] text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:hover:bg-blue-600"
                         >
                             Get Started
                         </Link>
