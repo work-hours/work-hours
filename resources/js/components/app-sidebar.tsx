@@ -79,10 +79,10 @@ export function AppSidebar() {
             variant="inset"
             className="bg-white border-r-2 border-gray-400 relative"
         >
-            {/* Corner fold effect at the top of sidebar */}
-            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+            {/* Corner fold effect at the top of sidebar - using negative top margin to prevent pushing content down */}
+            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent" style={{ marginTop: 0 }}></div>
 
-            <SidebarHeader className="py-6">
+            <SidebarHeader className="pt-0 pb-6">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton
