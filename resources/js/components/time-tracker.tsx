@@ -151,7 +151,7 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
                             </div>
                             <div className="flex flex-col gap-2 md:w-1/2">
                                 <div>
-                                    <Label htmlFor="note" className="mb-1 block font-['Courier_New',monospace] text-sm font-bold uppercase">
+                                    <Label htmlFor="note" className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 dark:text-gray-200 uppercase">
                                         Note (required)
                                     </Label>
                                     <Input
@@ -193,7 +193,7 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
                                 <div>
                                     <Label
                                         htmlFor="tracking_project"
-                                        className="mb-1 block font-['Courier_New',monospace] text-sm font-bold uppercase"
+                                        className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 dark:text-gray-200 uppercase"
                                     >
                                         Project
                                     </Label>
