@@ -3,7 +3,8 @@ import { Building, Folder, Github, Heart, LayoutGrid, LucideProjector, LucideSer
 import { type NavItem, type SharedData } from '@/types'
 import { usePage } from '@inertiajs/react'
 import AppLogo from './app-logo'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 const mainNavItems: NavItem[] = [
     {
@@ -61,10 +62,22 @@ const footerNavItems: NavItem[] = [
 
 export function MasterSidebar() {
     const { isGitHubIntegrated, auth } = usePage<SharedData>().props
-    const [collapsed, setCollapsed] = useState(false)
+    const [collapsed, setCollapsed] = useState(() => {
+        // Initialize from localStorage if available
+        if (typeof window !== 'undefined') {
+            const savedState = localStorage.getItem('sidebar_collapsed')
+            return savedState === 'true'
+        }
+        return false
+    })
+
+    // Save collapsed state to localStorage when it changes
+    useEffect(() => {
+        localStorage.setItem('sidebar_collapsed', String(collapsed))
+    }, [collapsed])
 
     return (
-        <div className={`relative flex flex-col bg-[#f8f6e9] border-r border-gray-300 transition-all duration-300 ${collapsed ? 'w-20' : 'w-64'}`}>
+        <div className={`relative flex flex-col bg-[#f8f6e9] border-r border-gray-300 transition-all duration-300 ease-in-out ${collapsed ? 'w-20' : 'w-64'}`}>
             {/* Horizontal lines like a timesheet */}
             <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:100%_2rem]" aria-hidden="true"></div>
 
@@ -109,22 +122,32 @@ export function MasterSidebar() {
                             {collapsed ? 'Menu' : 'Platform'}
                         </h3>
                     </div>
-                    <nav className="space-y-1">
-                        {mainNavItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={`flex items-center px-2 py-2 text-sm font-medium rounded-md hover:bg-white hover:text-gray-900 ${
-                                    window.location.pathname === item.href
-                                        ? 'bg-white text-gray-900 border-l-4 border-gray-700'
-                                        : 'text-gray-700'
-                                }`}
-                            >
-                                <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                {!collapsed && <span>{item.title}</span>}
-                            </Link>
-                        ))}
-                    </nav>
+                    <TooltipProvider>
+                        <nav className="space-y-1">
+                            {mainNavItems.map((item) => (
+                                <Tooltip key={item.href}>
+                                    <TooltipTrigger asChild>
+                                        <Link
+                                            href={item.href}
+                                            className={`flex items-center px-2 py-2 text-sm font-medium rounded-md hover:bg-white hover:text-gray-900 ${
+                                                window.location.pathname === item.href
+                                                    ? 'bg-white text-gray-900 border-l-4 border-gray-700'
+                                                    : 'text-gray-700'
+                                            }`}
+                                        >
+                                            <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                            {!collapsed && <span>{item.title}</span>}
+                                        </Link>
+                                    </TooltipTrigger>
+                                    {collapsed && (
+                                        <TooltipContent side="right">
+                                            {item.title}
+                                        </TooltipContent>
+                                    )}
+                                </Tooltip>
+                            ))}
+                        </nav>
+                    </TooltipProvider>
                 </div>
 
                 {/* Integration Navigation */}
@@ -135,22 +158,32 @@ export function MasterSidebar() {
                                 {collapsed ? 'Int.' : 'Integration'}
                             </h3>
                         </div>
-                        <nav className="space-y-1">
-                            {integrationNavItems.map((item) => (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className={`flex items-center px-2 py-2 text-sm font-medium rounded-md hover:bg-white hover:text-gray-900 ${
-                                        window.location.pathname === item.href
-                                            ? 'bg-white text-gray-900 border-l-4 border-gray-700'
-                                            : 'text-gray-700'
-                                    }`}
-                                >
-                                    <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                    {!collapsed && <span>{item.title}</span>}
-                                </Link>
-                            ))}
-                        </nav>
+                        <TooltipProvider>
+                            <nav className="space-y-1">
+                                {integrationNavItems.map((item) => (
+                                    <Tooltip key={item.href}>
+                                        <TooltipTrigger asChild>
+                                            <Link
+                                                href={item.href}
+                                                className={`flex items-center px-2 py-2 text-sm font-medium rounded-md hover:bg-white hover:text-gray-900 ${
+                                                    window.location.pathname === item.href
+                                                        ? 'bg-white text-gray-900 border-l-4 border-gray-700'
+                                                        : 'text-gray-700'
+                                                }`}
+                                            >
+                                                <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                                {!collapsed && <span>{item.title}</span>}
+                                            </Link>
+                                        </TooltipTrigger>
+                                        {collapsed && (
+                                            <TooltipContent side="right">
+                                                {item.title}
+                                            </TooltipContent>
+                                        )}
+                                    </Tooltip>
+                                ))}
+                            </nav>
+                        </TooltipProvider>
                     </div>
                 )}
             </div>
@@ -161,20 +194,30 @@ export function MasterSidebar() {
                     <h3 className={`text-xs font-bold text-gray-900 font-['Courier_New',monospace] uppercase tracking-wider mb-2 ${collapsed ? 'text-center' : ''}`}>
                         {collapsed ? 'Links' : 'Links'}
                     </h3>
-                    <nav className="space-y-1">
-                        {footerNavItems.map((item) => (
-                            <a
-                                key={item.href}
-                                href={item.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center px-2 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-white hover:text-gray-900"
-                            >
-                                <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                {!collapsed && <span>{item.title}</span>}
-                            </a>
-                        ))}
-                    </nav>
+                    <TooltipProvider>
+                        <nav className="space-y-1">
+                            {footerNavItems.map((item) => (
+                                <Tooltip key={item.href}>
+                                    <TooltipTrigger asChild>
+                                        <a
+                                            href={item.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center px-2 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-white hover:text-gray-900"
+                                        >
+                                            <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                            {!collapsed && <span>{item.title}</span>}
+                                        </a>
+                                    </TooltipTrigger>
+                                    {collapsed && (
+                                        <TooltipContent side="right">
+                                            {item.title}
+                                        </TooltipContent>
+                                    )}
+                                </Tooltip>
+                            ))}
+                        </nav>
+                    </TooltipProvider>
                 </div>
 
                 {/* User section */}
