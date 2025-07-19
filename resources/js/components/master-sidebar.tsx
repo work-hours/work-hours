@@ -152,7 +152,7 @@ export function MasterSidebar() {
                                     {collapsed && (
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <div className="absolute inset-0 z-20 cursor-pointer"></div>
+                                                <div className="absolute inset-0 z-20 cursor-pointer pointer-events-none"></div>
                                             </TooltipTrigger>
                                             <TooltipContent side="right">
                                                 {item.title}
@@ -191,7 +191,7 @@ export function MasterSidebar() {
                                         {collapsed && (
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <div className="absolute inset-0 z-20 cursor-pointer"></div>
+                                                    <div className="absolute inset-0 z-20 cursor-pointer pointer-events-none"></div>
                                                 </TooltipTrigger>
                                                 <TooltipContent side="right">
                                                     {item.title}
@@ -228,7 +228,7 @@ export function MasterSidebar() {
                                     {collapsed && (
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <div className="absolute inset-0 z-20 cursor-pointer"></div>
+                                                <div className="absolute inset-0 z-20 cursor-pointer pointer-events-none"></div>
                                             </TooltipTrigger>
                                             <TooltipContent side="right">
                                                 {item.title}
@@ -275,7 +275,7 @@ export function MasterSidebar() {
                             {collapsed && (
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <div className="absolute inset-0 z-20 cursor-pointer"></div>
+                                        <div className="absolute inset-0 z-20 cursor-pointer pointer-events-none"></div>
                                     </TooltipTrigger>
                                     <TooltipContent side="right">
                                         Logout
