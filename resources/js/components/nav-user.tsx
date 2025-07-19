@@ -24,10 +24,7 @@ export function NavUser() {
                             className="group border-2 border-gray-700 bg-white text-gray-900 transition-colors hover:bg-white/90 data-[state=open]:bg-white"
                         >
                             <UserInfo user={auth.user} />
-                            <Icon
-                                iconNode={ChevronsUpDown}
-                                className="ml-auto size-4 text-gray-700 group-hover:text-gray-900"
-                            />
+                            <Icon iconNode={ChevronsUpDown} className="ml-auto size-4 text-gray-700 group-hover:text-gray-900" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent

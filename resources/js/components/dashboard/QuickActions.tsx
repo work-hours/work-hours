@@ -21,7 +21,7 @@ export default function QuickActions() {
                 <Link
                     key={index}
                     href={action.href}
-                    className="inline-flex items-center gap-2 rounded-none bg-blue-900 px-3 py-2 text-sm font-bold text-white border-2 border-blue-900 hover:bg-blue-800 transition-colors font-['Courier_New',monospace]"
+                    className="inline-flex items-center gap-2 rounded-none border-2 border-blue-900 bg-blue-900 px-3 py-2 font-['Courier_New',monospace] text-sm font-bold text-white transition-colors hover:bg-blue-800"
                 >
                     {action.icon}
                     {action.name}

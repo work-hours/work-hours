@@ -1,11 +1,10 @@
-import { Link } from '@inertiajs/react'
-import { Building, Folder, Github, Heart, LayoutGrid, LogOut, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem, type SharedData } from '@/types'
-import { usePage } from '@inertiajs/react'
+import { Link, usePage } from '@inertiajs/react'
+import { Building, Folder, Github, Heart, LayoutGrid, LogOut, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
-import { useState, useEffect } from 'react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 const mainNavItems: NavItem[] = [
     {
@@ -78,71 +77,100 @@ export function MasterSidebar() {
     }, [collapsed])
 
     return (
-        <div className={`sticky top-0 flex flex-col bg-[#f8f6e9] border-r border-gray-300 transition-all duration-300 ease-in-out h-screen ${collapsed ? 'w-20' : 'w-64'}`}>
+        <div
+            className={`sticky top-0 flex h-screen flex-col border-r border-gray-300 bg-[#f8f6e9] transition-all duration-300 ease-in-out ${collapsed ? 'w-20' : 'w-64'}`}
+        >
             {/* Horizontal lines like a timesheet */}
-            <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:100%_2rem] pointer-events-none" aria-hidden="true"></div>
+            <div
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:100%_2rem]"
+                aria-hidden="true"
+            ></div>
 
             {/* Vertical lines like a timesheet */}
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:2rem_100%] pointer-events-none" aria-hidden="true"></div>
+            <div
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:2rem_100%]"
+                aria-hidden="true"
+            ></div>
 
             {/* Punch card holes */}
-            <div className="absolute left-4 top-0 bottom-0 w-4 bg-[radial-gradient(circle,rgba(0,0,0,0.1)_3px,transparent_3px)] bg-[length:8px_24px] bg-[position:center] bg-repeat-y pointer-events-none" aria-hidden="true"></div>
+            <div
+                className="pointer-events-none absolute top-0 bottom-0 left-4 w-4 bg-[radial-gradient(circle,rgba(0,0,0,0.1)_3px,transparent_3px)] bg-[length:8px_24px] bg-[position:center] bg-repeat-y"
+                aria-hidden="true"
+            ></div>
 
             {/* Header */}
-            <div className={`p-4 pt-6 pb-6 relative z-20 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : ''}`}>
-                <div className={`flex items-center justify-between w-full ${collapsed ? 'flex-col' : ''}`}>
+            <div className={`relative z-20 p-4 pt-6 pb-6 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : ''}`}>
+                <div className={`flex w-full items-center justify-between ${collapsed ? 'flex-col' : ''}`}>
                     <Link
                         href="/dashboard"
-                        className={`rounded-none transition-all duration-300 ease-in-out hover:bg-white border-2 border-gray-700 ${
-                            collapsed ? 'p-1 mb-2 flex justify-center items-center' : 'p-2 flex items-center'
+                        className={`rounded-none border-2 border-gray-700 transition-all duration-300 ease-in-out hover:bg-white ${
+                            collapsed ? 'mb-2 flex items-center justify-center p-1' : 'flex items-center p-2'
                         }`}
                     >
-                        {collapsed ? (
-                            <AppLogoIcon className="h-8 w-8" />
-                        ) : (
-                            <AppLogo />
-                        )}
+                        {collapsed ? <AppLogoIcon className="h-8 w-8" /> : <AppLogo />}
                     </Link>
                     <button
                         onClick={() => setCollapsed(!collapsed)}
-                        className={`p-2 rounded-md hover:bg-gray-200 transition-colors ${
-                            collapsed ? 'absolute -right-10 top-6 bg-[#f8f6e9] border border-gray-300 shadow-md z-30' : ''
+                        className={`rounded-md p-2 transition-colors hover:bg-gray-200 ${
+                            collapsed ? 'absolute top-6 -right-10 z-30 border border-gray-300 bg-[#f8f6e9] shadow-md' : ''
                         }`}
                     >
                         {collapsed ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
                                 <polyline points="13 17 18 12 13 7"></polyline>
                                 <polyline points="6 17 11 12 6 7"></polyline>
                             </svg>
                         ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
                                 <polyline points="11 17 6 12 11 7"></polyline>
                                 <polyline points="18 17 13 12 18 7"></polyline>
                             </svg>
                         )}
                     </button>
                 </div>
-                <div className={`h-1 bg-gray-400 transition-all duration-300 ease-in-out ${collapsed ? 'w-full mt-4' : 'w-full mt-5'}`}></div>
+                <div className={`h-1 bg-gray-400 transition-all duration-300 ease-in-out ${collapsed ? 'mt-4 w-full' : 'mt-5 w-full'}`}></div>
             </div>
 
             {/* Navigation - scrollable content */}
-            <div className="flex-1 overflow-y-auto pt-3 flex flex-col">
+            <div className="flex flex-1 flex-col overflow-y-auto pt-3">
                 {/* Platform Navigation */}
                 <div className="mb-6 px-4">
-                    <div className="border-b border-gray-400 pb-2 mb-3">
-                        <h3 className={`text-sm font-bold text-gray-900 font-['Courier_New',monospace] uppercase tracking-wider ${collapsed ? 'text-center' : ''}`}>
+                    <div className="mb-3 border-b border-gray-400 pb-2">
+                        <h3
+                            className={`font-['Courier_New',monospace] text-sm font-bold tracking-wider text-gray-900 uppercase ${collapsed ? 'text-center' : ''}`}
+                        >
                             {collapsed ? 'Menu' : 'Platform'}
                         </h3>
                     </div>
                     <TooltipProvider>
-                        <nav className="space-y-1 relative z-10">
+                        <nav className="relative z-10 space-y-1">
                             {mainNavItems.map((item) => (
                                 <div key={item.href} className="relative">
                                     <Link
                                         href={item.href}
-                                        className={`flex items-center px-2 py-2 text-sm font-medium rounded-md hover:bg-white hover:text-gray-900 ${
+                                        className={`flex items-center rounded-md px-2 py-2 text-sm font-medium hover:bg-white hover:text-gray-900 ${
                                             typeof window !== 'undefined' && window.location.pathname === item.href
-                                                ? 'bg-white text-gray-900 border-l-4 border-gray-700'
+                                                ? 'border-l-4 border-gray-700 bg-white text-gray-900'
                                                 : 'text-gray-700'
                                         }`}
                                     >
@@ -152,11 +180,9 @@ export function MasterSidebar() {
                                     {collapsed && (
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <div className="absolute inset-0 z-20 cursor-pointer pointer-events-none"></div>
+                                                <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
                                             </TooltipTrigger>
-                                            <TooltipContent side="right">
-                                                {item.title}
-                                            </TooltipContent>
+                                            <TooltipContent side="right">{item.title}</TooltipContent>
                                         </Tooltip>
                                     )}
                                 </div>
@@ -168,20 +194,22 @@ export function MasterSidebar() {
                 {/* Integration Navigation */}
                 {isGitHubIntegrated && (
                     <div className="mb-6 px-4">
-                        <div className="border-b border-gray-400 pb-2 mb-3">
-                            <h3 className={`text-sm font-bold text-gray-900 font-['Courier_New',monospace] uppercase tracking-wider ${collapsed ? 'text-center' : ''}`}>
+                        <div className="mb-3 border-b border-gray-400 pb-2">
+                            <h3
+                                className={`font-['Courier_New',monospace] text-sm font-bold tracking-wider text-gray-900 uppercase ${collapsed ? 'text-center' : ''}`}
+                            >
                                 {collapsed ? 'Int.' : 'Integration'}
                             </h3>
                         </div>
                         <TooltipProvider>
-                            <nav className="space-y-1 relative z-10">
+                            <nav className="relative z-10 space-y-1">
                                 {integrationNavItems.map((item) => (
                                     <div key={item.href} className="relative">
                                         <Link
                                             href={item.href}
-                                            className={`flex items-center px-2 py-2 text-sm font-medium rounded-md hover:bg-white hover:text-gray-900 ${
+                                            className={`flex items-center rounded-md px-2 py-2 text-sm font-medium hover:bg-white hover:text-gray-900 ${
                                                 typeof window !== 'undefined' && window.location.pathname === item.href
-                                                    ? 'bg-white text-gray-900 border-l-4 border-gray-700'
+                                                    ? 'border-l-4 border-gray-700 bg-white text-gray-900'
                                                     : 'text-gray-700'
                                             }`}
                                         >
@@ -191,11 +219,9 @@ export function MasterSidebar() {
                                         {collapsed && (
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <div className="absolute inset-0 z-20 cursor-pointer pointer-events-none"></div>
+                                                    <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
                                                 </TooltipTrigger>
-                                                <TooltipContent side="right">
-                                                    {item.title}
-                                                </TooltipContent>
+                                                <TooltipContent side="right">{item.title}</TooltipContent>
                                             </Tooltip>
                                         )}
                                     </div>
@@ -208,19 +234,21 @@ export function MasterSidebar() {
 
             {/* Footer */}
             <div className="border-t border-gray-400 pt-4 pb-4">
-                <div className="px-4 mb-4">
-                    <h3 className={`text-xs font-bold text-gray-900 font-['Courier_New',monospace] uppercase tracking-wider mb-2 ${collapsed ? 'text-center' : ''}`}>
+                <div className="mb-4 px-4">
+                    <h3
+                        className={`mb-2 font-['Courier_New',monospace] text-xs font-bold tracking-wider text-gray-900 uppercase ${collapsed ? 'text-center' : ''}`}
+                    >
                         {collapsed ? 'Links' : 'Links'}
                     </h3>
                     <TooltipProvider>
-                        <nav className="space-y-1 relative z-10">
+                        <nav className="relative z-10 space-y-1">
                             {footerNavItems.map((item) => (
                                 <div key={item.href} className="relative">
                                     <a
                                         href={item.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center px-2 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-white hover:text-gray-900"
+                                        className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 hover:bg-white hover:text-gray-900"
                                     >
                                         {item.icon && <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />}
                                         {!collapsed && <span>{item.title}</span>}
@@ -228,11 +256,9 @@ export function MasterSidebar() {
                                     {collapsed && (
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <div className="absolute inset-0 z-20 cursor-pointer pointer-events-none"></div>
+                                                <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
                                             </TooltipTrigger>
-                                            <TooltipContent side="right">
-                                                {item.title}
-                                            </TooltipContent>
+                                            <TooltipContent side="right">{item.title}</TooltipContent>
                                         </Tooltip>
                                     )}
                                 </div>
@@ -242,17 +268,17 @@ export function MasterSidebar() {
                 </div>
 
                 {/* User section */}
-                <div className="px-4 mb-3">
+                <div className="mb-3 px-4">
                     <div className={`flex items-center ${collapsed ? 'justify-center' : ''} relative z-10`}>
                         <div className="flex-shrink-0">
-                            <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-bold">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 font-bold text-gray-700">
                                 {auth.user && auth.user.name ? auth.user.name.charAt(0) : ''}
                             </div>
                         </div>
                         {!collapsed && (
                             <div className="ml-3">
-                                <p className="text-sm font-medium text-gray-700 truncate">{auth.user && auth.user.name ? auth.user.name : ''}</p>
-                                <Link href="/settings/profile" className="text-xs text-gray-500 hover:text-gray-700 relative z-10">
+                                <p className="truncate text-sm font-medium text-gray-700">{auth.user && auth.user.name ? auth.user.name : ''}</p>
+                                <Link href="/settings/profile" className="relative z-10 text-xs text-gray-500 hover:text-gray-700">
                                     View profile
                                 </Link>
                             </div>
@@ -261,13 +287,13 @@ export function MasterSidebar() {
                 </div>
 
                 {/* Bottom link - always at the bottom of sidebar */}
-                <div className="mt-auto pt-4 px-4 border-t border-gray-400">
+                <div className="mt-auto border-t border-gray-400 px-4 pt-4">
                     <TooltipProvider>
                         <div className="relative">
                             <Link
                                 href={route('logout')}
                                 method="post"
-                                className="flex items-center px-2 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-white hover:text-gray-900"
+                                className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 hover:bg-white hover:text-gray-900"
                             >
                                 <LogOut className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
                                 {!collapsed && <span>Logout</span>}
@@ -275,11 +301,9 @@ export function MasterSidebar() {
                             {collapsed && (
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <div className="absolute inset-0 z-20 cursor-pointer pointer-events-none"></div>
+                                        <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
                                     </TooltipTrigger>
-                                    <TooltipContent side="right">
-                                        Logout
-                                    </TooltipContent>
+                                    <TooltipContent side="right">Logout</TooltipContent>
                                 </Tooltip>
                             )}
                         </div>

@@ -41,15 +41,18 @@ export default function RecentTimeLogs() {
     }, [])
 
     return (
-        <Card className="overflow-hidden border-l-4 border-l-blue-500 dark:border-l-blue-400 transition-colors">
+        <Card className="overflow-hidden border-l-4 border-l-blue-500 transition-colors dark:border-l-blue-400">
             <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                     <div>
                         <CardTitle className="text-xs font-bold uppercase">Recent Time Logs</CardTitle>
-                        <CardDescription className="text-[10px] font-['Courier_New',monospace]">Your team's latest activity</CardDescription>
+                        <CardDescription className="font-['Courier_New',monospace] text-[10px]">Your team's latest activity</CardDescription>
                     </div>
                     {!loading && (
-                        <Link href={recentLogs.allLogsLink} className="text-xs font-bold text-gray-700 border-b border-gray-400 pb-0.5 hover:border-gray-700 hover:text-gray-900 font-['Courier_New',monospace]">
+                        <Link
+                            href={recentLogs.allLogsLink}
+                            className="border-b border-gray-400 pb-0.5 font-['Courier_New',monospace] text-xs font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900"
+                        >
                             View all logs
                         </Link>
                     )}
@@ -67,7 +70,7 @@ export default function RecentTimeLogs() {
                                         <ClockIcon className="h-4 w-4 text-primary" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-bold font-['Courier_New',monospace]">
+                                        <p className="font-['Courier_New',monospace] text-sm font-bold">
                                             {log.user} on{' '}
                                             {new Date(log.date).toLocaleDateString('en-US', {
                                                 weekday: 'long',
@@ -77,13 +80,16 @@ export default function RecentTimeLogs() {
                                         </p>
                                     </div>
                                 </div>
-                                <div className="text-sm font-bold font-['Courier_New',monospace]">{roundToTwoDecimals(log.hours)} hours</div>
+                                <div className="font-['Courier_New',monospace] text-sm font-bold">{roundToTwoDecimals(log.hours)} hours</div>
                             </div>
                         ))
                     ) : (
                         <div className="py-4 text-center text-gray-700">
                             <p className="font-['Courier_New',monospace]">No recent time logs found</p>
-                            <Link href={route('time-log.create')} className="mt-2 inline-block font-bold text-gray-700 border-b border-gray-400 pb-0.5 hover:border-gray-700 hover:text-gray-900 font-['Courier_New',monospace]">
+                            <Link
+                                href={route('time-log.create')}
+                                className="mt-2 inline-block border-b border-gray-400 pb-0.5 font-['Courier_New',monospace] font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900"
+                            >
                                 Create your first time log
                             </Link>
                         </div>

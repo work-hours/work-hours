@@ -15,10 +15,10 @@ interface TeamProductivityProps {
 
 export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
     return (
-        <Card className="overflow-hidden border-l-4 border-l-purple-500 dark:border-l-purple-400 transition-colors">
+        <Card className="overflow-hidden border-l-4 border-l-purple-500 transition-colors dark:border-l-purple-400">
             <CardHeader className="pb-2">
                 <CardTitle className="text-xs font-bold uppercase">Team Productivity</CardTitle>
-                <CardDescription className="text-[10px] font-['Courier_New',monospace]">Hours logged by team members</CardDescription>
+                <CardDescription className="font-['Courier_New',monospace] text-[10px]">Hours logged by team members</CardDescription>
             </CardHeader>
             <CardContent className="h-60 py-1">
                 {teamStats.count > 0 ? (
@@ -42,7 +42,10 @@ export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
                     <div className="flex h-full flex-col items-center justify-center text-gray-700">
                         <UsersIcon className="mb-2 h-12 w-12 opacity-50" />
                         <p className="font-['Courier_New',monospace]">Add team members to see productivity insights</p>
-                        <Link href="/team/create" className="mt-2 font-bold text-gray-700 border-b border-gray-400 pb-0.5 hover:border-gray-700 hover:text-gray-900 font-['Courier_New',monospace]">
+                        <Link
+                            href="/team/create"
+                            className="mt-2 border-b border-gray-400 pb-0.5 font-['Courier_New',monospace] font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900"
+                        >
                             Add team members
                         </Link>
                     </div>

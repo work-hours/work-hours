@@ -98,60 +98,51 @@ export default function Dashboard() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex flex-col gap-6 relative">
+            <div className="relative flex flex-col gap-6">
                 <div className="relative border-2 border-gray-300 bg-white p-6">
-                    <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+                    {/* Corner fold effect */}
+                    <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
                     <WelcomeSection />
                 </div>
 
-                {!loading && (
-                    <section className="mb-4 relative border-2 border-gray-300 bg-white p-6">
-                        {/* Corner fold effect */}
-                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
-                        <TimeTracker projects={userProjects} />
-                    </section>
-                )}
+                {!loading && <TimeTracker projects={userProjects} />}
 
                 {loading ? (
                     <div className="relative border-2 border-gray-300 bg-white p-6">
                         {/* Corner fold effect */}
-                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+                        <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
                         <Loader message="Loading dashboard data..." className="h-40" />
                     </div>
                 ) : (
                     <>
-                        <section className="mb-6 relative border-2 border-gray-300 bg-white p-6">
+                        <section className="relative mb-6 border-2 border-gray-300 bg-white p-6">
                             {/* Corner fold effect */}
-                            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+                            <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
 
                             {/* Form-like header */}
-                            <div className="border-b border-gray-400 pb-4 mb-4">
+                            <div className="mb-4 border-b border-gray-400 pb-4">
                                 <div className="flex items-center">
                                     <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
                                         <LayoutGrid className="h-6 w-6 text-gray-700" aria-hidden="true" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase">
-                                        Metrics Dashboard
-                                    </h3>
+                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase">Metrics Dashboard</h3>
                                 </div>
                             </div>
 
                             <StatsCards teamStats={teamStats} />
                         </section>
 
-                        <section className="mb-6 relative border-2 border-gray-300 bg-white p-6">
+                        <section className="relative mb-6 border-2 border-gray-300 bg-white p-6">
                             {/* Corner fold effect */}
-                            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+                            <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
 
                             {/* Form-like header */}
-                            <div className="border-b border-gray-400 pb-4 mb-4">
+                            <div className="mb-4 border-b border-gray-400 pb-4">
                                 <div className="flex items-center">
                                     <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
                                         <BarChart2 className="h-6 w-6 text-gray-700" aria-hidden="true" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase">
-                                        Analytics
-                                    </h3>
+                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase">Analytics</h3>
                                 </div>
                             </div>
 
@@ -161,19 +152,17 @@ export default function Dashboard() {
                             </div>
                         </section>
 
-                        <section className="mb-6 relative border-2 border-gray-300 bg-white p-6">
+                        <section className="relative mb-6 border-2 border-gray-300 bg-white p-6">
                             {/* Corner fold effect */}
-                            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+                            <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
 
                             {/* Form-like header */}
-                            <div className="border-b border-gray-400 pb-4 mb-4">
+                            <div className="mb-4 border-b border-gray-400 pb-4">
                                 <div className="flex items-center">
                                     <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
                                         <Clock className="h-6 w-6 text-gray-700" aria-hidden="true" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase">
-                                        Activity
-                                    </h3>
+                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase">Activity</h3>
                                 </div>
                             </div>
 

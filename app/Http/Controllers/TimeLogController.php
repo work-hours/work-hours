@@ -272,7 +272,7 @@ final class TimeLogController extends Controller
             if ($isLogCompleted) {
                 $teamLeader = User::teamLeader(project: $timeLog->project);
                 if (auth()->id() !== $teamLeader->getKey()) {
-                    $teamLeader->notify(new TimeLogEntry($timeLog , auth()->user()));
+                    $teamLeader->notify(new TimeLogEntry($timeLog, auth()->user()));
                 }
             }
 

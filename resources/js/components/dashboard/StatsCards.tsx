@@ -25,7 +25,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
             // Fallback to the default card if no currency-specific amounts are available
             // Doesn't show the card if the unpaid amount is negative
             if (teamStats.unpaidAmount < 0) {
-                return null;
+                return null
             }
 
             return (
@@ -40,7 +40,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     }}
                     borderColor="green-500"
                 />
-            );
+            )
         }
 
         // Create a card for each currency, filtering out negative amounts
@@ -59,15 +59,15 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     }}
                     borderColor="green-500"
                 />
-            ));
-    };
+            ))
+    }
 
     const renderPaidAmountCards = () => {
         if (!teamStats.paidAmountsByCurrency || Object.keys(teamStats.paidAmountsByCurrency).length === 0) {
             // Fallback to the default card if no currency-specific amounts are available
             // Doesn't show the card if the paid amount is negative
             if (teamStats.paidAmount < 0) {
-                return null;
+                return null
             }
 
             return (
@@ -77,12 +77,12 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     value={`${teamStats.currency} ${roundToTwoDecimals(teamStats.paidAmount)}`}
                     trend={{
                         icon: <ClockIcon className="mr-1 h-3 w-3" />,
-                        text: "Paid earnings",
+                        text: 'Paid earnings',
                         color: 'text-green-500',
                     }}
                     borderColor="green-500"
                 />
-            );
+            )
         }
 
         // Create a card for each currency, filtering out negative amounts
@@ -96,13 +96,13 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     value={`${currencyCode} ${roundToTwoDecimals(amount)}`}
                     trend={{
                         icon: <ClockIcon className="mr-1 h-3 w-3" />,
-                        text: "Paid earnings",
+                        text: 'Paid earnings',
                         color: 'text-green-500',
                     }}
                     borderColor="green-500"
                 />
-            ));
-    };
+            ))
+    }
 
     return (
         <div className="space-y-4">
@@ -135,8 +135,10 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
             )}
 
             {/* Time Stats Section */}
-            {(teamStats.totalHours >= 0 || teamStats.unpaidHours >= 0 ||
-              (teamStats.totalHours - teamStats.unpaidHours) >= 0 || teamStats.weeklyAverage >= 0) && (
+            {(teamStats.totalHours >= 0 ||
+                teamStats.unpaidHours >= 0 ||
+                teamStats.totalHours - teamStats.unpaidHours >= 0 ||
+                teamStats.weeklyAverage >= 0) && (
                 <div>
                     <h4 className="mb-2 text-xs font-medium text-muted-foreground">Time Metrics</h4>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
@@ -164,7 +166,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                             />
                         )}
 
-                        {(teamStats.totalHours - teamStats.unpaidHours) >= 0 && (
+                        {teamStats.totalHours - teamStats.unpaidHours >= 0 && (
                             <StatsCard
                                 title="Paid Hours"
                                 icon={<ClockIcon className="h-4 w-4 text-muted-foreground" />}
@@ -190,9 +192,9 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
             {/* Financial Stats Section */}
             {/* Only show the section if there are cards to display */}
             {(teamStats.paidAmount >= 0 ||
-              (teamStats.paidAmountsByCurrency && Object.values(teamStats.paidAmountsByCurrency).some(amount => amount >= 0)) ||
-              teamStats.unpaidAmount >= 0 ||
-              (teamStats.unpaidAmountsByCurrency && Object.values(teamStats.unpaidAmountsByCurrency).some(amount => amount >= 0))) && (
+                (teamStats.paidAmountsByCurrency && Object.values(teamStats.paidAmountsByCurrency).some((amount) => amount >= 0)) ||
+                teamStats.unpaidAmount >= 0 ||
+                (teamStats.unpaidAmountsByCurrency && Object.values(teamStats.unpaidAmountsByCurrency).some((amount) => amount >= 0))) && (
                 <div>
                     <h4 className="mb-2 text-xs font-medium text-muted-foreground">Financial Summary</h4>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">

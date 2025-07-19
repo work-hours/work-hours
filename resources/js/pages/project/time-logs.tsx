@@ -1,5 +1,5 @@
-import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import StatsCards from '@/components/dashboard/StatsCards'
+import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
