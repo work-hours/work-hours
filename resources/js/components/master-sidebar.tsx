@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react'
-import { Building, Folder, Github, Heart, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
+import { Building, Folder, Github, Heart, LayoutGrid, LogOut, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
 import { type NavItem, type SharedData } from '@/types'
 import { usePage } from '@inertiajs/react'
 import AppLogo from './app-logo'
@@ -242,7 +242,7 @@ export function MasterSidebar() {
                 </div>
 
                 {/* User section */}
-                <div className="px-4">
+                <div className="px-4 mb-3">
                     <div className={`flex items-center ${collapsed ? 'justify-center' : ''} relative z-10`}>
                         <div className="flex-shrink-0">
                             <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-bold">
@@ -265,15 +265,12 @@ export function MasterSidebar() {
                     <TooltipProvider>
                         <div className="relative">
                             <Link
-                                href="/help"
+                                href={route('logout')}
+                                method="post"
                                 className="flex items-center px-2 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-white hover:text-gray-900"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 h-5 w-5 flex-shrink-0">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                                </svg>
-                                {!collapsed && <span>Help & Support</span>}
+                                <LogOut className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                {!collapsed && <span>Logout</span>}
                             </Link>
                             {collapsed && (
                                 <Tooltip>
@@ -281,7 +278,7 @@ export function MasterSidebar() {
                                         <div className="absolute inset-0 z-20 cursor-pointer"></div>
                                     </TooltipTrigger>
                                     <TooltipContent side="right">
-                                        Help & Support
+                                        Logout
                                     </TooltipContent>
                                 </Tooltip>
                             )}
