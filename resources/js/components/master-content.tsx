@@ -39,39 +39,39 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
     }, []);
 
     return (
-        <div className="flex flex-col flex-1 bg-[#f8f6e9] font-['Courier_New',monospace] relative">
+        <div className="flex flex-col flex-1 bg-[#f8f6e9] dark:bg-gray-900 font-['Courier_New',monospace] relative">
             {/* Enhanced horizontal lines with slightly increased contrast */}
             <div
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.04)_1px,transparent_1px)] bg-[length:100%_2rem]"
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:100%_2rem]"
                 aria-hidden="true"
             ></div>
 
             {/* Enhanced vertical lines with slightly increased contrast */}
             <div
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] bg-[length:2rem_100%]"
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:2rem_100%]"
                 aria-hidden="true"
             ></div>
 
             {/* Enhanced punch card holes with slightly increased contrast */}
             <div
-                className="pointer-events-none absolute top-0 bottom-0 left-4 w-4 bg-[radial-gradient(circle,rgba(0,0,0,0.12)_3px,transparent_3px)] bg-[length:8px_24px] bg-[position:center] bg-repeat-y"
+                className="pointer-events-none absolute top-0 bottom-0 left-4 w-4 bg-[radial-gradient(circle,rgba(0,0,0,0.12)_3px,transparent_3px)] dark:bg-[radial-gradient(circle,rgba(255,255,255,0.1)_3px,transparent_3px)] bg-[length:8px_24px] bg-[position:center] bg-repeat-y"
                 aria-hidden="true"
             ></div>
 
             {/* Enhanced red margin line with slightly increased opacity */}
-            <div className="absolute top-0 bottom-0 left-12 w-[1px] bg-red-400/40" aria-hidden="true"></div>
+            <div className="absolute top-0 bottom-0 left-12 w-[1px] bg-red-400/40 dark:bg-red-500/20" aria-hidden="true"></div>
 
             {/* Enhanced header with improved styling */}
-            <div className="border-b border-gray-300 bg-white p-4 shadow-md relative z-10">
+            <div className="border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-md relative z-10">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center">
                         <div className="flex items-center relative">
-                            <Link href="/dashboard" className="text-gray-600 transition-colors hover:text-gray-900">
+                            <Link href="/dashboard" className="text-gray-600 dark:text-gray-300 transition-colors hover:text-gray-900 dark:hover:text-gray-100">
                                 <Home className="h-5 w-5" />
                             </Link>
                             <button
                                 onClick={() => setCollapsed(!collapsed)}
-                                className="ml-2 rounded-md p-1 transition-all duration-200 hover:bg-gray-200 hover:shadow-sm"
+                                className="ml-2 rounded-md p-1 transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700 hover:shadow-sm"
                                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                             >
                                 {collapsed ? (
@@ -107,20 +107,20 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                                 )}
                             </button>
                         </div>
-                        {breadcrumbs.length > 0 && <ChevronRight className="mx-2 h-4 w-4 text-gray-400" />}
+                        {breadcrumbs.length > 0 && <ChevronRight className="mx-2 h-4 w-4 text-gray-400 dark:text-gray-500" />}
                         {breadcrumbs.map((breadcrumb, index) => (
                             <div key={breadcrumb.href} className="flex items-center">
                                 {breadcrumb.href ? (
                                     <Link
                                         href={breadcrumb.href}
-                                        className="font-['Courier_New',monospace] text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+                                        className="font-['Courier_New',monospace] text-sm font-medium text-gray-600 dark:text-gray-300 transition-colors hover:text-gray-900 dark:hover:text-gray-100"
                                     >
                                         {breadcrumb.title}
                                     </Link>
                                 ) : (
-                                    <span className="font-['Courier_New',monospace] text-sm font-medium text-gray-900">{breadcrumb.title}</span>
+                                    <span className="font-['Courier_New',monospace] text-sm font-medium text-gray-900 dark:text-gray-100">{breadcrumb.title}</span>
                                 )}
-                                {index < breadcrumbs.length - 1 && <ChevronRight className="mx-2 h-4 w-4 text-gray-400" />}
+                                {index < breadcrumbs.length - 1 && <ChevronRight className="mx-2 h-4 w-4 text-gray-400 dark:text-gray-500" />}
                             </div>
                         ))}
                     </div>
@@ -128,7 +128,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                     {/* Notification Link */}
                     <Link
                         href="/notifications"
-                        className="flex items-center gap-1 rounded-md p-1.5 text-gray-600 transition-all hover:bg-gray-100 hover:text-gray-900"
+                        className="flex items-center gap-1 rounded-md p-1.5 text-gray-600 dark:text-gray-300 transition-all hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100"
                         aria-label="View notifications"
                     >
                         <Bell className="h-5 w-5" />
