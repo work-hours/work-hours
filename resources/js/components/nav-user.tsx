@@ -15,23 +15,23 @@ export function NavUser() {
 
     return (
         <SidebarMenu className="mt-3 px-2">
-            <SidebarSeparator className="mb-3 bg-sidebar-border/40" />
+            <SidebarSeparator className="mb-3 bg-gray-400" />
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
-                            className="group border-2 border-gray-400 bg-white text-gray-800 transition-colors hover:bg-gray-50 data-[state=open]:bg-gray-100"
+                            className="group border-2 border-gray-700 bg-white text-gray-900 transition-colors hover:bg-white/90 data-[state=open]:bg-white"
                         >
                             <UserInfo user={auth.user} />
                             <Icon
                                 iconNode={ChevronsUpDown}
-                                className="ml-auto size-4 text-gray-600 group-hover:text-gray-800"
+                                className="ml-auto size-4 text-gray-700 group-hover:text-gray-900"
                             />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
-                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 border-2 border-gray-400 bg-white"
+                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 border-2 border-gray-700 bg-white"
                         align="end"
                         side={isMobile ? 'bottom' : state === 'collapsed' ? 'left' : 'bottom'}
                     >

@@ -91,7 +91,7 @@ export function AppSidebar() {
                         <SidebarMenuButton
                             size="lg"
                             asChild
-                            className="rounded-none transition-colors hover:bg-gray-100 border-2 border-gray-700 p-2"
+                            className="rounded-none transition-colors hover:bg-white border-2 border-gray-700 p-2"
                         >
                             <Link href="/dashboard" prefetch>
                                 <AppLogo />
@@ -106,7 +106,7 @@ export function AppSidebar() {
                 {/* Platform Navigation with paper-like styling */}
                 <div className="mb-6 px-4">
                     <div className="border-b border-gray-400 pb-2 mb-3">
-                        <h3 className="text-sm font-bold text-gray-800 font-['Courier_New',monospace] uppercase tracking-wider">
+                        <h3 className="text-sm font-bold text-gray-900 font-['Courier_New',monospace] uppercase tracking-wider">
                             Platform
                         </h3>
                     </div>
@@ -117,7 +117,7 @@ export function AppSidebar() {
                 {isGitHubIntegrated && (
                     <div className="mb-6 px-4">
                         <div className="border-b border-gray-400 pb-2 mb-3">
-                            <h3 className="text-sm font-bold text-gray-800 font-['Courier_New',monospace] uppercase tracking-wider">
+                            <h3 className="text-sm font-bold text-gray-900 font-['Courier_New',monospace] uppercase tracking-wider">
                                 Integration
                             </h3>
                         </div>
@@ -128,7 +128,7 @@ export function AppSidebar() {
 
             <SidebarFooter className="pb-5 border-t border-gray-400 pt-4 mt-auto">
                 <div className="px-4 mb-4">
-                    <h3 className="text-xs font-bold text-gray-700 font-['Courier_New',monospace] uppercase tracking-wider mb-2">
+                    <h3 className="text-xs font-bold text-gray-900 font-['Courier_New',monospace] uppercase tracking-wider mb-2">
                         Links
                     </h3>
                     <NavFooter items={footerNavItems} className="mt-2" />

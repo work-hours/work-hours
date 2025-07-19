@@ -20,25 +20,22 @@ export function NavFooter({
 }) {
     return (
         <SidebarGroup {...props} className={`px-3 py-3 group-data-[collapsible=icon]:p-0 ${className || ''}`}>
-            <SidebarSeparator className="mb-4 bg-sidebar-border/40" />
-            <SidebarGroupLabel className="mb-2 text-[11px] font-semibold tracking-wider text-sidebar-foreground/80 uppercase">
-                Resources
-            </SidebarGroupLabel>
+            <SidebarSeparator className="mb-4 bg-gray-400" />
             <SidebarGroupContent>
-                <SidebarMenu className="space-y-1.5">
+                <SidebarMenu className="space-y-1.5 font-['Courier_New',monospace]">
                     {items.map((item) => (
                         <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton
                                 asChild
                                 tooltip={{ children: item.title }}
-                                className="text-sidebar-foreground/90 transition-all duration-300 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
+                                className="text-gray-700 transition-all duration-300 hover:bg-white/70 hover:text-gray-900"
                                 size="sm"
                             >
                                 <a href={item.href} target="_blank" rel="noopener noreferrer" className="flex items-center">
                                     {item.icon && (
                                         <Icon
                                             iconNode={item.icon}
-                                            className="mr-3 size-4 text-sidebar-foreground/60 transition-all duration-300 group-hover:scale-110 group-hover:text-sidebar-accent-foreground"
+                                            className="mr-3 size-4 text-gray-700 transition-all duration-300 group-hover:scale-110 group-hover:text-gray-900"
                                         />
                                     )}
                                     <span>{item.title}</span>
