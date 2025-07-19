@@ -113,12 +113,12 @@ export default function Dashboard() {
                 ) : (
                     <>
                         <section className="mb-4">
-                            <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
+                            <h3 className="mb-2 text-sm font-bold uppercase text-gray-700 font-['Courier_New',monospace]">Metrics Dashboard</h3>
                             <StatsCards teamStats={teamStats} />
                         </section>
 
                         <section className="mb-4">
-                            <h3 className="mb-2 text-sm font-medium text-muted-foreground">Analytics</h3>
+                            <h3 className="mb-2 text-sm font-bold uppercase text-gray-700 font-['Courier_New',monospace]">Analytics</h3>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <HoursDistribution hoursData={hoursData} />
                                 <WeeklyTrend weeklyData={weeklyData} />
@@ -126,7 +126,7 @@ export default function Dashboard() {
                         </section>
 
                         <section className="mb-4">
-                            <h3 className="mb-2 text-sm font-medium text-muted-foreground">Activity</h3>
+                            <h3 className="mb-2 text-sm font-bold uppercase text-gray-700 font-['Courier_New',monospace]">Activity</h3>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <RecentTimeLogs />
                                 <TeamProductivity teamStats={teamStats} />
