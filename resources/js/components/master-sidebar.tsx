@@ -3,6 +3,7 @@ import { Building, Folder, Github, Heart, LayoutGrid, LucideProjector, LucideSer
 import { type NavItem, type SharedData } from '@/types'
 import { usePage } from '@inertiajs/react'
 import AppLogo from './app-logo'
+import AppLogoIcon from './app-logo-icon'
 import { useState, useEffect } from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
@@ -88,10 +89,19 @@ export function MasterSidebar() {
             <div className="absolute left-4 top-0 bottom-0 w-4 bg-[radial-gradient(circle,rgba(0,0,0,0.1)_3px,transparent_3px)] bg-[length:8px_24px] bg-[position:center] bg-repeat-y pointer-events-none" aria-hidden="true"></div>
 
             {/* Header */}
-            <div className="p-4 pt-6 pb-6">
-                <div className="flex items-center justify-between">
-                    <Link href="/dashboard" className="rounded-none transition-colors hover:bg-white border-2 border-gray-700 p-2">
-                        <AppLogo />
+            <div className={`p-4 pt-6 pb-6 relative z-20 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : ''}`}>
+                <div className={`flex items-center justify-between w-full ${collapsed ? 'flex-col' : ''}`}>
+                    <Link
+                        href="/dashboard"
+                        className={`rounded-none transition-all duration-300 ease-in-out hover:bg-white border-2 border-gray-700 ${
+                            collapsed ? 'p-1 mb-2 flex justify-center items-center' : 'p-2 flex items-center'
+                        }`}
+                    >
+                        {collapsed ? (
+                            <AppLogoIcon className="h-8 w-8" />
+                        ) : (
+                            <AppLogo />
+                        )}
                     </Link>
                     <button
                         onClick={() => setCollapsed(!collapsed)}
@@ -112,7 +122,7 @@ export function MasterSidebar() {
                         )}
                     </button>
                 </div>
-                <div className="mt-5 h-1 bg-gray-400"></div>
+                <div className={`h-1 bg-gray-400 transition-all duration-300 ease-in-out ${collapsed ? 'w-full mt-4' : 'w-full mt-5'}`}></div>
             </div>
 
             {/* Navigation */}
