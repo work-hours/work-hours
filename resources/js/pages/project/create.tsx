@@ -87,7 +87,7 @@ export default function CreateProject({ teamMembers, clients }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Project" />
-            <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Add Project</h1>

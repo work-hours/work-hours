@@ -262,7 +262,7 @@ export default function TimeLog({
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Time Log" />
-            <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-6 p-6">
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Time Logs</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage your work hours</p>

@@ -68,26 +68,26 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
     return (
         <div
-            className={`sticky top-0 flex h-screen flex-col border-r border-gray-300 bg-[#f8f6e9] transition-all duration-300 ease-in-out ${collapsed ? 'w-20' : 'w-64'}`}
+            className={`sticky top-0 flex h-screen flex-col border-r border-gray-300 bg-[#f8f6e9] shadow-sm transition-all duration-300 ease-in-out ${collapsed ? 'w-20' : 'w-64'}`}
         >
-            {/* Horizontal lines like a timesheet */}
+            {/* Enhanced horizontal lines with slightly increased contrast */}
             <div
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:100%_2rem]"
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.04)_1px,transparent_1px)] bg-[length:100%_2rem]"
                 aria-hidden="true"
             ></div>
 
-            {/* Vertical lines like a timesheet */}
+            {/* Enhanced vertical lines with slightly increased contrast */}
             <div
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:2rem_100%]"
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] bg-[length:2rem_100%]"
                 aria-hidden="true"
             ></div>
 
-            {/* Header */}
+            {/* Header with improved styling */}
             <div className={`relative z-20 p-4 pt-6 pb-6 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : ''}`}>
                 <div className={`flex w-full items-center ${collapsed ? 'flex-col' : ''}`}>
                     <Link
                         href="/dashboard"
-                        className={`rounded-none border-2 border-gray-700 transition-all duration-300 ease-in-out hover:bg-white ${
+                        className={`rounded-none border-2 border-gray-700 bg-white/50 transition-all duration-300 ease-in-out hover:bg-white hover:shadow-sm ${
                             collapsed ? 'mb-2 flex items-center justify-center p-1' : 'flex items-center p-2'
                         }`}
                     >
@@ -113,9 +113,9 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                                 <div key={item.href} className="relative">
                                     <Link
                                         href={item.href}
-                                        className={`flex items-center rounded-md px-2 py-2 text-sm font-medium hover:bg-white hover:text-gray-900 ${
+                                        className={`flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:shadow-sm hover:text-gray-900 ${
                                             typeof window !== 'undefined' && window.location.pathname === item.href
-                                                ? 'border-l-4 border-gray-700 bg-white text-gray-900'
+                                                ? 'border-l-4 border-gray-700 bg-white text-gray-900 shadow-sm'
                                                 : 'text-gray-700'
                                         }`}
                                     >
@@ -152,9 +152,9 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                                     <div key={item.href} className="relative">
                                         <Link
                                             href={item.href}
-                                            className={`flex items-center rounded-md px-2 py-2 text-sm font-medium hover:bg-white hover:text-gray-900 ${
+                                            className={`flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:shadow-sm hover:text-gray-900 ${
                                                 typeof window !== 'undefined' && window.location.pathname === item.href
-                                                    ? 'border-l-4 border-gray-700 bg-white text-gray-900'
+                                                    ? 'border-l-4 border-gray-700 bg-white text-gray-900 shadow-sm'
                                                     : 'text-gray-700'
                                             }`}
                                         >
@@ -177,7 +177,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                 )}
             </div>
 
-            {/* Footer */}
+            {/* Footer with enhanced styling */}
             <div className="border-t border-gray-400 pt-4 pb-4">
                 <div className="mb-4 px-4">
                     <h3
@@ -193,7 +193,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                                         href={item.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 hover:bg-white hover:text-gray-900"
+                                        className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:shadow-sm hover:text-gray-900"
                                     >
                                         {item.icon && <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />}
                                         {!collapsed && <span>{item.title}</span>}
@@ -212,18 +212,18 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                     </TooltipProvider>
                 </div>
 
-                {/* User section */}
+                {/* User section with enhanced styling */}
                 <div className="mb-3 px-4">
                     <div className={`flex items-center ${collapsed ? 'justify-center' : ''} relative z-10`}>
                         <div className="flex-shrink-0">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 font-bold text-gray-700">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 font-bold text-gray-700 shadow-sm">
                                 {auth.user && auth.user.name ? auth.user.name.charAt(0) : ''}
                             </div>
                         </div>
                         {!collapsed && (
                             <div className="ml-3">
                                 <p className="truncate text-sm font-medium text-gray-700">{auth.user && auth.user.name ? auth.user.name : ''}</p>
-                                <Link href="/settings/profile" className="relative z-10 text-xs text-gray-500 hover:text-gray-700">
+                                <Link href="/settings/profile" className="relative z-10 text-xs text-gray-500 transition-colors hover:text-gray-700">
                                     View profile
                                 </Link>
                             </div>
@@ -231,14 +231,14 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                     </div>
                 </div>
 
-                {/* Bottom link - always at the bottom of sidebar */}
+                {/* Bottom link with enhanced styling */}
                 <div className="mt-auto border-t border-gray-400 px-4 pt-4">
                     <TooltipProvider>
                         <div className="relative">
                             <Link
                                 href={route('logout')}
                                 method="post"
-                                className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 hover:bg-white hover:text-gray-900"
+                                className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:shadow-sm hover:text-gray-900"
                             >
                                 <LogOut className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
                                 {!collapsed && <span>Logout</span>}
