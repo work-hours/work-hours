@@ -78,7 +78,7 @@ export function MasterSidebar() {
     }, [collapsed])
 
     return (
-        <div className={`relative flex flex-col bg-[#f8f6e9] border-r border-gray-300 transition-all duration-300 ease-in-out ${collapsed ? 'w-20' : 'w-64'}`}>
+        <div className={`relative flex flex-col bg-[#f8f6e9] border-r border-gray-300 transition-all duration-300 ease-in-out h-full ${collapsed ? 'w-20' : 'w-64'}`}>
             {/* Horizontal lines like a timesheet */}
             <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:100%_2rem] pointer-events-none" aria-hidden="true"></div>
 
