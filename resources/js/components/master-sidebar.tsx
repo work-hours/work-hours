@@ -2,9 +2,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { type NavItem, type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 import { Building, Folder, Github, Heart, LayoutGrid, LogOut, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
+
+interface MasterSidebarProps {
+    collapsed: boolean
+}
 
 const mainNavItems: NavItem[] = [
     {
@@ -60,21 +63,8 @@ const footerNavItems: NavItem[] = [
     },
 ]
 
-export function MasterSidebar() {
+export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     const { isGitHubIntegrated, auth } = usePage<SharedData>().props
-    const [collapsed, setCollapsed] = useState(() => {
-        // Initialize from localStorage if available
-        if (typeof window !== 'undefined') {
-            const savedState = localStorage.getItem('sidebar_collapsed')
-            return savedState === 'true'
-        }
-        return false
-    })
-
-    // Save collapsed state to localStorage when it changes
-    useEffect(() => {
-        localStorage.setItem('sidebar_collapsed', String(collapsed))
-    }, [collapsed])
 
     return (
         <div
@@ -100,7 +90,7 @@ export function MasterSidebar() {
 
             {/* Header */}
             <div className={`relative z-20 p-4 pt-6 pb-6 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : ''}`}>
-                <div className={`flex w-full items-center justify-between ${collapsed ? 'flex-col' : ''}`}>
+                <div className={`flex w-full items-center justify-center ${collapsed ? 'flex-col' : ''}`}>
                     <Link
                         href="/dashboard"
                         className={`rounded-none border-2 border-gray-700 transition-all duration-300 ease-in-out hover:bg-white ${
@@ -109,44 +99,6 @@ export function MasterSidebar() {
                     >
                         {collapsed ? <AppLogoIcon className="h-8 w-8" /> : <AppLogo />}
                     </Link>
-                    <button
-                        onClick={() => setCollapsed(!collapsed)}
-                        className={`rounded-md p-2 transition-colors hover:bg-gray-200 ${
-                            collapsed ? 'absolute top-12 -right-8 z-50 border-2 border-gray-500 bg-white shadow-lg' : ''
-                        }`}
-                    >
-                        {collapsed ? (
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <polyline points="13 17 18 12 13 7"></polyline>
-                                <polyline points="6 17 11 12 6 7"></polyline>
-                            </svg>
-                        ) : (
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <polyline points="11 17 6 12 11 7"></polyline>
-                                <polyline points="18 17 13 12 18 7"></polyline>
-                            </svg>
-                        )}
-                    </button>
                 </div>
                 <div className={`h-1 bg-gray-400 transition-all duration-300 ease-in-out ${collapsed ? 'mt-4 w-full' : 'mt-5 w-full'}`}></div>
             </div>

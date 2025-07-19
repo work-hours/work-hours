@@ -1,7 +1,7 @@
 import { MasterContent } from '@/components/master-content'
 import { MasterSidebar } from '@/components/master-sidebar'
 import { type BreadcrumbItem } from '@/types'
-import { type ReactNode } from 'react'
+import { type ReactNode, useState, useEffect } from 'react'
 import { Toaster } from 'sonner'
 
 interface MasterLayoutProps {
@@ -10,6 +10,20 @@ interface MasterLayoutProps {
 }
 
 export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayoutProps) {
+    const [collapsed, setCollapsed] = useState(() => {
+        // Initialize from localStorage if available
+        if (typeof window !== 'undefined') {
+            const savedState = localStorage.getItem('sidebar_collapsed')
+            return savedState === 'true'
+        }
+        return false
+    })
+
+    // Save collapsed state to localStorage when it changes
+    useEffect(() => {
+        localStorage.setItem('sidebar_collapsed', String(collapsed))
+    }, [collapsed])
+
     return (
         <div className="flex min-h-screen bg-[#f8f6e9] font-['Courier_New',monospace]">
             {/* Paper texture overlay */}
@@ -28,10 +42,10 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
             ></div>
 
             {/* Sidebar */}
-            <MasterSidebar />
+            <MasterSidebar collapsed={collapsed} />
 
             {/* Content */}
-            <MasterContent breadcrumbs={breadcrumbs}>{children}</MasterContent>
+            <MasterContent breadcrumbs={breadcrumbs} collapsed={collapsed} setCollapsed={setCollapsed}>{children}</MasterContent>
 
             {/* Toaster for notifications */}
             <Toaster position="top-right" />
