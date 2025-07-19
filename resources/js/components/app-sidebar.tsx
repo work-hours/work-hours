@@ -74,14 +74,14 @@ export function AppSidebar() {
     const { isGitHubIntegrated } = usePage<SharedData>().props
 
     return (
-        <Sidebar collapsible="icon" variant="inset" className="bg-gradient-to-b from-sidebar via-sidebar/98 to-sidebar/90 shadow-2xl">
+        <Sidebar collapsible="icon" variant="inset" className="bg-white border-r-2 border-gray-400">
             <SidebarHeader className="py-6">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             size="lg"
                             asChild
-                            className="rounded-xl transition-all duration-300 hover:scale-105 hover:bg-sidebar-accent/30 hover:shadow-md"
+                            className="rounded-none transition-colors hover:bg-gray-100 border-2 border-gray-700 p-2"
                         >
                             <Link href="/dashboard" prefetch>
                                 <AppLogo />
@@ -89,7 +89,7 @@ export function AppSidebar() {
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
-                <SidebarSeparator className="mt-5 bg-sidebar-border/50" />
+                <SidebarSeparator className="mt-5 bg-gray-400 h-1" />
             </SidebarHeader>
 
             <SidebarContent className="pt-3">
