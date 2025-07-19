@@ -79,7 +79,6 @@ export function AppSidebar() {
             variant="inset"
             className="bg-[#f8f6e9] border-r-2 border-gray-400 relative"
         >
-
             {/* Horizontal lines like a timesheet */}
             <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:100%_2rem]" aria-hidden="true"></div>
 
