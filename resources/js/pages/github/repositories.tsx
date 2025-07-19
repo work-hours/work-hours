@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { cn } from '@/lib/utils'
 import { type BreadcrumbItem, type NavItem } from '@/types'
 import { toast } from 'sonner'
@@ -259,7 +259,7 @@ export default function GitHubRepositories() {
 
     if (isCheckingAuth) {
         return (
-            <AppLayout breadcrumbs={breadcrumbs}>
+            <MasterLayout breadcrumbs={breadcrumbs}>
                 <Head title="GitHub Repositories" />
                 <div className="mx-auto flex w-full flex-col gap-6 p-6 md:w-10/12">
                     {/* Header section */}
@@ -280,13 +280,13 @@ export default function GitHubRepositories() {
                         </CardContent>
                     </Card>
                 </div>
-            </AppLayout>
+            </MasterLayout>
         )
     }
 
     if (!isAuthenticated) {
         return (
-            <AppLayout breadcrumbs={breadcrumbs}>
+            <MasterLayout breadcrumbs={breadcrumbs}>
                 <Head title="GitHub Repositories" />
                 <div className="mx-auto flex w-full flex-col gap-6 p-6 md:w-10/12">
                     {/* Header section */}
@@ -321,7 +321,7 @@ export default function GitHubRepositories() {
                         </CardContent>
                     </Card>
                 </div>
-            </AppLayout>
+            </MasterLayout>
         )
     }
 
@@ -337,7 +337,7 @@ export default function GitHubRepositories() {
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="GitHub Repositories" />
             <div className="mx-auto flex w-full flex-col gap-6 p-6 md:w-10/12">
                 <section className="mb-2">
@@ -421,6 +421,6 @@ export default function GitHubRepositories() {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

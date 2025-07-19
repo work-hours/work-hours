@@ -3,7 +3,7 @@ import { Github } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 
 type Props = {
@@ -19,7 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Integration({ isGitHubIntegrated }: Props) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Integration" />
             <div className="mx-auto flex w-full flex-col gap-6 p-6 md:w-10/12">
                 {/* Header section */}
@@ -58,6 +58,6 @@ export default function Integration({ isGitHubIntegrated }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

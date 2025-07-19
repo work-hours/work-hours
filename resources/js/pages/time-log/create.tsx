@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 
 type Project = {
@@ -120,7 +120,7 @@ export default function CreateTimeLog({ projects }: Props) {
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Time Log" />
             <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
                 {/* Header section */}
@@ -244,6 +244,6 @@ export default function CreateTimeLog({ projects }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

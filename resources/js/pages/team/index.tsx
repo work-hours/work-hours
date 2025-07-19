@@ -5,7 +5,7 @@ import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, useForm } from '@inertiajs/react'
@@ -111,7 +111,7 @@ export default function Team({ teamMembers, filters }: Props) {
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Team" />
             <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
                 <section className="mb-2">
@@ -341,6 +341,6 @@ export default function Team({ teamMembers, filters }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

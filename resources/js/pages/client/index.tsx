@@ -2,7 +2,7 @@ import DeleteClient from '@/components/delete-client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -51,7 +51,7 @@ export default function Clients() {
     }, [])
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Clients" />
             <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
                 <section className="mb-2">
@@ -162,6 +162,6 @@ export default function Clients() {
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

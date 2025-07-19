@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
 import axios from 'axios'
@@ -260,7 +260,7 @@ export default function TimeLog({
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Time Log" />
             <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
                 <section className="mb-2">
@@ -566,6 +566,6 @@ export default function TimeLog({
                     </DialogContent>
                 </Dialog>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Loader from '@/components/ui/loader'
 import { Separator } from '@/components/ui/separator'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
@@ -125,7 +125,7 @@ export default function Notifications() {
     }, [])
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Notifications" />
             <div className="mx-auto flex w-10/12 flex-col gap-4 p-4">
                 <div className="mb-6 flex items-center justify-between">
@@ -314,6 +314,6 @@ export default function Notifications() {
                     </>
                 )}
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

@@ -6,7 +6,7 @@ import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
 import { ArrowLeft, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset } from 'lucide-react'
@@ -177,7 +177,7 @@ export default function AllTeamTimeLogs({
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="All Team Time Logs" />
             <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
                 {/* Header section */}
@@ -460,6 +460,6 @@ export default function AllTeamTimeLogs({
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

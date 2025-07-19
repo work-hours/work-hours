@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 
 type TeamMemberForm = {
@@ -72,7 +72,7 @@ export default function EditTeamMember({ user, currencies }: Props) {
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Team Member" />
             <div className="mx-auto flex w-10/12 flex-col gap-6 p-6">
                 {/* Header section */}
@@ -238,6 +238,6 @@ export default function EditTeamMember({ user, currencies }: Props) {
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+        </MasterLayout>
     )
 }

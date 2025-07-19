@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import SettingsLayout from '@/layouts/settings/layout'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -56,7 +56,7 @@ export default function Profile({ mustVerifyEmail, status, currencies }: { mustV
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Profile settings" />
 
             <SettingsLayout>
@@ -215,6 +215,6 @@ export default function Profile({ mustVerifyEmail, status, currencies }: { mustV
 
                 <DeleteUser />
             </SettingsLayout>
-        </AppLayout>
+        </MasterLayout>
     )
 }

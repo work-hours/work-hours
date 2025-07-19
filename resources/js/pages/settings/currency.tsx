@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import SettingsLayout from '@/layouts/settings/layout'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -51,7 +51,7 @@ export default function Currency({ currencies }: { currencies: Currency[] }) {
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Currency settings" />
 
             <SettingsLayout>
@@ -123,6 +123,6 @@ export default function Currency({ currencies }: { currencies: Currency[] }) {
                     </div>
                 </div>
             </SettingsLayout>
-        </AppLayout>
+        </MasterLayout>
     )
 }

@@ -1,5 +1,5 @@
 import InputError from '@/components/input-error'
-import AppLayout from '@/layouts/app-layout'
+import MasterLayout from '@/layouts/master-layout'
 import SettingsLayout from '@/layouts/settings/layout'
 import { type BreadcrumbItem } from '@/types'
 import { Transition } from '@headlessui/react'
@@ -56,7 +56,7 @@ export default function Password() {
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Password settings" />
 
             <SettingsLayout>
@@ -157,6 +157,6 @@ export default function Password() {
                     </form>
                 </div>
             </SettingsLayout>
-        </AppLayout>
+        </MasterLayout>
     )
 }
