@@ -30,9 +30,6 @@ export default function Features() {
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {/* GitHub Integration - Timesheet style */}
                     <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
-                        {/* Corner fold effect */}
-                        <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
-
                         {/* Form-like header */}
                         <div className="mb-4 border-b border-gray-400 pb-4">
                             <div className="flex items-center">
@@ -53,9 +50,6 @@ export default function Features() {
                     </article>
 
                     <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
-                        {/* Corner fold effect */}
-                        <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
-
                         {/* Form-like header */}
                         <div className="mb-4 border-b border-gray-400 pb-4">
                             <div className="flex items-center">
@@ -72,9 +66,6 @@ export default function Features() {
                     </article>
 
                     <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
-                        {/* Corner fold effect */}
-                        <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
-
                         {/* Form-like header */}
                         <div className="mb-4 border-b border-gray-400 pb-4">
                             <div className="flex items-center">
@@ -91,9 +82,6 @@ export default function Features() {
                     </article>
 
                     <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
-                        {/* Corner fold effect */}
-                        <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
-
                         {/* Form-like header */}
                         <div className="mb-4 border-b border-gray-400 pb-4">
                             <div className="flex items-center">
@@ -110,9 +98,6 @@ export default function Features() {
                     </article>
 
                     <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
-                        {/* Corner fold effect */}
-                        <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
-
                         {/* Form-like header */}
                         <div className="mb-4 border-b border-gray-400 pb-4">
                             <div className="flex items-center">
@@ -129,9 +114,6 @@ export default function Features() {
                     </article>
 
                     <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
-                        {/* Corner fold effect */}
-                        <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
-
                         {/* Form-like header */}
                         <div className="mb-4 border-b border-gray-400 pb-4">
                             <div className="flex items-center">
@@ -152,9 +134,6 @@ export default function Features() {
             {/* GitHub Integration Section - Timesheet style */}
             <section id="integration" className="container mx-auto mb-16 px-6 lg:px-8" aria-label="GitHub integration">
                 <div className="relative border-2 border-gray-300 bg-white p-6">
-                    {/* Corner fold effect */}
-                    <div className="absolute top-0 right-0 h-0 w-0 border-t-[30px] border-r-[30px] border-t-gray-400 border-r-transparent"></div>
-
                     {/* Timesheet form header */}
                     <div className="mb-6 border-b-2 border-gray-400 pb-3">
                         <div className="flex items-center">
@@ -222,9 +201,6 @@ export default function Features() {
             {/* Currency Management Section - Timesheet style */}
             <section id="currency-management" className="container mx-auto mb-16 px-6 lg:px-8" aria-label="Multiple currency management">
                 <div className="relative border-2 border-gray-300 bg-white p-6">
-                    {/* Corner fold effect */}
-                    <div className="absolute top-0 right-0 h-0 w-0 border-t-[30px] border-r-[30px] border-t-gray-400 border-r-transparent"></div>
-
                     {/* Currency symbols as typewritten characters */}
                     <div className="absolute top-4 right-8 font-['Courier_New',monospace] text-4xl text-gray-300">$</div>
                     <div className="absolute bottom-4 left-8 font-['Courier_New',monospace] text-3xl text-gray-300">€</div>
