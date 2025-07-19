@@ -21,7 +21,7 @@ export default function Integration({ isGitHubIntegrated }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Integration" />
-            <div className="mx-auto flex w-full flex-col gap-6 p-6 md:w-10/12">
+            <div className="mx-auto flex w-full flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Integration</h1>

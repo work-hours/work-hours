@@ -261,7 +261,7 @@ export default function GitHubRepositories() {
         return (
             <MasterLayout breadcrumbs={breadcrumbs}>
                 <Head title="GitHub Repositories" />
-                <div className="mx-auto flex w-full flex-col gap-6 p-6 md:w-10/12">
+                <div className="mx-auto flex w-full flex-col gap-6 p-6">
                     {/* Header section */}
                     <section className="mb-2">
                         <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
@@ -339,7 +339,7 @@ export default function GitHubRepositories() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="GitHub Repositories" />
-            <div className="mx-auto flex w-full flex-col gap-6 p-6 md:w-10/12">
+            <div className="mx-auto flex w-full flex-col gap-6 p-6">
                 <section className="mb-2">
                     <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
                         <Github className="h-8 w-8" />
