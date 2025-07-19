@@ -11,7 +11,7 @@ interface MasterContentProps {
 
 export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps) {
     return (
-        <div className="flex flex-col flex-1 bg-[#f8f6e9] font-['Courier_New',monospace] relative">
+        <div className="flex flex-col flex-1 bg-[#f8f6e9] font-['Courier_New',monospace] relative pl-8">
             {/* Horizontal lines like a timesheet */}
             <div
                 className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:100%_2rem]"
