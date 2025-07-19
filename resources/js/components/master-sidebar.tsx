@@ -141,12 +141,12 @@ export function MasterSidebar() {
                                     <Link
                                         href={item.href}
                                         className={`flex items-center px-2 py-2 text-sm font-medium rounded-md hover:bg-white hover:text-gray-900 ${
-                                            window.location.pathname === item.href
+                                            typeof window !== 'undefined' && window.location.pathname === item.href
                                                 ? 'bg-white text-gray-900 border-l-4 border-gray-700'
                                                 : 'text-gray-700'
                                         }`}
                                     >
-                                        <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                        {item.icon && <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />}
                                         {!collapsed && <span>{item.title}</span>}
                                     </Link>
                                     {collapsed && (
@@ -180,12 +180,12 @@ export function MasterSidebar() {
                                         <Link
                                             href={item.href}
                                             className={`flex items-center px-2 py-2 text-sm font-medium rounded-md hover:bg-white hover:text-gray-900 ${
-                                                window.location.pathname === item.href
+                                                typeof window !== 'undefined' && window.location.pathname === item.href
                                                     ? 'bg-white text-gray-900 border-l-4 border-gray-700'
                                                     : 'text-gray-700'
                                             }`}
                                         >
-                                            <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                            {item.icon && <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />}
                                             {!collapsed && <span>{item.title}</span>}
                                         </Link>
                                         {collapsed && (
@@ -222,7 +222,7 @@ export function MasterSidebar() {
                                         rel="noopener noreferrer"
                                         className="flex items-center px-2 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-white hover:text-gray-900"
                                     >
-                                        <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                        {item.icon && <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />}
                                         {!collapsed && <span>{item.title}</span>}
                                     </a>
                                     {collapsed && (
@@ -246,12 +246,12 @@ export function MasterSidebar() {
                     <div className={`flex items-center ${collapsed ? 'justify-center' : ''} relative z-10`}>
                         <div className="flex-shrink-0">
                             <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-bold">
-                                {auth.user.name.charAt(0)}
+                                {auth.user && auth.user.name ? auth.user.name.charAt(0) : ''}
                             </div>
                         </div>
                         {!collapsed && (
                             <div className="ml-3">
-                                <p className="text-sm font-medium text-gray-700 truncate">{auth.user.name}</p>
+                                <p className="text-sm font-medium text-gray-700 truncate">{auth.user && auth.user.name ? auth.user.name : ''}</p>
                                 <Link href="/settings/profile" className="text-xs text-gray-500 hover:text-gray-700 relative z-10">
                                     View profile
                                 </Link>

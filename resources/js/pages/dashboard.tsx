@@ -99,9 +99,7 @@ export default function Dashboard() {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex flex-col gap-6 relative">
-                {/* Welcome Section with paper styling */}
                 <div className="relative border-2 border-gray-300 bg-white p-6">
-                    {/* Corner fold effect */}
                     <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
                     <WelcomeSection />
                 </div>
