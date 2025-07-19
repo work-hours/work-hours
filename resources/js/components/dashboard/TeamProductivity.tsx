@@ -39,12 +39,12 @@ export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
                         </BarChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="flex h-full flex-col items-center justify-center text-gray-700">
+                    <div className="flex h-full flex-col items-center justify-center text-gray-700 dark:text-gray-300">
                         <UsersIcon className="mb-2 h-12 w-12 opacity-50" />
                         <p className="font-['Courier_New',monospace]">Add team members to see productivity insights</p>
                         <Link
                             href="/team/create"
-                            className="mt-2 border-b border-gray-400 pb-0.5 font-['Courier_New',monospace] font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900"
+                            className="mt-2 border-b border-gray-400 dark:border-gray-600 pb-0.5 font-['Courier_New',monospace] font-bold text-gray-700 dark:text-gray-300 hover:border-gray-700 dark:hover:border-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                         >
                             Add team members
                         </Link>
