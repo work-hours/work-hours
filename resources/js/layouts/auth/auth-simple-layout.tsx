@@ -73,7 +73,7 @@ export default function AuthSimpleLayout({ children, title, description }: Props
             </div>
 
             {/* Footer - styled like the landing page footer */}
-            <div className="mt-8 text-center text-sm">
+            <div className="mt-8 text-center text-sm relative z-10">
                 <div className="mb-2">
                     <a
                         href="https://github.com/sponsors/msamgan"
