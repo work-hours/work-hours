@@ -88,7 +88,7 @@ export default function Welcome() {
                 <HowItWorks />
             </div>
             <CTA />
-            <div className="mx-auto w-9/12">
+            <div className="mx-auto w-9/12 relative z-10">
                 <Footer />
             </div>
         </div>
