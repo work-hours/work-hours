@@ -17,7 +17,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             tooltip={{ children: item.title }}
                             className={`transition-colors ${
                                 page.url.startsWith(item.href)
-                                    ? 'bg-white border-l-2 border-gray-700'
+                                    ? 'bg-white !bg-white border-l-2 border-gray-700'
                                     : 'hover:bg-white/70 hover:border-l-2 hover:border-gray-700'
                             }`}
                         >
@@ -27,14 +27,14 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                         iconNode={item.icon}
                                         className={`mr-3 ${
                                             page.url.startsWith(item.href)
-                                                ? 'text-gray-900'
+                                                ? 'text-gray-900 !text-gray-900'
                                                 : 'text-gray-700'
                                         }`}
                                     />
                                 )}
                                 <span className={`font-['Courier_New',monospace] ${
                                     page.url.startsWith(item.href)
-                                        ? 'font-bold text-gray-900'
+                                        ? 'font-bold text-gray-900 !text-gray-900'
                                         : 'text-gray-700 hover:text-gray-900'
                                 }`}>
                                     {item.title}
