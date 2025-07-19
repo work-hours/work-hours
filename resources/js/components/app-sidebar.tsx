@@ -74,7 +74,14 @@ export function AppSidebar() {
     const { isGitHubIntegrated } = usePage<SharedData>().props
 
     return (
-        <Sidebar collapsible="icon" variant="inset" className="bg-white border-r-2 border-gray-400">
+        <Sidebar
+            collapsible="icon"
+            variant="inset"
+            className="bg-white border-r-2 border-gray-400 relative"
+        >
+            {/* Corner fold effect at the top of sidebar */}
+            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+
             <SidebarHeader className="py-6">
                 <SidebarMenu>
                     <SidebarMenuItem>
@@ -93,13 +100,36 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent className="pt-3">
-                <NavMain items={mainNavItems} title="Platform" />
+                {/* Platform Navigation with paper-like styling */}
+                <div className="mb-6 px-4">
+                    <div className="border-b border-gray-400 pb-2 mb-3">
+                        <h3 className="text-sm font-bold text-gray-800 font-['Courier_New',monospace] uppercase tracking-wider">
+                            Platform
+                        </h3>
+                    </div>
+                    <NavMain items={mainNavItems} title="Platform" />
+                </div>
 
-                {isGitHubIntegrated && <NavMain items={integrationNavItems} title="Integration" />}
+                {/* Integration Navigation with paper-like styling */}
+                {isGitHubIntegrated && (
+                    <div className="mb-6 px-4">
+                        <div className="border-b border-gray-400 pb-2 mb-3">
+                            <h3 className="text-sm font-bold text-gray-800 font-['Courier_New',monospace] uppercase tracking-wider">
+                                Integration
+                            </h3>
+                        </div>
+                        <NavMain items={integrationNavItems} title="Integration" />
+                    </div>
+                )}
             </SidebarContent>
 
-            <SidebarFooter className="pb-5">
-                <NavFooter items={footerNavItems} className="mt-auto" />
+            <SidebarFooter className="pb-5 border-t border-gray-400 pt-4 mt-auto">
+                <div className="px-4 mb-4">
+                    <h3 className="text-xs font-bold text-gray-700 font-['Courier_New',monospace] uppercase tracking-wider mb-2">
+                        Links
+                    </h3>
+                    <NavFooter items={footerNavItems} className="mt-2" />
+                </div>
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

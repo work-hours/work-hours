@@ -21,17 +21,17 @@ export function NavUser() {
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
-                            className="group rounded-lg border border-sidebar-border/40 text-sidebar-accent-foreground shadow-md transition-all duration-300 hover:border-sidebar-border/60 hover:bg-sidebar-accent/20 hover:shadow-lg data-[state=open]:bg-sidebar-accent"
+                            className="group border-2 border-gray-400 bg-white text-gray-800 transition-colors hover:bg-gray-50 data-[state=open]:bg-gray-100"
                         >
                             <UserInfo user={auth.user} />
                             <Icon
                                 iconNode={ChevronsUpDown}
-                                className="ml-auto size-4 opacity-70 transition-all duration-300 group-hover:scale-110 group-hover:opacity-100"
+                                className="ml-auto size-4 text-gray-600 group-hover:text-gray-800"
                             />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
-                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg border-sidebar-border/50 shadow-lg"
+                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 border-2 border-gray-400 bg-white"
                         align="end"
                         side={isMobile ? 'bottom' : state === 'collapsed' ? 'left' : 'bottom'}
                     >

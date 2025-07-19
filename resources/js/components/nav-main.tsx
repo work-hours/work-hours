@@ -1,40 +1,40 @@
 import { Icon } from '@/components/icon'
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 import { type NavItem } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 
-export function NavMain({ items = [], title = 'Platform' }: { items: NavItem[]; title?: string }) {
+export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage()
     return (
-        <SidebarGroup className="px-4 py-4">
-            <SidebarGroupLabel className="mb-3 text-[11px] font-semibold tracking-wider text-sidebar-foreground/90 uppercase">
-                {title}
-            </SidebarGroupLabel>
-            <SidebarMenu className="space-y-2.5">
+        <SidebarGroup className="py-2">
+            {/* We've removed the title here since it's now handled in the parent component */}
+            <SidebarMenu className="space-y-2">
                 {items.map((item) => (
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                             asChild
                             isActive={page.url.startsWith(item.href)}
                             tooltip={{ children: item.title }}
-                            className={`rounded-lg font-medium transition-all duration-300 ${
+                            className={`transition-colors ${
                                 page.url.startsWith(item.href)
-                                    ? 'bg-sidebar-accent/80 shadow-md'
-                                    : 'hover:translate-x-1.5 hover:bg-sidebar-accent/20 hover:shadow-sm'
+                                    ? 'bg-gray-100 border-l-2 border-gray-700'
+                                    : 'hover:bg-gray-50 hover:border-l-2 hover:border-gray-400'
                             }`}
                         >
                             <Link href={item.href} prefetch>
                                 {item.icon && (
                                     <Icon
                                         iconNode={item.icon}
-                                        className={`mr-3.5 transition-all duration-300 ${
+                                        className={`mr-3 ${
                                             page.url.startsWith(item.href)
-                                                ? 'scale-115 text-sidebar-accent-foreground'
-                                                : 'text-sidebar-foreground/80 group-hover:scale-115 group-hover:text-sidebar-accent-foreground'
+                                                ? 'text-gray-800'
+                                                : 'text-gray-600'
                                         }`}
                                     />
                                 )}
-                                <span className="font-medium">{item.title}</span>
+                                <span className={`font-['Courier_New',monospace] ${page.url.startsWith(item.href) ? 'font-bold' : ''}`}>
+                                    {item.title}
+                                </span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

@@ -13,6 +13,7 @@ import { type BreadcrumbItem } from '@/types'
 // @ts-expect-error
 import { projects, stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
+import { BarChart2, Clock, LayoutGrid } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface TeamStats {
@@ -97,36 +98,87 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="mx-auto flex w-10/12 flex-col gap-4 p-4">
-                <WelcomeSection />
+            <div className="mx-auto flex w-10/12 flex-col gap-6 p-4">
+                {/* Welcome Section with paper styling */}
+                <div className="relative border-2 border-gray-300 bg-white p-6">
+                    {/* Corner fold effect */}
+                    <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+                    <WelcomeSection />
+                </div>
 
                 {!loading && (
-                    <section className="mb-4">
+                    <section className="mb-4 relative border-2 border-gray-300 bg-white p-6">
+                        {/* Corner fold effect */}
+                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
                         <TimeTracker projects={userProjects} />
                     </section>
                 )}
 
                 {loading ? (
-                    <>
+                    <div className="relative border-2 border-gray-300 bg-white p-6">
+                        {/* Corner fold effect */}
+                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
                         <Loader message="Loading dashboard data..." className="h-40" />
-                    </>
+                    </div>
                 ) : (
                     <>
-                        <section className="mb-4">
-                            <h3 className="mb-2 text-sm font-bold uppercase text-gray-700 font-['Courier_New',monospace]">Metrics Dashboard</h3>
+                        <section className="mb-6 relative border-2 border-gray-300 bg-white p-6">
+                            {/* Corner fold effect */}
+                            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+
+                            {/* Form-like header */}
+                            <div className="border-b border-gray-400 pb-4 mb-4">
+                                <div className="flex items-center">
+                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
+                                        <LayoutGrid className="h-6 w-6 text-gray-700" aria-hidden="true" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase">
+                                        Metrics Dashboard
+                                    </h3>
+                                </div>
+                            </div>
+
                             <StatsCards teamStats={teamStats} />
                         </section>
 
-                        <section className="mb-4">
-                            <h3 className="mb-2 text-sm font-bold uppercase text-gray-700 font-['Courier_New',monospace]">Analytics</h3>
+                        <section className="mb-6 relative border-2 border-gray-300 bg-white p-6">
+                            {/* Corner fold effect */}
+                            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+
+                            {/* Form-like header */}
+                            <div className="border-b border-gray-400 pb-4 mb-4">
+                                <div className="flex items-center">
+                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
+                                        <BarChart2 className="h-6 w-6 text-gray-700" aria-hidden="true" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase">
+                                        Analytics
+                                    </h3>
+                                </div>
+                            </div>
+
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <HoursDistribution hoursData={hoursData} />
                                 <WeeklyTrend weeklyData={weeklyData} />
                             </div>
                         </section>
 
-                        <section className="mb-4">
-                            <h3 className="mb-2 text-sm font-bold uppercase text-gray-700 font-['Courier_New',monospace]">Activity</h3>
+                        <section className="mb-6 relative border-2 border-gray-300 bg-white p-6">
+                            {/* Corner fold effect */}
+                            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+
+                            {/* Form-like header */}
+                            <div className="border-b border-gray-400 pb-4 mb-4">
+                                <div className="flex items-center">
+                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
+                                        <Clock className="h-6 w-6 text-gray-700" aria-hidden="true" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase">
+                                        Activity
+                                    </h3>
+                                </div>
+                            </div>
+
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <RecentTimeLogs />
                                 <TeamProductivity teamStats={teamStats} />
