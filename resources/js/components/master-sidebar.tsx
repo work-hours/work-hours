@@ -112,7 +112,7 @@ export function MasterSidebar() {
                     <button
                         onClick={() => setCollapsed(!collapsed)}
                         className={`rounded-md p-2 transition-colors hover:bg-gray-200 ${
-                            collapsed ? 'absolute top-6 -right-10 z-30 border border-gray-300 bg-[#f8f6e9] shadow-md' : ''
+                            collapsed ? 'absolute top-13 -right-11 z-30 border border-gray-300 bg-[#f8f6e9] shadow-md' : ''
                         }`}
                     >
                         {collapsed ? (

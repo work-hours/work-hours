@@ -11,7 +11,7 @@ interface MasterContentProps {
 
 export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps) {
     return (
-        <main className="container mx-auto flex-1 overflow-y-auto">
+        <div className="flex flex-col flex-1 bg-[#f8f6e9] font-['Courier_New',monospace]">
             {/* Header with breadcrumbs */}
             <div className="border-b border-gray-300 bg-white p-4 shadow-sm">
                 <div className="flex items-center">
@@ -36,12 +36,16 @@ export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps
                     ))}
                 </div>
             </div>
+            <main className="container mx-auto flex-1 overflow-y-auto">
 
-            {/* Hourly rate status bar */}
-            <HourlyRateStatusBar />
 
-            {/* Content */}
-            <div className="p-4">{children}</div>
-        </main>
+                {/* Hourly rate status bar */}
+                <HourlyRateStatusBar />
+
+                {/* Content */}
+                <div className="p-4">{children}</div>
+            </main>
+        </div>
+
     )
 }
