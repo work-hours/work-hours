@@ -131,7 +131,7 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
     return (
         <>
             {activeTimeLog ? (
-                <Card className="overflow-hidden bg-primary/5 transition-colors">
+                <Card className="overflow-hidden bg-primary/5 dark:bg-primary/10 transition-colors">
                     <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                             <div>
@@ -145,7 +145,7 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
                                 <div className="mt-2 font-['Courier_New',monospace] text-3xl font-bold text-primary">
                                     {formatElapsedTime(activeTimeLog.elapsed)}
                                 </div>
-                                <div className="font-['Courier_New',monospace] text-sm text-gray-700">
+                                <div className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
                                     Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
                                 </div>
                             </div>
