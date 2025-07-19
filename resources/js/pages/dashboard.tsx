@@ -100,8 +100,6 @@ export default function Dashboard() {
             <Head title="Dashboard" />
             <div className="relative flex flex-col gap-6">
                 <div className="relative border-2 border-gray-300 bg-white p-6">
-                    {/* Corner fold effect */}
-                    <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
                     <WelcomeSection />
                 </div>
 
@@ -109,16 +107,11 @@ export default function Dashboard() {
 
                 {loading ? (
                     <div className="relative border-2 border-gray-300 bg-white p-6">
-                        {/* Corner fold effect */}
-                        <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
                         <Loader message="Loading dashboard data..." className="h-40" />
                     </div>
                 ) : (
                     <>
                         <section className="relative mb-6 border-2 border-gray-300 bg-white p-6">
-                            {/* Corner fold effect */}
-                            <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
-
                             {/* Form-like header */}
                             <div className="mb-4 border-b border-gray-400 pb-4">
                                 <div className="flex items-center">
@@ -133,9 +126,6 @@ export default function Dashboard() {
                         </section>
 
                         <section className="relative mb-6 border-2 border-gray-300 bg-white p-6">
-                            {/* Corner fold effect */}
-                            <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
-
                             {/* Form-like header */}
                             <div className="mb-4 border-b border-gray-400 pb-4">
                                 <div className="flex items-center">
@@ -153,9 +143,6 @@ export default function Dashboard() {
                         </section>
 
                         <section className="relative mb-6 border-2 border-gray-300 bg-white p-6">
-                            {/* Corner fold effect */}
-                            <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
-
                             {/* Form-like header */}
                             <div className="mb-4 border-b border-gray-400 pb-4">
                                 <div className="flex items-center">
