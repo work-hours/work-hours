@@ -32,6 +32,9 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                 aria-hidden="true"
             ></div>
 
+            {/* Red margin line */}
+            <div className="absolute top-0 bottom-0 left-12 w-[1px] bg-red-400/30" aria-hidden="true"></div>
+
             {/* Header with breadcrumbs */}
             <div className="border-b border-gray-300 bg-white p-4 shadow-sm relative z-10">
                 <div className="flex items-center">

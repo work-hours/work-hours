@@ -82,15 +82,9 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                 aria-hidden="true"
             ></div>
 
-            {/* Punch card holes */}
-            <div
-                className="pointer-events-none absolute top-0 bottom-0 left-4 w-4 bg-[radial-gradient(circle,rgba(0,0,0,0.1)_3px,transparent_3px)] bg-[length:8px_24px] bg-[position:center] bg-repeat-y"
-                aria-hidden="true"
-            ></div>
-
             {/* Header */}
             <div className={`relative z-20 p-4 pt-6 pb-6 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : ''}`}>
-                <div className={`flex w-full items-center justify-center ${collapsed ? 'flex-col' : ''}`}>
+                <div className={`flex w-full items-center ${collapsed ? 'flex-col' : ''}`}>
                     <Link
                         href="/dashboard"
                         className={`rounded-none border-2 border-gray-700 transition-all duration-300 ease-in-out hover:bg-white ${
@@ -100,7 +94,6 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                         {collapsed ? <AppLogoIcon className="h-8 w-8" /> : <AppLogo />}
                     </Link>
                 </div>
-                <div className={`h-1 bg-gray-400 transition-all duration-300 ease-in-out ${collapsed ? 'mt-4 w-full' : 'mt-5 w-full'}`}></div>
             </div>
 
             {/* Navigation - scrollable content */}
