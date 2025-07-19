@@ -10,17 +10,27 @@ export default function Navbar() {
 
     return (
         <nav className="container mx-auto flex items-center justify-between px-6 py-6 lg:px-8">
-            <div className="animate-fade-right animate-once flex items-center gap-2">
-                <AppLogoIcon className="h-16 w-16 text-primary transition-all hover:scale-110 hover:rotate-3" />
-                <span className="text-xl font-bold tracking-tight text-foreground">Work Hours</span>
+            {/* Logo with timesheet-style container */}
+            <div className="flex items-center gap-3">
+                <div className="h-14 w-14 border-2 border-gray-700 flex items-center justify-center bg-white">
+                    <AppLogoIcon className="h-8 w-8 text-gray-700" />
+                </div>
+                <div>
+                    <span className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase tracking-wider">Work Hours</span>
+                    <div className="h-1 w-full bg-gray-300 mt-1"></div>
+                </div>
             </div>
+
             <div className="flex items-center gap-6 md:gap-8">
-                <AppearanceToggleDropdown className="animate-fade-left animate-once" />
+                {/* Appearance toggle with paper-like styling */}
+                <div className="border border-gray-400 p-1 bg-white">
+                    <AppearanceToggleDropdown />
+                </div>
 
                 {isLoggedIn ? (
                     <Link
                         href="/dashboard"
-                        className="animate-fade-left animate-once animate-delay-300 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-md"
+                        className="inline-flex items-center justify-center bg-blue-900 px-5 py-2 text-sm font-bold text-white border-2 border-blue-900 hover:bg-blue-800 transition-colors font-['Courier_New',monospace]"
                     >
                         Dashboard
                     </Link>
@@ -28,13 +38,13 @@ export default function Navbar() {
                     <>
                         <Link
                             href={route('login')}
-                            className="animate-fade-left animate-once animate-delay-300 text-sm font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-primary hover:underline"
+                            className="text-sm font-bold text-gray-700 font-['Courier_New',monospace] hover:text-gray-900 border-b-2 border-gray-400 pb-1 hover:border-gray-700"
                         >
                             Sign in
                         </Link>
                         <Link
                             href={route('register')}
-                            className="animate-fade-left animate-once animate-delay-500 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-md"
+                            className="inline-flex items-center justify-center bg-blue-900 px-5 py-2 text-sm font-bold text-white border-2 border-blue-900 hover:bg-blue-800 transition-colors font-['Courier_New',monospace]"
                         >
                             Get Started
                         </Link>

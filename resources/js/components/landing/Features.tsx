@@ -9,90 +9,151 @@ export default function Features() {
         <>
             <section id="features" className="container mx-auto mb-24 px-6 lg:px-8" aria-label="Product features">
                 <div className="mb-16 text-center">
-                    <span className="animate-fade-up animate-once inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-                        Features
-                    </span>
-                    <h2 className="animate-fade-up animate-once mt-4 mb-6 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+                    {/* Timesheet section header */}
+                    <div className="relative mx-auto w-fit mb-6">
+                        <div className="border-b-2 border-gray-800/70 px-8 py-2">
+                            <span className="font-['Courier_New',monospace] uppercase text-gray-800 font-bold tracking-widest">
+                                Features
+                            </span>
+                        </div>
+                        <div className="absolute -right-2 -top-2 h-8 w-8 border-2 border-blue-900/40 flex items-center justify-center bg-blue-100/20 rotate-12">
+                            <span className="text-blue-900 text-xs font-bold">F</span>
+                        </div>
+                    </div>
+
+                    <h2 className="mt-4 mb-6 text-3xl font-bold tracking-tight text-gray-800 uppercase font-['Courier_New',monospace] md:text-5xl">
                         Powerful Features
                     </h2>
-                    <p className="animate-fade-up animate-once animate-delay-300 mx-auto max-w-2xl text-lg text-muted-foreground">
+                    <p className="mx-auto max-w-2xl text-lg text-gray-700 font-['Courier_New',monospace]">
                         Everything you need to track, analyze, and optimize your work hours.
                     </p>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {/* GitHub Integration - Compact but prominent */}
-                    <article className="animate-fade-up animate-once animate-delay-500 group relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-b from-primary/5 to-card/95 p-6 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5">
-                        <div className="absolute -top-4 -right-4 h-16 w-16 rounded-full bg-primary/10 opacity-70 blur-xl transition-all duration-300 group-hover:opacity-100"></div>
-                        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 transition-colors duration-300 group-hover:bg-primary/20">
-                            <Github className="h-6 w-6 text-primary" aria-hidden="true" />
+                    {/* GitHub Integration - Timesheet style */}
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
+                        {/* Corner fold effect */}
+                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+
+                        {/* Form-like header */}
+                        <div className="border-b border-gray-400 pb-4 mb-4">
+                            <div className="flex items-center">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
+                                    <Github className="h-6 w-6 text-gray-700" aria-hidden="true" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase flex items-center">
+                                    GitHub Integration
+                                    <span className="ml-2 border border-red-800/40 px-1.5 py-0.5 text-xs font-bold text-red-800/70 uppercase">
+                                        Popular
+                                    </span>
+                                </h3>
+                            </div>
                         </div>
-                        <h3 className="mb-2 text-xl font-bold text-foreground flex items-center">
-                            GitHub Integration
-                            <span className="ml-2 inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
-                                Popular
-                            </span>
-                        </h3>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-gray-700 font-['Courier_New',monospace]">
                             Connect GitHub to import repositories as projects and track development time efficiently.
                         </p>
                     </article>
 
-                    <article className="animate-fade-up animate-once animate-delay-700 group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
-                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
-                            <Clock className="h-8 w-8 text-primary" aria-hidden="true" />
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
+                        {/* Corner fold effect */}
+                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+
+                        {/* Form-like header */}
+                        <div className="border-b border-gray-400 pb-4 mb-4">
+                            <div className="flex items-center">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
+                                    <Clock className="h-6 w-6 text-gray-700" aria-hidden="true" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase">
+                                    Time Tracking
+                                </h3>
+                            </div>
                         </div>
-                        <h3 className="mb-3 text-2xl font-bold text-foreground">Time Tracking</h3>
-                        <p className="text-muted-foreground">
+                        <p className="text-sm text-gray-700 font-['Courier_New',monospace]">
                             Track time with a single click. Add notes and categorize your activities for better insights. Set timers, track breaks,
                             and monitor overtime automatically.
                         </p>
                     </article>
 
-                    <article className="animate-fade-up animate-once animate-delay-900 group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
-                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
-                            <BarChart2 className="h-8 w-8 text-primary" aria-hidden="true" />
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
+                        {/* Corner fold effect */}
+                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+
+                        {/* Form-like header */}
+                        <div className="border-b border-gray-400 pb-4 mb-4">
+                            <div className="flex items-center">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
+                                    <BarChart2 className="h-6 w-6 text-gray-700" aria-hidden="true" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase">
+                                    Detailed Reports
+                                </h3>
+                            </div>
                         </div>
-                        <h3 className="mb-3 text-2xl font-bold text-foreground">Detailed Reports</h3>
-                        <p className="text-muted-foreground">
+                        <p className="text-sm text-gray-700 font-['Courier_New',monospace]">
                             Generate comprehensive reports to analyze your productivity and identify improvement areas. Export data in multiple
                             formats for seamless integration with other tools.
                         </p>
                     </article>
 
-                    <article className="animate-fade-up animate-once animate-delay-[1100ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
-                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
-                            <Users className="h-8 w-8 text-primary" aria-hidden="true" />
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
+                        {/* Corner fold effect */}
+                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+
+                        {/* Form-like header */}
+                        <div className="border-b border-gray-400 pb-4 mb-4">
+                            <div className="flex items-center">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
+                                    <Users className="h-6 w-6 text-gray-700" aria-hidden="true" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase">
+                                    Team Collaboration
+                                </h3>
+                            </div>
                         </div>
-                        <h3 className="mb-3 text-2xl font-bold text-foreground">Team Collaboration</h3>
-                        <p className="text-muted-foreground">
+                        <p className="text-sm text-gray-700 font-['Courier_New',monospace]">
                             Manage your team's time, assign projects, and track progress all in one place. Real-time updates and notifications keep
                             everyone in sync.
                         </p>
                     </article>
 
-                    <article className="animate-fade-up animate-once animate-delay-[1300ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
-                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
-                            <Briefcase className="h-8 w-8 text-primary" aria-hidden="true" />
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
+                        {/* Corner fold effect */}
+                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+
+                        {/* Form-like header */}
+                        <div className="border-b border-gray-400 pb-4 mb-4">
+                            <div className="flex items-center">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
+                                    <Briefcase className="h-6 w-6 text-gray-700" aria-hidden="true" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase">
+                                    Client Management
+                                </h3>
+                            </div>
                         </div>
-                        <h3 className="mb-3 text-2xl font-bold text-foreground">Client Management</h3>
-                        <p className="text-muted-foreground">
+                        <p className="text-sm text-gray-700 font-['Courier_New',monospace]">
                             Organize and manage your clients effortlessly. Track client projects, store contact information, and maintain detailed
                             records for better client relationships and billing accuracy.
                         </p>
                     </article>
 
-                    <article className="animate-fade-up animate-once animate-delay-[1500ms] group relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card to-card/95 p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5">
-                        <div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-primary/5 opacity-70 blur-2xl transition-all duration-300 group-hover:bg-primary/10 group-hover:opacity-100"></div>
-                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 transition-colors duration-300 group-hover:bg-primary/20">
-                            <Upload className="h-8 w-8 text-primary" aria-hidden="true" />
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all">
+                        {/* Corner fold effect */}
+                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-gray-400 border-r-transparent"></div>
+
+                        {/* Form-like header */}
+                        <div className="border-b border-gray-400 pb-4 mb-4">
+                            <div className="flex items-center">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100">
+                                    <Upload className="h-6 w-6 text-gray-700" aria-hidden="true" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase">
+                                    Bulk Upload
+                                </h3>
+                            </div>
                         </div>
-                        <h3 className="mb-3 text-2xl font-bold text-foreground">Bulk Upload</h3>
-                        <p className="text-muted-foreground">
+                        <p className="text-sm text-gray-700 font-['Courier_New',monospace]">
                             Save time by importing multiple time logs at once. Download a template, fill it with your data, and upload it to quickly
                             record all your work hours in one go.
                         </p>
@@ -100,97 +161,145 @@ export default function Features() {
                 </div>
             </section>
 
-            {/* Compact GitHub Integration Section */}
+            {/* GitHub Integration Section - Timesheet style */}
             <section id="integration" className="container mx-auto mb-16 px-6 lg:px-8" aria-label="GitHub integration">
-                <div className="animate-fade-up animate-once relative overflow-hidden rounded-xl border border-primary/30 bg-gradient-to-r from-primary/5 to-transparent p-6 shadow-md">
-                    {/* Minimal decorative elements */}
-                    <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-primary/5 opacity-50 blur-2xl"></div>
+                <div className="relative border-2 border-gray-300 bg-white p-6">
+                    {/* Corner fold effect */}
+                    <div className="absolute top-0 right-0 w-0 h-0 border-t-[30px] border-r-[30px] border-t-gray-400 border-r-transparent"></div>
 
-                    <div className="relative z-10">
-                        <div className="flex flex-col md:flex-row md:items-center md:gap-8">
-                            <div className="mb-6 md:mb-0 md:w-1/4 flex justify-center">
-                                <div className="relative">
-                                    <div className="relative flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md">
-                                        <Github className="h-8 w-8 text-primary" aria-label="GitHub logo" />
-                                    </div>
-                                    <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">
-                                        <span>★</span>
+                    {/* Timesheet form header */}
+                    <div className="border-b-2 border-gray-400 pb-3 mb-6">
+                        <div className="flex items-center">
+                            <div className="mr-4 flex h-12 w-12 items-center justify-center border-2 border-gray-500 bg-gray-100">
+                                <Github className="h-7 w-7 text-gray-700" aria-label="GitHub logo" />
+                            </div>
+                            <div>
+                                <div className="flex items-center">
+                                    <h2 className="text-2xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase tracking-wide">
+                                        GitHub Integration
+                                    </h2>
+                                    <div className="ml-3 -rotate-6 border-2 border-red-800/40 px-2 py-0.5">
+                                        <span className="text-xs font-bold text-red-800/70 uppercase tracking-wider">Featured</span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="md:w-3/4">
-                                <div className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary mb-2">
-                                    <span className="mr-1">★</span> Featured
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row md:gap-8">
+                        <div className="md:w-1/4 mb-6 md:mb-0">
+                            {/* Vintage form illustration */}
+                            <div className="border border-gray-400 p-3 bg-gray-50 h-full flex items-center justify-center">
+                                <div className="text-center">
+                                    <div className="text-4xl mb-2 text-gray-700">
+                                        <span className="font-['Courier_New',monospace]">&lt;/&gt;</span>
+                                    </div>
+                                    <div className="text-xs text-gray-600 font-['Courier_New',monospace] uppercase">
+                                        GitHub Repos
+                                    </div>
                                 </div>
-                                <h2 className="mb-2 text-2xl font-bold tracking-tight text-foreground">
-                                    GitHub Integration
-                                </h2>
-                                <p className="text-sm text-muted-foreground mb-3">
-                                    Connect GitHub to import repositories as projects and track development time efficiently.
-                                </p>
-                                <div className="flex flex-wrap gap-3 mb-4 text-xs">
-                                    <span className="inline-flex items-center rounded-full bg-primary/5 px-2 py-1">
-                                        <span className="mr-1 text-primary">✓</span> Repository sync
-                                    </span>
-                                    <span className="inline-flex items-center rounded-full bg-primary/5 px-2 py-1">
-                                        <span className="mr-1 text-primary">✓</span> Repository Import
-                                    </span>
-                                    <span className="inline-flex items-center rounded-full bg-primary/5 px-2 py-1">
-                                        <span className="mr-1 text-primary">✓</span> Productivity metrics
-                                    </span>
+                            </div>
+                        </div>
+                        <div className="md:w-3/4">
+                            <p className="text-sm text-gray-700 font-['Courier_New',monospace] mb-4">
+                                Connect GitHub to import repositories as projects and track development time efficiently.
+                            </p>
+                            <div className="flex flex-wrap gap-3 mb-5">
+                                <div className="inline-flex items-center border border-gray-400 px-3 py-1 bg-gray-50">
+                                    <span className="mr-1 text-gray-700 font-bold">✓</span>
+                                    <span className="text-xs text-gray-700 font-['Courier_New',monospace] uppercase">Repository sync</span>
                                 </div>
-                                <div>
-                                    <a
-                                        href="/integration"
-                                        className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-all duration-300 hover:bg-primary/90"
-                                        aria-label={isLoggedIn ? 'Connect your account with GitHub' : 'Get started with Work Hours'}
-                                    >
-                                        <Github className="mr-1.5 h-4 w-4" />
-                                        {isLoggedIn ? 'Connect with GitHub' : 'Get Started'}
-                                    </a>
+                                <div className="inline-flex items-center border border-gray-400 px-3 py-1 bg-gray-50">
+                                    <span className="mr-1 text-gray-700 font-bold">✓</span>
+                                    <span className="text-xs text-gray-700 font-['Courier_New',monospace] uppercase">Repository Import</span>
                                 </div>
+                                <div className="inline-flex items-center border border-gray-400 px-3 py-1 bg-gray-50">
+                                    <span className="mr-1 text-gray-700 font-bold">✓</span>
+                                    <span className="text-xs text-gray-700 font-['Courier_New',monospace] uppercase">Productivity metrics</span>
+                                </div>
+                            </div>
+                            <div>
+                                <a
+                                    href="/integration"
+                                    className="inline-flex items-center bg-blue-900 px-6 py-2 text-sm font-bold text-white border-2 border-blue-900 hover:bg-blue-800 transition-colors"
+                                    aria-label={isLoggedIn ? 'Connect your account with GitHub' : 'Get started with Work Hours'}
+                                >
+                                    <Github className="mr-2 h-4 w-4" />
+                                    {isLoggedIn ? 'Connect with GitHub' : 'Get Started'}
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Compact Currency Management Section */}
+            {/* Currency Management Section - Timesheet style */}
             <section id="currency-management" className="container mx-auto mb-16 px-6 lg:px-8" aria-label="Multiple currency management">
-                <div className="animate-fade-up animate-once relative overflow-hidden rounded-xl bg-gradient-to-b from-blue-50/50 to-blue-100/30 dark:from-blue-950/20 dark:to-blue-900/10 p-6 shadow-md">
-                    {/* Minimal decorative currency symbols */}
-                    <div className="absolute top-4 right-6 text-blue-300/20 text-4xl font-bold">$</div>
-                    <div className="absolute bottom-4 left-6 text-green-300/10 text-3xl font-bold">€</div>
+                <div className="relative border-2 border-gray-300 bg-white p-6">
+                    {/* Corner fold effect */}
+                    <div className="absolute top-0 right-0 w-0 h-0 border-t-[30px] border-r-[30px] border-t-gray-400 border-r-transparent"></div>
 
-                    <div className="relative z-10 flex flex-col md:flex-row md:items-center md:gap-8">
-                        <div className="mb-6 md:mb-0 md:w-1/4 flex justify-center">
-                            <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-100/70 dark:bg-blue-900/30 shadow-sm">
-                                <DollarSign className="h-7 w-7 text-blue-600 dark:text-blue-400" aria-label="Currency icon" />
+                    {/* Currency symbols as typewritten characters */}
+                    <div className="absolute top-4 right-8 text-gray-300 text-4xl font-['Courier_New',monospace]">$</div>
+                    <div className="absolute bottom-4 left-8 text-gray-300 text-3xl font-['Courier_New',monospace]">€</div>
+
+                    {/* Timesheet form header */}
+                    <div className="border-b-2 border-gray-400 pb-3 mb-6">
+                        <div className="flex items-center">
+                            <div className="mr-4 flex h-12 w-12 items-center justify-center border-2 border-gray-500 bg-gray-100">
+                                <DollarSign className="h-7 w-7 text-gray-700" aria-label="Currency icon" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-800 font-['Courier_New',monospace] uppercase tracking-wide">
+                                    Multiple Currency Management
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row md:gap-8">
+                        <div className="md:w-1/4 mb-6 md:mb-0">
+                            {/* Vintage form illustration */}
+                            <div className="border border-gray-400 p-3 bg-gray-50 h-full flex items-center justify-center">
+                                <div className="text-center">
+                                    <div className="text-4xl mb-2 text-gray-700 flex justify-center space-x-1">
+                                        <span className="font-['Courier_New',monospace]">$</span>
+                                        <span className="font-['Courier_New',monospace]">€</span>
+                                        <span className="font-['Courier_New',monospace]">£</span>
+                                    </div>
+                                    <div className="text-xs text-gray-600 font-['Courier_New',monospace] uppercase">
+                                        Currency Options
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className="md:w-3/4">
-                            <h2 className="mb-2 text-2xl font-bold tracking-tight text-foreground">Multiple Currency Management</h2>
-                            <p className="text-sm text-muted-foreground mb-4">
+                            <p className="text-sm text-gray-700 font-['Courier_New',monospace] mb-4">
                                 Work with multiple currencies across projects and clients. Track earnings in various currencies and generate reports with accurate conversions.
                             </p>
-                            <div className="flex flex-wrap gap-3 mb-4 text-xs">
-                                <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-900/20 px-2 py-1">
-                                    <span className="mr-1 text-blue-600 dark:text-blue-400">✓</span> Multi-currency billing
-                                </span>
-                                <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-900/20 px-2 py-1">
-                                    <span className="mr-1 text-blue-600 dark:text-blue-400">✓</span> Currency conversion
-                                </span>
-                                <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-900/20 px-2 py-1">
-                                    <span className="mr-1 text-blue-600 dark:text-blue-400">✓</span> Global reporting
-                                </span>
+                            <div className="flex flex-wrap gap-3 mb-5">
+                                <div className="inline-flex items-center border border-gray-400 px-3 py-1 bg-gray-50">
+                                    <span className="mr-1 text-gray-700 font-bold">✓</span>
+                                    <span className="text-xs text-gray-700 font-['Courier_New',monospace] uppercase">Multi-currency billing</span>
+                                </div>
+                                <div className="inline-flex items-center border border-gray-400 px-3 py-1 bg-gray-50">
+                                    <span className="mr-1 text-gray-700 font-bold">✓</span>
+                                    <span className="text-xs text-gray-700 font-['Courier_New',monospace] uppercase">Currency conversion</span>
+                                </div>
+                                <div className="inline-flex items-center border border-gray-400 px-3 py-1 bg-gray-50">
+                                    <span className="mr-1 text-gray-700 font-bold">✓</span>
+                                    <span className="text-xs text-gray-700 font-['Courier_New',monospace] uppercase">Global reporting</span>
+                                </div>
                             </div>
-                            <a
-                                href={isLoggedIn ? "/settings/currency" : "/register"}
-                                className="inline-flex items-center rounded-md bg-blue-600 dark:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-300 hover:bg-blue-700 dark:hover:bg-blue-600"
-                                aria-label={isLoggedIn ? 'Manage your currencies' : 'Get started with Work Hours'}
-                            >
-                                {isLoggedIn ? 'Manage Currencies' : 'Get Started'}
-                            </a>
+                            <div>
+                                <a
+                                    href={isLoggedIn ? "/settings/currency" : "/register"}
+                                    className="inline-flex items-center bg-blue-900 px-6 py-2 text-sm font-bold text-white border-2 border-blue-900 hover:bg-blue-800 transition-colors"
+                                    aria-label={isLoggedIn ? 'Manage your currencies' : 'Get started with Work Hours'}
+                                >
+                                    {isLoggedIn ? 'Manage Currencies' : 'Get Started'}
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
