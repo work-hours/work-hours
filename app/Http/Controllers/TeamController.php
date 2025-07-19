@@ -85,7 +85,11 @@ final class TeamController extends Controller
     {
         Gate::authorize('viewTimeLogs', $user);
 
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', $user->getKey()));
+        $timeLogs = TimeLogStore::timeLogs(
+            baseQuery: TimeLog::query()
+                ->where('user_id', $user->getKey())
+                ->whereIn('project_id', ProjectStore::userProjects(userId: auth()->id())->pluck('id'))
+        );
         $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
 
         $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
@@ -259,7 +263,11 @@ final class TeamController extends Controller
 
     public function allTimeLogs()
     {
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->whereIn('user_id', TeamStore::teamMembersIds(userId: auth()->id())));
+        $timeLogs = TimeLogStore::timeLogs(
+            baseQuery: TimeLog::query()
+                ->whereIn('user_id', TeamStore::teamMembersIds(userId: auth()->id()))
+                ->whereIn('project_id', ProjectStore::userProjects(userId: auth()->id())->pluck('id'))
+        );
         $unpaidAmountsByCurrency = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
         $paidAmountsByCurrency = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
         $timeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
