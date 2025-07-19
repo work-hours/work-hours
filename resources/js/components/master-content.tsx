@@ -1,4 +1,5 @@
 import { HourlyRateStatusBar } from '@/components/hourly-rate-status-bar'
+import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { Badge } from '@/components/ui/badge'
 import { type BreadcrumbItem } from '@/types'
 import { Link } from '@inertiajs/react'
@@ -125,22 +126,27 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                         ))}
                     </div>
 
-                    {/* Notification Link */}
-                    <Link
-                        href="/notifications"
-                        className="flex items-center gap-1 rounded-md p-1.5 text-gray-600 dark:text-gray-300 transition-all hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100"
-                        aria-label="View notifications"
-                    >
-                        <Bell className="h-5 w-5" />
-                        {unreadCount > 0 && (
-                            <Badge
-                                variant="destructive"
-                                className="ml-0.5 h-5 min-w-5 flex items-center justify-center rounded-full px-1.5 text-xs font-medium"
-                            >
-                                {unreadCount > 99 ? '99+' : unreadCount}
-                            </Badge>
-                        )}
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        {/* Theme Switcher */}
+                        <AppearanceToggleDropdown className="rounded-md text-gray-600 dark:text-gray-300" />
+
+                        {/* Notification Link */}
+                        <Link
+                            href="/notifications"
+                            className="flex items-center gap-1 rounded-md p-1.5 text-gray-600 dark:text-gray-300 transition-all hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100"
+                            aria-label="View notifications"
+                        >
+                            <Bell className="h-5 w-5" />
+                            {unreadCount > 0 && (
+                                <Badge
+                                    variant="destructive"
+                                    className="ml-0.5 h-5 min-w-5 flex items-center justify-center rounded-full px-1.5 text-xs font-medium"
+                                >
+                                    {unreadCount > 99 ? '99+' : unreadCount}
+                                </Badge>
+                            )}
+                        </Link>
+                    </div>
                 </div>
             </div>
             <main className="container mx-auto flex-1 overflow-y-auto relative z-10">
