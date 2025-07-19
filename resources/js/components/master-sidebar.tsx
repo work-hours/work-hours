@@ -78,7 +78,7 @@ export function MasterSidebar() {
     }, [collapsed])
 
     return (
-        <div className={`relative flex flex-col bg-[#f8f6e9] border-r border-gray-300 transition-all duration-300 ease-in-out h-full ${collapsed ? 'w-20' : 'w-64'}`}>
+        <div className={`sticky top-0 flex flex-col bg-[#f8f6e9] border-r border-gray-300 transition-all duration-300 ease-in-out h-screen ${collapsed ? 'w-20' : 'w-64'}`}>
             {/* Horizontal lines like a timesheet */}
             <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:100%_2rem] pointer-events-none" aria-hidden="true"></div>
 
@@ -125,8 +125,8 @@ export function MasterSidebar() {
                 <div className={`h-1 bg-gray-400 transition-all duration-300 ease-in-out ${collapsed ? 'w-full mt-4' : 'w-full mt-5'}`}></div>
             </div>
 
-            {/* Navigation */}
-            <div className="flex-1 overflow-y-auto pt-3">
+            {/* Navigation - scrollable content */}
+            <div className="flex-1 overflow-y-auto pt-3 flex flex-col">
                 {/* Platform Navigation */}
                 <div className="mb-6 px-4">
                     <div className="border-b border-gray-400 pb-2 mb-3">
@@ -258,6 +258,35 @@ export function MasterSidebar() {
                             </div>
                         )}
                     </div>
+                </div>
+
+                {/* Bottom link - always at the bottom of sidebar */}
+                <div className="mt-auto pt-4 px-4 border-t border-gray-400">
+                    <TooltipProvider>
+                        <div className="relative">
+                            <Link
+                                href="/help"
+                                className="flex items-center px-2 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-white hover:text-gray-900"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 h-5 w-5 flex-shrink-0">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                                {!collapsed && <span>Help & Support</span>}
+                            </Link>
+                            {collapsed && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div className="absolute inset-0 z-20 cursor-pointer"></div>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="right">
+                                        Help & Support
+                                    </TooltipContent>
+                                </Tooltip>
+                            )}
+                        </div>
+                    </TooltipProvider>
                 </div>
             </div>
         </div>
