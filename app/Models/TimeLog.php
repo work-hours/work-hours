@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
  * @property float $hourly_rate
  * @property string $currency
  * @property string $note
+ * @property string $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Project $project
@@ -40,6 +41,7 @@ final class TimeLog extends Model
         'hourly_rate',
         'note',
         'currency',
+        'status',
     ];
 
     public function user(): BelongsTo
@@ -61,6 +63,7 @@ final class TimeLog extends Model
             'is_paid' => 'boolean',
             'hourly_rate' => 'decimal:2',
             'currency' => 'string',
+            'status' => 'string',
         ];
     }
 }

@@ -18,6 +18,7 @@ export type TimeLogEntry = {
     hourly_rate?: number
     paid_amount?: number
     currency?: string
+    status?: 'pending' | 'approved' | 'rejected'
 }
 
 type TimeLogTableProps = {
@@ -65,10 +66,12 @@ export default function TimeLogTable({
                                     type="checkbox"
                                     checked={selectedLogs.includes(log.id)}
                                     onChange={(e) => onSelectLog && onSelectLog(log.id, e.target.checked)}
-                                    disabled={log.is_paid || !log.start_timestamp || !log.end_timestamp}
+                                    disabled={log.is_paid || !log.start_timestamp || !log.end_timestamp || log.status !== 'approved'}
                                     title={
                                         !log.start_timestamp || !log.end_timestamp
                                             ? 'Time logs without both start and end timestamps cannot be marked as paid'
+                                            : log.status !== 'approved'
+                                            ? 'Time logs must be approved before they can be marked as paid'
                                             : ''
                                     }
                                     className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
@@ -106,15 +109,33 @@ export default function TimeLogTable({
                             <div className="max-h-20 overflow-y-auto">{log.note}</div>
                         </TableCell>
                         <TableCell>
-                            {log.is_paid ? (
-                                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
-                                    Paid
-                                </span>
-                            ) : (
-                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
-                                    Unpaid
-                                </span>
-                            )}
+                            <div className="flex flex-col gap-1">
+                                {/* Approval Status */}
+                                {log.status === 'approved' ? (
+                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                        Approved
+                                    </span>
+                                ) : log.status === 'rejected' ? (
+                                    <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
+                                        Rejected
+                                    </span>
+                                ) : (
+                                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                        Pending
+                                    </span>
+                                )}
+
+                                {/* Payment Status */}
+                                {log.is_paid ? (
+                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                        Paid
+                                    </span>
+                                ) : (
+                                    <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
+                                        Unpaid
+                                    </span>
+                                )}
+                            </div>
                         </TableCell>
                         {showActions && (
                             <TableCell className="text-right">
