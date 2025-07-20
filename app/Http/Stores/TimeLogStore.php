@@ -181,30 +181,6 @@ final class TimeLogStore
             ->with(['user', 'project'])->get();
     }
 
-    /**
-     * Get initials from a name
-     *
-     * @param string|null $name
-     * @return string|null
-     */
-    private static function getInitials(?string $name): ?string
-    {
-        if (!$name) {
-            return null;
-        }
-
-        $words = preg_split('/[\s\/]+/', trim($name));
-        $initials = '';
-
-        foreach ($words as $word) {
-            if (!empty($word)) {
-                $initials .= mb_substr($word, 0, 1);
-            }
-        }
-
-        return mb_strtoupper($initials);
-    }
-
     public static function timeLogMapper(\Illuminate\Support\Collection $timeLogs): \Illuminate\Support\Collection
     {
         return $timeLogs->map(function ($timeLog): array {
@@ -218,17 +194,12 @@ final class TimeLogStore
                 $approverName = $approver ? $approver->name : null;
             }
 
-            $userName = $timeLog->user ? $timeLog->user->name : null;
-            $projectName = $timeLog->project ? $timeLog->project->name : 'No Project';
-
             return [
                 'id' => $timeLog->id,
                 'user_id' => $timeLog->user_id,
-                'user_name' => $userName,
-                'user_initials' => self::getInitials($userName),
+                'user_name' => $timeLog->user ? $timeLog->user->name : null,
                 'project_id' => $timeLog->project_id,
-                'project_name' => $projectName,
-                'project_initials' => self::getInitials($projectName),
+                'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
                 'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                 'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
                 'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
@@ -240,7 +211,6 @@ final class TimeLogStore
                 'status' => $timeLog->status,
                 'approved_by' => $timeLog->approved_by,
                 'approver_name' => $approverName,
-                'approver_initials' => self::getInitials($approverName),
                 'comment' => $timeLog->comment,
             ];
         });
