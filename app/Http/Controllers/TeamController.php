@@ -283,7 +283,7 @@ final class TeamController extends Controller
             ->map(fn ($teamMember): array => [
                 'id' => $teamMember->member->getKey(),
                 'name' => $teamMember->member->name,
-                'email' => $teamMember->member->email
+                'email' => $teamMember->member->email,
             ]);
 
         // For backward compatibility, calculate total unpaid amount

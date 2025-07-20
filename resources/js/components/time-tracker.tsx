@@ -131,7 +131,7 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
     return (
         <>
             {activeTimeLog ? (
-                <Card className="overflow-hidden bg-primary/5 dark:bg-primary/10 transition-colors">
+                <Card className="overflow-hidden bg-primary/5 transition-colors dark:bg-primary/10">
                     <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                             <div>
@@ -151,7 +151,10 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
                             </div>
                             <div className="flex flex-col gap-2 md:w-1/2">
                                 <div>
-                                    <Label htmlFor="note" className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 dark:text-gray-200 uppercase">
+                                    <Label
+                                        htmlFor="note"
+                                        className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 uppercase dark:text-gray-200"
+                                    >
                                         Note (required)
                                     </Label>
                                     <Input
@@ -193,7 +196,7 @@ export default function TimeTracker({ projects }: TimeTrackerProps) {
                                 <div>
                                     <Label
                                         htmlFor="tracking_project"
-                                        className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 dark:text-gray-200 uppercase"
+                                        className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 uppercase dark:text-gray-200"
                                     >
                                         Project
                                     </Label>

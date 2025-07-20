@@ -11,15 +11,17 @@ export default function Features() {
                 <div className="mb-16 text-center">
                     {/* Timesheet section header */}
                     <div className="relative mx-auto mb-6 w-fit">
-                        <div className="border-b-2 border-gray-800/70 dark:border-gray-200/70 px-8 py-2">
-                            <span className="font-['Courier_New',monospace] font-bold tracking-widest text-gray-800 dark:text-gray-200 uppercase">Features</span>
+                        <div className="border-b-2 border-gray-800/70 px-8 py-2 dark:border-gray-200/70">
+                            <span className="font-['Courier_New',monospace] font-bold tracking-widest text-gray-800 uppercase dark:text-gray-200">
+                                Features
+                            </span>
                         </div>
-                        <div className="absolute -top-2 -right-2 flex h-8 w-8 rotate-12 items-center justify-center border-2 border-blue-900/40 dark:border-blue-400/40 bg-blue-100/20 dark:bg-blue-900/20">
+                        <div className="absolute -top-2 -right-2 flex h-8 w-8 rotate-12 items-center justify-center border-2 border-blue-900/40 bg-blue-100/20 dark:border-blue-400/40 dark:bg-blue-900/20">
                             <span className="text-xs font-bold text-blue-900 dark:text-blue-400">F</span>
                         </div>
                     </div>
 
-                    <h2 className="mt-4 mb-6 font-['Courier_New',monospace] text-3xl font-bold tracking-tight text-gray-800 dark:text-gray-200 uppercase md:text-5xl">
+                    <h2 className="mt-4 mb-6 font-['Courier_New',monospace] text-3xl font-bold tracking-tight text-gray-800 uppercase md:text-5xl dark:text-gray-200">
                         Powerful Features
                     </h2>
                     <p className="mx-auto max-w-2xl font-['Courier_New',monospace] text-lg text-gray-700 dark:text-gray-300">
@@ -29,16 +31,16 @@ export default function Features() {
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {/* GitHub Integration - Timesheet style */}
-                    <article className="group relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 transition-all">
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all dark:border-gray-700 dark:bg-gray-800">
                         {/* Form-like header */}
-                        <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                        <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
                             <div className="flex items-center">
-                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                     <Github className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                 </div>
-                                <h3 className="flex items-center font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">
+                                <h3 className="flex items-center font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
                                     GitHub Integration
-                                    <span className="ml-2 border border-red-800/40 dark:border-red-400/40 px-1.5 py-0.5 text-xs font-bold text-red-800/70 dark:text-red-400/90 uppercase">
+                                    <span className="ml-2 border border-red-800/40 px-1.5 py-0.5 text-xs font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
                                         Popular
                                     </span>
                                 </h3>
@@ -49,14 +51,16 @@ export default function Features() {
                         </p>
                     </article>
 
-                    <article className="group relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 transition-all">
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all dark:border-gray-700 dark:bg-gray-800">
                         {/* Form-like header */}
-                        <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                        <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
                             <div className="flex items-center">
-                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                     <Clock className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                 </div>
-                                <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">Time Tracking</h3>
+                                <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
+                                    Time Tracking
+                                </h3>
                             </div>
                         </div>
                         <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
@@ -65,14 +69,16 @@ export default function Features() {
                         </p>
                     </article>
 
-                    <article className="group relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 transition-all">
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all dark:border-gray-700 dark:bg-gray-800">
                         {/* Form-like header */}
-                        <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                        <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
                             <div className="flex items-center">
-                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                     <BarChart2 className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                 </div>
-                                <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">Detailed Reports</h3>
+                                <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
+                                    Detailed Reports
+                                </h3>
                             </div>
                         </div>
                         <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
@@ -81,14 +87,16 @@ export default function Features() {
                         </p>
                     </article>
 
-                    <article className="group relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 transition-all">
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all dark:border-gray-700 dark:bg-gray-800">
                         {/* Form-like header */}
-                        <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                        <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
                             <div className="flex items-center">
-                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                     <Users className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                 </div>
-                                <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">Team Collaboration</h3>
+                                <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
+                                    Team Collaboration
+                                </h3>
                             </div>
                         </div>
                         <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
@@ -97,14 +105,16 @@ export default function Features() {
                         </p>
                     </article>
 
-                    <article className="group relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 transition-all">
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all dark:border-gray-700 dark:bg-gray-800">
                         {/* Form-like header */}
-                        <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                        <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
                             <div className="flex items-center">
-                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                     <Briefcase className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                 </div>
-                                <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">Client Management</h3>
+                                <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
+                                    Client Management
+                                </h3>
                             </div>
                         </div>
                         <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
@@ -113,14 +123,16 @@ export default function Features() {
                         </p>
                     </article>
 
-                    <article className="group relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 transition-all">
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all dark:border-gray-700 dark:bg-gray-800">
                         {/* Form-like header */}
-                        <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                        <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
                             <div className="flex items-center">
-                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                     <Upload className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                 </div>
-                                <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">Bulk Upload</h3>
+                                <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
+                                    Bulk Upload
+                                </h3>
                             </div>
                         </div>
                         <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
@@ -133,20 +145,22 @@ export default function Features() {
 
             {/* GitHub Integration Section - Timesheet style */}
             <section id="integration" className="container mx-auto mb-16 px-6 lg:px-8" aria-label="GitHub integration">
-                <div className="relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+                <div className="relative border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                     {/* Timesheet form header */}
-                    <div className="mb-6 border-b-2 border-gray-400 dark:border-gray-600 pb-3">
+                    <div className="mb-6 border-b-2 border-gray-400 pb-3 dark:border-gray-600">
                         <div className="flex items-center">
-                            <div className="mr-4 flex h-12 w-12 items-center justify-center border-2 border-gray-500 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                            <div className="mr-4 flex h-12 w-12 items-center justify-center border-2 border-gray-500 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                 <Github className="h-7 w-7 text-gray-700 dark:text-gray-300" aria-label="GitHub logo" />
                             </div>
                             <div>
                                 <div className="flex items-center">
-                                    <h2 className="font-['Courier_New',monospace] text-2xl font-bold tracking-wide text-gray-800 dark:text-gray-200 uppercase">
+                                    <h2 className="font-['Courier_New',monospace] text-2xl font-bold tracking-wide text-gray-800 uppercase dark:text-gray-200">
                                         GitHub Integration
                                     </h2>
-                                    <div className="ml-3 -rotate-6 border-2 border-red-800/40 dark:border-red-400/40 px-2 py-0.5">
-                                        <span className="text-xs font-bold tracking-wider text-red-800/70 dark:text-red-400/90 uppercase">Featured</span>
+                                    <div className="ml-3 -rotate-6 border-2 border-red-800/40 px-2 py-0.5 dark:border-red-400/40">
+                                        <span className="text-xs font-bold tracking-wider text-red-800/70 uppercase dark:text-red-400/90">
+                                            Featured
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -156,12 +170,14 @@ export default function Features() {
                     <div className="flex flex-col md:flex-row md:gap-8">
                         <div className="mb-6 md:mb-0 md:w-1/4">
                             {/* Vintage form illustration */}
-                            <div className="flex h-full items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-3">
+                            <div className="flex h-full items-center justify-center border border-gray-400 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-700">
                                 <div className="text-center">
                                     <div className="mb-2 text-4xl text-gray-700 dark:text-gray-300">
                                         <span className="font-['Courier_New',monospace]">&lt;/&gt;</span>
                                     </div>
-                                    <div className="font-['Courier_New',monospace] text-xs text-gray-600 dark:text-gray-400 uppercase">GitHub Repos</div>
+                                    <div className="font-['Courier_New',monospace] text-xs text-gray-600 uppercase dark:text-gray-400">
+                                        GitHub Repos
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -170,23 +186,29 @@ export default function Features() {
                                 Connect GitHub to import repositories as projects and track development time efficiently.
                             </p>
                             <div className="mb-5 flex flex-wrap gap-3">
-                                <div className="inline-flex items-center border border-gray-400 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-1">
+                                <div className="inline-flex items-center border border-gray-400 bg-gray-50 px-3 py-1 dark:border-gray-600 dark:bg-gray-700">
                                     <span className="mr-1 font-bold text-gray-700 dark:text-gray-300">✓</span>
-                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 dark:text-gray-300 uppercase">Repository sync</span>
+                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 uppercase dark:text-gray-300">
+                                        Repository sync
+                                    </span>
                                 </div>
-                                <div className="inline-flex items-center border border-gray-400 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-1">
+                                <div className="inline-flex items-center border border-gray-400 bg-gray-50 px-3 py-1 dark:border-gray-600 dark:bg-gray-700">
                                     <span className="mr-1 font-bold text-gray-700 dark:text-gray-300">✓</span>
-                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 dark:text-gray-300 uppercase">Repository Import</span>
+                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 uppercase dark:text-gray-300">
+                                        Repository Import
+                                    </span>
                                 </div>
-                                <div className="inline-flex items-center border border-gray-400 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-1">
+                                <div className="inline-flex items-center border border-gray-400 bg-gray-50 px-3 py-1 dark:border-gray-600 dark:bg-gray-700">
                                     <span className="mr-1 font-bold text-gray-700 dark:text-gray-300">✓</span>
-                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 dark:text-gray-300 uppercase">Productivity metrics</span>
+                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 uppercase dark:text-gray-300">
+                                        Productivity metrics
+                                    </span>
                                 </div>
                             </div>
                             <div>
                                 <a
                                     href="/integration"
-                                    className="inline-flex items-center border-2 border-blue-900 dark:border-blue-700 bg-blue-900 dark:bg-blue-700 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:hover:bg-blue-600"
+                                    className="inline-flex items-center border-2 border-blue-900 bg-blue-900 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
                                     aria-label={isLoggedIn ? 'Connect your account with GitHub' : 'Get started with Work Hours'}
                                 >
                                     <Github className="mr-2 h-4 w-4" />
@@ -200,19 +222,19 @@ export default function Features() {
 
             {/* Currency Management Section - Timesheet style */}
             <section id="currency-management" className="container mx-auto mb-16 px-6 lg:px-8" aria-label="Multiple currency management">
-                <div className="relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+                <div className="relative border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                     {/* Currency symbols as typewritten characters */}
                     <div className="absolute top-4 right-8 font-['Courier_New',monospace] text-4xl text-gray-300 dark:text-gray-700">$</div>
                     <div className="absolute bottom-4 left-8 font-['Courier_New',monospace] text-3xl text-gray-300 dark:text-gray-700">€</div>
 
                     {/* Timesheet form header */}
-                    <div className="mb-6 border-b-2 border-gray-400 dark:border-gray-600 pb-3">
+                    <div className="mb-6 border-b-2 border-gray-400 pb-3 dark:border-gray-600">
                         <div className="flex items-center">
-                            <div className="mr-4 flex h-12 w-12 items-center justify-center border-2 border-gray-500 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                            <div className="mr-4 flex h-12 w-12 items-center justify-center border-2 border-gray-500 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                 <DollarSign className="h-7 w-7 text-gray-700 dark:text-gray-300" aria-label="Currency icon" />
                             </div>
                             <div>
-                                <h2 className="font-['Courier_New',monospace] text-2xl font-bold tracking-wide text-gray-800 dark:text-gray-200 uppercase">
+                                <h2 className="font-['Courier_New',monospace] text-2xl font-bold tracking-wide text-gray-800 uppercase dark:text-gray-200">
                                     Multiple Currency Management
                                 </h2>
                             </div>
@@ -222,14 +244,16 @@ export default function Features() {
                     <div className="flex flex-col md:flex-row md:gap-8">
                         <div className="mb-6 md:mb-0 md:w-1/4">
                             {/* Vintage form illustration */}
-                            <div className="flex h-full items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-3">
+                            <div className="flex h-full items-center justify-center border border-gray-400 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-700">
                                 <div className="text-center">
                                     <div className="mb-2 flex justify-center space-x-1 text-4xl text-gray-700 dark:text-gray-300">
                                         <span className="font-['Courier_New',monospace]">$</span>
                                         <span className="font-['Courier_New',monospace]">€</span>
                                         <span className="font-['Courier_New',monospace]">£</span>
                                     </div>
-                                    <div className="font-['Courier_New',monospace] text-xs text-gray-600 dark:text-gray-400 uppercase">Currency Options</div>
+                                    <div className="font-['Courier_New',monospace] text-xs text-gray-600 uppercase dark:text-gray-400">
+                                        Currency Options
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -239,23 +263,29 @@ export default function Features() {
                                 with accurate conversions.
                             </p>
                             <div className="mb-5 flex flex-wrap gap-3">
-                                <div className="inline-flex items-center border border-gray-400 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-1">
+                                <div className="inline-flex items-center border border-gray-400 bg-gray-50 px-3 py-1 dark:border-gray-600 dark:bg-gray-700">
                                     <span className="mr-1 font-bold text-gray-700 dark:text-gray-300">✓</span>
-                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 dark:text-gray-300 uppercase">Multi-currency billing</span>
+                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 uppercase dark:text-gray-300">
+                                        Multi-currency billing
+                                    </span>
                                 </div>
-                                <div className="inline-flex items-center border border-gray-400 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-1">
+                                <div className="inline-flex items-center border border-gray-400 bg-gray-50 px-3 py-1 dark:border-gray-600 dark:bg-gray-700">
                                     <span className="mr-1 font-bold text-gray-700 dark:text-gray-300">✓</span>
-                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 dark:text-gray-300 uppercase">Currency conversion</span>
+                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 uppercase dark:text-gray-300">
+                                        Currency conversion
+                                    </span>
                                 </div>
-                                <div className="inline-flex items-center border border-gray-400 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-1">
+                                <div className="inline-flex items-center border border-gray-400 bg-gray-50 px-3 py-1 dark:border-gray-600 dark:bg-gray-700">
                                     <span className="mr-1 font-bold text-gray-700 dark:text-gray-300">✓</span>
-                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 dark:text-gray-300 uppercase">Global reporting</span>
+                                    <span className="font-['Courier_New',monospace] text-xs text-gray-700 uppercase dark:text-gray-300">
+                                        Global reporting
+                                    </span>
                                 </div>
                             </div>
                             <div>
                                 <a
                                     href={isLoggedIn ? '/settings/currency' : '/register'}
-                                    className="inline-flex items-center border-2 border-blue-900 dark:border-blue-700 bg-blue-900 dark:bg-blue-700 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:hover:bg-blue-600"
+                                    className="inline-flex items-center border-2 border-blue-900 bg-blue-900 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
                                     aria-label={isLoggedIn ? 'Manage your currencies' : 'Get started with Work Hours'}
                                 >
                                     {isLoggedIn ? 'Manage Currencies' : 'Get Started'}

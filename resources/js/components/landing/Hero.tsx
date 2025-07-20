@@ -6,33 +6,35 @@ export default function Hero() {
         <section className="mb-24 w-full pt-12 lg:pt-20" aria-label="Hero section">
             <div className="relative mx-auto w-9/12">
                 {/* Timesheet header stamp */}
-                <div className="absolute -top-4 right-4 rotate-6 border-2 border-red-800/30 dark:border-red-400/30 px-4 py-2 text-sm font-bold tracking-wider text-red-800/70 dark:text-red-400/80 uppercase md:right-10">
+                <div className="absolute -top-4 right-4 rotate-6 border-2 border-red-800/30 px-4 py-2 text-sm font-bold tracking-wider text-red-800/70 uppercase md:right-10 dark:border-red-400/30 dark:text-red-400/80">
                     Time Sheet
                 </div>
 
                 <div className="relative mx-auto max-w-4xl text-center">
                     {/* Vintage rubber stamp effect */}
                     <div className="mx-auto mb-8 w-fit">
-                        <div className="rotate-[-2deg] border-2 border-blue-900/40 dark:border-blue-400/40 bg-blue-100/20 dark:bg-blue-900/20 px-6 py-3">
-                            <span className="text-sm font-bold tracking-wider text-blue-900/80 dark:text-blue-400/90 uppercase">Time Tracking & Insights</span>
+                        <div className="rotate-[-2deg] border-2 border-blue-900/40 bg-blue-100/20 px-6 py-3 dark:border-blue-400/40 dark:bg-blue-900/20">
+                            <span className="text-sm font-bold tracking-wider text-blue-900/80 uppercase dark:text-blue-400/90">
+                                Time Tracking & Insights
+                            </span>
                         </div>
                     </div>
 
-                    <h1 className="mb-6 font-['Courier_New',monospace] text-4xl font-bold tracking-tight text-gray-800 dark:text-gray-200 uppercase md:text-6xl lg:text-7xl">
+                    <h1 className="mb-6 font-['Courier_New',monospace] text-4xl font-bold tracking-tight text-gray-800 uppercase md:text-6xl lg:text-7xl dark:text-gray-200">
                         Track Your Work Hours{' '}
                         <span className="relative text-blue-900 dark:text-blue-400">
                             Effortlessly
                             <div className="absolute right-0 bottom-0 left-0 h-1 bg-blue-900/30 dark:bg-blue-400/30"></div>
                         </span>
                     </h1>
-                    <p className="mx-auto mb-10 max-w-2xl font-['Courier_New',monospace] text-lg text-gray-700 dark:text-gray-300 md:text-xl">
+                    <p className="mx-auto mb-10 max-w-2xl font-['Courier_New',monospace] text-lg text-gray-700 md:text-xl dark:text-gray-300">
                         A simple, intuitive time tracking solution for teams and individuals. Boost productivity, improve billing accuracy, and gain
                         valuable insights into how you spend your time.
                     </p>
                     <div className="flex flex-col justify-center gap-4 sm:flex-row">
                         <Link
                             href={route('register')}
-                            className="inline-flex items-center justify-center gap-2 border-2 border-blue-900 dark:border-blue-700 bg-blue-900 dark:bg-blue-700 px-8 py-3 text-base font-bold text-white transition-colors hover:bg-blue-800 dark:hover:bg-blue-600"
+                            className="inline-flex items-center justify-center gap-2 border-2 border-blue-900 bg-blue-900 px-8 py-3 text-base font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
                             aria-label="Start using Work Hours for free"
                         >
                             Start for free
@@ -40,7 +42,7 @@ export default function Hero() {
                         </Link>
                         <Link
                             href="#features"
-                            className="inline-flex items-center justify-center gap-2 border-2 border-gray-800 dark:border-gray-400 bg-transparent px-8 py-3 text-base font-bold text-gray-800 dark:text-gray-300 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                            className="inline-flex items-center justify-center gap-2 border-2 border-gray-800 bg-transparent px-8 py-3 text-base font-bold text-gray-800 transition-colors hover:bg-gray-100 dark:border-gray-400 dark:text-gray-300 dark:hover:bg-gray-800"
                             aria-label="Learn more about Work Hours features"
                         >
                             Explore features
@@ -66,7 +68,10 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-muted-foreground dark:text-gray-400" aria-label="Key benefits">
+                    <div
+                        className="mt-12 flex flex-wrap items-center justify-center gap-6 text-muted-foreground dark:text-gray-400"
+                        aria-label="Key benefits"
+                    >
                         <div className="animate-fade-up animate-once animate-delay-[1100ms] flex items-center gap-2">
                             <CheckCircle className="h-5 w-5 text-primary dark:text-blue-400" aria-hidden="true" />
                             <span className="text-sm font-medium">No credit card required</span>

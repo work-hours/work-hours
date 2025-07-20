@@ -98,41 +98,45 @@ export default function Dashboard() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="relative flex flex-col gap-6 mx-auto">
-                <div className="relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+            <div className="relative mx-auto flex flex-col gap-6">
+                <div className="relative border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                     <WelcomeSection />
                 </div>
 
                 {!loading && <TimeTracker projects={userProjects} />}
 
                 {loading ? (
-                    <div className="relative border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+                    <div className="relative border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                         <Loader message="Loading dashboard data..." className="h-40" />
                     </div>
                 ) : (
                     <>
-                        <section className="relative mb-6 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+                        <section className="relative mb-6 border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                             {/* Form-like header */}
-                            <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                            <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
                                 <div className="flex items-center">
-                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                         <LayoutGrid className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                     </div>
-                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">Metrics Dashboard</h3>
+                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
+                                        Metrics Dashboard
+                                    </h3>
                                 </div>
                             </div>
 
                             <StatsCards teamStats={teamStats} />
                         </section>
 
-                        <section className="relative mb-6 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+                        <section className="relative mb-6 border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                             {/* Form-like header */}
-                            <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                            <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
                                 <div className="flex items-center">
-                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                         <BarChart2 className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                     </div>
-                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">Analytics</h3>
+                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
+                                        Analytics
+                                    </h3>
                                 </div>
                             </div>
 
@@ -142,14 +146,16 @@ export default function Dashboard() {
                             </div>
                         </section>
 
-                        <section className="relative mb-6 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+                        <section className="relative mb-6 border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                             {/* Form-like header */}
-                            <div className="mb-4 border-b border-gray-400 dark:border-gray-600 pb-4">
+                            <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
                                 <div className="flex items-center">
-                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                         <Clock className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                     </div>
-                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 dark:text-gray-200 uppercase">Activity</h3>
+                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
+                                        Activity
+                                    </h3>
                                 </div>
                             </div>
 
