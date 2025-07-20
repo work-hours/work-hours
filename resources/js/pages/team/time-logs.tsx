@@ -393,8 +393,8 @@ export default function TeamMemberTimeLogs({
 
                                         // Approval status description
                                         if (data.status) {
-                                            const statusText = data.status === 'pending' ? 'pending' :
-                                                              data.status === 'approved' ? 'approved' : 'rejected'
+                                            const statusText =
+                                                data.status === 'pending' ? 'pending' : data.status === 'approved' ? 'approved' : 'rejected'
 
                                             if (description) {
                                                 description += ` with ${statusText} status`

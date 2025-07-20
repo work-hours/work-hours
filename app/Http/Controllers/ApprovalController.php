@@ -140,7 +140,7 @@ final class ApprovalController extends Controller
                     if ($timeLogOwner && auth()->id() !== $timeLogOwner->getKey()) {
                         $timeLogOwner->notify(new TimeLogApproved($timeLog, auth()->user()));
                     }
-                } catch (Exception $e) {
+                } catch (Exception) {
                     $skippedCount++;
                 }
             }
@@ -262,8 +262,6 @@ final class ApprovalController extends Controller
             ->where('is_approver', true)
             ->exists();
 
-        if (auth()->id() !== $teamLeader->getKey() && !$isApprover) {
-            throw new Exception('You are not authorized to approve this time log.');
-        }
+        throw_if(auth()->id() !== $teamLeader->getKey() && ! $isApprover, new Exception('You are not authorized to approve this time log.'));
     }
 }

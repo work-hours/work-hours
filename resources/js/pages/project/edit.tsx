@@ -239,7 +239,7 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                         <div className="space-y-2 pl-7">
                                             {data.team_members.length > 0 ? (
                                                 teamMembers
-                                                    .filter(member => data.team_members.includes(member.id))
+                                                    .filter((member) => data.team_members.includes(member.id))
                                                     .map((member) => (
                                                         <div key={`approver-${member.id}`} className="flex items-center space-x-2">
                                                             <Checkbox

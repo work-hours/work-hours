@@ -31,14 +31,12 @@ enum TimeLogStatus: string
         foreach (self::cases() as $case) {
             $options[$case->value] = ucfirst($case->value);
         }
+
         return $options;
     }
 
     /**
      * Create an instance from a string value
-     *
-     * @param string|null $value
-     * @return self|null
      */
     public static function fromValue(?string $value): ?self
     {

@@ -339,7 +339,8 @@ export default function AllTeamTimeLogs({
                                     type="button"
                                     variant="outline"
                                     disabled={
-                                        processing || (!data.start_date && !data.end_date && !data.user_id && !data.project_id && !data.is_paid && !data.status)
+                                        processing ||
+                                        (!data.start_date && !data.end_date && !data.user_id && !data.project_id && !data.is_paid && !data.status)
                                     }
                                     onClick={() => {
                                         setData({
@@ -414,8 +415,8 @@ export default function AllTeamTimeLogs({
 
                                         // Approval status description
                                         if (data.status) {
-                                            const statusText = data.status === 'pending' ? 'pending' :
-                                                              data.status === 'approved' ? 'approved' : 'rejected'
+                                            const statusText =
+                                                data.status === 'pending' ? 'pending' : data.status === 'approved' ? 'approved' : 'rejected'
 
                                             if (description) {
                                                 description += ` with ${statusText} status`

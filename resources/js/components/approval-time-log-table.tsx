@@ -94,19 +94,19 @@ export default function ApprovalTimeLogTable({
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
+                                    className="border-green-200 bg-green-50 text-green-700 hover:bg-green-100"
                                     onClick={() => onApprove(log.id)}
                                 >
-                                    <CheckCircle className="h-3.5 w-3.5 mr-1" />
+                                    <CheckCircle className="mr-1 h-3.5 w-3.5" />
                                     Approve
                                 </Button>
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
+                                    className="border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
                                     onClick={() => onReject(log.id)}
                                 >
-                                    <X className="h-3.5 w-3.5 mr-1" />
+                                    <X className="mr-1 h-3.5 w-3.5" />
                                     Reject
                                 </Button>
                             </div>

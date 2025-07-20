@@ -1,5 +1,5 @@
-import StatsCards from '@/components/dashboard/StatsCards'
 import ApprovalTimeLogTable from '@/components/approval-time-log-table'
+import StatsCard from '@/components/dashboard/StatsCard'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,24 +10,12 @@ import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Textarea } from '@/components/ui/textarea'
 import MasterLayout from '@/layouts/master-layout'
+import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { Head, useForm } from '@inertiajs/react'
 import axios from 'axios'
-import {
-    AlertCircle,
-    Briefcase,
-    Calendar,
-    CalendarRange,
-    CheckCircle,
-    CheckSquare,
-    ClockIcon, DollarSign,
-    Search,
-    TimerReset, TrendingUp,
-    User
-} from 'lucide-react'
+import { AlertCircle, Briefcase, Calendar, CalendarRange, CheckCircle, CheckSquare, ClockIcon, Search, TimerReset, User } from 'lucide-react'
 import { ChangeEvent, FormEventHandler, forwardRef, ReactNode, useState } from 'react'
-import { roundToTwoDecimals } from '@/lib/utils'
-import StatsCard from '@/components/dashboard/StatsCard'
 
 interface CustomInputProps {
     value?: string
@@ -109,13 +97,7 @@ type Props = {
     totalDuration: number
 }
 
-export default function Approvals({
-    timeLogs,
-    filters,
-    projects,
-    teamMembers,
-    totalDuration,
-}: Props) {
+export default function Approvals({ timeLogs, filters, projects, teamMembers, totalDuration }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
@@ -289,7 +271,6 @@ export default function Approvals({
             preserveState: true,
         })
     }
-
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
@@ -504,9 +485,7 @@ export default function Approvals({
                 <Dialog open={approveDialogOpen} onOpenChange={setApproveDialogOpen}>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
-                            <DialogTitle>
-                                {singleApprovalId ? 'Approve Time Log' : `Approve ${selectedLogs.length} Time Logs`}
-                            </DialogTitle>
+                            <DialogTitle>{singleApprovalId ? 'Approve Time Log' : `Approve ${selectedLogs.length} Time Logs`}</DialogTitle>
                             <DialogDescription>
                                 {singleApprovalId
                                     ? 'Add an optional comment and approve this time log.'
@@ -545,12 +524,7 @@ export default function Approvals({
                             <Button type="button" variant="secondary" onClick={closeApproveDialog} disabled={approving}>
                                 Cancel
                             </Button>
-                            <Button
-                                type="button"
-                                onClick={handleApprove}
-                                disabled={approving}
-                                className="bg-green-600 hover:bg-green-700 text-white"
-                            >
+                            <Button type="button" onClick={handleApprove} disabled={approving} className="bg-green-600 text-white hover:bg-green-700">
                                 {approving ? 'Approving...' : 'Approve'}
                             </Button>
                         </DialogFooter>
@@ -562,9 +536,7 @@ export default function Approvals({
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
                             <DialogTitle>Reject Time Log</DialogTitle>
-                            <DialogDescription>
-                                Add a comment explaining why you're rejecting this time log.
-                            </DialogDescription>
+                            <DialogDescription>Add a comment explaining why you're rejecting this time log.</DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                             <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -603,7 +575,7 @@ export default function Approvals({
                                 type="button"
                                 onClick={handleReject}
                                 disabled={approving || !comment.trim()}
-                                className="bg-red-600 hover:bg-red-700 text-white"
+                                className="bg-red-600 text-white hover:bg-red-700"
                             >
                                 {approving ? 'Rejecting...' : 'Reject'}
                             </Button>

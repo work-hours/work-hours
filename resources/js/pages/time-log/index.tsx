@@ -373,10 +373,7 @@ export default function TimeLog({
                                     id="status"
                                     value={data.status}
                                     onChange={(value) => setData('status', value)}
-                                    options={[
-                                        { id: '', name: 'All Statuses' },
-                                        ...timeLogStatusOptions
-                                    ]}
+                                    options={[{ id: '', name: 'All Statuses' }, ...timeLogStatusOptions]}
                                     placeholder="Approval status"
                                     disabled={processing}
                                     icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
@@ -448,8 +445,12 @@ export default function TimeLog({
                                         }
 
                                         if (data.status) {
-                                            const statusText = data.status === TimeLogStatus.PENDING ? 'pending' :
-                                                              data.status === TimeLogStatus.APPROVED ? 'approved' : 'rejected'
+                                            const statusText =
+                                                data.status === TimeLogStatus.PENDING
+                                                    ? 'pending'
+                                                    : data.status === TimeLogStatus.APPROVED
+                                                      ? 'approved'
+                                                      : 'rejected'
 
                                             if (description) {
                                                 description += ` with ${statusText} status`

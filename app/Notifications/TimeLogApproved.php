@@ -63,7 +63,7 @@ final class TimeLogApproved extends Notification
 
     private function messageFormatter(): string
     {
-        $comment = $this->timeLog->comment ? " with comment: \"{$this->timeLog->comment}\"" : "";
+        $comment = $this->timeLog->comment ? " with comment: \"{$this->timeLog->comment}\"" : '';
 
         return sprintf(
             'Your time log for %s on %s with duration %s hours has been approved by %s%s.',

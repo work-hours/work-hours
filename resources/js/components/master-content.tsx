@@ -145,7 +145,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                             {unreadCount > 0 && (
                                 <Badge
                                     variant="destructive"
-                                    className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold border-0 overflow-hidden"
+                                    className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center overflow-hidden rounded-full border-0 px-1.5 text-xs font-semibold"
                                 >
                                     {unreadCount > 99 ? '99+' : unreadCount}
                                 </Badge>
