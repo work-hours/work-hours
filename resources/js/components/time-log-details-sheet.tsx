@@ -20,7 +20,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent side="left" className="overflow-y-auto">
+            <SheetContent side="right" className="overflow-y-auto">
                 <SheetHeader>
                     <SheetTitle className="flex items-center gap-2">
                         <Info className="h-5 w-5 text-primary" />
