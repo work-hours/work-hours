@@ -138,14 +138,14 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                         {/* Notification Link */}
                         <Link
                             href="/notifications"
-                            className="flex items-center gap-1 rounded-md p-1.5 text-gray-600 transition-all hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+                            className="relative flex items-center rounded-md p-1.5 text-gray-600 transition-all hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
                             aria-label="View notifications"
                         >
                             <Bell className="h-5 w-5" />
                             {unreadCount > 0 && (
                                 <Badge
                                     variant="destructive"
-                                    className="ml-0.5 flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium"
+                                    className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold border-0 overflow-hidden"
                                 >
                                     {unreadCount > 99 ? '99+' : unreadCount}
                                 </Badge>
