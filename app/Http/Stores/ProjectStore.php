@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Stores;
 
 use App\Models\Project;
+use App\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -59,8 +60,9 @@ final class ProjectStore
             'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
             'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : 'In Progress',
             'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-            'note' => $timeLog->note,
             'is_paid' => $timeLog->is_paid ? 'Paid' : 'Unpaid',
+            'note' => $timeLog->note,
+            'hourly_rate' => $timeLog->hourly_rate ?: Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id),
         ]);
     }
 

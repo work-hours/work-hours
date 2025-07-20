@@ -369,6 +369,7 @@ final class TeamController extends Controller
     #[Action(method: 'get', name: 'team.export-time-logs', middleware: ['auth', 'verified'])]
     public function exportTimeLogs(): StreamedResponse
     {
+        // Use the same base query as the allTimeLogs method, ensuring all filters are applied
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->whereIn('user_id', TeamStore::teamMembersIds(userId: auth()->id())));
         $mappedTimeLogs = $timeLogs->map(fn ($timeLog): array => [
             'id' => $timeLog->id,
@@ -378,10 +379,11 @@ final class TeamController extends Controller
             'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
             'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
             'note' => $timeLog->note,
-            'is_paid' => $timeLog->is_paid,
+            'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
+            'hourly_rate' => $timeLog->hourly_rate ?: Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id),
         ]);
 
-        $headers = ['ID', 'Team Member', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Note', 'Paid'];
+        $headers = ['ID', 'Team Member', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Note', 'Paid', 'Hourly Rate'];
         $filename = 'team_time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);

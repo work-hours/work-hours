@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
-use App\Enums\TimeLogStatus;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
@@ -311,6 +311,7 @@ final class TimeLogController extends Controller
     #[Action(method: 'get', name: 'time-log.export', middleware: ['auth', 'verified'])]
     public function export(): StreamedResponse
     {
+        // Use the same base query as the index method, ensuring all filters are applied
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
 
         $mappedTimeLogs = $timeLogs->map(function ($timeLog): array {
@@ -328,7 +329,7 @@ final class TimeLogController extends Controller
                 'hourly_rate' => $hourlyRate,
                 'paid_amount' => $paidAmount,
                 'note' => $timeLog->note,
-                'status' => ucfirst($timeLog->status?->value ?: TimeLogStatus::PENDING->value),
+                'status' => ucfirst((string) $timeLog->status?->value ?: TimeLogStatus::PENDING->value),
                 'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
             ];
         });

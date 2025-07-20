@@ -56,6 +56,7 @@ final class ProjectController extends Controller
             if ($request->has('team_members')) {
                 $teamMembers = collect($request->input('team_members'))->mapWithKeys(function ($memberId) use ($request) {
                     $isApprover = $request->has('approvers') && in_array($memberId, $request->input('approvers'), true);
+
                     return [$memberId => ['is_approver' => $isApprover]];
                 })->toArray();
 
@@ -134,6 +135,7 @@ final class ProjectController extends Controller
             if ($request->has('team_members')) {
                 $teamMembers = collect($request->input('team_members'))->mapWithKeys(function ($memberId) use ($request) {
                     $isApprover = $request->has('approvers') && in_array($memberId, $request->input('approvers'), true);
+
                     return [$memberId => ['is_approver' => $isApprover]];
                 })->toArray();
 
@@ -224,11 +226,12 @@ final class ProjectController extends Controller
 
         Gate::authorize('viewTimeLogs', $project);
 
+        // Use the same base query as the timeLogs method, ensuring all filters are applied
         $timeLogsData = ProjectStore::exportTimeLogsMapper(
             timeLogs: TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('project_id', $project->getKey()))
         );
 
-        $headers = ['ID', 'Team Member', 'Start Time', 'End Time', 'Duration (hours)', 'Payment Status'];
+        $headers = ['ID', 'Team Member', 'Start Time', 'End Time', 'Duration (hours)', 'Payment Status', 'Note', 'Hourly Rate'];
         $filename = 'project_time_logs_' . $project->id . '_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($timeLogsData, $headers, $filename);
