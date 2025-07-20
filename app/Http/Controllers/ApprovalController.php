@@ -22,6 +22,20 @@ use Throwable;
 
 final class ApprovalController extends Controller
 {
+    /**
+     * Get the count of pending approvals for the current user
+     */
+    #[Action(method: 'get', name: 'approvals.count', middleware: ['auth', 'verified'])]
+    public function count(): JsonResponse
+    {
+        $pendingTimeLogs = $this->getPendingApprovals();
+        $count = $pendingTimeLogs->count();
+
+        return response()->json([
+            'count' => $count,
+        ]);
+    }
+
     public function index()
     {
         $pendingTimeLogs = $this->getPendingApprovals();

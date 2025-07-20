@@ -1,7 +1,12 @@
+import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem, type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 import { Building, CheckSquare, Folder, Github, Heart, LayoutGrid, LogOut, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import { count } from '@actions/ApprovalController'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
 
@@ -70,6 +75,27 @@ const footerNavItems: NavItem[] = [
 
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     const { isGitHubIntegrated, auth } = usePage<SharedData>().props
+    const [approvalCount, setApprovalCount] = useState(0)
+
+    // Fetch approval count when component mounts
+    useEffect(() => {
+        const fetchApprovalCount = async () => {
+            try {
+                const response = await count.data({})
+                setApprovalCount(response.count)
+            } catch (error) {
+                console.error('Failed to fetch approval count', error)
+            }
+        }
+
+        fetchApprovalCount().then()
+
+        // Set up an interval to refresh the count every minute
+        const intervalId = setInterval(fetchApprovalCount, 60000)
+
+        // Cleanup interval on component unmount
+        return () => clearInterval(intervalId)
+    }, [])
 
     return (
         <div
@@ -124,7 +150,17 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                                                 : 'text-gray-700 dark:text-gray-300'
                                         }`}
                                     >
-                                        {item.icon && <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />}
+                                        <div className="relative">
+                                            {item.icon && <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />}
+                                            {item.href === '/approvals' && approvalCount > 0 && (
+                                                <Badge
+                                                    variant="destructive"
+                                                    className="absolute top-0 -right-25 flex h-5 min-w-5 items-center justify-center overflow-hidden rounded-full border-0 px-1.5 text-xs font-semibold"
+                                                >
+                                                    {approvalCount > 99 ? '99+' : approvalCount}
+                                                </Badge>
+                                            )}
+                                        </div>
                                         {!collapsed && <span>{item.title}</span>}
                                     </Link>
                                     {collapsed && (
@@ -132,7 +168,10 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                                             <TooltipTrigger asChild>
                                                 <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
                                             </TooltipTrigger>
-                                            <TooltipContent side="right">{item.title}</TooltipContent>
+                                            <TooltipContent side="right">
+                                                {item.title}
+                                                {item.href === '/approvals' && approvalCount > 0 && ` (${approvalCount})`}
+                                            </TooltipContent>
                                         </Tooltip>
                                     )}
                                 </div>
