@@ -13,7 +13,7 @@ export default function QuickActions() {
         { name: 'Add Team Member', icon: <UsersIcon className="h-5 w-5" />, href: route('team.create') },
         { name: 'Create Project', icon: <PlusCircle className="h-5 w-5" />, href: route('project.create') },
         { name: 'All Team Log', icon: <BarChart3 className="h-5 w-5" />, href: route('team.all-time-logs') },
-        { name: 'Approval Management', icon: <CheckSquare className="h-5 w-5" />, href: '/approvals' },
+        { name: 'Approvals', icon: <CheckSquare className="h-5 w-5" />, href: '/approvals' },
     ]
 
     return (

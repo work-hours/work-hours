@@ -1,6 +1,6 @@
 import { type SharedData } from '@/types'
 import { usePage } from '@inertiajs/react'
-import { BarChart2, Briefcase, Clock, DollarSign, Github, Upload, Users } from 'lucide-react'
+import { BarChart2, Briefcase, CheckSquare, Clock, DollarSign, Github, Upload, Users } from 'lucide-react'
 
 export default function Features() {
     const { auth } = usePage<SharedData>().props
@@ -138,6 +138,26 @@ export default function Features() {
                         <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
                             Save time by importing multiple time logs at once. Download a template, fill it with your data, and upload it to quickly
                             record all your work hours in one go.
+                        </p>
+                    </article>
+
+                    <article className="group relative border-2 border-gray-300 bg-white p-6 transition-all dark:border-gray-700 dark:bg-gray-800">
+                        {/* Form-like header */}
+                        <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
+                            <div className="flex items-center">
+                                <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
+                                    <CheckSquare className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
+                                </div>
+                                <h3 className="flex items-center font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
+                                    Approval Management
+                                    <span className="ml-2 border border-red-800/40 px-1.5 py-0.5 text-xs font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
+                                        New
+                                    </span>
+                                </h3>
+                            </div>
+                        </div>
+                        <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
+                            Streamline your workflow with our robust approval system. Managers can review, approve, or reject time logs, ensuring accuracy and accountability across your organization.
                         </p>
                     </article>
                 </div>
