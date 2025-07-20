@@ -201,6 +201,7 @@ final class TimeLogStore
                 'hourly_rate' => $hourlyRate,
                 'paid_amount' => $paidAmount,
                 'currency' => $timeLog->currency ?? 'USD',
+                'status' => $timeLog->status,
             ];
         });
     }

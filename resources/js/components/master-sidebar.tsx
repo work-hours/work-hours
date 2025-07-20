@@ -1,23 +1,7 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem, type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
-import React, { useState } from 'react'
-import {
-    Building,
-    CheckSquare,
-    ChevronDown,
-    Folder,
-    Github,
-    Heart,
-    LayoutGrid,
-    LogOut,
-    LucideProjector,
-    LucideServerCog,
-    Settings,
-    TimerIcon,
-    Users,
-} from 'lucide-react'
+import { Building, CheckSquare, Folder, Github, Heart, LayoutGrid, LogOut, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
 
@@ -46,7 +30,11 @@ const mainNavItems: NavItem[] = [
         href: '/project',
         icon: LucideProjector,
     },
-    // Time Log dropdown is handled separately
+    {
+        title: 'Time Log',
+        href: '/time-log',
+        icon: TimerIcon,
+    },
     {
         title: 'Approvals',
         href: '/approvals',
@@ -79,93 +67,6 @@ const footerNavItems: NavItem[] = [
         icon: Heart,
     },
 ]
-
-// TimeLogDropdown component for the sidebar
-function TimeLogDropdown({ collapsed }: { collapsed: boolean }) {
-    const isTimeLogActive =
-        typeof window !== 'undefined' && (window.location.pathname === '/time-log' || window.location.pathname.startsWith('/team/all-time-logs'))
-
-    const isMyTimeLogActive = typeof window !== 'undefined' && window.location.pathname === '/time-log'
-    const isTeamTimeLogsActive = typeof window !== 'undefined' && window.location.pathname.startsWith('/team/all-time-logs')
-
-    // Use useState to control the dropdown open state
-    // Initialize it to true if any of the links are active
-    const [isOpen, setIsOpen] = useState(isTimeLogActive)
-
-    // Handle open state changes
-    const handleOpenChange = (open: boolean) => {
-        setIsOpen(open)
-    }
-
-    return (
-        <div className="relative">
-            {collapsed ? (
-                // Collapsed view - just show icon with tooltip
-                <>
-                    <Link
-                        href="/time-log"
-                        className={`flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:hover:bg-gray-700 dark:hover:text-gray-100 ${
-                            isTimeLogActive
-                                ? 'border-l-4 border-gray-700 bg-white text-gray-900 shadow-sm dark:border-gray-400 dark:bg-gray-700 dark:text-gray-100'
-                                : 'text-gray-700 dark:text-gray-300'
-                        }`}
-                    >
-                        <TimerIcon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                    </Link>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">Time Log</TooltipContent>
-                    </Tooltip>
-                </>
-            ) : (
-                // Expanded view - show dropdown
-                <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
-                    <DropdownMenuTrigger
-                        className={`flex w-full items-center rounded-md py-2 pr-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:hover:bg-gray-700 dark:hover:text-gray-100 ${
-                            isTimeLogActive
-                                ? 'border-l-4 border-gray-700 bg-white pl-2 text-gray-900 shadow-sm dark:border-gray-400 dark:bg-gray-700 dark:text-gray-100'
-                                : 'pl-3 text-gray-700 dark:text-gray-300'
-                        }`}
-                    >
-                        <TimerIcon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                        <span className="flex-1">Time Log</span>
-                        <ChevronDown className="h-4 w-4" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56">
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href="/time-log"
-                                className={`flex w-full cursor-pointer items-center rounded-md py-2 pr-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:hover:bg-gray-700 dark:hover:text-gray-100 ${
-                                    isMyTimeLogActive
-                                        ? 'border-l-4 border-gray-700 bg-white pl-2 text-gray-900 shadow-sm dark:border-gray-400 dark:bg-gray-700 dark:text-gray-100'
-                                        : 'pl-3 text-gray-700 dark:text-gray-300'
-                                }`}
-                            >
-                                <TimerIcon className="mr-3 h-4 w-4" />
-                                <span>My Time Log</span>
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            <Link
-                                href="/team/all-time-logs"
-                                className={`flex w-full cursor-pointer items-center rounded-md py-2 pr-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:hover:bg-gray-700 dark:hover:text-gray-100 ${
-                                    isTeamTimeLogsActive
-                                        ? 'border-l-4 border-gray-700 bg-white pl-2 text-gray-900 shadow-sm dark:border-gray-400 dark:bg-gray-700 dark:text-gray-100'
-                                        : 'pl-3 text-gray-700 dark:text-gray-300'
-                                }`}
-                            >
-                                <Users className="mr-3 h-4 w-4" />
-                                <span>Team Time Logs</span>
-                            </Link>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )}
-        </div>
-    )
-}
 
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     const { isGitHubIntegrated, auth } = usePage<SharedData>().props
@@ -236,9 +137,6 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                                     )}
                                 </div>
                             ))}
-
-                            {/* Time Log Dropdown */}
-                            <TimeLogDropdown collapsed={collapsed} />
                         </nav>
                     </TooltipProvider>
                 </div>
