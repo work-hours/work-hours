@@ -93,13 +93,13 @@ export default function TimeLogTable({
                             {showTeamMember && <TableCell className="font-medium">{log.user_name}</TableCell>}
                             {showProject && <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>}
                             <TableCell>
-                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                                     {log.duration}
                                 </span>
                             </TableCell>
                             <TableCell>
                                 {log.hourly_rate !== undefined && log.hourly_rate !== null && typeof log.hourly_rate === 'number' ? (
-                                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-100">
+                                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-100">
                                         {log.currency || 'USD'} {log.hourly_rate.toFixed(2)}
                                     </span>
                                 ) : (
@@ -108,7 +108,7 @@ export default function TimeLogTable({
                             </TableCell>
                             <TableCell>
                                 {log.paid_amount !== undefined && log.paid_amount !== null && typeof log.paid_amount === 'number' && log.is_paid ? (
-                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                                         {log.currency || 'USD'} {log.paid_amount.toFixed(2)}
                                     </span>
                                 ) : (
@@ -119,26 +119,26 @@ export default function TimeLogTable({
                                 <div className="flex flex-col gap-1">
                                     {/* Approval Status */}
                                     {log.status === 'approved' ? (
-                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                                             Approved
                                         </span>
                                     ) : log.status === 'rejected' ? (
-                                        <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
+                                        <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
                                             Rejected
                                         </span>
                                     ) : (
-                                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
                                             Pending
                                         </span>
                                     )}
 
                                     {/* Payment Status */}
                                     {log.is_paid ? (
-                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                                             Paid
                                         </span>
                                     ) : (
-                                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
+                                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
                                             Unpaid
                                         </span>
                                     )}

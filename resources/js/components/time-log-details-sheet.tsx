@@ -91,11 +91,11 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                 <p className="text-sm font-bold text-muted-foreground">Payment Status</p>
                                 <p className="text-base">
                                     {timeLog.is_paid ? (
-                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-bold text-green-800 dark:bg-green-900 dark:text-green-100">
+                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-800 dark:bg-green-900 dark:text-green-100">
                                             Paid
                                         </span>
                                     ) : (
-                                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-bold text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
+                                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-bold text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
                                             Unpaid
                                         </span>
                                     )}
@@ -112,15 +112,15 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                 <p className="text-sm font-bold text-muted-foreground">Status</p>
                                 <p className="text-base">
                                     {timeLog.status === 'approved' ? (
-                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-bold text-green-800 dark:bg-green-900 dark:text-green-100">
+                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-800 dark:bg-green-900 dark:text-green-100">
                                             Approved
                                         </span>
                                     ) : timeLog.status === 'rejected' ? (
-                                        <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-800 dark:bg-red-900 dark:text-red-100">
+                                        <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-800 dark:bg-red-900 dark:text-red-100">
                                             Rejected
                                         </span>
                                     ) : (
-                                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-bold text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-800 dark:bg-gray-700 dark:text-gray-300">
                                             Pending
                                         </span>
                                     )}
