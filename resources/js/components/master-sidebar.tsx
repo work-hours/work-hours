@@ -123,13 +123,13 @@ function TimeLogDropdown({ collapsed }: { collapsed: boolean }) {
                 // Expanded view - show dropdown
                 <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
                     <DropdownMenuTrigger
-                        className={`flex w-full items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:hover:bg-gray-700 dark:hover:text-gray-100 ${
+                        className={`flex w-full items-center rounded-md py-2 pr-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:hover:bg-gray-700 dark:hover:text-gray-100 ${
                             isTimeLogActive
-                                ? 'border-l-4 border-gray-700 bg-white text-gray-900 shadow-sm dark:border-gray-400 dark:bg-gray-700 dark:text-gray-100'
-                                : 'text-gray-700 dark:text-gray-300'
+                                ? 'border-l-4 border-gray-700 bg-white pl-2 text-gray-900 shadow-sm dark:border-gray-400 dark:bg-gray-700 dark:text-gray-100'
+                                : 'pl-3 text-gray-700 dark:text-gray-300'
                         }`}
                     >
-                        <TimerIcon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                        <TimerIcon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
                         <span className="flex-1">Time Log</span>
                         <ChevronDown className="h-4 w-4" />
                     </DropdownMenuTrigger>
@@ -137,26 +137,26 @@ function TimeLogDropdown({ collapsed }: { collapsed: boolean }) {
                         <DropdownMenuItem asChild>
                             <Link
                                 href="/time-log"
-                                className={`flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:hover:bg-gray-700 dark:hover:text-gray-100 ${
+                                className={`flex w-full cursor-pointer items-center rounded-md py-2 pr-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:hover:bg-gray-700 dark:hover:text-gray-100 ${
                                     isMyTimeLogActive
-                                        ? 'border-l-4 border-gray-700 bg-white text-gray-900 shadow-sm dark:border-gray-400 dark:bg-gray-700 dark:text-gray-100'
-                                        : 'text-gray-700 dark:text-gray-300'
+                                        ? 'border-l-4 border-gray-700 bg-white pl-2 text-gray-900 shadow-sm dark:border-gray-400 dark:bg-gray-700 dark:text-gray-100'
+                                        : 'pl-3 text-gray-700 dark:text-gray-300'
                                 }`}
                             >
-                                <TimerIcon className="mr-2 h-4 w-4" />
+                                <TimerIcon className="mr-3 h-4 w-4" />
                                 <span>My Time Log</span>
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                             <Link
                                 href="/team/all-time-logs"
-                                className={`flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:hover:bg-gray-700 dark:hover:text-gray-100 ${
+                                className={`flex w-full cursor-pointer items-center rounded-md py-2 pr-2 text-sm font-medium transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:hover:bg-gray-700 dark:hover:text-gray-100 ${
                                     isTeamTimeLogsActive
-                                        ? 'border-l-4 border-gray-700 bg-white text-gray-900 shadow-sm dark:border-gray-400 dark:bg-gray-700 dark:text-gray-100'
-                                        : 'text-gray-700 dark:text-gray-300'
+                                        ? 'border-l-4 border-gray-700 bg-white pl-2 text-gray-900 shadow-sm dark:border-gray-400 dark:bg-gray-700 dark:text-gray-100'
+                                        : 'pl-3 text-gray-700 dark:text-gray-300'
                                 }`}
                             >
-                                <Users className="mr-2 h-4 w-4" />
+                                <Users className="mr-3 h-4 w-4" />
                                 <span>Team Time Logs</span>
                             </Link>
                         </DropdownMenuItem>
