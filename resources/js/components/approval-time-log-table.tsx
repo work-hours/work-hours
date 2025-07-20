@@ -12,11 +12,7 @@ export type TimeLogEntry = {
     start_timestamp: string
     end_timestamp: string
     duration: number
-    is_paid?: boolean
     note?: string
-    hourly_rate?: number
-    paid_amount?: number
-    currency?: string
     status?: 'pending' | 'approved' | 'rejected'
 }
 
@@ -47,7 +43,6 @@ export default function ApprovalTimeLogTable({
                     <TableHead>Start Time</TableHead>
                     <TableHead>End Time</TableHead>
                     <TableHead>Duration</TableHead>
-                    <TableHead>Hourly Rate</TableHead>
                     <TableHead>Note</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -75,46 +70,24 @@ export default function ApprovalTimeLogTable({
                                 {log.duration}
                             </span>
                         </TableCell>
-                        <TableCell>
-                            {log.hourly_rate !== undefined && log.hourly_rate !== null && typeof log.hourly_rate === 'number' ? (
-                                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-100">
-                                    {log.currency || 'USD'} {log.hourly_rate.toFixed(2)}
-                                </span>
-                            ) : (
-                                <span className="text-gray-500">-</span>
-                            )}
-                        </TableCell>
                         <TableCell className="max-w-xs break-words whitespace-normal" title={log.note}>
                             <div className="max-h-20 overflow-y-auto">{log.note}</div>
                         </TableCell>
                         <TableCell>
-                            <div className="flex flex-col gap-1">
-                                {/* Approval Status */}
-                                {log.status === 'approved' ? (
-                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
-                                        Approved
-                                    </span>
-                                ) : log.status === 'rejected' ? (
-                                    <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
-                                        Rejected
-                                    </span>
-                                ) : (
-                                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                                        Pending
-                                    </span>
-                                )}
-
-                                {/* Payment Status */}
-                                {log.is_paid ? (
-                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
-                                        Paid
-                                    </span>
-                                ) : (
-                                    <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
-                                        Unpaid
-                                    </span>
-                                )}
-                            </div>
+                            {/* Approval Status */}
+                            {log.status === 'approved' ? (
+                                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                    Approved
+                                </span>
+                            ) : log.status === 'rejected' ? (
+                                <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
+                                    Rejected
+                                </span>
+                            ) : (
+                                <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                    Pending
+                                </span>
+                            )}
                         </TableCell>
                         <TableCell className="text-right">
                             <div className="flex justify-end gap-2">

@@ -78,9 +78,6 @@ type TimeLog = {
     start_timestamp: string
     end_timestamp: string
     duration: number
-    is_paid: boolean
-    hourly_rate?: number
-    paid_amount?: number
     status: 'pending' | 'approved' | 'rejected'
 }
 
@@ -308,12 +305,12 @@ export default function Approvals({
                             teamStats={{
                                 count: -1,
                                 totalHours: totalDuration,
-                                unpaidHours: totalDuration, // All pending logs are unpaid
-                                unpaidAmount: 0, // Not relevant for approvals
+                                unpaidHours: 0, // Not showing monetary information
+                                unpaidAmount: 0, // Not showing monetary information
                                 unpaidAmountsByCurrency: {},
-                                paidAmount: 0, // Not relevant for approvals
+                                paidAmount: 0, // Not showing monetary information
                                 paidAmountsByCurrency: {},
-                                currency: 'USD',
+                                currency: '', // Not showing monetary information
                                 weeklyAverage: 0, // Not relevant for approvals
                                 clientCount: -1,
                             }}
