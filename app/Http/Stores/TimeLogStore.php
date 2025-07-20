@@ -8,6 +8,7 @@ use App\Http\QueryFilters\TimeLog\EndDateFilter;
 use App\Http\QueryFilters\TimeLog\IsPaidFilter;
 use App\Http\QueryFilters\TimeLog\ProjectIdFilter;
 use App\Http\QueryFilters\TimeLog\StartDateFilter;
+use App\Http\QueryFilters\TimeLog\StatusFilter;
 use App\Http\QueryFilters\TimeLog\UserIdFilter;
 use App\Models\Project;
 use App\Models\Team;
@@ -174,6 +175,7 @@ final class TimeLogStore
                 UserIdFilter::class,
                 IsPaidFilter::class,
                 ProjectIdFilter::class,
+                StatusFilter::class,
             ])
             ->thenReturn()
             ->with(['user', 'project'])->get();

@@ -57,6 +57,7 @@ final class TimeLogController extends Controller
                 'end_date' => request('end_date', ''),
                 'project_id' => request('project_id', ''),
                 'is_paid' => request('is_paid', ''),
+                'status' => request('status', ''),
             ],
             'projects' => $projects,
             'totalDuration' => $totalDuration,
