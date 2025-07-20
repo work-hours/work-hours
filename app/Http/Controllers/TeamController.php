@@ -298,7 +298,7 @@ final class TeamController extends Controller
         $totalPaidAmount = array_sum($paidAmountsByCurrency);
 
         return Inertia::render('team/all-time-logs', [
-            'timeLogs' => $timeLogs,
+            'timeLogs' => $mappedTimeLogs,
             'filters' => [
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
