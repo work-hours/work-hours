@@ -73,7 +73,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
     return (
         <div
-            className={`sticky top-0 flex h-screen flex-col border-r border-gray-300 bg-[#f8f6e9] shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-64'}`}
+            className={`sticky top-0 flex h-screen flex-col border-r border-gray-300 bg-[#f8f6e9] shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-52'}`}
         >
             {/* Enhanced horizontal lines with slightly increased contrast */}
             <div
