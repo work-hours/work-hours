@@ -450,6 +450,8 @@ export default function ProjectTimeLogs({
                                 showCheckboxes={isCreator}
                                 showTeamMember={true}
                                 showProject={false}
+                                showActions={true}
+                                showEditDelete={false}
                                 selectedLogs={selectedLogs}
                                 onSelectLog={handleSelectLog}
                             />

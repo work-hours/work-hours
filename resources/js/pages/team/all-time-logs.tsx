@@ -480,6 +480,8 @@ export default function AllTeamTimeLogs({
                                 timeLogs={timeLogs as TimeLogEntry[]}
                                 showTeamMember={true}
                                 showCheckboxes={true}
+                                showActions={true}
+                                showEditDelete={false}
                                 selectedLogs={selectedLogs}
                                 onSelectLog={handleSelectLog}
                             />

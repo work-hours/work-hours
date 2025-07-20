@@ -5,7 +5,6 @@ import { CheckCircle, DollarSign, LoaderCircle, Mail, User } from 'lucide-react'
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
-import DeleteUser from '@/components/delete-user'
 import HeadingSmall from '@/components/heading-small'
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'

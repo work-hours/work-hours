@@ -161,13 +161,8 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
     // Chat-like bubble when minimized
     if (!isVisible) {
         return (
-            <div className="fixed bottom-4 right-4 z-50">
-                <Button
-                    onClick={toggleVisibility}
-                    variant="default"
-                    size="sm"
-                    className="flex items-center gap-2 rounded-full shadow-lg"
-                >
+            <div className="fixed right-4 bottom-4 z-50">
+                <Button onClick={toggleVisibility} variant="default" size="sm" className="flex items-center gap-2 rounded-full shadow-lg">
                     <MessageCircle className="h-4 w-4" />
                     <span>Time Tracker</span>
                 </Button>
@@ -178,16 +173,18 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
     // Compact floating bubble when tracking is active but not expanded
     if (activeTimeLog && view === 'tracking') {
         return (
-            <div className="fixed bottom-4 right-4 z-50">
+            <div className="fixed right-4 bottom-4 z-50">
                 <Button
                     onClick={toggleExpand}
                     variant="default"
                     size="icon"
-                    className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 animate-pulse"
+                    className="h-14 w-14 animate-pulse rounded-full bg-primary shadow-lg hover:bg-primary/90"
                 >
                     <div className="flex flex-col items-center justify-center">
                         <ClockIcon className="h-6 w-6 text-white" />
-                        <span className="text-xs font-bold text-white">{formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}</span>
+                        <span className="text-xs font-bold text-white">
+                            {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
+                        </span>
                     </div>
                 </Button>
             </div>
@@ -197,22 +194,15 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
     // Note input view when tracking is active and user clicked the bubble
     if (activeTimeLog && view === 'note') {
         return (
-            <div className="fixed bottom-4 right-4 z-50 w-full max-w-md">
-                <Card className="overflow-hidden transition-all duration-300 shadow-lg bg-primary/5 dark:bg-primary/10 rounded-2xl">
-                    <div className="flex items-center justify-between border-b border-gray-200 p-3 dark:border-gray-700 bg-primary/10">
+            <div className="fixed right-4 bottom-4 z-50 w-full max-w-md">
+                <Card className="overflow-hidden rounded-2xl bg-primary/5 shadow-lg transition-all duration-300 dark:bg-primary/10">
+                    <div className="flex items-center justify-between border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
                         <div className="flex items-center gap-2">
-                            <ClockIcon className="h-5 w-5 text-primary animate-pulse" />
-                            <span className="font-['Courier_New',monospace] font-bold">
-                                {formatElapsedTime(activeTimeLog.elapsed)}
-                            </span>
+                            <ClockIcon className="h-5 w-5 animate-pulse text-primary" />
+                            <span className="font-['Courier_New',monospace] font-bold">{formatElapsedTime(activeTimeLog.elapsed)}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Button
-                                onClick={() => setView('tracking')}
-                                variant="ghost"
-                                size="sm"
-                                className="p-1 h-8 w-8"
-                            >
+                            <Button onClick={() => setView('tracking')} variant="ghost" size="sm" className="h-8 w-8 p-1">
                                 <X className="h-4 w-4" />
                             </Button>
                         </div>
@@ -249,7 +239,7 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
                                     onClick={stopTimeLog}
                                     variant="destructive"
                                     size="lg"
-                                    className="flex w-full items-center gap-2 mt-2"
+                                    className="mt-2 flex w-full items-center gap-2"
                                     disabled={!note.trim()}
                                 >
                                     <PauseCircle className="h-5 w-5" />
@@ -265,29 +255,20 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
 
     // Project selection view
     return (
-        <div className="fixed bottom-4 right-4 z-50 w-full max-w-md">
-            <Card className="overflow-hidden transition-all duration-300 shadow-lg rounded-2xl">
-                <div className="flex items-center justify-between border-b border-gray-200 p-3 dark:border-gray-700 bg-primary/10">
+        <div className="fixed right-4 bottom-4 z-50 w-full max-w-md">
+            <Card className="overflow-hidden rounded-2xl shadow-lg transition-all duration-300">
+                <div className="flex items-center justify-between border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
                     <div className="flex items-center gap-2">
                         <MessageCircle className="h-5 w-5" />
-                        <span className="font-['Courier_New',monospace] font-bold">
-                            Time Tracker
-                        </span>
+                        <span className="font-['Courier_New',monospace] font-bold">Time Tracker</span>
                     </div>
-                    <Button
-                        onClick={toggleVisibility}
-                        variant="ghost"
-                        size="sm"
-                        className="p-1 h-8 w-8"
-                    >
+                    <Button onClick={toggleVisibility} variant="ghost" size="sm" className="h-8 w-8 p-1">
                         <X className="h-4 w-4" />
                     </Button>
                 </div>
                 <CardContent className="p-4">
                     <div className="flex flex-col gap-3">
-                        <CardDescription className="font-['Courier_New',monospace]">
-                            Select a project and start tracking your time
-                        </CardDescription>
+                        <CardDescription className="font-['Courier_New',monospace]">Select a project and start tracking your time</CardDescription>
                         <div>
                             <Label
                                 htmlFor="tracking_project"
@@ -308,7 +289,7 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
                             onClick={startTimeLog}
                             variant="default"
                             size="lg"
-                            className="flex w-full items-center gap-2 mt-2"
+                            className="mt-2 flex w-full items-center gap-2"
                             disabled={selectedProject === null}
                         >
                             <PlayCircle className="h-5 w-5" />
