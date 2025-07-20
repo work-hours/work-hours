@@ -24,6 +24,7 @@ final class TimeLogStore
     {
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
+            ->where('status', \App\Enums\TimeLogStatus::APPROVED)
             ->orderBy('start_timestamp', 'desc')
             ->with('user')
             ->take($limit)
@@ -34,6 +35,7 @@ final class TimeLogStore
     {
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
+            ->where('status', \App\Enums\TimeLogStatus::APPROVED)
             ->sum('duration');
     }
 
@@ -42,6 +44,7 @@ final class TimeLogStore
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
             ->where('is_paid', false)
+            ->where('status', \App\Enums\TimeLogStatus::APPROVED)
             ->sum('duration');
     }
 
@@ -78,6 +81,7 @@ final class TimeLogStore
             ->with('project')
             ->where('user_id', $teamMemberId)
             ->where('is_paid', false)
+            ->where('status', \App\Enums\TimeLogStatus::APPROVED)
             ->get();
     }
 
@@ -114,6 +118,7 @@ final class TimeLogStore
             ->with('project')
             ->where('user_id', $teamMemberId)
             ->where('is_paid', true)
+            ->where('status', \App\Enums\TimeLogStatus::APPROVED)
             ->get();
     }
 
@@ -125,7 +130,7 @@ final class TimeLogStore
             $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $currency = $timeLog->currency ?? 'USD';
 
-            if (! $timeLog['is_paid']) {
+            if (! $timeLog['is_paid'] && $timeLog['status'] === \App\Enums\TimeLogStatus::APPROVED) {
                 if (! isset($unpaidAmounts[$currency])) {
                     $unpaidAmounts[$currency] = 0;
                 }
@@ -149,7 +154,7 @@ final class TimeLogStore
             $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $currency = $timeLog->currency ?? 'USD';
 
-            if ($timeLog['is_paid']) {
+            if ($timeLog['is_paid'] && $timeLog['status'] === \App\Enums\TimeLogStatus::APPROVED) {
                 if (! isset($paidAmounts[$currency])) {
                     $paidAmounts[$currency] = 0;
                 }

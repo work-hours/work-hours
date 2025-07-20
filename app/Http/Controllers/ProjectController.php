@@ -191,8 +191,10 @@ final class ProjectController extends Controller
         $paidAmount = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
 
         $mappedTimeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
-        $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
-        $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
+        // Only include approved logs in calculations
+        $approvedLogs = $mappedTimeLogs->where('status', \App\Enums\TimeLogStatus::APPROVED);
+        $totalDuration = round($approvedLogs->sum('duration'), 2);
+        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
         $teamMembers = ProjectStore::teamMembers(project: $project);
