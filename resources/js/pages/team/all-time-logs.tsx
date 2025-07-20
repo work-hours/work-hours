@@ -31,6 +31,7 @@ type Filters = {
     user_id: string
     project_id: string
     is_paid: string
+    status: string
 }
 
 interface CustomInputProps {
@@ -149,6 +150,7 @@ export default function AllTeamTimeLogs({
         user_id: filters.user_id || '',
         project_id: filters.project_id || '',
         is_paid: filters.is_paid || '',
+        status: filters.status || '',
     })
 
     const startDate = data.start_date ? new Date(data.start_date) : null
@@ -308,6 +310,25 @@ export default function AllTeamTimeLogs({
                                     icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
                                 />
                             </div>
+                            <div className="grid gap-1">
+                                <Label htmlFor="status" className="text-xs font-medium">
+                                    Approval Status
+                                </Label>
+                                <SearchableSelect
+                                    id="status"
+                                    value={data.status}
+                                    onChange={(value) => setData('status', value)}
+                                    options={[
+                                        { id: '', name: 'All Statuses' },
+                                        { id: 'pending', name: 'Pending' },
+                                        { id: 'approved', name: 'Approved' },
+                                        { id: 'rejected', name: 'Rejected' },
+                                    ]}
+                                    placeholder="Select approval status"
+                                    disabled={processing}
+                                    icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                />
+                            </div>
                             <div className="flex items-end gap-2">
                                 <Button type="submit" disabled={processing} className="flex h-9 items-center gap-1 px-3">
                                     <Search className="h-3.5 w-3.5" />
@@ -318,7 +339,7 @@ export default function AllTeamTimeLogs({
                                     type="button"
                                     variant="outline"
                                     disabled={
-                                        processing || (!data.start_date && !data.end_date && !data.user_id && !data.project_id && !data.is_paid)
+                                        processing || (!data.start_date && !data.end_date && !data.user_id && !data.project_id && !data.is_paid && !data.status)
                                     }
                                     onClick={() => {
                                         setData({
@@ -327,6 +348,7 @@ export default function AllTeamTimeLogs({
                                             user_id: '',
                                             project_id: '',
                                             is_paid: '',
+                                            status: '',
                                         })
                                         get(route('team.all-time-logs'), {
                                             preserveState: true,
@@ -341,7 +363,7 @@ export default function AllTeamTimeLogs({
                         </form>
 
                         <p className={'mt-4 text-sm text-muted-foreground'}>
-                            {(data.start_date || data.end_date || data.user_id || data.project_id) && (
+                            {(data.start_date || data.end_date || data.user_id || data.project_id || data.status) && (
                                 <CardDescription>
                                     {(() => {
                                         let description = ''
@@ -387,6 +409,18 @@ export default function AllTeamTimeLogs({
                                                 description += ` (${paymentStatus})`
                                             } else {
                                                 description = `Showing ${paymentStatus} logs`
+                                            }
+                                        }
+
+                                        // Approval status description
+                                        if (data.status) {
+                                            const statusText = data.status === 'pending' ? 'pending' :
+                                                              data.status === 'approved' ? 'approved' : 'rejected'
+
+                                            if (description) {
+                                                description += ` with ${statusText} status`
+                                            } else {
+                                                description = `Showing logs with ${statusText} status`
                                             }
                                         }
 

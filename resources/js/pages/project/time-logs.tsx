@@ -32,6 +32,7 @@ type Filters = {
     end_date: string
     user_id: string
     is_paid: string
+    status: string
 }
 
 type Project = {
