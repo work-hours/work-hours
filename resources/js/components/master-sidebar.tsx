@@ -1,7 +1,7 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem, type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
-import { Building, Folder, Github, Heart, LayoutGrid, LogOut, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
+import { Building, CheckSquare, Folder, Github, Heart, LayoutGrid, LogOut, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
 
@@ -34,6 +34,11 @@ const mainNavItems: NavItem[] = [
         title: 'Time Log',
         href: '/time-log',
         icon: TimerIcon,
+    },
+    {
+        title: 'Approvals',
+        href: '/approvals',
+        icon: CheckSquare,
     },
     {
         title: 'Integration',
