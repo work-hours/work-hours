@@ -98,7 +98,6 @@ final class TimeLogController extends Controller
 
                 if ($project && $project->isCreator(auth()->id())) {
                     $data['status'] = TimeLogStatus::APPROVED;
-                    $data['is_paid'] = true;
                     $data['approved_by'] = auth()->id();
                     $data['approved_at'] = Carbon::now();
                 }
@@ -283,7 +282,6 @@ final class TimeLogController extends Controller
 
                 if ($project && $project->isCreator(auth()->id())) {
                     $data['status'] = 'approved';
-                    $data['is_paid'] = true;
                     $data['approved_by'] = auth()->id();
                     $data['approved_at'] = Carbon::now();
                 }
