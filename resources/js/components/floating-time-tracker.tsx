@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { router } from '@inertiajs/react'
-import { Briefcase, ChevronDown, ChevronUp, ClockIcon, PauseCircle, PlayCircle, X } from 'lucide-react'
+import { Briefcase, ClockIcon, MessageCircle, PauseCircle, PlayCircle, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 type Project = {
@@ -20,6 +20,7 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
     const [selectedProject, setSelectedProject] = useState<number | null>(projects.length > 0 ? projects[0].id : null)
     const [isExpanded, setIsExpanded] = useState(false)
     const [isVisible, setIsVisible] = useState(true)
+    const [view, setView] = useState<'select' | 'tracking' | 'note'>('select')
 
     const [activeTimeLog, setActiveTimeLog] = useState<{
         id: number | null
@@ -33,14 +34,14 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
     const [note, setNote] = useState('')
     const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null)
 
-    // Load active time log from localStorage on component mount
+    // Load active time log from localStorage on the component mount
     useEffect(() => {
         const savedTimeLog = localStorage.getItem('activeTimeLog')
         if (savedTimeLog) {
             try {
                 const parsedTimeLog = JSON.parse(savedTimeLog)
                 setActiveTimeLog(parsedTimeLog)
-                setIsExpanded(true) // Auto-expand if there's an active time log
+                setView('tracking')
             } catch (e) {
                 console.error('Failed to parse saved time log', e)
                 localStorage.removeItem('activeTimeLog')
@@ -101,6 +102,7 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
 
         setActiveTimeLog(newTimeLog)
         setNote('')
+        setView('tracking')
         localStorage.setItem('activeTimeLog', JSON.stringify(newTimeLog))
     }
 
@@ -124,6 +126,7 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
                 onSuccess: () => {
                     setActiveTimeLog(null)
                     setNote('')
+                    setView('select')
                     localStorage.removeItem('activeTimeLog')
 
                     if (timerInterval) {
@@ -144,13 +147,18 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
     }
 
     const toggleExpand = () => {
-        setIsExpanded(!isExpanded)
+        if (activeTimeLog) {
+            setView('note')
+        } else {
+            setIsExpanded(!isExpanded)
+        }
     }
 
     const toggleVisibility = () => {
         setIsVisible(!isVisible)
     }
 
+    // Chat-like bubble when minimized
     if (!isVisible) {
         return (
             <div className="fixed bottom-4 right-4 z-50">
@@ -160,29 +168,112 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
                     size="sm"
                     className="flex items-center gap-2 rounded-full shadow-lg"
                 >
-                    <ClockIcon className="h-4 w-4" />
-                    <span>Show Time Tracker</span>
+                    <MessageCircle className="h-4 w-4" />
+                    <span>Time Tracker</span>
                 </Button>
             </div>
         )
     }
 
+    // Compact floating bubble when tracking is active but not expanded
+    if (activeTimeLog && view === 'tracking') {
+        return (
+            <div className="fixed bottom-4 right-4 z-50">
+                <Button
+                    onClick={toggleExpand}
+                    variant="default"
+                    size="icon"
+                    className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 animate-pulse"
+                >
+                    <div className="flex flex-col items-center justify-center">
+                        <ClockIcon className="h-6 w-6 text-white" />
+                        <span className="text-xs font-bold text-white">{formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}</span>
+                    </div>
+                </Button>
+            </div>
+        )
+    }
+
+    // Note input view when tracking is active and user clicked the bubble
+    if (activeTimeLog && view === 'note') {
+        return (
+            <div className="fixed bottom-4 right-4 z-50 w-full max-w-md">
+                <Card className="overflow-hidden transition-all duration-300 shadow-lg bg-primary/5 dark:bg-primary/10 rounded-2xl">
+                    <div className="flex items-center justify-between border-b border-gray-200 p-3 dark:border-gray-700 bg-primary/10">
+                        <div className="flex items-center gap-2">
+                            <ClockIcon className="h-5 w-5 text-primary animate-pulse" />
+                            <span className="font-['Courier_New',monospace] font-bold">
+                                {formatElapsedTime(activeTimeLog.elapsed)}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                onClick={() => setView('tracking')}
+                                variant="ghost"
+                                size="sm"
+                                className="p-1 h-8 w-8"
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+                    <CardContent className="p-4">
+                        <div className="flex flex-col gap-3">
+                            <div>
+                                <CardTitle className="flex items-center gap-2 text-left font-['Courier_New',monospace] text-lg font-bold">
+                                    <span>{activeTimeLog.project_name}</span>
+                                </CardTitle>
+                                <CardDescription className="font-['Courier_New',monospace]">
+                                    Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
+                                </CardDescription>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <div>
+                                    <Label
+                                        htmlFor="note"
+                                        className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 dark:text-gray-200"
+                                    >
+                                        What did you work on?
+                                    </Label>
+                                    <Input
+                                        id="note"
+                                        value={note}
+                                        onChange={(e) => setNote(e.target.value)}
+                                        placeholder="Enter your note here..."
+                                        required
+                                        className="w-full"
+                                        autoFocus
+                                    />
+                                </div>
+                                <Button
+                                    onClick={stopTimeLog}
+                                    variant="destructive"
+                                    size="lg"
+                                    className="flex w-full items-center gap-2 mt-2"
+                                    disabled={!note.trim()}
+                                >
+                                    <PauseCircle className="h-5 w-5" />
+                                    <span>Stop Tracking</span>
+                                </Button>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
+
+    // Project selection view
     return (
         <div className="fixed bottom-4 right-4 z-50 w-full max-w-md">
-            <Card className={`overflow-hidden transition-all duration-300 shadow-lg ${activeTimeLog ? 'bg-primary/5 dark:bg-primary/10' : ''}`}>
-                <div className="flex items-center justify-between border-b border-gray-200 p-2 dark:border-gray-700">
-                    <Button
-                        onClick={toggleExpand}
-                        variant="ghost"
-                        size="sm"
-                        className="flex items-center gap-2 p-1"
-                    >
-                        <ClockIcon className="h-4 w-4" />
+            <Card className="overflow-hidden transition-all duration-300 shadow-lg rounded-2xl">
+                <div className="flex items-center justify-between border-b border-gray-200 p-3 dark:border-gray-700 bg-primary/10">
+                    <div className="flex items-center gap-2">
+                        <MessageCircle className="h-5 w-5" />
                         <span className="font-['Courier_New',monospace] font-bold">
-                            {activeTimeLog ? 'Time Tracking Active' : 'Time Tracker'}
+                            Time Tracker
                         </span>
-                        {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-                    </Button>
+                    </div>
                     <Button
                         onClick={toggleVisibility}
                         variant="ghost"
@@ -192,99 +283,39 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
                         <X className="h-4 w-4" />
                     </Button>
                 </div>
-
-                {isExpanded && (
-                    <CardContent className="p-4">
-                        {activeTimeLog ? (
-                            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                                <div>
-                                    <CardTitle className="flex items-center gap-2 text-left font-['Courier_New',monospace] text-xl font-bold uppercase">
-                                        <ClockIcon className="h-5 w-5 animate-pulse text-primary" />
-                                        <span>Time Tracking</span>
-                                    </CardTitle>
-                                    <CardDescription className="font-['Courier_New',monospace]">
-                                        {activeTimeLog.project_name ? `Tracking time for ${activeTimeLog.project_name}` : 'Tracking time'}
-                                    </CardDescription>
-                                    <div className="mt-2 font-['Courier_New',monospace] text-3xl font-bold text-primary">
-                                        {formatElapsedTime(activeTimeLog.elapsed)}
-                                    </div>
-                                    <div className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
-                                        Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
-                                    </div>
-                                </div>
-                                <div className="flex flex-col gap-2 md:w-1/2">
-                                    <div>
-                                        <Label
-                                            htmlFor="note"
-                                            className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 uppercase dark:text-gray-200"
-                                        >
-                                            Note (required)
-                                        </Label>
-                                        <Input
-                                            id="note"
-                                            value={note}
-                                            onChange={(e) => setNote(e.target.value)}
-                                            placeholder="What did you work on?"
-                                            required
-                                            className="w-full"
-                                        />
-                                    </div>
-                                    <Button
-                                        onClick={stopTimeLog}
-                                        variant="default"
-                                        size="lg"
-                                        className="flex w-full items-center gap-2"
-                                        disabled={!note.trim()}
-                                    >
-                                        <PauseCircle className="h-5 w-5" />
-                                        <span>Stop Tracking</span>
-                                    </Button>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                                <div>
-                                    <CardTitle className="text-left font-['Courier_New',monospace] text-xl font-bold uppercase">
-                                        Quick Time Tracking
-                                    </CardTitle>
-                                    <CardDescription className="font-['Courier_New',monospace]">
-                                        Select a project and start tracking your time
-                                    </CardDescription>
-                                </div>
-                                <div className="grid grid-cols-1 gap-2 md:w-1/2">
-                                    <div>
-                                        <Label
-                                            htmlFor="tracking_project"
-                                            className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 uppercase dark:text-gray-200"
-                                        >
-                                            Project
-                                        </Label>
-                                        <SearchableSelect
-                                            id="tracking_project"
-                                            value={selectedProject?.toString() || ''}
-                                            onChange={(value) => setSelectedProject(value ? parseInt(value) : null)}
-                                            options={projects}
-                                            placeholder="Select project"
-                                            icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
-                                        />
-                                    </div>
-                                    <div>
-                                        <Button
-                                            onClick={startTimeLog}
-                                            variant="default"
-                                            size="lg"
-                                            className="flex w-full items-center gap-2"
-                                            disabled={selectedProject === null}
-                                        >
-                                            <PlayCircle className="h-5 w-5" />
-                                            <span>Start Tracking</span>
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </CardContent>
-                )}
+                <CardContent className="p-4">
+                    <div className="flex flex-col gap-3">
+                        <CardDescription className="font-['Courier_New',monospace]">
+                            Select a project and start tracking your time
+                        </CardDescription>
+                        <div>
+                            <Label
+                                htmlFor="tracking_project"
+                                className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 dark:text-gray-200"
+                            >
+                                Project
+                            </Label>
+                            <SearchableSelect
+                                id="tracking_project"
+                                value={selectedProject?.toString() || ''}
+                                onChange={(value) => setSelectedProject(value ? parseInt(value) : null)}
+                                options={projects}
+                                placeholder="Select project"
+                                icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                            />
+                        </div>
+                        <Button
+                            onClick={startTimeLog}
+                            variant="default"
+                            size="lg"
+                            className="flex w-full items-center gap-2 mt-2"
+                            disabled={selectedProject === null}
+                        >
+                            <PlayCircle className="h-5 w-5" />
+                            <span>Start Tracking</span>
+                        </Button>
+                    </div>
+                </CardContent>
             </Card>
         </div>
     )
