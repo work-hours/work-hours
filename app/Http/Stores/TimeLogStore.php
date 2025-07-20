@@ -193,7 +193,7 @@ final class TimeLogStore
             return null;
         }
 
-        $words = preg_split('/\s+/', trim($name));
+        $words = preg_split('/[\s\/]+/', trim($name));
         $initials = '';
 
         foreach ($words as $word) {
