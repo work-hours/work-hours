@@ -96,6 +96,14 @@ final class TimeLogController extends Controller
                 $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
             }
 
+            // If the authenticated user is the project owner, automatically approve and mark as paid
+            if ($project && $project->isCreator(auth()->id())) {
+                $data['status'] = 'approved';
+                $data['is_paid'] = true;
+                $data['approved_by'] = auth()->id();
+                $data['approved_at'] = Carbon::now();
+            }
+
             $timeLog = TimeLog::query()->create($data);
             DB::commit();
 
