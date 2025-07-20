@@ -14,7 +14,7 @@ final class ProjectStore
     {
         $ownedProjects = Project::query()
             ->where('user_id', $userId)
-            ->with(['teamMembers', 'user'])
+            ->with(['teamMembers', 'approvers', 'user'])
             ->get();
 
         $assignedProjects = Project::query()
@@ -22,7 +22,7 @@ final class ProjectStore
                 $query->where('users.id', $userId);
             })
             ->where('user_id', '!=', $userId)
-            ->with(['teamMembers', 'user'])
+            ->with(['teamMembers', 'approvers', 'user'])
             ->get();
 
         return $ownedProjects->concat($assignedProjects);
@@ -72,6 +72,7 @@ final class ProjectStore
             'description' => $project->description,
             'owner' => $project->user->name,
             'team_members' => $project->teamMembers->pluck('name')->implode(', '),
+            'approvers' => $project->approvers->pluck('name')->implode(', '),
             'created_at' => Carbon::parse($project->created_at)->toDateTimeString(),
         ]);
     }

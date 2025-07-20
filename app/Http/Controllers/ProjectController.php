@@ -170,7 +170,7 @@ final class ProjectController extends Controller
     #[Action(method: 'get', name: 'project.export', middleware: ['auth', 'verified'])]
     public function projectExport(): StreamedResponse
     {
-        $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Created At'];
+        $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Approvers', 'Created At'];
         $filename = 'projects_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv(ProjectStore::projectExportMapper(
