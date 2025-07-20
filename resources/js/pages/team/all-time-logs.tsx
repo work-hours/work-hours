@@ -481,6 +481,7 @@ export default function AllTeamTimeLogs({
                                 showTeamMember={true}
                                 showCheckboxes={true}
                                 showActions={true}
+                                showEditDelete={false}
                                 selectedLogs={selectedLogs}
                                 onSelectLog={handleSelectLog}
                             />

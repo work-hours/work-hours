@@ -31,6 +31,7 @@ type TimeLogTableProps = {
     showActions?: boolean
     showCheckboxes?: boolean
     showProject?: boolean
+    showEditDelete?: boolean
     selectedLogs?: number[]
     onSelectLog?: (id: number, checked: boolean) => void
 }
@@ -41,6 +42,7 @@ export default function TimeLogTable({
     showActions = false,
     showCheckboxes = false,
     showProject = true,
+    showEditDelete = true,
     selectedLogs = [],
     onSelectLog,
 }: TimeLogTableProps) {
@@ -157,29 +159,33 @@ export default function TimeLogTable({
                                             <span className="sr-only">View Details</span>
                                         </Button>
 
-                                        {/* Edit Button */}
-                                        {!log.is_paid ? (
-                                            <Link href={route('time-log.edit', log.id)}>
-                                                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                    <Edit className="h-3.5 w-3.5" />
-                                                    <span className="sr-only">Edit</span>
-                                                </Button>
-                                            </Link>
-                                        ) : (
-                                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be edited">
-                                                <Edit className="h-3.5 w-3.5" />
-                                                <span className="sr-only">Edit</span>
-                                            </Button>
-                                        )}
+                                        {showEditDelete && (
+                                            <>
+                                                {/* Edit Button */}
+                                                {!log.is_paid ? (
+                                                    <Link href={route('time-log.edit', log.id)}>
+                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                                                            <Edit className="h-3.5 w-3.5" />
+                                                            <span className="sr-only">Edit</span>
+                                                        </Button>
+                                                    </Link>
+                                                ) : (
+                                                    <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be edited">
+                                                        <Edit className="h-3.5 w-3.5" />
+                                                        <span className="sr-only">Edit</span>
+                                                    </Button>
+                                                )}
 
-                                        {/* Delete Button */}
-                                        {!log.is_paid ? (
-                                            <DeleteTimeLog timeLogId={log.id} />
-                                        ) : (
-                                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be deleted">
-                                                <Trash2 className="h-4 w-4" />
-                                                <span className="sr-only">Delete</span>
-                                            </Button>
+                                                {/* Delete Button */}
+                                                {!log.is_paid ? (
+                                                    <DeleteTimeLog timeLogId={log.id} />
+                                                ) : (
+                                                    <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be deleted">
+                                                        <Trash2 className="h-4 w-4" />
+                                                        <span className="sr-only">Delete</span>
+                                                    </Button>
+                                                )}
+                                            </>
                                         )}
                                     </div>
                                 </TableCell>
