@@ -99,7 +99,15 @@ export default function CreateTimeLog({ projects }: Props) {
 
     const handleEndDateChange = (date: Date | null) => {
         if (date) {
-            const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes())
+            // Use the date from start_timestamp but time from the selected end time
+            const startDate = new Date(data.start_timestamp)
+            const localDate = new Date(
+                startDate.getFullYear(),
+                startDate.getMonth(),
+                startDate.getDate(),
+                date.getHours(),
+                date.getMinutes()
+            )
             setData('end_timestamp', localDate.toISOString())
         } else {
             setData('end_timestamp', '')

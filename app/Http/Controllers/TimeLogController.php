@@ -96,6 +96,12 @@ final class TimeLogController extends Controller
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
 
+                // Ensure the end date is the same as the start date
+                if ($start->format('Y-m-d') !== $end->format('Y-m-d')) {
+                    $end = Carbon::parse($end->format('H:i:s'))->setDateFrom($start);
+                    $data['end_timestamp'] = $end->toDateTimeString();
+                }
+
                 $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
 
                 if ($project && $project->isCreator(auth()->id())) {
@@ -279,6 +285,12 @@ final class TimeLogController extends Controller
             if ($isLogCompleted) {
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
+
+                // Ensure the end date is the same as the start date
+                if ($start->format('Y-m-d') !== $end->format('Y-m-d')) {
+                    $end = Carbon::parse($end->format('H:i:s'))->setDateFrom($start);
+                    $data['end_timestamp'] = $end->toDateTimeString();
+                }
 
                 $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
 
