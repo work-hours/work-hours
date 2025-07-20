@@ -9,10 +9,12 @@ export type TimeLogEntry = {
     id: number
     project_id?: number
     project_name: string | null
+    project_initials?: string | null
     start_timestamp: string
     end_timestamp: string
     duration: number
     user_name?: string
+    user_initials?: string | null
     is_paid?: boolean
     note?: string
     hourly_rate?: number
@@ -21,6 +23,7 @@ export type TimeLogEntry = {
     status?: 'pending' | 'approved' | 'rejected'
     approved_by?: number
     approver_name?: string
+    approver_initials?: string | null
     comment?: string
 }
 
@@ -83,8 +86,20 @@ export default function TimeLogTable({
                                 />
                             </TableCell>
                         )}
-                        {showTeamMember && <TableCell className="font-medium">{log.user_name}</TableCell>}
-                        {showProject && <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>}
+                        {showTeamMember && (
+                            <TableCell className="font-medium">
+                                <span title={log.user_name || ''}>
+                                    {log.user_initials || (log.user_name ? log.user_name.charAt(0) : '-')}
+                                </span>
+                            </TableCell>
+                        )}
+                        {showProject && (
+                            <TableCell className="font-medium">
+                                <span title={log.project_name || 'No Project'}>
+                                    {log.project_initials || (log.project_name ? log.project_name.charAt(0) : 'N')}
+                                </span>
+                            </TableCell>
+                        )}
                         <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
                         <TableCell className="font-medium">{formatDateTime(log.end_timestamp)}</TableCell>
                         <TableCell>
@@ -144,7 +159,9 @@ export default function TimeLogTable({
                         </TableCell>
                         <TableCell>
                             {log.approver_name ? (
-                                <span className="font-medium">{log.approver_name}</span>
+                                <span className="font-medium" title={log.approver_name}>
+                                    {log.approver_initials || log.approver_name.charAt(0)}
+                                </span>
                             ) : (
                                 <span className="text-gray-500">-</span>
                             )}
