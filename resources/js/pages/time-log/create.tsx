@@ -201,6 +201,13 @@ export default function CreateTimeLog({ projects }: Props) {
                                         disabled={processing}
                                         isClearable
                                         placeholderText="Select end time (optional)"
+                                        filterDate={(date) => {
+                                            // Only allow the same date as the start date
+                                            const start = new Date(data.start_timestamp)
+                                            return date.getDate() === start.getDate() &&
+                                                date.getMonth() === start.getMonth() &&
+                                                date.getFullYear() === start.getFullYear()
+                                        }}
                                         customInput={
                                             <CustomInput
                                                 id="end_timestamp"
