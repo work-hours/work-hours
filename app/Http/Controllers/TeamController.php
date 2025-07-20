@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreTeamMemberRequest;
 use App\Http\Requests\UpdateTeamMemberRequest;
 use App\Http\Stores\ProjectStore;
@@ -54,7 +55,7 @@ final class TeamController extends Controller
                 $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', $team->member->getkey()));
                 $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
                 // Only include approved logs in calculations
-                $approvedLogs = $mappedTimeLogs->where('status', \App\Enums\TimeLogStatus::APPROVED);
+                $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
                 $totalDuration = round($approvedLogs->sum('duration'), 2);
                 $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
                 $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
@@ -95,7 +96,7 @@ final class TeamController extends Controller
         $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
 
         // Only include approved logs in calculations
-        $approvedLogs = $mappedTimeLogs->where('status', \App\Enums\TimeLogStatus::APPROVED);
+        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
         $totalDuration = round($approvedLogs->sum('duration'), 2);
         $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
         $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);
@@ -276,7 +277,7 @@ final class TeamController extends Controller
         $paidAmountsByCurrency = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
         $mappedTimeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
         // Only include approved logs in calculations
-        $approvedLogs = $mappedTimeLogs->where('status', \App\Enums\TimeLogStatus::APPROVED);
+        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
         $totalDuration = round($approvedLogs->sum('duration'), 2);
         $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
         $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);
@@ -343,7 +344,7 @@ final class TeamController extends Controller
                 $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', $team->member->id));
                 $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
                 // Only include approved logs in calculations
-                $approvedLogs = $mappedTimeLogs->where('status', \App\Enums\TimeLogStatus::APPROVED);
+                $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
                 $totalDuration = round($approvedLogs->sum('duration'), 2);
                 $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
                 $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);

@@ -42,7 +42,7 @@ final class TimeLogController extends Controller
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
         $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
         // Only include approved logs in calculations
-        $approvedLogs = $mappedTimeLogs->where('status', \App\Enums\TimeLogStatus::APPROVED);
+        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
         $totalDuration = round($approvedLogs->sum('duration'), 2);
         $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
         $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);

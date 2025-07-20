@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Stores\ClientStore;
@@ -192,7 +193,7 @@ final class ProjectController extends Controller
 
         $mappedTimeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
         // Only include approved logs in calculations
-        $approvedLogs = $mappedTimeLogs->where('status', \App\Enums\TimeLogStatus::APPROVED);
+        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
         $totalDuration = round($approvedLogs->sum('duration'), 2);
         $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Stores;
 
+use App\Enums\TimeLogStatus;
 use App\Http\QueryFilters\TimeLog\EndDateFilter;
 use App\Http\QueryFilters\TimeLog\IsPaidFilter;
 use App\Http\QueryFilters\TimeLog\ProjectIdFilter;
@@ -13,6 +14,7 @@ use App\Http\QueryFilters\TimeLog\UserIdFilter;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -24,7 +26,7 @@ final class TimeLogStore
     {
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
-            ->where('status', \App\Enums\TimeLogStatus::APPROVED)
+            ->where('status', TimeLogStatus::APPROVED)
             ->orderBy('start_timestamp', 'desc')
             ->with('user')
             ->take($limit)
@@ -35,7 +37,7 @@ final class TimeLogStore
     {
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
-            ->where('status', \App\Enums\TimeLogStatus::APPROVED)
+            ->where('status', TimeLogStatus::APPROVED)
             ->sum('duration');
     }
 
@@ -44,7 +46,7 @@ final class TimeLogStore
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
             ->where('is_paid', false)
-            ->where('status', \App\Enums\TimeLogStatus::APPROVED)
+            ->where('status', TimeLogStatus::APPROVED)
             ->sum('duration');
     }
 
@@ -81,7 +83,7 @@ final class TimeLogStore
             ->with('project')
             ->where('user_id', $teamMemberId)
             ->where('is_paid', false)
-            ->where('status', \App\Enums\TimeLogStatus::APPROVED)
+            ->where('status', TimeLogStatus::APPROVED)
             ->get();
     }
 
@@ -118,7 +120,7 @@ final class TimeLogStore
             ->with('project')
             ->where('user_id', $teamMemberId)
             ->where('is_paid', true)
-            ->where('status', \App\Enums\TimeLogStatus::APPROVED)
+            ->where('status', TimeLogStatus::APPROVED)
             ->get();
     }
 
@@ -130,7 +132,7 @@ final class TimeLogStore
             $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $currency = $timeLog->currency ?? 'USD';
 
-            if (! $timeLog['is_paid'] && $timeLog['status'] === \App\Enums\TimeLogStatus::APPROVED) {
+            if (! $timeLog['is_paid'] && $timeLog['status'] === TimeLogStatus::APPROVED) {
                 if (! isset($unpaidAmounts[$currency])) {
                     $unpaidAmounts[$currency] = 0;
                 }
@@ -154,7 +156,7 @@ final class TimeLogStore
             $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $currency = $timeLog->currency ?? 'USD';
 
-            if ($timeLog['is_paid'] && $timeLog['status'] === \App\Enums\TimeLogStatus::APPROVED) {
+            if ($timeLog['is_paid'] && $timeLog['status'] === TimeLogStatus::APPROVED) {
                 if (! isset($paidAmounts[$currency])) {
                     $paidAmounts[$currency] = 0;
                 }
@@ -195,7 +197,7 @@ final class TimeLogStore
             // Get approver name if approved_by is set
             $approverName = null;
             if ($timeLog->approved_by) {
-                $approver = \App\Models\User::find($timeLog->approved_by);
+                $approver = User::query()->find($timeLog->approved_by);
                 $approverName = $approver ? $approver->name : null;
             }
 

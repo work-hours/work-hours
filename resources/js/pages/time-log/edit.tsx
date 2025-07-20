@@ -121,13 +121,7 @@ export default function EditTimeLog({ timeLog, projects }: Props) {
         if (date) {
             // Use the date from start_timestamp but time from the selected end time
             const startDate = new Date(data.start_timestamp)
-            const localDate = new Date(
-                startDate.getFullYear(),
-                startDate.getMonth(),
-                startDate.getDate(),
-                date.getHours(),
-                date.getMinutes()
-            )
+            const localDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), date.getHours(), date.getMinutes())
             setData('end_timestamp', localDate.toISOString())
         } else {
             setData('end_timestamp', '')
@@ -223,9 +217,11 @@ export default function EditTimeLog({ timeLog, projects }: Props) {
                                         filterDate={(date) => {
                                             // Only allow the same date as the start date
                                             const start = new Date(data.start_timestamp)
-                                            return date.getDate() === start.getDate() &&
+                                            return (
+                                                date.getDate() === start.getDate() &&
                                                 date.getMonth() === start.getMonth() &&
                                                 date.getFullYear() === start.getFullYear()
+                                            )
                                         }}
                                         customInput={
                                             <CustomInput

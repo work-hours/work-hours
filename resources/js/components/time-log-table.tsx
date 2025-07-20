@@ -143,11 +143,7 @@ export default function TimeLogTable({
                             </div>
                         </TableCell>
                         <TableCell>
-                            {log.approver_name ? (
-                                <span className="font-medium">{log.approver_name}</span>
-                            ) : (
-                                <span className="text-gray-500">-</span>
-                            )}
+                            {log.approver_name ? <span className="font-medium">{log.approver_name}</span> : <span className="text-gray-500">-</span>}
                         </TableCell>
                         <TableCell className="max-w-xs break-words whitespace-normal" title={log.comment}>
                             <div className="max-h-20 overflow-y-auto">{log.comment || '-'}</div>
