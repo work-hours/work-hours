@@ -1,8 +1,17 @@
 import { MasterContent } from '@/components/master-content'
 import { MasterSidebar } from '@/components/master-sidebar'
+import FloatingTimeTracker from '@/components/floating-time-tracker'
 import { type BreadcrumbItem } from '@/types'
 import { type ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import { projects } from '@actions/DashboardController'
+
+interface Project {
+    id: number
+    name: string
+}
 
 interface MasterLayoutProps {
     children: ReactNode
@@ -18,6 +27,24 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
         }
         return false
     })
+
+    const [userProjects, setUserProjects] = useState<Project[]>([])
+    const [projectsLoaded, setProjectsLoaded] = useState(false)
+
+    // Fetch projects for the time tracker
+    const getProjects = async (): Promise<void> => {
+        try {
+            const response = await projects.data({})
+            setUserProjects(response.projects)
+            setProjectsLoaded(true)
+        } catch (error: unknown) {
+            console.error('Failed to fetch projects:', error)
+        }
+    }
+
+    useEffect(() => {
+        getProjects().then()
+    }, [])
 
     // Save collapsed state to localStorage when it changes
     useEffect(() => {
@@ -51,6 +78,9 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
 
             {/* Toaster for notifications with improved positioning */}
             <Toaster position="top-right" closeButton={true} />
+
+            {/* Floating Time Tracker */}
+            {projectsLoaded && <FloatingTimeTracker projects={userProjects} />}
         </div>
     )
 }
