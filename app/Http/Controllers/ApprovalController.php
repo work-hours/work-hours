@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeLogStatus;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
 use App\Models\TimeLog;
 use App\Models\User;
 use App\Notifications\TimeLogApproved;
+use App\Notifications\TimeLogRejected;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -22,7 +24,6 @@ final class ApprovalController extends Controller
 {
     public function index()
     {
-        // Get all pending time logs for team members where the current user is a team leader or approver
         $pendingTimeLogs = $this->getPendingApprovals();
         $mappedTimeLogs = TimeLogStore::timeLogMapper($pendingTimeLogs);
 
@@ -66,12 +67,10 @@ final class ApprovalController extends Controller
         try {
             $timeLog = TimeLog::query()->findOrFail($timeLogId);
 
-            // Check if the user is authorized to approve this time log
             $this->authorizeApproval($timeLog);
 
-            // Update the time log status
             $timeLog->update([
-                'status' => 'approved',
+                'status' => TimeLogStatus::APPROVED,
                 'approved_by' => auth()->id(),
                 'approved_at' => Carbon::now(),
                 'comment' => request('comment'),
@@ -79,7 +78,6 @@ final class ApprovalController extends Controller
 
             DB::commit();
 
-            // Notify the time log owner
             $timeLogOwner = User::query()->find($timeLog->user_id);
             if ($timeLogOwner && auth()->id() !== $timeLogOwner->getKey()) {
                 $timeLogOwner->notify(new TimeLogApproved($timeLog, auth()->user()));
@@ -121,13 +119,11 @@ final class ApprovalController extends Controller
             $skippedCount = 0;
 
             foreach ($timeLogs as $timeLog) {
-                // Check if the user is authorized to approve this time log
                 try {
                     $this->authorizeApproval($timeLog);
 
-                    // Update the time log status
                     $timeLog->update([
-                        'status' => 'approved',
+                        'status' => TimeLogStatus::APPROVED,
                         'approved_by' => auth()->id(),
                         'approved_at' => Carbon::now(),
                         'comment' => request('comment'),
@@ -135,7 +131,6 @@ final class ApprovalController extends Controller
 
                     $approvedCount++;
 
-                    // Notify the time log owner
                     $timeLogOwner = User::query()->find($timeLog->user_id);
                     if ($timeLogOwner && auth()->id() !== $timeLogOwner->getKey()) {
                         $timeLogOwner->notify(new TimeLogApproved($timeLog, auth()->user()));
@@ -182,18 +177,32 @@ final class ApprovalController extends Controller
         try {
             $timeLog = TimeLog::query()->findOrFail($timeLogId);
 
-            // Check if the user is authorized to reject this time log
             $this->authorizeApproval($timeLog);
 
-            // Update the time log status
             $timeLog->update([
-                'status' => 'rejected',
+                'status' => TimeLogStatus::REJECTED,
                 'approved_by' => auth()->id(),
                 'approved_at' => Carbon::now(),
                 'comment' => request('comment'),
             ]);
 
             DB::commit();
+
+            $timeLogOwner = User::query()->find($timeLog->user_id);
+            if ($timeLogOwner && auth()->id() !== $timeLogOwner->getKey()) {
+                $timeLogOwner->notify(new TimeLogRejected($timeLog, auth()->user()));
+            }
+
+            $teamLeader = User::teamLeader(project: $timeLog->project);
+            $isApprover = DB::table('project_team')
+                ->where('project_id', $timeLog->project_id)
+                ->where('member_id', auth()->id())
+                ->where('is_approver', true)
+                ->exists();
+
+            if ($isApprover && auth()->id() !== $teamLeader->getKey()) {
+                $teamLeader->notify(new TimeLogRejected($timeLog, auth()->user()));
+            }
 
             return response()->json([
                 'success' => true,
@@ -214,29 +223,24 @@ final class ApprovalController extends Controller
      */
     private function getPendingApprovals()
     {
-        // Get all projects where the current user is a team leader
         $leadProjects = ProjectStore::userProjects(userId: auth()->id())
             ->pluck('id')
             ->toArray();
 
-        // Get all project-team entries where the current user is an approver
         $approverProjects = DB::table('project_team')
             ->where('member_id', auth()->id())
             ->where('is_approver', true)
             ->pluck('project_id')
             ->toArray();
 
-        // Combine the projects
         $allProjects = array_unique(array_merge($leadProjects, $approverProjects));
 
-        // Get all team members for these projects
         $teamMemberIds = DB::table('project_team')
             ->whereIn('project_id', $allProjects)
             ->where('member_id', '!=', auth()->id())
             ->pluck('member_id')
             ->toArray();
 
-        // Get all pending time logs for these team members
         return TimeLogStore::timeLogs(
             baseQuery: TimeLog::query()
                 ->whereIn('user_id', $teamMemberIds)
@@ -248,14 +252,12 @@ final class ApprovalController extends Controller
     /**
      * Check if the current user is authorized to approve/reject the given time log
      *
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     private function authorizeApproval(TimeLog $timeLog): void
     {
-        // Check if the current user is the team leader for the project
         $teamLeader = User::teamLeader(project: $timeLog->project);
 
-        // Check if the current user is an approver for the project
         $isApprover = DB::table('project_team')
             ->where('project_id', $timeLog->project_id)
             ->where('member_id', auth()->id())
