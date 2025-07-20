@@ -1,7 +1,6 @@
 import DeleteTimeLog from '@/components/delete-time-log'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
-import { formatDateTime } from '@/lib/utils'
 import { Link } from '@inertiajs/react'
 import { Edit, Trash2 } from 'lucide-react'
 
@@ -50,15 +49,10 @@ export default function TimeLogTable({
                     {showCheckboxes && <TableHead className="w-[50px]">Select</TableHead>}
                     {showTeamMember && <TableHead>Team Member</TableHead>}
                     {showProject && <TableHead>Project</TableHead>}
-                    <TableHead>Start Time</TableHead>
-                    <TableHead>End Time</TableHead>
                     <TableHead>Duration</TableHead>
                     <TableHead>Hourly Rate</TableHead>
                     <TableHead>Paid Amount</TableHead>
-                    <TableHead>Note</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Approved By</TableHead>
-                    <TableHead>Comment</TableHead>
                     {showActions && <TableHead className="text-right">Actions</TableHead>}
                 </TableHeaderRow>
             </TableHeader>
@@ -85,8 +79,6 @@ export default function TimeLogTable({
                         )}
                         {showTeamMember && <TableCell className="font-medium">{log.user_name}</TableCell>}
                         {showProject && <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>}
-                        <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
-                        <TableCell className="font-medium">{formatDateTime(log.end_timestamp)}</TableCell>
                         <TableCell>
                             <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                                 {log.duration}
@@ -109,9 +101,6 @@ export default function TimeLogTable({
                             ) : (
                                 <span className="text-gray-500">-</span>
                             )}
-                        </TableCell>
-                        <TableCell className="max-w-xs break-words whitespace-normal" title={log.note}>
-                            <div className="max-h-20 overflow-y-auto">{log.note}</div>
                         </TableCell>
                         <TableCell>
                             <div className="flex flex-col gap-1">
@@ -141,12 +130,6 @@ export default function TimeLogTable({
                                     </span>
                                 )}
                             </div>
-                        </TableCell>
-                        <TableCell>
-                            {log.approver_name ? <span className="font-medium">{log.approver_name}</span> : <span className="text-gray-500">-</span>}
-                        </TableCell>
-                        <TableCell className="max-w-xs break-words whitespace-normal" title={log.comment}>
-                            <div className="max-h-20 overflow-y-auto">{log.comment || '-'}</div>
                         </TableCell>
                         {showActions && (
                             <TableCell className="text-right">
