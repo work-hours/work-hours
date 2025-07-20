@@ -213,7 +213,7 @@ export default function Profile({ mustVerifyEmail, status, currencies }: { mustV
                     </form>
                 </div>
 
-                <DeleteUser />
+                {/*<DeleteUser />*/}
             </SettingsLayout>
         </MasterLayout>
     )

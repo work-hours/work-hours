@@ -1,6 +1,5 @@
 import StatsCards from '@/components/dashboard/StatsCards'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
-import TimeTracker from '@/components/time-tracker'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -466,8 +465,6 @@ export default function TimeLog({
                         </p>
                     </CardContent>
                 </Card>
-
-                <TimeTracker projects={projects} />
 
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="pb-3">

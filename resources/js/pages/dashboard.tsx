@@ -4,14 +4,13 @@ import StatsCards from '@/components/dashboard/StatsCards'
 import TeamProductivity from '@/components/dashboard/TeamProductivity'
 import WeeklyTrend from '@/components/dashboard/WeeklyTrend'
 import WelcomeSection from '@/components/dashboard/WelcomeSection'
-import TimeTracker from '@/components/time-tracker'
 import Loader from '@/components/ui/loader'
 import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { projects, stats } from '@actions/DashboardController'
+import { stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
 import { BarChart2, Clock, LayoutGrid } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -27,11 +26,6 @@ interface TeamStats {
     currency: string
     weeklyAverage: number
     clientCount: number
-}
-
-interface Project {
-    id: number
-    name: string
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -55,7 +49,6 @@ export default function Dashboard() {
         weeklyAverage: 0,
         clientCount: 0,
     })
-    const [userProjects, setUserProjects] = useState<Project[]>([])
 
     const getStats = async (): Promise<void> => {
         try {
@@ -69,18 +62,8 @@ export default function Dashboard() {
         }
     }
 
-    const getProjects = async (): Promise<void> => {
-        try {
-            const response = await projects.data({})
-            setUserProjects(response.projects)
-        } catch (error: unknown) {
-            console.error('Failed to fetch projects:', error)
-        }
-    }
-
     useEffect(() => {
         getStats().then()
-        getProjects().then()
     }, [])
 
     const hoursData = [
@@ -102,8 +85,6 @@ export default function Dashboard() {
                 <div className="relative border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                     <WelcomeSection />
                 </div>
-
-                {!loading && <TimeTracker projects={userProjects} />}
 
                 {loading ? (
                     <div className="relative border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
