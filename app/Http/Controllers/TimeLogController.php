@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
+use App\Enums\TimeLogStatus;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
@@ -96,7 +97,7 @@ final class TimeLogController extends Controller
                 $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
 
                 if ($project && $project->isCreator(auth()->id())) {
-                    $data['status'] = 'approved';
+                    $data['status'] = TimeLogStatus::APPROVED;
                     $data['is_paid'] = true;
                     $data['approved_by'] = auth()->id();
                     $data['approved_at'] = Carbon::now();
@@ -196,7 +197,7 @@ final class TimeLogController extends Controller
                 }
 
                 // Check if the time log is approved
-                if ($timeLog->status !== 'approved') {
+                if ($timeLog->status !== TimeLogStatus::APPROVED) {
                     $invalidLogs[] = $timeLog->id;
 
                     continue;
@@ -327,7 +328,7 @@ final class TimeLogController extends Controller
                 'hourly_rate' => $hourlyRate,
                 'paid_amount' => $paidAmount,
                 'note' => $timeLog->note,
-                'status' => ucfirst($timeLog->status ?: 'pending'),
+                'status' => ucfirst($timeLog->status?->value ?: TimeLogStatus::PENDING->value),
                 'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
             ];
         });

@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
+import { TimeLogStatus, timeLogStatusOptions } from '@/types/TimeLogStatus'
 import { Head, Link, router, useForm } from '@inertiajs/react'
 import axios from 'axios'
 import {
@@ -116,7 +117,6 @@ export default function TimeLog({
     totalDuration,
     unpaidHours,
     unpaidAmount,
-    paidHours,
     paidAmount,
     currency,
     weeklyAverage,
@@ -375,9 +375,7 @@ export default function TimeLog({
                                     onChange={(value) => setData('status', value)}
                                     options={[
                                         { id: '', name: 'All Statuses' },
-                                        { id: 'pending', name: 'Pending' },
-                                        { id: 'approved', name: 'Approved' },
-                                        { id: 'rejected', name: 'Rejected' },
+                                        ...timeLogStatusOptions
                                     ]}
                                     placeholder="Approval status"
                                     disabled={processing}
@@ -450,8 +448,8 @@ export default function TimeLog({
                                         }
 
                                         if (data.status) {
-                                            const statusText = data.status === 'pending' ? 'pending' :
-                                                              data.status === 'approved' ? 'approved' : 'rejected'
+                                            const statusText = data.status === TimeLogStatus.PENDING ? 'pending' :
+                                                              data.status === TimeLogStatus.APPROVED ? 'approved' : 'rejected'
 
                                             if (description) {
                                                 description += ` with ${statusText} status`

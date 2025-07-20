@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\TimeLogStatus;
 use App\Policies\TimeLogPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
@@ -63,7 +64,7 @@ final class TimeLog extends Model
             'is_paid' => 'boolean',
             'hourly_rate' => 'decimal:2',
             'currency' => 'string',
-            'status' => 'string',
+            'status' => TimeLogStatus::class,
         ];
     }
 }
