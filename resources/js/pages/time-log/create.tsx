@@ -1,7 +1,7 @@
 import DatePicker from '@/components/ui/date-picker'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
-import { FormEventHandler, forwardRef } from 'react'
+import { FormEventHandler, forwardRef, useMemo } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
@@ -88,6 +88,18 @@ export default function CreateTimeLog({ projects }: Props) {
     const startDate = data.start_timestamp ? new Date(data.start_timestamp) : new Date()
     const endDate = data.end_timestamp ? new Date(data.end_timestamp) : null
 
+    // Calculate hours between start and end time when both are filled
+    const calculatedHours = useMemo(() => {
+        if (!data.start_timestamp || !data.end_timestamp) return null
+
+        const start = new Date(data.start_timestamp)
+        const end = new Date(data.end_timestamp)
+        const diffMs = end.getTime() - start.getTime()
+        const diffHours = diffMs / (1000 * 60 * 60)
+
+        return Math.round(diffHours * 100) / 100 // Round to 2 decimal places
+    }, [data.start_timestamp, data.end_timestamp])
+
     // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
@@ -99,7 +111,9 @@ export default function CreateTimeLog({ projects }: Props) {
 
     const handleEndDateChange = (date: Date | null) => {
         if (date) {
-            const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes())
+            // Use the date from start_timestamp but time from the selected end time
+            const startDate = new Date(data.start_timestamp)
+            const localDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), date.getHours(), date.getMinutes())
             setData('end_timestamp', localDate.toISOString())
         } else {
             setData('end_timestamp', '')
@@ -193,6 +207,15 @@ export default function CreateTimeLog({ projects }: Props) {
                                         disabled={processing}
                                         isClearable
                                         placeholderText="Select end time (optional)"
+                                        filterDate={(date) => {
+                                            // Only allow the same date as the start date
+                                            const start = new Date(data.start_timestamp)
+                                            return (
+                                                date.getDate() === start.getDate() &&
+                                                date.getMonth() === start.getMonth() &&
+                                                date.getFullYear() === start.getFullYear()
+                                            )
+                                        }}
                                         customInput={
                                             <CustomInput
                                                 id="end_timestamp"
@@ -203,6 +226,11 @@ export default function CreateTimeLog({ projects }: Props) {
                                         }
                                     />
                                     <InputError message={errors.end_timestamp} />
+                                    {calculatedHours !== null && (
+                                        <p className="mt-1 text-sm font-medium text-green-600 dark:text-green-400">
+                                            Duration: {calculatedHours} hours
+                                        </p>
+                                    )}
                                     <p className="text-xs text-muted-foreground">Leave end time empty if you're still working</p>
                                 </div>
 

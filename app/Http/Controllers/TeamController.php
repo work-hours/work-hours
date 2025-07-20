@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreTeamMemberRequest;
 use App\Http\Requests\UpdateTeamMemberRequest;
 use App\Http\Stores\ProjectStore;
@@ -53,8 +54,10 @@ final class TeamController extends Controller
             ->map(function ($team): array {
                 $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', $team->member->getkey()));
                 $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
-                $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
-                $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
+                // Only include approved logs in calculations
+                $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
+                $totalDuration = round($approvedLogs->sum('duration'), 2);
+                $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
                 $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
                 $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
@@ -92,9 +95,11 @@ final class TeamController extends Controller
         );
         $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
 
-        $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
-        $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
-        $paidHours = round($mappedTimeLogs->where('is_paid', true)->sum('duration'), 2);
+        // Only include approved logs in calculations
+        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
+        $totalDuration = round($approvedLogs->sum('duration'), 2);
+        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
+        $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
         $team = TeamStore::teamEntry(userId: auth()->id(), memberId: $user->getKey());
@@ -270,10 +275,12 @@ final class TeamController extends Controller
         );
         $unpaidAmountsByCurrency = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
         $paidAmountsByCurrency = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
-        $timeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
-        $totalDuration = round($timeLogs->sum('duration'), 2);
-        $unpaidHours = round($timeLogs->where('is_paid', false)->sum('duration'), 2);
-        $paidHours = round($timeLogs->where('is_paid', true)->sum('duration'), 2);
+        $mappedTimeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
+        // Only include approved logs in calculations
+        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
+        $totalDuration = round($approvedLogs->sum('duration'), 2);
+        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
+        $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
         $defaultCurrency = 'USD';
@@ -283,7 +290,7 @@ final class TeamController extends Controller
             ->map(fn ($teamMember): array => [
                 'id' => $teamMember->member->getKey(),
                 'name' => $teamMember->member->name,
-                'email' => $teamMember->member->email
+                'email' => $teamMember->member->email,
             ]);
 
         // For backward compatibility, calculate total unpaid amount
@@ -292,7 +299,7 @@ final class TeamController extends Controller
         $totalPaidAmount = array_sum($paidAmountsByCurrency);
 
         return Inertia::render('team/all-time-logs', [
-            'timeLogs' => $timeLogs,
+            'timeLogs' => $mappedTimeLogs,
             'filters' => [
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
@@ -336,8 +343,10 @@ final class TeamController extends Controller
             ->map(function ($team): array {
                 $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', $team->member->id));
                 $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
-                $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
-                $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
+                // Only include approved logs in calculations
+                $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
+                $totalDuration = round($approvedLogs->sum('duration'), 2);
+                $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
                 $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
                 $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
@@ -369,6 +378,7 @@ final class TeamController extends Controller
     #[Action(method: 'get', name: 'team.export-time-logs', middleware: ['auth', 'verified'])]
     public function exportTimeLogs(): StreamedResponse
     {
+        // Use the same base query as the allTimeLogs method, ensuring all filters are applied
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->whereIn('user_id', TeamStore::teamMembersIds(userId: auth()->id())));
         $mappedTimeLogs = $timeLogs->map(fn ($timeLog): array => [
             'id' => $timeLog->id,
@@ -378,10 +388,11 @@ final class TeamController extends Controller
             'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
             'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
             'note' => $timeLog->note,
-            'is_paid' => $timeLog->is_paid,
+            'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
+            'hourly_rate' => $timeLog->hourly_rate ?: Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id),
         ]);
 
-        $headers = ['ID', 'Team Member', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Note', 'Paid'];
+        $headers = ['ID', 'Team Member', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Note', 'Paid', 'Hourly Rate'];
         $filename = 'team_time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);

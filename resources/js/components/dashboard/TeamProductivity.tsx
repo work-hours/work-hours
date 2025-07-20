@@ -44,7 +44,7 @@ export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
                         <p className="font-['Courier_New',monospace]">Add team members to see productivity insights</p>
                         <Link
                             href="/team/create"
-                            className="mt-2 border-b border-gray-400 dark:border-gray-600 pb-0.5 font-['Courier_New',monospace] font-bold text-gray-700 dark:text-gray-300 hover:border-gray-700 dark:hover:border-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                            className="mt-2 border-b border-gray-400 pb-0.5 font-['Courier_New',monospace] font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
                         >
                             Add team members
                         </Link>

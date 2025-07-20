@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\TimeLogStatus;
 use App\Policies\TimeLogPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property float $hourly_rate
  * @property string $currency
  * @property string $note
+ * @property string $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Project $project
@@ -40,6 +42,7 @@ final class TimeLog extends Model
         'hourly_rate',
         'note',
         'currency',
+        'status',
     ];
 
     public function user(): BelongsTo
@@ -61,6 +64,7 @@ final class TimeLog extends Model
             'is_paid' => 'boolean',
             'hourly_rate' => 'decimal:2',
             'currency' => 'string',
+            'status' => TimeLogStatus::class,
         ];
     }
 }

@@ -29,6 +29,7 @@ type Project = {
     name: string
     description: string | null
     team_members: TeamMember[]
+    approvers: TeamMember[]
     user: {
         id: number
         name: string
@@ -130,6 +131,7 @@ export default function Projects({ auth }: Props) {
                                         <TableHead>Description</TableHead>
                                         <TableHead>Owner</TableHead>
                                         <TableHead>Team Members</TableHead>
+                                        <TableHead>Approvers</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
@@ -164,6 +166,23 @@ export default function Projects({ auth }: Props) {
                                                     </div>
                                                 ) : (
                                                     <span className="text-muted-foreground/50">No team members</span>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {project.approvers && project.approvers.length > 0 ? (
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {project.approvers.map((approver) => (
+                                                            <span
+                                                                key={approver.id}
+                                                                className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-700/10 ring-inset dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30"
+                                                                title={approver.email}
+                                                            >
+                                                                {approver.name}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-muted-foreground/50">No approvers</span>
                                                 )}
                                             </TableCell>
                                             <TableCell className="text-right">

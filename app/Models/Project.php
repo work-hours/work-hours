@@ -26,6 +26,7 @@ use Illuminate\Support\Carbon;
  * @property User $user
  * @property Client|null $client
  * @property Collection|User[] $teamMembers
+ * @property Collection|User[] $approvers
  */
 #[UsePolicy(ProjectPolicy::class)]
 final class Project extends Model
@@ -41,6 +42,13 @@ final class Project extends Model
     {
         return $this->belongsToMany(User::class, 'project_team', 'project_id', 'member_id')
             ->withTimestamps();
+    }
+
+    public function approvers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'project_team', 'project_id', 'member_id')
+            ->withTimestamps()
+            ->wherePivot('is_approver', true);
     }
 
     public function client(): BelongsTo

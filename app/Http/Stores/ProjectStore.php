@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Stores;
 
 use App\Models\Project;
+use App\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -14,7 +15,7 @@ final class ProjectStore
     {
         $ownedProjects = Project::query()
             ->where('user_id', $userId)
-            ->with(['teamMembers', 'user'])
+            ->with(['teamMembers', 'approvers', 'user'])
             ->get();
 
         $assignedProjects = Project::query()
@@ -22,7 +23,7 @@ final class ProjectStore
                 $query->where('users.id', $userId);
             })
             ->where('user_id', '!=', $userId)
-            ->with(['teamMembers', 'user'])
+            ->with(['teamMembers', 'approvers', 'user'])
             ->get();
 
         return $ownedProjects->concat($assignedProjects);
@@ -59,8 +60,9 @@ final class ProjectStore
             'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
             'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : 'In Progress',
             'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-            'note' => $timeLog->note,
             'is_paid' => $timeLog->is_paid ? 'Paid' : 'Unpaid',
+            'note' => $timeLog->note,
+            'hourly_rate' => $timeLog->hourly_rate ?: Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id),
         ]);
     }
 
@@ -72,6 +74,7 @@ final class ProjectStore
             'description' => $project->description,
             'owner' => $project->user->name,
             'team_members' => $project->teamMembers->pluck('name')->implode(', '),
+            'approvers' => $project->approvers->pluck('name')->implode(', '),
             'created_at' => Carbon::parse($project->created_at)->toDateTimeString(),
         ]);
     }

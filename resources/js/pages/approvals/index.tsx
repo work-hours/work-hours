@@ -1,6 +1,5 @@
-import StatsCards from '@/components/dashboard/StatsCards'
-import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
-import TimeTracker from '@/components/time-tracker'
+import ApprovalTimeLogTable from '@/components/approval-time-log-table'
+import StatsCard from '@/components/dashboard/StatsCard'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,26 +8,14 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
+import { Textarea } from '@/components/ui/textarea'
 import MasterLayout from '@/layouts/master-layout'
+import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
-import { TimeLogStatus, timeLogStatusOptions } from '@/types/TimeLogStatus'
-import { Head, Link, router, useForm } from '@inertiajs/react'
+import { Head, useForm } from '@inertiajs/react'
 import axios from 'axios'
-import {
-    AlertCircle,
-    Briefcase,
-    Calendar,
-    CalendarRange,
-    CheckCircle,
-    ClockIcon,
-    Download,
-    FileSpreadsheet,
-    PlusCircle,
-    Search,
-    TimerReset,
-    Upload,
-} from 'lucide-react'
-import { ChangeEvent, FormEventHandler, forwardRef, ReactNode, useRef, useState } from 'react'
+import { AlertCircle, Briefcase, Calendar, CalendarRange, CheckCircle, CheckSquare, ClockIcon, Search, TimerReset, User } from 'lucide-react'
+import { ChangeEvent, FormEventHandler, forwardRef, ReactNode, useState } from 'react'
 
 interface CustomInputProps {
     value?: string
@@ -67,29 +54,28 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Time Log',
-        href: '/time-log',
+        title: 'Approvals',
+        href: '/approvals',
     },
 ]
 
 type TimeLog = {
     id: number
+    user_id: number
+    user_name: string
     project_id: number
     project_name: string | null
     start_timestamp: string
     end_timestamp: string
     duration: number
-    is_paid: boolean
-    hourly_rate?: number
-    paid_amount?: number
+    status: 'pending' | 'approved' | 'rejected'
 }
 
 type Filters = {
     start_date: string
     end_date: string
     project_id: string
-    is_paid: string
-    status: string
+    user_id: string
 }
 
 type Project = {
@@ -97,45 +83,36 @@ type Project = {
     name: string
 }
 
+type TeamMember = {
+    id: number
+    name: string
+    email: string
+}
+
 type Props = {
     timeLogs: TimeLog[]
     filters: Filters
     projects: Project[]
+    teamMembers: TeamMember[]
     totalDuration: number
-    unpaidHours: number
-    unpaidAmount: Record<string, number>
-    paidHours: number
-    paidAmount: Record<string, number>
-    currency: string
-    weeklyAverage: number
 }
 
-export default function TimeLog({
-    timeLogs,
-    filters,
-    projects,
-    totalDuration,
-    unpaidHours,
-    unpaidAmount,
-    paidAmount,
-    currency,
-    weeklyAverage,
-}: Props) {
+export default function Approvals({ timeLogs, filters, projects, teamMembers, totalDuration }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
         project_id: filters.project_id || '',
-        is_paid: filters.is_paid || '',
-        status: filters.status || '',
+        user_id: filters.user_id || '',
     })
 
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
-    const [importDialogOpen, setImportDialogOpen] = useState(false)
-    const [importFile, setImportFile] = useState<File | null>(null)
-    const [importing, setImporting] = useState(false)
-    const [importSuccess, setImportSuccess] = useState<string | null>(null)
-    const [importErrors, setImportErrors] = useState<string[]>([])
-    const fileInputRef = useRef<HTMLInputElement>(null)
+    const [approveDialogOpen, setApproveDialogOpen] = useState(false)
+    const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
+    const [singleApprovalId, setSingleApprovalId] = useState<number | null>(null)
+    const [comment, setComment] = useState('')
+    const [approving, setApproving] = useState(false)
+    const [approvalSuccess, setApprovalSuccess] = useState<string | null>(null)
+    const [approvalError, setApprovalError] = useState<string | null>(null)
 
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
@@ -145,94 +122,128 @@ export default function TimeLog({
         }
     }
 
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setImportFile(e.target.files[0])
-        }
+    const openSingleApproveDialog = (id: number) => {
+        setSingleApprovalId(id)
+        setComment('')
+        setApprovalSuccess(null)
+        setApprovalError(null)
+        setApproveDialogOpen(true)
     }
 
-    const handleImport = async () => {
-        if (!importFile) return
+    const openSingleRejectDialog = (id: number) => {
+        setSingleApprovalId(id)
+        setComment('')
+        setApprovalSuccess(null)
+        setApprovalError(null)
+        setRejectDialogOpen(true)
+    }
 
-        setImporting(true)
-        setImportSuccess(null)
-        setImportErrors([])
+    const openBulkApproveDialog = () => {
+        if (selectedLogs.length === 0) return
+        setSingleApprovalId(null)
+        setComment('')
+        setApprovalSuccess(null)
+        setApprovalError(null)
+        setApproveDialogOpen(true)
+    }
 
-        const formData = new FormData()
-        formData.append('file', importFile)
+    const closeApproveDialog = () => {
+        setApproveDialogOpen(false)
+        setSingleApprovalId(null)
+        setComment('')
+    }
+
+    const closeRejectDialog = () => {
+        setRejectDialogOpen(false)
+        setSingleApprovalId(null)
+        setComment('')
+    }
+
+    const handleApprove = async () => {
+        setApproving(true)
+        setApprovalSuccess(null)
+        setApprovalError(null)
 
         try {
-            const response = await axios.post(route('time-log.import'), formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            })
-
-            setImportSuccess(response.data.message)
-
-            if (response.data.errors && response.data.errors.length > 0) {
-                setImportErrors(response.data.errors)
+            let response
+            if (singleApprovalId) {
+                // Approve single time log
+                response = await axios.post(route('approvals.approve'), {
+                    time_log_id: singleApprovalId,
+                    comment: comment,
+                })
             } else {
-                setTimeout(() => resetImport(), 1000)
+                // Approve multiple time logs
+                response = await axios.post(route('approvals.approve-multiple'), {
+                    time_log_ids: selectedLogs,
+                    comment: comment,
+                })
             }
 
+            setApprovalSuccess(response.data.message)
+
+            // Refresh the page after a short delay
             setTimeout(() => {
-                get(route('time-log.index'), { preserveState: true })
-            }, 2000)
+                get(route('approvals.index'), { preserveState: true })
+                closeApproveDialog()
+                setSelectedLogs([])
+            }, 1500)
         } catch (error) {
             const axiosError = error as {
                 response?: {
                     data?: {
-                        errors?: string[]
                         message?: string
                     }
                 }
             }
 
-            if (axiosError.response && axiosError.response.data) {
-                if (axiosError.response.data.errors) {
-                    setImportErrors(axiosError.response.data.errors)
-                } else if (axiosError.response.data.message) {
-                    setImportErrors([axiosError.response.data.message])
-                }
+            if (axiosError.response && axiosError.response.data && axiosError.response.data.message) {
+                setApprovalError(axiosError.response.data.message)
             } else {
-                setImportErrors(['An unexpected error occurred. Please try again.'])
+                setApprovalError('An unexpected error occurred. Please try again.')
             }
         } finally {
-            setImporting(false)
+            setApproving(false)
         }
     }
 
-    const resetImport = () => {
-        setImportFile(null)
-        setImportSuccess(null)
-        setImportErrors([])
-        if (fileInputRef.current) {
-            fileInputRef.current.value = ''
+    const handleReject = async () => {
+        if (!singleApprovalId) return
+
+        setApproving(true)
+        setApprovalSuccess(null)
+        setApprovalError(null)
+
+        try {
+            const response = await axios.post(route('approvals.reject'), {
+                time_log_id: singleApprovalId,
+                comment: comment,
+            })
+
+            setApprovalSuccess(response.data.message)
+
+            // Refresh the page after a short delay
+            setTimeout(() => {
+                get(route('approvals.index'), { preserveState: true })
+                closeRejectDialog()
+            }, 1500)
+        } catch (error) {
+            const axiosError = error as {
+                response?: {
+                    data?: {
+                        message?: string
+                    }
+                }
+            }
+
+            if (axiosError.response && axiosError.response.data && axiosError.response.data.message) {
+                setApprovalError(axiosError.response.data.message)
+            } else {
+                setApprovalError('An unexpected error occurred. Please try again.')
+            }
+        } finally {
+            setApproving(false)
         }
-    }
-
-    const closeImportDialog = () => {
-        setImportDialogOpen(false)
-        resetImport()
-    }
-
-    const markAsPaid = () => {
-        if (selectedLogs.length === 0) {
-            return
-        }
-
-        router.post(
-            route('time-log.mark-as-paid'),
-            {
-                time_log_ids: selectedLogs,
-            },
-            {
-                onSuccess: () => {
-                    setSelectedLogs([])
-                },
-            },
-        )
     }
 
     const startDate = data.start_date ? new Date(data.start_date) : null
@@ -256,36 +267,29 @@ export default function TimeLog({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        get(route('time-log.index'), {
+        get(route('approvals.index'), {
             preserveState: true,
         })
     }
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
-            <Head title="Time Log" />
+            <Head title="Approvals" />
             <div className="mx-auto flex flex-col gap-6 p-6">
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Time Logs</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage your work hours</p>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Pending Approvals</h1>
+                    <p className="mt-1 text-gray-500 dark:text-gray-400">Approve or reject time logs from your team members</p>
                 </section>
 
                 {timeLogs.length > 0 && (
-                    <section className="mb-4">
+                    <section className="mb-4 w-3/12">
                         <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
-                        <StatsCards
-                            teamStats={{
-                                count: -1, // Just one user (personal time logs)
-                                totalHours: totalDuration,
-                                unpaidHours: unpaidHours,
-                                unpaidAmount: Object.values(unpaidAmount).reduce((sum, amount) => sum + amount, 0),
-                                unpaidAmountsByCurrency: unpaidAmount,
-                                paidAmount: Object.values(paidAmount).reduce((sum, amount) => sum + amount, 0),
-                                paidAmountsByCurrency: paidAmount,
-                                currency: currency,
-                                weeklyAverage: weeklyAverage,
-                                clientCount: -1,
-                            }}
+                        <StatsCard
+                            title="Total Hours"
+                            icon={<ClockIcon className="h-4 w-4 text-muted-foreground" />}
+                            value={roundToTwoDecimals(totalDuration)}
+                            description="Total pending hours to be approved"
+                            borderColor="blue-500"
                         />
                     </section>
                 )}
@@ -348,35 +352,17 @@ export default function TimeLog({
                                 />
                             </div>
                             <div className="grid gap-1">
-                                <Label htmlFor="is_paid" className="text-xs font-medium">
-                                    Payment Status
+                                <Label htmlFor="user_id" className="text-xs font-medium">
+                                    Team Member
                                 </Label>
                                 <SearchableSelect
-                                    id="is_paid"
-                                    value={data.is_paid}
-                                    onChange={(value) => setData('is_paid', value)}
-                                    options={[
-                                        { id: '', name: 'All Statuses' },
-                                        { id: 'true', name: 'Paid' },
-                                        { id: 'false', name: 'Unpaid' },
-                                    ]}
-                                    placeholder="Select status"
+                                    id="user_id"
+                                    value={data.user_id}
+                                    onChange={(value) => setData('user_id', value)}
+                                    options={[{ id: '', name: 'All Members' }, ...teamMembers]}
+                                    placeholder="Select member"
                                     disabled={processing}
-                                    icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-                            <div className="grid gap-1">
-                                <Label htmlFor="status" className="text-xs font-medium">
-                                    Approval Status
-                                </Label>
-                                <SearchableSelect
-                                    id="status"
-                                    value={data.status}
-                                    onChange={(value) => setData('status', value)}
-                                    options={[{ id: '', name: 'All Statuses' }, ...timeLogStatusOptions]}
-                                    placeholder="Approval status"
-                                    disabled={processing}
-                                    icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                    icon={<User className="h-4 w-4 text-muted-foreground" />}
                                 />
                             </div>
                             <div className="flex items-end gap-2">
@@ -388,16 +374,15 @@ export default function TimeLog({
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    disabled={processing || (!data.start_date && !data.end_date && !data.project_id && !data.is_paid && !data.status)}
+                                    disabled={processing || (!data.start_date && !data.end_date && !data.project_id && !data.user_id)}
                                     onClick={() => {
                                         setData({
                                             start_date: '',
                                             end_date: '',
                                             project_id: '',
-                                            is_paid: '',
-                                            status: '',
+                                            user_id: '',
                                         })
-                                        get(route('time-log.index'), {
+                                        get(route('approvals.index'), {
                                             preserveState: true,
                                         })
                                     }}
@@ -410,7 +395,7 @@ export default function TimeLog({
                         </form>
 
                         <p className={'mt-4 text-sm text-muted-foreground'}>
-                            {(data.start_date || data.end_date || data.project_id || data.status) && (
+                            {(data.start_date || data.end_date || data.project_id || data.user_id) && (
                                 <CardDescription>
                                     {(() => {
                                         let description = ''
@@ -434,28 +419,14 @@ export default function TimeLog({
                                             }
                                         }
 
-                                        if (data.is_paid) {
-                                            const paymentStatus = data.is_paid === 'true' ? 'paid' : 'unpaid'
+                                        if (data.user_id) {
+                                            const selectedMember = teamMembers.find((member) => member.id.toString() === data.user_id)
+                                            const memberName = selectedMember ? selectedMember.name : ''
 
                                             if (description) {
-                                                description += ` (${paymentStatus})`
+                                                description += ` by ${memberName}`
                                             } else {
-                                                description = `Showing ${paymentStatus} logs`
-                                            }
-                                        }
-
-                                        if (data.status) {
-                                            const statusText =
-                                                data.status === TimeLogStatus.PENDING
-                                                    ? 'pending'
-                                                    : data.status === TimeLogStatus.APPROVED
-                                                      ? 'approved'
-                                                      : 'rejected'
-
-                                            if (description) {
-                                                description += ` with ${statusText} status`
-                                            } else {
-                                                description = `Showing logs with ${statusText} status`
+                                                description = `Showing logs by ${memberName}`
                                             }
                                         }
 
@@ -467,132 +438,146 @@ export default function TimeLog({
                     </CardContent>
                 </Card>
 
-                <TimeTracker projects={projects} />
-
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle className="text-xl">Your Time Logs</CardTitle>
+                                <CardTitle className="text-xl">Pending Approvals</CardTitle>
                                 <CardDescription>
                                     {timeLogs.length > 0
-                                        ? `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`
-                                        : 'No time logs found for the selected period'}
+                                        ? `Showing ${timeLogs.length} pending ${timeLogs.length === 1 ? 'entry' : 'entries'}`
+                                        : 'No pending approvals found for the selected period'}
                                 </CardDescription>
                             </div>
                             <div className="flex gap-2">
-                                <a href={route('time-log.export') + window.location.search} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
-                                <a href={route('time-log.template')} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <FileSpreadsheet className="h-4 w-4" />
-                                        <span>Template</span>
-                                    </Button>
-                                </a>
-                                <Button variant="outline" className="flex items-center gap-2" onClick={() => setImportDialogOpen(true)}>
-                                    <Upload className="h-4 w-4" />
-                                    <span>Import</span>
-                                </Button>
                                 {selectedLogs.length > 0 && (
-                                    <Button onClick={markAsPaid} variant="secondary" className="flex items-center gap-2">
-                                        <CheckCircle className="h-4 w-4" />
-                                        <span>Mark as Paid ({selectedLogs.length})</span>
+                                    <Button onClick={openBulkApproveDialog} variant="default" className="flex items-center gap-2">
+                                        <CheckSquare className="h-4 w-4" />
+                                        <span>Approve Selected ({selectedLogs.length})</span>
                                     </Button>
                                 )}
-                                <Link href={route('time-log.create')}>
-                                    <Button className="flex items-center gap-2">
-                                        <ClockIcon className="h-4 w-4" />
-                                        <span>Log Time</span>
-                                    </Button>
-                                </Link>
                             </div>
                         </div>
                     </CardHeader>
                     <CardContent>
                         {timeLogs.length > 0 ? (
-                            <TimeLogTable
-                                timeLogs={timeLogs as TimeLogEntry[]}
-                                showActions={true}
+                            <ApprovalTimeLogTable
+                                timeLogs={timeLogs}
                                 showCheckboxes={true}
                                 selectedLogs={selectedLogs}
                                 onSelectLog={handleSelectLog}
+                                onApprove={openSingleApproveDialog}
+                                onReject={openSingleRejectDialog}
                             />
                         ) : (
                             <div className="rounded-md border bg-muted/5 p-6">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
                                     <ClockIcon className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                                    <h3 className="mb-1 text-lg font-medium">No Time Logs</h3>
-                                    <p className="mb-4 text-muted-foreground">You haven't added any time logs yet.</p>
-                                    <Link href={route('time-log.create')}>
-                                        <Button className="flex items-center gap-2">
-                                            <PlusCircle className="h-4 w-4" />
-                                            <span>Add Time Log</span>
-                                        </Button>
-                                    </Link>
+                                    <h3 className="mb-1 text-lg font-medium">No Pending Approvals</h3>
+                                    <p className="mb-4 text-muted-foreground">There are no pending time logs that require your approval.</p>
                                 </div>
                             </div>
                         )}
                     </CardContent>
                 </Card>
 
-                {/* Import Dialog */}
-                <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+                {/* Approve Dialog */}
+                <Dialog open={approveDialogOpen} onOpenChange={setApproveDialogOpen}>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
-                            <DialogTitle>Import Time Logs</DialogTitle>
+                            <DialogTitle>{singleApprovalId ? 'Approve Time Log' : `Approve ${selectedLogs.length} Time Logs`}</DialogTitle>
                             <DialogDescription>
-                                Upload an Excel file with time logs to import.
-                                <a href={route('time-log.template')} className="ml-1 text-primary hover:underline">
-                                    Download template
-                                </a>
+                                {singleApprovalId
+                                    ? 'Add an optional comment and approve this time log.'
+                                    : `You are about to approve ${selectedLogs.length} time logs. Add an optional comment.`}
                             </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                             <div className="grid w-full max-w-sm items-center gap-1.5">
-                                <Label htmlFor="file-upload">Excel File</Label>
-                                <Input
-                                    id="file-upload"
-                                    type="file"
-                                    accept=".xlsx,.xls"
-                                    onChange={handleFileChange}
-                                    ref={fileInputRef}
-                                    disabled={importing}
+                                <Label htmlFor="comment">Comment (Optional)</Label>
+                                <Textarea
+                                    id="comment"
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                    placeholder="Add a comment about this approval"
+                                    disabled={approving}
                                 />
-                                <p className="text-sm text-muted-foreground">Only .xlsx and .xls files are supported (max 2MB)</p>
                             </div>
 
-                            {importSuccess && (
+                            {approvalSuccess && (
                                 <Alert className="border-green-200 bg-green-50 dark:border-green-900/30 dark:bg-green-900/20">
                                     <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                                     <AlertTitle className="text-green-800 dark:text-green-400">Success</AlertTitle>
-                                    <AlertDescription className="text-green-700 dark:text-green-400">{importSuccess}</AlertDescription>
+                                    <AlertDescription className="text-green-700 dark:text-green-400">{approvalSuccess}</AlertDescription>
                                 </Alert>
                             )}
 
-                            {importErrors.length > 0 && (
+                            {approvalError && (
                                 <Alert className="border-red-200 bg-red-50 dark:border-red-900/30 dark:bg-red-900/20">
                                     <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
                                     <AlertTitle className="text-red-800 dark:text-red-400">Error</AlertTitle>
-                                    <AlertDescription className="text-red-700 dark:text-red-400">
-                                        <ul className="mt-2 list-disc space-y-1 pl-5">
-                                            {importErrors.map((error, index) => (
-                                                <li key={index}>{error}</li>
-                                            ))}
-                                        </ul>
-                                    </AlertDescription>
+                                    <AlertDescription className="text-red-700 dark:text-red-400">{approvalError}</AlertDescription>
                                 </Alert>
                             )}
                         </div>
                         <DialogFooter className="sm:justify-between">
-                            <Button type="button" variant="secondary" onClick={closeImportDialog} disabled={importing}>
+                            <Button type="button" variant="secondary" onClick={closeApproveDialog} disabled={approving}>
                                 Cancel
                             </Button>
-                            <Button type="button" onClick={handleImport} disabled={!importFile || importing}>
-                                {importing ? 'Importing...' : 'Import'}
+                            <Button type="button" onClick={handleApprove} disabled={approving} className="bg-green-600 text-white hover:bg-green-700">
+                                {approving ? 'Approving...' : 'Approve'}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Reject Dialog */}
+                <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Reject Time Log</DialogTitle>
+                            <DialogDescription>Add a comment explaining why you're rejecting this time log.</DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                            <div className="grid w-full max-w-sm items-center gap-1.5">
+                                <Label htmlFor="reject-comment">Comment</Label>
+                                <Textarea
+                                    id="reject-comment"
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                    placeholder="Explain why you're rejecting this time log"
+                                    disabled={approving}
+                                    required
+                                />
+                            </div>
+
+                            {approvalSuccess && (
+                                <Alert className="border-green-200 bg-green-50 dark:border-green-900/30 dark:bg-green-900/20">
+                                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                                    <AlertTitle className="text-green-800 dark:text-green-400">Success</AlertTitle>
+                                    <AlertDescription className="text-green-700 dark:text-green-400">{approvalSuccess}</AlertDescription>
+                                </Alert>
+                            )}
+
+                            {approvalError && (
+                                <Alert className="border-red-200 bg-red-50 dark:border-red-900/30 dark:bg-red-900/20">
+                                    <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                                    <AlertTitle className="text-red-800 dark:text-red-400">Error</AlertTitle>
+                                    <AlertDescription className="text-red-700 dark:text-red-400">{approvalError}</AlertDescription>
+                                </Alert>
+                            )}
+                        </div>
+                        <DialogFooter className="sm:justify-between">
+                            <Button type="button" variant="secondary" onClick={closeRejectDialog} disabled={approving}>
+                                Cancel
+                            </Button>
+                            <Button
+                                type="button"
+                                onClick={handleReject}
+                                disabled={approving || !comment.trim()}
+                                className="bg-red-600 text-white hover:bg-red-700"
+                            >
+                                {approving ? 'Rejecting...' : 'Reject'}
                             </Button>
                         </DialogFooter>
                     </DialogContent>

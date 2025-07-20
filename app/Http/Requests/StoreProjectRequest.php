@@ -30,6 +30,8 @@ final class StoreProjectRequest extends FormRequest
             'client_id' => ['nullable', 'exists:clients,id'],
             'team_members' => ['nullable', 'array'],
             'team_members.*' => ['exists:users,id'],
+            'approvers' => ['nullable', 'array'],
+            'approvers.*' => ['exists:users,id'],
         ];
     }
 }

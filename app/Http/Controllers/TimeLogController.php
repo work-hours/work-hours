@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
 use App\Http\Stores\ProjectStore;
@@ -40,9 +41,11 @@ final class TimeLogController extends Controller
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
         $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
-        $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
-        $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
-        $paidHours = round($mappedTimeLogs->where('is_paid', true)->sum('duration'), 2);
+        // Only include approved logs in calculations
+        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
+        $totalDuration = round($approvedLogs->sum('duration'), 2);
+        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
+        $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);
         $team = TeamStore::teamEntry(userId: auth()->id(), memberId: auth()->id());
         $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
         $paidAmount = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
@@ -57,6 +60,7 @@ final class TimeLogController extends Controller
                 'end_date' => request('end_date', ''),
                 'project_id' => request('project_id', ''),
                 'is_paid' => request('is_paid', ''),
+                'status' => request('status', ''),
             ],
             'projects' => $projects,
             'totalDuration' => $totalDuration,
@@ -92,7 +96,19 @@ final class TimeLogController extends Controller
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
 
+                // Ensure the end date is the same as the start date
+                if ($start->format('Y-m-d') !== $end->format('Y-m-d')) {
+                    $end = Carbon::parse($end->format('H:i:s'))->setDateFrom($start);
+                    $data['end_timestamp'] = $end->toDateTimeString();
+                }
+
                 $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
+
+                if ($project && $project->isCreator(auth()->id())) {
+                    $data['status'] = TimeLogStatus::APPROVED;
+                    $data['approved_by'] = auth()->id();
+                    $data['approved_at'] = Carbon::now();
+                }
             }
 
             $timeLog = TimeLog::query()->create($data);
@@ -187,6 +203,13 @@ final class TimeLogController extends Controller
                     continue;
                 }
 
+                // Check if the time log is approved
+                if ($timeLog->status !== TimeLogStatus::APPROVED) {
+                    $invalidLogs[] = $timeLog->id;
+
+                    continue;
+                }
+
                 $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
                 $timeLog->update([
                     'is_paid' => true,
@@ -230,8 +253,8 @@ final class TimeLogController extends Controller
             if ($invalidLogs !== []) {
                 $count = count($invalidLogs);
                 $message = $count === 1
-                    ? "1 time log entry was skipped because it doesn't have both start and end timestamps."
-                    : "$count time log entries were skipped because they don't have both start and end timestamps.";
+                    ? "1 time log entry was skipped because it doesn't have both start and end timestamps or is not approved."
+                    : "$count time log entries were skipped because they don't have both start and end timestamps or are not approved.";
 
                 session()->flash('warning', $message);
             }
@@ -263,7 +286,19 @@ final class TimeLogController extends Controller
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
 
+                // Ensure the end date is the same as the start date
+                if ($start->format('Y-m-d') !== $end->format('Y-m-d')) {
+                    $end = Carbon::parse($end->format('H:i:s'))->setDateFrom($start);
+                    $data['end_timestamp'] = $end->toDateTimeString();
+                }
+
                 $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
+
+                if ($project && $project->isCreator(auth()->id())) {
+                    $data['status'] = 'approved';
+                    $data['approved_by'] = auth()->id();
+                    $data['approved_at'] = Carbon::now();
+                }
             }
 
             $timeLog->update($data);
@@ -288,6 +323,7 @@ final class TimeLogController extends Controller
     #[Action(method: 'get', name: 'time-log.export', middleware: ['auth', 'verified'])]
     public function export(): StreamedResponse
     {
+        // Use the same base query as the index method, ensuring all filters are applied
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
 
         $mappedTimeLogs = $timeLogs->map(function ($timeLog): array {
@@ -305,11 +341,12 @@ final class TimeLogController extends Controller
                 'hourly_rate' => $hourlyRate,
                 'paid_amount' => $paidAmount,
                 'note' => $timeLog->note,
+                'status' => ucfirst((string) $timeLog->status?->value ?: TimeLogStatus::PENDING->value),
                 'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
             ];
         });
 
-        $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Hourly Rate', 'Paid Amount', 'Note', 'Paid'];
+        $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Hourly Rate', 'Paid Amount', 'Note', 'Status', 'Paid'];
         $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);

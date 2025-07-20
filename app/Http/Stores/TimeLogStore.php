@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Stores;
 
+use App\Enums\TimeLogStatus;
 use App\Http\QueryFilters\TimeLog\EndDateFilter;
 use App\Http\QueryFilters\TimeLog\IsPaidFilter;
 use App\Http\QueryFilters\TimeLog\ProjectIdFilter;
 use App\Http\QueryFilters\TimeLog\StartDateFilter;
+use App\Http\QueryFilters\TimeLog\StatusFilter;
 use App\Http\QueryFilters\TimeLog\UserIdFilter;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -23,6 +26,7 @@ final class TimeLogStore
     {
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
+            ->where('status', TimeLogStatus::APPROVED)
             ->orderBy('start_timestamp', 'desc')
             ->with('user')
             ->take($limit)
@@ -33,6 +37,7 @@ final class TimeLogStore
     {
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
+            ->where('status', TimeLogStatus::APPROVED)
             ->sum('duration');
     }
 
@@ -41,6 +46,7 @@ final class TimeLogStore
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
             ->where('is_paid', false)
+            ->where('status', TimeLogStatus::APPROVED)
             ->sum('duration');
     }
 
@@ -77,6 +83,7 @@ final class TimeLogStore
             ->with('project')
             ->where('user_id', $teamMemberId)
             ->where('is_paid', false)
+            ->where('status', TimeLogStatus::APPROVED)
             ->get();
     }
 
@@ -113,6 +120,7 @@ final class TimeLogStore
             ->with('project')
             ->where('user_id', $teamMemberId)
             ->where('is_paid', true)
+            ->where('status', TimeLogStatus::APPROVED)
             ->get();
     }
 
@@ -124,7 +132,7 @@ final class TimeLogStore
             $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $currency = $timeLog->currency ?? 'USD';
 
-            if (! $timeLog['is_paid']) {
+            if (! $timeLog['is_paid'] && $timeLog['status'] === TimeLogStatus::APPROVED) {
                 if (! isset($unpaidAmounts[$currency])) {
                     $unpaidAmounts[$currency] = 0;
                 }
@@ -148,7 +156,7 @@ final class TimeLogStore
             $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $currency = $timeLog->currency ?? 'USD';
 
-            if ($timeLog['is_paid']) {
+            if ($timeLog['is_paid'] && $timeLog['status'] === TimeLogStatus::APPROVED) {
                 if (! isset($paidAmounts[$currency])) {
                     $paidAmounts[$currency] = 0;
                 }
@@ -174,6 +182,7 @@ final class TimeLogStore
                 UserIdFilter::class,
                 IsPaidFilter::class,
                 ProjectIdFilter::class,
+                StatusFilter::class,
             ])
             ->thenReturn()
             ->with(['user', 'project'])->get();
@@ -184,6 +193,13 @@ final class TimeLogStore
         return $timeLogs->map(function ($timeLog): array {
             $hourlyRate = (float) $timeLog->hourly_rate ?? Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
+
+            // Get approver name if approved_by is set
+            $approverName = null;
+            if ($timeLog->approved_by) {
+                $approver = User::query()->find($timeLog->approved_by);
+                $approverName = $approver ? $approver->name : null;
+            }
 
             return [
                 'id' => $timeLog->id,
@@ -199,6 +215,10 @@ final class TimeLogStore
                 'hourly_rate' => $hourlyRate,
                 'paid_amount' => $paidAmount,
                 'currency' => $timeLog->currency ?? 'USD',
+                'status' => $timeLog->status,
+                'approved_by' => $timeLog->approved_by,
+                'approver_name' => $approverName,
+                'comment' => $timeLog->comment,
             ];
         });
     }

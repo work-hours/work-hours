@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Stores\ClientStore;
@@ -54,7 +55,13 @@ final class ProjectController extends Controller
             ]);
 
             if ($request->has('team_members')) {
-                $project->teamMembers()->sync($request->input('team_members'));
+                $teamMembers = collect($request->input('team_members'))->mapWithKeys(function ($memberId) use ($request) {
+                    $isApprover = $request->has('approvers') && in_array($memberId, $request->input('approvers'), true);
+
+                    return [$memberId => ['is_approver' => $isApprover]];
+                })->toArray();
+
+                $project->teamMembers()->sync($teamMembers);
             }
 
             DB::commit();
@@ -97,6 +104,7 @@ final class ProjectController extends Controller
             ]);
 
         $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
+        $assignedApprovers = $project->approvers->pluck('id')->toArray();
 
         $clients = ClientStore::userClients(auth()->id())
             ->map(fn ($client): array => [
@@ -108,6 +116,7 @@ final class ProjectController extends Controller
             'project' => $project,
             'teamMembers' => $teamMembers,
             'assignedTeamMembers' => $assignedTeamMembers,
+            'assignedApprovers' => $assignedApprovers,
             'clients' => $clients,
         ]);
     }
@@ -125,7 +134,13 @@ final class ProjectController extends Controller
             $project->update($request->only(['name', 'description', 'client_id']));
 
             if ($request->has('team_members')) {
-                $project->teamMembers()->sync($request->input('team_members'));
+                $teamMembers = collect($request->input('team_members'))->mapWithKeys(function ($memberId) use ($request) {
+                    $isApprover = $request->has('approvers') && in_array($memberId, $request->input('approvers'), true);
+
+                    return [$memberId => ['is_approver' => $isApprover]];
+                })->toArray();
+
+                $project->teamMembers()->sync($teamMembers);
             } else {
                 $project->teamMembers()->detach();
             }
@@ -158,7 +173,7 @@ final class ProjectController extends Controller
     #[Action(method: 'get', name: 'project.export', middleware: ['auth', 'verified'])]
     public function projectExport(): StreamedResponse
     {
-        $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Created At'];
+        $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Approvers', 'Created At'];
         $filename = 'projects_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv(ProjectStore::projectExportMapper(
@@ -177,8 +192,10 @@ final class ProjectController extends Controller
         $paidAmount = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
 
         $mappedTimeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
-        $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
-        $unpaidHours = round($mappedTimeLogs->where('is_paid', false)->sum('duration'), 2);
+        // Only include approved logs in calculations
+        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
+        $totalDuration = round($approvedLogs->sum('duration'), 2);
+        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
         $teamMembers = ProjectStore::teamMembers(project: $project);
@@ -212,11 +229,12 @@ final class ProjectController extends Controller
 
         Gate::authorize('viewTimeLogs', $project);
 
+        // Use the same base query as the timeLogs method, ensuring all filters are applied
         $timeLogsData = ProjectStore::exportTimeLogsMapper(
             timeLogs: TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('project_id', $project->getKey()))
         );
 
-        $headers = ['ID', 'Team Member', 'Start Time', 'End Time', 'Duration (hours)', 'Payment Status'];
+        $headers = ['ID', 'Team Member', 'Start Time', 'End Time', 'Duration (hours)', 'Payment Status', 'Note', 'Hourly Rate'];
         $filename = 'project_time_logs_' . $project->id . '_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($timeLogsData, $headers, $filename);

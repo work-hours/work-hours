@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IntegrationController;
@@ -46,6 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('time-log', [TimeLogController::class, 'index'])->name('time-log.index');
     Route::get('time-log/create', [TimeLogController::class, 'create'])->name('time-log.create');
     Route::get('time-log/{timeLog}/edit', [TimeLogController::class, 'edit'])->name('time-log.edit');
+
+    Route::get('approvals', [ApprovalController::class, 'index'])->name('approvals.index');
 });
 
 require __DIR__ . '/settings.php';
