@@ -305,13 +305,13 @@ export default function Approvals({
                             teamStats={{
                                 count: -1,
                                 totalHours: totalDuration,
-                                unpaidHours: 0, // Not showing monetary information
-                                unpaidAmount: 0, // Not showing monetary information
+                                unpaidHours: -1, // Set to negative to hide this card
+                                unpaidAmount: -1, // Set to negative to hide this card
                                 unpaidAmountsByCurrency: {},
-                                paidAmount: 0, // Not showing monetary information
+                                paidAmount: -1, // Set to negative to hide this card
                                 paidAmountsByCurrency: {},
-                                currency: '', // Not showing monetary information
-                                weeklyAverage: 0, // Not relevant for approvals
+                                currency: '',
+                                weeklyAverage: totalDuration > 0 ? Math.round(totalDuration / 7 * 100) / 100 : 0,
                                 clientCount: -1,
                             }}
                         />
