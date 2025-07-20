@@ -20,12 +20,14 @@ import {
     CalendarRange,
     CheckCircle,
     CheckSquare,
-    ClockIcon,
+    ClockIcon, DollarSign,
     Search,
-    TimerReset,
-    User,
+    TimerReset, TrendingUp,
+    User
 } from 'lucide-react'
 import { ChangeEvent, FormEventHandler, forwardRef, ReactNode, useState } from 'react'
+import { roundToTwoDecimals } from '@/lib/utils'
+import StatsCard from '@/components/dashboard/StatsCard'
 
 interface CustomInputProps {
     value?: string
@@ -299,21 +301,14 @@ export default function Approvals({
                 </section>
 
                 {timeLogs.length > 0 && (
-                    <section className="mb-4">
+                    <section className="mb-4 w-3/12">
                         <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
-                        <StatsCards
-                            teamStats={{
-                                count: -1,
-                                totalHours: totalDuration,
-                                unpaidHours: -1, // Set to negative to hide this card
-                                unpaidAmount: -1, // Set to negative to hide this card
-                                unpaidAmountsByCurrency: {},
-                                paidAmount: -1, // Set to negative to hide this card
-                                paidAmountsByCurrency: {},
-                                currency: '',
-                                weeklyAverage: totalDuration > 0 ? Math.round(totalDuration / 7 * 100) / 100 : 0,
-                                clientCount: -1,
-                            }}
+                        <StatsCard
+                            title="Total Hours"
+                            icon={<ClockIcon className="h-4 w-4 text-muted-foreground" />}
+                            value={roundToTwoDecimals(totalDuration)}
+                            description="Total pending hours to be approved"
+                            borderColor="blue-500"
                         />
                     </section>
                 )}
