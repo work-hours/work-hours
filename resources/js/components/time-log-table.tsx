@@ -1,8 +1,10 @@
 import DeleteTimeLog from '@/components/delete-time-log'
+import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { Link } from '@inertiajs/react'
-import { Edit, Trash2 } from 'lucide-react'
+import { Edit, Eye, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 
 export type TimeLogEntry = {
     id: number
@@ -42,125 +44,157 @@ export default function TimeLogTable({
     selectedLogs = [],
     onSelectLog,
 }: TimeLogTableProps) {
-    return (
-        <Table>
-            <TableHeader>
-                <TableHeaderRow>
-                    {showCheckboxes && <TableHead className="w-[50px]">Select</TableHead>}
-                    {showTeamMember && <TableHead>Team Member</TableHead>}
-                    {showProject && <TableHead>Project</TableHead>}
-                    <TableHead>Duration</TableHead>
-                    <TableHead>Hourly Rate</TableHead>
-                    <TableHead>Paid Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    {showActions && <TableHead className="text-right">Actions</TableHead>}
-                </TableHeaderRow>
-            </TableHeader>
-            <TableBody>
-                {timeLogs.map((log) => (
-                    <TableRow key={log.id}>
-                        {showCheckboxes && (
-                            <TableCell>
-                                <input
-                                    type="checkbox"
-                                    checked={selectedLogs.includes(log.id)}
-                                    onChange={(e) => onSelectLog && onSelectLog(log.id, e.target.checked)}
-                                    disabled={log.is_paid || !log.start_timestamp || !log.end_timestamp || log.status !== 'approved'}
-                                    title={
-                                        !log.start_timestamp || !log.end_timestamp
-                                            ? 'Time logs without both start and end timestamps cannot be marked as paid'
-                                            : log.status !== 'approved'
-                                              ? 'Time logs must be approved before they can be marked as paid'
-                                              : ''
-                                    }
-                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                                />
-                            </TableCell>
-                        )}
-                        {showTeamMember && <TableCell className="font-medium">{log.user_name}</TableCell>}
-                        {showProject && <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>}
-                        <TableCell>
-                            <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                                {log.duration}
-                            </span>
-                        </TableCell>
-                        <TableCell>
-                            {log.hourly_rate !== undefined && log.hourly_rate !== null && typeof log.hourly_rate === 'number' ? (
-                                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-100">
-                                    {log.currency || 'USD'} {log.hourly_rate.toFixed(2)}
-                                </span>
-                            ) : (
-                                <span className="text-gray-500">-</span>
-                            )}
-                        </TableCell>
-                        <TableCell>
-                            {log.paid_amount !== undefined && log.paid_amount !== null && typeof log.paid_amount === 'number' && log.is_paid ? (
-                                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
-                                    {log.currency || 'USD'} {log.paid_amount.toFixed(2)}
-                                </span>
-                            ) : (
-                                <span className="text-gray-500">-</span>
-                            )}
-                        </TableCell>
-                        <TableCell>
-                            <div className="flex flex-col gap-1">
-                                {/* Approval Status */}
-                                {log.status === 'approved' ? (
-                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
-                                        Approved
-                                    </span>
-                                ) : log.status === 'rejected' ? (
-                                    <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
-                                        Rejected
-                                    </span>
-                                ) : (
-                                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                                        Pending
-                                    </span>
-                                )}
+    const [selectedTimeLog, setSelectedTimeLog] = useState<TimeLogEntry | null>(null)
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false)
 
-                                {/* Payment Status */}
-                                {log.is_paid ? (
-                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
-                                        Paid
+    const handleViewDetails = (log: TimeLogEntry) => {
+        setSelectedTimeLog(log)
+        setIsDetailsOpen(true)
+    }
+
+    return (
+        <>
+            <Table>
+                <TableHeader>
+                    <TableHeaderRow>
+                        {showCheckboxes && <TableHead className="w-[50px]">Select</TableHead>}
+                        {showTeamMember && <TableHead>Team Member</TableHead>}
+                        {showProject && <TableHead>Project</TableHead>}
+                        <TableHead>Duration</TableHead>
+                        <TableHead>Hourly Rate</TableHead>
+                        <TableHead>Paid Amount</TableHead>
+                        <TableHead>Status</TableHead>
+                        {showActions && <TableHead className="text-right">Actions</TableHead>}
+                    </TableHeaderRow>
+                </TableHeader>
+                <TableBody>
+                    {timeLogs.map((log) => (
+                        <TableRow key={log.id}>
+                            {showCheckboxes && (
+                                <TableCell>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedLogs.includes(log.id)}
+                                        onChange={(e) => onSelectLog && onSelectLog(log.id, e.target.checked)}
+                                        disabled={log.is_paid || !log.start_timestamp || !log.end_timestamp || log.status !== 'approved'}
+                                        title={
+                                            !log.start_timestamp || !log.end_timestamp
+                                                ? 'Time logs without both start and end timestamps cannot be marked as paid'
+                                                : log.status !== 'approved'
+                                                ? 'Time logs must be approved before they can be marked as paid'
+                                                : ''
+                                        }
+                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                    />
+                                </TableCell>
+                            )}
+                            {showTeamMember && <TableCell className="font-medium">{log.user_name}</TableCell>}
+                            {showProject && <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>}
+                            <TableCell>
+                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                                    {log.duration}
+                                </span>
+                            </TableCell>
+                            <TableCell>
+                                {log.hourly_rate !== undefined && log.hourly_rate !== null && typeof log.hourly_rate === 'number' ? (
+                                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-100">
+                                        {log.currency || 'USD'} {log.hourly_rate.toFixed(2)}
                                     </span>
                                 ) : (
-                                    <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
-                                        Unpaid
-                                    </span>
+                                    <span className="text-gray-500">-</span>
                                 )}
-                            </div>
-                        </TableCell>
-                        {showActions && (
-                            <TableCell className="text-right">
-                                <div className="flex justify-end gap-2">
-                                    {!log.is_paid ? (
-                                        <Link href={route('time-log.edit', log.id)}>
-                                            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                <Edit className="h-3.5 w-3.5" />
-                                                <span className="sr-only">Edit</span>
-                                            </Button>
-                                        </Link>
+                            </TableCell>
+                            <TableCell>
+                                {log.paid_amount !== undefined && log.paid_amount !== null && typeof log.paid_amount === 'number' && log.is_paid ? (
+                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                        {log.currency || 'USD'} {log.paid_amount.toFixed(2)}
+                                    </span>
+                                ) : (
+                                    <span className="text-gray-500">-</span>
+                                )}
+                            </TableCell>
+                            <TableCell>
+                                <div className="flex flex-col gap-1">
+                                    {/* Approval Status */}
+                                    {log.status === 'approved' ? (
+                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                            Approved
+                                        </span>
+                                    ) : log.status === 'rejected' ? (
+                                        <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
+                                            Rejected
+                                        </span>
                                     ) : (
-                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be edited">
-                                            <Edit className="h-3.5 w-3.5" />
-                                            <span className="sr-only">Edit</span>
-                                        </Button>
+                                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                            Pending
+                                        </span>
                                     )}
-                                    {!log.is_paid ? (
-                                        <DeleteTimeLog timeLogId={log.id} />
+
+                                    {/* Payment Status */}
+                                    {log.is_paid ? (
+                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                            Paid
+                                        </span>
                                     ) : (
-                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be deleted">
-                                            <Trash2 className="h-4 w-4" />
-                                            <span className="sr-only">Delete</span>
-                                        </Button>
+                                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
+                                            Unpaid
+                                        </span>
                                     )}
                                 </div>
                             </TableCell>
-                        )}
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+                            {showActions && (
+                                <TableCell className="text-right">
+                                    <div className="flex justify-end gap-2">
+                                        {/* View Details Button */}
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="h-8 w-8 p-0 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+                                            onClick={() => handleViewDetails(log)}
+                                            title="View Details"
+                                        >
+                                            <Eye className="h-3.5 w-3.5" />
+                                            <span className="sr-only">View Details</span>
+                                        </Button>
+
+                                        {/* Edit Button */}
+                                        {!log.is_paid ? (
+                                            <Link href={route('time-log.edit', log.id)}>
+                                                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                                                    <Edit className="h-3.5 w-3.5" />
+                                                    <span className="sr-only">Edit</span>
+                                                </Button>
+                                            </Link>
+                                        ) : (
+                                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be edited">
+                                                <Edit className="h-3.5 w-3.5" />
+                                                <span className="sr-only">Edit</span>
+                                            </Button>
+                                        )}
+
+                                        {/* Delete Button */}
+                                        {!log.is_paid ? (
+                                            <DeleteTimeLog timeLogId={log.id} />
+                                        ) : (
+                                            <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be deleted">
+                                                <Trash2 className="h-4 w-4" />
+                                                <span className="sr-only">Delete</span>
+                                            </Button>
+                                        )}
+                                    </div>
+                                </TableCell>
+                            )}
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+
+            {/* Time Log Details Sheet */}
+            <TimeLogDetailsSheet
+                timeLog={selectedTimeLog}
+                open={isDetailsOpen}
+                onOpenChange={setIsDetailsOpen}
+            />
+        </>
     )
 }
