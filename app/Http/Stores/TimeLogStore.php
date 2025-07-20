@@ -187,6 +187,13 @@ final class TimeLogStore
             $hourlyRate = (float) $timeLog->hourly_rate ?? Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
 
+            // Get approver name if approved_by is set
+            $approverName = null;
+            if ($timeLog->approved_by) {
+                $approver = \App\Models\User::find($timeLog->approved_by);
+                $approverName = $approver ? $approver->name : null;
+            }
+
             return [
                 'id' => $timeLog->id,
                 'user_id' => $timeLog->user_id,
@@ -202,6 +209,9 @@ final class TimeLogStore
                 'paid_amount' => $paidAmount,
                 'currency' => $timeLog->currency ?? 'USD',
                 'status' => $timeLog->status,
+                'approved_by' => $timeLog->approved_by,
+                'approver_name' => $approverName,
+                'comment' => $timeLog->comment,
             ];
         });
     }

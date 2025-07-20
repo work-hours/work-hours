@@ -19,6 +19,9 @@ export type TimeLogEntry = {
     paid_amount?: number
     currency?: string
     status?: 'pending' | 'approved' | 'rejected'
+    approved_by?: number
+    approver_name?: string
+    comment?: string
 }
 
 type TimeLogTableProps = {
@@ -54,6 +57,8 @@ export default function TimeLogTable({
                     <TableHead>Paid Amount</TableHead>
                     <TableHead>Note</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Approved By</TableHead>
+                    <TableHead>Comment</TableHead>
                     {showActions && <TableHead className="text-right">Actions</TableHead>}
                 </TableHeaderRow>
             </TableHeader>
@@ -136,6 +141,16 @@ export default function TimeLogTable({
                                     </span>
                                 )}
                             </div>
+                        </TableCell>
+                        <TableCell>
+                            {log.approver_name ? (
+                                <span className="font-medium">{log.approver_name}</span>
+                            ) : (
+                                <span className="text-gray-500">-</span>
+                            )}
+                        </TableCell>
+                        <TableCell className="max-w-xs break-words whitespace-normal" title={log.comment}>
+                            <div className="max-h-20 overflow-y-auto">{log.comment || '-'}</div>
                         </TableCell>
                         {showActions && (
                             <TableCell className="text-right">
