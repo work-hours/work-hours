@@ -83,8 +83,8 @@ export default function TimeLogTable({
                                             !log.start_timestamp || !log.end_timestamp
                                                 ? 'Time logs without both start and end timestamps cannot be marked as paid'
                                                 : log.status !== 'approved'
-                                                ? 'Time logs must be approved before they can be marked as paid'
-                                                : ''
+                                                  ? 'Time logs must be approved before they can be marked as paid'
+                                                  : ''
                                         }
                                         className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                                     />
@@ -151,7 +151,7 @@ export default function TimeLogTable({
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="h-8 w-8 p-0 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+                                            className="h-8 w-8 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
                                             onClick={() => handleViewDetails(log)}
                                             title="View Details"
                                         >
@@ -170,7 +170,13 @@ export default function TimeLogTable({
                                                         </Button>
                                                     </Link>
                                                 ) : (
-                                                    <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be edited">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-8 w-8 p-0"
+                                                        disabled
+                                                        title="Paid time logs cannot be edited"
+                                                    >
                                                         <Edit className="h-3.5 w-3.5" />
                                                         <span className="sr-only">Edit</span>
                                                     </Button>
@@ -180,7 +186,13 @@ export default function TimeLogTable({
                                                 {!log.is_paid ? (
                                                     <DeleteTimeLog timeLogId={log.id} />
                                                 ) : (
-                                                    <Button variant="outline" size="sm" className="h-8 w-8 p-0" disabled title="Paid time logs cannot be deleted">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-8 w-8 p-0"
+                                                        disabled
+                                                        title="Paid time logs cannot be deleted"
+                                                    >
                                                         <Trash2 className="h-4 w-4" />
                                                         <span className="sr-only">Delete</span>
                                                     </Button>
@@ -196,11 +208,7 @@ export default function TimeLogTable({
             </Table>
 
             {/* Time Log Details Sheet */}
-            <TimeLogDetailsSheet
-                timeLog={selectedTimeLog}
-                open={isDetailsOpen}
-                onOpenChange={setIsDetailsOpen}
-            />
+            <TimeLogDetailsSheet timeLog={selectedTimeLog} open={isDetailsOpen} onOpenChange={setIsDetailsOpen} />
         </>
     )
 }

@@ -1,6 +1,6 @@
+import FloatingTimeTracker from '@/components/floating-time-tracker'
 import { MasterContent } from '@/components/master-content'
 import { MasterSidebar } from '@/components/master-sidebar'
-import FloatingTimeTracker from '@/components/floating-time-tracker'
 import { type BreadcrumbItem } from '@/types'
 import { type ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
