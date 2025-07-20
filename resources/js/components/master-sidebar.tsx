@@ -16,9 +16,9 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Projects',
-        href: '/project',
-        icon: LucideProjector,
+        title: 'Team',
+        href: '/team',
+        icon: LucideServerCog,
     },
     {
         title: 'Clients',
@@ -26,9 +26,9 @@ const mainNavItems: NavItem[] = [
         icon: Building,
     },
     {
-        title: 'Team',
-        href: '/team',
-        icon: LucideServerCog,
+        title: 'Projects',
+        href: '/project',
+        icon: LucideProjector,
     },
     {
         title: 'Time Log',

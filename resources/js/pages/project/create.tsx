@@ -30,6 +30,7 @@ type ProjectForm = {
     description: string
     client_id: string
     team_members: number[]
+    approvers: number[]
 }
 
 type Props = {
@@ -54,6 +55,7 @@ export default function CreateProject({ teamMembers, clients }: Props) {
         description: '',
         client_id: '',
         team_members: [],
+        approvers: [],
     })
 
     const submit: FormEventHandler = (e) => {
@@ -82,6 +84,31 @@ export default function CreateProject({ teamMembers, clients }: Props) {
         }
 
         setData('team_members', currentMembers)
+
+        // If a team member is removed, also remove them from approvers
+        if (index !== -1 && data.approvers.includes(memberId)) {
+            handleApproverToggle(memberId)
+        }
+    }
+
+    const handleApproverToggle = (memberId: number) => {
+        // Only allow approvers who are also team members
+        if (!data.team_members.includes(memberId)) {
+            return
+        }
+
+        const currentApprovers = [...data.approvers]
+        const index = currentApprovers.indexOf(memberId)
+
+        if (index === -1) {
+            // Add approver if not already selected
+            currentApprovers.push(memberId)
+        } else {
+            // Remove approver if already selected
+            currentApprovers.splice(index, 1)
+        }
+
+        setData('approvers', currentApprovers)
     }
 
     return (
@@ -192,6 +219,39 @@ export default function CreateProject({ teamMembers, clients }: Props) {
                                         </div>
                                     </div>
                                     <InputError message={errors.team_members} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label className="text-sm font-medium">
+                                        Project Approvers <span className="text-xs text-muted-foreground">(optional)</span>
+                                    </Label>
+                                    <div className="relative rounded-md border p-3">
+                                        <div className="pointer-events-none absolute top-3 left-3">
+                                            <Users className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <div className="space-y-2 pl-7">
+                                            {data.team_members.length > 0 ? (
+                                                teamMembers
+                                                    .filter(member => data.team_members.includes(member.id))
+                                                    .map((member) => (
+                                                        <div key={`approver-${member.id}`} className="flex items-center space-x-2">
+                                                            <Checkbox
+                                                                id={`approver-${member.id}`}
+                                                                checked={data.approvers.includes(member.id)}
+                                                                onCheckedChange={() => handleApproverToggle(member.id)}
+                                                                disabled={processing}
+                                                            />
+                                                            <Label htmlFor={`approver-${member.id}`} className="cursor-pointer text-sm">
+                                                                {member.name} ({member.email})
+                                                            </Label>
+                                                        </div>
+                                                    ))
+                                            ) : (
+                                                <p className="text-sm text-muted-foreground">Select team members first</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <InputError message={errors.approvers} />
                                 </div>
 
                                 <div className="mt-4 flex justify-end gap-3">

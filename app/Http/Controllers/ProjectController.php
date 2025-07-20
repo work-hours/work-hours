@@ -54,7 +54,12 @@ final class ProjectController extends Controller
             ]);
 
             if ($request->has('team_members')) {
-                $project->teamMembers()->sync($request->input('team_members'));
+                $teamMembers = collect($request->input('team_members'))->mapWithKeys(function ($memberId) use ($request) {
+                    $isApprover = $request->has('approvers') && in_array($memberId, $request->input('approvers'), true);
+                    return [$memberId => ['is_approver' => $isApprover]];
+                })->toArray();
+
+                $project->teamMembers()->sync($teamMembers);
             }
 
             DB::commit();
@@ -97,6 +102,7 @@ final class ProjectController extends Controller
             ]);
 
         $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
+        $assignedApprovers = $project->approvers->pluck('id')->toArray();
 
         $clients = ClientStore::userClients(auth()->id())
             ->map(fn ($client): array => [
@@ -108,6 +114,7 @@ final class ProjectController extends Controller
             'project' => $project,
             'teamMembers' => $teamMembers,
             'assignedTeamMembers' => $assignedTeamMembers,
+            'assignedApprovers' => $assignedApprovers,
             'clients' => $clients,
         ]);
     }
@@ -125,7 +132,12 @@ final class ProjectController extends Controller
             $project->update($request->only(['name', 'description', 'client_id']));
 
             if ($request->has('team_members')) {
-                $project->teamMembers()->sync($request->input('team_members'));
+                $teamMembers = collect($request->input('team_members'))->mapWithKeys(function ($memberId) use ($request) {
+                    $isApprover = $request->has('approvers') && in_array($memberId, $request->input('approvers'), true);
+                    return [$memberId => ['is_approver' => $isApprover]];
+                })->toArray();
+
+                $project->teamMembers()->sync($teamMembers);
             } else {
                 $project->teamMembers()->detach();
             }

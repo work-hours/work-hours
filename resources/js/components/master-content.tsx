@@ -30,12 +30,12 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
             }
         }
 
-        fetchUnreadCount()
+        fetchUnreadCount().then()
 
         // Set up an interval to refresh the count every minute
         const intervalId = setInterval(fetchUnreadCount, 60000)
 
-        // Clean up interval on component unmount
+        // Cleanup interval on component unmount
         return () => clearInterval(intervalId)
     }, [])
 

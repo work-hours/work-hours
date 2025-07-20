@@ -13,7 +13,7 @@ export function HourlyRateStatusBar() {
     }
 
     return (
-        <Alert variant="destructive" className="mx-auto mt-2 mb-4 w-10/12">
+        <Alert variant="destructive" className="mx-auto mt-4">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Hourly Rate Required</AlertTitle>
             <AlertDescription className={'flex flex-row items-center justify-between'}>
