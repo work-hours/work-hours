@@ -77,7 +77,7 @@ final class TimeLogStore
                 $currency = $log->currency ?? 'USD';
 
                 if ($hourlyRate) {
-                    if (! isset($unpaidAmounts[$currency])) {
+                    if (!isset($unpaidAmounts[$currency])) {
                         $unpaidAmounts[$currency] = 0;
                     }
                     $unpaidAmounts[$currency] += $memberUnpaidHours * $hourlyRate;
@@ -114,7 +114,7 @@ final class TimeLogStore
                 $currency = $log->currency ?? 'USD';
 
                 if ($hourlyRate) {
-                    if (! isset($paidAmounts[$currency])) {
+                    if (!isset($paidAmounts[$currency])) {
                         $paidAmounts[$currency] = 0;
                     }
                     $paidAmounts[$currency] += $memberPaidHours * $hourlyRate;
@@ -140,58 +140,10 @@ final class TimeLogStore
             ->get();
     }
 
-    public static function unpaidAmountFromLogs(\Illuminate\Support\Collection $timeLogs): array
-    {
-        $unpaidAmounts = [];
-
-        $timeLogs->each(function (TimeLog $timeLog) use (&$unpaidAmounts): void {
-            $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
-            $currency = $timeLog->currency ?? 'USD';
-
-            if (! $timeLog['is_paid'] && $timeLog['status'] === TimeLogStatus::APPROVED) {
-                if (! isset($unpaidAmounts[$currency])) {
-                    $unpaidAmounts[$currency] = 0;
-                }
-                $unpaidAmounts[$currency] += $timeLog['duration'] * $hourlyRate;
-            }
-        });
-
-        // Round all amounts to 2 decimal places
-        foreach ($unpaidAmounts as $currency => $amount) {
-            $unpaidAmounts[$currency] = round($amount, 2);
-        }
-
-        return $unpaidAmounts;
-    }
-
-    public static function paidAmountFromLogs(\Illuminate\Support\Collection $timeLogs): array
-    {
-        $paidAmounts = [];
-
-        $timeLogs->each(function (TimeLog $timeLog) use (&$paidAmounts): void {
-            $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
-            $currency = $timeLog->currency ?? 'USD';
-
-            if ($timeLog['is_paid'] && $timeLog['status'] === TimeLogStatus::APPROVED) {
-                if (! isset($paidAmounts[$currency])) {
-                    $paidAmounts[$currency] = 0;
-                }
-                $paidAmounts[$currency] += $timeLog['duration'] * $hourlyRate;
-            }
-        });
-
-        // Round all amounts to 2 decimal places
-        foreach ($paidAmounts as $currency => $amount) {
-            $paidAmounts[$currency] = round($amount, 2);
-        }
-
-        return $paidAmounts;
-    }
-
     public static function timeLogMapper(\Illuminate\Support\Collection $timeLogs): \Illuminate\Support\Collection
     {
         return $timeLogs->map(function ($timeLog): array {
-            $hourlyRate = (float) $timeLog->hourly_rate ?? Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+            $hourlyRate = (float)$timeLog->hourly_rate ?? Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
 
             // Get approver name if approved_by is set
@@ -246,5 +198,53 @@ final class TimeLogStore
             'paid_amount' => self::paidAmountFromLogs($approvedLogs),
             'weekly_average' => $weeklyAverage,
         ];
+    }
+
+    public static function unpaidAmountFromLogs(\Illuminate\Support\Collection $timeLogs): array
+    {
+        $unpaidAmounts = [];
+
+        $timeLogs->each(function (TimeLog $timeLog) use (&$unpaidAmounts): void {
+            $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+            $currency = $timeLog->currency ?? 'USD';
+
+            if (!$timeLog['is_paid'] && $timeLog['status'] === TimeLogStatus::APPROVED) {
+                if (!isset($unpaidAmounts[$currency])) {
+                    $unpaidAmounts[$currency] = 0;
+                }
+                $unpaidAmounts[$currency] += $timeLog['duration'] * $hourlyRate;
+            }
+        });
+
+        // Round all amounts to 2 decimal places
+        foreach ($unpaidAmounts as $currency => $amount) {
+            $unpaidAmounts[$currency] = round($amount, 2);
+        }
+
+        return $unpaidAmounts;
+    }
+
+    public static function paidAmountFromLogs(\Illuminate\Support\Collection $timeLogs): array
+    {
+        $paidAmounts = [];
+
+        $timeLogs->each(function (TimeLog $timeLog) use (&$paidAmounts): void {
+            $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+            $currency = $timeLog->currency ?? 'USD';
+
+            if ($timeLog['is_paid'] && $timeLog['status'] === TimeLogStatus::APPROVED) {
+                if (!isset($paidAmounts[$currency])) {
+                    $paidAmounts[$currency] = 0;
+                }
+                $paidAmounts[$currency] += $timeLog['duration'] * $hourlyRate;
+            }
+        });
+
+        // Round all amounts to 2 decimal places
+        foreach ($paidAmounts as $currency => $amount) {
+            $paidAmounts[$currency] = round($amount, 2);
+        }
+
+        return $paidAmounts;
     }
 }

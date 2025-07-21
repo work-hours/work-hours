@@ -40,14 +40,13 @@ final class TimeLogController extends Controller
     public function index()
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
-        $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
         $timeLogStats = TimeLogStore::stats(timeLogs: $timeLogs);
         $projects = ProjectStore::userProjects(userId: auth()->id());
         $team = TeamStore::teamEntry(userId: auth()->id(), memberId: auth()->id());
         $currency = $team instanceof Team ? $team->currency : 'USD';
 
         return Inertia::render('time-log/index', [
-            'timeLogs' => $mappedTimeLogs,
+            'timeLogs' => TimeLogStore::timeLogMapper($timeLogs),
             'filters' => [
                 'start_date' => request('start_date', ''),
                 'end_date' => request('end_date', ''),
