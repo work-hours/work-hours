@@ -17,7 +17,11 @@ export function HourlyRateStatusBar() {
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Hourly Rate Required</AlertTitle>
             <AlertDescription className={'flex flex-row items-center justify-between'}>
-                <span>Please set your hourly rate in your profile settings.</span>
+                <span>
+                    Please set your hourly rate in your profile settings for your own projects.
+                    <br /> When assigned to a team, the team rate will be used instead.
+                </span>
+
                 <Button variant="link" className="h-auto p-0 font-semibold" asChild>
                     <Link href={route('profile.edit')}>Update Profile</Link>
                 </Button>

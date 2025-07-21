@@ -46,7 +46,7 @@ final class TimeLogStore
                 StatusFilter::class,
             ])
             ->thenReturn()
-            ->with(['user', 'project'])
+            ->with(['user', 'project', 'task'])
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -247,6 +247,12 @@ final class TimeLogStore
                 'user_name' => $timeLog->user ? $timeLog->user->name : null,
                 'project_id' => $timeLog->project_id,
                 'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
+                'task_id' => $timeLog->task_id,
+                'task_title' => $timeLog->task ? $timeLog->task->title : null,
+                'task_description' => $timeLog->task ? $timeLog->task->description : null,
+                'task_status' => $timeLog->task ? $timeLog->task->status : null,
+                'task_priority' => $timeLog->task ? $timeLog->task->priority : null,
+                'task_due_date' => $timeLog->task && $timeLog->task->due_date ? Carbon::parse($timeLog->task->due_date)->toDateString() : null,
                 'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
                 'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : null,
                 'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
@@ -270,6 +276,10 @@ final class TimeLogStore
         return $map->map(fn ($timeLog): array => [
             $timeLog['user_name'],
             $timeLog['project_name'],
+            $timeLog['task_title'] ?? 'No Task',
+            $timeLog['task_status'] ?? '',
+            $timeLog['task_priority'] ?? '',
+            $timeLog['task_due_date'] ?? '',
             $timeLog['start_timestamp'],
             $timeLog['end_timestamp'],
             $timeLog['duration'],
@@ -289,6 +299,10 @@ final class TimeLogStore
         return [
             'User Name',
             'Project Name',
+            'Task Title',
+            'Task Status',
+            'Task Priority',
+            'Task Due Date',
             'Start Timestamp',
             'End Timestamp',
             'Duration (hours)',

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -27,6 +28,7 @@ use Illuminate\Support\Carbon;
  * @property Client|null $client
  * @property Collection|User[] $teamMembers
  * @property Collection|User[] $approvers
+ * @property Collection|Task[] $tasks
  */
 #[UsePolicy(ProjectPolicy::class)]
 final class Project extends Model
@@ -59,5 +61,10 @@ final class Project extends Model
     public function isCreator(int $userId): bool
     {
         return $this->user_id === $userId;
+    }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
     }
 }

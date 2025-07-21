@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
@@ -20,9 +21,11 @@ type Project = {
 
 type TimeLogForm = {
     project_id: number
+    task_id: number | null
     start_timestamp: string
     end_timestamp: string
     note: string
+    mark_task_complete: boolean
 }
 
 // Custom input component for DatePicker with icon
@@ -72,16 +75,25 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-type Props = {
-    projects: Project[]
+type Task = {
+    id: number
+    title: string
+    project_id: number
 }
 
-export default function CreateTimeLog({ projects }: Props) {
+type Props = {
+    projects: Project[]
+    tasks: Task[]
+}
+
+export default function CreateTimeLog({ projects, tasks }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<Required<TimeLogForm>>({
         project_id: 0,
+        task_id: null,
         start_timestamp: new Date().toISOString(), // Default to now, using full ISO string
         end_timestamp: '',
         note: '',
+        mark_task_complete: false,
     })
 
     // Convert string timestamps to Date objects for DatePicker
@@ -158,13 +170,54 @@ export default function CreateTimeLog({ projects }: Props) {
                                     <SearchableSelect
                                         id="project_id"
                                         value={data.project_id ? data.project_id.toString() : ''}
-                                        onChange={(value) => setData('project_id', parseInt(value))}
+                                        onChange={(value) => {
+                                            setData('project_id', parseInt(value))
+                                            // Reset task_id when project changes
+                                            setData('task_id', null)
+                                        }}
                                         options={projects}
                                         placeholder="Select a project"
                                         disabled={processing}
                                     />
                                     <InputError message={errors.project_id} className="mt-1" />
                                 </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="task_id" className="text-sm font-medium">
+                                        Task (Optional)
+                                    </Label>
+                                    <SearchableSelect
+                                        id="task_id"
+                                        value={data.task_id === null ? '' : data.task_id.toString()}
+                                        onChange={(value) => setData('task_id', value ? parseInt(value) : null)}
+                                        options={tasks
+                                            .filter((task) => task.project_id === data.project_id)
+                                            .map((task) => ({
+                                                id: task.id,
+                                                name: task.title,
+                                            }))}
+                                        placeholder="Select a task (optional)"
+                                        disabled={processing || !data.project_id}
+                                    />
+                                    <InputError message={errors.task_id} className="mt-1" />
+                                    {data.project_id && tasks.filter((task) => task.project_id === data.project_id).length === 0 && (
+                                        <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
+                                    )}
+                                </div>
+
+                                {/* Show checkbox to mark task as complete only when a task is selected */}
+                                {data.task_id && (
+                                    <div className="mt-2 flex items-center space-x-2">
+                                        <Checkbox
+                                            id="mark_task_complete"
+                                            checked={data.mark_task_complete}
+                                            onCheckedChange={(checked) => setData('mark_task_complete', checked as boolean)}
+                                        />
+                                        <Label htmlFor="mark_task_complete" className="cursor-pointer text-sm font-medium">
+                                            Mark task as complete when time log is complete
+                                        </Label>
+                                    </div>
+                                )}
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="start_timestamp" className="text-sm font-medium">

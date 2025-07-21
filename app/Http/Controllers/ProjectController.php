@@ -198,12 +198,14 @@ final class ProjectController extends Controller
         Gate::authorize('viewTimeLogs', $project);
 
         $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseTimeLogQuery($project));
+        $tasks = $project->tasks()->with('assignees')->get();
 
         $teamMembers = ProjectStore::teamMembers(project: $project);
 
         return Inertia::render('project/time-logs', [
             'project' => $project,
             'teamMembers' => $teamMembers,
+            'tasks' => $tasks,
             ...TimeLogStore::resData(timeLogs: $timeLogs),
         ]);
     }

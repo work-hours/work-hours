@@ -1,15 +1,31 @@
 import StatsCards from '@/components/dashboard/StatsCards'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
-import { AlertCircle, ArrowLeft, Calendar, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset, User } from 'lucide-react'
+import {
+    AlertCircle,
+    ArrowLeft,
+    Calendar,
+    CalendarRange,
+    CheckCircle,
+    ClipboardList,
+    ClockIcon,
+    Download,
+    Edit,
+    Plus,
+    Search,
+    TimerReset,
+    User,
+} from 'lucide-react'
 import { FormEventHandler, forwardRef, useState } from 'react'
 
 type TimeLog = {
@@ -89,6 +105,21 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
     ),
 )
 
+type Task = {
+    id: number
+    project_id: number
+    title: string
+    description: string | null
+    status: 'pending' | 'in_progress' | 'completed'
+    priority: 'low' | 'medium' | 'high'
+    due_date: string | null
+    assignees: {
+        id: number
+        name: string
+        email: string
+    }[]
+}
+
 type Props = {
     timeLogs: TimeLog[]
     filters: Filters
@@ -100,6 +131,7 @@ type Props = {
     paidAmountsByCurrency: Record<string, number>
     weeklyAverage: number
     isCreator: boolean
+    tasks: Task[]
 }
 
 export default function ProjectTimeLogs({
@@ -113,6 +145,7 @@ export default function ProjectTimeLogs({
     paidAmountsByCurrency,
     weeklyAverage,
     isCreator,
+    tasks,
 }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -461,6 +494,135 @@ export default function ProjectTimeLogs({
                                     <ClockIcon className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Time Logs</h3>
                                     <p className="mb-4 text-muted-foreground">No time logs have been added to this project yet.</p>
+                                </div>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Tasks Card */}
+                <Card className="overflow-hidden transition-all hover:shadow-md">
+                    <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-xl">{project.name} - Tasks</CardTitle>
+                                <CardDescription>
+                                    {tasks.length > 0
+                                        ? `Showing ${tasks.length} ${tasks.length === 1 ? 'task' : 'tasks'}`
+                                        : 'No tasks found for this project'}
+                                </CardDescription>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Link href={`/task/create?project_id=${project.id}`}>
+                                    <Button className="flex items-center gap-2">
+                                        <Plus className="h-4 w-4" />
+                                        <span>Add Task</span>
+                                    </Button>
+                                </Link>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {tasks.length > 0 ? (
+                            <Table>
+                                <TableHeader>
+                                    <TableHeaderRow>
+                                        <TableHead>Title</TableHead>
+                                        <TableHead>Status</TableHead>
+                                        <TableHead>Priority</TableHead>
+                                        <TableHead>Due Date</TableHead>
+                                        <TableHead>Assignees</TableHead>
+                                        <TableHead className="text-right">Actions</TableHead>
+                                    </TableHeaderRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {tasks.map((task) => (
+                                        <TableRow key={task.id}>
+                                            <TableCell className="font-medium">{task.title}</TableCell>
+                                            <TableCell>
+                                                {task.status === 'completed' && (
+                                                    <Badge variant="success" className="capitalize">
+                                                        {task.status.replace('_', ' ')}
+                                                    </Badge>
+                                                )}
+                                                {task.status === 'in_progress' && (
+                                                    <Badge variant="warning" className="capitalize">
+                                                        {task.status.replace('_', ' ')}
+                                                    </Badge>
+                                                )}
+                                                {task.status === 'pending' && (
+                                                    <Badge variant="secondary" className="capitalize">
+                                                        {task.status.replace('_', ' ')}
+                                                    </Badge>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {task.priority === 'high' && (
+                                                    <Badge variant="destructive" className="capitalize">
+                                                        {task.priority}
+                                                    </Badge>
+                                                )}
+                                                {task.priority === 'medium' && (
+                                                    <Badge variant="default" className="capitalize">
+                                                        {task.priority}
+                                                    </Badge>
+                                                )}
+                                                {task.priority === 'low' && (
+                                                    <Badge variant="outline" className="capitalize">
+                                                        {task.priority}
+                                                    </Badge>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {task.due_date ? (
+                                                    new Date(task.due_date).toLocaleDateString()
+                                                ) : (
+                                                    <span className="text-muted-foreground/50">No due date</span>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {task.assignees && task.assignees.length > 0 ? (
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {task.assignees.map((assignee) => (
+                                                            <span
+                                                                key={assignee.id}
+                                                                className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
+                                                                title={assignee.email}
+                                                            >
+                                                                {assignee.name}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-muted-foreground/50">No assignees</span>
+                                                )}
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                <div className="flex justify-end gap-2">
+                                                    <Link href={route('task.edit', task.id)}>
+                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                                                            <Edit className="h-3.5 w-3.5" />
+                                                            <span className="sr-only">Edit</span>
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        ) : (
+                            <div className="rounded-md border bg-muted/5 p-6">
+                                <div className="flex flex-col items-center justify-center py-12 text-center">
+                                    <ClipboardList className="mb-4 h-12 w-12 text-muted-foreground/50" />
+                                    <h3 className="mb-1 text-lg font-medium">No Tasks</h3>
+                                    <p className="mb-4 text-muted-foreground">No tasks have been added to this project yet.</p>
+                                    <Link href={`/task/create?project_id=${project.id}`}>
+                                        <Button className="flex items-center gap-2">
+                                            <Plus className="h-4 w-4" />
+                                            <span>Add Task</span>
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
                         )}
