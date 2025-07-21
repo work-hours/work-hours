@@ -47,7 +47,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::get('task', [TaskController::class, 'index'])->name('task.index');
     Route::get('task/create', [TaskController::class, 'create'])->name('task.create');
-    Route::get('task/potential-assignees/{projectId}', [TaskController::class, 'potentialAssignees'])->name('task.potential-assignees');
     Route::get('task/{task}/edit', [TaskController::class, 'edit'])->name('task.edit');
 
     Route::get('time-log', [TimeLogController::class, 'index'])->name('time-log.index');
