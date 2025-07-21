@@ -1,6 +1,6 @@
+import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Info } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
 
 type User = {
     id: number

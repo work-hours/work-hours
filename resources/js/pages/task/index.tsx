@@ -3,10 +3,10 @@ import TaskDetailsSheet from '@/components/task-details-sheet'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -14,10 +14,10 @@ import { type BreadcrumbItem } from '@/types'
 import { type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
+import axios from 'axios'
 import { ClipboardList, Download, Edit, Eye, FileText, Loader2, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import axios from 'axios'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -89,11 +89,11 @@ export default function Tasks() {
                 priority: taskToUpdate.priority,
                 description: taskToUpdate.description,
                 due_date: taskToUpdate.due_date,
-                assignees: taskToUpdate.assignees.map(a => a.id)
+                assignees: taskToUpdate.assignees.map((a) => a.id),
             })
 
             // Update the task status locally
-            const updatedTasks = tasks.map(task => {
+            const updatedTasks = tasks.map((task) => {
                 if (task.id === taskToUpdate.id) {
                     return { ...task, status: selectedStatus }
                 }
@@ -155,31 +155,19 @@ export default function Tasks() {
         switch (status) {
             case 'completed':
                 return (
-                    <Badge
-                        variant="success"
-                        className="capitalize cursor-pointer hover:opacity-80"
-                        onClick={() => handleStatusClick(task, status)}
-                    >
+                    <Badge variant="success" className="cursor-pointer capitalize hover:opacity-80" onClick={() => handleStatusClick(task, status)}>
                         {status.replace('_', ' ')}
                     </Badge>
                 )
             case 'in_progress':
                 return (
-                    <Badge
-                        variant="warning"
-                        className="capitalize cursor-pointer hover:opacity-80"
-                        onClick={() => handleStatusClick(task, status)}
-                    >
+                    <Badge variant="warning" className="cursor-pointer capitalize hover:opacity-80" onClick={() => handleStatusClick(task, status)}>
                         {status.replace('_', ' ')}
                     </Badge>
                 )
             case 'pending':
                 return (
-                    <Badge
-                        variant="secondary"
-                        className="capitalize cursor-pointer hover:opacity-80"
-                        onClick={() => handleStatusClick(task, status)}
-                    >
+                    <Badge variant="secondary" className="cursor-pointer capitalize hover:opacity-80" onClick={() => handleStatusClick(task, status)}>
                         {status.replace('_', ' ')}
                     </Badge>
                 )
@@ -309,7 +297,7 @@ export default function Tasks() {
                                                             </Link>
                                                             <DeleteTask
                                                                 taskId={task.id}
-                                                                onDelete={() => setTasks(tasks.filter(t => t.id !== task.id))}
+                                                                onDelete={() => setTasks(tasks.filter((t) => t.id !== task.id))}
                                                             />
                                                         </>
                                                     )}
@@ -345,9 +333,7 @@ export default function Tasks() {
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
                             <DialogTitle>Change Task Status</DialogTitle>
-                            <DialogDescription>
-                                Select a new status for this task.
-                            </DialogDescription>
+                            <DialogDescription>Select a new status for this task.</DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                             <RadioGroup
@@ -376,19 +362,10 @@ export default function Tasks() {
                             </RadioGroup>
                         </div>
                         <DialogFooter>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => setStatusDialogOpen(false)}
-                                disabled={isUpdating}
-                            >
+                            <Button type="button" variant="outline" onClick={() => setStatusDialogOpen(false)} disabled={isUpdating}>
                                 Cancel
                             </Button>
-                            <Button
-                                type="button"
-                                onClick={updateTaskStatus}
-                                disabled={isUpdating}
-                            >
+                            <Button type="button" onClick={updateTaskStatus} disabled={isUpdating}>
                                 {isUpdating ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

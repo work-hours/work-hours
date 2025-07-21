@@ -124,12 +124,10 @@ final class TaskController extends Controller
         // Load relationships
         $task->load(['project', 'assignees']);
 
-        // Check if user has access to edit this task
+        // Check if a user has access to edit this task
         $isProjectOwner = $task->project->user_id === auth()->id();
-        $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
-        $isAssignee = $task->assignees->contains('id', auth()->id());
 
-        abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
+        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
 
         $projects = ProjectStore::userProjects(userId: auth()->id())
             ->map(fn ($project): array => [
@@ -169,12 +167,8 @@ final class TaskController extends Controller
         $isAssignee = $task->assignees->contains('id', auth()->id());
 
         // Allow project owners to do full updates, but assignees can only update the status
-        if (!$isProjectOwner) {
-            // If not a project owner, check if the user is an assignee and only updating status
-            if (!$isAssignee || count($request->only(['title', 'description', 'status', 'priority', 'due_date'])) > 1) {
-                abort(403, 'Unauthorized action.');
-            }
-        }
+        // If not a project owner, check if the user is an assignee and only updating status
+        abort_if(! $isProjectOwner && (! $isAssignee || count($request->only(['title', 'description', 'status', 'priority', 'due_date'])) > 1), 403, 'Unauthorized action.');
 
         DB::beginTransaction();
         try {
@@ -214,9 +208,9 @@ final class TaskController extends Controller
             }
 
             // Check if the status was changed to complete by someone other than the project owner
-            if ($oldStatus !== 'completed' && $request->input('status') === 'completed' && !$isProjectOwner) {
+            if ($oldStatus !== 'completed' && $request->input('status') === 'completed' && ! $isProjectOwner) {
                 // Load the project relationship for the notification if not already loaded
-                if (!$task->relationLoaded('project')) {
+                if (! $task->relationLoaded('project')) {
                     $task->load('project');
                 }
 
