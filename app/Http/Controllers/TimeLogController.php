@@ -318,23 +318,21 @@ final class TimeLogController extends Controller
         // Use the same base query as the index method, ensuring all filters are applied
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
 
-        $mappedTimeLogs = $timeLogs->map(function ($timeLog): array {
-            $hourlyRate = $timeLog->hourly_rate
-                ?: Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
+        // Use the timeLogMapper method for consistency with the index method
+        $mappedLogs = TimeLogStore::timeLogMapper($timeLogs);
 
-            $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
-
+        $mappedTimeLogs = $mappedLogs->map(function ($timeLog): array {
             return [
-                'id' => $timeLog->id,
-                'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
-                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
-                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-                'hourly_rate' => $hourlyRate,
-                'paid_amount' => $paidAmount,
-                'note' => $timeLog->note,
-                'status' => ucfirst((string) $timeLog->status?->value ?: TimeLogStatus::PENDING->value),
-                'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
+                'id' => $timeLog['id'],
+                'project_name' => $timeLog['project_name'],
+                'start_timestamp' => $timeLog['start_timestamp'],
+                'end_timestamp' => $timeLog['end_timestamp'] ?? '',
+                'duration' => $timeLog['duration'],
+                'hourly_rate' => $timeLog['hourly_rate'],
+                'paid_amount' => $timeLog['paid_amount'],
+                'note' => $timeLog['note'],
+                'status' => ucfirst((string) $timeLog['status']?->value ?: TimeLogStatus::PENDING->value),
+                'is_paid' => $timeLog['is_paid'] ? 'Yes' : 'No',
             ];
         });
 
