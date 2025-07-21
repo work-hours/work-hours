@@ -39,26 +39,8 @@ final class TimeLogController extends Controller
     public function index()
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
-        $timeLogStats = TimeLogStore::stats(timeLogs: $timeLogs);
-        $projects = ProjectStore::userProjects(userId: auth()->id());
 
-        return Inertia::render('time-log/index', [
-            'timeLogs' => TimeLogStore::timeLogMapper($timeLogs),
-            'filters' => [
-                'start_date' => request('start_date', ''),
-                'end_date' => request('end_date', ''),
-                'project_id' => request('project_id', ''),
-                'is_paid' => request('is_paid', ''),
-                'status' => request('status', ''),
-            ],
-            'projects' => $projects,
-            'totalDuration' => $timeLogStats['total_duration'],
-            'unpaidHours' => $timeLogStats['unpaid_hours'],
-            'paidHours' => $timeLogStats['paid_hours'],
-            'weeklyAverage' => $timeLogStats['weekly_average'],
-            'unpaidAmountsByCurrency' => $timeLogStats['unpaid_amounts_by_currency'],
-            'paidAmountsByCurrency' => $timeLogStats['paid_amounts_by_currency'],
-        ]);
+        return Inertia::render('time-log/index', TimeLogStore::resData(timeLogs: $timeLogs));
     }
 
     /**
@@ -78,7 +60,7 @@ final class TimeLogController extends Controller
             $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
             $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
 
-            $isLogCompleted = !empty($data['start_timestamp']) && !empty($data['end_timestamp']);
+            $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
             if ($isLogCompleted) {
                 $start = Carbon::parse($data['start_timestamp']);
@@ -206,7 +188,7 @@ final class TimeLogController extends Controller
 
                 $amount = $timeLog->duration * $hourlyRate;
 
-                if (!isset($projectAmounts[$timeLog->project_id])) {
+                if (! isset($projectAmounts[$timeLog->project_id])) {
                     $projectAmounts[$timeLog->project_id] = 0;
                 }
 
@@ -268,7 +250,7 @@ final class TimeLogController extends Controller
             $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
             $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
 
-            $isLogCompleted = !empty($data['start_timestamp']) && !empty($data['end_timestamp']);
+            $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
             if ($isLogCompleted) {
                 $start = Carbon::parse($data['start_timestamp']);
@@ -329,7 +311,7 @@ final class TimeLogController extends Controller
                 'hourly_rate' => $hourlyRate,
                 'paid_amount' => $paidAmount,
                 'note' => $timeLog->note,
-                'status' => ucfirst((string)$timeLog->status?->value ?: TimeLogStatus::PENDING->value),
+                'status' => ucfirst((string) $timeLog->status?->value ?: TimeLogStatus::PENDING->value),
                 'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
             ];
         });

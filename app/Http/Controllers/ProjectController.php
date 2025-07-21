@@ -188,33 +188,13 @@ final class ProjectController extends Controller
         Gate::authorize('viewTimeLogs', $project);
 
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('project_id', $project->getKey()));
-        $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
-        $paidAmount = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
-
-        $mappedTimeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
-        // Only include approved logs in calculations
-        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
-        $totalDuration = round($approvedLogs->sum('duration'), 2);
-        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
-        $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
 
         $teamMembers = ProjectStore::teamMembers(project: $project);
 
         return Inertia::render('project/time-logs', [
-            'timeLogs' => $mappedTimeLogs,
-            'filters' => [
-                'start_date' => request('start_date', ''),
-                'end_date' => request('end_date', ''),
-                'user_id' => request('user_id', ''),
-                'is_paid' => request('is_paid', ''),
-            ],
             'project' => $project,
             'teamMembers' => $teamMembers,
-            'totalDuration' => $totalDuration,
-            'unpaidHours' => $unpaidHours,
-            'unpaidAmount' => $unpaidAmount,
-            'paidAmount' => $paidAmount,
-            'weeklyAverage' => $weeklyAverage,
+            ...TimeLogStore::resData(timeLogs: $timeLogs),
         ]);
     }
 

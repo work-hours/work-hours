@@ -88,51 +88,17 @@ final class TeamController extends Controller
     {
         Gate::authorize('viewTimeLogs', $user);
 
+        $projects = ProjectStore::userProjects(userId: auth()->id());
+
         $timeLogs = TimeLogStore::timeLogs(
             baseQuery: TimeLog::query()
                 ->where('user_id', $user->getKey())
-                ->whereIn('project_id', ProjectStore::userProjects(userId: auth()->id())->pluck('id'))
+                ->whereIn('project_id', $projects->pluck('id'))
         );
-        $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
-
-        // Only include approved logs in calculations
-        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
-        $totalDuration = round($approvedLogs->sum('duration'), 2);
-        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
-        $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);
-        $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
-
-        $team = TeamStore::teamEntry(userId: auth()->id(), memberId: $user->getKey());
-        $unpaidAmountsByCurrency = TimeLogStore::unpaidAmountFromLogs($timeLogs);
-        $paidAmountsByCurrency = TimeLogStore::paidAmountFromLogs($timeLogs);
-        $defaultCurrency = $team instanceof Team ? $team->currency : 'USD';
-
-        // For backward compatibility, calculate total unpaid amount
-        $totalUnpaidAmount = array_sum($unpaidAmountsByCurrency);
-        // For backward compatibility, calculate total paid amount
-        $totalPaidAmount = array_sum($paidAmountsByCurrency);
-
-        $projects = ProjectStore::userProjects(userId: auth()->id());
 
         return Inertia::render('team/time-logs', [
-            'timeLogs' => $mappedTimeLogs,
-            'filters' => [
-                'start_date' => request('start_date', ''),
-                'end_date' => request('end_date', ''),
-                'project_id' => request('project_id', ''),
-                'is_paid' => request('is_paid', ''),
-            ],
-            'projects' => $projects,
             'user' => $user,
-            'totalDuration' => $totalDuration,
-            'unpaidHours' => $unpaidHours,
-            'paidHours' => $paidHours,
-            'unpaidAmount' => round($totalUnpaidAmount, 2),
-            'unpaidAmountsByCurrency' => $unpaidAmountsByCurrency,
-            'paidAmount' => round($totalPaidAmount, 2),
-            'paidAmountsByCurrency' => $paidAmountsByCurrency,
-            'currency' => $defaultCurrency,
-            'weeklyAverage' => $weeklyAverage,
+            ...TimeLogStore::resData(timeLogs: $timeLogs),
         ]);
     }
 
@@ -268,23 +234,13 @@ final class TeamController extends Controller
 
     public function allTimeLogs()
     {
+        $projects = ProjectStore::userProjects(userId: auth()->id());
+
         $timeLogs = TimeLogStore::timeLogs(
             baseQuery: TimeLog::query()
                 ->whereIn('user_id', TeamStore::teamMembersIds(userId: auth()->id()))
-                ->whereIn('project_id', ProjectStore::userProjects(userId: auth()->id())->pluck('id'))
+                ->whereIn('project_id', $projects->pluck('id'))
         );
-        $unpaidAmountsByCurrency = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
-        $paidAmountsByCurrency = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
-        $mappedTimeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
-        // Only include approved logs in calculations
-        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
-        $totalDuration = round($approvedLogs->sum('duration'), 2);
-        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
-        $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);
-        $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
-
-        $defaultCurrency = 'USD';
-        $projects = ProjectStore::userProjects(userId: auth()->id());
 
         $teamMembersList = TeamStore::teamMembers(userId: auth()->id())
             ->map(fn ($teamMember): array => [
@@ -293,31 +249,9 @@ final class TeamController extends Controller
                 'email' => $teamMember->member->email,
             ]);
 
-        // For backward compatibility, calculate total unpaid amount
-        $totalUnpaidAmount = array_sum($unpaidAmountsByCurrency);
-        // For backward compatibility, calculate total paid amount
-        $totalPaidAmount = array_sum($paidAmountsByCurrency);
-
         return Inertia::render('team/all-time-logs', [
-            'timeLogs' => $mappedTimeLogs,
-            'filters' => [
-                'start_date' => request('start_date', ''),
-                'end_date' => request('end_date', ''),
-                'user_id' => request('user_id', ''),
-                'project_id' => request('project_id', ''),
-                'is_paid' => request('is_paid', ''),
-            ],
-            'projects' => $projects,
             'teamMembers' => $teamMembersList,
-            'totalDuration' => $totalDuration,
-            'unpaidHours' => $unpaidHours,
-            'paidHours' => $paidHours,
-            'unpaidAmount' => round($totalUnpaidAmount, 2),
-            'unpaidAmountsByCurrency' => $unpaidAmountsByCurrency,
-            'paidAmount' => round($totalPaidAmount, 2),
-            'paidAmountsByCurrency' => $paidAmountsByCurrency,
-            'currency' => $defaultCurrency,
-            'weeklyAverage' => $weeklyAverage,
+            ...TimeLogStore::resData(timeLogs: $timeLogs),
         ]);
     }
 
