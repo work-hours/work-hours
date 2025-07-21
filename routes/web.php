@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TimeLogController;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,11 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('client/create', [ClientController::class, 'create'])->name('client.create');
     Route::get('client/{client}/edit', [ClientController::class, 'edit'])->name('client.edit');
     Route::get('client/{client}/projects', [ClientController::class, 'projects'])->name('client.projects');
+
+    Route::get('task', [TaskController::class, 'index'])->name('task.index');
+    Route::get('task/create', [TaskController::class, 'create'])->name('task.create');
+    Route::get('task/potential-assignees/{projectId}', [TaskController::class, 'potentialAssignees'])->name('task.potential-assignees');
+    Route::get('task/{task}/edit', [TaskController::class, 'edit'])->name('task.edit');
 
     Route::get('time-log', [TimeLogController::class, 'index'])->name('time-log.index');
     Route::get('time-log/create', [TimeLogController::class, 'create'])->name('time-log.create');

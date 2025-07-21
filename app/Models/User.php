@@ -8,7 +8,9 @@ use App\Policies\TeamPolicy;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -27,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @property float|null $hourly_rate
  * @property string|null $currency
  * @property mixed $unreadNotifications
+ * @property Collection|Task[] $assignedTasks
  */
 #[UsePolicy(TeamPolicy::class)]
 final class User extends Authenticatable implements MustVerifyEmail
@@ -84,5 +87,11 @@ final class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function assignedTasks(): BelongsToMany
+    {
+        return $this->belongsToMany(Task::class, 'task_user')
+            ->withTimestamps();
     }
 }
