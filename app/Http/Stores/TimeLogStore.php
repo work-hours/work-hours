@@ -189,14 +189,16 @@ final class TimeLogStore
         $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
         $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);
         $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
+        $unpaidAmountsByCurrency = self::unpaidAmountFromLogs($approvedLogs);
+        $paidAmountsByCurrency = self::paidAmountFromLogs($approvedLogs);
 
         return [
             'total_duration' => $totalDuration,
             'unpaid_hours' => $unpaidHours,
             'paid_hours' => $paidHours,
-            'unpaid_amount' => self::unpaidAmountFromLogs($approvedLogs),
-            'paid_amount' => self::paidAmountFromLogs($approvedLogs),
             'weekly_average' => $weeklyAverage,
+            'unpaid_amounts_by_currency' => $unpaidAmountsByCurrency,
+            'paid_amounts_by_currency' => $paidAmountsByCurrency,
         ];
     }
 
