@@ -8,9 +8,10 @@ import { type BreadcrumbItem } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { tasks as _tasks } from '@actions/TaskController'
-import { Head, Link } from '@inertiajs/react'
+import { Head, Link, usePage } from '@inertiajs/react'
 import { ClipboardList, Download, Edit, FileText, Loader2, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { type SharedData } from '@/types'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -28,6 +29,7 @@ type User = {
 type Project = {
     id: number
     name: string
+    user_id: number
 }
 
 type Task = {
@@ -43,6 +45,7 @@ type Task = {
 }
 
 export default function Tasks() {
+    const { auth } = usePage<SharedData>().props
     const [tasks, setTasks] = useState<Task[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
@@ -211,13 +214,17 @@ export default function Tasks() {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
-                                                    <Link href={route('task.edit', task.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Edit className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Edit</span>
-                                                        </Button>
-                                                    </Link>
-                                                    <DeleteTask taskId={task.id} />
+                                                    {task.project.user_id === auth.user.id && (
+                                                        <>
+                                                            <Link href={route('task.edit', task.id)}>
+                                                                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                                                                    <Edit className="h-3.5 w-3.5" />
+                                                                    <span className="sr-only">Edit</span>
+                                                                </Button>
+                                                            </Link>
+                                                            <DeleteTask taskId={task.id} />
+                                                        </>
+                                                    )}
                                                 </div>
                                             </TableCell>
                                         </TableRow>
