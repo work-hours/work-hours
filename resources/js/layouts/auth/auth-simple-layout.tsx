@@ -10,7 +10,7 @@ interface AuthLayoutProps {
 
 export default function AuthSimpleLayout({ children, title, description }: PropsWithChildren<AuthLayoutProps>) {
     return (
-        <div className="relative flex min-h-svh flex-col items-center justify-center bg-[#f8f6e9] p-6 font-['Courier_New',monospace] md:p-10 dark:bg-gray-900">
+        <div className="relative flex min-h-svh flex-col items-center justify-center bg-[#f8f6e9] p-6 md:p-10 dark:bg-gray-900">
             {/* Paper texture overlay */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPgogIDxmaWx0ZXIgaWQ9Im5vaXNlIj4KICAgIDxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVCbGVuZCBtb2RlPSJtdWx0aXBseSIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2UiLz4KICA8L2ZpbHRlcj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+Cjwvc3ZnPg==')] opacity-100 dark:opacity-30"></div>
 
@@ -52,7 +52,7 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                                         <AppLogoIcon className="h-8 w-8 text-gray-700 dark:text-gray-300" />
                                     </div>
                                     <div>
-                                        <span className="font-['Courier_New',monospace] text-xl font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">
+                                        <span className="text-xl font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">
                                             Work Hours
                                         </span>
                                         <div className="mt-1 h-1 w-full bg-gray-300 dark:bg-gray-600"></div>
@@ -60,12 +60,8 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                                 </Link>
 
                                 <div className="mt-4 space-y-2 text-center">
-                                    <h1 className="font-['Courier_New',monospace] text-2xl font-bold tracking-wide text-gray-800 uppercase dark:text-gray-200">
-                                        {title}
-                                    </h1>
-                                    <p className="text-center font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
-                                        {description}
-                                    </p>
+                                    <h1 className="text-2xl font-bold tracking-wide text-gray-800 uppercase dark:text-gray-200">{title}</h1>
+                                    <p className="text-center text-sm text-gray-700 dark:text-gray-300">{description}</p>
                                 </div>
                             </div>
                             {children}
@@ -81,15 +77,13 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                         href="https://github.com/sponsors/msamgan"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="border-b border-gray-400 pb-1 font-['Courier_New',monospace] text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
+                        className="border-b border-gray-400 pb-1 text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
                     >
                         Sponsor this project
                     </a>
                 </div>
                 <div className="inline-block border border-gray-300/40 bg-[#f8f6e9]/90 px-4 py-1 dark:border-gray-700/40 dark:bg-gray-800/90">
-                    <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
-                        &copy; {new Date().getFullYear()} Work Hours. All rights reserved.
-                    </p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">&copy; {new Date().getFullYear()} Work Hours. All rights reserved.</p>
                 </div>
             </div>
         </div>

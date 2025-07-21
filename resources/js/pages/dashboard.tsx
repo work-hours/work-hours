@@ -99,9 +99,7 @@ export default function Dashboard() {
                                     <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                         <LayoutGrid className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                     </div>
-                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
-                                        Metrics Dashboard
-                                    </h3>
+                                    <h3 className="text-xl font-bold text-gray-800 uppercase dark:text-gray-200">Metrics Dashboard</h3>
                                 </div>
                             </div>
 
@@ -115,9 +113,7 @@ export default function Dashboard() {
                                     <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                         <BarChart2 className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                     </div>
-                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
-                                        Analytics
-                                    </h3>
+                                    <h3 className="text-xl font-bold text-gray-800 uppercase dark:text-gray-200">Analytics</h3>
                                 </div>
                             </div>
 
@@ -134,9 +130,7 @@ export default function Dashboard() {
                                     <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                         <Clock className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                     </div>
-                                    <h3 className="font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
-                                        Activity
-                                    </h3>
+                                    <h3 className="text-xl font-bold text-gray-800 uppercase dark:text-gray-200">Activity</h3>
                                 </div>
                             </div>
 

@@ -14,7 +14,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent side="right" className="overflow-y-auto font-['Courier_New',monospace] sm:max-w-md md:max-w-lg">
+            <SheetContent side="right" className="overflow-y-auto sm:max-w-md md:max-w-lg">
                 <SheetHeader>
                     <SheetTitle className="flex items-center gap-2">
                         <Info className="h-5 w-5 text-primary" />

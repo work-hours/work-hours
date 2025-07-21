@@ -199,7 +199,7 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
                     <div className="flex items-center justify-between border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
                         <div className="flex items-center gap-2">
                             <ClockIcon className="h-5 w-5 animate-pulse text-primary" />
-                            <span className="font-['Courier_New',monospace] font-bold">{formatElapsedTime(activeTimeLog.elapsed)}</span>
+                            <span className="font-bold">{formatElapsedTime(activeTimeLog.elapsed)}</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Button onClick={() => setView('tracking')} variant="ghost" size="sm" className="h-8 w-8 p-1">
@@ -210,19 +210,16 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
                     <CardContent className="p-4">
                         <div className="flex flex-col gap-3">
                             <div>
-                                <CardTitle className="flex items-center gap-2 text-left font-['Courier_New',monospace] text-lg font-bold">
+                                <CardTitle className="flex items-center gap-2 text-left text-lg font-bold">
                                     <span>{activeTimeLog.project_name}</span>
                                 </CardTitle>
-                                <CardDescription className="font-['Courier_New',monospace]">
+                                <CardDescription className="">
                                     Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
                                 </CardDescription>
                             </div>
                             <div className="flex flex-col gap-2">
                                 <div>
-                                    <Label
-                                        htmlFor="note"
-                                        className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 dark:text-gray-200"
-                                    >
+                                    <Label htmlFor="note" className="mb-1 block text-sm font-bold text-gray-800 dark:text-gray-200">
                                         What did you work on?
                                     </Label>
                                     <Input
@@ -260,7 +257,7 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
                 <div className="flex items-center justify-between border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
                     <div className="flex items-center gap-2">
                         <MessageCircle className="h-5 w-5" />
-                        <span className="font-['Courier_New',monospace] font-bold">Time Tracker</span>
+                        <span className="font-bold">Time Tracker</span>
                     </div>
                     <Button onClick={toggleVisibility} variant="ghost" size="sm" className="h-8 w-8 p-1">
                         <X className="h-4 w-4" />
@@ -268,12 +265,9 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
                 </div>
                 <CardContent className="p-4">
                     <div className="flex flex-col gap-3">
-                        <CardDescription className="font-['Courier_New',monospace]">Select a project and start tracking your time</CardDescription>
+                        <CardDescription className="">Select a project and start tracking your time</CardDescription>
                         <div>
-                            <Label
-                                htmlFor="tracking_project"
-                                className="mb-1 block font-['Courier_New',monospace] text-sm font-bold text-gray-800 dark:text-gray-200"
-                            >
+                            <Label htmlFor="tracking_project" className="mb-1 block text-sm font-bold text-gray-800 dark:text-gray-200">
                                 Project
                             </Label>
                             <SearchableSelect

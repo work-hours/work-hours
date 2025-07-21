@@ -20,14 +20,14 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    <h1 className="mb-6 font-['Courier_New',monospace] text-4xl font-bold tracking-tight text-gray-800 uppercase md:text-6xl lg:text-7xl dark:text-gray-200">
+                    <h1 className="mb-6 text-4xl font-bold tracking-tight text-gray-800 uppercase md:text-6xl lg:text-7xl dark:text-gray-200">
                         Track Your Work Hours{' '}
                         <span className="relative text-blue-900 dark:text-blue-400">
                             Effortlessly
                             <div className="absolute right-0 bottom-0 left-0 h-1 bg-blue-900/30 dark:bg-blue-400/30"></div>
                         </span>
                     </h1>
-                    <p className="mx-auto mb-10 max-w-2xl font-['Courier_New',monospace] text-lg text-gray-700 md:text-xl dark:text-gray-300">
+                    <p className="mx-auto mb-10 max-w-2xl text-lg text-gray-700 md:text-xl dark:text-gray-300">
                         A simple, intuitive time tracking solution for teams and individuals. Boost productivity, improve billing accuracy, and gain
                         valuable insights into how you spend your time.
                     </p>

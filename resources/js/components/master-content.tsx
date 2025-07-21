@@ -40,7 +40,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
     }, [])
 
     return (
-        <div className="relative flex flex-1 flex-col bg-[#f8f6e9] font-['Courier_New',monospace] dark:bg-gray-900">
+        <div className="relative flex flex-1 flex-col bg-[#f8f6e9] dark:bg-gray-900">
             {/* Enhanced horizontal lines with slightly increased contrast */}
             <div
                 className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.04)_1px,transparent_1px)] bg-[length:100%_2rem] dark:bg-[linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)]"
@@ -117,14 +117,12 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                                 {breadcrumb.href ? (
                                     <Link
                                         href={breadcrumb.href}
-                                        className="font-['Courier_New',monospace] text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                                        className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
                                     >
                                         {breadcrumb.title}
                                     </Link>
                                 ) : (
-                                    <span className="font-['Courier_New',monospace] text-sm font-medium text-gray-900 dark:text-gray-100">
-                                        {breadcrumb.title}
-                                    </span>
+                                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{breadcrumb.title}</span>
                                 )}
                                 {index < breadcrumbs.length - 1 && <ChevronRight className="mx-2 h-4 w-4 text-gray-400 dark:text-gray-500" />}
                             </div>

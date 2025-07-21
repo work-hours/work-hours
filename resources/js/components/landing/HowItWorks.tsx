@@ -7,21 +7,15 @@ export default function HowItWorks() {
             <div className="mb-16 text-center">
                 <div className="relative mx-auto mb-6 w-fit">
                     <div className="border-b-2 border-gray-800/70 px-8 py-2 dark:border-gray-200/70">
-                        <span className="font-['Courier_New',monospace] font-bold tracking-widest text-gray-800 uppercase dark:text-gray-200">
-                            Instructions
-                        </span>
+                        <span className="font-bold tracking-widest text-gray-800 uppercase dark:text-gray-200">Instructions</span>
                     </div>
                     <div className="absolute -top-2 -right-2 flex h-8 w-8 rotate-12 items-center justify-center border-2 border-blue-900/40 bg-blue-100/20 dark:border-blue-400/40 dark:bg-blue-900/20">
                         <span className="text-xs font-bold text-blue-900 dark:text-blue-400">I</span>
                     </div>
                 </div>
 
-                <h2 className="mb-4 font-['Courier_New',monospace] text-3xl font-bold tracking-tight text-gray-800 uppercase md:text-5xl dark:text-gray-200">
-                    How It Works
-                </h2>
-                <p className="mx-auto max-w-2xl font-['Courier_New',monospace] text-lg text-gray-700 dark:text-gray-300">
-                    Get started with Work Hours in four simple steps
-                </p>
+                <h2 className="mb-4 text-3xl font-bold tracking-tight text-gray-800 uppercase md:text-5xl dark:text-gray-200">How It Works</h2>
+                <p className="mx-auto max-w-2xl text-lg text-gray-700 dark:text-gray-300">Get started with Work Hours in four simple steps</p>
             </div>
 
             {/* Process steps with connecting lines - timesheet style */}
@@ -45,14 +39,12 @@ export default function HowItWorks() {
                             aria-hidden="true"
                         >
                             <div className="flex flex-col items-center justify-center">
-                                <span className="font-['Courier_New',monospace] text-2xl font-bold">1</span>
+                                <span className="text-2xl font-bold">1</span>
                                 <UserPlus className="mt-1 h-6 w-6" />
                             </div>
                         </div>
-                        <h3 className="mb-3 font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
-                            Create Your Account
-                        </h3>
-                        <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
+                        <h3 className="mb-3 text-xl font-bold text-gray-800 uppercase dark:text-gray-200">Create Your Account</h3>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
                             Sign up for free in less than a minute. No credit card required to get started with our basic plan.
                         </p>
                     </li>
@@ -63,14 +55,12 @@ export default function HowItWorks() {
                             aria-hidden="true"
                         >
                             <div className="flex flex-col items-center justify-center">
-                                <span className="font-['Courier_New',monospace] text-2xl font-bold">2</span>
+                                <span className="text-2xl font-bold">2</span>
                                 <FolderPlus className="mt-1 h-6 w-6" />
                             </div>
                         </div>
-                        <h3 className="mb-3 font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
-                            Set Up Your Projects
-                        </h3>
-                        <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
+                        <h3 className="mb-3 text-xl font-bold text-gray-800 uppercase dark:text-gray-200">Set Up Your Projects</h3>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
                             Create or import projects and customize your workspace to match your workflow and business needs.
                         </p>
                     </li>
@@ -81,14 +71,12 @@ export default function HowItWorks() {
                             aria-hidden="true"
                         >
                             <div className="flex flex-col items-center justify-center">
-                                <span className="font-['Courier_New',monospace] text-2xl font-bold">3</span>
+                                <span className="text-2xl font-bold">3</span>
                                 <Users className="mt-1 h-6 w-6" />
                             </div>
                         </div>
-                        <h3 className="mb-3 font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
-                            Build Your Team
-                        </h3>
-                        <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
+                        <h3 className="mb-3 text-xl font-bold text-gray-800 uppercase dark:text-gray-200">Build Your Team</h3>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
                             Invite team members, assign them to projects, and set hourly rates for accurate time tracking.
                         </p>
                     </li>
@@ -99,14 +87,12 @@ export default function HowItWorks() {
                             aria-hidden="true"
                         >
                             <div className="flex flex-col items-center justify-center">
-                                <span className="font-['Courier_New',monospace] text-2xl font-bold">4</span>
+                                <span className="text-2xl font-bold">4</span>
                                 <Clock className="mt-1 h-6 w-6" />
                             </div>
                         </div>
-                        <h3 className="mb-3 font-['Courier_New',monospace] text-xl font-bold text-gray-800 uppercase dark:text-gray-200">
-                            Start Tracking Time
-                        </h3>
-                        <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
+                        <h3 className="mb-3 text-xl font-bold text-gray-800 uppercase dark:text-gray-200">Start Tracking Time</h3>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
                             Track time with a single click, generate reports, and optimize your productivity with data-driven insights.
                         </p>
                     </li>
@@ -126,7 +112,7 @@ export default function HowItWorks() {
                     </div>
                     <div className="flex items-center gap-2">
                         <Zap className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
-                        <span className="font-['Courier_New',monospace] text-sm font-bold text-gray-800 dark:text-gray-200">
+                        <span className="text-sm font-bold text-gray-800 dark:text-gray-200">
                             Most users are up and running in less than 10 minutes!
                         </span>
                     </div>
