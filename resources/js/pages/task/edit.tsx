@@ -1,7 +1,7 @@
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Save, Text } from 'lucide-react'
-import { FormEventHandler } from 'react'
+import { FormEventHandler, forwardRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
@@ -12,8 +12,45 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import DatePicker from '@/components/ui/date-picker'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
+
+// Custom input component for DatePicker with icon
+interface CustomInputProps {
+    value?: string
+    onClick?: () => void
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+    icon: React.ReactNode
+    placeholder?: string
+    disabled?: boolean
+    required?: boolean
+    autoFocus?: boolean
+    tabIndex?: number
+    id: string
+}
+
+const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
+    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
+        <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
+            <Input
+                id={id}
+                ref={ref}
+                value={value}
+                onClick={onClick}
+                onChange={onChange}
+                placeholder={placeholder}
+                disabled={disabled}
+                required={required}
+                autoFocus={autoFocus}
+                tabIndex={tabIndex}
+                className="pl-10"
+                readOnly={!onChange}
+            />
+        </div>
+    ),
+)
 
 type User = {
     id: number
@@ -72,6 +109,19 @@ export default function EditTask({ task, projects, potentialAssignees, assignedU
         due_date: task.due_date || '',
         assignees: assignedUsers || [],
     })
+
+    // State for due date
+    const [dueDate, setDueDate] = useState<Date | null>(data.due_date ? new Date(data.due_date) : null)
+
+    // Handle due date change
+    const handleDueDateChange = (date: Date | null) => {
+        setDueDate(date)
+        if (date) {
+            setData('due_date', date.toISOString().split('T')[0])
+        } else {
+            setData('due_date', '')
+        }
+    }
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
@@ -248,19 +298,22 @@ export default function EditTask({ task, projects, potentialAssignees, assignedU
                                     <Label htmlFor="due_date" className="text-sm font-medium">
                                         Due Date <span className="text-xs text-muted-foreground">(optional)</span>
                                     </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                                        </div>
-                                        <Input
-                                            id="due_date"
-                                            type="date"
-                                            value={data.due_date}
-                                            onChange={(e) => setData('due_date', e.target.value)}
-                                            disabled={processing}
-                                            className="pl-10"
-                                        />
-                                    </div>
+                                    <DatePicker
+                                        selected={dueDate}
+                                        onChange={handleDueDateChange}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        placeholderText="Select due date (optional)"
+                                        customInput={
+                                            <CustomInput
+                                                id="due_date"
+                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                tabIndex={3}
+                                            />
+                                        }
+                                    />
                                     <InputError message={errors.due_date} />
                                 </div>
 
