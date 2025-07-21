@@ -4,6 +4,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -13,6 +16,8 @@ import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { ClipboardList, Download, Edit, Eye, FileText, Loader2, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import axios from 'axios'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -52,10 +57,58 @@ export default function Tasks() {
     const [error, setError] = useState<boolean>(false)
     const [selectedTask, setSelectedTask] = useState<Task | null>(null)
     const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+    const [statusDialogOpen, setStatusDialogOpen] = useState(false)
+    const [selectedStatus, setSelectedStatus] = useState<Task['status'] | null>(null)
+    const [isUpdating, setIsUpdating] = useState(false)
+    const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null)
 
     const handleViewDetails = (task: Task) => {
         setSelectedTask(task)
         setIsDetailsOpen(true)
+    }
+
+    const handleStatusClick = (task: Task, status: Task['status']) => {
+        setTaskToUpdate(task)
+        setSelectedStatus(status)
+        setStatusDialogOpen(true)
+    }
+
+    const updateTaskStatus = async () => {
+        if (!taskToUpdate || !selectedStatus || selectedStatus === taskToUpdate.status) {
+            setStatusDialogOpen(false)
+            return
+        }
+
+        setIsUpdating(true)
+        try {
+            await axios.put(route('task.update', taskToUpdate.id), {
+                status: selectedStatus,
+                // Include other required fields to avoid validation errors
+                title: taskToUpdate.title,
+                project_id: taskToUpdate.project_id,
+                priority: taskToUpdate.priority,
+                description: taskToUpdate.description,
+                due_date: taskToUpdate.due_date,
+                assignees: taskToUpdate.assignees.map(a => a.id)
+            })
+
+            // Update the task status locally
+            const updatedTasks = tasks.map(task => {
+                if (task.id === taskToUpdate.id) {
+                    return { ...task, status: selectedStatus }
+                }
+                return task
+            })
+
+            setTasks(updatedTasks)
+            toast.success('Task status updated successfully')
+            setStatusDialogOpen(false)
+        } catch (error) {
+            console.error('Error updating task status:', error)
+            toast.error('Failed to update task status')
+        } finally {
+            setIsUpdating(false)
+        }
     }
 
     const getTasks = async () => {
@@ -98,23 +151,35 @@ export default function Tasks() {
         }
     }
 
-    const getStatusBadge = (status: Task['status']) => {
+    const getStatusBadge = (task: Task, status: Task['status']) => {
         switch (status) {
             case 'completed':
                 return (
-                    <Badge variant="success" className="capitalize">
+                    <Badge
+                        variant="success"
+                        className="capitalize cursor-pointer hover:opacity-80"
+                        onClick={() => handleStatusClick(task, status)}
+                    >
                         {status.replace('_', ' ')}
                     </Badge>
                 )
             case 'in_progress':
                 return (
-                    <Badge variant="warning" className="capitalize">
+                    <Badge
+                        variant="warning"
+                        className="capitalize cursor-pointer hover:opacity-80"
+                        onClick={() => handleStatusClick(task, status)}
+                    >
                         {status.replace('_', ' ')}
                     </Badge>
                 )
             case 'pending':
                 return (
-                    <Badge variant="secondary" className="capitalize">
+                    <Badge
+                        variant="secondary"
+                        className="capitalize cursor-pointer hover:opacity-80"
+                        onClick={() => handleStatusClick(task, status)}
+                    >
                         {status.replace('_', ' ')}
                     </Badge>
                 )
@@ -194,7 +259,7 @@ export default function Tasks() {
                                         <TableRow key={task.id}>
                                             <TableCell className="font-medium">{task.title}</TableCell>
                                             <TableCell>{task.project.name}</TableCell>
-                                            <TableCell>{getStatusBadge(task.status)}</TableCell>
+                                            <TableCell>{getStatusBadge(task, task.status)}</TableCell>
                                             <TableCell>{getPriorityBadge(task.priority)}</TableCell>
                                             <TableCell>
                                                 {task.due_date ? (
@@ -271,6 +336,68 @@ export default function Tasks() {
 
                 {/* Task Details Sheet */}
                 <TaskDetailsSheet task={selectedTask} open={isDetailsOpen} onOpenChange={setIsDetailsOpen} />
+
+                {/* Status Change Dialog */}
+                <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Change Task Status</DialogTitle>
+                            <DialogDescription>
+                                Select a new status for this task.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <RadioGroup
+                                value={selectedStatus || ''}
+                                onValueChange={(value) => setSelectedStatus(value as Task['status'])}
+                                className="flex flex-col space-y-2"
+                            >
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="pending" id="status-pending" />
+                                    <Label htmlFor="status-pending" className="cursor-pointer">
+                                        Pending
+                                    </Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="in_progress" id="status-in-progress" />
+                                    <Label htmlFor="status-in-progress" className="cursor-pointer">
+                                        In Progress
+                                    </Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="completed" id="status-completed" />
+                                    <Label htmlFor="status-completed" className="cursor-pointer">
+                                        Completed
+                                    </Label>
+                                </div>
+                            </RadioGroup>
+                        </div>
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setStatusDialogOpen(false)}
+                                disabled={isUpdating}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="button"
+                                onClick={updateTaskStatus}
+                                disabled={isUpdating}
+                            >
+                                {isUpdating ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Saving...
+                                    </>
+                                ) : (
+                                    'Save Changes'
+                                )}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </MasterLayout>
     )
