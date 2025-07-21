@@ -187,7 +187,7 @@ export default function Tasks() {
                                             <TableCell>{getPriorityBadge(task.priority)}</TableCell>
                                             <TableCell>
                                                 {task.due_date ? (
-                                                    new Date(task.due_date).toLocaleDateString()
+                                                    new Date(task.due_date).toISOString().split('T')[0]
                                                 ) : (
                                                     <span className="text-muted-foreground/50">No due date</span>
                                                 )}
