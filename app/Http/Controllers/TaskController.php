@@ -166,9 +166,9 @@ final class TaskController extends Controller
         $isProjectOwner = $task->project->user_id === auth()->id();
         $isAssignee = $task->assignees->contains('id', auth()->id());
 
-        // Allow project owners to do full updates, but assignees can only update the status
-        // If not a project owner, check if the user is an assignee and only updating status
-        abort_if(! $isProjectOwner && (! $isAssignee || count($request->only(['title', 'description', 'status', 'priority', 'due_date'])) > 1), 403, 'Unauthorized action.');
+        if (! $isProjectOwner && ! $isAssignee) {
+            abort(403, 'Unauthorized action.');
+        }
 
         DB::beginTransaction();
         try {
