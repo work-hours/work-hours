@@ -233,7 +233,6 @@ final class TimeLogStore
             $hourlyRate = (float) $timeLog->hourly_rate ?? Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
 
-            // Get approver name if approved_by is set
             $approverName = null;
             if ($timeLog->approved_by) {
                 $approver = User::query()->find($timeLog->approved_by);
@@ -260,6 +259,48 @@ final class TimeLogStore
                 'comment' => $timeLog->comment,
             ];
         });
+    }
+
+    public static function timeLogExportMapper(\Illuminate\Support\Collection $timeLogs): \Illuminate\Support\Collection
+    {
+        $map = self::timeLogMapper($timeLogs);
+
+        return $map->map(function ($timeLog): array {
+            return [
+                $timeLog['user_name'],
+                $timeLog['project_name'],
+                $timeLog['start_timestamp'],
+                $timeLog['end_timestamp'],
+                $timeLog['duration'],
+                $timeLog['note'],
+                $timeLog['is_paid'] ? 'Yes' : 'No',
+                $timeLog['hourly_rate'],
+                $timeLog['paid_amount'],
+                $timeLog['currency'],
+                $timeLog['status']?->value,
+                $timeLog['approver_name'] ?? '',
+                $timeLog['comment'] ?? '',
+            ];
+        });
+    }
+
+    public static function timeLogExportHeaders(): array
+    {
+        return [
+            'User Name',
+            'Project Name',
+            'Start Timestamp',
+            'End Timestamp',
+            'Duration (hours)',
+            'Note',
+            'Is Paid',
+            'Hourly Rate',
+            'Paid Amount',
+            'Currency',
+            'Status',
+            'Approver Name',
+            'Comment',
+        ];
     }
 
     public static function filters(): array

@@ -36,9 +36,14 @@ final class TimeLogController extends Controller
 {
     use ExportableTrait;
 
+    private function baseQuery()
+    {
+        return TimeLog::query()->where('user_id', auth()->id());
+    }
+
     public function index()
     {
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseQuery());;
 
         return Inertia::render('time-log/index', TimeLogStore::resData(timeLogs: $timeLogs));
     }
@@ -293,30 +298,9 @@ final class TimeLogController extends Controller
     #[Action(method: 'get', name: 'time-log.export', middleware: ['auth', 'verified'])]
     public function export(): StreamedResponse
     {
-        // Use the same base query as the index method, ensuring all filters are applied
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
-
-        $mappedTimeLogs = $timeLogs->map(function ($timeLog): array {
-            $hourlyRate = $timeLog->hourly_rate
-                ?: Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
-
-            $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
-
-            return [
-                'id' => $timeLog->id,
-                'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
-                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
-                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-                'hourly_rate' => $hourlyRate,
-                'paid_amount' => $paidAmount,
-                'note' => $timeLog->note,
-                'status' => ucfirst((string) $timeLog->status?->value ?: TimeLogStatus::PENDING->value),
-                'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
-            ];
-        });
-
-        $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Hourly Rate', 'Paid Amount', 'Note', 'Status', 'Paid'];
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseQuery());
+        $mappedTimeLogs = TimeLogStore::timeLogExportMapper(timeLogs: $timeLogs);
+        $headers = TimeLogStore::timeLogExportHeaders();;
         $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);
