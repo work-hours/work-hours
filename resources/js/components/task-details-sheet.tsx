@@ -166,7 +166,7 @@ export default function TaskDetailsSheet({ task, open, onOpenChange }: TaskDetai
                             {task.created_at && (
                                 <div>
                                     <p className="text-sm font-bold text-muted-foreground">Created At</p>
-                                    <p className="text-base">{new Date(task.created_at).toLocaleString()}</p>
+                                    <p className="text-base">{new Date(task.created_at).toISOString().split('T')[0]}</p>
                                 </div>
                             )}
                         </div>
