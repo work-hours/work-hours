@@ -47,6 +47,47 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                         </div>
                     </div>
 
+                    {/* Task Information */}
+                    {timeLog.task_title && (
+                        <div className="space-y-2">
+                            <h3 className="ml-4 text-lg font-semibold text-primary">Task Information</h3>
+                            <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                                <div>
+                                    <p className="text-sm font-bold text-muted-foreground">Task Title</p>
+                                    <p className="text-base">{timeLog.task_title}</p>
+                                </div>
+
+                                {timeLog.task_status && (
+                                    <div>
+                                        <p className="text-sm font-bold text-muted-foreground">Task Status</p>
+                                        <p className="text-base">{timeLog.task_status}</p>
+                                    </div>
+                                )}
+
+                                {timeLog.task_priority && (
+                                    <div>
+                                        <p className="text-sm font-bold text-muted-foreground">Task Priority</p>
+                                        <p className="text-base">{timeLog.task_priority}</p>
+                                    </div>
+                                )}
+
+                                {timeLog.task_due_date && (
+                                    <div>
+                                        <p className="text-sm font-bold text-muted-foreground">Task Due Date</p>
+                                        <p className="text-base">{timeLog.task_due_date}</p>
+                                    </div>
+                                )}
+
+                                {timeLog.task_description && (
+                                    <div>
+                                        <p className="text-sm font-bold text-muted-foreground">Task Description</p>
+                                        <p className="text-base whitespace-pre-wrap">{timeLog.task_description}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Time Information */}
                     <div className="space-y-2">
                         <h3 className="ml-4 text-lg font-semibold text-primary">Time Information</h3>
