@@ -102,10 +102,9 @@ type Props = {
     projects: Project[]
     totalDuration: number
     unpaidHours: number
-    unpaidAmount: Record<string, number>
+    unpaidAmountsByCurrency: Record<string, number>
     paidHours: number
-    paidAmount: Record<string, number>
-    currency: string
+    paidAmountsByCurrency: Record<string, number>
     weeklyAverage: number
 }
 
@@ -115,9 +114,8 @@ export default function TimeLog({
     projects,
     totalDuration,
     unpaidHours,
-    unpaidAmount,
-    paidAmount,
-    currency,
+    unpaidAmountsByCurrency,
+    paidAmountsByCurrency,
     weeklyAverage,
 }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
@@ -277,11 +275,11 @@ export default function TimeLog({
                                 count: -1, // Just one user (personal time logs)
                                 totalHours: totalDuration,
                                 unpaidHours: unpaidHours,
-                                unpaidAmount: Object.values(unpaidAmount).reduce((sum, amount) => sum + amount, 0),
-                                unpaidAmountsByCurrency: unpaidAmount,
-                                paidAmount: Object.values(paidAmount).reduce((sum, amount) => sum + amount, 0),
-                                paidAmountsByCurrency: paidAmount,
-                                currency: currency,
+                                unpaidAmount: Object.values(unpaidAmountsByCurrency).reduce((sum, amount) => sum + amount, 0),
+                                unpaidAmountsByCurrency: unpaidAmountsByCurrency,
+                                paidAmount: Object.values(paidAmountsByCurrency).reduce((sum, amount) => sum + amount, 0),
+                                paidAmountsByCurrency: paidAmountsByCurrency,
+                                currency: Object.keys(unpaidAmountsByCurrency)[0] || Object.keys(paidAmountsByCurrency)[0] || 'USD',
                                 weeklyAverage: weeklyAverage,
                                 clientCount: -1,
                             }}
