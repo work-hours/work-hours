@@ -228,7 +228,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
             {/* Footer with enhanced styling */}
             <div className="border-t border-gray-400 pt-4 pb-4 dark:border-gray-600">
-                <div className="mb-4 px-4">
+                {/*<div className="mb-4 px-4">
                     <h3
                         className={`mb-2 text-xs font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
                     >
@@ -259,7 +259,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                             ))}
                         </nav>
                     </TooltipProvider>
-                </div>
+                </div>*/}
 
                 {/* User section with enhanced styling */}
                 <div className="mb-3 px-4">
