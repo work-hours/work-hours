@@ -32,7 +32,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 <StatsCard
                     title="Unpaid Amount"
                     icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
-                    value={`${teamStats.currency} ${roundToTwoDecimals(teamStats.unpaidAmount)}`}
+                    value={`${teamStats.currency || 'USD'} ${roundToTwoDecimals(teamStats.unpaidAmount)}`}
                     trend={{
                         icon: <ClockIcon className="mr-1 h-3 w-3" />,
                         text: `${roundToTwoDecimals(teamStats.unpaidHours)} unpaid hours`,
@@ -74,7 +74,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 <StatsCard
                     title="Paid Amount"
                     icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
-                    value={`${teamStats.currency} ${roundToTwoDecimals(teamStats.paidAmount)}`}
+                    value={`${teamStats.currency || 'USD'} ${roundToTwoDecimals(teamStats.paidAmount)}`}
                     trend={{
                         icon: <ClockIcon className="mr-1 h-3 w-3" />,
                         text: 'Paid earnings',
