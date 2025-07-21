@@ -41,17 +41,10 @@ final class TimeLogController extends Controller
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
         $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
-        // Only include approved logs in calculations
-        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
-        $totalDuration = round($approvedLogs->sum('duration'), 2);
-        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
-        $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);
-        $team = TeamStore::teamEntry(userId: auth()->id(), memberId: auth()->id());
-        $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
-        $paidAmount = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
-        $currency = $team instanceof Team ? $team->currency : 'USD';
-        $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
+        $timeLogStats = TimeLogStore::stats(timeLogs: $timeLogs);
         $projects = ProjectStore::userProjects(userId: auth()->id());
+        $team = TeamStore::teamEntry(userId: auth()->id(), memberId: auth()->id());
+        $currency = $team instanceof Team ? $team->currency : 'USD';
 
         return Inertia::render('time-log/index', [
             'timeLogs' => $mappedTimeLogs,
@@ -63,13 +56,13 @@ final class TimeLogController extends Controller
                 'status' => request('status', ''),
             ],
             'projects' => $projects,
-            'totalDuration' => $totalDuration,
-            'unpaidHours' => $unpaidHours,
-            'paidHours' => $paidHours,
-            'unpaidAmount' => $unpaidAmount,
-            'paidAmount' => $paidAmount,
+            'totalDuration' => $timeLogStats['total_duration'],
+            'unpaidHours' => $timeLogStats['unpaid_hours'],
+            'paidHours' => $timeLogStats['paid_hours'],
+            'unpaidAmount' => $timeLogStats['unpaid_amount'],
+            'paidAmount' => $timeLogStats['paid_amount'],
+            'weeklyAverage' => $timeLogStats['weekly_average'],
             'currency' => $currency,
-            'weeklyAverage' => $weeklyAverage,
         ]);
     }
 

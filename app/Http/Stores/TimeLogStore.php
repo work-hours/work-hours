@@ -33,6 +33,22 @@ final class TimeLogStore
             ->get(['start_timestamp', 'end_timestamp', 'duration', 'user_id']);
     }
 
+    public static function timeLogs(Builder $baseQuery)
+    {
+        return app(Pipeline::class)
+            ->send($baseQuery)
+            ->through([
+                StartDateFilter::class,
+                EndDateFilter::class,
+                UserIdFilter::class,
+                IsPaidFilter::class,
+                ProjectIdFilter::class,
+                StatusFilter::class,
+            ])
+            ->thenReturn()
+            ->with(['user', 'project'])->get();
+    }
+
     public static function totalHours(array $teamMembersIds): float
     {
         return TimeLog::query()
@@ -172,22 +188,6 @@ final class TimeLogStore
         return $paidAmounts;
     }
 
-    public static function timeLogs(Builder $baseQuery)
-    {
-        return app(Pipeline::class)
-            ->send($baseQuery)
-            ->through([
-                StartDateFilter::class,
-                EndDateFilter::class,
-                UserIdFilter::class,
-                IsPaidFilter::class,
-                ProjectIdFilter::class,
-                StatusFilter::class,
-            ])
-            ->thenReturn()
-            ->with(['user', 'project'])->get();
-    }
-
     public static function timeLogMapper(\Illuminate\Support\Collection $timeLogs): \Illuminate\Support\Collection
     {
         return $timeLogs->map(function ($timeLog): array {
@@ -228,5 +228,23 @@ final class TimeLogStore
         $team = TeamStore::teamEntry(userId: $project->user_id, memberId: auth()->id());
 
         return $team instanceof Team ? $team->currency : auth()->user()->currency;
+    }
+
+    public static function stats(\Illuminate\Support\Collection $timeLogs): array
+    {
+        $approvedLogs = $timeLogs->where('status', TimeLogStatus::APPROVED);
+        $totalDuration = round($approvedLogs->sum('duration'), 2);
+        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
+        $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);
+        $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
+
+        return [
+            'total_duration' => $totalDuration,
+            'unpaid_hours' => $unpaidHours,
+            'paid_hours' => $paidHours,
+            'unpaid_amount' => self::unpaidAmountFromLogs($approvedLogs),
+            'paid_amount' => self::paidAmountFromLogs($approvedLogs),
+            'weekly_average' => $weeklyAverage,
+        ];
     }
 }

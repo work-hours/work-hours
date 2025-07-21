@@ -562,7 +562,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                             <DialogTitle>{singleApprovalId ? 'Reject Time Log' : `Reject ${selectedLogs.length} Time Logs`}</DialogTitle>
                             <DialogDescription>
                                 {singleApprovalId
-                                    ? 'Add a comment explaining why you\'re rejecting this time log.'
+                                    ? "Add a comment explaining why you're rejecting this time log."
                                     : `You are about to reject ${selectedLogs.length} time logs. Add a comment explaining why.`}
                             </DialogDescription>
                         </DialogHeader>
@@ -573,9 +573,11 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                                     id="reject-comment"
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
-                                    placeholder={singleApprovalId
-                                        ? "Explain why you're rejecting this time log"
-                                        : "Explain why you're rejecting these time logs"}
+                                    placeholder={
+                                        singleApprovalId
+                                            ? "Explain why you're rejecting this time log"
+                                            : "Explain why you're rejecting these time logs"
+                                    }
                                     disabled={approving}
                                     required
                                 />
