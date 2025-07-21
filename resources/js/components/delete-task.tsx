@@ -8,9 +8,10 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 
 interface DeleteTaskProps {
     taskId: number
+    onDelete?: () => void
 }
 
-export default function DeleteTask({ taskId }: DeleteTaskProps) {
+export default function DeleteTask({ taskId, onDelete }: DeleteTaskProps) {
     const { delete: destroy, processing, reset, clearErrors } = useForm({})
 
     const deleteTask: FormEventHandler = (e) => {
@@ -18,7 +19,12 @@ export default function DeleteTask({ taskId }: DeleteTaskProps) {
 
         destroy(route('task.destroy', taskId), {
             preserveScroll: true,
-            onSuccess: () => closeModal(),
+            onSuccess: () => {
+                closeModal()
+                if (onDelete) {
+                    onDelete()
+                }
+            },
             onFinish: () => reset(),
         })
     }

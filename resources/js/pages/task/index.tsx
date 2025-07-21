@@ -307,7 +307,10 @@ export default function Tasks() {
                                                                     <span className="sr-only">Edit</span>
                                                                 </Button>
                                                             </Link>
-                                                            <DeleteTask taskId={task.id} />
+                                                            <DeleteTask
+                                                                taskId={task.id}
+                                                                onDelete={() => setTasks(tasks.filter(t => t.id !== task.id))}
+                                                            />
                                                         </>
                                                     )}
                                                 </div>
