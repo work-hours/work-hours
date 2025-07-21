@@ -265,23 +265,21 @@ final class TimeLogStore
     {
         $map = self::timeLogMapper($timeLogs);
 
-        return $map->map(function ($timeLog): array {
-            return [
-                $timeLog['user_name'],
-                $timeLog['project_name'],
-                $timeLog['start_timestamp'],
-                $timeLog['end_timestamp'],
-                $timeLog['duration'],
-                $timeLog['note'],
-                $timeLog['is_paid'] ? 'Yes' : 'No',
-                $timeLog['hourly_rate'],
-                $timeLog['paid_amount'],
-                $timeLog['currency'],
-                $timeLog['status']?->value,
-                $timeLog['approver_name'] ?? '',
-                $timeLog['comment'] ?? '',
-            ];
-        });
+        return $map->map(fn ($timeLog): array => [
+            $timeLog['user_name'],
+            $timeLog['project_name'],
+            $timeLog['start_timestamp'],
+            $timeLog['end_timestamp'],
+            $timeLog['duration'],
+            $timeLog['note'],
+            $timeLog['is_paid'] ? 'Yes' : 'No',
+            $timeLog['hourly_rate'],
+            $timeLog['paid_amount'],
+            $timeLog['currency'],
+            $timeLog['status']?->value,
+            $timeLog['approver_name'] ?? '',
+            $timeLog['comment'] ?? '',
+        ]);
     }
 
     public static function timeLogExportHeaders(): array

@@ -36,14 +36,9 @@ final class TimeLogController extends Controller
 {
     use ExportableTrait;
 
-    private function baseQuery()
-    {
-        return TimeLog::query()->where('user_id', auth()->id());
-    }
-
     public function index()
     {
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseQuery());;
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseQuery());
 
         return Inertia::render('time-log/index', TimeLogStore::resData(timeLogs: $timeLogs));
     }
@@ -300,7 +295,7 @@ final class TimeLogController extends Controller
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseQuery());
         $mappedTimeLogs = TimeLogStore::timeLogExportMapper(timeLogs: $timeLogs);
-        $headers = TimeLogStore::timeLogExportHeaders();;
+        $headers = TimeLogStore::timeLogExportHeaders();
         $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);
@@ -393,5 +388,10 @@ final class TimeLogController extends Controller
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
+    }
+
+    private function baseQuery()
+    {
+        return TimeLog::query()->where('user_id', auth()->id());
     }
 }

@@ -172,11 +172,32 @@ final class ProjectController extends Controller
         );
     }
 
+    #[Action(method: 'get', name: 'project.export-time-logs', middleware: ['auth', 'verified'])]
+    public function exportTimeLogs(): StreamedResponse
+    {
+        request()->validate([
+            'project_id' => ['required', 'integer', 'exists:projects,id'],
+        ]);
+
+        $project = Project::query()->findOrFail(request('project_id'));
+
+        abort_if($project->user_id !== auth()->id(), 403, 'Unauthorized action.');
+
+        Gate::authorize('viewTimeLogs', $project);
+
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseTimeLogQuery($project));
+        $mappedTimeLogs = TimeLogStore::timeLogExportMapper(timeLogs: $timeLogs);
+        $headers = TimeLogStore::timeLogExportHeaders();
+        $filename = 'project_time_logs_' . $project->name . '_' . Carbon::now()->format('Y-m-d') . '.csv';
+
+        return $this->exportToCsv($mappedTimeLogs, $headers, $filename);
+    }
+
     public function timeLogs(Project $project)
     {
         Gate::authorize('viewTimeLogs', $project);
 
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('project_id', $project->getKey()));
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseTimeLogQuery($project));
 
         $teamMembers = ProjectStore::teamMembers(project: $project);
 
@@ -187,25 +208,8 @@ final class ProjectController extends Controller
         ]);
     }
 
-    #[Action(method: 'get', name: 'project.export-time-logs', middleware: ['auth', 'verified'])]
-    public function exportTimeLogs(): StreamedResponse
+    private function baseTimeLogQuery(Project $project)
     {
-        request()->validate([
-            'project_id' => ['required', 'integer', 'exists:projects,id'],
-        ]);
-
-        $project = Project::query()->findOrFail(request('project_id'));
-
-        Gate::authorize('viewTimeLogs', $project);
-
-        // Use the same base query as the timeLogs method, ensuring all filters are applied
-        $timeLogsData = ProjectStore::exportTimeLogsMapper(
-            timeLogs: TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('project_id', $project->getKey()))
-        );
-
-        $headers = ['ID', 'Team Member', 'Start Time', 'End Time', 'Duration (hours)', 'Payment Status', 'Note', 'Hourly Rate'];
-        $filename = 'project_time_logs_' . $project->id . '_' . Carbon::now()->format('Y-m-d') . '.csv';
-
-        return $this->exportToCsv($timeLogsData, $headers, $filename);
+        return TimeLog::query()->where('project_id', $project->getKey());
     }
 }
