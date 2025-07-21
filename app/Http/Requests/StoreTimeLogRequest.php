@@ -26,6 +26,7 @@ final class StoreTimeLogRequest extends FormRequest
     {
         return [
             'project_id' => ['required', 'exists:projects,id'],
+            'task_id' => ['nullable', 'exists:tasks,id'],
             'start_timestamp' => ['required', 'date'],
             'end_timestamp' => ['date', 'after_or_equal:start_timestamp', 'nullable'],
             'note' => ['required', 'string'],

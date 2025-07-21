@@ -100,8 +100,23 @@ final class TimeLogController extends Controller
     {
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
+        // Get all tasks assigned to the user
+        $tasks = \App\Models\Task::query()
+            ->whereHas('assignees', function ($query) {
+                $query->where('users.id', auth()->id());
+            })
+            ->get(['id', 'title', 'project_id'])
+            ->map(function ($task) {
+                return [
+                    'id' => $task->id,
+                    'title' => $task->title,
+                    'project_id' => $task->project_id,
+                ];
+            });
+
         return Inertia::render('time-log/create', [
             'projects' => $projects,
+            'tasks' => $tasks,
         ]);
     }
 
@@ -111,16 +126,32 @@ final class TimeLogController extends Controller
 
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
+        // Get all tasks assigned to the user
+        $tasks = \App\Models\Task::query()
+            ->whereHas('assignees', function ($query) {
+                $query->where('users.id', auth()->id());
+            })
+            ->get(['id', 'title', 'project_id'])
+            ->map(function ($task) {
+                return [
+                    'id' => $task->id,
+                    'title' => $task->title,
+                    'project_id' => $task->project_id,
+                ];
+            });
+
         return Inertia::render('time-log/edit', [
             'timeLog' => [
                 'id' => $timeLog->id,
                 'project_id' => $timeLog->project_id,
+                'task_id' => $timeLog->task_id,
                 'start_timestamp' => $timeLog->start_timestamp,
                 'end_timestamp' => $timeLog->end_timestamp,
                 'duration' => $timeLog->duration,
                 'note' => $timeLog->note,
             ],
             'projects' => $projects,
+            'tasks' => $tasks,
         ]);
     }
 
