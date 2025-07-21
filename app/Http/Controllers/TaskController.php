@@ -12,6 +12,7 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use App\Notifications\TaskAssigned;
+use App\Notifications\TaskCompleted;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
@@ -165,35 +166,65 @@ final class TaskController extends Controller
     {
         // Check if user has access to update this task
         $isProjectOwner = $task->project->user_id === auth()->id();
+        $isAssignee = $task->assignees->contains('id', auth()->id());
 
-        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
+        // Allow project owners to do full updates, but assignees can only update the status
+        if (!$isProjectOwner) {
+            // If not a project owner, check if the user is an assignee and only updating status
+            if (!$isAssignee || count($request->only(['title', 'description', 'status', 'priority', 'due_date'])) > 1) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
 
         DB::beginTransaction();
         try {
+            // Store the old status to check if it's being changed to completed
+            $oldStatus = $task->status;
+
             // Get current assignees before update
             $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
 
-            $task->update($request->only(['title', 'description', 'status', 'priority', 'due_date']));
+            // If the project owner, allow full update
+            if ($isProjectOwner) {
+                $task->update($request->only(['title', 'description', 'status', 'priority', 'due_date']));
 
-            if ($request->has('assignees')) {
-                $newAssigneeIds = $request->input('assignees');
-                $task->assignees()->sync($newAssigneeIds);
+                if ($request->has('assignees')) {
+                    $newAssigneeIds = $request->input('assignees');
+                    $task->assignees()->sync($newAssigneeIds);
 
-                // Find newly added assignees
-                $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
+                    // Find newly added assignees
+                    $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
 
-                if ($addedAssigneeIds !== []) {
-                    // Load the project relationship for the notification
-                    $task->load('project');
+                    if ($addedAssigneeIds !== []) {
+                        // Load the project relationship for the notification
+                        $task->load('project');
 
-                    // Send notification only to newly assigned users
-                    $newUsers = User::query()->whereIn('id', $addedAssigneeIds)->get();
-                    foreach ($newUsers as $user) {
-                        $user->notify(new TaskAssigned($task, auth()->user()));
+                        // Send notification only to newly assigned users
+                        $newUsers = User::query()->whereIn('id', $addedAssigneeIds)->get();
+                        foreach ($newUsers as $user) {
+                            $user->notify(new TaskAssigned($task, auth()->user()));
+                        }
                     }
+                } else {
+                    $task->assignees()->detach();
                 }
             } else {
-                $task->assignees()->detach();
+                // If assignee, only allow status update
+                $task->update($request->only(['status']));
+            }
+
+            // Check if the status was changed to complete by someone other than the project owner
+            if ($oldStatus !== 'completed' && $request->input('status') === 'completed' && !$isProjectOwner) {
+                // Load the project relationship for the notification if not already loaded
+                if (!$task->relationLoaded('project')) {
+                    $task->load('project');
+                }
+
+                // Get the project owner (task creator)
+                $projectOwner = User::query()->find($task->project->user_id);
+
+                // Send a notification to the project owner
+                $projectOwner->notify(new TaskCompleted($task, auth()->user()));
             }
 
             DB::commit();

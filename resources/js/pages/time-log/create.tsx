@@ -188,7 +188,7 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                     </Label>
                                     <SearchableSelect
                                         id="task_id"
-                                        value={data.task_id ? data.task_id.toString() : ''}
+                                        value={data.task_id === null ? '' : data.task_id.toString()}
                                         onChange={(value) => setData('task_id', value ? parseInt(value) : null)}
                                         options={tasks
                                             .filter((task) => task.project_id === data.project_id)
