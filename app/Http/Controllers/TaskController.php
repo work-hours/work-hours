@@ -10,6 +10,8 @@ use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TaskStore;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
+use App\Notifications\TaskAssigned;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
@@ -75,6 +77,16 @@ final class TaskController extends Controller
 
             if ($request->has('assignees')) {
                 $task->assignees()->sync($request->input('assignees'));
+
+                // Load the project relationship for the notification
+                $task->load('project');
+
+                // Send notification to all assignees
+                $assigneeIds = $request->input('assignees');
+                $users = User::query()->whereIn('id', $assigneeIds)->get();
+                foreach ($users as $user) {
+                    $user->notify(new TaskAssigned($task, auth()->user()));
+                }
             }
 
             DB::commit();
@@ -157,10 +169,28 @@ final class TaskController extends Controller
 
         DB::beginTransaction();
         try {
+            // Get current assignees before update
+            $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
+
             $task->update($request->only(['title', 'description', 'status', 'priority', 'due_date']));
 
             if ($request->has('assignees')) {
-                $task->assignees()->sync($request->input('assignees'));
+                $newAssigneeIds = $request->input('assignees');
+                $task->assignees()->sync($newAssigneeIds);
+
+                // Find newly added assignees
+                $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
+
+                if (!empty($addedAssigneeIds)) {
+                    // Load the project relationship for the notification
+                    $task->load('project');
+
+                    // Send notification only to newly assigned users
+                    $newUsers = User::whereIn('id', $addedAssigneeIds)->get();
+                    foreach ($newUsers as $user) {
+                        $user->notify(new TaskAssigned($task, auth()->user()));
+                    }
+                }
             } else {
                 $task->assignees()->detach();
             }
