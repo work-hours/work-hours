@@ -1,7 +1,7 @@
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus, Text } from 'lucide-react'
-import { FormEventHandler, forwardRef, useEffect, useState } from 'react'
+import { FormEventHandler, forwardRef, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error

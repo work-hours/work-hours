@@ -1,8 +1,11 @@
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Save, Text } from 'lucide-react'
-import { FormEventHandler, forwardRef, useState } from 'react'
+import { FormEventHandler, forwardRef, useEffect, useState } from 'react'
 import { toast } from 'sonner'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
@@ -99,7 +102,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-export default function EditTask({ task, projects, potentialAssignees, assignedUsers }: Props) {
+export default function EditTask({ task, projects, potentialAssignees: initialAssignees, assignedUsers }: Props) {
     const { data, setData, put, processing, errors } = useForm<TaskForm>({
         project_id: task.project_id.toString(),
         title: task.title,
@@ -110,8 +113,38 @@ export default function EditTask({ task, projects, potentialAssignees, assignedU
         assignees: assignedUsers || [],
     })
 
+    // State for potential assignees
+    const [potentialAssignees, setPotentialAssignees] = useState<{ id: number; name: string; email: string }[]>(initialAssignees || [])
+    const [loadingAssignees, setLoadingAssignees] = useState<boolean>(false)
+
     // State for due date
     const [dueDate, setDueDate] = useState<Date | null>(data.due_date ? new Date(data.due_date) : null)
+
+    // Fetch potential assignees when project_id changes
+    useEffect(() => {
+        if (data.project_id) {
+            setLoadingAssignees(true)
+            _potentialAssignees
+                .data({
+                    params: {
+                        project: parseInt(data.project_id)
+                    }
+                })
+                .then((assignees) => {
+                    setPotentialAssignees(assignees)
+                })
+                .catch((error) => {
+                    console.error('Failed to fetch potential assignees:', error)
+                    toast.error('Failed to load potential assignees')
+                    setPotentialAssignees([])
+                })
+                .finally(() => {
+                    setLoadingAssignees(false)
+                })
+        } else {
+            setPotentialAssignees([])
+        }
+    }, [data.project_id])
 
     // Handle due date change
     const handleDueDateChange = (date: Date | null) => {
@@ -326,7 +359,12 @@ export default function EditTask({ task, projects, potentialAssignees, assignedU
                                             <CheckSquare className="h-4 w-4 text-muted-foreground" />
                                         </div>
                                         <div className="space-y-2 pl-7">
-                                            {potentialAssignees && potentialAssignees.length > 0 ? (
+                                            {loadingAssignees ? (
+                                                <div className="flex items-center space-x-2">
+                                                    <LoaderCircle className="h-4 w-4 animate-spin text-muted-foreground" />
+                                                    <p className="text-sm text-muted-foreground">Loading assignees...</p>
+                                                </div>
+                                            ) : potentialAssignees && potentialAssignees.length > 0 ? (
                                                 potentialAssignees.map((assignee) => (
                                                     <div key={assignee.id} className="flex items-center space-x-2">
                                                         <Checkbox
@@ -341,7 +379,9 @@ export default function EditTask({ task, projects, potentialAssignees, assignedU
                                                     </div>
                                                 ))
                                             ) : (
-                                                <p className="text-sm text-muted-foreground">No potential assignees available</p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {data.project_id ? 'No potential assignees available for this project' : 'Select a project first'}
+                                                </p>
                                             )}
                                         </div>
                                     </div>
