@@ -24,6 +24,7 @@ type Task = {
     due_date: string | null
     project: Project
     assignees: User[]
+    created_at?: string
 }
 
 type TaskDetailsSheetProps = {
@@ -157,6 +158,19 @@ export default function TaskDetailsSheet({ task, open, onOpenChange }: TaskDetai
                             </div>
                         </div>
                     )}
+
+                    {/* Additional Information */}
+                    <div className="space-y-2">
+                        <h3 className="ml-4 text-lg font-semibold text-primary">Additional Information</h3>
+                        <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                            {task.created_at && (
+                                <div>
+                                    <p className="text-sm font-bold text-muted-foreground">Created At</p>
+                                    <p className="text-base">{new Date(task.created_at).toLocaleString()}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </SheetContent>
         </Sheet>
