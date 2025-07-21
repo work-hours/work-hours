@@ -287,7 +287,7 @@ export default function TimeLog({
                     </section>
                 )}
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
+                <Card className="transition-all hover:shadow-md">
                     <CardContent>
                         <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
                             <div className="grid gap-1">

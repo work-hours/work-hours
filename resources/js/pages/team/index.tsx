@@ -130,7 +130,7 @@ export default function Team({ teamMembers, filters }: Props) {
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your team members and their time logs</p>
                 </section>
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
+                <Card className="transition-all hover:shadow-md">
                     <CardContent>
                         <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4">
                             <div className="grid gap-1">
