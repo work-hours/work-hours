@@ -1,4 +1,5 @@
 import DeleteTask from '@/components/delete-task'
+import TaskDetailsSheet from '@/components/task-details-sheet'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,7 +11,7 @@ import { type BreadcrumbItem } from '@/types'
 import { type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { ClipboardList, Download, Edit, FileText, Loader2, Plus } from 'lucide-react'
+import { ClipboardList, Download, Edit, Eye, FileText, Loader2, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -49,6 +50,13 @@ export default function Tasks() {
     const [tasks, setTasks] = useState<Task[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+
+    const handleViewDetails = (task: Task) => {
+        setSelectedTask(task)
+        setIsDetailsOpen(true)
+    }
 
     const getTasks = async () => {
         setLoading(true)
@@ -214,6 +222,18 @@ export default function Tasks() {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
+                                                    {/* View Details Button */}
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-8 w-8 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
+                                                        onClick={() => handleViewDetails(task)}
+                                                        title="View Details"
+                                                    >
+                                                        <Eye className="h-3.5 w-3.5" />
+                                                        <span className="sr-only">View Details</span>
+                                                    </Button>
+
                                                     {task.project.user_id === auth.user.id && (
                                                         <>
                                                             <Link href={route('task.edit', task.id)}>
@@ -248,6 +268,9 @@ export default function Tasks() {
                         )}
                     </CardContent>
                 </Card>
+
+                {/* Task Details Sheet */}
+                <TaskDetailsSheet task={selectedTask} open={isDetailsOpen} onOpenChange={setIsDetailsOpen} />
             </div>
         </MasterLayout>
     )
