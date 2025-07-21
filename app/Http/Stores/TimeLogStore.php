@@ -33,6 +33,22 @@ final class TimeLogStore
             ->get(['start_timestamp', 'end_timestamp', 'duration', 'user_id']);
     }
 
+    public static function timeLogs(Builder $baseQuery)
+    {
+        return app(Pipeline::class)
+            ->send($baseQuery)
+            ->through([
+                StartDateFilter::class,
+                EndDateFilter::class,
+                UserIdFilter::class,
+                IsPaidFilter::class,
+                ProjectIdFilter::class,
+                StatusFilter::class,
+            ])
+            ->thenReturn()
+            ->with(['user', 'project'])->get();
+    }
+
     public static function totalHours(array $teamMembersIds): float
     {
         return TimeLog::query()
@@ -124,6 +140,45 @@ final class TimeLogStore
             ->get();
     }
 
+    public static function currency(Project $project)
+    {
+        $team = TeamStore::teamEntry(userId: $project->user_id, memberId: auth()->id());
+
+        return $team instanceof Team ? $team->currency : auth()->user()->currency;
+    }
+
+    public static function resData(\Illuminate\Support\Collection $timeLogs): array
+    {
+        $timeLogStats = self::stats($timeLogs);
+
+        return [
+            'timeLogs' => self::timeLogMapper($timeLogs),
+            'filters' => self::filters(),
+            'projects' => ProjectStore::userProjects(userId: auth()->id()),
+            'totalDuration' => $timeLogStats['total_duration'],
+            'unpaidHours' => $timeLogStats['unpaid_hours'],
+            'paidHours' => $timeLogStats['paid_hours'],
+            'weeklyAverage' => $timeLogStats['weekly_average'],
+            'unpaidAmountsByCurrency' => $timeLogStats['unpaid_amounts_by_currency'],
+            'paidAmountsByCurrency' => $timeLogStats['paid_amounts_by_currency'],
+        ];
+    }
+
+    public static function stats(\Illuminate\Support\Collection $timeLogs): array
+    {
+        $approvedLogs = $timeLogs->where('status', TimeLogStatus::APPROVED);
+        $totalDuration = round($approvedLogs->sum('duration'), 2);
+
+        return [
+            'total_duration' => $totalDuration,
+            'unpaid_hours' => round($approvedLogs->where('is_paid', false)->sum('duration'), 2),
+            'paid_hours' => round($approvedLogs->where('is_paid', true)->sum('duration'), 2),
+            'weekly_average' => $totalDuration > 0 ? round($totalDuration / 7, 2) : 0,
+            'unpaid_amounts_by_currency' => self::unpaidAmountFromLogs($approvedLogs),
+            'paid_amounts_by_currency' => self::paidAmountFromLogs($approvedLogs),
+        ];
+    }
+
     public static function unpaidAmountFromLogs(\Illuminate\Support\Collection $timeLogs): array
     {
         $unpaidAmounts = [];
@@ -172,29 +227,12 @@ final class TimeLogStore
         return $paidAmounts;
     }
 
-    public static function timeLogs(Builder $baseQuery)
-    {
-        return app(Pipeline::class)
-            ->send($baseQuery)
-            ->through([
-                StartDateFilter::class,
-                EndDateFilter::class,
-                UserIdFilter::class,
-                IsPaidFilter::class,
-                ProjectIdFilter::class,
-                StatusFilter::class,
-            ])
-            ->thenReturn()
-            ->with(['user', 'project'])->get();
-    }
-
     public static function timeLogMapper(\Illuminate\Support\Collection $timeLogs): \Illuminate\Support\Collection
     {
         return $timeLogs->map(function ($timeLog): array {
             $hourlyRate = (float) $timeLog->hourly_rate ?? Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
 
-            // Get approver name if approved_by is set
             $approverName = null;
             if ($timeLog->approved_by) {
                 $approver = User::query()->find($timeLog->approved_by);
@@ -223,10 +261,54 @@ final class TimeLogStore
         });
     }
 
-    public static function currency(Project $project)
+    public static function timeLogExportMapper(\Illuminate\Support\Collection $timeLogs): \Illuminate\Support\Collection
     {
-        $team = TeamStore::teamEntry(userId: $project->user_id, memberId: auth()->id());
+        $map = self::timeLogMapper($timeLogs);
 
-        return $team instanceof Team ? $team->currency : auth()->user()->currency;
+        return $map->map(fn ($timeLog): array => [
+            $timeLog['user_name'],
+            $timeLog['project_name'],
+            $timeLog['start_timestamp'],
+            $timeLog['end_timestamp'],
+            $timeLog['duration'],
+            $timeLog['note'],
+            $timeLog['is_paid'] ? 'Yes' : 'No',
+            $timeLog['hourly_rate'],
+            $timeLog['paid_amount'],
+            $timeLog['currency'],
+            $timeLog['status']?->value,
+            $timeLog['approver_name'] ?? '',
+            $timeLog['comment'] ?? '',
+        ]);
+    }
+
+    public static function timeLogExportHeaders(): array
+    {
+        return [
+            'User Name',
+            'Project Name',
+            'Start Timestamp',
+            'End Timestamp',
+            'Duration (hours)',
+            'Note',
+            'Is Paid',
+            'Hourly Rate',
+            'Paid Amount',
+            'Currency',
+            'Status',
+            'Approver Name',
+            'Comment',
+        ];
+    }
+
+    public static function filters(): array
+    {
+        return [
+            'start_date' => request('start_date', ''),
+            'end_date' => request('end_date', ''),
+            'project_id' => request('project_id', ''),
+            'is_paid' => request('is_paid', ''),
+            'status' => request('status', ''),
+        ];
     }
 }

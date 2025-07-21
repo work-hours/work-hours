@@ -37,12 +37,13 @@ final class DashboardController extends Controller
     public function stats(): array
     {
         $teamCount = TeamStore::teamMemberCount(userId: auth()->id());
+        $clientCount = ClientStore::userClients(userId: auth()->id())->count();
+
         $teamMembers = TeamStore::teamMembersIds(userId: auth()->id())->merge([auth()->id()]);
         $totalHours = TimeLogStore::totalHours(teamMembersIds: $teamMembers->toArray());
         $unpaidHours = TimeLogStore::unpaidHours(teamMembersIds: $teamMembers->toArray());
         $unpaidAmountsByCurrency = TimeLogStore::unpaidAmount(teamMembersIds: $teamMembers->toArray());
         $paidAmountsByCurrency = TimeLogStore::paidAmount(teamMembersIds: $teamMembers->toArray());
-        $clientCount = ClientStore::userClients(userId: auth()->id())->count();
 
         return [
             'count' => $teamCount,

@@ -96,8 +96,8 @@ type Props = {
     teamMembers: TeamMember[]
     totalDuration: number
     unpaidHours: number
-    unpaidAmount: Record<string, number>
-    paidAmount: Record<string, number>
+    unpaidAmountsByCurrency: Record<string, number>
+    paidAmountsByCurrency: Record<string, number>
     weeklyAverage: number
     isCreator: boolean
 }
@@ -109,8 +109,8 @@ export default function ProjectTimeLogs({
     teamMembers,
     totalDuration,
     unpaidHours,
-    unpaidAmount,
-    paidAmount,
+    unpaidAmountsByCurrency,
+    paidAmountsByCurrency,
     weeklyAverage,
     isCreator,
 }: Props) {
@@ -214,11 +214,11 @@ export default function ProjectTimeLogs({
                                 count: -1,
                                 totalHours: totalDuration,
                                 unpaidHours: unpaidHours,
-                                unpaidAmount: Object.values(unpaidAmount).reduce((sum, amount) => sum + amount, 0),
-                                unpaidAmountsByCurrency: unpaidAmount,
-                                paidAmount: Object.values(paidAmount).reduce((sum, amount) => sum + amount, 0),
-                                paidAmountsByCurrency: paidAmount,
-                                currency: Object.keys(unpaidAmount)[0] || Object.keys(paidAmount)[0] || 'USD',
+                                unpaidAmount: Object.values(unpaidAmountsByCurrency).reduce((sum, amount) => sum + amount, 0),
+                                unpaidAmountsByCurrency: unpaidAmountsByCurrency,
+                                paidAmount: Object.values(paidAmountsByCurrency).reduce((sum, amount) => sum + amount, 0),
+                                paidAmountsByCurrency: paidAmountsByCurrency,
+                                currency: Object.keys(unpaidAmountsByCurrency)[0] || Object.keys(paidAmountsByCurrency)[0] || 'USD',
                                 weeklyAverage: weeklyAverage,
                                 clientCount: -1,
                             }}

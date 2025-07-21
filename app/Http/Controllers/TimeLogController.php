@@ -8,7 +8,6 @@ use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
 use App\Http\Stores\ProjectStore;
-use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
 use App\Imports\TimeLogImport;
 use App\Models\Project;
@@ -39,38 +38,9 @@ final class TimeLogController extends Controller
 
     public function index()
     {
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
-        $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
-        // Only include approved logs in calculations
-        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
-        $totalDuration = round($approvedLogs->sum('duration'), 2);
-        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
-        $paidHours = round($approvedLogs->where('is_paid', true)->sum('duration'), 2);
-        $team = TeamStore::teamEntry(userId: auth()->id(), memberId: auth()->id());
-        $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
-        $paidAmount = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
-        $currency = $team instanceof Team ? $team->currency : 'USD';
-        $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
-        $projects = ProjectStore::userProjects(userId: auth()->id());
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseQuery());
 
-        return Inertia::render('time-log/index', [
-            'timeLogs' => $mappedTimeLogs,
-            'filters' => [
-                'start_date' => request('start_date', ''),
-                'end_date' => request('end_date', ''),
-                'project_id' => request('project_id', ''),
-                'is_paid' => request('is_paid', ''),
-                'status' => request('status', ''),
-            ],
-            'projects' => $projects,
-            'totalDuration' => $totalDuration,
-            'unpaidHours' => $unpaidHours,
-            'paidHours' => $paidHours,
-            'unpaidAmount' => $unpaidAmount,
-            'paidAmount' => $paidAmount,
-            'currency' => $currency,
-            'weeklyAverage' => $weeklyAverage,
-        ]);
+        return Inertia::render('time-log/index', TimeLogStore::resData(timeLogs: $timeLogs));
     }
 
     /**
@@ -323,30 +293,9 @@ final class TimeLogController extends Controller
     #[Action(method: 'get', name: 'time-log.export', middleware: ['auth', 'verified'])]
     public function export(): StreamedResponse
     {
-        // Use the same base query as the index method, ensuring all filters are applied
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', auth()->id()));
-
-        $mappedTimeLogs = $timeLogs->map(function ($timeLog): array {
-            $hourlyRate = $timeLog->hourly_rate
-                ?: Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
-
-            $paidAmount = $timeLog->is_paid ? round($timeLog->duration * $hourlyRate, 2) : 0;
-
-            return [
-                'id' => $timeLog->id,
-                'project_name' => $timeLog->project ? $timeLog->project->name : 'No Project',
-                'start_timestamp' => Carbon::parse($timeLog->start_timestamp)->toDateTimeString(),
-                'end_timestamp' => $timeLog->end_timestamp ? Carbon::parse($timeLog->end_timestamp)->toDateTimeString() : '',
-                'duration' => $timeLog->duration ? round($timeLog->duration, 2) : 0,
-                'hourly_rate' => $hourlyRate,
-                'paid_amount' => $paidAmount,
-                'note' => $timeLog->note,
-                'status' => ucfirst((string) $timeLog->status?->value ?: TimeLogStatus::PENDING->value),
-                'is_paid' => $timeLog->is_paid ? 'Yes' : 'No',
-            ];
-        });
-
-        $headers = ['ID', 'Project', 'Start Time', 'End Time', 'Duration (hours)', 'Hourly Rate', 'Paid Amount', 'Note', 'Status', 'Paid'];
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseQuery());
+        $mappedTimeLogs = TimeLogStore::timeLogExportMapper(timeLogs: $timeLogs);
+        $headers = TimeLogStore::timeLogExportHeaders();
         $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);
@@ -439,5 +388,10 @@ final class TimeLogController extends Controller
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
+    }
+
+    private function baseQuery()
+    {
+        return TimeLog::query()->where('user_id', auth()->id());
     }
 }

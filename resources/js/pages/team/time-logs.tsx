@@ -100,7 +100,6 @@ export default function TeamMemberTimeLogs({
     user,
     totalDuration,
     unpaidHours,
-    paidHours,
     unpaidAmountsByCurrency,
     paidAmountsByCurrency,
     currency,
@@ -425,7 +424,7 @@ export default function TeamMemberTimeLogs({
                             </div>
                             <div className="flex items-center gap-2">
                                 <a
-                                    href={`${route('team.export-time-logs')}?team_member_id=${user.id}${window.location.search.replace('?', '&')}`}
+                                    href={`${route('team.export-time-logs')}?user_id=${user.id}${window.location.search.replace('?', '&')}`}
                                     className="inline-block"
                                 >
                                     <Button variant="outline" className="flex items-center gap-2">

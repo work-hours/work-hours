@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Stores\ClientStore;
@@ -73,12 +72,7 @@ final class ProjectController extends Controller
 
     public function create()
     {
-        $teamMembers = TeamStore::teamMembers(userId: auth()->id())
-            ->map(fn ($team): array => [
-                'id' => $team->member->id,
-                'name' => $team->member->name,
-                'email' => $team->member->email,
-            ]);
+        $teamMembers = TeamStore::teamMembers(userId: auth()->id());
 
         $clients = ClientStore::userClients(auth()->id())
             ->map(fn ($client): array => [
@@ -96,12 +90,7 @@ final class ProjectController extends Controller
     {
         Gate::authorize('update', $project);
 
-        $teamMembers = TeamStore::teamMembers(userId: auth()->id())
-            ->map(fn ($team): array => [
-                'id' => $team->member->id,
-                'name' => $team->member->name,
-                'email' => $team->member->email,
-            ]);
+        $teamMembers = TeamStore::teamMembers(userId: auth()->id());
 
         $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
         $assignedApprovers = $project->approvers->pluck('id')->toArray();
@@ -183,41 +172,6 @@ final class ProjectController extends Controller
         );
     }
 
-    public function timeLogs(Project $project)
-    {
-        Gate::authorize('viewTimeLogs', $project);
-
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('project_id', $project->getKey()));
-        $unpaidAmount = TimeLogStore::unpaidAmountFromLogs(timeLogs: $timeLogs);
-        $paidAmount = TimeLogStore::paidAmountFromLogs(timeLogs: $timeLogs);
-
-        $mappedTimeLogs = TimeLogStore::timeLogMapper(timeLogs: $timeLogs);
-        // Only include approved logs in calculations
-        $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
-        $totalDuration = round($approvedLogs->sum('duration'), 2);
-        $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
-        $weeklyAverage = $totalDuration > 0 ? round($totalDuration / 7, 2) : 0;
-
-        $teamMembers = ProjectStore::teamMembers(project: $project);
-
-        return Inertia::render('project/time-logs', [
-            'timeLogs' => $mappedTimeLogs,
-            'filters' => [
-                'start_date' => request('start_date', ''),
-                'end_date' => request('end_date', ''),
-                'user_id' => request('user_id', ''),
-                'is_paid' => request('is_paid', ''),
-            ],
-            'project' => $project,
-            'teamMembers' => $teamMembers,
-            'totalDuration' => $totalDuration,
-            'unpaidHours' => $unpaidHours,
-            'unpaidAmount' => $unpaidAmount,
-            'paidAmount' => $paidAmount,
-            'weeklyAverage' => $weeklyAverage,
-        ]);
-    }
-
     #[Action(method: 'get', name: 'project.export-time-logs', middleware: ['auth', 'verified'])]
     public function exportTimeLogs(): StreamedResponse
     {
@@ -227,16 +181,35 @@ final class ProjectController extends Controller
 
         $project = Project::query()->findOrFail(request('project_id'));
 
+        abort_if($project->user_id !== auth()->id(), 403, 'Unauthorized action.');
+
         Gate::authorize('viewTimeLogs', $project);
 
-        // Use the same base query as the timeLogs method, ensuring all filters are applied
-        $timeLogsData = ProjectStore::exportTimeLogsMapper(
-            timeLogs: TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('project_id', $project->getKey()))
-        );
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseTimeLogQuery($project));
+        $mappedTimeLogs = TimeLogStore::timeLogExportMapper(timeLogs: $timeLogs);
+        $headers = TimeLogStore::timeLogExportHeaders();
+        $filename = 'project_time_logs_' . $project->name . '_' . Carbon::now()->format('Y-m-d') . '.csv';
 
-        $headers = ['ID', 'Team Member', 'Start Time', 'End Time', 'Duration (hours)', 'Payment Status', 'Note', 'Hourly Rate'];
-        $filename = 'project_time_logs_' . $project->id . '_' . Carbon::now()->format('Y-m-d') . '.csv';
+        return $this->exportToCsv($mappedTimeLogs, $headers, $filename);
+    }
 
-        return $this->exportToCsv($timeLogsData, $headers, $filename);
+    public function timeLogs(Project $project)
+    {
+        Gate::authorize('viewTimeLogs', $project);
+
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseTimeLogQuery($project));
+
+        $teamMembers = ProjectStore::teamMembers(project: $project);
+
+        return Inertia::render('project/time-logs', [
+            'project' => $project,
+            'teamMembers' => $teamMembers,
+            ...TimeLogStore::resData(timeLogs: $timeLogs),
+        ]);
+    }
+
+    private function baseTimeLogQuery(Project $project)
+    {
+        return TimeLog::query()->where('project_id', $project->getKey());
     }
 }

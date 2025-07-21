@@ -21,10 +21,8 @@ trait ExportableTrait
         $callback = function () use ($data, $headers): void {
             $file = fopen('php://output', 'w');
 
-            // Add headers
             fputcsv($file, $headers);
 
-            // Add data
             foreach ($data as $row) {
                 fputcsv($file, $row);
             }
