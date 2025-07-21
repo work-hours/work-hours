@@ -147,6 +147,15 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
         setApproveDialogOpen(true)
     }
 
+    const openBulkRejectDialog = () => {
+        if (selectedLogs.length === 0) return
+        setSingleApprovalId(null)
+        setComment('')
+        setApprovalSuccess(null)
+        setApprovalError(null)
+        setRejectDialogOpen(true)
+    }
+
     const closeApproveDialog = () => {
         setApproveDialogOpen(false)
         setSingleApprovalId(null)
@@ -208,17 +217,25 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
     }
 
     const handleReject = async () => {
-        if (!singleApprovalId) return
-
         setApproving(true)
         setApprovalSuccess(null)
         setApprovalError(null)
 
         try {
-            const response = await axios.post(route('approvals.reject'), {
-                time_log_id: singleApprovalId,
-                comment: comment,
-            })
+            let response
+            if (singleApprovalId) {
+                // Reject single time log
+                response = await axios.post(route('approvals.reject'), {
+                    time_log_id: singleApprovalId,
+                    comment: comment,
+                })
+            } else {
+                // Reject multiple time logs
+                response = await axios.post(route('approvals.reject-multiple'), {
+                    time_log_ids: selectedLogs,
+                    comment: comment,
+                })
+            }
 
             setApprovalSuccess(response.data.message)
 
@@ -226,6 +243,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
             setTimeout(() => {
                 get(route('approvals.index'), { preserveState: true })
                 closeRejectDialog()
+                setSelectedLogs([])
             }, 1500)
         } catch (error) {
             const axiosError = error as {
@@ -451,10 +469,16 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                             </div>
                             <div className="flex gap-2">
                                 {selectedLogs.length > 0 && (
-                                    <Button onClick={openBulkApproveDialog} variant="default" className="flex items-center gap-2">
-                                        <CheckSquare className="h-4 w-4" />
-                                        <span>Approve Selected ({selectedLogs.length})</span>
-                                    </Button>
+                                    <>
+                                        <Button onClick={openBulkApproveDialog} variant="default" className="flex items-center gap-2">
+                                            <CheckSquare className="h-4 w-4" />
+                                            <span>Approve Selected ({selectedLogs.length})</span>
+                                        </Button>
+                                        <Button onClick={openBulkRejectDialog} variant="destructive" className="flex items-center gap-2">
+                                            <AlertCircle className="h-4 w-4" />
+                                            <span>Reject Selected ({selectedLogs.length})</span>
+                                        </Button>
+                                    </>
                                 )}
                             </div>
                         </div>
@@ -535,8 +559,12 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                 <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
-                            <DialogTitle>Reject Time Log</DialogTitle>
-                            <DialogDescription>Add a comment explaining why you're rejecting this time log.</DialogDescription>
+                            <DialogTitle>{singleApprovalId ? 'Reject Time Log' : `Reject ${selectedLogs.length} Time Logs`}</DialogTitle>
+                            <DialogDescription>
+                                {singleApprovalId
+                                    ? 'Add a comment explaining why you\'re rejecting this time log.'
+                                    : `You are about to reject ${selectedLogs.length} time logs. Add a comment explaining why.`}
+                            </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                             <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -545,7 +573,9 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                                     id="reject-comment"
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
-                                    placeholder="Explain why you're rejecting this time log"
+                                    placeholder={singleApprovalId
+                                        ? "Explain why you're rejecting this time log"
+                                        : "Explain why you're rejecting these time logs"}
                                     disabled={approving}
                                     required
                                 />

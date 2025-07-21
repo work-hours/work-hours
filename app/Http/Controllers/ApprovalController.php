@@ -233,6 +233,81 @@ final class ApprovalController extends Controller
     }
 
     /**
+     * Reject multiple time log entries
+     *
+     * @throws Throwable
+     */
+    #[Action(method: 'post', name: 'approvals.reject-multiple', middleware: ['auth', 'verified'])]
+    public function rejectMultiple(): JsonResponse
+    {
+        $timeLogIds = request('time_log_ids', []);
+
+        abort_if(empty($timeLogIds), 400, 'No time logs selected.');
+
+        DB::beginTransaction();
+        try {
+            $timeLogs = TimeLog::query()
+                ->whereIn('id', $timeLogIds)
+                ->get();
+
+            $rejectedCount = 0;
+            $skippedCount = 0;
+
+            foreach ($timeLogs as $timeLog) {
+                try {
+                    $this->authorizeApproval($timeLog);
+
+                    $timeLog->update([
+                        'status' => TimeLogStatus::REJECTED,
+                        'approved_by' => auth()->id(),
+                        'approved_at' => Carbon::now(),
+                        'comment' => request('comment'),
+                    ]);
+
+                    $rejectedCount++;
+
+                    $timeLogOwner = User::query()->find($timeLog->user_id);
+                    if ($timeLogOwner && auth()->id() !== $timeLogOwner->getKey()) {
+                        $timeLogOwner->notify(new TimeLogRejected($timeLog, auth()->user()));
+                    }
+
+                    $teamLeader = User::teamLeader(project: $timeLog->project);
+                    $isApprover = DB::table('project_team')
+                        ->where('project_id', $timeLog->project_id)
+                        ->where('member_id', auth()->id())
+                        ->where('is_approver', true)
+                        ->exists();
+
+                    if ($isApprover && auth()->id() !== $teamLeader->getKey()) {
+                        $teamLeader->notify(new TimeLogRejected($timeLog, auth()->user()));
+                    }
+                } catch (Exception) {
+                    $skippedCount++;
+                }
+            }
+
+            DB::commit();
+
+            $message = $rejectedCount . ' time logs rejected successfully.';
+            if ($skippedCount > 0) {
+                $message .= ' ' . $skippedCount . ' time logs were skipped because you are not authorized to reject them.';
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reject time logs: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Get all pending time logs for team members where the current user is a team leader or approver
      */
     private function getPendingApprovals()
