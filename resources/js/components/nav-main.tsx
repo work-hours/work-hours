@@ -29,7 +29,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                     />
                                 )}
                                 <span
-                                    className={`font-['Courier_New',monospace] ${
+                                    className={`${
                                         page.url.startsWith(item.href)
                                             ? 'font-bold !text-gray-900 text-gray-900'
                                             : 'text-gray-700 hover:text-gray-900'

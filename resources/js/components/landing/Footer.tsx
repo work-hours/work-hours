@@ -12,35 +12,27 @@ export default function Footer() {
                             <div className="flex h-10 w-10 items-center justify-center border border-gray-500/60 bg-[#f8f6e9]/90 dark:border-gray-600/60 dark:bg-gray-800/90">
                                 <AppLogoIcon className="h-6 w-6 text-gray-700 dark:text-gray-300" />
                             </div>
-                            <span className="font-['Courier_New',monospace] text-lg font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">
-                                WorkHours
-                            </span>
+                            <span className="text-lg font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">WorkHours</span>
                         </div>
-                        <p className="mb-4 font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
+                        <p className="mb-4 text-sm text-gray-700 dark:text-gray-300">
                             Simplifying time tracking for teams and individuals since 2025.
                         </p>
                     </div>
 
                     <div>
-                        <h3 className="mb-4 border-b border-gray-400/30 pb-1 font-['Courier_New',monospace] text-sm font-bold text-gray-800 uppercase dark:border-gray-600/30 dark:text-gray-200">
+                        <h3 className="mb-4 border-b border-gray-400/30 pb-1 text-sm font-bold text-gray-800 uppercase dark:border-gray-600/30 dark:text-gray-200">
                             Company
                         </h3>
                         <ul className="space-y-2 text-sm">
                             <li className="flex items-center">
                                 <span className="mr-2 text-gray-700/70 dark:text-gray-400/70">•</span>
-                                <Link
-                                    href="/"
-                                    className="font-['Courier_New',monospace] text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
-                                >
+                                <Link href="/" className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100">
                                     Home
                                 </Link>
                             </li>
                             <li className="flex items-center">
                                 <span className="mr-2 text-gray-700/70 dark:text-gray-400/70">•</span>
-                                <Link
-                                    href={route('login')}
-                                    className="font-['Courier_New',monospace] text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
-                                >
+                                <Link href={route('login')} className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100">
                                     Login
                                 </Link>
                             </li>
@@ -48,7 +40,7 @@ export default function Footer() {
                                 <span className="mr-2 text-gray-700/70 dark:text-gray-400/70">•</span>
                                 <Link
                                     href={route('register')}
-                                    className="font-['Courier_New',monospace] text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                                    className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
                                 >
                                     Register
                                 </Link>
@@ -57,7 +49,7 @@ export default function Footer() {
                     </div>
 
                     <div>
-                        <h3 className="mb-4 border-b border-gray-400/30 pb-1 font-['Courier_New',monospace] text-sm font-bold text-gray-800 uppercase dark:border-gray-600/30 dark:text-gray-200">
+                        <h3 className="mb-4 border-b border-gray-400/30 pb-1 text-sm font-bold text-gray-800 uppercase dark:border-gray-600/30 dark:text-gray-200">
                             Legal
                         </h3>
                         <ul className="space-y-2 text-sm">
@@ -65,7 +57,7 @@ export default function Footer() {
                                 <span className="mr-2 text-gray-700/70 dark:text-gray-400/70">•</span>
                                 <Link
                                     href={route('privacy-policy')}
-                                    className="font-['Courier_New',monospace] text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                                    className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
                                 >
                                     Privacy Policy
                                 </Link>
@@ -74,7 +66,7 @@ export default function Footer() {
                                 <span className="mr-2 text-gray-700/70 dark:text-gray-400/70">•</span>
                                 <Link
                                     href={route('terms-of-service')}
-                                    className="font-['Courier_New',monospace] text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                                    className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
                                 >
                                     Terms of Service
                                 </Link>
@@ -83,7 +75,7 @@ export default function Footer() {
                                 <span className="mr-2 text-gray-700/70 dark:text-gray-400/70">•</span>
                                 <Link
                                     href={route('cookie-policy')}
-                                    className="font-['Courier_New',monospace] text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                                    className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
                                 >
                                     Cookie Policy
                                 </Link>
@@ -92,7 +84,7 @@ export default function Footer() {
                                 <span className="mr-2 text-gray-700/70 dark:text-gray-400/70">•</span>
                                 <Link
                                     href={route('gdpr-compliance')}
-                                    className="text-gray-700 dark:text-gray-300 font-['Courier_New',monospace] hover:text-gray-900 dark:hover:text-gray-100"
+                                    className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
                                 >
                                     GDPR Compliance
                                 </Link>
@@ -101,7 +93,7 @@ export default function Footer() {
                                 <span className="mr-2 text-gray-700/70 dark:text-gray-400/70">•</span>
                                 <Link
                                     href={route('security')}
-                                    className="font-['Courier_New',monospace] text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                                    className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
                                 >
                                     Security
                                 </Link>
@@ -113,9 +105,7 @@ export default function Footer() {
                 <div className="mt-12 border-t border-gray-300/30 pt-8 text-center dark:border-gray-700/30">
                     {/* Typewriter-style copyright with form line - more subtle */}
                     <div className="inline-block border border-gray-300/40 bg-[#f8f6e9]/90 px-6 py-2 dark:border-gray-700/40 dark:bg-gray-800/90">
-                        <p className="font-['Courier_New',monospace] text-sm text-gray-700 dark:text-gray-300">
-                            &copy; {new Date().getFullYear()} Work Hours. All rights reserved.
-                        </p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">&copy; {new Date().getFullYear()} Work Hours. All rights reserved.</p>
                     </div>
                 </div>
             </div>

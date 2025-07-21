@@ -133,7 +133,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                 <div className="mb-6 px-4">
                     <div className="mb-3 border-b border-gray-400 pb-2 dark:border-gray-600">
                         <h3
-                            className={`font-['Courier_New',monospace] text-sm font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
+                            className={`text-sm font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
                         >
                             {collapsed ? 'Menu' : 'Platform'}
                         </h3>
@@ -185,7 +185,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                     <div className="mb-6 px-4">
                         <div className="mb-3 border-b border-gray-400 pb-2 dark:border-gray-600">
                             <h3
-                                className={`font-['Courier_New',monospace] text-sm font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
+                                className={`text-sm font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
                             >
                                 {collapsed ? 'Int.' : 'Integration'}
                             </h3>
@@ -225,7 +225,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
             <div className="border-t border-gray-400 pt-4 pb-4 dark:border-gray-600">
                 <div className="mb-4 px-4">
                     <h3
-                        className={`mb-2 font-['Courier_New',monospace] text-xs font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
+                        className={`mb-2 text-xs font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
                     >
                         {collapsed ? 'Links' : 'Links'}
                     </h3>

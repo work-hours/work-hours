@@ -8,7 +8,7 @@ export function Breadcrumbs({ breadcrumbs }: { breadcrumbs: BreadcrumbItemType[]
         <>
             {breadcrumbs.length > 0 && (
                 <Breadcrumb>
-                    <BreadcrumbList className="font-['Courier_New',monospace] text-gray-700">
+                    <BreadcrumbList className="text-gray-700">
                         {breadcrumbs.map((item, index) => {
                             const isLast = index === breadcrumbs.length - 1
                             return (

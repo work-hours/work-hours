@@ -52,7 +52,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     }, [collapsed])
 
     return (
-        <div className="flex min-h-screen bg-[#f8f6e9] font-['Courier_New',monospace] dark:bg-gray-900">
+        <div className="flex min-h-screen bg-[#f8f6e9] dark:bg-gray-900">
             {/* Enhanced paper texture overlay with slightly increased opacity for better visibility */}
             <div className="absolute inset-0 -z-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPgogIDxmaWx0ZXIgaWQ9Im5vaXNlIj4KICAgIDxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVCbGVuZCBtb2RlPSJtdWx0aXBseSIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2UiLz4KICA8L2ZpbHRlcj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA3Ii8+Cjwvc3ZnPg==')] opacity-100 dark:opacity-30"></div>
 

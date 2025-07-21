@@ -14,7 +14,7 @@ export function NavFooter({
         <SidebarGroup {...props} className={`px-3 py-3 group-data-[collapsible=icon]:p-0 ${className || ''}`}>
             <SidebarSeparator className="mb-4 bg-gray-400" />
             <SidebarGroupContent>
-                <SidebarMenu className="space-y-1.5 font-['Courier_New',monospace]">
+                <SidebarMenu className="space-y-1.5">
                     {items.map((item) => (
                         <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton

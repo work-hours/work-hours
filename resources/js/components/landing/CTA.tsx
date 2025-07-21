@@ -18,12 +18,12 @@ export default function CTA() {
 
                     {/* Form header */}
                     <div className="mb-6 border-b border-gray-400/40 pb-4 dark:border-gray-600/40">
-                        <h2 className="font-['Courier_New',monospace] text-3xl font-bold tracking-wide text-gray-800 uppercase md:text-4xl dark:text-gray-200">
+                        <h2 className="text-3xl font-bold tracking-wide text-gray-800 uppercase md:text-4xl dark:text-gray-200">
                             Ready to Optimize Your Time?
                         </h2>
                     </div>
 
-                    <p className="mx-auto mb-10 max-w-2xl font-['Courier_New',monospace] text-lg text-gray-700 dark:text-gray-300">
+                    <p className="mx-auto mb-10 max-w-2xl text-lg text-gray-700 dark:text-gray-300">
                         Join thousands of professionals who have transformed how they track and manage their time.
                     </p>
 

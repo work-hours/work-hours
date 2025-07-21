@@ -48,12 +48,12 @@ export default function RecentTimeLogs() {
                 <div className="flex items-center justify-between">
                     <div>
                         <CardTitle className="text-xs font-bold uppercase">Recent Time Logs</CardTitle>
-                        <CardDescription className="font-['Courier_New',monospace] text-[10px]">Your team's latest activity</CardDescription>
+                        <CardDescription className="text-[10px]">Your team's latest activity</CardDescription>
                     </div>
                     {!loading && (
                         <Link
                             href={recentLogs.allLogsLink}
-                            className="border-b border-gray-400 pb-0.5 font-['Courier_New',monospace] text-xs font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
+                            className="border-b border-gray-400 pb-0.5 text-xs font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
                         >
                             View all logs
                         </Link>
@@ -72,7 +72,7 @@ export default function RecentTimeLogs() {
                                         <ClockIcon className="h-4 w-4 text-primary" />
                                     </div>
                                     <div>
-                                        <p className="font-['Courier_New',monospace] text-sm font-bold">
+                                        <p className="text-sm font-bold">
                                             {log.user} on{' '}
                                             {new Date(log.date).toLocaleDateString('en-US', {
                                                 weekday: 'long',
@@ -82,15 +82,15 @@ export default function RecentTimeLogs() {
                                         </p>
                                     </div>
                                 </div>
-                                <div className="font-['Courier_New',monospace] text-sm font-bold">{roundToTwoDecimals(log.hours)} hours</div>
+                                <div className="text-sm font-bold">{roundToTwoDecimals(log.hours)} hours</div>
                             </div>
                         ))
                     ) : (
                         <div className="py-4 text-center text-gray-700 dark:text-gray-300">
-                            <p className="font-['Courier_New',monospace]">No recent time logs found</p>
+                            <p className="">No recent time logs found</p>
                             <Link
                                 href={route('time-log.create')}
-                                className="mt-2 inline-block border-b border-gray-400 pb-0.5 font-['Courier_New',monospace] font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
+                                className="mt-2 inline-block border-b border-gray-400 pb-0.5 font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
                             >
                                 Create your first time log
                             </Link>

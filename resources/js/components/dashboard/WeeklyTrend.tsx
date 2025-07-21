@@ -10,7 +10,7 @@ export default function WeeklyTrend({ weeklyData }: WeeklyTrendProps) {
         <Card className="overflow-hidden border-l-4 border-l-blue-500 transition-colors dark:border-l-blue-400">
             <CardHeader className="pb-2">
                 <CardTitle className="text-xs font-bold uppercase">Weekly Trend</CardTitle>
-                <CardDescription className="font-['Courier_New',monospace] text-[10px]">Hours logged over the past weeks</CardDescription>
+                <CardDescription className="text-[10px]">Hours logged over the past weeks</CardDescription>
             </CardHeader>
             <CardContent className="h-60 py-1">
                 <ResponsiveContainer width="100%" height="100%">

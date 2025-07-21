@@ -24,10 +24,10 @@ export default function StatsCard({ title, icon, value, description, trend, bord
                     <CardTitle className="text-xs font-bold uppercase">{title}</CardTitle>
                     <div className="h-3 w-3 text-gray-700">{icon}</div>
                 </div>
-                <div className="font-['Courier_New',monospace] text-lg font-bold">{value}</div>
-                {description && <p className="font-['Courier_New',monospace] text-[10px] text-gray-700">{description}</p>}
+                <div className="text-lg font-bold">{value}</div>
+                {description && <p className="text-[10px] text-gray-700">{description}</p>}
                 {trend && (
-                    <div className={`flex items-center text-[10px] ${trend.color} font-['Courier_New',monospace]`}>
+                    <div className={`flex items-center text-[10px] ${trend.color} `}>
                         {trend.icon}
                         <span>{trend.text}</span>
                     </div>

@@ -16,9 +16,7 @@ export default function Navbar() {
                     <AppLogoIcon className="h-8 w-8 text-gray-700 dark:text-gray-300" />
                 </div>
                 <div>
-                    <span className="font-['Courier_New',monospace] text-xl font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">
-                        Work Hours
-                    </span>
+                    <span className="text-xl font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">Work Hours</span>
                     <div className="mt-1 h-1 w-full bg-gray-300 dark:bg-gray-600"></div>
                 </div>
             </Link>
@@ -32,7 +30,7 @@ export default function Navbar() {
                 {isLoggedIn ? (
                     <Link
                         href="/dashboard"
-                        className="inline-flex items-center justify-center border-2 border-blue-900 bg-blue-900 px-5 py-2 font-['Courier_New',monospace] text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                        className="inline-flex items-center justify-center border-2 border-blue-900 bg-blue-900 px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
                     >
                         Dashboard
                     </Link>
@@ -40,13 +38,13 @@ export default function Navbar() {
                     <>
                         <Link
                             href={route('login')}
-                            className="relative z-10 cursor-pointer border-b-2 border-gray-400 pb-1 font-['Courier_New',monospace] text-sm font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
+                            className="relative z-10 cursor-pointer border-b-2 border-gray-400 pb-1 text-sm font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
                         >
                             Sign in
                         </Link>
                         <Link
                             href={route('register')}
-                            className="relative z-10 inline-flex cursor-pointer items-center justify-center border-2 border-blue-900 bg-blue-900 px-5 py-2 font-['Courier_New',monospace] text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                            className="relative z-10 inline-flex cursor-pointer items-center justify-center border-2 border-blue-900 bg-blue-900 px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
                         >
                             Get Started
                         </Link>
