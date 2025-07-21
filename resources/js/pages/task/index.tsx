@@ -1,17 +1,17 @@
 import DeleteTask from '@/components/delete-task'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
+import { type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { ClipboardList, Download, Edit, FileText, Loader2, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { type SharedData } from '@/types'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

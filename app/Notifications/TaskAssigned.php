@@ -46,9 +46,7 @@ final class TaskAssigned extends Notification
             ->line('Project: ' . $this->task->project->name)
             ->line('Status: ' . $this->task->status)
             ->line('Priority: ' . $this->task->priority)
-            ->when($this->task->due_date, function (MailMessage $message) {
-                return $message->line('Due Date: ' . $this->task->due_date->format('Y-m-d'));
-            })
+            ->when($this->task->due_date, fn (MailMessage $message) => $message->line('Due Date: ' . $this->task->due_date->format('Y-m-d')))
             ->action('View Task', url('/tasks/' . $this->task->id))
             ->line('Thank you for using WorkHours!');
     }

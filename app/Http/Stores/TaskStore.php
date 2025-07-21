@@ -8,7 +8,6 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 final class TaskStore
@@ -51,7 +50,7 @@ final class TaskStore
             'title' => $task->title,
             'description' => $task->description,
             'status' => ucfirst(str_replace('_', ' ', $task->status)),
-            'priority' => ucfirst($task->priority),
+            'priority' => ucfirst((string) $task->priority),
             'due_date' => $task->due_date ? Carbon::parse($task->due_date)->toDateString() : 'No due date',
             'assignees' => $task->assignees->pluck('name')->implode(', '),
             'created_at' => Carbon::parse($task->created_at)->toDateTimeString(),
@@ -69,7 +68,7 @@ final class TaskStore
             'Priority',
             'Due Date',
             'Assignees',
-            'Created At'
+            'Created At',
         ];
     }
 }

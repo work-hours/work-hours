@@ -30,6 +30,7 @@ final class UpdateTimeLogRequest extends FormRequest
             'start_timestamp' => ['required', 'date'],
             'end_timestamp' => ['required', 'date', 'after_or_equal:start_timestamp'],
             'note' => ['required', 'string'],
+            'mark_task_complete' => ['boolean', 'nullable'],
         ];
     }
 }

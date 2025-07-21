@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
 /**
@@ -36,10 +36,6 @@ final class Task extends Model
         'due_date',
     ];
 
-    protected $casts = [
-        'due_date' => 'date',
-    ];
-
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
@@ -49,5 +45,12 @@ final class Task extends Model
     {
         return $this->belongsToMany(User::class, 'task_user')
             ->withTimestamps();
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'due_date' => 'date',
+        ];
     }
 }

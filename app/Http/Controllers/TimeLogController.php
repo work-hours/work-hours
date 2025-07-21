@@ -11,6 +11,7 @@ use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TimeLogStore;
 use App\Imports\TimeLogImport;
 use App\Models\Project;
+use App\Models\Task;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
@@ -81,7 +82,18 @@ final class TimeLogController extends Controller
                 }
             }
 
+            $markAsComplete = $data['mark_task_complete'] ?? false;
+            unset($data['mark_task_complete']);
+
             $timeLog = TimeLog::query()->create($data);
+
+            if ($isLogCompleted && ! empty($data['task_id']) && $markAsComplete) {
+                $task = Task::query()->find($data['task_id']);
+                if ($task) {
+                    $task->update(['status' => 'completed']);
+                }
+            }
+
             DB::commit();
 
             if ($isLogCompleted) {
@@ -101,23 +113,85 @@ final class TimeLogController extends Controller
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
         // Get all tasks assigned to the user
-        $tasks = \App\Models\Task::query()
-            ->whereHas('assignees', function ($query) {
+        $tasks = Task::query()
+            ->whereHas('assignees', function ($query): void {
                 $query->where('users.id', auth()->id());
             })
             ->get(['id', 'title', 'project_id'])
-            ->map(function ($task) {
-                return [
-                    'id' => $task->id,
-                    'title' => $task->title,
-                    'project_id' => $task->project_id,
-                ];
-            });
+            ->map(fn ($task): array => [
+                'id' => $task->id,
+                'title' => $task->title,
+                'project_id' => $task->project_id,
+            ]);
 
         return Inertia::render('time-log/create', [
             'projects' => $projects,
             'tasks' => $tasks,
         ]);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Action(method: 'put', name: 'time-log.update', params: ['timeLog'], middleware: ['auth', 'verified'])]
+    public function update(UpdateTimeLogRequest $request, TimeLog $timeLog): void
+    {
+        Gate::authorize('update', $timeLog);
+
+        DB::beginTransaction();
+        try {
+            $data = $request->validated();
+
+            $project = Project::query()->find($data['project_id']);
+            $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
+            $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
+
+            $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
+
+            if ($isLogCompleted) {
+                $start = Carbon::parse($data['start_timestamp']);
+                $end = Carbon::parse($data['end_timestamp']);
+
+                // Ensure the end date is the same as the start date
+                if ($start->format('Y-m-d') !== $end->format('Y-m-d')) {
+                    $end = Carbon::parse($end->format('H:i:s'))->setDateFrom($start);
+                    $data['end_timestamp'] = $end->toDateTimeString();
+                }
+
+                $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
+
+                if ($project && $project->isCreator(auth()->id())) {
+                    $data['status'] = 'approved';
+                    $data['approved_by'] = auth()->id();
+                    $data['approved_at'] = Carbon::now();
+                }
+            }
+
+            $markAsComplete = $data['mark_task_complete'] ?? false;
+            unset($data['mark_task_complete']);
+
+            $timeLog->update($data);
+
+            if ($isLogCompleted && ! empty($data['task_id']) && $markAsComplete) {
+                $task = Task::query()->find($data['task_id']);
+                if ($task) {
+                    $task->update(['status' => 'completed']);
+                }
+            }
+
+            DB::commit();
+
+            if ($isLogCompleted) {
+                $teamLeader = User::teamLeader(project: $timeLog->project);
+                if (auth()->id() !== $teamLeader->getKey()) {
+                    $teamLeader->notify(new TimeLogEntry($timeLog, auth()->user()));
+                }
+            }
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function edit(TimeLog $timeLog)
@@ -127,18 +201,16 @@ final class TimeLogController extends Controller
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
         // Get all tasks assigned to the user
-        $tasks = \App\Models\Task::query()
-            ->whereHas('assignees', function ($query) {
+        $tasks = Task::query()
+            ->whereHas('assignees', function ($query): void {
                 $query->where('users.id', auth()->id());
             })
             ->get(['id', 'title', 'project_id'])
-            ->map(function ($task) {
-                return [
-                    'id' => $task->id,
-                    'title' => $task->title,
-                    'project_id' => $task->project_id,
-                ];
-            });
+            ->map(fn ($task): array => [
+                'id' => $task->id,
+                'title' => $task->title,
+                'project_id' => $task->project_id,
+            ]);
 
         return Inertia::render('time-log/edit', [
             'timeLog' => [
@@ -259,59 +331,6 @@ final class TimeLogController extends Controller
 
                 session()->flash('warning', $message);
             }
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
-
-    /**
-     * @throws Throwable
-     */
-    #[Action(method: 'put', name: 'time-log.update', params: ['timeLog'], middleware: ['auth', 'verified'])]
-    public function update(UpdateTimeLogRequest $request, TimeLog $timeLog): void
-    {
-        Gate::authorize('update', $timeLog);
-
-        DB::beginTransaction();
-        try {
-            $data = $request->validated();
-
-            $project = Project::query()->find($data['project_id']);
-            $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
-            $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
-
-            $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
-
-            if ($isLogCompleted) {
-                $start = Carbon::parse($data['start_timestamp']);
-                $end = Carbon::parse($data['end_timestamp']);
-
-                // Ensure the end date is the same as the start date
-                if ($start->format('Y-m-d') !== $end->format('Y-m-d')) {
-                    $end = Carbon::parse($end->format('H:i:s'))->setDateFrom($start);
-                    $data['end_timestamp'] = $end->toDateTimeString();
-                }
-
-                $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
-
-                if ($project && $project->isCreator(auth()->id())) {
-                    $data['status'] = 'approved';
-                    $data['approved_by'] = auth()->id();
-                    $data['approved_at'] = Carbon::now();
-                }
-            }
-
-            $timeLog->update($data);
-            DB::commit();
-
-            if ($isLogCompleted) {
-                $teamLeader = User::teamLeader(project: $timeLog->project);
-                if (auth()->id() !== $teamLeader->getKey()) {
-                    $teamLeader->notify(new TimeLogEntry($timeLog, auth()->user()));
-                }
-            }
-
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;

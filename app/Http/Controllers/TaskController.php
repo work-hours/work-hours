@@ -17,7 +17,6 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -59,6 +58,7 @@ final class TaskController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
      * @throws Throwable
      */
     #[Action(method: 'post', name: 'task.store', middleware: ['auth', 'verified'])]
@@ -100,7 +100,7 @@ final class TaskController extends Controller
      * Display the specified resource.
      */
     #[Action(method: 'get', name: 'task.show', params: ['task'], middleware: ['auth', 'verified'])]
-    public function show(Task $task)
+    public function show(Task $task): Task
     {
         // Load relationships
         $task->load(['project', 'assignees']);
@@ -110,7 +110,7 @@ final class TaskController extends Controller
         $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
         $isAssignee = $task->assignees->contains('id', auth()->id());
 
-        abort_if(!$isProjectOwner && !$isTeamMember && !$isAssignee, 403, 'Unauthorized action.');
+        abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
 
         return $task;
     }
@@ -128,7 +128,7 @@ final class TaskController extends Controller
         $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
         $isAssignee = $task->assignees->contains('id', auth()->id());
 
-        abort_if(!$isProjectOwner && !$isTeamMember && !$isAssignee, 403, 'Unauthorized action.');
+        abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
 
         $projects = ProjectStore::userProjects(userId: auth()->id())
             ->map(fn ($project): array => [
@@ -157,6 +157,7 @@ final class TaskController extends Controller
 
     /**
      * Update the specified resource in storage.
+     *
      * @throws Throwable
      */
     #[Action(method: 'put', name: 'task.update', params: ['task'], middleware: ['auth', 'verified'])]
@@ -165,7 +166,7 @@ final class TaskController extends Controller
         // Check if user has access to update this task
         $isProjectOwner = $task->project->user_id === auth()->id();
 
-        abort_if(!$isProjectOwner, 403, 'Unauthorized action.');
+        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
 
         DB::beginTransaction();
         try {
@@ -181,12 +182,12 @@ final class TaskController extends Controller
                 // Find newly added assignees
                 $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
 
-                if (!empty($addedAssigneeIds)) {
+                if ($addedAssigneeIds !== []) {
                     // Load the project relationship for the notification
                     $task->load('project');
 
                     // Send notification only to newly assigned users
-                    $newUsers = User::whereIn('id', $addedAssigneeIds)->get();
+                    $newUsers = User::query()->whereIn('id', $addedAssigneeIds)->get();
                     foreach ($newUsers as $user) {
                         $user->notify(new TaskAssigned($task, auth()->user()));
                     }
@@ -204,6 +205,7 @@ final class TaskController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     *
      * @throws Throwable
      */
     #[Action(method: 'delete', name: 'task.destroy', params: ['task'], middleware: ['auth', 'verified'])]
@@ -212,7 +214,7 @@ final class TaskController extends Controller
         // Check if user has access to delete this task
         $isProjectOwner = $task->project->user_id === auth()->id();
 
-        abort_if(!$isProjectOwner, 403, 'Unauthorized action.');
+        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
 
         DB::beginTransaction();
         try {
@@ -252,7 +254,7 @@ final class TaskController extends Controller
         $isProjectOwner = $project->user_id === auth()->id();
         $isTeamMember = $project->teamMembers->contains('id', auth()->id());
 
-        abort_if(!$isProjectOwner && !$isTeamMember, 403, 'Unauthorized action.');
+        abort_if(! $isProjectOwner && ! $isTeamMember, 403, 'Unauthorized action.');
 
         // Get potential assignees (project team members and owner)
         return collect([$project->user])

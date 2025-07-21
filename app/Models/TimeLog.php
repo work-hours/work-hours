@@ -44,6 +44,7 @@ final class TimeLog extends Model
         'note',
         'currency',
         'status',
+        'mark_task_complete',
     ];
 
     public function user(): BelongsTo

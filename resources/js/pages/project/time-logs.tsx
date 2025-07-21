@@ -1,17 +1,31 @@
 import StatsCards from '@/components/dashboard/StatsCards'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
-import { AlertCircle, ArrowLeft, Calendar, CalendarRange, CheckCircle, ClipboardList, ClockIcon, Download, Edit, Plus, Search, TimerReset, User } from 'lucide-react'
+import {
+    AlertCircle,
+    ArrowLeft,
+    Calendar,
+    CalendarRange,
+    CheckCircle,
+    ClipboardList,
+    ClockIcon,
+    Download,
+    Edit,
+    Plus,
+    Search,
+    TimerReset,
+    User,
+} from 'lucide-react'
 import { FormEventHandler, forwardRef, useState } from 'react'
 
 type TimeLog = {

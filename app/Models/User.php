@@ -76,6 +76,12 @@ final class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Currency::class)->orderBy('created_at', 'ASC');
     }
 
+    public function assignedTasks(): BelongsToMany
+    {
+        return $this->belongsToMany(Task::class, 'task_user')
+            ->withTimestamps();
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -87,11 +93,5 @@ final class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function assignedTasks(): BelongsToMany
-    {
-        return $this->belongsToMany(Task::class, 'task_user')
-            ->withTimestamps();
     }
 }

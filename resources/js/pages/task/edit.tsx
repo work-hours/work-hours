@@ -11,11 +11,11 @@ import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import DatePicker from '@/components/ui/date-picker'
+import { Textarea } from '@/components/ui/textarea'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 
@@ -127,8 +127,8 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
             _potentialAssignees
                 .data({
                     params: {
-                        project: parseInt(data.project_id)
-                    }
+                        project: parseInt(data.project_id),
+                    },
                 })
                 .then((assignees) => {
                     setPotentialAssignees(assignees)
@@ -279,15 +279,21 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                             >
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="pending" id="status-pending" />
-                                                    <Label htmlFor="status-pending" className="cursor-pointer">Pending</Label>
+                                                    <Label htmlFor="status-pending" className="cursor-pointer">
+                                                        Pending
+                                                    </Label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="in_progress" id="status-in-progress" />
-                                                    <Label htmlFor="status-in-progress" className="cursor-pointer">In Progress</Label>
+                                                    <Label htmlFor="status-in-progress" className="cursor-pointer">
+                                                        In Progress
+                                                    </Label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="completed" id="status-completed" />
-                                                    <Label htmlFor="status-completed" className="cursor-pointer">Completed</Label>
+                                                    <Label htmlFor="status-completed" className="cursor-pointer">
+                                                        Completed
+                                                    </Label>
                                                 </div>
                                             </RadioGroup>
                                         </div>
@@ -311,15 +317,21 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                             >
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="low" id="priority-low" />
-                                                    <Label htmlFor="priority-low" className="cursor-pointer">Low</Label>
+                                                    <Label htmlFor="priority-low" className="cursor-pointer">
+                                                        Low
+                                                    </Label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="medium" id="priority-medium" />
-                                                    <Label htmlFor="priority-medium" className="cursor-pointer">Medium</Label>
+                                                    <Label htmlFor="priority-medium" className="cursor-pointer">
+                                                        Medium
+                                                    </Label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value="high" id="priority-high" />
-                                                    <Label htmlFor="priority-high" className="cursor-pointer">High</Label>
+                                                    <Label htmlFor="priority-high" className="cursor-pointer">
+                                                        High
+                                                    </Label>
                                                 </div>
                                             </RadioGroup>
                                         </div>

@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
@@ -24,6 +25,7 @@ type TimeLogForm = {
     start_timestamp: string
     end_timestamp: string
     note: string
+    mark_task_complete: boolean
 }
 
 type Task = {
@@ -100,6 +102,7 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
         start_timestamp: new Date(timeLog.start_timestamp).toISOString(),
         end_timestamp: timeLog.end_timestamp ? new Date(timeLog.end_timestamp).toISOString() : '',
         note: timeLog.note,
+        mark_task_complete: false,
     })
 
     // Convert string timestamps to Date objects for DatePicker
@@ -176,9 +179,9 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                         id="project_id"
                                         value={data.project_id ? data.project_id.toString() : ''}
                                         onChange={(value) => {
-                                            setData('project_id', parseInt(value));
+                                            setData('project_id', parseInt(value))
                                             // Reset task_id when project changes
-                                            setData('task_id', null);
+                                            setData('task_id', null)
                                         }}
                                         options={projects}
                                         placeholder="Select a project"
@@ -195,18 +198,34 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                         id="task_id"
                                         value={data.task_id ? data.task_id.toString() : ''}
                                         onChange={(value) => setData('task_id', value ? parseInt(value) : null)}
-                                        options={tasks.filter(task => task.project_id === data.project_id).map(task => ({
-                                            id: task.id,
-                                            name: task.title
-                                        }))}
+                                        options={tasks
+                                            .filter((task) => task.project_id === data.project_id)
+                                            .map((task) => ({
+                                                id: task.id,
+                                                name: task.title,
+                                            }))}
                                         placeholder="Select a task (optional)"
                                         disabled={processing || !data.project_id}
                                     />
                                     <InputError message={errors.task_id} className="mt-1" />
-                                    {data.project_id && tasks.filter(task => task.project_id === data.project_id).length === 0 && (
+                                    {data.project_id && tasks.filter((task) => task.project_id === data.project_id).length === 0 && (
                                         <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
                                     )}
                                 </div>
+
+                                {/* Show checkbox to mark task as complete only when a task is selected */}
+                                {data.task_id && (
+                                    <div className="mt-2 flex items-center space-x-2">
+                                        <Checkbox
+                                            id="mark_task_complete"
+                                            checked={data.mark_task_complete}
+                                            onCheckedChange={(checked) => setData('mark_task_complete', checked as boolean)}
+                                        />
+                                        <Label htmlFor="mark_task_complete" className="cursor-pointer text-sm font-medium">
+                                            Mark task as complete when time log is complete
+                                        </Label>
+                                    </div>
+                                )}
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="start_timestamp" className="text-sm font-medium">
