@@ -46,7 +46,9 @@ final class TimeLogStore
                 StatusFilter::class,
             ])
             ->thenReturn()
-            ->with(['user', 'project'])->get();
+            ->with(['user', 'project'])
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     public static function totalHours(array $teamMembersIds): float
