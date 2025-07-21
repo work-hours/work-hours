@@ -242,12 +242,7 @@ final class TeamController extends Controller
                 ->whereIn('project_id', $projects->pluck('id'))
         );
 
-        $teamMembersList = TeamStore::teamMembers(userId: auth()->id())
-            ->map(fn ($teamMember): array => [
-                'id' => $teamMember->member->getKey(),
-                'name' => $teamMember->member->name,
-                'email' => $teamMember->member->email,
-            ]);
+        $teamMembersList = TeamStore::teamMembers(userId: auth()->id());
 
         return Inertia::render('team/all-time-logs', [
             'teamMembers' => $teamMembersList,

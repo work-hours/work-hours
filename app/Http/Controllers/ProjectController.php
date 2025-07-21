@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Stores\ClientStore;
@@ -73,12 +72,7 @@ final class ProjectController extends Controller
 
     public function create()
     {
-        $teamMembers = TeamStore::teamMembers(userId: auth()->id())
-            ->map(fn ($team): array => [
-                'id' => $team->member->id,
-                'name' => $team->member->name,
-                'email' => $team->member->email,
-            ]);
+        $teamMembers = TeamStore::teamMembers(userId: auth()->id());
 
         $clients = ClientStore::userClients(auth()->id())
             ->map(fn ($client): array => [
@@ -96,12 +90,7 @@ final class ProjectController extends Controller
     {
         Gate::authorize('update', $project);
 
-        $teamMembers = TeamStore::teamMembers(userId: auth()->id())
-            ->map(fn ($team): array => [
-                'id' => $team->member->id,
-                'name' => $team->member->name,
-                'email' => $team->member->email,
-            ]);
+        $teamMembers = TeamStore::teamMembers(userId: auth()->id());
 
         $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
         $assignedApprovers = $project->approvers->pluck('id')->toArray();

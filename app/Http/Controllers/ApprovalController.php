@@ -40,25 +40,14 @@ final class ApprovalController extends Controller
     {
         $pendingTimeLogs = $this->getPendingApprovals();
         $mappedTimeLogs = TimeLogStore::timeLogMapper($pendingTimeLogs);
-
         $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
-        $teamMembers = TeamStore::teamMembers(userId: auth()->id())
-            ->map(fn ($teamMember): array => [
-                'id' => $teamMember->member->getKey(),
-                'name' => $teamMember->member->name,
-                'email' => $teamMember->member->email,
-            ]);
+        $teamMembers = TeamStore::teamMembers(userId: auth()->id());
 
         return Inertia::render('approvals/index', [
             'timeLogs' => $mappedTimeLogs,
-            'filters' => [
-                'start_date' => request('start_date', ''),
-                'end_date' => request('end_date', ''),
-                'user_id' => request('user_id', ''),
-                'project_id' => request('project_id', ''),
-            ],
+            'filters' => TimeLogStore::filters(),
             'projects' => $projects,
             'teamMembers' => $teamMembers,
             'totalDuration' => $totalDuration,

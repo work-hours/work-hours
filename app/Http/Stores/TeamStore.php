@@ -19,12 +19,16 @@ final class TeamStore
         return Team::query()->where('user_id', $userId)->count();
     }
 
-    public static function teamMembers(int $userId): \Illuminate\Database\Eloquent\Collection
+    public static function teamMembers(int $userId): Collection
     {
         return Team::query()
             ->where('user_id', $userId)
             ->with('member')
-            ->get();
+            ->get()->map(fn ($team): array => [
+                'id' => $team->member->id,
+                'name' => $team->member->name,
+                'email' => $team->member->email,
+            ]);
     }
 
     public static function teamEntry(int $userId, int $memberId): ?Team
