@@ -166,9 +166,7 @@ final class TaskController extends Controller
         $isProjectOwner = $task->project->user_id === auth()->id();
         $isAssignee = $task->assignees->contains('id', auth()->id());
 
-        if (! $isProjectOwner && ! $isAssignee) {
-            abort(403, 'Unauthorized action.');
-        }
+        abort_if(! $isProjectOwner && ! $isAssignee, 403, 'Unauthorized action.');
 
         DB::beginTransaction();
         try {
