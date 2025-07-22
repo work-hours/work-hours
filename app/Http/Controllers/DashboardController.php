@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Stores\ClientStore;
 use App\Http\Stores\ProjectStore;
+use App\Http\Stores\TaskStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
 use Inertia\Response;
@@ -62,6 +63,14 @@ final class DashboardController extends Controller
     {
         return [
             'projects' => ProjectStore::userProjects(userId: auth()->id()),
+        ];
+    }
+
+    #[Action(method: 'get', name: 'dashboard.tasks', middleware: ['auth', 'verified'])]
+    public function tasks(): array
+    {
+        return [
+            'tasks' => TaskStore::userTasks(userId: auth()->id()),
         ];
     }
 }

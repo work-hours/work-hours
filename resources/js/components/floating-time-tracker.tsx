@@ -12,12 +12,20 @@ type Project = {
     name: string
 }
 
-type FloatingTimeTrackerProps = {
-    projects: Project[]
+type Task = {
+    id: number
+    title: string
+    project_id: number
 }
 
-export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerProps) {
+type FloatingTimeTrackerProps = {
+    projects: Project[]
+    tasks: Task[]
+}
+
+export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTrackerProps) {
     const [selectedProject, setSelectedProject] = useState<number | null>(projects.length > 0 ? projects[0].id : null)
+    const [selectedTask, setSelectedTask] = useState<number | null>(null)
     const [isExpanded, setIsExpanded] = useState(false)
     const [isVisible, setIsVisible] = useState(true)
     const [view, setView] = useState<'select' | 'tracking' | 'note'>('select')
@@ -26,6 +34,8 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
         id: number | null
         project_id: number | null
         project_name: string | null
+        task_id: number | null
+        task_title: string | null
         start_timestamp: string | null
         elapsed: number
         note?: string
@@ -89,12 +99,15 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
 
     const startTimeLog = () => {
         const project = projects.find((p) => p.id === selectedProject) || null
+        const task = selectedTask ? tasks.find((t) => t.id === selectedTask) || null : null
 
         const now = new Date().toISOString()
         const newTimeLog = {
             id: null,
             project_id: project?.id || null,
             project_name: project?.name || null,
+            task_id: task?.id || null,
+            task_title: task?.title || null,
             start_timestamp: now,
             elapsed: 0,
             note: '',
@@ -118,6 +131,7 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
             route('time-log.store'),
             {
                 project_id: activeTimeLog.project_id,
+                task_id: activeTimeLog.task_id,
                 start_timestamp: activeTimeLog.start_timestamp,
                 end_timestamp: new Date().toISOString(),
                 note: note,
@@ -174,19 +188,26 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
     if (activeTimeLog && view === 'tracking') {
         return (
             <div className="fixed right-4 bottom-4 z-50">
-                <Button
-                    onClick={toggleExpand}
-                    variant="default"
-                    size="icon"
-                    className="h-14 w-14 animate-pulse rounded-full bg-primary shadow-lg hover:bg-primary/90"
-                >
-                    <div className="flex flex-col items-center justify-center">
-                        <ClockIcon className="h-6 w-6 text-white" />
-                        <span className="text-xs font-bold text-white">
-                            {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
-                        </span>
-                    </div>
-                </Button>
+                <div className="flex flex-col items-end gap-2">
+                    {activeTimeLog.task_id && (
+                        <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">
+                            {activeTimeLog.task_title}
+                        </div>
+                    )}
+                    <Button
+                        onClick={toggleExpand}
+                        variant="default"
+                        size="icon"
+                        className="h-14 w-14 animate-pulse rounded-full bg-primary shadow-lg hover:bg-primary/90"
+                    >
+                        <div className="flex flex-col items-center justify-center">
+                            <ClockIcon className="h-6 w-6 text-white" />
+                            <span className="text-xs font-bold text-white">
+                                {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
+                            </span>
+                        </div>
+                    </Button>
+                </div>
             </div>
         )
     }
@@ -213,7 +234,12 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
                                 <CardTitle className="flex items-center gap-2 text-left text-lg font-bold">
                                     <span>{activeTimeLog.project_name}</span>
                                 </CardTitle>
-                                <CardDescription className="">
+                                {activeTimeLog.task_id && (
+                                    <div className="mt-1 text-sm font-medium text-primary">
+                                        Task: {activeTimeLog.task_title}
+                                    </div>
+                                )}
+                                <CardDescription className="mt-1">
                                     Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
                                 </CardDescription>
                             </div>
@@ -273,12 +299,39 @@ export default function FloatingTimeTracker({ projects }: FloatingTimeTrackerPro
                             <SearchableSelect
                                 id="tracking_project"
                                 value={selectedProject?.toString() || ''}
-                                onChange={(value) => setSelectedProject(value ? parseInt(value) : null)}
+                                onChange={(value) => {
+                                    setSelectedProject(value ? parseInt(value) : null)
+                                    setSelectedTask(null) // Reset task when project changes
+                                }}
                                 options={projects}
                                 placeholder="Select project"
                                 icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
                             />
                         </div>
+
+                        {selectedProject && (
+                            <div>
+                                <Label htmlFor="tracking_task" className="mb-1 block text-sm font-bold text-gray-800 dark:text-gray-200">
+                                    Task (Optional)
+                                </Label>
+                                <SearchableSelect
+                                    id="tracking_task"
+                                    value={selectedTask?.toString() || ''}
+                                    onChange={(value) => setSelectedTask(value ? parseInt(value) : null)}
+                                    options={tasks
+                                        .filter((task) => task.project_id === selectedProject)
+                                        .map((task) => ({
+                                            id: task.id,
+                                            name: task.title,
+                                        }))}
+                                    placeholder="Select task (optional)"
+                                    disabled={!selectedProject}
+                                />
+                                {selectedProject && tasks.filter((task) => task.project_id === selectedProject).length === 0 && (
+                                    <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
+                                )}
+                            </div>
+                        )}
                         <Button
                             onClick={startTimeLog}
                             variant="default"
