@@ -6,11 +6,17 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { projects } from '@actions/DashboardController'
+import { projects, tasks } from '@actions/DashboardController'
 
 interface Project {
     id: number
     name: string
+}
+
+interface Task {
+    id: number
+    title: string
+    project_id: number
 }
 
 interface MasterLayoutProps {
@@ -29,21 +35,26 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     })
 
     const [userProjects, setUserProjects] = useState<Project[]>([])
-    const [projectsLoaded, setProjectsLoaded] = useState(false)
+    const [userTasks, setUserTasks] = useState<Task[]>([])
+    const [dataLoaded, setDataLoaded] = useState(false)
 
-    // Fetch projects for the time tracker
-    const getProjects = async (): Promise<void> => {
+    // Fetch projects and tasks for the time tracker
+    const fetchData = async (): Promise<void> => {
         try {
-            const response = await projects.data({})
-            setUserProjects(response.projects)
-            setProjectsLoaded(true)
+            const [projectsResponse, tasksResponse] = await Promise.all([
+                projects.data({}),
+                tasks.data({})
+            ])
+            setUserProjects(projectsResponse.projects)
+            setUserTasks(tasksResponse.tasks)
+            setDataLoaded(true)
         } catch (error: unknown) {
-            console.error('Failed to fetch projects:', error)
+            console.error('Failed to fetch data:', error)
         }
     }
 
     useEffect(() => {
-        getProjects().then()
+        fetchData().then()
     }, [])
 
     // Save collapsed state to localStorage when it changes
@@ -80,7 +91,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
             <Toaster position="top-right" closeButton={true} />
 
             {/* Floating Time Tracker */}
-            {projectsLoaded && <FloatingTimeTracker projects={userProjects} />}
+            {dataLoaded && <FloatingTimeTracker projects={userProjects} tasks={userTasks} />}
         </div>
     )
 }
