@@ -17,7 +17,7 @@ test('authenticated users can visit the dashboard', function (): void {
     $this->get('/team')->assertOk();
 });
 
-it('can creat a member', function () {
+it('can creat a member', function (): void {
     $this->actingAs($user = User::factory()->create());
 
     $response = $this->post(route('team.store'), [
@@ -37,7 +37,7 @@ it('can creat a member', function () {
     ]);
 });
 
-it('can update a team member', function () {
+it('can update a team member', function (): void {
     $this->actingAs($user = User::factory()->create());
 
     $teamMember = User::factory()->create();
@@ -70,7 +70,7 @@ it('can update a team member', function () {
     ]);
 });
 
-it('can delete a team member', function () {
+it('can delete a team member', function (): void {
     $this->actingAs($user = User::factory()->create());
 
     $teamMember = User::factory()->create();
@@ -97,7 +97,7 @@ it('can delete a team member', function () {
     ]);
 });
 
-it('can export team members to CSV', function () {
+it('can export team members to CSV', function (): void {
     $this->actingAs($user = User::factory()->create());
 
     $teamMember1 = User::factory()->create(['name' => 'Alice', 'email' => 'alice@example.com']);
@@ -124,7 +124,7 @@ it('can export team members to CSV', function () {
     $response->assertHeader('Content-Disposition', 'attachment; filename="team_members_' . now()->format('Y-m-d') . '.csv"');
 });
 
-it('can filter team members by start_date, end_date, and search', function () {
+it('can filter team members by start_date, end_date, and search', function (): void {
     $this->actingAs($user = User::factory()->create());
 
     // Create team members
