@@ -20,7 +20,7 @@ type Project = {
 }
 
 type TimeLogForm = {
-    project_id: number
+    project_id: number | null
     task_id: number | null
     start_timestamp: string
     end_timestamp: string
@@ -88,7 +88,7 @@ type Props = {
 
 export default function CreateTimeLog({ projects, tasks }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<Required<TimeLogForm>>({
-        project_id: 0,
+        project_id: null, // Set to null initially to avoid showing "0"
         task_id: null,
         start_timestamp: new Date().toISOString(), // Default to now, using full ISO string
         end_timestamp: '',
@@ -169,7 +169,7 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                     </Label>
                                     <SearchableSelect
                                         id="project_id"
-                                        value={data.project_id ? data.project_id.toString() : ''}
+                                        value={data.project_id !== null ? data.project_id.toString() : ''}
                                         onChange={(value) => {
                                             setData('project_id', parseInt(value))
                                             // Reset task_id when project changes
@@ -197,10 +197,10 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                                 name: task.title,
                                             }))}
                                         placeholder="Select a task (optional)"
-                                        disabled={processing || !data.project_id}
+                                        disabled={processing || data.project_id === null}
                                     />
                                     <InputError message={errors.task_id} className="mt-1" />
-                                    {data.project_id && tasks.filter((task) => task.project_id === data.project_id).length === 0 && (
+                                    {data.project_id !== null && tasks.filter((task) => task.project_id === data.project_id).length === 0 && (
                                         <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
                                     )}
                                 </div>
