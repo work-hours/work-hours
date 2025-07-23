@@ -105,8 +105,8 @@ export default function Tasks() {
         status: 'all',
         priority: 'all',
         project_id: 'all',
-        due_date_from: null as Date | null,
-        due_date_to: null as Date | null,
+        due_date_from: null as Date | '',
+        due_date_to: null as Date | '',
         search: '',
     })
     const [processing, setProcessing] = useState(false)
@@ -163,7 +163,7 @@ export default function Tasks() {
     // Update URL with filters
     const getTasks = async (
         filters:
-            | { status: string; priority: string; project_id: string; due_date_from: Date | null; due_date_to: Date | null; search: string }
+            | { status: string; priority: string; project_id: string; due_date_from: Date | ''; due_date_to: Date | ''; search: string }
             | undefined,
     ) => {
         setLoading(true)
@@ -193,8 +193,8 @@ export default function Tasks() {
             status: 'all',
             priority: 'all',
             project_id: 'all',
-            due_date_from: null,
-            due_date_to: null,
+            due_date_from: '',
+            due_date_to: '',
             search: '',
         })
     }
@@ -256,8 +256,8 @@ export default function Tasks() {
     useEffect(() => {
         const queryParams = QueryStringToObject()
 
-        const due_date_from = queryParams.due_date_from ? new Date(queryParams.due_date_from) : null
-        const due_date_to = queryParams.due_date_to ? new Date(queryParams.due_date_to) : null
+        const due_date_from = queryParams.due_date_from ? new Date(queryParams.due_date_from) : ''
+        const due_date_to = queryParams.due_date_to ? new Date(queryParams.due_date_to) : ''
 
         setFilters({
             status: queryParams.status || 'all',

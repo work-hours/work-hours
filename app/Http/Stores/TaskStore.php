@@ -6,8 +6,8 @@ namespace App\Http\Stores;
 
 use App\Models\Project;
 use App\Models\Task;
-use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 final class TaskStore
@@ -30,9 +30,8 @@ final class TaskStore
             ->with(['project', 'assignees'])
             ->orderByDesc('created_at');
 
-        // Apply filters to both queries
-        self::applyFilters($ownedProjectTasksQuery, $filters);
-        self::applyFilters($assignedTasksQuery, $filters);
+        $ownedProjectTasksQuery = self::applyFilters($ownedProjectTasksQuery, $filters);
+        $assignedTasksQuery = self::applyFilters($assignedTasksQuery, $filters);
 
         $ownedProjectTasks = $ownedProjectTasksQuery->get();
         $assignedTasks = $assignedTasksQuery->get();
@@ -79,29 +78,20 @@ final class TaskStore
         ];
     }
 
-    /**
-     * Apply filters to a task query
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     */
-    private static function applyFilters($query, array $filters): void
+    private static function applyFilters(Builder $query, array $filters): Builder
     {
-        // Filter by status
-        if (isset($filters['status']) && $filters['status']) {
+        if (isset($filters['status']) && $filters['status'] !== 'all') {
             $query->where('status', $filters['status']);
         }
 
-        // Filter by priority
-        if (isset($filters['priority']) && $filters['priority']) {
+        if (isset($filters['priority']) && $filters['priority'] !== 'all') {
             $query->where('priority', $filters['priority']);
         }
 
-        // Filter by project
-        if (isset($filters['project_id']) && $filters['project_id']) {
+        if (isset($filters['project_id']) && $filters['project_id'] !== 'all') {
             $query->where('project_id', $filters['project_id']);
         }
 
-        // Filter by due date range
         if (isset($filters['due_date_from']) && $filters['due_date_from']) {
             $query->whereDate('due_date', '>=', $filters['due_date_from']);
         }
@@ -110,12 +100,13 @@ final class TaskStore
             $query->whereDate('due_date', '<=', $filters['due_date_to']);
         }
 
-        // Filter by search term (title or description)
-        if (isset($filters['search']) && $filters['search']) {
+        if (isset($filters['search']) && $filters['search'] !== '') {
             $query->where(function ($q) use ($filters) {
                 $q->where('title', 'like', '%' . $filters['search'] . '%')
                     ->orWhere('description', 'like', '%' . $filters['search'] . '%');
             });
         }
+
+        return $query;
     }
 }

@@ -38,8 +38,18 @@ final class TaskController extends Controller
                 'name' => $project->name,
             ]);
 
+        $filters = request()->only([
+            'status',
+            'priority',
+            'project_id',
+            'due_date_from',
+            'due_date_to',
+            'search',
+        ]);
+
         return Inertia::render('task/index', [
             'projects' => $projects,
+            'filters' => $filters,
         ]);
     }
 
