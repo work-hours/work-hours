@@ -232,31 +232,11 @@ export default function Tasks() {
 
                 {/* Filters card */}
                 <Card className="transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="text-xl">Filters</CardTitle>
-                                <CardDescription>
-                                    Filter your tasks by various criteria
-                                </CardDescription>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={clearFilters}
-                                    className="h-8 text-xs"
-                                >
-                                    <X className="h-3.5 w-3.5 mr-1" />
-                                    Clear Filters
-                                </Button>
-                            </div>
-                        </div>
-                    </CardHeader>
                     <CardContent>
-                        <form onSubmit={(e) => { e.preventDefault(); getTasks(); }} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
+                        <form onSubmit={(e) => { e.preventDefault(); getTasks().then(); }}
+                              className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
                             {/* Search */}
-                            <div className="md:col-span-2">
+                            <div className="grid gap-1">
                                 <Label htmlFor="search" className="text-xs font-medium">
                                     Search
                                 </Label>
@@ -273,7 +253,7 @@ export default function Tasks() {
                             </div>
 
                             {/* Status Filter */}
-                            <div>
+                            <div className="grid gap-1">
                                 <Label htmlFor="status" className="text-xs font-medium">
                                     Status
                                 </Label>
@@ -294,7 +274,7 @@ export default function Tasks() {
                             </div>
 
                             {/* Priority Filter */}
-                            <div>
+                            <div className="grid gap-1">
                                 <Label htmlFor="priority" className="text-xs font-medium">
                                     Priority
                                 </Label>
@@ -315,7 +295,7 @@ export default function Tasks() {
                             </div>
 
                             {/* Project Filter */}
-                            <div>
+                            <div className="grid gap-1">
                                 <Label htmlFor="project" className="text-xs font-medium">
                                     Project
                                 </Label>
@@ -338,7 +318,7 @@ export default function Tasks() {
                             </div>
 
                             {/* Due Date From */}
-                            <div>
+                            <div className="grid gap-1">
                                 <Label htmlFor="due-date-from" className="text-xs font-medium">
                                     Due Date From
                                 </Label>
@@ -356,7 +336,7 @@ export default function Tasks() {
                             </div>
 
                             {/* Due Date To */}
-                            <div>
+                            <div className="grid gap-1">
                                 <Label htmlFor="due-date-to" className="text-xs font-medium">
                                     Due Date To
                                 </Label>
@@ -373,13 +353,79 @@ export default function Tasks() {
                                 </div>
                             </div>
 
-                            <div className="md:col-span-6 flex justify-end mt-2">
-                                <Button type="submit" className="flex items-center gap-2">
-                                    <Search className="h-4 w-4" />
+                            <div className="flex items-end gap-2">
+                                <Button type="submit" className="flex h-9 items-center gap-1 px-3">
+                                    <Search className="h-3.5 w-3.5" />
                                     <span>Filter</span>
+                                </Button>
+
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    disabled={filters.status === 'all' && filters.priority === 'all' && filters.project_id === 'all' && !filters.due_date_from && !filters.due_date_to && !filters.search}
+                                    onClick={clearFilters}
+                                    className="flex h-9 items-center gap-1 px-3"
+                                >
+                                    <X className="h-3.5 w-3.5" />
+                                    <span>Clear</span>
                                 </Button>
                             </div>
                         </form>
+
+                        <p className={'mt-4 text-sm text-muted-foreground'}>
+                            {(filters.status !== 'all' || filters.priority !== 'all' || filters.project_id !== 'all' || filters.due_date_from || filters.due_date_to || filters.search) && (
+                                <CardDescription>
+                                    {(() => {
+                                        let description = ''
+
+                                        if (filters.due_date_from && filters.due_date_to) {
+                                            description = `Showing tasks from ${filters.due_date_from.toISOString().split('T')[0]} to ${filters.due_date_to.toISOString().split('T')[0]}`
+                                        } else if (filters.due_date_from) {
+                                            description = `Showing tasks from ${filters.due_date_from.toISOString().split('T')[0]}`
+                                        } else if (filters.due_date_to) {
+                                            description = `Showing tasks until ${filters.due_date_to.toISOString().split('T')[0]}`
+                                        }
+
+                                        if (filters.status !== 'all') {
+                                            if (description) {
+                                                description += ` with status "${filters.status.replace('_', ' ')}"`
+                                            } else {
+                                                description = `Showing tasks with status "${filters.status.replace('_', ' ')}"`
+                                            }
+                                        }
+
+                                        if (filters.priority !== 'all') {
+                                            if (description) {
+                                                description += ` and priority "${filters.priority}"`
+                                            } else {
+                                                description = `Showing tasks with priority "${filters.priority}"`
+                                            }
+                                        }
+
+                                        if (filters.project_id !== 'all') {
+                                            const project = projects.find(p => p.id.toString() === filters.project_id)
+                                            if (project) {
+                                                if (description) {
+                                                    description += ` in project "${project.name}"`
+                                                } else {
+                                                    description = `Showing tasks in project "${project.name}"`
+                                                }
+                                            }
+                                        }
+
+                                        if (filters.search) {
+                                            if (description) {
+                                                description += ` matching "${filters.search}"`
+                                            } else {
+                                                description = `Showing tasks matching "${filters.search}"`
+                                            }
+                                        }
+
+                                        return description
+                                    })()}
+                                </CardDescription>
+                            )}
+                        </p>
                     </CardContent>
                 </Card>
 
