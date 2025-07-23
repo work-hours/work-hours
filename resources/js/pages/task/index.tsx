@@ -3,20 +3,75 @@ import TaskDetailsSheet from '@/components/task-details-sheet'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import DatePicker from '@/components/ui/date-picker'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
+import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
-import { ClipboardList, Download, Edit, Eye, FileText, Loader2, Plus } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import {
+    AlertCircle,
+    Briefcase,
+    Calendar,
+    CalendarRange,
+    ClipboardList,
+    Download,
+    Edit,
+    Eye,
+    FileText,
+    Flag,
+    Loader2,
+    Plus,
+    Search,
+    X,
+} from 'lucide-react'
+import { ChangeEvent, forwardRef, JSX, ReactNode, useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { Task, TaskFilters } from './types'
+
+interface CustomInputProps {
+    value?: string
+    onClick?: () => void
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+    icon: ReactNode
+    placeholder?: string
+    disabled?: boolean
+    required?: boolean
+    autoFocus?: boolean
+    tabIndex?: number
+    id: string
+}
+
+const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
+    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
+        <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
+            <Input
+                id={id}
+                ref={ref}
+                value={value}
+                onClick={onClick}
+                onChange={onChange}
+                placeholder={placeholder}
+                disabled={disabled}
+                required={required}
+                autoFocus={autoFocus}
+                tabIndex={tabIndex}
+                className="pl-10"
+                readOnly={!onChange}
+            />
+        </div>
+    ),
+)
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -25,32 +80,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-type User = {
-    id: number
-    name: string
-    email: string
-}
-
-type Project = {
-    id: number
-    name: string
-    user_id: number
-}
-
-type Task = {
-    id: number
-    project_id: number
-    title: string
-    description: string | null
-    status: 'pending' | 'in_progress' | 'completed'
-    priority: 'low' | 'medium' | 'high'
-    due_date: string | null
-    project: Project
-    assignees: User[]
-}
-
 export default function Tasks() {
-    const { auth } = usePage<SharedData>().props
+    const { auth, projects } = usePage<SharedData & { projects: { id: number; name: string }[] }>().props
     const [tasks, setTasks] = useState<Task[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
@@ -61,18 +92,29 @@ export default function Tasks() {
     const [isUpdating, setIsUpdating] = useState(false)
     const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null)
 
-    const handleViewDetails = (task: Task) => {
+    // Filter states
+    const [filters, setFilters] = useState<TaskFilters>({
+        status: 'all',
+        priority: 'all',
+        project_id: 'all',
+        due_date_from: '',
+        due_date_to: '',
+        search: '',
+    })
+    const [processing, setProcessing] = useState(false)
+
+    const handleViewDetails = (task: Task): void => {
         setSelectedTask(task)
         setIsDetailsOpen(true)
     }
 
-    const handleStatusClick = (task: Task, status: Task['status']) => {
+    const handleStatusClick = (task: Task, status: Task['status']): void => {
         setTaskToUpdate(task)
         setSelectedStatus(status)
         setStatusDialogOpen(true)
     }
 
-    const updateTaskStatus = async () => {
+    const updateTaskStatus = async (): Promise<void> => {
         if (!taskToUpdate || !selectedStatus || selectedStatus === taskToUpdate.status) {
             setStatusDialogOpen(false)
             return
@@ -110,24 +152,42 @@ export default function Tasks() {
         }
     }
 
-    const getTasks = async () => {
+    // Update URL with filters
+    const getTasks = async (filters?: TaskFilters): Promise<void> => {
         setLoading(true)
         setError(false)
+        setProcessing(true)
         try {
-            setTasks(await _tasks.data({}))
+            setTasks(
+                await _tasks.data({
+                    params: filters,
+                }),
+            )
         } catch (error) {
             console.error('Error fetching tasks:', error)
             setError(true)
         } finally {
             setLoading(false)
+            setProcessing(false)
         }
     }
 
-    useEffect(() => {
-        getTasks().then()
-    }, [])
+    const handleFilterChange = (key: keyof TaskFilters, value: string | number | Date | null): void => {
+        setFilters((prev) => ({ ...prev, [key]: value }))
+    }
 
-    const getPriorityBadge = (priority: Task['priority']) => {
+    const clearFilters = (): void => {
+        setFilters({
+            status: 'all',
+            priority: 'all',
+            project_id: 'all',
+            due_date_from: '',
+            due_date_to: '',
+            search: '',
+        })
+    }
+
+    const getPriorityBadge = (priority: Task['priority']): JSX.Element => {
         switch (priority) {
             case 'high':
                 return (
@@ -147,10 +207,16 @@ export default function Tasks() {
                         {priority}
                     </Badge>
                 )
+            default:
+                return (
+                    <Badge variant="outline" className="capitalize">
+                        {priority}
+                    </Badge>
+                )
         }
     }
 
-    const getStatusBadge = (task: Task, status: Task['status']) => {
+    const getStatusBadge = (task: Task, status: Task['status']): JSX.Element => {
         switch (status) {
             case 'completed':
                 return (
@@ -170,8 +236,67 @@ export default function Tasks() {
                         {status.replace('_', ' ')}
                     </Badge>
                 )
+            default:
+                return (
+                    <Badge variant="secondary" className="cursor-pointer capitalize hover:opacity-80" onClick={() => handleStatusClick(task, status)}>
+                        {status.replace('_', ' ')}
+                    </Badge>
+                )
         }
     }
+
+    /**
+     * Helper function to safely format date values (handles both Date objects and strings)
+     */
+    const formatDateValue = (dateValue: Date | string | ''): string => {
+        if (dateValue instanceof Date) {
+            return dateValue.toISOString().split('T')[0]
+        } else if (typeof dateValue === 'string' && dateValue) {
+            return dateValue
+        }
+        return ''
+    }
+
+    const handleSubmit = (e: { preventDefault: () => void }): void => {
+        e.preventDefault()
+        const formattedFilters = { ...filters }
+
+        if (formattedFilters.due_date_from instanceof Date) {
+            const year = formattedFilters.due_date_from.getFullYear()
+            const month = String(formattedFilters.due_date_from.getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters.due_date_from.getDate()).padStart(2, '0')
+            formattedFilters.due_date_from = `${year}-${month}-${day}`
+        }
+
+        if (formattedFilters.due_date_to instanceof Date) {
+            const year = formattedFilters.due_date_to.getFullYear()
+            const month = String(formattedFilters.due_date_to.getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters.due_date_to.getDate()).padStart(2, '0')
+            formattedFilters.due_date_to = `${year}-${month}-${day}`
+        }
+
+        const filtersString = objectToQueryString(formattedFilters)
+
+        getTasks(formattedFilters).then(() => {
+            window.history.pushState({}, '', `?${filtersString}`)
+        })
+    }
+
+    useEffect(() => {
+        const queryParams = queryStringToObject()
+
+        const initialFilters: TaskFilters = {
+            status: queryParams.status || 'all',
+            priority: queryParams.priority || 'all',
+            project_id: queryParams.project_id || 'all',
+            due_date_from: queryParams.due_date_from || '',
+            due_date_to: queryParams.due_date_to || '',
+            search: queryParams.search || '',
+        }
+
+        setFilters(initialFilters)
+        getTasks(initialFilters).then()
+    }, [])
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
@@ -182,6 +307,223 @@ export default function Tasks() {
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Task Management</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your tasks</p>
                 </section>
+
+                {/* Filters card */}
+                <Card className="transition-all hover:shadow-md">
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
+                            {/* Search */}
+                            <div className="grid gap-1">
+                                <Label htmlFor="search" className="text-xs font-medium">
+                                    Search
+                                </Label>
+                                <div className="relative">
+                                    <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        id="search"
+                                        placeholder="Search"
+                                        className="pl-10"
+                                        value={filters.search}
+                                        onChange={(e) => handleFilterChange('search', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Status Filter */}
+                            <div className="grid gap-1">
+                                <Label htmlFor="status" className="text-xs font-medium">
+                                    Status
+                                </Label>
+                                <SearchableSelect
+                                    id="status"
+                                    value={filters.status}
+                                    onChange={(value) => handleFilterChange('status', value)}
+                                    options={[
+                                        { id: 'all', name: 'All Statuses' },
+                                        { id: 'pending', name: 'Pending' },
+                                        { id: 'in_progress', name: 'In Progress' },
+                                        { id: 'completed', name: 'Completed' },
+                                    ]}
+                                    placeholder="All Statuses"
+                                    disabled={processing}
+                                    icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                />
+                            </div>
+
+                            {/* Priority Filter */}
+                            <div className="grid gap-1">
+                                <Label htmlFor="priority" className="text-xs font-medium">
+                                    Priority
+                                </Label>
+                                <SearchableSelect
+                                    id="priority"
+                                    value={filters.priority}
+                                    onChange={(value) => handleFilterChange('priority', value)}
+                                    options={[
+                                        { id: 'all', name: 'All Priorities' },
+                                        { id: 'low', name: 'Low' },
+                                        { id: 'medium', name: 'Medium' },
+                                        { id: 'high', name: 'High' },
+                                    ]}
+                                    placeholder="All Priorities"
+                                    disabled={processing}
+                                    icon={<Flag className="h-4 w-4 text-muted-foreground" />}
+                                />
+                            </div>
+
+                            {/* Project Filter */}
+                            <div className="grid gap-1">
+                                <Label htmlFor="project" className="text-xs font-medium">
+                                    Project
+                                </Label>
+                                <SearchableSelect
+                                    id="project"
+                                    value={filters.project_id}
+                                    onChange={(value) => handleFilterChange('project_id', value)}
+                                    options={[
+                                        { id: 'all', name: 'All Projects' },
+                                        ...projects.map((project) => ({
+                                            id: project.id.toString(),
+                                            name: project.name,
+                                        })),
+                                    ]}
+                                    placeholder="All Projects"
+                                    disabled={processing}
+                                    icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                />
+                            </div>
+
+                            {/* Due Date From */}
+                            <div className="grid gap-1">
+                                <Label htmlFor="due-date-from" className="text-xs font-medium">
+                                    Due Date From
+                                </Label>
+                                <DatePicker
+                                    selected={filters.due_date_from}
+                                    onChange={(date) => handleFilterChange('due_date_from', date)}
+                                    dateFormat="yyyy-MM-dd"
+                                    isClearable
+                                    disabled={processing}
+                                    customInput={
+                                        <CustomInput
+                                            id="due-date-from"
+                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                            disabled={processing}
+                                            placeholder="Select start date"
+                                        />
+                                    }
+                                />
+                            </div>
+
+                            {/* Due Date To */}
+                            <div className="grid gap-1">
+                                <Label htmlFor="due-date-to" className="text-xs font-medium">
+                                    Due Date To
+                                </Label>
+                                <DatePicker
+                                    selected={filters.due_date_to}
+                                    onChange={(date) => handleFilterChange('due_date_to', date)}
+                                    dateFormat="yyyy-MM-dd"
+                                    isClearable
+                                    disabled={processing}
+                                    customInput={
+                                        <CustomInput
+                                            id="due-date-to"
+                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                            disabled={processing}
+                                            placeholder="Select end date"
+                                        />
+                                    }
+                                />
+                            </div>
+
+                            <div className="flex items-end gap-2">
+                                <Button type="submit" className="flex h-9 items-center gap-1 px-3">
+                                    <Search className="h-3.5 w-3.5" />
+                                    <span>Filter</span>
+                                </Button>
+
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    disabled={
+                                        filters.status === 'all' &&
+                                        filters.priority === 'all' &&
+                                        filters.project_id === 'all' &&
+                                        !filters.due_date_from &&
+                                        !filters.due_date_to &&
+                                        !filters.search
+                                    }
+                                    onClick={clearFilters}
+                                    className="flex h-9 items-center gap-1 px-3"
+                                >
+                                    <X className="h-3.5 w-3.5" />
+                                    <span>Clear</span>
+                                </Button>
+                            </div>
+                        </form>
+
+                        <div className={'mt-4 text-sm text-muted-foreground'}>
+                            {(filters.status !== 'all' ||
+                                filters.priority !== 'all' ||
+                                filters.project_id !== 'all' ||
+                                filters.due_date_from ||
+                                filters.due_date_to ||
+                                filters.search) && (
+                                <CardDescription>
+                                    {(() => {
+                                        let description = ''
+
+                                        if (filters.due_date_from && filters.due_date_to) {
+                                            description = `Showing tasks from ${formatDateValue(filters.due_date_from)} to ${formatDateValue(filters.due_date_to)}`
+                                        } else if (filters.due_date_from) {
+                                            description = `Showing tasks from ${formatDateValue(filters.due_date_from)}`
+                                        } else if (filters.due_date_to) {
+                                            description = `Showing tasks until ${formatDateValue(filters.due_date_to)}`
+                                        }
+
+                                        if (filters.status !== 'all') {
+                                            if (description) {
+                                                description += ` with status "${filters.status.replace('_', ' ')}"`
+                                            } else {
+                                                description = `Showing tasks with status "${filters.status.replace('_', ' ')}"`
+                                            }
+                                        }
+
+                                        if (filters.priority !== 'all') {
+                                            if (description) {
+                                                description += ` and priority "${filters.priority}"`
+                                            } else {
+                                                description = `Showing tasks with priority "${filters.priority}"`
+                                            }
+                                        }
+
+                                        if (filters.project_id !== 'all') {
+                                            const project = projects.find((p) => p.id.toString() === filters.project_id)
+                                            if (project) {
+                                                if (description) {
+                                                    description += ` in project "${project.name}"`
+                                                } else {
+                                                    description = `Showing tasks in project "${project.name}"`
+                                                }
+                                            }
+                                        }
+
+                                        if (filters.search) {
+                                            if (description) {
+                                                description += ` matching "${filters.search}"`
+                                            } else {
+                                                description = `Showing tasks matching "${filters.search}"`
+                                            }
+                                        }
+
+                                        return description
+                                    })()}
+                                </CardDescription>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
 
                 {/* Tasks card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">

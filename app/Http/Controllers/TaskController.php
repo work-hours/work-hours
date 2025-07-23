@@ -32,13 +32,40 @@ final class TaskController extends Controller
      */
     public function index()
     {
-        return Inertia::render('task/index');
+        $projects = ProjectStore::userProjects(userId: auth()->id())
+            ->map(fn ($project): array => [
+                'id' => $project->id,
+                'name' => $project->name,
+            ]);
+
+        $filters = request()->only([
+            'status',
+            'priority',
+            'project_id',
+            'due_date_from',
+            'due_date_to',
+            'search',
+        ]);
+
+        return Inertia::render('task/index', [
+            'projects' => $projects,
+            'filters' => $filters,
+        ]);
     }
 
     #[Action(method: 'get', name: 'task.list', middleware: ['auth', 'verified'])]
     public function tasks(): Collection
     {
-        return TaskStore::userTasks(userId: auth()->id());
+        $filters = request()->only([
+            'status',
+            'priority',
+            'project_id',
+            'due_date_from',
+            'due_date_to',
+            'search',
+        ]);
+
+        return TaskStore::userTasks(userId: auth()->id(), filters: $filters);
     }
 
     /**

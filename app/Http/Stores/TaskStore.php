@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Stores;
 
+use App\Http\QueryFilters\Task\DueDateFromFilter;
+use App\Http\QueryFilters\Task\DueDateToFilter;
+use App\Http\QueryFilters\Task\PriorityFilter;
+use App\Http\QueryFilters\Task\ProjectIdFilter;
+use App\Http\QueryFilters\Task\SearchFilter;
+use App\Http\QueryFilters\Task\StatusFilter;
 use App\Models\Project;
 use App\Models\Task;
-use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 
 final class TaskStore
@@ -15,20 +22,23 @@ final class TaskStore
     public static function userTasks(int $userId): Collection
     {
         // Get tasks from projects owned by the user
-        $ownedProjectTasks = Task::query()
+        $ownedProjectTasksQuery = Task::query()
             ->whereHas('project', function ($query) use ($userId): void {
                 $query->where('user_id', $userId);
             })
             ->with(['project', 'assignees'])
-            ->get();
+            ->orderByDesc('created_at');
 
         // Get tasks assigned to the user
-        $assignedTasks = Task::query()
+        $assignedTasksQuery = Task::query()
             ->whereHas('assignees', function ($query) use ($userId): void {
                 $query->where('users.id', $userId);
             })
             ->with(['project', 'assignees'])
-            ->get();
+            ->orderByDesc('created_at');
+
+        $ownedProjectTasks = self::applyFilterPipeline($ownedProjectTasksQuery)->get();
+        $assignedTasks = self::applyFilterPipeline($assignedTasksQuery)->get();
 
         // Combine and remove duplicates
         return $ownedProjectTasks->concat($assignedTasks)->unique('id');
@@ -70,5 +80,20 @@ final class TaskStore
             'Assignees',
             'Created At',
         ];
+    }
+
+    private static function applyFilterPipeline(Builder $query): Builder
+    {
+        return app(Pipeline::class)
+            ->send($query)
+            ->through([
+                StatusFilter::class,
+                PriorityFilter::class,
+                ProjectIdFilter::class,
+                DueDateFromFilter::class,
+                DueDateToFilter::class,
+                SearchFilter::class,
+            ])
+            ->thenReturn();
     }
 }

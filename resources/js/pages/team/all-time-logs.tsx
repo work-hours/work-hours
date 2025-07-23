@@ -362,7 +362,7 @@ export default function AllTeamTimeLogs({
                             </div>
                         </form>
 
-                        <p className={'mt-4 text-sm text-muted-foreground'}>
+                        <div className={'mt-4 text-sm text-muted-foreground'}>
                             {(data.start_date || data.end_date || data.user_id || data.project_id || data.status) && (
                                 <CardDescription>
                                     {(() => {
@@ -428,7 +428,7 @@ export default function AllTeamTimeLogs({
                                     })()}
                                 </CardDescription>
                             )}
-                        </p>
+                        </div>
                     </CardContent>
                 </Card>
 
