@@ -18,7 +18,7 @@ final class SearchFilter
     {
         if (request()->has('search') && request('search') !== '') {
             $search = request('search');
-            $builder->where(function ($q) use ($search) {
+            $builder->where(function ($q) use ($search): void {
                 $q->where('title', 'like', '%' . $search . '%')
                     ->orWhere('description', 'like', '%' . $search . '%');
             });

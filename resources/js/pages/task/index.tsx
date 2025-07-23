@@ -14,13 +14,28 @@ import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
+import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
-import { AlertCircle, Briefcase, Calendar, CalendarRange, ClipboardList, Download, Edit, Eye, FileText, Flag, Loader2, Plus, Search, X } from 'lucide-react'
+import {
+    AlertCircle,
+    Briefcase,
+    Calendar,
+    CalendarRange,
+    ClipboardList,
+    Download,
+    Edit,
+    Eye,
+    FileText,
+    Flag,
+    Loader2,
+    Plus,
+    Search,
+    X,
+} from 'lucide-react'
 import { ChangeEvent, forwardRef, JSX, ReactNode, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { Task, TaskFilters } from './types'
 
 interface CustomInputProps {
@@ -296,15 +311,14 @@ export default function Tasks() {
                 {/* Filters card */}
                 <Card className="transition-all hover:shadow-md">
                     <CardContent>
-                        <form onSubmit={handleSubmit}
-                              className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
                             {/* Search */}
                             <div className="grid gap-1">
                                 <Label htmlFor="search" className="text-xs font-medium">
                                     Search
                                 </Label>
                                 <div className="relative">
-                                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
                                     <Input
                                         id="search"
                                         placeholder="Search"
@@ -328,7 +342,7 @@ export default function Tasks() {
                                         { id: 'all', name: 'All Statuses' },
                                         { id: 'pending', name: 'Pending' },
                                         { id: 'in_progress', name: 'In Progress' },
-                                        { id: 'completed', name: 'Completed' }
+                                        { id: 'completed', name: 'Completed' },
                                     ]}
                                     placeholder="All Statuses"
                                     disabled={processing}
@@ -349,7 +363,7 @@ export default function Tasks() {
                                         { id: 'all', name: 'All Priorities' },
                                         { id: 'low', name: 'Low' },
                                         { id: 'medium', name: 'Medium' },
-                                        { id: 'high', name: 'High' }
+                                        { id: 'high', name: 'High' },
                                     ]}
                                     placeholder="All Priorities"
                                     disabled={processing}
@@ -368,10 +382,10 @@ export default function Tasks() {
                                     onChange={(value) => handleFilterChange('project_id', value)}
                                     options={[
                                         { id: 'all', name: 'All Projects' },
-                                        ...projects.map(project => ({
+                                        ...projects.map((project) => ({
                                             id: project.id.toString(),
-                                            name: project.name
-                                        }))
+                                            name: project.name,
+                                        })),
                                     ]}
                                     placeholder="All Projects"
                                     disabled={processing}
@@ -432,7 +446,14 @@ export default function Tasks() {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    disabled={filters.status === 'all' && filters.priority === 'all' && filters.project_id === 'all' && !filters.due_date_from && !filters.due_date_to && !filters.search}
+                                    disabled={
+                                        filters.status === 'all' &&
+                                        filters.priority === 'all' &&
+                                        filters.project_id === 'all' &&
+                                        !filters.due_date_from &&
+                                        !filters.due_date_to &&
+                                        !filters.search
+                                    }
                                     onClick={clearFilters}
                                     className="flex h-9 items-center gap-1 px-3"
                                 >
@@ -443,7 +464,12 @@ export default function Tasks() {
                         </form>
 
                         <div className={'mt-4 text-sm text-muted-foreground'}>
-                            {(filters.status !== 'all' || filters.priority !== 'all' || filters.project_id !== 'all' || filters.due_date_from || filters.due_date_to || filters.search) && (
+                            {(filters.status !== 'all' ||
+                                filters.priority !== 'all' ||
+                                filters.project_id !== 'all' ||
+                                filters.due_date_from ||
+                                filters.due_date_to ||
+                                filters.search) && (
                                 <CardDescription>
                                     {(() => {
                                         let description = ''
@@ -473,7 +499,7 @@ export default function Tasks() {
                                         }
 
                                         if (filters.project_id !== 'all') {
-                                            const project = projects.find(p => p.id.toString() === filters.project_id)
+                                            const project = projects.find((p) => p.id.toString() === filters.project_id)
                                             if (project) {
                                                 if (description) {
                                                     description += ` in project "${project.name}"`

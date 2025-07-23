@@ -19,7 +19,7 @@ use Illuminate\Support\Collection;
 
 final class TaskStore
 {
-    public static function userTasks(int $userId, array $filters = []): Collection
+    public static function userTasks(int $userId): Collection
     {
         // Get tasks from projects owned by the user
         $ownedProjectTasksQuery = Task::query()
@@ -37,26 +37,11 @@ final class TaskStore
             ->with(['project', 'assignees'])
             ->orderByDesc('created_at');
 
-        $ownedProjectTasks = self::applyFilterPipeline($ownedProjectTasksQuery, $filters)->get();
-        $assignedTasks = self::applyFilterPipeline($assignedTasksQuery, $filters)->get();
+        $ownedProjectTasks = self::applyFilterPipeline($ownedProjectTasksQuery)->get();
+        $assignedTasks = self::applyFilterPipeline($assignedTasksQuery)->get();
 
         // Combine and remove duplicates
         return $ownedProjectTasks->concat($assignedTasks)->unique('id');
-    }
-
-    private static function applyFilterPipeline(Builder $query, array $filters): Builder
-    {
-        return app(Pipeline::class)
-            ->send($query)
-            ->through([
-                StatusFilter::class,
-                PriorityFilter::class,
-                ProjectIdFilter::class,
-                DueDateFromFilter::class,
-                DueDateToFilter::class,
-                SearchFilter::class,
-            ])
-            ->thenReturn();
     }
 
     public static function projectTasks(Project $project): Collection
@@ -97,4 +82,18 @@ final class TaskStore
         ];
     }
 
+    private static function applyFilterPipeline(Builder $query): Builder
+    {
+        return app(Pipeline::class)
+            ->send($query)
+            ->through([
+                StatusFilter::class,
+                PriorityFilter::class,
+                ProjectIdFilter::class,
+                DueDateFromFilter::class,
+                DueDateToFilter::class,
+                SearchFilter::class,
+            ])
+            ->thenReturn();
+    }
 }
