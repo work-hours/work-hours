@@ -56,16 +56,7 @@ final class TaskController extends Controller
     #[Action(method: 'get', name: 'task.list', middleware: ['auth', 'verified'])]
     public function tasks(): Collection
     {
-        $filters = request()->only([
-            'status',
-            'priority',
-            'project_id',
-            'due_date_from',
-            'due_date_to',
-            'search',
-        ]);
-
-        return TaskStore::userTasks(userId: auth()->id(), filters: $filters);
+        return TaskStore::userTasks(userId: auth()->id());
     }
 
     /**

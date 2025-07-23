@@ -21,7 +21,6 @@ final class TaskStore
 {
     public static function userTasks(int $userId): Collection
     {
-        // Get tasks from projects owned by the user
         $ownedProjectTasksQuery = Task::query()
             ->whereHas('project', function ($query) use ($userId): void {
                 $query->where('user_id', $userId);
