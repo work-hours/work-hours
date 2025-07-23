@@ -17,9 +17,44 @@ import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
-import { Calendar, ClipboardList, Download, Edit, Eye, FileText, Loader2, Plus, Search, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Calendar, CalendarRange, ClipboardList, Download, Edit, Eye, FileText, Loader2, Plus, Search, X } from 'lucide-react'
+import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 import { toast } from 'sonner'
+
+interface CustomInputProps {
+    value?: string
+    onClick?: () => void
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+    icon: ReactNode
+    placeholder?: string
+    disabled?: boolean
+    required?: boolean
+    autoFocus?: boolean
+    tabIndex?: number
+    id: string
+}
+
+const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
+    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
+        <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
+            <Input
+                id={id}
+                ref={ref}
+                value={value}
+                onClick={onClick}
+                onChange={onChange}
+                placeholder={placeholder}
+                disabled={disabled}
+                required={required}
+                autoFocus={autoFocus}
+                tabIndex={tabIndex}
+                className="pl-10"
+                readOnly={!onChange}
+            />
+        </div>
+    ),
+)
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -73,6 +108,7 @@ export default function Tasks() {
         due_date_to: null as Date | null,
         search: '',
     })
+    const [processing, setProcessing] = useState(false)
 
     const handleViewDetails = (task: Task) => {
         setSelectedTask(task)
@@ -126,6 +162,7 @@ export default function Tasks() {
     const getTasks = async () => {
         setLoading(true)
         setError(false)
+        setProcessing(true)
         try {
             // Prepare filter parameters
             const filterParams: Record<string, string | number | boolean> = {}
@@ -150,6 +187,7 @@ export default function Tasks() {
             setError(true)
         } finally {
             setLoading(false)
+            setProcessing(false)
         }
     }
 
@@ -244,7 +282,7 @@ export default function Tasks() {
                                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                     <Input
                                         id="search"
-                                        placeholder="Search by title or description"
+                                        placeholder="Search"
                                         className="pl-10"
                                         value={filters.search}
                                         onChange={(e) => handleFilterChange('search', e.target.value)}
@@ -322,17 +360,21 @@ export default function Tasks() {
                                 <Label htmlFor="due-date-from" className="text-xs font-medium">
                                     Due Date From
                                 </Label>
-                                <div className="relative">
-                                    <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                    <DatePicker
-                                        id="due-date-from"
-                                        selected={filters.due_date_from}
-                                        onChange={(date) => handleFilterChange('due_date_from', date)}
-                                        placeholderText="Select start date"
-                                        className="w-full pl-10 h-10"
-                                        isClearable
-                                    />
-                                </div>
+                                <DatePicker
+                                    selected={filters.due_date_from}
+                                    onChange={(date) => handleFilterChange('due_date_from', date)}
+                                    dateFormat="yyyy-MM-dd"
+                                    isClearable
+                                    disabled={processing}
+                                    customInput={
+                                        <CustomInput
+                                            id="due-date-from"
+                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                            disabled={processing}
+                                            placeholder="Select start date"
+                                        />
+                                    }
+                                />
                             </div>
 
                             {/* Due Date To */}
@@ -340,17 +382,21 @@ export default function Tasks() {
                                 <Label htmlFor="due-date-to" className="text-xs font-medium">
                                     Due Date To
                                 </Label>
-                                <div className="relative">
-                                    <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                    <DatePicker
-                                        id="due-date-to"
-                                        selected={filters.due_date_to}
-                                        onChange={(date) => handleFilterChange('due_date_to', date)}
-                                        placeholderText="Select end date"
-                                        className="w-full pl-10 h-10"
-                                        isClearable
-                                    />
-                                </div>
+                                <DatePicker
+                                    selected={filters.due_date_to}
+                                    onChange={(date) => handleFilterChange('due_date_to', date)}
+                                    dateFormat="yyyy-MM-dd"
+                                    isClearable
+                                    disabled={processing}
+                                    customInput={
+                                        <CustomInput
+                                            id="due-date-to"
+                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                            disabled={processing}
+                                            placeholder="Select end date"
+                                        />
+                                    }
+                                />
                             </div>
 
                             <div className="flex items-end gap-2">
