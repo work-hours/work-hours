@@ -105,8 +105,8 @@ export default function Tasks() {
         status: 'all',
         priority: 'all',
         project_id: 'all',
-        due_date_from: null as Date | '',
-        due_date_to: null as Date | '',
+        due_date_from: null as unknown as Date | '',
+        due_date_to: null as unknown as Date | '',
         search: '',
     })
     const [processing, setProcessing] = useState(false)

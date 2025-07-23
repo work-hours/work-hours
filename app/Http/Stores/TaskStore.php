@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Stores;
 
+use App\Http\QueryFilters\Task\DueDateFromFilter;
+use App\Http\QueryFilters\Task\DueDateToFilter;
+use App\Http\QueryFilters\Task\PriorityFilter;
+use App\Http\QueryFilters\Task\ProjectIdFilter;
+use App\Http\QueryFilters\Task\SearchFilter;
+use App\Http\QueryFilters\Task\StatusFilter;
 use App\Models\Project;
 use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 
 final class TaskStore
@@ -30,14 +37,26 @@ final class TaskStore
             ->with(['project', 'assignees'])
             ->orderByDesc('created_at');
 
-        $ownedProjectTasksQuery = self::applyFilters($ownedProjectTasksQuery, $filters);
-        $assignedTasksQuery = self::applyFilters($assignedTasksQuery, $filters);
-
-        $ownedProjectTasks = $ownedProjectTasksQuery->get();
-        $assignedTasks = $assignedTasksQuery->get();
+        $ownedProjectTasks = self::applyFilterPipeline($ownedProjectTasksQuery, $filters)->get();
+        $assignedTasks = self::applyFilterPipeline($assignedTasksQuery, $filters)->get();
 
         // Combine and remove duplicates
         return $ownedProjectTasks->concat($assignedTasks)->unique('id');
+    }
+
+    private static function applyFilterPipeline(Builder $query, array $filters): Builder
+    {
+        return app(Pipeline::class)
+            ->send($query)
+            ->through([
+                StatusFilter::class,
+                PriorityFilter::class,
+                ProjectIdFilter::class,
+                DueDateFromFilter::class,
+                DueDateToFilter::class,
+                SearchFilter::class,
+            ])
+            ->thenReturn();
     }
 
     public static function projectTasks(Project $project): Collection
@@ -78,35 +97,4 @@ final class TaskStore
         ];
     }
 
-    private static function applyFilters(Builder $query, array $filters): Builder
-    {
-        if (isset($filters['status']) && $filters['status'] !== 'all') {
-            $query->where('status', $filters['status']);
-        }
-
-        if (isset($filters['priority']) && $filters['priority'] !== 'all') {
-            $query->where('priority', $filters['priority']);
-        }
-
-        if (isset($filters['project_id']) && $filters['project_id'] !== 'all') {
-            $query->where('project_id', $filters['project_id']);
-        }
-
-        if (isset($filters['due_date_from']) && $filters['due_date_from']) {
-            $query->whereDate('due_date', '>=', $filters['due_date_from']);
-        }
-
-        if (isset($filters['due_date_to']) && $filters['due_date_to']) {
-            $query->whereDate('due_date', '<=', $filters['due_date_to']);
-        }
-
-        if (isset($filters['search']) && $filters['search'] !== '') {
-            $query->where(function ($q) use ($filters) {
-                $q->where('title', 'like', '%' . $filters['search'] . '%')
-                    ->orWhere('description', 'like', '%' . $filters['search'] . '%');
-            });
-        }
-
-        return $query;
-    }
 }
