@@ -31,7 +31,16 @@ final class Team extends Model
 
         $entry = self::query()->where('user_id', $project->user_id)->where('member_id', $memberId)->first();
 
-        return $entry ? (float) $entry->hourly_rate : 0;
+        if (!$entry) {
+            return 0;
+        }
+
+        // Return 0 if the team member is non-monetary
+        if ($entry->non_monetary) {
+            return 0;
+        }
+
+        return (float) $entry->hourly_rate;
     }
 
     public function user(): BelongsTo
