@@ -18,6 +18,7 @@ type TeamMemberForm = {
     password?: string // Password is optional for editing
     hourly_rate: number | string
     currency: string
+    non_monetary: boolean
 }
 
 type Currency = {
@@ -35,6 +36,7 @@ type Props = {
         email: string
         hourly_rate: number
         currency: string
+        non_monetary: boolean
     }
     currencies: Currency[]
 }
@@ -57,6 +59,7 @@ export default function EditTeamMember({ user, currencies }: Props) {
         password: '', // Empty by default since it's optional
         hourly_rate: user.hourly_rate,
         currency: user.currency, // Use the user's current currency
+        non_monetary: user.non_monetary,
     })
 
     const submit: FormEventHandler = (e) => {
@@ -161,60 +164,77 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                     <InputError message={errors.password} />
                                 </div>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="hourly_rate" className="text-sm font-medium">
-                                        Hourly Rate
+                                <div className="flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        id="non_monetary"
+                                        checked={data.non_monetary}
+                                        onChange={(e) => setData('non_monetary', e.target.checked)}
+                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                    />
+                                    <Label htmlFor="non_monetary" className="text-sm font-medium">
+                                        Non-monetary (no hourly rate)
                                     </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <span className="h-4 w-4 text-muted-foreground">$</span>
-                                        </div>
-                                        <Input
-                                            id="hourly_rate"
-                                            type="number"
-                                            min="0"
-                                            step="0.01"
-                                            tabIndex={4}
-                                            value={data.hourly_rate}
-                                            onChange={(e) => setData('hourly_rate', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="0.00"
-                                            className="pl-10"
-                                        />
-                                    </div>
-                                    <InputError message={errors.hourly_rate} />
                                 </div>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="currency" className="text-sm font-medium">
-                                        Currency{' '}
-                                        <Link href={route('currency.edit')} className="text-xs text-blue-500 hover:underline">
-                                            (create new currency)
-                                        </Link>
-                                    </Label>
-                                    <Select
-                                        value={data.currency}
-                                        onValueChange={(value) => setData('currency', value)}
-                                        disabled={processing || currencies.length === 0}
-                                    >
-                                        <SelectTrigger id="currency" className="w-full">
-                                            <SelectValue placeholder="Select a currency" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {currencies.map((currency) => (
-                                                <SelectItem key={currency.id} value={currency.code}>
-                                                    {currency.code}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    {currencies.length === 0 && (
-                                        <p className="text-xs text-muted-foreground">
-                                            No currencies available. Please add currencies in the settings.
-                                        </p>
-                                    )}
-                                    <InputError message={errors.currency} />
-                                </div>
+                                {!data.non_monetary && (
+                                    <>
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="hourly_rate" className="text-sm font-medium">
+                                                Hourly Rate
+                                            </Label>
+                                            <div className="relative">
+                                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                    <span className="h-4 w-4 text-muted-foreground">$</span>
+                                                </div>
+                                                <Input
+                                                    id="hourly_rate"
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.01"
+                                                    tabIndex={4}
+                                                    value={data.hourly_rate}
+                                                    onChange={(e) => setData('hourly_rate', e.target.value)}
+                                                    disabled={processing}
+                                                    placeholder="0.00"
+                                                    className="pl-10"
+                                                />
+                                            </div>
+                                            <InputError message={errors.hourly_rate} />
+                                        </div>
+
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="currency" className="text-sm font-medium">
+                                                Currency{' '}
+                                                <Link href={route('currency.edit')} className="text-xs text-blue-500 hover:underline">
+                                                    (create new currency)
+                                                </Link>
+                                            </Label>
+                                            <Select
+                                                value={data.currency}
+                                                onValueChange={(value) => setData('currency', value)}
+                                                disabled={processing || currencies.length === 0}
+                                            >
+                                                <SelectTrigger id="currency" className="w-full">
+                                                    <SelectValue placeholder="Select a currency" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {currencies.map((currency) => (
+                                                        <SelectItem key={currency.id} value={currency.code}>
+                                                            {currency.code}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            {currencies.length === 0 && (
+                                                <p className="text-xs text-muted-foreground">
+                                                    No currencies available. Please add currencies in the settings.
+                                                </p>
+                                            )}
+                                            <InputError message={errors.currency} />
+                                        </div>
+                                    </>
+                                )}
 
                                 <div className="mt-4 flex justify-end gap-3">
                                     <Button

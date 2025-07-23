@@ -113,11 +113,15 @@ final class TeamController extends Controller
                 $user = User::query()->create($userData);
             }
 
+            $nonMonetary = $request->boolean('non_monetary', false);
+            $hourlyRate = $nonMonetary ? 0 : ($request->get('hourly_rate') ?? 0);
+
             $teamData = [
                 'user_id' => auth()->id(),
                 'member_id' => $user->getKey(),
-                'hourly_rate' => $request->get('hourly_rate') ?? 0,
+                'hourly_rate' => $hourlyRate,
                 'currency' => $request->get('currency'),
+                'non_monetary' => $nonMonetary,
             ];
 
             Team::query()->create($teamData);
@@ -155,6 +159,7 @@ final class TeamController extends Controller
                 'email' => $user->email,
                 'hourly_rate' => $team->hourly_rate,
                 'currency' => $team->currency,
+                'non_monetary' => (bool) $team->non_monetary,
             ],
             'currencies' => auth()->user()->currencies,
         ]);
@@ -182,11 +187,16 @@ final class TeamController extends Controller
                 $passwordChanged = true;
             }
 
+            $nonMonetary = isset($data['non_monetary']) ? (bool) $data['non_monetary'] : false;
+            $hourlyRate = $nonMonetary ? 0 : ($data['hourly_rate'] ?? 0);
+
             $teamData = [
-                'hourly_rate' => $data['hourly_rate'] ?? 0,
+                'hourly_rate' => $hourlyRate,
                 'currency' => $data['currency'],
+                'non_monetary' => $nonMonetary,
             ];
-            unset($data['hourly_rate'], $data['currency']);
+
+            unset($data['hourly_rate'], $data['currency'], $data['non_monetary']);
 
             $user->update($data);
 
