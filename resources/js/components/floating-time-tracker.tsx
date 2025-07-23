@@ -190,9 +190,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
             <div className="fixed right-4 bottom-4 z-50">
                 <div className="flex flex-col items-end gap-2">
                     {activeTimeLog.task_id && (
-                        <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">
-                            {activeTimeLog.task_title}
-                        </div>
+                        <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
                     )}
                     <Button
                         onClick={toggleExpand}
@@ -235,9 +233,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                     <span>{activeTimeLog.project_name}</span>
                                 </CardTitle>
                                 {activeTimeLog.task_id && (
-                                    <div className="mt-1 text-sm font-medium text-primary">
-                                        Task: {activeTimeLog.task_title}
-                                    </div>
+                                    <div className="mt-1 text-sm font-medium text-primary">Task: {activeTimeLog.task_title}</div>
                                 )}
                                 <CardDescription className="mt-1">
                                     Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}

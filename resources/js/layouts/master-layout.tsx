@@ -41,10 +41,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     // Fetch projects and tasks for the time tracker
     const fetchData = async (): Promise<void> => {
         try {
-            const [projectsResponse, tasksResponse] = await Promise.all([
-                projects.data({}),
-                tasks.data({})
-            ])
+            const [projectsResponse, tasksResponse] = await Promise.all([projects.data({}), tasks.data({})])
             setUserProjects(projectsResponse.projects)
             setUserTasks(tasksResponse.tasks)
             setDataLoaded(true)
