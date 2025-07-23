@@ -230,6 +230,159 @@ export default function Tasks() {
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your tasks</p>
                 </section>
 
+                {/* Filters card */}
+                <Card className="transition-all hover:shadow-md">
+                    <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-xl">Filters</CardTitle>
+                                <CardDescription>
+                                    Filter your tasks by various criteria
+                                </CardDescription>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={clearFilters}
+                                    className="h-8 text-xs"
+                                >
+                                    <X className="h-3.5 w-3.5 mr-1" />
+                                    Clear Filters
+                                </Button>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={(e) => { e.preventDefault(); getTasks(); }} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
+                            {/* Search */}
+                            <div className="md:col-span-2">
+                                <Label htmlFor="search" className="text-xs font-medium">
+                                    Search
+                                </Label>
+                                <div className="relative">
+                                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        id="search"
+                                        placeholder="Search by title or description"
+                                        className="pl-10"
+                                        value={filters.search}
+                                        onChange={(e) => handleFilterChange('search', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Status Filter */}
+                            <div>
+                                <Label htmlFor="status" className="text-xs font-medium">
+                                    Status
+                                </Label>
+                                <Select
+                                    value={filters.status}
+                                    onValueChange={(value) => handleFilterChange('status', value)}
+                                >
+                                    <SelectTrigger id="status" className="h-10">
+                                        <SelectValue placeholder="All Statuses" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Statuses</SelectItem>
+                                        <SelectItem value="pending">Pending</SelectItem>
+                                        <SelectItem value="in_progress">In Progress</SelectItem>
+                                        <SelectItem value="completed">Completed</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* Priority Filter */}
+                            <div>
+                                <Label htmlFor="priority" className="text-xs font-medium">
+                                    Priority
+                                </Label>
+                                <Select
+                                    value={filters.priority}
+                                    onValueChange={(value) => handleFilterChange('priority', value)}
+                                >
+                                    <SelectTrigger id="priority" className="h-10">
+                                        <SelectValue placeholder="All Priorities" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Priorities</SelectItem>
+                                        <SelectItem value="low">Low</SelectItem>
+                                        <SelectItem value="medium">Medium</SelectItem>
+                                        <SelectItem value="high">High</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* Project Filter */}
+                            <div>
+                                <Label htmlFor="project" className="text-xs font-medium">
+                                    Project
+                                </Label>
+                                <Select
+                                    value={filters.project_id}
+                                    onValueChange={(value) => handleFilterChange('project_id', value)}
+                                >
+                                    <SelectTrigger id="project" className="h-10">
+                                        <SelectValue placeholder="All Projects" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Projects</SelectItem>
+                                        {projects.map((project) => (
+                                            <SelectItem key={project.id} value={project.id.toString()}>
+                                                {project.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* Due Date From */}
+                            <div>
+                                <Label htmlFor="due-date-from" className="text-xs font-medium">
+                                    Due Date From
+                                </Label>
+                                <div className="relative">
+                                    <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <DatePicker
+                                        id="due-date-from"
+                                        selected={filters.due_date_from}
+                                        onChange={(date) => handleFilterChange('due_date_from', date)}
+                                        placeholderText="Select start date"
+                                        className="w-full pl-10 h-10"
+                                        isClearable
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Due Date To */}
+                            <div>
+                                <Label htmlFor="due-date-to" className="text-xs font-medium">
+                                    Due Date To
+                                </Label>
+                                <div className="relative">
+                                    <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <DatePicker
+                                        id="due-date-to"
+                                        selected={filters.due_date_to}
+                                        onChange={(date) => handleFilterChange('due_date_to', date)}
+                                        placeholderText="Select end date"
+                                        className="w-full pl-10 h-10"
+                                        isClearable
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="md:col-span-6 flex justify-end mt-2">
+                                <Button type="submit" className="flex items-center gap-2">
+                                    <Search className="h-4 w-4" />
+                                    <span>Filter</span>
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+
                 {/* Tasks card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
@@ -255,141 +408,6 @@ export default function Tasks() {
                                 </Link>
                             </div>
                         </div>
-
-                        <CardContent className="border-t pt-6">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-sm font-medium text-muted-foreground">Filter Tasks</h3>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={clearFilters}
-                                    className="h-8 text-xs"
-                                >
-                                    <X className="h-3.5 w-3.5 mr-1" />
-                                    Clear Filters
-                                </Button>
-                            </div>
-
-                            <form onSubmit={(e) => { e.preventDefault(); getTasks(); }} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
-                                {/* Search */}
-                                <div className="md:col-span-2">
-                                    <Label htmlFor="search" className="text-xs font-medium">
-                                        Search
-                                    </Label>
-                                    <div className="relative">
-                                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                        <Input
-                                            id="search"
-                                            placeholder="Search by title or description"
-                                            className="pl-10"
-                                            value={filters.search}
-                                            onChange={(e) => handleFilterChange('search', e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Status Filter */}
-                                <div>
-                                    <Label htmlFor="status" className="text-xs font-medium">
-                                        Status
-                                    </Label>
-                                    <Select
-                                        value={filters.status}
-                                        onValueChange={(value) => handleFilterChange('status', value)}
-                                    >
-                                        <SelectTrigger id="status" className="h-10">
-                                            <SelectValue placeholder="All Statuses" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">All Statuses</SelectItem>
-                                            <SelectItem value="pending">Pending</SelectItem>
-                                            <SelectItem value="in_progress">In Progress</SelectItem>
-                                            <SelectItem value="completed">Completed</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                {/* Priority Filter */}
-                                <div>
-                                    <Label htmlFor="priority" className="text-xs font-medium">
-                                        Priority
-                                    </Label>
-                                    <Select
-                                        value={filters.priority}
-                                        onValueChange={(value) => handleFilterChange('priority', value)}
-                                    >
-                                        <SelectTrigger id="priority" className="h-10">
-                                            <SelectValue placeholder="All Priorities" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">All Priorities</SelectItem>
-                                            <SelectItem value="low">Low</SelectItem>
-                                            <SelectItem value="medium">Medium</SelectItem>
-                                            <SelectItem value="high">High</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                {/* Project Filter */}
-                                <div>
-                                    <Label htmlFor="project" className="text-xs font-medium">
-                                        Project
-                                    </Label>
-                                    <Select
-                                        value={filters.project_id}
-                                        onValueChange={(value) => handleFilterChange('project_id', value)}
-                                    >
-                                        <SelectTrigger id="project" className="h-10">
-                                            <SelectValue placeholder="All Projects" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">All Projects</SelectItem>
-                                            {projects.map((project) => (
-                                                <SelectItem key={project.id} value={project.id.toString()}>
-                                                    {project.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                {/* Due Date From */}
-                                <div>
-                                    <Label htmlFor="due-date-from" className="text-xs font-medium">
-                                        Due Date From
-                                    </Label>
-                                    <div className="relative">
-                                        <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                        <DatePicker
-                                            id="due-date-from"
-                                            selected={filters.due_date_from}
-                                            onChange={(date) => handleFilterChange('due_date_from', date)}
-                                            placeholderText="Select start date"
-                                            className="w-full pl-10 h-10"
-                                            isClearable
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Due Date To */}
-                                <div>
-                                    <Label htmlFor="due-date-to" className="text-xs font-medium">
-                                        Due Date To
-                                    </Label>
-                                    <div className="relative">
-                                        <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                        <DatePicker
-                                            id="due-date-to"
-                                            selected={filters.due_date_to}
-                                            onChange={(date) => handleFilterChange('due_date_to', date)}
-                                            placeholderText="Select end date"
-                                            className="w-full pl-10 h-10"
-                                            isClearable
-                                        />
-                                    </div>
-                                </div>
-                            </form>
-                        </CardContent>
                     </CardHeader>
                     <CardContent>
                         {loading ? (
