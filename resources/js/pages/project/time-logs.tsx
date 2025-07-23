@@ -387,7 +387,7 @@ export default function ProjectTimeLogs({
                             </div>
                         </form>
 
-                        <p className={'mt-4 text-sm text-muted-foreground'}>
+                        <div className={'mt-4 text-sm text-muted-foreground'}>
                             {(data.start_date || data.end_date || data.user_id || data.is_paid || data.status) && (
                                 <CardDescription>
                                     {(() => {
@@ -441,7 +441,7 @@ export default function ProjectTimeLogs({
                                     })()}
                                 </CardDescription>
                             )}
-                        </p>
+                        </div>
                     </CardContent>
                 </Card>
 

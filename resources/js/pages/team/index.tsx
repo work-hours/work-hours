@@ -219,7 +219,7 @@ export default function Team({ teamMembers, filters }: Props) {
                             </div>
                         </form>
 
-                        <p className={'mt-4 text-sm text-muted-foreground'}>
+                        <div className={'mt-4 text-sm text-muted-foreground'}>
                             {(data.start_date || data.end_date || data.search) && (
                                 <CardDescription>
                                     {(() => {
@@ -245,7 +245,7 @@ export default function Team({ teamMembers, filters }: Props) {
                                     })()}
                                 </CardDescription>
                             )}
-                        </p>
+                        </div>
                     </CardContent>
                 </Card>
 

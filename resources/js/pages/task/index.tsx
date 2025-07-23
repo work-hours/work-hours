@@ -419,7 +419,7 @@ export default function Tasks() {
                             </div>
                         </form>
 
-                        <p className={'mt-4 text-sm text-muted-foreground'}>
+                        <div className={'mt-4 text-sm text-muted-foreground'}>
                             {(filters.status !== 'all' || filters.priority !== 'all' || filters.project_id !== 'all' || filters.due_date_from || filters.due_date_to || filters.search) && (
                                 <CardDescription>
                                     {(() => {
@@ -472,7 +472,7 @@ export default function Tasks() {
                                     })()}
                                 </CardDescription>
                             )}
-                        </p>
+                        </div>
                     </CardContent>
                 </Card>
 
