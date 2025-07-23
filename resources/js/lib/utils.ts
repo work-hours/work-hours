@@ -20,3 +20,23 @@ export function roundToTwoDecimals(value: number | null | undefined): number {
     if (value === null || value === undefined || isNaN(value)) return 0
     return Math.round((value + Number.EPSILON) * 100) / 100
 }
+
+export function objectToQueryString(obj: never): string {
+    const params = new URLSearchParams()
+    for (const [key, value] of Object.entries(obj)) {
+        if (value !== undefined && value !== null) {
+            params.append(key, String(value))
+        }
+    }
+    return params.toString()
+}
+
+export function QueryStringToObject(): Record<string, string> {
+    const params = new URLSearchParams(window.location.search)
+    const obj: Record<string, string> = {}
+    for (const [key, value] of params.entries()) {
+        obj[key] = value
+    }
+
+    return obj
+}

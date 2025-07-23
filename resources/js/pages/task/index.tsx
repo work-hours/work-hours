@@ -15,11 +15,12 @@ import { type BreadcrumbItem, type SharedData } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { tasks as _tasks } from '@actions/TaskController'
-import { Head, Link, usePage } from '@inertiajs/react'
+import { Head, Link, usePage, useNavigate } from '@inertiajs/react'
 import axios from 'axios'
 import { AlertCircle, Briefcase, Calendar, CalendarRange, ClipboardList, Download, Edit, Eye, FileText, Flag, Loader2, Plus, Search, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { objectToQueryString, QueryStringToObject } from '@/lib/utils'
 
 interface CustomInputProps {
     value?: string
@@ -159,31 +160,21 @@ export default function Tasks() {
         }
     }
 
-    const getTasks = async () => {
+    // Update URL with filters
+    const getTasks = async (
+        filters:
+            | { status: string; priority: string; project_id: string; due_date_from: Date | null; due_date_to: Date | null; search: string }
+            | undefined,
+    ) => {
         setLoading(true)
         setError(false)
         setProcessing(true)
         try {
-            // Prepare filter parameters
-            const filterParams: Record<string, string | number | boolean> = {}
-
-            if (filters.status && filters.status !== 'all') filterParams.status = filters.status
-            if (filters.priority && filters.priority !== 'all') filterParams.priority = filters.priority
-            if (filters.project_id && filters.project_id !== 'all') filterParams.project_id = filters.project_id
-            if (filters.search) filterParams.search = filters.search
-
-            // Format dates for API
-            if (filters.due_date_from) {
-                filterParams.due_date_from = filters.due_date_from.toISOString().split('T')[0]
-            }
-
-            if (filters.due_date_to) {
-                filterParams.due_date_to = filters.due_date_to.toISOString().split('T')[0]
-            }
-
-            setTasks(await _tasks.data({
-                params: filterParams
-            }))
+            setTasks(
+                await _tasks.data({
+                    params: filters,
+                }),
+            )
         } catch (error) {
             console.error('Error fetching tasks:', error)
             setError(true)
@@ -193,12 +184,10 @@ export default function Tasks() {
         }
     }
 
-    // Handle filter changes
     const handleFilterChange = (key: string, value: string | number | Date | null) => {
         setFilters((prev) => ({ ...prev, [key]: value }))
     }
 
-    // Clear all filters
     const clearFilters = () => {
         setFilters({
             status: 'all',
@@ -209,10 +198,6 @@ export default function Tasks() {
             search: '',
         })
     }
-
-    useEffect(() => {
-        getTasks().then()
-    }, [filters])
 
     const getPriorityBadge = (priority: Task['priority']) => {
         switch (priority) {
@@ -260,6 +245,24 @@ export default function Tasks() {
         }
     }
 
+    const handelSubmit = (e: { preventDefault: () => void }) => {
+        e.preventDefault()
+        const filtersString = objectToQueryString(filters)
+        getTasks(filters).then(() => {
+            window.history.pushState({}, '', `?${filtersString}`)
+        })
+    }
+
+    useEffect(() => {
+        const filterObj = QueryStringToObject()
+        setFilters({
+            filterObj,
+            ...QueryStringToObject(),
+        })
+
+        getTasks(filterObj).then()
+    }, [])
+
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Tasks" />
@@ -273,7 +276,7 @@ export default function Tasks() {
                 {/* Filters card */}
                 <Card className="transition-all hover:shadow-md">
                     <CardContent>
-                        <form onSubmit={(e) => { e.preventDefault(); getTasks().then(); }}
+                        <form onSubmit={handelSubmit}
                               className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
                             {/* Search */}
                             <div className="grid gap-1">
