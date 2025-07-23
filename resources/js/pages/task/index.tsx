@@ -457,12 +457,22 @@ export default function Tasks() {
                                     {(() => {
                                         let description = ''
 
+                                        // Helper function to safely format date values (handles both Date objects and strings)
+                                        const formatDateValue = (dateValue: Date | string | '') => {
+                                            if (dateValue instanceof Date) {
+                                                return dateValue.toISOString().split('T')[0]
+                                            } else if (typeof dateValue === 'string' && dateValue) {
+                                                return dateValue
+                                            }
+                                            return ''
+                                        }
+
                                         if (filters.due_date_from && filters.due_date_to) {
-                                            description = `Showing tasks from ${filters.due_date_from.toISOString().split('T')[0]} to ${filters.due_date_to.toISOString().split('T')[0]}`
+                                            description = `Showing tasks from ${formatDateValue(filters.due_date_from)} to ${formatDateValue(filters.due_date_to)}`
                                         } else if (filters.due_date_from) {
-                                            description = `Showing tasks from ${filters.due_date_from.toISOString().split('T')[0]}`
+                                            description = `Showing tasks from ${formatDateValue(filters.due_date_from)}`
                                         } else if (filters.due_date_to) {
-                                            description = `Showing tasks until ${filters.due_date_to.toISOString().split('T')[0]}`
+                                            description = `Showing tasks until ${formatDateValue(filters.due_date_to)}`
                                         }
 
                                         if (filters.status !== 'all') {
