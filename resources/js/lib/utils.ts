@@ -21,7 +21,7 @@ export function roundToTwoDecimals(value: number | null | undefined): number {
     return Math.round((value + Number.EPSILON) * 100) / 100
 }
 
-export function objectToQueryString(obj: never): string {
+export function objectToQueryString(obj: Record<string, string | number | boolean | Date | null | undefined>): string {
     const params = new URLSearchParams()
     for (const [key, value] of Object.entries(obj)) {
         if (value !== undefined && value !== null) {

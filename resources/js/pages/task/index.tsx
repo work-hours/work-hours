@@ -15,7 +15,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { tasks as _tasks } from '@actions/TaskController'
-import { Head, Link, usePage, useNavigate } from '@inertiajs/react'
+import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
 import { AlertCircle, Briefcase, Calendar, CalendarRange, ClipboardList, Download, Edit, Eye, FileText, Flag, Loader2, Plus, Search, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
@@ -245,7 +245,7 @@ export default function Tasks() {
         }
     }
 
-    const handelSubmit = (e: { preventDefault: () => void }) => {
+    const handleSubmit = (e: { preventDefault: () => void }) => {
         e.preventDefault()
         const filtersString = objectToQueryString(filters)
         getTasks(filters).then(() => {
@@ -254,13 +254,28 @@ export default function Tasks() {
     }
 
     useEffect(() => {
-        const filterObj = QueryStringToObject()
+        const queryParams = QueryStringToObject()
+
+        const due_date_from = queryParams.due_date_from ? new Date(queryParams.due_date_from) : null
+        const due_date_to = queryParams.due_date_to ? new Date(queryParams.due_date_to) : null
+
         setFilters({
-            filterObj,
-            ...QueryStringToObject(),
+            status: queryParams.status || 'all',
+            priority: queryParams.priority || 'all',
+            project_id: queryParams.project_id || 'all',
+            due_date_from,
+            due_date_to,
+            search: queryParams.search || '',
         })
 
-        getTasks(filterObj).then()
+        getTasks({
+            status: queryParams.status || 'all',
+            priority: queryParams.priority || 'all',
+            project_id: queryParams.project_id || 'all',
+            due_date_from,
+            due_date_to,
+            search: queryParams.search || '',
+        }).then()
     }, [])
 
     return (
@@ -276,7 +291,7 @@ export default function Tasks() {
                 {/* Filters card */}
                 <Card className="transition-all hover:shadow-md">
                     <CardContent>
-                        <form onSubmit={handelSubmit}
+                        <form onSubmit={handleSubmit}
                               className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
                             {/* Search */}
                             <div className="grid gap-1">
