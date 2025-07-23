@@ -18,9 +18,10 @@ import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
 import { AlertCircle, Briefcase, Calendar, CalendarRange, ClipboardList, Download, Edit, Eye, FileText, Flag, Loader2, Plus, Search, X } from 'lucide-react'
-import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
+import { ChangeEvent, forwardRef, JSX, ReactNode, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { objectToQueryString, queryStringToObject } from '@/lib/utils'
+import { Task, TaskFilters } from './types'
 
 interface CustomInputProps {
     value?: string
@@ -64,30 +65,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-type User = {
-    id: number
-    name: string
-    email: string
-}
-
-type Project = {
-    id: number
-    name: string
-    user_id: number
-}
-
-type Task = {
-    id: number
-    project_id: number
-    title: string
-    description: string | null
-    status: 'pending' | 'in_progress' | 'completed'
-    priority: 'low' | 'medium' | 'high'
-    due_date: string | null
-    project: Project
-    assignees: User[]
-}
-
 export default function Tasks() {
     const { auth, projects } = usePage<SharedData & { projects: { id: number; name: string }[] }>().props
     const [tasks, setTasks] = useState<Task[]>([])
@@ -101,28 +78,28 @@ export default function Tasks() {
     const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null)
 
     // Filter states
-    const [filters, setFilters] = useState({
+    const [filters, setFilters] = useState<TaskFilters>({
         status: 'all',
         priority: 'all',
         project_id: 'all',
-        due_date_from: null as unknown as Date | '' | string,
-        due_date_to: null as unknown as Date | '' | string,
+        due_date_from: '',
+        due_date_to: '',
         search: '',
     })
     const [processing, setProcessing] = useState(false)
 
-    const handleViewDetails = (task: Task) => {
+    const handleViewDetails = (task: Task): void => {
         setSelectedTask(task)
         setIsDetailsOpen(true)
     }
 
-    const handleStatusClick = (task: Task, status: Task['status']) => {
+    const handleStatusClick = (task: Task, status: Task['status']): void => {
         setTaskToUpdate(task)
         setSelectedStatus(status)
         setStatusDialogOpen(true)
     }
 
-    const updateTaskStatus = async () => {
+    const updateTaskStatus = async (): Promise<void> => {
         if (!taskToUpdate || !selectedStatus || selectedStatus === taskToUpdate.status) {
             setStatusDialogOpen(false)
             return
@@ -161,11 +138,7 @@ export default function Tasks() {
     }
 
     // Update URL with filters
-    const getTasks = async (
-        filters:
-            | { status: string; priority: string; project_id: string; due_date_from: Date | string | ''; due_date_to: Date | ''; search: string }
-            | undefined,
-    ) => {
+    const getTasks = async (filters?: TaskFilters): Promise<void> => {
         setLoading(true)
         setError(false)
         setProcessing(true)
@@ -184,11 +157,11 @@ export default function Tasks() {
         }
     }
 
-    const handleFilterChange = (key: string, value: string | number | Date | null) => {
+    const handleFilterChange = (key: keyof TaskFilters, value: string | number | Date | null): void => {
         setFilters((prev) => ({ ...prev, [key]: value }))
     }
 
-    const clearFilters = () => {
+    const clearFilters = (): void => {
         setFilters({
             status: 'all',
             priority: 'all',
@@ -199,7 +172,7 @@ export default function Tasks() {
         })
     }
 
-    const getPriorityBadge = (priority: Task['priority']) => {
+    const getPriorityBadge = (priority: Task['priority']): JSX.Element => {
         switch (priority) {
             case 'high':
                 return (
@@ -219,10 +192,16 @@ export default function Tasks() {
                         {priority}
                     </Badge>
                 )
+            default:
+                return (
+                    <Badge variant="outline" className="capitalize">
+                        {priority}
+                    </Badge>
+                )
         }
     }
 
-    const getStatusBadge = (task: Task, status: Task['status']) => {
+    const getStatusBadge = (task: Task, status: Task['status']): JSX.Element => {
         switch (status) {
             case 'completed':
                 return (
@@ -242,10 +221,28 @@ export default function Tasks() {
                         {status.replace('_', ' ')}
                     </Badge>
                 )
+            default:
+                return (
+                    <Badge variant="secondary" className="cursor-pointer capitalize hover:opacity-80" onClick={() => handleStatusClick(task, status)}>
+                        {status.replace('_', ' ')}
+                    </Badge>
+                )
         }
     }
 
-    const handleSubmit = (e: { preventDefault: () => void }) => {
+    /**
+     * Helper function to safely format date values (handles both Date objects and strings)
+     */
+    const formatDateValue = (dateValue: Date | string | ''): string => {
+        if (dateValue instanceof Date) {
+            return dateValue.toISOString().split('T')[0]
+        } else if (typeof dateValue === 'string' && dateValue) {
+            return dateValue
+        }
+        return ''
+    }
+
+    const handleSubmit = (e: { preventDefault: () => void }): void => {
         e.preventDefault()
         const formattedFilters = { ...filters }
 
@@ -273,23 +270,17 @@ export default function Tasks() {
     useEffect(() => {
         const queryParams = queryStringToObject()
 
-        setFilters({
+        const initialFilters: TaskFilters = {
             status: queryParams.status || 'all',
             priority: queryParams.priority || 'all',
             project_id: queryParams.project_id || 'all',
             due_date_from: queryParams.due_date_from || '',
             due_date_to: queryParams.due_date_to || '',
             search: queryParams.search || '',
-        })
+        }
 
-        getTasks({
-            status: queryParams.status || 'all',
-            priority: queryParams.priority || 'all',
-            project_id: queryParams.project_id || 'all',
-            due_date_from: queryParams.due_date_from || '',
-            due_date_to : queryParams.due_date_to || '',
-            search: queryParams.search || '',
-        }).then()
+        setFilters(initialFilters)
+        getTasks(initialFilters).then()
     }, [])
 
     return (
@@ -456,16 +447,6 @@ export default function Tasks() {
                                 <CardDescription>
                                     {(() => {
                                         let description = ''
-
-                                        // Helper function to safely format date values (handles both Date objects and strings)
-                                        const formatDateValue = (dateValue: Date | string | '') => {
-                                            if (dateValue instanceof Date) {
-                                                return dateValue.toISOString().split('T')[0]
-                                            } else if (typeof dateValue === 'string' && dateValue) {
-                                                return dateValue
-                                            }
-                                            return ''
-                                        }
 
                                         if (filters.due_date_from && filters.due_date_to) {
                                             description = `Showing tasks from ${formatDateValue(filters.due_date_from)} to ${formatDateValue(filters.due_date_to)}`
