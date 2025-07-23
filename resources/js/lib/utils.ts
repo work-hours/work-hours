@@ -25,13 +25,21 @@ export function objectToQueryString(obj: Record<string, string | number | boolea
     const params = new URLSearchParams()
     for (const [key, value] of Object.entries(obj)) {
         if (value !== undefined && value !== null) {
-            params.append(key, String(value))
+            if (value instanceof Date && !isNaN(value.getTime())) {
+                // Format Date objects as YYYY-MM-DD
+                const year = value.getFullYear()
+                const month = String(value.getMonth() + 1).padStart(2, '0')
+                const day = String(value.getDate()).padStart(2, '0')
+                params.append(key, `${year}-${month}-${day}`)
+            } else {
+                params.append(key, String(value))
+            }
         }
     }
     return params.toString()
 }
 
-export function QueryStringToObject(): Record<string, string> {
+export function queryStringToObject(): Record<string, string> {
     const params = new URLSearchParams(window.location.search)
     const obj: Record<string, string> = {}
     for (const [key, value] of params.entries()) {

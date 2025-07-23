@@ -20,7 +20,7 @@ import axios from 'axios'
 import { AlertCircle, Briefcase, Calendar, CalendarRange, ClipboardList, Download, Edit, Eye, FileText, Flag, Loader2, Plus, Search, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { objectToQueryString, QueryStringToObject } from '@/lib/utils'
+import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 
 interface CustomInputProps {
     value?: string
@@ -105,8 +105,8 @@ export default function Tasks() {
         status: 'all',
         priority: 'all',
         project_id: 'all',
-        due_date_from: null as unknown as Date | '',
-        due_date_to: null as unknown as Date | '',
+        due_date_from: null as unknown as Date | '' | string,
+        due_date_to: null as unknown as Date | '' | string,
         search: '',
     })
     const [processing, setProcessing] = useState(false)
@@ -163,7 +163,7 @@ export default function Tasks() {
     // Update URL with filters
     const getTasks = async (
         filters:
-            | { status: string; priority: string; project_id: string; due_date_from: Date | ''; due_date_to: Date | ''; search: string }
+            | { status: string; priority: string; project_id: string; due_date_from: Date | string | ''; due_date_to: Date | ''; search: string }
             | undefined,
     ) => {
         setLoading(true)
@@ -247,24 +247,38 @@ export default function Tasks() {
 
     const handleSubmit = (e: { preventDefault: () => void }) => {
         e.preventDefault()
-        const filtersString = objectToQueryString(filters)
-        getTasks(filters).then(() => {
+        const formattedFilters = { ...filters }
+
+        if (formattedFilters.due_date_from instanceof Date) {
+            const year = formattedFilters.due_date_from.getFullYear()
+            const month = String(formattedFilters.due_date_from.getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters.due_date_from.getDate()).padStart(2, '0')
+            formattedFilters.due_date_from = `${year}-${month}-${day}`
+        }
+
+        if (formattedFilters.due_date_to instanceof Date) {
+            const year = formattedFilters.due_date_to.getFullYear()
+            const month = String(formattedFilters.due_date_to.getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters.due_date_to.getDate()).padStart(2, '0')
+            formattedFilters.due_date_to = `${year}-${month}-${day}`
+        }
+
+        const filtersString = objectToQueryString(formattedFilters)
+
+        getTasks(formattedFilters).then(() => {
             window.history.pushState({}, '', `?${filtersString}`)
         })
     }
 
     useEffect(() => {
-        const queryParams = QueryStringToObject()
-
-        const due_date_from = queryParams.due_date_from ? new Date(queryParams.due_date_from) : ''
-        const due_date_to = queryParams.due_date_to ? new Date(queryParams.due_date_to) : ''
+        const queryParams = queryStringToObject()
 
         setFilters({
             status: queryParams.status || 'all',
             priority: queryParams.priority || 'all',
             project_id: queryParams.project_id || 'all',
-            due_date_from,
-            due_date_to,
+            due_date_from: queryParams.due_date_from || '',
+            due_date_to: queryParams.due_date_to || '',
             search: queryParams.search || '',
         })
 
@@ -272,8 +286,8 @@ export default function Tasks() {
             status: queryParams.status || 'all',
             priority: queryParams.priority || 'all',
             project_id: queryParams.project_id || 'all',
-            due_date_from,
-            due_date_to,
+            due_date_from: queryParams.due_date_from || '',
+            due_date_to : queryParams.due_date_to || '',
             search: queryParams.search || '',
         }).then()
     }, [])
