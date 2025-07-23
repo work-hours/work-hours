@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
@@ -17,7 +17,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
-import { Calendar, CalendarRange, ClipboardList, Download, Edit, Eye, FileText, Loader2, Plus, Search, X } from 'lucide-react'
+import { AlertCircle, Briefcase, Calendar, CalendarRange, ClipboardList, Download, Edit, Eye, FileText, Flag, Loader2, Plus, Search, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -295,20 +295,20 @@ export default function Tasks() {
                                 <Label htmlFor="status" className="text-xs font-medium">
                                     Status
                                 </Label>
-                                <Select
+                                <SearchableSelect
+                                    id="status"
                                     value={filters.status}
-                                    onValueChange={(value) => handleFilterChange('status', value)}
-                                >
-                                    <SelectTrigger id="status" className="h-10">
-                                        <SelectValue placeholder="All Statuses" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Statuses</SelectItem>
-                                        <SelectItem value="pending">Pending</SelectItem>
-                                        <SelectItem value="in_progress">In Progress</SelectItem>
-                                        <SelectItem value="completed">Completed</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                    onChange={(value) => handleFilterChange('status', value)}
+                                    options={[
+                                        { id: 'all', name: 'All Statuses' },
+                                        { id: 'pending', name: 'Pending' },
+                                        { id: 'in_progress', name: 'In Progress' },
+                                        { id: 'completed', name: 'Completed' }
+                                    ]}
+                                    placeholder="All Statuses"
+                                    disabled={processing}
+                                    icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                />
                             </div>
 
                             {/* Priority Filter */}
@@ -316,20 +316,20 @@ export default function Tasks() {
                                 <Label htmlFor="priority" className="text-xs font-medium">
                                     Priority
                                 </Label>
-                                <Select
+                                <SearchableSelect
+                                    id="priority"
                                     value={filters.priority}
-                                    onValueChange={(value) => handleFilterChange('priority', value)}
-                                >
-                                    <SelectTrigger id="priority" className="h-10">
-                                        <SelectValue placeholder="All Priorities" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Priorities</SelectItem>
-                                        <SelectItem value="low">Low</SelectItem>
-                                        <SelectItem value="medium">Medium</SelectItem>
-                                        <SelectItem value="high">High</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                    onChange={(value) => handleFilterChange('priority', value)}
+                                    options={[
+                                        { id: 'all', name: 'All Priorities' },
+                                        { id: 'low', name: 'Low' },
+                                        { id: 'medium', name: 'Medium' },
+                                        { id: 'high', name: 'High' }
+                                    ]}
+                                    placeholder="All Priorities"
+                                    disabled={processing}
+                                    icon={<Flag className="h-4 w-4 text-muted-foreground" />}
+                                />
                             </div>
 
                             {/* Project Filter */}
@@ -337,22 +337,21 @@ export default function Tasks() {
                                 <Label htmlFor="project" className="text-xs font-medium">
                                     Project
                                 </Label>
-                                <Select
+                                <SearchableSelect
+                                    id="project"
                                     value={filters.project_id}
-                                    onValueChange={(value) => handleFilterChange('project_id', value)}
-                                >
-                                    <SelectTrigger id="project" className="h-10">
-                                        <SelectValue placeholder="All Projects" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Projects</SelectItem>
-                                        {projects.map((project) => (
-                                            <SelectItem key={project.id} value={project.id.toString()}>
-                                                {project.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                    onChange={(value) => handleFilterChange('project_id', value)}
+                                    options={[
+                                        { id: 'all', name: 'All Projects' },
+                                        ...projects.map(project => ({
+                                            id: project.id.toString(),
+                                            name: project.name
+                                        }))
+                                    ]}
+                                    placeholder="All Projects"
+                                    disabled={processing}
+                                    icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                />
                             </div>
 
                             {/* Due Date From */}
