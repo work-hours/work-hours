@@ -67,6 +67,7 @@ final class TeamController extends Controller
                     'email' => $team->member->email,
                     'hourly_rate' => $team->hourly_rate,
                     'currency' => $team->currency,
+                    'non_monetary' => (bool) $team->non_monetary,
                     'totalHours' => $totalDuration,
                     'weeklyAverage' => $weeklyAverage,
                     'unpaidHours' => $unpaidHours,
