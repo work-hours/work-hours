@@ -3,9 +3,12 @@ import TaskDetailsSheet from '@/components/task-details-sheet'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import DatePicker from '@/components/ui/date-picker'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
@@ -14,7 +17,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
-import { ClipboardList, Download, Edit, Eye, FileText, Loader2, Plus } from 'lucide-react'
+import { Calendar, ClipboardList, Download, Edit, Eye, FileText, Filter, Loader2, Plus, Search, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -50,7 +53,7 @@ type Task = {
 }
 
 export default function Tasks() {
-    const { auth } = usePage<SharedData>().props
+    const { auth, projects } = usePage<SharedData & { projects: { id: number; name: string }[] }>().props
     const [tasks, setTasks] = useState<Task[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
@@ -60,6 +63,17 @@ export default function Tasks() {
     const [selectedStatus, setSelectedStatus] = useState<Task['status'] | null>(null)
     const [isUpdating, setIsUpdating] = useState(false)
     const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null)
+
+    // Filter states
+    const [filters, setFilters] = useState({
+        status: 'all',
+        priority: 'all',
+        project_id: 'all',
+        due_date_from: null as Date | null,
+        due_date_to: null as Date | null,
+        search: '',
+    })
+    const [isFiltersVisible, setIsFiltersVisible] = useState(false)
 
     const handleViewDetails = (task: Task) => {
         setSelectedTask(task)
@@ -114,7 +128,24 @@ export default function Tasks() {
         setLoading(true)
         setError(false)
         try {
-            setTasks(await _tasks.data({}))
+            // Prepare filter parameters
+            const filterParams: Record<string, string | number | boolean> = {}
+
+            if (filters.status && filters.status !== 'all') filterParams.status = filters.status
+            if (filters.priority && filters.priority !== 'all') filterParams.priority = filters.priority
+            if (filters.project_id && filters.project_id !== 'all') filterParams.project_id = filters.project_id
+            if (filters.search) filterParams.search = filters.search
+
+            // Format dates for API
+            if (filters.due_date_from) {
+                filterParams.due_date_from = filters.due_date_from.toISOString().split('T')[0]
+            }
+
+            if (filters.due_date_to) {
+                filterParams.due_date_to = filters.due_date_to.toISOString().split('T')[0]
+            }
+
+            setTasks(await _tasks.data(filterParams))
         } catch (error) {
             console.error('Error fetching tasks:', error)
             setError(true)
@@ -123,9 +154,26 @@ export default function Tasks() {
         }
     }
 
+    // Handle filter changes
+    const handleFilterChange = (key: string, value: string | number | Date | null) => {
+        setFilters((prev) => ({ ...prev, [key]: value }))
+    }
+
+    // Clear all filters
+    const clearFilters = () => {
+        setFilters({
+            status: 'all',
+            priority: 'all',
+            project_id: 'all',
+            due_date_from: null,
+            due_date_to: null,
+            search: '',
+        })
+    }
+
     useEffect(() => {
         getTasks().then()
-    }, [])
+    }, [filters])
 
     const getPriorityBadge = (priority: Task['priority']) => {
         switch (priority) {
@@ -194,6 +242,15 @@ export default function Tasks() {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setIsFiltersVisible(!isFiltersVisible)}
+                                    className="flex items-center gap-2"
+                                >
+                                    <Filter className="h-4 w-4" />
+                                    <span>{isFiltersVisible ? 'Hide Filters' : 'Show Filters'}</span>
+                                </Button>
                                 <a href={route('task.export')} className="inline-block">
                                     <Button variant="outline" className="flex items-center gap-2">
                                         <Download className="h-4 w-4" />
@@ -208,6 +265,131 @@ export default function Tasks() {
                                 </Link>
                             </div>
                         </div>
+
+                        {isFiltersVisible && (
+                            <div className="mt-4 border rounded-md p-4 bg-muted/10">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-sm font-medium">Filter Tasks</h3>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={clearFilters}
+                                        className="h-8 text-xs"
+                                    >
+                                        <X className="h-3.5 w-3.5 mr-1" />
+                                        Clear Filters
+                                    </Button>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    {/* Search */}
+                                    <div className="col-span-1 md:col-span-3">
+                                        <Label htmlFor="search" className="text-xs mb-1.5 block">Search</Label>
+                                        <div className="relative">
+                                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            <Input
+                                                id="search"
+                                                placeholder="Search by title or description"
+                                                className="pl-9"
+                                                value={filters.search}
+                                                onChange={(e) => handleFilterChange('search', e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Status Filter */}
+                                    <div>
+                                        <Label htmlFor="status" className="text-xs mb-1.5 block">Status</Label>
+                                        <Select
+                                            value={filters.status}
+                                            onValueChange={(value) => handleFilterChange('status', value)}
+                                        >
+                                            <SelectTrigger id="status">
+                                                <SelectValue placeholder="All Statuses" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">All Statuses</SelectItem>
+                                                <SelectItem value="pending">Pending</SelectItem>
+                                                <SelectItem value="in_progress">In Progress</SelectItem>
+                                                <SelectItem value="completed">Completed</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Priority Filter */}
+                                    <div>
+                                        <Label htmlFor="priority" className="text-xs mb-1.5 block">Priority</Label>
+                                        <Select
+                                            value={filters.priority}
+                                            onValueChange={(value) => handleFilterChange('priority', value)}
+                                        >
+                                            <SelectTrigger id="priority">
+                                                <SelectValue placeholder="All Priorities" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">All Priorities</SelectItem>
+                                                <SelectItem value="low">Low</SelectItem>
+                                                <SelectItem value="medium">Medium</SelectItem>
+                                                <SelectItem value="high">High</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Project Filter */}
+                                    <div>
+                                        <Label htmlFor="project" className="text-xs mb-1.5 block">Project</Label>
+                                        <Select
+                                            value={filters.project_id}
+                                            onValueChange={(value) => handleFilterChange('project_id', value)}
+                                        >
+                                            <SelectTrigger id="project">
+                                                <SelectValue placeholder="All Projects" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">All Projects</SelectItem>
+                                                {projects.map((project) => (
+                                                    <SelectItem key={project.id} value={project.id.toString()}>
+                                                        {project.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Due Date From */}
+                                    <div>
+                                        <Label htmlFor="due-date-from" className="text-xs mb-1.5 block">Due Date From</Label>
+                                        <div className="relative">
+                                            <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            <DatePicker
+                                                id="due-date-from"
+                                                selected={filters.due_date_from}
+                                                onChange={(date) => handleFilterChange('due_date_from', date)}
+                                                placeholderText="Select start date"
+                                                className="w-full pl-9 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                                                isClearable
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Due Date To */}
+                                    <div>
+                                        <Label htmlFor="due-date-to" className="text-xs mb-1.5 block">Due Date To</Label>
+                                        <div className="relative">
+                                            <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            <DatePicker
+                                                id="due-date-to"
+                                                selected={filters.due_date_to}
+                                                onChange={(date) => handleFilterChange('due_date_to', date)}
+                                                placeholderText="Select end date"
+                                                className="w-full pl-9 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                                                isClearable
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </CardHeader>
                     <CardContent>
                         {loading ? (

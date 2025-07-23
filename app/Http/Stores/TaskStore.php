@@ -12,23 +12,69 @@ use Illuminate\Support\Collection;
 
 final class TaskStore
 {
-    public static function userTasks(int $userId): Collection
+    /**
+     * Apply filters to a task query
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $filters
+     * @return void
+     */
+    private static function applyFilters($query, array $filters): void
+    {
+        // Filter by status
+        if (isset($filters['status']) && $filters['status']) {
+            $query->where('status', $filters['status']);
+        }
+
+        // Filter by priority
+        if (isset($filters['priority']) && $filters['priority']) {
+            $query->where('priority', $filters['priority']);
+        }
+
+        // Filter by project
+        if (isset($filters['project_id']) && $filters['project_id']) {
+            $query->where('project_id', $filters['project_id']);
+        }
+
+        // Filter by due date range
+        if (isset($filters['due_date_from']) && $filters['due_date_from']) {
+            $query->whereDate('due_date', '>=', $filters['due_date_from']);
+        }
+
+        if (isset($filters['due_date_to']) && $filters['due_date_to']) {
+            $query->whereDate('due_date', '<=', $filters['due_date_to']);
+        }
+
+        // Filter by search term (title or description)
+        if (isset($filters['search']) && $filters['search']) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', '%' . $filters['search'] . '%')
+                  ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+            });
+        }
+    }
+    public static function userTasks(int $userId, array $filters = []): Collection
     {
         // Get tasks from projects owned by the user
-        $ownedProjectTasks = Task::query()
+        $ownedProjectTasksQuery = Task::query()
             ->whereHas('project', function ($query) use ($userId): void {
                 $query->where('user_id', $userId);
             })
-            ->with(['project', 'assignees'])
-            ->get();
+            ->with(['project', 'assignees']);
 
         // Get tasks assigned to the user
-        $assignedTasks = Task::query()
+        $assignedTasksQuery = Task::query()
             ->whereHas('assignees', function ($query) use ($userId): void {
                 $query->where('users.id', $userId);
             })
-            ->with(['project', 'assignees'])
-            ->get();
+            ->with(['project', 'assignees']);
+
+        // Apply filters to both queries
+        self::applyFilters($ownedProjectTasksQuery, $filters);
+        self::applyFilters($assignedTasksQuery, $filters);
+
+        $ownedProjectTasks = $ownedProjectTasksQuery->get();
+        $assignedTasks = $assignedTasksQuery->get();
 
         // Combine and remove duplicates
         return $ownedProjectTasks->concat($assignedTasks)->unique('id');
