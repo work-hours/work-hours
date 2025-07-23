@@ -14,13 +14,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $member_id
  * @property float $hourly_rate
  * @property string currency
+ * @property bool $non_monetary
  * @property User $user
  * @property User $member
  */
 #[UsePolicy(TeamPolicy::class)]
 final class Team extends Model
 {
-    protected $fillable = ['user_id', 'member_id'];
+    protected $fillable = ['user_id', 'member_id', 'hourly_rate', 'currency', 'non_monetary'];
 
     public static function memberHourlyRate(Project $project, int $memberId): ?float
     {
@@ -30,7 +31,16 @@ final class Team extends Model
 
         $entry = self::query()->where('user_id', $project->user_id)->where('member_id', $memberId)->first();
 
-        return $entry ? (float) $entry->hourly_rate : 0;
+        if (!$entry) {
+            return 0;
+        }
+
+        // Return 0 if the team member is non-monetary
+        if ($entry->non_monetary) {
+            return 0;
+        }
+
+        return (float) $entry->hourly_rate;
     }
 
     public function user(): BelongsTo
