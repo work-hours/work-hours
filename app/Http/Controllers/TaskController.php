@@ -52,7 +52,7 @@ final class TaskController extends Controller
             'project_id',
             'due_date_from',
             'due_date_to',
-            'search'
+            'search',
         ]);
 
         return TaskStore::userTasks(userId: auth()->id(), filters: $filters);

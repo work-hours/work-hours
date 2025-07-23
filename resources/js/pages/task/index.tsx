@@ -267,9 +267,9 @@ export default function Tasks() {
                         </div>
 
                         {isFiltersVisible && (
-                            <div className="mt-4 border rounded-md p-4 bg-muted/10">
+                            <CardContent className="border-t pt-6">
                                 <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-sm font-medium">Filter Tasks</h3>
+                                    <h3 className="text-sm font-medium text-muted-foreground">Filter Tasks</h3>
                                     <Button
                                         variant="ghost"
                                         size="sm"
@@ -281,16 +281,18 @@ export default function Tasks() {
                                     </Button>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <form onSubmit={(e) => { e.preventDefault(); getTasks(); }} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
                                     {/* Search */}
-                                    <div className="col-span-1 md:col-span-3">
-                                        <Label htmlFor="search" className="text-xs mb-1.5 block">Search</Label>
+                                    <div className="md:col-span-2">
+                                        <Label htmlFor="search" className="text-xs font-medium">
+                                            Search
+                                        </Label>
                                         <div className="relative">
                                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 id="search"
                                                 placeholder="Search by title or description"
-                                                className="pl-9"
+                                                className="pl-10"
                                                 value={filters.search}
                                                 onChange={(e) => handleFilterChange('search', e.target.value)}
                                             />
@@ -299,12 +301,14 @@ export default function Tasks() {
 
                                     {/* Status Filter */}
                                     <div>
-                                        <Label htmlFor="status" className="text-xs mb-1.5 block">Status</Label>
+                                        <Label htmlFor="status" className="text-xs font-medium">
+                                            Status
+                                        </Label>
                                         <Select
                                             value={filters.status}
                                             onValueChange={(value) => handleFilterChange('status', value)}
                                         >
-                                            <SelectTrigger id="status">
+                                            <SelectTrigger id="status" className="h-10">
                                                 <SelectValue placeholder="All Statuses" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -318,12 +322,14 @@ export default function Tasks() {
 
                                     {/* Priority Filter */}
                                     <div>
-                                        <Label htmlFor="priority" className="text-xs mb-1.5 block">Priority</Label>
+                                        <Label htmlFor="priority" className="text-xs font-medium">
+                                            Priority
+                                        </Label>
                                         <Select
                                             value={filters.priority}
                                             onValueChange={(value) => handleFilterChange('priority', value)}
                                         >
-                                            <SelectTrigger id="priority">
+                                            <SelectTrigger id="priority" className="h-10">
                                                 <SelectValue placeholder="All Priorities" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -337,12 +343,14 @@ export default function Tasks() {
 
                                     {/* Project Filter */}
                                     <div>
-                                        <Label htmlFor="project" className="text-xs mb-1.5 block">Project</Label>
+                                        <Label htmlFor="project" className="text-xs font-medium">
+                                            Project
+                                        </Label>
                                         <Select
                                             value={filters.project_id}
                                             onValueChange={(value) => handleFilterChange('project_id', value)}
                                         >
-                                            <SelectTrigger id="project">
+                                            <SelectTrigger id="project" className="h-10">
                                                 <SelectValue placeholder="All Projects" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -358,7 +366,9 @@ export default function Tasks() {
 
                                     {/* Due Date From */}
                                     <div>
-                                        <Label htmlFor="due-date-from" className="text-xs mb-1.5 block">Due Date From</Label>
+                                        <Label htmlFor="due-date-from" className="text-xs font-medium">
+                                            Due Date From
+                                        </Label>
                                         <div className="relative">
                                             <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                             <DatePicker
@@ -366,7 +376,7 @@ export default function Tasks() {
                                                 selected={filters.due_date_from}
                                                 onChange={(date) => handleFilterChange('due_date_from', date)}
                                                 placeholderText="Select start date"
-                                                className="w-full pl-9 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                                                className="w-full pl-10 h-10"
                                                 isClearable
                                             />
                                         </div>
@@ -374,7 +384,9 @@ export default function Tasks() {
 
                                     {/* Due Date To */}
                                     <div>
-                                        <Label htmlFor="due-date-to" className="text-xs mb-1.5 block">Due Date To</Label>
+                                        <Label htmlFor="due-date-to" className="text-xs font-medium">
+                                            Due Date To
+                                        </Label>
                                         <div className="relative">
                                             <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                             <DatePicker
@@ -382,13 +394,13 @@ export default function Tasks() {
                                                 selected={filters.due_date_to}
                                                 onChange={(date) => handleFilterChange('due_date_to', date)}
                                                 placeholderText="Select end date"
-                                                className="w-full pl-9 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                                                className="w-full pl-10 h-10"
                                                 isClearable
                                             />
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                </form>
+                            </CardContent>
                         )}
                     </CardHeader>
                     <CardContent>

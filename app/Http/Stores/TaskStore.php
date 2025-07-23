@@ -12,47 +12,6 @@ use Illuminate\Support\Collection;
 
 final class TaskStore
 {
-    /**
-     * Apply filters to a task query
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param array $filters
-     * @return void
-     */
-    private static function applyFilters($query, array $filters): void
-    {
-        // Filter by status
-        if (isset($filters['status']) && $filters['status']) {
-            $query->where('status', $filters['status']);
-        }
-
-        // Filter by priority
-        if (isset($filters['priority']) && $filters['priority']) {
-            $query->where('priority', $filters['priority']);
-        }
-
-        // Filter by project
-        if (isset($filters['project_id']) && $filters['project_id']) {
-            $query->where('project_id', $filters['project_id']);
-        }
-
-        // Filter by due date range
-        if (isset($filters['due_date_from']) && $filters['due_date_from']) {
-            $query->whereDate('due_date', '>=', $filters['due_date_from']);
-        }
-
-        if (isset($filters['due_date_to']) && $filters['due_date_to']) {
-            $query->whereDate('due_date', '<=', $filters['due_date_to']);
-        }
-
-        // Filter by search term (title or description)
-        if (isset($filters['search']) && $filters['search']) {
-            $query->where(function ($q) use ($filters) {
-                $q->where('title', 'like', '%' . $filters['search'] . '%')
-                  ->orWhere('description', 'like', '%' . $filters['search'] . '%');
-            });
-        }
-    }
     public static function userTasks(int $userId, array $filters = []): Collection
     {
         // Get tasks from projects owned by the user
@@ -60,14 +19,16 @@ final class TaskStore
             ->whereHas('project', function ($query) use ($userId): void {
                 $query->where('user_id', $userId);
             })
-            ->with(['project', 'assignees']);
+            ->with(['project', 'assignees'])
+            ->orderByDesc('created_at');
 
         // Get tasks assigned to the user
         $assignedTasksQuery = Task::query()
             ->whereHas('assignees', function ($query) use ($userId): void {
                 $query->where('users.id', $userId);
             })
-            ->with(['project', 'assignees']);
+            ->with(['project', 'assignees'])
+            ->orderByDesc('created_at');
 
         // Apply filters to both queries
         self::applyFilters($ownedProjectTasksQuery, $filters);
@@ -116,5 +77,45 @@ final class TaskStore
             'Assignees',
             'Created At',
         ];
+    }
+
+    /**
+     * Apply filters to a task query
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     */
+    private static function applyFilters($query, array $filters): void
+    {
+        // Filter by status
+        if (isset($filters['status']) && $filters['status']) {
+            $query->where('status', $filters['status']);
+        }
+
+        // Filter by priority
+        if (isset($filters['priority']) && $filters['priority']) {
+            $query->where('priority', $filters['priority']);
+        }
+
+        // Filter by project
+        if (isset($filters['project_id']) && $filters['project_id']) {
+            $query->where('project_id', $filters['project_id']);
+        }
+
+        // Filter by due date range
+        if (isset($filters['due_date_from']) && $filters['due_date_from']) {
+            $query->whereDate('due_date', '>=', $filters['due_date_from']);
+        }
+
+        if (isset($filters['due_date_to']) && $filters['due_date_to']) {
+            $query->whereDate('due_date', '<=', $filters['due_date_to']);
+        }
+
+        // Filter by search term (title or description)
+        if (isset($filters['search']) && $filters['search']) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+            });
+        }
     }
 }
