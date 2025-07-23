@@ -262,14 +262,14 @@ export default function Features() {
                         </div>
                     </div>
 
-                    {/* Feature 9: Scheduling */}
+                    {/* Feature 10: Task Management */}
                     <div className="group relative overflow-hidden border-2 border-gray-300 bg-white transition-all dark:border-gray-700 dark:bg-gray-800">
                         {/* Feature header with typewriter styling */}
                         <div className="border-b-2 border-gray-400 bg-gray-100 px-4 py-3 dark:border-gray-600 dark:bg-gray-700">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-bold text-gray-800 uppercase dark:text-gray-200">Scheduling</h3>
+                                <h3 className="text-lg font-bold text-gray-800 uppercase dark:text-gray-200">Task Management</h3>
                                 <div className="flex h-8 w-8 items-center justify-center border border-gray-500 bg-gray-200 dark:border-gray-500 dark:bg-gray-600">
-                                    <Calendar className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
+                                    <CheckSquare className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                 </div>
                             </div>
                         </div>
@@ -277,17 +277,17 @@ export default function Features() {
                         {/* Feature content */}
                         <div className="p-5">
                             <div className="mb-3 flex">
-                                <span className="mr-2 inline-flex items-center rounded-none border border-blue-800/40 px-2 py-0.5 text-xs font-bold text-blue-800/70 uppercase dark:border-blue-400/40 dark:text-blue-400/90">
-                                    Coming Soon
+                                <span className="mr-2 inline-flex items-center rounded-none border border-red-800/40 px-2 py-0.5 text-xs font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
+                                    New
                                 </span>
                             </div>
                             <p className="text-sm text-gray-700 dark:text-gray-300">
-                                Plan your work schedule in advance. Set recurring tasks and get reminders for upcoming deadlines.
+                                Create, assign, and track tasks efficiently. Organize your work with priorities and due dates.
                             </p>
                             <div className="mt-4 flex flex-wrap gap-2">
                                 <div className="inline-flex items-center border border-gray-400 bg-gray-50 px-2 py-1 dark:border-gray-600 dark:bg-gray-700">
                                     <span className="mr-1 font-bold text-gray-700 dark:text-gray-300">✓</span>
-                                    <span className="text-xs text-gray-700 uppercase dark:text-gray-300">Calendar view</span>
+                                    <span className="text-xs text-gray-700 uppercase dark:text-gray-300">Task tracking</span>
                                 </div>
                             </div>
                         </div>
