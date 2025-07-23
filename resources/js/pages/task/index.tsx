@@ -181,7 +181,9 @@ export default function Tasks() {
                 filterParams.due_date_to = filters.due_date_to.toISOString().split('T')[0]
             }
 
-            setTasks(await _tasks.data(filterParams))
+            setTasks(await _tasks.data({
+                params: filterParams
+            }))
         } catch (error) {
             console.error('Error fetching tasks:', error)
             setError(true)
