@@ -43,6 +43,17 @@ final class Team extends Model
         return (float) $entry->hourly_rate;
     }
 
+    public static function isMemberNonMonetary(int $userId, int $memberId): bool
+    {
+        $entry = self::query()->where('user_id', $userId)->where('member_id', $memberId)->first();
+
+        if (! $entry) {
+            return false;
+        }
+
+        return (bool) $entry->non_monetary;
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');

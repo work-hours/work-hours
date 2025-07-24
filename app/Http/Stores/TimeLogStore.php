@@ -241,6 +241,8 @@ final class TimeLogStore
                 $approverName = $approver ? $approver->name : null;
             }
 
+            $isNonMonetary = Team::isMemberNonMonetary(userId: $timeLog->project->user_id, memberId: $timeLog->user_id);
+
             return [
                 'id' => $timeLog->id,
                 'user_id' => $timeLog->user_id,
@@ -265,7 +267,7 @@ final class TimeLogStore
                 'approved_by' => $timeLog->approved_by,
                 'approver_name' => $approverName,
                 'comment' => $timeLog->comment,
-                'user_non_monetary' => $timeLog->user ? $timeLog->user->non_monetary : false,
+                'user_non_monetary' => $isNonMonetary,
             ];
         });
     }
