@@ -106,50 +106,46 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
                     {/* Payment Information - Only shown for monetary users */}
                     {timeLog.hourly_rate !== undefined &&
-                     timeLog.hourly_rate !== null &&
-                     typeof timeLog.hourly_rate === 'number' &&
-                     timeLog.hourly_rate > 0 && (
-                        <div className="space-y-2">
-                            <h3 className="ml-4 text-lg font-semibold text-primary">Payment Information</h3>
-                            <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
-                                <div>
-                                    <p className="text-sm font-bold text-muted-foreground">Hourly Rate</p>
-                                    <p className="text-base">
-                                        {`${timeLog.currency || 'USD'} ${timeLog.hourly_rate.toFixed(2)}`}
-                                    </p>
-                                </div>
+                        timeLog.hourly_rate !== null &&
+                        typeof timeLog.hourly_rate === 'number' &&
+                        timeLog.hourly_rate > 0 && (
+                            <div className="space-y-2">
+                                <h3 className="ml-4 text-lg font-semibold text-primary">Payment Information</h3>
+                                <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                                    <div>
+                                        <p className="text-sm font-bold text-muted-foreground">Hourly Rate</p>
+                                        <p className="text-base">{`${timeLog.currency || 'USD'} ${timeLog.hourly_rate.toFixed(2)}`}</p>
+                                    </div>
 
-                                <div>
-                                    <p className="text-sm font-bold text-muted-foreground">Paid Amount</p>
-                                    <p className="text-base">
-                                        {timeLog.paid_amount !== undefined &&
-                                         timeLog.paid_amount !== null &&
-                                         typeof timeLog.paid_amount === 'number' &&
-                                         timeLog.paid_amount > 0 ? (
-                                            `${timeLog.currency || 'USD'} ${timeLog.paid_amount.toFixed(2)}`
-                                        ) : (
-                                            "-"
-                                        )}
-                                    </p>
-                                </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-muted-foreground">Paid Amount</p>
+                                        <p className="text-base">
+                                            {timeLog.paid_amount !== undefined &&
+                                            timeLog.paid_amount !== null &&
+                                            typeof timeLog.paid_amount === 'number' &&
+                                            timeLog.paid_amount > 0
+                                                ? `${timeLog.currency || 'USD'} ${timeLog.paid_amount.toFixed(2)}`
+                                                : '-'}
+                                        </p>
+                                    </div>
 
-                                <div>
-                                    <p className="text-sm font-bold text-muted-foreground">Payment Status</p>
-                                    <p className="text-base">
-                                        {timeLog.is_paid ? (
-                                            <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-800 dark:bg-green-900 dark:text-green-100">
-                                                Paid
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-bold text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
-                                                Unpaid
-                                            </span>
-                                        )}
-                                    </p>
+                                    <div>
+                                        <p className="text-sm font-bold text-muted-foreground">Payment Status</p>
+                                        <p className="text-base">
+                                            {timeLog.is_paid ? (
+                                                <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-800 dark:bg-green-900 dark:text-green-100">
+                                                    Paid
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-bold text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
+                                                    Unpaid
+                                                </span>
+                                            )}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
                     {/* Approval Information */}
                     <div className="space-y-2">

@@ -265,6 +265,7 @@ final class TimeLogStore
                 'approved_by' => $timeLog->approved_by,
                 'approver_name' => $approverName,
                 'comment' => $timeLog->comment,
+                'user_non_monetary' => $timeLog->user ? $timeLog->user->non_monetary : false,
             ];
         });
     }

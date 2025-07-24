@@ -295,12 +295,12 @@ export default function Team({ teamMembers, filters }: Props) {
                                                 <div className="font-medium">{member.name}</div>
                                                 <div className="text-xs text-muted-foreground">{member.email}</div>
                                             </TableCell>
-                                            <TableCell>{member.non_monetary ? "-" : member.hourly_rate}</TableCell>
-                                            <TableCell>{member.non_monetary ? "-" : member.currency}</TableCell>
+                                            <TableCell>{member.non_monetary ? '-' : member.hourly_rate}</TableCell>
+                                            <TableCell>{member.non_monetary ? '-' : member.currency}</TableCell>
                                             <TableCell>{roundToTwoDecimals(member.totalHours)}</TableCell>
                                             <TableCell>{roundToTwoDecimals(member.unpaidHours)}</TableCell>
                                             <TableCell>
-                                                {member.non_monetary ? "-" : `${member.currency} ${roundToTwoDecimals(member.unpaidAmount)}`}
+                                                {member.non_monetary ? '-' : `${member.currency} ${roundToTwoDecimals(member.unpaidAmount)}`}
                                             </TableCell>
                                             <TableCell>{roundToTwoDecimals(member.weeklyAverage)}</TableCell>
                                             <TableCell className="text-right">

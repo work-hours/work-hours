@@ -31,7 +31,7 @@ final class Team extends Model
 
         $entry = self::query()->where('user_id', $project->user_id)->where('member_id', $memberId)->first();
 
-        if (!$entry) {
+        if (! $entry) {
             return 0;
         }
 

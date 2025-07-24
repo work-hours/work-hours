@@ -188,7 +188,7 @@ final class TeamController extends Controller
                 $passwordChanged = true;
             }
 
-            $nonMonetary = isset($data['non_monetary']) ? (bool) $data['non_monetary'] : false;
+            $nonMonetary = isset($data['non_monetary']) && (bool) $data['non_monetary'];
             $hourlyRate = $nonMonetary ? 0 : ($data['hourly_rate'] ?? 0);
 
             $teamData = [
