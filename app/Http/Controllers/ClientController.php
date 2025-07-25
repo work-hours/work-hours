@@ -33,6 +33,11 @@ final class ClientController extends Controller
 
         return Inertia::render('client/index', [
             'clients' => $clients,
+            'filters' => [
+                'search' => request('search', ''),
+                'created_date_from' => request('created_date_from', ''),
+                'created_date_to' => request('created_date_to', ''),
+            ],
         ]);
     }
 
