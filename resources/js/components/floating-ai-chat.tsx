@@ -18,26 +18,31 @@ export default function FloatingAiChat({ projects = [], timeLogs = [] }: Floatin
 
     return (
         <>
-            {isAiChatVisible && (
+            {isAiChatVisible ? (
                 <AiChat
-                    onClose={() => setIsAiChatVisible(false)}
+                    onClose={() => {
+                        setIsAiChatVisible(false)
+                    }}
                     projects={projects}
                     timeLogs={timeLogs}
                 />
+            ) : (
+                <div className="fixed right-4 bottom-24 z-50">
+                    <Button
+                        onClick={() => {
+                            setIsAiChatVisible(true)
+                        }}
+                        variant="outline"
+                        size="icon"
+                        className="h-14 w-14 rounded-full bg-white shadow-lg hover:bg-gray-100"
+                    >
+                        <div className="flex flex-col items-center justify-center">
+                            <BrainCircuit className="h-6 w-6 text-primary" />
+                            <span className="text-xs font-bold text-primary">Ask AI</span>
+                        </div>
+                    </Button>
+                </div>
             )}
-            <div className="fixed right-4 bottom-24 z-50">
-                <Button
-                    onClick={() => setIsAiChatVisible(true)}
-                    variant="outline"
-                    size="icon"
-                    className="h-14 w-14 rounded-full bg-white shadow-lg hover:bg-gray-100"
-                >
-                    <div className="flex flex-col items-center justify-center">
-                        <BrainCircuit className="h-6 w-6 text-primary" />
-                        <span className="text-xs font-bold text-primary">Ask AI</span>
-                    </div>
-                </Button>
-            </div>
         </>
     )
 }

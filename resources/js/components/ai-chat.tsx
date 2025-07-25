@@ -4,6 +4,9 @@ import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { BrainCircuit, Send, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import { sendMessage } from '@actions/AiChatController'
 
 type Message = {
     id: string
@@ -63,28 +66,26 @@ export default function AiChat({ onClose, projects = [], timeLogs = [] }: AiChat
             }
 
             // Send message to backend
-            const response = await fetch(route('ai-chat.send-message'), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                },
-                body: JSON.stringify({
-                    message: userMessage.content,
-                    context,
-                }),
-            })
+            const response = await sendMessage
+                .call({
+                    data: {
+                        message: userMessage.content,
+                        context,
+                    },
+                })
+                .then((res: { data: never }) => res.data)
+                .then((data: { success: never; message: never }) => {
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to get response from AI')
+                    }
 
-            const data = await response.json()
-
-            if (!data.success) {
-                throw new Error(data.message || 'Failed to get response from AI')
-            }
+                    return data.message
+                })
 
             // Add AI response to messages
             const aiMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                content: data.message,
+                content: response.message,
                 isUser: false,
                 timestamp: new Date(),
             }

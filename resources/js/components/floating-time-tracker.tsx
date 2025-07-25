@@ -176,9 +176,11 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     if (!isVisible) {
         return (
             <div className="fixed right-4 bottom-4 z-50">
-                <Button onClick={toggleVisibility} variant="default" size="sm" className="flex items-center gap-2 rounded-full shadow-lg">
-                    <MessageCircle className="h-4 w-4" />
-                    <span>Time Tracker</span>
+                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-14 w-14 rounded-full bg-white shadow-lg hover:bg-gray-100">
+                    <div className="flex flex-col items-center justify-center">
+                        <ClockIcon className="h-6 w-6 text-primary" />
+                        <span className="text-xs font-bold text-primary">Time</span>
+                    </div>
                 </Button>
             </div>
         )
@@ -194,13 +196,13 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                     )}
                     <Button
                         onClick={toggleExpand}
-                        variant="default"
+                        variant="outline"
                         size="icon"
-                        className="h-14 w-14 animate-pulse rounded-full bg-primary shadow-lg hover:bg-primary/90"
+                        className="h-14 w-14 animate-pulse rounded-full bg-white shadow-lg hover:bg-gray-100"
                     >
                         <div className="flex flex-col items-center justify-center">
-                            <ClockIcon className="h-6 w-6 text-white" />
-                            <span className="text-xs font-bold text-white">
+                            <ClockIcon className="h-6 w-6 text-primary" />
+                            <span className="text-xs font-bold text-primary">
                                 {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
                             </span>
                         </div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -26,7 +27,7 @@ final class AiChatController extends Controller
         try {
             $apiKey = config('services.google_gemini.api_key');
 
-            if (!$apiKey) {
+            if (! $apiKey) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Google Gemini API key is not configured.',
@@ -37,17 +38,17 @@ final class AiChatController extends Controller
             $context = $request->input('context', []);
 
             // Build the prompt with context
-            $prompt = "You are an AI assistant for a time tracking application. ";
-            $prompt .= "The user is asking about their time tracking data. ";
+            $prompt = 'You are an AI assistant for a time tracking application. ';
+            $prompt .= 'The user is asking about their time tracking data. ';
 
-            if (!empty($context)) {
+            if (! empty($context)) {
                 $prompt .= "Here is some context about the user's data:\n";
 
-                if (!empty($context['projects'])) {
-                    $prompt .= "Projects: " . implode(", ", array_column($context['projects'], 'name')) . "\n";
+                if (! empty($context['projects'])) {
+                    $prompt .= 'Projects: ' . implode(', ', array_column($context['projects'], 'name')) . "\n";
                 }
 
-                if (!empty($context['timeLogs'])) {
+                if (! empty($context['timeLogs'])) {
                     $prompt .= "Recent time logs:\n";
                     foreach ($context['timeLogs'] as $log) {
                         $prompt .= "- Project: {$log['project_name']}, Duration: {$log['duration']} hours, Note: {$log['note']}\n";
@@ -62,15 +63,16 @@ final class AiChatController extends Controller
             // Call Google Gemini API
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', [
+                'X-goog-api-key' => $apiKey,
+            ])->post('https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent', [
                 'contents' => [
                     [
                         'parts' => [
                             [
-                                'text' => $prompt
-                            ]
-                        ]
-                    ]
+                                'text' => $prompt,
+                            ],
+                        ],
+                    ],
                 ],
                 'generationConfig' => [
                     'temperature' => 0.7,
@@ -78,7 +80,6 @@ final class AiChatController extends Controller
                     'topP' => 0.95,
                     'maxOutputTokens' => 1024,
                 ],
-                'key' => $apiKey,
             ]);
 
             if ($response->failed()) {
@@ -102,7 +103,7 @@ final class AiChatController extends Controller
                 'success' => true,
                 'message' => $aiResponse,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('AI Chat error', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
