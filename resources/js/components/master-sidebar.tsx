@@ -8,7 +8,6 @@ import {
     ClipboardList,
     Folder,
     Github,
-    Heart,
     LayoutGrid,
     LogOut,
     LucideProjector,
@@ -83,11 +82,6 @@ const footerNavItems: NavItem[] = [
         title: 'Feedback & Issues',
         href: 'https://github.com/msamgan/work-hours/issues',
         icon: Folder,
-    },
-    {
-        title: 'Sponsor',
-        href: 'https://github.com/sponsors/msamgan',
-        icon: Heart,
     },
 ]
 

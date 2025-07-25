@@ -49,4 +49,8 @@ return [
         'redirect' => env('GITHUB_REDIRECT_URI', '/auth/github/callback'),
     ],
 
+    'google_gemini' => [
+        'api_key' => env('GOOGLE_GEMINI_API_KEY'),
+    ],
+
 ];

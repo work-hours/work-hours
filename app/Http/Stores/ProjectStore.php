@@ -22,14 +22,14 @@ final class ProjectStore
     {
         $ownedProjectsQuery = Project::query()
             ->where('user_id', $userId)
-            ->with(['teamMembers', 'approvers', 'user']);
+            ->with(['teamMembers', 'approvers', 'user', 'client', 'tasks', 'timeLogs']);
 
         $assignedProjectsQuery = Project::query()
             ->whereHas('teamMembers', function ($query) use ($userId): void {
                 $query->where('users.id', $userId);
             })
             ->where('user_id', '!=', $userId)
-            ->with(['teamMembers', 'approvers', 'user']);
+            ->with(['teamMembers', 'approvers', 'user', 'client', 'tasks', 'timeLogs']);
 
         $ownedProjects = self::applyFilterPipeline($ownedProjectsQuery)->get();
         $assignedProjects = self::applyFilterPipeline($assignedProjectsQuery)->get();

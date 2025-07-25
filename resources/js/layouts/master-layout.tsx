@@ -1,3 +1,4 @@
+import FloatingAiChat from '@/components/floating-ai-chat'
 import FloatingTimeTracker from '@/components/floating-time-tracker'
 import { MasterContent } from '@/components/master-content'
 import { MasterSidebar } from '@/components/master-sidebar'
@@ -87,8 +88,13 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
             {/* Toaster for notifications with improved positioning */}
             <Toaster position="top-right" closeButton={true} />
 
-            {/* Floating Time Tracker */}
-            {dataLoaded && <FloatingTimeTracker projects={userProjects} tasks={userTasks} />}
+            {/* Floating Time Tracker and AI Chat */}
+            {dataLoaded && (
+                <>
+                    <FloatingTimeTracker projects={userProjects} tasks={userTasks} />
+                    <FloatingAiChat projects={userProjects} timeLogs={[]} />
+                </>
+            )}
         </div>
     )
 }

@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
+import { CardDescription, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { router } from '@inertiajs/react'
-import { Briefcase, ClockIcon, MessageCircle, PauseCircle, PlayCircle, X } from 'lucide-react'
+import { Briefcase, ClockIcon, MessageCircle, PauseCircle, PlayCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 type Project = {
@@ -26,8 +27,8 @@ type FloatingTimeTrackerProps = {
 export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTrackerProps) {
     const [selectedProject, setSelectedProject] = useState<number | null>(projects.length > 0 ? projects[0].id : null)
     const [selectedTask, setSelectedTask] = useState<number | null>(null)
-    const [isExpanded, setIsExpanded] = useState(false)
     const [isVisible, setIsVisible] = useState(true)
+    const [isOpen, setIsOpen] = useState(false)
     const [view, setView] = useState<'select' | 'tracking' | 'note'>('select')
 
     const [activeTimeLog, setActiveTimeLog] = useState<{
@@ -160,73 +161,111 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
         return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
     }
 
-    const toggleExpand = () => {
-        if (activeTimeLog) {
-            setView('note')
-        } else {
-            setIsExpanded(!isExpanded)
-        }
-    }
-
     const toggleVisibility = () => {
         setIsVisible(!isVisible)
     }
 
-    // Chat-like bubble when minimized
+    // Function to handle opening the sheet
+    const handleOpenSheet = () => {
+        setIsOpen(true)
+    }
+
+    // Function to handle toggling the expanded view for active time log
+    const toggleExpand = () => {
+        if (activeTimeLog) {
+            setView('note')
+            setIsOpen(true)
+        }
+    }
+
+    // Minimized button when not visible
     if (!isVisible) {
         return (
-            <div className="fixed right-4 bottom-4 z-50">
-                <Button onClick={toggleVisibility} variant="default" size="sm" className="flex items-center gap-2 rounded-full shadow-lg">
-                    <MessageCircle className="h-4 w-4" />
-                    <span>Time Tracker</span>
+            <div className="fixed right-4 bottom-4 z-50 duration-300 animate-in fade-in slide-in-from-right-5">
+                <Button
+                    onClick={toggleVisibility}
+                    variant="outline"
+                    size="icon"
+                    className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5"
+                >
+                    <div className="relative flex flex-col items-center justify-center gap-1">
+                        <ClockIcon className="h-7 w-7 text-primary" />
+                        <span className="text-xs font-semibold text-primary">Time</span>
+                    </div>
                 </Button>
             </div>
         )
     }
 
-    // Compact floating bubble when tracking is active but not expanded
-    if (activeTimeLog && view === 'tracking') {
-        return (
-            <div className="fixed right-4 bottom-4 z-50">
+    return (
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            {/* Floating button or compact tracking view */}
+            <div className="fixed right-4 bottom-4 z-50 duration-300 animate-in fade-in slide-in-from-right-5">
                 <div className="flex flex-col items-end gap-2">
-                    {activeTimeLog.task_id && (
-                        <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
+                    {activeTimeLog && activeTimeLog.task_id && (
+                        <div className="rounded-md bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
                     )}
-                    <Button
-                        onClick={toggleExpand}
-                        variant="default"
-                        size="icon"
-                        className="h-14 w-14 animate-pulse rounded-full bg-primary shadow-lg hover:bg-primary/90"
-                    >
-                        <div className="flex flex-col items-center justify-center">
-                            <ClockIcon className="h-6 w-6 text-white" />
-                            <span className="text-xs font-bold text-white">
-                                {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
-                            </span>
-                        </div>
-                    </Button>
+
+                    {activeTimeLog ? (
+                        // Tracking active button
+                        <SheetTrigger asChild>
+                            <Button
+                                onClick={toggleExpand}
+                                variant="outline"
+                                size="icon"
+                                className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5"
+                            >
+                                <div className="relative flex flex-col items-center justify-center gap-1">
+                                    <ClockIcon className="h-7 w-7 text-primary" />
+                                    <span className="text-xs font-semibold text-primary">
+                                        {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
+                                    </span>
+                                </div>
+                            </Button>
+                        </SheetTrigger>
+                    ) : (
+                        // Normal time tracker button
+                        <SheetTrigger asChild>
+                            <Button
+                                onClick={handleOpenSheet}
+                                variant="outline"
+                                size="icon"
+                                className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5"
+                            >
+                                <div className="relative flex flex-col items-center justify-center gap-1">
+                                    <ClockIcon className="h-7 w-7 text-primary" />
+                                    <span className="text-xs font-semibold text-primary">Time</span>
+                                </div>
+                            </Button>
+                        </SheetTrigger>
+                    )}
                 </div>
             </div>
-        )
-    }
 
-    // Note input view when tracking is active and user clicked the bubble
-    if (activeTimeLog && view === 'note') {
-        return (
-            <div className="fixed right-4 bottom-4 z-50 w-full max-w-md">
-                <Card className="overflow-hidden rounded-2xl bg-primary/5 shadow-lg transition-all duration-300 dark:bg-primary/10">
-                    <div className="flex items-center justify-between border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
+            {/* Sheet content */}
+            <SheetContent className="overflow-hidden p-0">
+                <SheetHeader className="border-b border-gray-200 bg-background p-3 dark:border-gray-700">
+                    <div className="flex items-center">
                         <div className="flex items-center gap-2">
-                            <ClockIcon className="h-5 w-5 animate-pulse text-primary" />
-                            <span className="font-bold">{formatElapsedTime(activeTimeLog.elapsed)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Button onClick={() => setView('tracking')} variant="ghost" size="sm" className="h-8 w-8 p-1">
-                                <X className="h-4 w-4" />
-                            </Button>
+                            {activeTimeLog ? (
+                                <>
+                                    <ClockIcon className="h-5 w-5 animate-pulse text-primary" />
+                                    <SheetTitle className="font-bold">{formatElapsedTime(activeTimeLog.elapsed)}</SheetTitle>
+                                </>
+                            ) : (
+                                <>
+                                    <MessageCircle className="h-5 w-5 text-primary" />
+                                    <SheetTitle className="font-bold">Time Tracker</SheetTitle>
+                                </>
+                            )}
                         </div>
                     </div>
-                    <CardContent className="p-4">
+                </SheetHeader>
+
+                {/* Conditional content based on state */}
+                <div className="p-4">
+                    {activeTimeLog && view === 'note' ? (
+                        // Note input view
                         <div className="flex flex-col gap-3">
                             <div>
                                 <CardTitle className="flex items-center gap-2 text-left text-lg font-bold">
@@ -266,81 +305,64 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 </Button>
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
-            </div>
-        )
-    }
-
-    // Project selection view
-    return (
-        <div className="fixed right-4 bottom-4 z-50 w-full max-w-md">
-            <Card className="overflow-hidden rounded-2xl shadow-lg transition-all duration-300">
-                <div className="flex items-center justify-between border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
-                    <div className="flex items-center gap-2">
-                        <MessageCircle className="h-5 w-5" />
-                        <span className="font-bold">Time Tracker</span>
-                    </div>
-                    <Button onClick={toggleVisibility} variant="ghost" size="sm" className="h-8 w-8 p-1">
-                        <X className="h-4 w-4" />
-                    </Button>
-                </div>
-                <CardContent className="p-4">
-                    <div className="flex flex-col gap-3">
-                        <CardDescription className="">Select a project and start tracking your time</CardDescription>
-                        <div>
-                            <Label htmlFor="tracking_project" className="mb-1 block text-sm font-bold text-gray-800 dark:text-gray-200">
-                                Project
-                            </Label>
-                            <SearchableSelect
-                                id="tracking_project"
-                                value={selectedProject?.toString() || ''}
-                                onChange={(value) => {
-                                    setSelectedProject(value ? parseInt(value) : null)
-                                    setSelectedTask(null) // Reset task when project changes
-                                }}
-                                options={projects}
-                                placeholder="Select project"
-                                icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
-                            />
-                        </div>
-
-                        {selectedProject && (
+                    ) : (
+                        // Project selection view
+                        <div className="flex flex-col gap-3">
+                            <CardDescription className="">Select a project and start tracking your time</CardDescription>
                             <div>
-                                <Label htmlFor="tracking_task" className="mb-1 block text-sm font-bold text-gray-800 dark:text-gray-200">
-                                    Task (Optional)
+                                <Label htmlFor="tracking_project" className="mb-1 block text-sm font-bold text-gray-800 dark:text-gray-200">
+                                    Project
                                 </Label>
                                 <SearchableSelect
-                                    id="tracking_task"
-                                    value={selectedTask?.toString() || ''}
-                                    onChange={(value) => setSelectedTask(value ? parseInt(value) : null)}
-                                    options={tasks
-                                        .filter((task) => task.project_id === selectedProject)
-                                        .map((task) => ({
-                                            id: task.id,
-                                            name: task.title,
-                                        }))}
-                                    placeholder="Select task (optional)"
-                                    disabled={!selectedProject}
+                                    id="tracking_project"
+                                    value={selectedProject?.toString() || ''}
+                                    onChange={(value) => {
+                                        setSelectedProject(value ? parseInt(value) : null)
+                                        setSelectedTask(null) // Reset task when project changes
+                                    }}
+                                    options={projects}
+                                    placeholder="Select project"
+                                    icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
                                 />
-                                {selectedProject && tasks.filter((task) => task.project_id === selectedProject).length === 0 && (
-                                    <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
-                                )}
                             </div>
-                        )}
-                        <Button
-                            onClick={startTimeLog}
-                            variant="default"
-                            size="lg"
-                            className="mt-2 flex w-full items-center gap-2"
-                            disabled={selectedProject === null}
-                        >
-                            <PlayCircle className="h-5 w-5" />
-                            <span>Start Tracking</span>
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
+
+                            {selectedProject && (
+                                <div>
+                                    <Label htmlFor="tracking_task" className="mb-1 block text-sm font-bold text-gray-800 dark:text-gray-200">
+                                        Task (Optional)
+                                    </Label>
+                                    <SearchableSelect
+                                        id="tracking_task"
+                                        value={selectedTask?.toString() || ''}
+                                        onChange={(value) => setSelectedTask(value ? parseInt(value) : null)}
+                                        options={tasks
+                                            .filter((task) => task.project_id === selectedProject)
+                                            .map((task) => ({
+                                                id: task.id,
+                                                name: task.title,
+                                            }))}
+                                        placeholder="Select task (optional)"
+                                        disabled={!selectedProject}
+                                    />
+                                    {selectedProject && tasks.filter((task) => task.project_id === selectedProject).length === 0 && (
+                                        <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
+                                    )}
+                                </div>
+                            )}
+                            <Button
+                                onClick={startTimeLog}
+                                variant="default"
+                                size="lg"
+                                className="mt-2 flex w-full items-center gap-2"
+                                disabled={selectedProject === null}
+                            >
+                                <PlayCircle className="h-5 w-5" />
+                                <span>Start Tracking</span>
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            </SheetContent>
+        </Sheet>
     )
 }

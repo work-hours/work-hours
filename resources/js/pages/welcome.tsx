@@ -4,6 +4,7 @@ import Footer from '@/components/landing/Footer'
 import Hero from '@/components/landing/Hero'
 import HowItWorks from '@/components/landing/HowItWorks'
 import Navbar from '@/components/landing/Navbar'
+import AiSection from '@/components/landing/AiSection'
 import { Head } from '@inertiajs/react'
 
 export default function Welcome() {
@@ -85,6 +86,7 @@ export default function Welcome() {
             <Hero />
             <div className="mx-auto w-9/12">
                 <Features />
+                <AiSection />
                 <HowItWorks />
             </div>
             <CTA />
