@@ -3,9 +3,8 @@ import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/c
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
-import AiChat from '@/components/ai-chat'
 import { router } from '@inertiajs/react'
-import { Briefcase, BrainCircuit, ClockIcon, MessageCircle, PauseCircle, PlayCircle, X } from 'lucide-react'
+import { Briefcase, ClockIcon, MessageCircle, PauseCircle, PlayCircle, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 type Project = {
@@ -30,7 +29,6 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     const [isExpanded, setIsExpanded] = useState(false)
     const [isVisible, setIsVisible] = useState(true)
     const [view, setView] = useState<'select' | 'tracking' | 'note'>('select')
-    const [isAiChatVisible, setIsAiChatVisible] = useState(false)
 
     const [activeTimeLog, setActiveTimeLog] = useState<{
         id: number | null
@@ -177,88 +175,38 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     // Chat-like bubble when minimized
     if (!isVisible) {
         return (
-            <>
-                {isAiChatVisible && (
-                    <AiChat
-                        onClose={() => setIsAiChatVisible(false)}
-                        projects={projects}
-                        timeLogs={activeTimeLog ? [{
-                            id: activeTimeLog.id || 0,
-                            project_name: activeTimeLog.project_name || '',
-                            duration: activeTimeLog.elapsed,
-                            note: activeTimeLog.note || ''
-                        }] : []}
-                    />
-                )}
-                <div className="fixed right-4 bottom-4 z-50 flex gap-2">
-                    <Button
-                        onClick={() => setIsAiChatVisible(true)}
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center gap-2 rounded-full shadow-lg"
-                    >
-                        <BrainCircuit className="h-4 w-4 text-primary" />
-                        <span>Ask AI</span>
-                    </Button>
-                    <Button onClick={toggleVisibility} variant="default" size="sm" className="flex items-center gap-2 rounded-full shadow-lg">
-                        <MessageCircle className="h-4 w-4" />
-                        <span>Time Tracker</span>
-                    </Button>
-                </div>
-            </>
+            <div className="fixed right-4 bottom-4 z-50">
+                <Button onClick={toggleVisibility} variant="default" size="sm" className="flex items-center gap-2 rounded-full shadow-lg">
+                    <MessageCircle className="h-4 w-4" />
+                    <span>Time Tracker</span>
+                </Button>
+            </div>
         )
     }
 
     // Compact floating bubble when tracking is active but not expanded
     if (activeTimeLog && view === 'tracking') {
         return (
-            <>
-                {isAiChatVisible && (
-                    <AiChat
-                        onClose={() => setIsAiChatVisible(false)}
-                        projects={projects}
-                        timeLogs={[{
-                            id: activeTimeLog.id || 0,
-                            project_name: activeTimeLog.project_name || '',
-                            duration: activeTimeLog.elapsed,
-                            note: activeTimeLog.note || ''
-                        }]}
-                    />
-                )}
-                <div className="fixed right-4 bottom-4 z-50">
-                    <div className="flex flex-col items-end gap-2">
-                        {activeTimeLog.task_id && (
-                            <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
-                        )}
-                        <div className="flex items-center gap-2">
-                            <Button
-                                onClick={() => setIsAiChatVisible(true)}
-                                variant="outline"
-                                size="icon"
-                                className="h-14 w-14 rounded-full bg-white shadow-lg hover:bg-gray-100"
-                            >
-                                <div className="flex flex-col items-center justify-center">
-                                    <BrainCircuit className="h-6 w-6 text-primary" />
-                                    <span className="text-xs font-bold text-primary">Ask AI</span>
-                                </div>
-                            </Button>
-                            <Button
-                                onClick={toggleExpand}
-                                variant="default"
-                                size="icon"
-                                className="h-14 w-14 animate-pulse rounded-full bg-primary shadow-lg hover:bg-primary/90"
-                            >
-                                <div className="flex flex-col items-center justify-center">
-                                    <ClockIcon className="h-6 w-6 text-white" />
-                                    <span className="text-xs font-bold text-white">
-                                        {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
-                                    </span>
-                                </div>
-                            </Button>
+            <div className="fixed right-4 bottom-4 z-50">
+                <div className="flex flex-col items-end gap-2">
+                    {activeTimeLog.task_id && (
+                        <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
+                    )}
+                    <Button
+                        onClick={toggleExpand}
+                        variant="default"
+                        size="icon"
+                        className="h-14 w-14 animate-pulse rounded-full bg-primary shadow-lg hover:bg-primary/90"
+                    >
+                        <div className="flex flex-col items-center justify-center">
+                            <ClockIcon className="h-6 w-6 text-white" />
+                            <span className="text-xs font-bold text-white">
+                                {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
+                            </span>
                         </div>
-                    </div>
+                    </Button>
                 </div>
-            </>
+            </div>
         )
     }
 
@@ -272,20 +220,9 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                             <ClockIcon className="h-5 w-5 animate-pulse text-primary" />
                             <span className="font-bold">{formatElapsedTime(activeTimeLog.elapsed)}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Button
-                                onClick={() => setIsAiChatVisible(true)}
-                                variant="ghost"
-                                size="sm"
-                                className="flex h-8 w-8 items-center justify-center p-1"
-                                title="Ask AI"
-                            >
-                                <BrainCircuit className="h-4 w-4 text-primary" />
-                            </Button>
-                            <Button onClick={() => setView('tracking')} variant="ghost" size="sm" className="h-8 w-8 p-1">
-                                <X className="h-4 w-4" />
-                            </Button>
-                        </div>
+                        <Button onClick={() => setView('tracking')} variant="ghost" size="sm" className="h-8 w-8 p-1">
+                            <X className="h-4 w-4" />
+                        </Button>
                     </div>
                     <CardContent className="p-4">
                         <div className="flex flex-col gap-3">
@@ -335,98 +272,73 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
 
     // Project selection view
     return (
-        <>
-            {isAiChatVisible && (
-                <AiChat
-                    onClose={() => setIsAiChatVisible(false)}
-                    projects={projects}
-                    timeLogs={activeTimeLog ? [{
-                        id: activeTimeLog.id || 0,
-                        project_name: activeTimeLog.project_name || '',
-                        duration: activeTimeLog.elapsed,
-                        note: activeTimeLog.note || ''
-                    }] : []}
-                />
-            )}
-            <div className="fixed right-4 bottom-4 z-50 w-full max-w-md">
-                <Card className="overflow-hidden rounded-2xl shadow-lg transition-all duration-300">
-                    <div className="flex items-center justify-between border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
-                        <div className="flex items-center gap-2">
-                            <MessageCircle className="h-5 w-5" />
-                            <span className="font-bold">Time Tracker</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Button
-                                onClick={() => setIsAiChatVisible(true)}
-                                variant="ghost"
-                                size="sm"
-                                className="flex h-8 w-8 items-center justify-center p-1"
-                                title="Ask AI"
-                            >
-                                <BrainCircuit className="h-4 w-4 text-primary" />
-                            </Button>
-                            <Button onClick={toggleVisibility} variant="ghost" size="sm" className="h-8 w-8 p-1">
-                                <X className="h-4 w-4" />
-                            </Button>
-                        </div>
+        <div className="fixed right-4 bottom-4 z-50 w-full max-w-md">
+            <Card className="overflow-hidden rounded-2xl shadow-lg transition-all duration-300">
+                <div className="flex items-center justify-between border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
+                    <div className="flex items-center gap-2">
+                        <MessageCircle className="h-5 w-5" />
+                        <span className="font-bold">Time Tracker</span>
                     </div>
-                    <CardContent className="p-4">
-                        <div className="flex flex-col gap-3">
-                            <CardDescription className="">Select a project and start tracking your time</CardDescription>
+                    <Button onClick={toggleVisibility} variant="ghost" size="sm" className="h-8 w-8 p-1">
+                        <X className="h-4 w-4" />
+                    </Button>
+                </div>
+                <CardContent className="p-4">
+                    <div className="flex flex-col gap-3">
+                        <CardDescription className="">Select a project and start tracking your time</CardDescription>
+                        <div>
+                            <Label htmlFor="tracking_project" className="mb-1 block text-sm font-bold text-gray-800 dark:text-gray-200">
+                                Project
+                            </Label>
+                            <SearchableSelect
+                                id="tracking_project"
+                                value={selectedProject?.toString() || ''}
+                                onChange={(value) => {
+                                    setSelectedProject(value ? parseInt(value) : null)
+                                    setSelectedTask(null) // Reset task when project changes
+                                }}
+                                options={projects}
+                                placeholder="Select project"
+                                icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                            />
+                        </div>
+
+                        {selectedProject && (
                             <div>
-                                <Label htmlFor="tracking_project" className="mb-1 block text-sm font-bold text-gray-800 dark:text-gray-200">
-                                    Project
+                                <Label htmlFor="tracking_task" className="mb-1 block text-sm font-bold text-gray-800 dark:text-gray-200">
+                                    Task (Optional)
                                 </Label>
                                 <SearchableSelect
-                                    id="tracking_project"
-                                    value={selectedProject?.toString() || ''}
-                                    onChange={(value) => {
-                                        setSelectedProject(value ? parseInt(value) : null)
-                                        setSelectedTask(null) // Reset task when project changes
-                                    }}
-                                    options={projects}
-                                    placeholder="Select project"
-                                    icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                    id="tracking_task"
+                                    value={selectedTask?.toString() || ''}
+                                    onChange={(value) => setSelectedTask(value ? parseInt(value) : null)}
+                                    options={tasks
+                                        .filter((task) => task.project_id === selectedProject)
+                                        .map((task) => ({
+                                            id: task.id,
+                                            name: task.title,
+                                        }))}
+                                    placeholder="Select task (optional)"
+                                    disabled={!selectedProject}
                                 />
+                                {selectedProject && tasks.filter((task) => task.project_id === selectedProject).length === 0 && (
+                                    <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
+                                )}
                             </div>
-
-                            {selectedProject && (
-                                <div>
-                                    <Label htmlFor="tracking_task" className="mb-1 block text-sm font-bold text-gray-800 dark:text-gray-200">
-                                        Task (Optional)
-                                    </Label>
-                                    <SearchableSelect
-                                        id="tracking_task"
-                                        value={selectedTask?.toString() || ''}
-                                        onChange={(value) => setSelectedTask(value ? parseInt(value) : null)}
-                                        options={tasks
-                                            .filter((task) => task.project_id === selectedProject)
-                                            .map((task) => ({
-                                                id: task.id,
-                                                name: task.title,
-                                            }))}
-                                        placeholder="Select task (optional)"
-                                        disabled={!selectedProject}
-                                    />
-                                    {selectedProject && tasks.filter((task) => task.project_id === selectedProject).length === 0 && (
-                                        <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
-                                    )}
-                                </div>
-                            )}
-                            <Button
-                                onClick={startTimeLog}
-                                variant="default"
-                                size="lg"
-                                className="mt-2 flex w-full items-center gap-2"
-                                disabled={selectedProject === null}
-                            >
-                                <PlayCircle className="h-5 w-5" />
-                                <span>Start Tracking</span>
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-        </>
+                        )}
+                        <Button
+                            onClick={startTimeLog}
+                            variant="default"
+                            size="lg"
+                            className="mt-2 flex w-full items-center gap-2"
+                            disabled={selectedProject === null}
+                        >
+                            <PlayCircle className="h-5 w-5" />
+                            <span>Start Tracking</span>
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
     )
 }
