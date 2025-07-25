@@ -27,6 +27,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::get('notifications', [NotificationsController::class, 'index'])->name('notifications.index');
 
+    // AI Chat routes
+    Route::post('ai-chat/send-message', [\App\Http\Controllers\AiChatController::class, 'sendMessage'])->name('ai-chat.send-message');
+
     Route::get('integration', [IntegrationController::class, 'index'])->name('integration.index');
 
     Route::get('team', [TeamController::class, 'index'])->name('team.index');
