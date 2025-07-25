@@ -73,19 +73,20 @@ export default function AiChat({ onClose, projects = [], timeLogs = [] }: AiChat
                         context,
                     },
                 })
-                .then((res: { data: never }) => res.data)
-                .then((data: { success: never; message: never }) => {
-                    if (!data.success) {
-                        throw new Error(data.message || 'Failed to get response from AI')
-                    }
 
-                    return data.message
-                })
+            if (!response || !response.ok) {
+                throw new Error('Invalid response from server')
+            }
 
-            // Add AI response to messages
+            const responseData = await response.json()
+
+            if (!responseData.success) {
+                throw new Error(responseData.message || 'Failed to get response from AI')
+            }
+
             const aiMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                content: response.message,
+                content: responseData.message,
                 isUser: false,
                 timestamp: new Date(),
             }
@@ -115,14 +116,16 @@ export default function AiChat({ onClose, projects = [], timeLogs = [] }: AiChat
     }
 
     return (
-        <div className="fixed right-4 bottom-4 z-50 w-full max-w-md">
-            <Card className="overflow-hidden rounded-2xl shadow-lg transition-all duration-300">
-                <div className="flex items-center justify-between border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
-                    <div className="flex items-center gap-2">
-                        <BrainCircuit className="h-5 w-5 text-primary" />
-                        <span className="font-bold">Ask AI Assistant</span>
+        <div className="fixed right-4 bottom-4 z-50 w-full max-w-md animate-in fade-in slide-in-from-bottom-5 duration-300">
+            <Card className="overflow-hidden rounded-2xl border border-primary/20 shadow-xl shadow-primary/5 transition-all duration-300 hover:shadow-2xl">
+                <div className="flex items-center justify-between bg-gradient-to-r from-primary/15 to-primary/5 p-4 dark:from-primary/20 dark:to-primary/10">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                            <BrainCircuit className="h-5 w-5 text-primary" />
+                        </div>
+                        <span className="text-lg font-bold text-primary/90">Ask AI Assistant</span>
                     </div>
-                    <Button onClick={onClose} variant="ghost" size="sm" className="h-8 w-8 p-1">
+                    <Button onClick={onClose} variant="ghost" size="sm" className="h-8 w-8 p-1 rounded-full hover:bg-primary/10 hover:text-primary transition-colors">
                         <X className="h-4 w-4" />
                     </Button>
                 </div>
@@ -135,13 +138,13 @@ export default function AiChat({ onClose, projects = [], timeLogs = [] }: AiChat
                                     className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div
-                                        className={`max-w-[80%] rounded-lg p-3 ${
+                                        className={`max-w-[80%] rounded-lg p-3 shadow-sm animate-in ${message.isUser ? 'slide-in-from-right' : 'slide-in-from-left'} duration-200 ${
                                             message.isUser
-                                                ? 'bg-primary text-primary-foreground'
-                                                : 'bg-muted text-muted-foreground'
+                                                ? 'bg-gradient-to-br from-primary to-primary/90 text-primary-foreground'
+                                                : 'bg-gradient-to-br from-muted/90 to-muted text-muted-foreground border border-muted/20'
                                         }`}
                                     >
-                                        <p className="text-sm">{message.content}</p>
+                                        <p className="text-sm leading-relaxed">{message.content}</p>
                                         <p className="mt-1 text-right text-xs opacity-70">
                                             {message.timestamp.toLocaleTimeString([], {
                                                 hour: '2-digit',
@@ -152,12 +155,12 @@ export default function AiChat({ onClose, projects = [], timeLogs = [] }: AiChat
                                 </div>
                             ))}
                             {isLoading && (
-                                <div className="flex justify-start">
-                                    <div className="max-w-[80%] rounded-lg bg-muted p-3 text-muted-foreground">
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-2 w-2 animate-pulse rounded-full bg-primary"></div>
-                                            <div className="h-2 w-2 animate-pulse rounded-full bg-primary" style={{ animationDelay: '0.2s' }}></div>
-                                            <div className="h-2 w-2 animate-pulse rounded-full bg-primary" style={{ animationDelay: '0.4s' }}></div>
+                                <div className="flex justify-start animate-in fade-in duration-200">
+                                    <div className="max-w-[80%] rounded-lg bg-gradient-to-br from-muted/90 to-muted p-3 text-muted-foreground border border-muted/20 shadow-sm">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-3 w-3 animate-pulse rounded-full bg-primary/80"></div>
+                                            <div className="h-3 w-3 animate-pulse rounded-full bg-primary/80" style={{ animationDelay: '0.2s' }}></div>
+                                            <div className="h-3 w-3 animate-pulse rounded-full bg-primary/80" style={{ animationDelay: '0.4s' }}></div>
                                         </div>
                                     </div>
                                 </div>
@@ -165,20 +168,20 @@ export default function AiChat({ onClose, projects = [], timeLogs = [] }: AiChat
                             <div ref={messagesEndRef} />
                         </div>
                     </ScrollArea>
-                    <div className="flex items-center gap-2 border-t border-gray-200 p-3 dark:border-gray-700">
+                    <div className="flex items-center gap-3 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-white p-4 dark:border-gray-700 dark:from-gray-900 dark:to-gray-950">
                         <Input
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder="Type your message..."
-                            className="flex-1"
+                            className="flex-1 rounded-full border-primary/20 bg-white px-4 py-2 shadow-sm focus-visible:ring-primary/30 dark:bg-gray-900"
                             disabled={isLoading}
                         />
                         <Button
                             onClick={handleSendMessage}
                             size="icon"
                             disabled={!inputValue.trim() || isLoading}
-                            className="h-10 w-10"
+                            className="h-10 w-10 rounded-full bg-primary/90 shadow-md hover:bg-primary hover:shadow-lg transition-all duration-200"
                         >
                             <Send className="h-4 w-4" />
                         </Button>

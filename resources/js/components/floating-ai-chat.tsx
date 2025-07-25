@@ -27,17 +27,18 @@ export default function FloatingAiChat({ projects = [], timeLogs = [] }: Floatin
                     timeLogs={timeLogs}
                 />
             ) : (
-                <div className="fixed right-4 bottom-24 z-50">
+                <div className="fixed right-4 bottom-24 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
                     <Button
                         onClick={() => {
                             setIsAiChatVisible(true)
                         }}
                         variant="outline"
                         size="icon"
-                        className="h-14 w-14 rounded-full bg-white shadow-lg hover:bg-gray-100"
+                        className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-primary/5 border border-primary/20 shadow-xl shadow-primary/10 hover:shadow-2xl hover:scale-105 hover:border-primary/30 transition-all duration-300"
                     >
-                        <div className="flex flex-col items-center justify-center">
-                            <BrainCircuit className="h-6 w-6 text-primary" />
+                        <div className="relative flex flex-col items-center justify-center gap-1">
+                            <div className="absolute inset-0 rounded-full animate-pulse-slow bg-primary/5 scale-90"></div>
+                            <BrainCircuit className="h-7 w-7 text-primary animate-float" />
                             <span className="text-xs font-bold text-primary">Ask AI</span>
                         </div>
                     </Button>

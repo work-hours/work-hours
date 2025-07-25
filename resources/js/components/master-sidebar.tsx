@@ -83,12 +83,7 @@ const footerNavItems: NavItem[] = [
         title: 'Feedback & Issues',
         href: 'https://github.com/msamgan/work-hours/issues',
         icon: Folder,
-    },
-    {
-        title: 'Sponsor',
-        href: 'https://github.com/sponsors/msamgan',
-        icon: Heart,
-    },
+    }
 ]
 
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {

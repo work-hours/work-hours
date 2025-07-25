@@ -175,10 +175,11 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     // Chat-like bubble when minimized
     if (!isVisible) {
         return (
-            <div className="fixed right-4 bottom-4 z-50">
-                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-14 w-14 rounded-full bg-white shadow-lg hover:bg-gray-100">
-                    <div className="flex flex-col items-center justify-center">
-                        <ClockIcon className="h-6 w-6 text-primary" />
+            <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
+                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-primary/5 border border-primary/20 shadow-xl shadow-primary/10 hover:shadow-2xl hover:scale-105 hover:border-primary/30 transition-all duration-300">
+                    <div className="relative flex flex-col items-center justify-center gap-1">
+                        <div className="absolute inset-0 rounded-full animate-pulse-slow bg-primary/5 scale-90"></div>
+                        <ClockIcon className="h-7 w-7 text-primary animate-float" />
                         <span className="text-xs font-bold text-primary">Time</span>
                     </div>
                 </Button>
@@ -189,7 +190,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     // Compact floating bubble when tracking is active but not expanded
     if (activeTimeLog && view === 'tracking') {
         return (
-            <div className="fixed right-4 bottom-4 z-50">
+            <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
                 <div className="flex flex-col items-end gap-2">
                     {activeTimeLog.task_id && (
                         <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
@@ -198,10 +199,11 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                         onClick={toggleExpand}
                         variant="outline"
                         size="icon"
-                        className="h-14 w-14 animate-pulse rounded-full bg-white shadow-lg hover:bg-gray-100"
+                        className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-primary/5 border border-primary/20 shadow-xl shadow-primary/10 hover:shadow-2xl hover:scale-105 hover:border-primary/30 transition-all duration-300"
                     >
-                        <div className="flex flex-col items-center justify-center">
-                            <ClockIcon className="h-6 w-6 text-primary" />
+                        <div className="relative flex flex-col items-center justify-center gap-1">
+                            <div className="absolute inset-0 rounded-full animate-pulse-slow bg-primary/5 scale-90"></div>
+                            <ClockIcon className="h-7 w-7 text-primary animate-float" />
                             <span className="text-xs font-bold text-primary">
                                 {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
                             </span>

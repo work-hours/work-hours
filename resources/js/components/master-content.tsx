@@ -19,7 +19,7 @@ interface MasterContentProps {
 export function MasterContent({ children, breadcrumbs = [], collapsed, setCollapsed }: MasterContentProps) {
     const [unreadCount, setUnreadCount] = useState(0)
 
-    // Fetch unread notification count when component mounts
+    // Fetch unread notification count when the component mounts
     useEffect(() => {
         const fetchUnreadCount = async () => {
             try {
