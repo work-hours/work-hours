@@ -176,12 +176,12 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     if (!isVisible) {
         return (
             <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
-                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-primary/5 border-4 border-primary/40 shadow-xl shadow-primary/10 hover:shadow-2xl hover:scale-105 hover:border-primary/60 transition-all duration-300 rotate-3">
+                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-red-500/5 border-4 border-red-800/40 shadow-xl shadow-red-500/10 hover:shadow-2xl hover:scale-105 hover:border-red-800/60 transition-all duration-300 rotate-3">
                     <div className="relative flex flex-col items-center justify-center gap-1">
-                        <div className="absolute inset-0 rounded-full animate-pulse-slow bg-primary/10 scale-90"></div>
-                        <div className="absolute inset-0 rounded-full border-2 border-dashed border-primary/20"></div>
-                        <ClockIcon className="h-7 w-7 text-primary animate-float" />
-                        <span className="text-xs font-bold text-primary">Time</span>
+                        <div className="absolute inset-0 rounded-full animate-pulse-slow bg-red-500/10 scale-90"></div>
+                        <div className="absolute inset-0 rounded-full border-2 border-dashed border-red-800/20"></div>
+                        <ClockIcon className="h-7 w-7 text-red-800 animate-float" />
+                        <span className="text-xs font-bold text-red-800">Time</span>
                     </div>
                 </Button>
             </div>
@@ -194,19 +194,19 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
             <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
                 <div className="flex flex-col items-end gap-2">
                     {activeTimeLog.task_id && (
-                        <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
+                        <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-red-800 shadow-md">{activeTimeLog.task_title}</div>
                     )}
                     <Button
                         onClick={toggleExpand}
                         variant="outline"
                         size="icon"
-                        className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-primary/5 border-4 border-primary/40 shadow-xl shadow-primary/10 hover:shadow-2xl hover:scale-105 hover:border-primary/60 transition-all duration-300 rotate-3"
+                        className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-red-500/5 border-4 border-red-800/40 shadow-xl shadow-red-500/10 hover:shadow-2xl hover:scale-105 hover:border-red-800/60 transition-all duration-300 rotate-3"
                     >
                         <div className="relative flex flex-col items-center justify-center gap-1">
-                            <div className="absolute inset-0 rounded-full animate-pulse-slow bg-primary/10 scale-90"></div>
-                            <div className="absolute inset-0 rounded-full border-2 border-dashed border-primary/20"></div>
-                            <ClockIcon className="h-7 w-7 text-primary animate-float" />
-                            <span className="text-xs font-bold text-primary">
+                            <div className="absolute inset-0 rounded-full animate-pulse-slow bg-red-500/10 scale-90"></div>
+                            <div className="absolute inset-0 rounded-full border-2 border-dashed border-red-800/20"></div>
+                            <ClockIcon className="h-7 w-7 text-red-800 animate-float" />
+                            <span className="text-xs font-bold text-red-800">
                                 {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
                             </span>
                         </div>
@@ -220,10 +220,10 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     if (activeTimeLog && view === 'note') {
         return (
             <div className="fixed right-4 bottom-4 z-50 w-full max-w-md">
-                <Card className="overflow-hidden rounded-2xl bg-primary/5 shadow-lg transition-all duration-300 dark:bg-primary/10">
-                    <div className="flex items-center justify-between border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
+                <Card className="overflow-hidden rounded-2xl bg-red-500/5 shadow-lg transition-all duration-300 dark:bg-red-500/10">
+                    <div className="flex items-center justify-between border-b border-gray-200 bg-red-500/10 p-3 dark:border-gray-700">
                         <div className="flex items-center gap-2">
-                            <ClockIcon className="h-5 w-5 animate-pulse text-primary" />
+                            <ClockIcon className="h-5 w-5 animate-pulse text-red-800" />
                             <span className="font-bold">{formatElapsedTime(activeTimeLog.elapsed)}</span>
                         </div>
                         <Button onClick={() => setView('tracking')} variant="ghost" size="sm" className="h-8 w-8 p-1">
@@ -237,7 +237,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                     <span>{activeTimeLog.project_name}</span>
                                 </CardTitle>
                                 {activeTimeLog.task_id && (
-                                    <div className="mt-1 text-sm font-medium text-primary">Task: {activeTimeLog.task_title}</div>
+                                    <div className="mt-1 text-sm font-medium text-red-800">Task: {activeTimeLog.task_title}</div>
                                 )}
                                 <CardDescription className="mt-1">
                                     Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
@@ -280,9 +280,9 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     return (
         <div className="fixed right-4 bottom-4 z-50 w-full max-w-md">
             <Card className="overflow-hidden rounded-2xl shadow-lg transition-all duration-300">
-                <div className="flex items-center justify-between border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
+                <div className="flex items-center justify-between border-b border-gray-200 bg-red-500/10 p-3 dark:border-gray-700">
                     <div className="flex items-center gap-2">
-                        <MessageCircle className="h-5 w-5" />
+                        <MessageCircle className="h-5 w-5 text-red-800" />
                         <span className="font-bold">Time Tracker</span>
                     </div>
                     <Button onClick={toggleVisibility} variant="ghost" size="sm" className="h-8 w-8 p-1">

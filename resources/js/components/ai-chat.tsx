@@ -62,6 +62,7 @@ export default function AiChat({ onClose, projects = [] }: AiChatProps) {
             // Prepare context data
             const context = {
                 projects,
+                messages
             }
 
             // Send message to backend

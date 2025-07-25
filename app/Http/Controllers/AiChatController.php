@@ -47,6 +47,10 @@ final class AiChatController extends Controller
                     $prompt .= 'Project data: ' . json_encode($context['projects']) . "\n";
                 }
                 $prompt .= "\n";
+                if (! empty($context['messages'])) {
+                    $prompt .= 'conversation data: ' . json_encode($context['messages']) . "\n";
+                }
+                $prompt .= "\n";
             }
 
             $prompt .= "User's question: " . $request->input('message');
