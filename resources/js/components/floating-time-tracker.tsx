@@ -178,8 +178,6 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
             <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
                 <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-red-500/5 border-4 border-red-800/40 shadow-xl shadow-red-500/10 hover:shadow-2xl hover:scale-105 hover:border-red-800/60 transition-all duration-300 rotate-3">
                     <div className="relative flex flex-col items-center justify-center gap-1">
-                        <div className="absolute inset-0 rounded-full animate-pulse-slow bg-red-500/10 scale-90"></div>
-                        <div className="absolute inset-0 rounded-full border-2 border-dashed border-red-800/20"></div>
                         <ClockIcon className="h-7 w-7 text-red-800 animate-float" />
                         <span className="text-xs font-bold text-red-800">Time</span>
                     </div>
@@ -216,7 +214,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
         )
     }
 
-    // Note input view when tracking is active and user clicked the bubble
+    // Note the input view when tracking is active and the user clicked the bubble
     if (activeTimeLog && view === 'note') {
         return (
             <div className="fixed right-4 bottom-4 z-50 w-full max-w-md">
