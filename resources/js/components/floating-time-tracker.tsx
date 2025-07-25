@@ -176,9 +176,10 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     if (!isVisible) {
         return (
             <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
-                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-primary/5 border border-primary/20 shadow-xl shadow-primary/10 hover:shadow-2xl hover:scale-105 hover:border-primary/30 transition-all duration-300">
+                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-primary/5 border-4 border-primary/40 shadow-xl shadow-primary/10 hover:shadow-2xl hover:scale-105 hover:border-primary/60 transition-all duration-300 rotate-3">
                     <div className="relative flex flex-col items-center justify-center gap-1">
-                        <div className="absolute inset-0 rounded-full animate-pulse-slow bg-primary/5 scale-90"></div>
+                        <div className="absolute inset-0 rounded-full animate-pulse-slow bg-primary/10 scale-90"></div>
+                        <div className="absolute inset-0 rounded-full border-2 border-dashed border-primary/20"></div>
                         <ClockIcon className="h-7 w-7 text-primary animate-float" />
                         <span className="text-xs font-bold text-primary">Time</span>
                     </div>
@@ -199,10 +200,11 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                         onClick={toggleExpand}
                         variant="outline"
                         size="icon"
-                        className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-primary/5 border border-primary/20 shadow-xl shadow-primary/10 hover:shadow-2xl hover:scale-105 hover:border-primary/30 transition-all duration-300"
+                        className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-primary/5 border-4 border-primary/40 shadow-xl shadow-primary/10 hover:shadow-2xl hover:scale-105 hover:border-primary/60 transition-all duration-300 rotate-3"
                     >
                         <div className="relative flex flex-col items-center justify-center gap-1">
-                            <div className="absolute inset-0 rounded-full animate-pulse-slow bg-primary/5 scale-90"></div>
+                            <div className="absolute inset-0 rounded-full animate-pulse-slow bg-primary/10 scale-90"></div>
+                            <div className="absolute inset-0 rounded-full border-2 border-dashed border-primary/20"></div>
                             <ClockIcon className="h-7 w-7 text-primary animate-float" />
                             <span className="text-xs font-bold text-primary">
                                 {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
