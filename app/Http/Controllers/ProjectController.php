@@ -184,19 +184,6 @@ final class ProjectController extends Controller
     public function projectExport(): StreamedResponse
     {
         $projects = ProjectStore::userProjects(userId: auth()->id());
-
-        if ($projects->isEmpty()) {
-            $allProjects = Project::query()
-                ->where('user_id', auth()->id())
-                ->orWhereHas('teamMembers', function ($query): void {
-                    $query->where('users.id', auth()->id());
-                })
-                ->with(['teamMembers', 'approvers', 'user'])
-                ->get();
-
-            Log::info('Total projects without filtering: ' . $allProjects->count());
-        }
-
         $mappedProjects = ProjectStore::projectExportMapper(projects: $projects);
 
         $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Approvers', 'Created At'];
