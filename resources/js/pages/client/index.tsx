@@ -79,7 +79,7 @@ type Props = {
 }
 
 export default function Clients() {
-    const { filters: pageFilters } = usePage<Props>().props;
+    const { filters: pageFilters } = usePage<Props>().props
     const [clients, setClients] = useState<Client[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
@@ -253,11 +253,7 @@ export default function Clients() {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    disabled={
-                                        !filters.search &&
-                                        !filters.created_date_from &&
-                                        !filters.created_date_to
-                                    }
+                                    disabled={!filters.search && !filters.created_date_from && !filters.created_date_to}
                                     onClick={clearFilters}
                                     className="flex h-9 items-center gap-1 px-3"
                                 >
@@ -268,9 +264,7 @@ export default function Clients() {
                         </form>
 
                         <div className={'mt-4 text-sm text-muted-foreground'}>
-                            {(filters.search ||
-                                filters.created_date_from ||
-                                filters.created_date_to) && (
+                            {(filters.search || filters.created_date_from || filters.created_date_to) && (
                                 <CardDescription>
                                     {(() => {
                                         let description = ''

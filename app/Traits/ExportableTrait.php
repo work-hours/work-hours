@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Traits;
 
+use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait ExportableTrait
@@ -19,7 +21,7 @@ trait ExportableTrait
     public function exportToCsv(Collection $data, array $headers, string $filename): StreamedResponse
     {
         // Log export details
-        \Log::info('Exporting CSV with ' . $data->count() . ' rows');
+        Log::info('Exporting CSV with ' . $data->count() . ' rows');
 
         $callback = function () use ($data, $headers): void {
             $file = fopen('php://output', 'w');
@@ -29,14 +31,14 @@ trait ExportableTrait
 
             // Log if data is empty
             if ($data->isEmpty()) {
-                \Log::warning('Exporting CSV with empty data collection');
+                Log::warning('Exporting CSV with empty data collection');
             }
 
             foreach ($data as $row) {
                 try {
                     fputcsv($file, $row);
-                } catch (\Exception $e) {
-                    \Log::error('Error writing CSV row: ' . $e->getMessage(), ['row' => $row]);
+                } catch (Exception $e) {
+                    Log::error('Error writing CSV row: ' . $e->getMessage(), ['row' => $row]);
                 }
             }
 

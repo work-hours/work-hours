@@ -16,9 +16,9 @@ final class SearchFilter
      */
     public function handle($builder, Closure $next)
     {
-        if (request()->has('search') && request('search') !== '' && request('search') !== "null" && request('search') !== null) {
+        if (request()->has('search') && request('search') !== '' && request('search') !== 'null' && request('search') !== null) {
             $search = request('search');
-            $builder->where(function ($query) use ($search) {
+            $builder->where(function ($query) use ($search): void {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('contact_person', 'like', "%{$search}%")

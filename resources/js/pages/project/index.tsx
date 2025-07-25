@@ -103,7 +103,7 @@ type Props = {
 }
 
 export default function Projects() {
-    const { auth, filters: pageFilters, clients, teamMembers } = usePage<Props>().props;
+    const { auth, filters: pageFilters, clients, teamMembers } = usePage<Props>().props
     const [projects, setProjects] = useState<Project[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
