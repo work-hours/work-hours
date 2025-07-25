@@ -37,6 +37,18 @@
         <link rel="icon" href="/logo.png" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/logo.png">
 
+        @if(app()->environment('production'))
+            <!-- Google tag (gtag.js) -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-3RHMLRXFBG"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+
+                gtag('config', 'G-3RHMLRXFBG');
+            </script>
+        @endif
+
         @routes
         @viteReactRefresh
         @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
