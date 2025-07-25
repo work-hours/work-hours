@@ -21,11 +21,11 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
                     <Button
                         variant="outline"
                         size="icon"
-                        className="h-16 w-16 rounded-xl bg-background border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300"
+                        className="h-16 w-16 rounded-xl bg-background border border-primary/20 shadow-md hover:bg-primary/5 hover:border-primary/30 transition-all duration-200"
                     >
                         <div className="relative flex flex-col items-center justify-center gap-1">
-                            <BrainCircuit className="h-7 w-7 text-primary animate-float" />
-                            <span className="text-xs font-bold text-primary">Ask AI</span>
+                            <BrainCircuit className="h-7 w-7 text-primary" />
+                            <span className="text-xs font-semibold text-primary">Ask AI</span>
                         </div>
                     </Button>
                 </SheetTrigger>
