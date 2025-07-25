@@ -18,13 +18,26 @@ trait ExportableTrait
      */
     public function exportToCsv(Collection $data, array $headers, string $filename): StreamedResponse
     {
+        // Log export details
+        \Log::info('Exporting CSV with ' . $data->count() . ' rows');
+
         $callback = function () use ($data, $headers): void {
             $file = fopen('php://output', 'w');
 
+            // Always write headers even if data is empty
             fputcsv($file, $headers);
 
+            // Log if data is empty
+            if ($data->isEmpty()) {
+                \Log::warning('Exporting CSV with empty data collection');
+            }
+
             foreach ($data as $row) {
-                fputcsv($file, $row);
+                try {
+                    fputcsv($file, $row);
+                } catch (\Exception $e) {
+                    \Log::error('Error writing CSV row: ' . $e->getMessage(), ['row' => $row]);
+                }
             }
 
             fclose($file);

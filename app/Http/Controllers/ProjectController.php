@@ -19,6 +19,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Log;
 use Msamgan\Lact\Attributes\Action;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -29,7 +30,27 @@ final class ProjectController extends Controller
 
     public function index()
     {
-        return Inertia::render('project/index');
+        $filters = request()->only([
+            'client_id',
+            'team_member_id',
+            'created_date_from',
+            'created_date_to',
+            'search',
+        ]);
+
+        $clients = ClientStore::userClients(auth()->id())
+            ->map(fn ($client): array => [
+                'id' => $client->id,
+                'name' => $client->name,
+            ]);
+
+        $teamMembers = TeamStore::teamMembers(userId: auth()->id());
+
+        return Inertia::render('project/index', [
+            'filters' => $filters,
+            'clients' => $clients,
+            'teamMembers' => $teamMembers,
+        ]);
     }
 
     #[Action(method: 'get', name: 'project.list', middleware: ['auth', 'verified'])]
@@ -162,14 +183,13 @@ final class ProjectController extends Controller
     #[Action(method: 'get', name: 'project.export', middleware: ['auth', 'verified'])]
     public function projectExport(): StreamedResponse
     {
+        $projects = ProjectStore::userProjects(userId: auth()->id());
+        $mappedProjects = ProjectStore::projectExportMapper(projects: $projects);
+
         $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Approvers', 'Created At'];
         $filename = 'projects_' . Carbon::now()->format('Y-m-d') . '.csv';
 
-        return $this->exportToCsv(ProjectStore::projectExportMapper(
-            projects: ProjectStore::userProjects(userId: auth()->id())),
-            $headers,
-            $filename
-        );
+        return $this->exportToCsv($mappedProjects, $headers, $filename);
     }
 
     #[Action(method: 'get', name: 'project.export-time-logs', middleware: ['auth', 'verified'])]
