@@ -182,7 +182,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     if (!isVisible) {
         return (
             <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
-                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-16 w-16 rounded-full bg-gradient-to-br from-background to-primary/10 border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300">
+                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-16 w-16 rounded-xl bg-gradient-to-br from-background to-primary/10 border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300">
                     <div className="relative flex flex-col items-center justify-center gap-1">
                         <ClockIcon className="h-7 w-7 text-primary animate-float" />
                         <span className="text-xs font-bold text-primary">Time</span>
@@ -198,7 +198,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
             <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
                 <div className="flex flex-col items-end gap-2">
                     {activeTimeLog && activeTimeLog.task_id && (
-                        <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
+                        <div className="rounded-md bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
                     )}
 
                     {activeTimeLog ? (
@@ -208,7 +208,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 onClick={toggleExpand}
                                 variant="outline"
                                 size="icon"
-                                className="h-16 w-16 rounded-full bg-gradient-to-br from-background to-primary/10 border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300"
+                                className="h-16 w-16 rounded-xl bg-gradient-to-br from-background to-primary/10 border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300"
                             >
                                 <div className="relative flex flex-col items-center justify-center gap-1">
                                     <ClockIcon className="h-7 w-7 text-primary animate-float" />
@@ -225,7 +225,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 onClick={handleOpenSheet}
                                 variant="outline"
                                 size="icon"
-                                className="h-16 w-16 rounded-full bg-gradient-to-br from-background to-primary/10 border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300"
+                                className="h-16 w-16 rounded-xl bg-gradient-to-br from-background to-primary/10 border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300"
                             >
                                 <div className="relative flex flex-col items-center justify-center gap-1">
                                     <ClockIcon className="h-7 w-7 text-primary animate-float" />
