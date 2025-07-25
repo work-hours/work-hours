@@ -8,7 +8,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { sendMessage } from '@actions/AiChatController'
+import { sendMessage, getChatHistory } from '@actions/AiChatController'
 import '../../css/markdown.css'
 
 type Message = {
@@ -27,9 +27,11 @@ type AiChatProps = {
         duration: number
         note: string
     }>
+    chatHistoryId?: number | null
+    onChatSaved?: () => void
 }
 
-export default function AiChat({ onClose, projects = [] }: AiChatProps) {
+export default function AiChat({ onClose, projects = [], chatHistoryId = null, onChatSaved }: AiChatProps) {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
@@ -40,6 +42,7 @@ export default function AiChat({ onClose, projects = [] }: AiChatProps) {
     ])
     const [inputValue, setInputValue] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const [currentChatId, setCurrentChatId] = useState<number | null>(null)
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
 
@@ -47,6 +50,61 @@ export default function AiChat({ onClose, projects = [] }: AiChatProps) {
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages])
+
+    // Define a type for the stored message format
+    type StoredMessage = {
+        id: string;
+        content: string;
+        isUser: boolean;
+        timestamp: string;
+    }
+
+    // Load chat history when chatHistoryId changes
+    useEffect(() => {
+        const loadChatHistory = async () => {
+            if (chatHistoryId) {
+                try {
+                    setIsLoading(true)
+                    const response = await getChatHistory.call({
+                        data: { id: chatHistoryId }
+                    })
+
+                    if (response && response.ok) {
+                        const data = await response.json()
+                        if (data.success && data.history) {
+                            // Convert stored messages to the format expected by the component
+                            const historyMessages = data.history.messages.map((msg: StoredMessage) => ({
+                                id: msg.id,
+                                content: msg.content,
+                                isUser: msg.isUser,
+                                timestamp: new Date(msg.timestamp)
+                            }))
+
+                            setMessages(historyMessages)
+                            setCurrentChatId(chatHistoryId)
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading chat history:', error)
+                } finally {
+                    setIsLoading(false)
+                }
+            } else {
+                // Reset to initial state for a new chat
+                setMessages([
+                    {
+                        id: '1',
+                        content: 'Hi! I\'m your AI assistant. How can I help you with your time tracking today?',
+                        isUser: false,
+                        timestamp: new Date(),
+                    }
+                ])
+                setCurrentChatId(null)
+            }
+        }
+
+        loadChatHistory()
+    }, [chatHistoryId])
 
     const handleSendMessage = async () => {
         if (!inputValue.trim() || isLoading) return
@@ -75,6 +133,7 @@ export default function AiChat({ onClose, projects = [] }: AiChatProps) {
                     data: {
                         message: userMessage.content,
                         context,
+                        chat_history_id: currentChatId,
                     },
                 })
 
@@ -96,6 +155,16 @@ export default function AiChat({ onClose, projects = [] }: AiChatProps) {
             }
 
             setMessages((prev) => [...prev, aiMessage])
+
+            // Update the current chat ID if this is a new chat
+            if (!currentChatId && responseData.chat_history_id) {
+                setCurrentChatId(responseData.chat_history_id)
+            }
+
+            // Notify parent component that a chat was saved or updated
+            if (onChatSaved) {
+                onChatSaved()
+            }
         } catch (error) {
             console.error('Error sending message:', error)
 

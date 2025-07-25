@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Stores\ClientStore;
 use App\Http\Stores\TeamStore;
+use App\Models\AiChatHistory;
 use App\Models\TimeLog;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -17,14 +18,109 @@ use Msamgan\Lact\Attributes\Action;
 final class AiChatController extends Controller
 {
     /**
+     * Get all chat histories for the authenticated user
+     */
+    #[Action(method: 'get', name: 'ai-chat.get-histories', middleware: ['auth', 'verified'])]
+    public function getChatHistories(): JsonResponse
+    {
+        try {
+            $histories = AiChatHistory::where('user_id', auth()->id())
+                ->orderBy('updated_at', 'desc')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'histories' => $histories,
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error retrieving chat histories', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Get a specific chat history by ID
+     */
+    #[Action(method: 'get', name: 'ai-chat.get-history', middleware: ['auth', 'verified'])]
+    public function getChatHistory(Request $request): JsonResponse
+    {
+        $request->validate([
+            'id' => 'required|integer|exists:ai_chat_histories,id',
+        ]);
+
+        try {
+            $history = AiChatHistory::where('id', $request->id)
+                ->where('user_id', auth()->id())
+                ->firstOrFail();
+
+            return response()->json([
+                'success' => true,
+                'history' => $history,
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error retrieving chat history', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete a chat history
+     */
+    #[Action(method: 'delete', name: 'ai-chat.delete-history', middleware: ['auth', 'verified'])]
+    public function deleteChatHistory(Request $request): JsonResponse
+    {
+        $request->validate([
+            'id' => 'required|integer|exists:ai_chat_histories,id',
+        ]);
+
+        try {
+            $history = AiChatHistory::where('id', $request->id)
+                ->where('user_id', auth()->id())
+                ->firstOrFail();
+
+            $history->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Chat history deleted successfully',
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error deleting chat history', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Send a message to Google Gemini AI and get a response
      */
     #[Action(method: 'post', name: 'ai-chat.send-message', middleware: ['auth', 'verified'])]
     public function sendMessage(Request $request): JsonResponse
     {
         $request->validate([
-            'message' => 'required|string',
-            'context' => 'nullable|array',
+            'message' => ['required', 'string', 'max:5000'],
+            'context' => ['nullable', 'array'],
+            'chat_history_id' => ['nullable', 'integer', 'exists:ai_chat_histories,id'],
         ]);
 
         try {
@@ -39,6 +135,8 @@ final class AiChatController extends Controller
 
             // Prepare context data
             $context = $request->input('context', []);
+            $chatHistoryId = $request->input('chat_history_id');
+            $userMessage = $request->input('message');
 
             // Build the prompt with context
             $prompt = 'You are an AI assistant for a time tracking application. ';
@@ -79,7 +177,7 @@ final class AiChatController extends Controller
             }
             $prompt .= "\n";
 
-            $prompt .= "User's question: " . $request->input('message');
+            $prompt .= "User's question: " . $userMessage;
 
             // Call Google Gemini API
             $response = Http::withHeaders([
@@ -117,12 +215,60 @@ final class AiChatController extends Controller
 
             $responseData = $response->json();
 
-            // Extract the text response from the Gemini API response
             $aiResponse = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? 'Sorry, I could not generate a response.';
+
+            // Prepare messages for storage
+            $messages = [];
+            $chatHistory = null;
+
+            // If chat history ID is provided, retrieve the existing chat history
+            if ($chatHistoryId) {
+                $chatHistory = AiChatHistory::query()->where('id', $chatHistoryId)
+                    ->where('user_id', auth()->id())
+                    ->first();
+
+                if ($chatHistory) {
+                    $messages = $chatHistory->messages;
+                }
+            }
+
+            // Add new messages
+            $messages[] = [
+                'id' => uniqid(),
+                'content' => $userMessage,
+                'isUser' => true,
+                'timestamp' => now()->toIso8601String(),
+            ];
+
+            $messages[] = [
+                'id' => uniqid(),
+                'content' => $aiResponse,
+                'isUser' => false,
+                'timestamp' => now()->toIso8601String(),
+            ];
+
+            // Create or update the chat history
+            if ($chatHistory) {
+                $chatHistory->update([
+                    'messages' => $messages,
+                ]);
+            } else {
+                // Generate title from the first user message
+                $title = strlen($userMessage) > 50
+                    ? substr($userMessage, 0, 47) . '...'
+                    : $userMessage;
+
+                $chatHistory = AiChatHistory::create([
+                    'user_id' => auth()->id(),
+                    'title' => $title,
+                    'messages' => $messages,
+                ]);
+            }
 
             return response()->json([
                 'success' => true,
                 'message' => $aiResponse,
+                'chat_history_id' => $chatHistory->id,
             ]);
         } catch (Exception $e) {
             Log::error('AI Chat error', [
