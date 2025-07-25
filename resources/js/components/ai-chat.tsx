@@ -66,7 +66,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                 try {
                     setIsLoading(true)
                     const response = await getChatHistory.call({
-                        data: { id: chatHistoryId }
+                        params: { id: chatHistoryId }
                     })
 
                     if (response && response.ok) {

@@ -56,7 +56,7 @@ final class AiChatController extends Controller
         ]);
 
         try {
-            $history = AiChatHistory::where('id', $request->id)
+            $history = AiChatHistory::query()->where('id', $request->id)
                 ->where('user_id', auth()->id())
                 ->firstOrFail();
 

@@ -36,16 +36,16 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
     const [selectedChatId, setSelectedChatId] = useState<number | null>(null)
     const [isLoading, setIsLoading] = useState(false)
 
-    // Load chat histories when component mounts
+    // Load chat histories when the component mounts
     useEffect(() => {
-        loadChatHistories()
+        loadChatHistories().then()
     }, [])
 
     // Function to load chat histories
     const loadChatHistories = async () => {
         try {
             setIsLoading(true)
-            const response = await getChatHistories.call()
+            const response = await getChatHistories.call({})
 
             if (response && response.ok) {
                 const data = await response.json()
