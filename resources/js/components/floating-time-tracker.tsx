@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { router } from '@inertiajs/react'
-import { Briefcase, ClockIcon, MessageCircle, PauseCircle, PlayCircle, X } from 'lucide-react'
+import { Briefcase, ClockIcon, MessageCircle, PauseCircle, PlayCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 type Project = {
@@ -182,10 +182,10 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     if (!isVisible) {
         return (
             <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
-                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-red-500/5 border-4 border-red-800/40 shadow-xl shadow-red-500/10 hover:shadow-2xl hover:scale-105 hover:border-red-800/60 transition-all duration-300 rotate-3">
+                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-16 w-16 rounded-full bg-gradient-to-br from-background to-primary/10 border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300">
                     <div className="relative flex flex-col items-center justify-center gap-1">
-                        <ClockIcon className="h-7 w-7 text-red-800 animate-float" />
-                        <span className="text-xs font-bold text-red-800">Time</span>
+                        <ClockIcon className="h-7 w-7 text-primary animate-float" />
+                        <span className="text-xs font-bold text-primary">Time</span>
                     </div>
                 </Button>
             </div>
@@ -198,7 +198,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
             <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
                 <div className="flex flex-col items-end gap-2">
                     {activeTimeLog && activeTimeLog.task_id && (
-                        <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-red-800 shadow-md">{activeTimeLog.task_title}</div>
+                        <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
                     )}
 
                     {activeTimeLog ? (
@@ -208,13 +208,11 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 onClick={toggleExpand}
                                 variant="outline"
                                 size="icon"
-                                className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-red-500/5 border-4 border-red-800/40 shadow-xl shadow-red-500/10 hover:shadow-2xl hover:scale-105 hover:border-red-800/60 transition-all duration-300 rotate-3"
+                                className="h-16 w-16 rounded-full bg-gradient-to-br from-background to-primary/10 border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300"
                             >
                                 <div className="relative flex flex-col items-center justify-center gap-1">
-                                    <div className="absolute inset-0 rounded-full animate-pulse-slow bg-red-500/10 scale-90"></div>
-                                    <div className="absolute inset-0 rounded-full border-2 border-dashed border-red-800/20"></div>
-                                    <ClockIcon className="h-7 w-7 text-red-800 animate-float" />
-                                    <span className="text-xs font-bold text-red-800">
+                                    <ClockIcon className="h-7 w-7 text-primary animate-float" />
+                                    <span className="text-xs font-bold text-primary">
                                         {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
                                     </span>
                                 </div>
@@ -227,11 +225,11 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 onClick={handleOpenSheet}
                                 variant="outline"
                                 size="icon"
-                                className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-red-500/5 border-4 border-red-800/40 shadow-xl shadow-red-500/10 hover:shadow-2xl hover:scale-105 hover:border-red-800/60 transition-all duration-300 rotate-3"
+                                className="h-16 w-16 rounded-full bg-gradient-to-br from-background to-primary/10 border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300"
                             >
                                 <div className="relative flex flex-col items-center justify-center gap-1">
-                                    <ClockIcon className="h-7 w-7 text-red-800 animate-float" />
-                                    <span className="text-xs font-bold text-red-800">Time</span>
+                                    <ClockIcon className="h-7 w-7 text-primary animate-float" />
+                                    <span className="text-xs font-bold text-primary">Time</span>
                                 </div>
                             </Button>
                         </SheetTrigger>
@@ -241,24 +239,21 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
 
             {/* Sheet content */}
             <SheetContent className="p-0 overflow-hidden">
-                <SheetHeader className="border-b border-gray-200 bg-red-500/10 p-3 dark:border-gray-700">
-                    <div className="flex items-center justify-between">
+                <SheetHeader className="border-b border-gray-200 bg-primary/10 p-3 dark:border-gray-700">
+                    <div className="flex items-center">
                         <div className="flex items-center gap-2">
                             {activeTimeLog ? (
                                 <>
-                                    <ClockIcon className="h-5 w-5 animate-pulse text-red-800" />
+                                    <ClockIcon className="h-5 w-5 animate-pulse text-primary" />
                                     <SheetTitle className="font-bold">{formatElapsedTime(activeTimeLog.elapsed)}</SheetTitle>
                                 </>
                             ) : (
                                 <>
-                                    <MessageCircle className="h-5 w-5 text-blue-800" />
+                                    <MessageCircle className="h-5 w-5 text-primary" />
                                     <SheetTitle className="font-bold">Time Tracker</SheetTitle>
                                 </>
                             )}
                         </div>
-                        <Button onClick={toggleVisibility} variant="ghost" size="sm" className="h-8 w-8 p-1">
-                            <X className="h-4 w-4" />
-                        </Button>
                     </div>
                 </SheetHeader>
 
@@ -272,7 +267,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                     <span>{activeTimeLog.project_name}</span>
                                 </CardTitle>
                                 {activeTimeLog.task_id && (
-                                    <div className="mt-1 text-sm font-medium text-red-800">Task: {activeTimeLog.task_title}</div>
+                                    <div className="mt-1 text-sm font-medium text-primary">Task: {activeTimeLog.task_title}</div>
                                 )}
                                 <CardDescription className="mt-1">
                                     Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
