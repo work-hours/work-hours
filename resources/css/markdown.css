@@ -32,7 +32,9 @@
     color: rgba(var(--color-primary), 0.8);
 }
 
-.markdown-content h4, .markdown-content h5, .markdown-content h6 {
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
     font-size: 1rem;
     font-weight: 600;
     margin-top: 1rem;
@@ -47,7 +49,8 @@
 }
 
 /* Lists */
-.markdown-content ul, .markdown-content ol {
+.markdown-content ul,
+.markdown-content ol {
     margin-top: 0.5rem;
     margin-bottom: 1rem;
     padding-left: 1.5rem;
@@ -78,7 +81,7 @@
 }
 
 .markdown-content code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
     font-size: 0.875rem;
     background-color: rgba(var(--color-primary), 0.05);
     padding: 0.2rem 0.4rem;
@@ -116,7 +119,8 @@
     box-shadow: 0 1px 3px rgba(var(--color-primary), 0.1);
 }
 
-.markdown-content th, .markdown-content td {
+.markdown-content th,
+.markdown-content td {
     border: 1px solid rgba(var(--color-primary), 0.1);
     padding: 0.6rem 0.8rem;
     text-align: left;
@@ -160,12 +164,14 @@
         background-color: rgba(var(--color-primary), 0.08);
     }
 
-    .markdown-content code, .markdown-content pre {
+    .markdown-content code,
+    .markdown-content pre {
         background-color: rgba(var(--color-primary), 0.1);
         border-color: rgba(var(--color-primary), 0.2);
     }
 
-    .markdown-content th, .markdown-content td {
+    .markdown-content th,
+    .markdown-content td {
         border-color: rgba(var(--color-primary), 0.2);
     }
 

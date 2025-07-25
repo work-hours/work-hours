@@ -8,7 +8,6 @@ import {
     ClipboardList,
     Folder,
     Github,
-    Heart,
     LayoutGrid,
     LogOut,
     LucideProjector,
@@ -83,7 +82,7 @@ const footerNavItems: NavItem[] = [
         title: 'Feedback & Issues',
         href: 'https://github.com/msamgan/work-hours/issues',
         icon: Folder,
-    }
+    },
 ]
 
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {

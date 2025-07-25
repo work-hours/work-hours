@@ -24,7 +24,7 @@ final class AiChatController extends Controller
     public function getChatHistories(): JsonResponse
     {
         try {
-            $histories = AiChatHistory::where('user_id', auth()->id())
+            $histories = AiChatHistory::query()->where('user_id', auth()->id())
                 ->orderBy('updated_at', 'desc')
                 ->get();
 
@@ -88,7 +88,7 @@ final class AiChatController extends Controller
         ]);
 
         try {
-            $history = AiChatHistory::where('id', $request->id)
+            $history = AiChatHistory::query()->where('id', $request->id)
                 ->where('user_id', auth()->id())
                 ->firstOrFail();
 
@@ -254,11 +254,11 @@ final class AiChatController extends Controller
                 ]);
             } else {
                 // Generate title from the first user message
-                $title = strlen($userMessage) > 50
-                    ? substr($userMessage, 0, 47) . '...'
+                $title = mb_strlen((string) $userMessage) > 50
+                    ? mb_substr((string) $userMessage, 0, 47) . '...'
                     : $userMessage;
 
-                $chatHistory = AiChatHistory::create([
+                $chatHistory = AiChatHistory::query()->create([
                     'user_id' => auth()->id(),
                     'title' => $title,
                     'messages' => $messages,

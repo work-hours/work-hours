@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
@@ -28,7 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('notifications', [NotificationsController::class, 'index'])->name('notifications.index');
 
     // AI Chat routes
-    Route::post('ai-chat/send-message', [\App\Http\Controllers\AiChatController::class, 'sendMessage'])->name('ai-chat.send-message');
+    Route::post('ai-chat/send-message', [AiChatController::class, 'sendMessage'])->name('ai-chat.send-message');
 
     Route::get('integration', [IntegrationController::class, 'index'])->name('integration.index');
 

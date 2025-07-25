@@ -1,5 +1,5 @@
-import FloatingTimeTracker from '@/components/floating-time-tracker'
 import FloatingAiChat from '@/components/floating-ai-chat'
+import FloatingTimeTracker from '@/components/floating-time-tracker'
 import { MasterContent } from '@/components/master-content'
 import { MasterSidebar } from '@/components/master-sidebar'
 import { type BreadcrumbItem } from '@/types'

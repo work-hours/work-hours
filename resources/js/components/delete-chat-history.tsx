@@ -21,7 +21,7 @@ export default function DeleteChatHistory({ chatId, onDelete }: DeleteChatHistor
         try {
             setProcessing(true)
             const response = await deleteChatHistory.call({
-                data: { id: chatId }
+                data: { id: chatId },
             })
 
             if (response && response.ok) {
@@ -44,7 +44,7 @@ export default function DeleteChatHistory({ chatId, onDelete }: DeleteChatHistor
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 hover:bg-background/80 transition-colors"
+                    className="h-6 w-6 transition-colors hover:bg-background/80"
                     onClick={(e) => {
                         e.stopPropagation() // Prevent triggering the click on the parent element
                         setIsOpen(true)
@@ -55,14 +55,10 @@ export default function DeleteChatHistory({ chatId, onDelete }: DeleteChatHistor
             </DialogTrigger>
             <DialogContent>
                 <DialogTitle>Delete Chat History</DialogTitle>
-                <DialogDescription>
-                    Are you sure you want to delete this chat history? This action cannot be undone.
-                </DialogDescription>
+                <DialogDescription>Are you sure you want to delete this chat history? This action cannot be undone.</DialogDescription>
                 <DialogFooter className="gap-2">
                     <DialogClose asChild>
-                        <Button variant="secondary">
-                            Cancel
-                        </Button>
+                        <Button variant="secondary">Cancel</Button>
                     </DialogClose>
 
                     <Button variant="destructive" disabled={processing} onClick={handleDelete}>

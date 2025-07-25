@@ -181,8 +181,13 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     // Minimized button when not visible
     if (!isVisible) {
         return (
-            <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
-                <Button onClick={toggleVisibility} variant="outline" size="icon" className="h-16 w-16 rounded-xl bg-background border border-primary/20 shadow-md hover:bg-primary/5 hover:border-primary/30 transition-all duration-200">
+            <div className="fixed right-4 bottom-4 z-50 duration-300 animate-in fade-in slide-in-from-right-5">
+                <Button
+                    onClick={toggleVisibility}
+                    variant="outline"
+                    size="icon"
+                    className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5"
+                >
                     <div className="relative flex flex-col items-center justify-center gap-1">
                         <ClockIcon className="h-7 w-7 text-primary" />
                         <span className="text-xs font-semibold text-primary">Time</span>
@@ -195,7 +200,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             {/* Floating button or compact tracking view */}
-            <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
+            <div className="fixed right-4 bottom-4 z-50 duration-300 animate-in fade-in slide-in-from-right-5">
                 <div className="flex flex-col items-end gap-2">
                     {activeTimeLog && activeTimeLog.task_id && (
                         <div className="rounded-md bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
@@ -208,7 +213,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 onClick={toggleExpand}
                                 variant="outline"
                                 size="icon"
-                                className="h-16 w-16 rounded-xl bg-background border border-primary/20 shadow-md hover:bg-primary/5 hover:border-primary/30 transition-all duration-200"
+                                className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5"
                             >
                                 <div className="relative flex flex-col items-center justify-center gap-1">
                                     <ClockIcon className="h-7 w-7 text-primary" />
@@ -225,7 +230,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 onClick={handleOpenSheet}
                                 variant="outline"
                                 size="icon"
-                                className="h-16 w-16 rounded-xl bg-background border border-primary/20 shadow-md hover:bg-primary/5 hover:border-primary/30 transition-all duration-200"
+                                className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5"
                             >
                                 <div className="relative flex flex-col items-center justify-center gap-1">
                                     <ClockIcon className="h-7 w-7 text-primary" />
@@ -238,7 +243,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
             </div>
 
             {/* Sheet content */}
-            <SheetContent className="p-0 overflow-hidden">
+            <SheetContent className="overflow-hidden p-0">
                 <SheetHeader className="border-b border-gray-200 bg-background p-3 dark:border-gray-700">
                     <div className="flex items-center">
                         <div className="flex items-center gap-2">
