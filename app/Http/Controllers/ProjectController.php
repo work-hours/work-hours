@@ -19,6 +19,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Log;
 use Msamgan\Lact\Attributes\Action;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -182,20 +183,9 @@ final class ProjectController extends Controller
     #[Action(method: 'get', name: 'project.export', middleware: ['auth', 'verified'])]
     public function projectExport(): StreamedResponse
     {
-        // Log all request parameters for debugging
-        \Log::info('Project export request parameters:', request()->all());
-
-        // Get projects with filters applied (filters are automatically applied via the Pipeline)
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
-        // Log the number of projects found after filtering
-        \Log::info('Projects found after filtering: ' . $projects->count());
-
-        // If no projects found after filtering, log more details
         if ($projects->isEmpty()) {
-            \Log::info('Export with empty results. Request parameters:', request()->all());
-
-            // Get all projects without filtering to see if there are any projects at all
             $allProjects = Project::query()
                 ->where('user_id', auth()->id())
                 ->orWhereHas('teamMembers', function ($query): void {
@@ -204,13 +194,10 @@ final class ProjectController extends Controller
                 ->with(['teamMembers', 'approvers', 'user'])
                 ->get();
 
-            \Log::info('Total projects without filtering: ' . $allProjects->count());
+            Log::info('Total projects without filtering: ' . $allProjects->count());
         }
 
         $mappedProjects = ProjectStore::projectExportMapper(projects: $projects);
-
-        // Log the number of mapped projects
-        \Log::info('Mapped projects for export: ' . $mappedProjects->count());
 
         $headers = ['ID', 'Name', 'Description', 'Owner', 'Team Members', 'Approvers', 'Created At'];
         $filename = 'projects_' . Carbon::now()->format('Y-m-d') . '.csv';
