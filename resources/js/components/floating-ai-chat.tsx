@@ -25,7 +25,7 @@ export default function FloatingAiChat({ projects = [], timeLogs = [] }: Floatin
                     timeLogs={timeLogs}
                 />
             )}
-            <div className="fixed right-20 bottom-4 z-50">
+            <div className="fixed right-4 bottom-24 z-50">
                 <Button
                     onClick={() => setIsAiChatVisible(true)}
                     variant="outline"
