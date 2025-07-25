@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Stores\ClientStore;
+use App\Http\Stores\TeamStore;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -51,6 +53,19 @@ final class AiChatController extends Controller
                     $prompt .= 'conversation data: ' . json_encode($context['messages']) . "\n";
                 }
                 $prompt .= "\n";
+            }
+
+            $team = TeamStore::teamMembers(userId: auth()->id(), map: false);
+            if ($team) {
+                $prompt .= "Here is the user's team data:\n";
+                $prompt .= json_encode($team->toArray()) . "\n";
+            }
+
+            $clients = ClientStore::userClients(auth()->id());
+
+            if ($clients->isNotEmpty()) {
+                $prompt .= "Here is the user's client data:\n";
+                $prompt .= json_encode($clients->toArray()) . "\n";
             }
 
             $prompt .= "User's question: " . $request->input('message');

@@ -19,16 +19,22 @@ final class TeamStore
         return Team::query()->where('user_id', $userId)->count();
     }
 
-    public static function teamMembers(int $userId): Collection
+    public static function teamMembers(int $userId, bool $map = true): Collection|null
     {
-        return Team::query()
+        $team = Team::query()
             ->where('user_id', $userId)
             ->with('member')
-            ->get()->map(fn ($team): array => [
+            ->get();
+
+        if ($map) {
+            return $team->map(fn ($team): array => [
                 'id' => $team->member->id,
                 'name' => $team->member->name,
                 'email' => $team->member->email,
             ]);
+        }
+
+        return $team;
     }
 
     public static function teamEntry(int $userId, int $memberId): ?Team

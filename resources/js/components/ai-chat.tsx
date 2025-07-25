@@ -4,9 +4,13 @@ import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { BrainCircuit, Send, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { sendMessage } from '@actions/AiChatController'
+import '../../css/markdown.css'
 
 type Message = {
     id: string
@@ -144,7 +148,35 @@ export default function AiChat({ onClose, projects = [] }: AiChatProps) {
                                                 : 'bg-gradient-to-br from-muted/90 to-muted text-muted-foreground border border-muted/20'
                                         }`}
                                     >
-                                        <p className="text-sm leading-relaxed">{message.content}</p>
+                                        {message.isUser ? (
+                                            <p className="text-sm leading-relaxed">{message.content}</p>
+                                        ) : (
+                                            <div className="markdown-content text-sm leading-relaxed">
+                                                <ReactMarkdown
+                                                    components={{
+                                                        code({inline, className, children, ...props}) {
+                                                            const match = /language-(\w+)/.exec(className || '')
+                                                            return !inline && match ? (
+                                                                <SyntaxHighlighter
+                                                                    style={atomDark}
+                                                                    language={match[1]}
+                                                                    PreTag="div"
+                                                                    {...props}
+                                                                >
+                                                                    {String(children).replace(/\n$/, '')}
+                                                                </SyntaxHighlighter>
+                                                            ) : (
+                                                                <code className={className} {...props}>
+                                                                    {children}
+                                                                </code>
+                                                            )
+                                                        }
+                                                    }}
+                                                >
+                                                    {message.content}
+                                                </ReactMarkdown>
+                                            </div>
+                                        )}
                                         <p className="mt-1 text-right text-xs opacity-70">
                                             {message.timestamp.toLocaleTimeString([], {
                                                 hour: '2-digit',
