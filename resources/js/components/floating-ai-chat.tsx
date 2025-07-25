@@ -13,7 +13,7 @@ type FloatingAiChatProps = {
     }>
 }
 
-export default function FloatingAiChat({ projects = [], timeLogs = [] }: FloatingAiChatProps) {
+export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
     const [isAiChatVisible, setIsAiChatVisible] = useState(false)
 
     return (
@@ -33,12 +33,11 @@ export default function FloatingAiChat({ projects = [], timeLogs = [] }: Floatin
                         }}
                         variant="outline"
                         size="icon"
-                        className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-primary/5 border border-primary/20 shadow-xl shadow-primary/10 hover:shadow-2xl hover:scale-105 hover:border-primary/30 transition-all duration-300"
+                        className="h-16 w-16 rounded-full bg-gradient-to-br from-white to-red-500/5 border-4 border-red-800/40 shadow-xl shadow-red-500/10 hover:shadow-2xl hover:scale-105 hover:border-red-800/60 transition-all duration-300 rotate-3"
                     >
                         <div className="relative flex flex-col items-center justify-center gap-1">
-                            <div className="absolute inset-0 rounded-full animate-pulse-slow bg-primary/5 scale-90"></div>
-                            <BrainCircuit className="h-7 w-7 text-primary animate-float" />
-                            <span className="text-xs font-bold text-primary">Ask AI</span>
+                            <BrainCircuit className="h-7 w-7 text-red-800 animate-float" />
+                            <span className="text-xs font-bold text-red-800">Ask AI</span>
                         </div>
                     </Button>
                 </div>

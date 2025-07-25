@@ -278,9 +278,9 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     return (
         <div className="fixed right-4 bottom-4 z-50 w-full max-w-md">
             <Card className="overflow-hidden rounded-2xl shadow-lg transition-all duration-300">
-                <div className="flex items-center justify-between border-b border-gray-200 bg-red-500/10 p-3 dark:border-gray-700">
+                <div className="flex items-center justify-between border-b border-gray-200 bg-blue-500/10 p-3 dark:border-gray-700">
                     <div className="flex items-center gap-2">
-                        <MessageCircle className="h-5 w-5 text-red-800" />
+                        <MessageCircle className="h-5 w-5 text-blue-800" />
                         <span className="font-bold">Time Tracker</span>
                     </div>
                     <Button onClick={toggleVisibility} variant="ghost" size="sm" className="h-8 w-8 p-1">
