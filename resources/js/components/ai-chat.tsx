@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { BrainCircuit, Send, X } from 'lucide-react'
@@ -20,7 +19,7 @@ type Message = {
 }
 
 type AiChatProps = {
-    onClose: () => void
+    onClose?: () => void
     projects?: Array<{ id: number; name: string }>
     timeLogs?: Array<{
         id: number
@@ -120,109 +119,109 @@ export default function AiChat({ onClose, projects = [] }: AiChatProps) {
     }
 
     return (
-        <div className="fixed right-4 bottom-4 z-50 w-full max-w-[95%] sm:max-w-md animate-in fade-in slide-in-from-bottom-5 duration-300">
-            <Card className="overflow-hidden border-2 border-primary/20 shadow-xl shadow-primary/10 transition-all duration-300 hover:shadow-2xl">
-                <div className="flex items-center justify-between bg-gradient-to-r from-primary/20 to-primary/5 p-4 dark:from-primary/30 dark:to-primary/15 border-b border-primary/20">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 shadow-sm">
-                            <BrainCircuit className="h-6 w-6 text-primary animate-pulse" />
-                        </div>
-                        <div>
-                            <span className="text-lg font-bold text-primary/90">AI Assistant</span>
-                            <p className="text-xs text-primary/70">Powered by Google Gemini</p>
-                        </div>
+        <div className="flex flex-col h-full">
+            <div className="flex items-center justify-between bg-gradient-to-r from-primary/20 to-primary/5 p-4 dark:from-primary/30 dark:to-primary/15 border-b border-primary/20">
+                <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 shadow-sm">
+                        <BrainCircuit className="h-6 w-6 text-primary animate-pulse" />
                     </div>
+                    <div>
+                        <span className="text-lg font-bold text-primary/90">AI Assistant</span>
+                        <p className="text-xs text-primary/70">Powered by Google Gemini</p>
+                    </div>
+                </div>
+                {onClose && (
                     <Button onClick={onClose} variant="ghost" size="sm" className="h-8 w-8 p-1 rounded-full hover:bg-primary/10 hover:text-primary transition-colors">
                         <X className="h-4 w-4" />
                     </Button>
-                </div>
-                <CardContent className="p-0">
-                    <ScrollArea className="h-[400px] p-4 bg-gradient-to-b from-background to-muted/30">
-                        <div className="flex flex-col gap-4">
-                            {messages.map((message) => (
+                )}
+            </div>
+            <div className="flex-grow flex flex-col overflow-hidden">
+                <ScrollArea className="flex-grow p-4 bg-gradient-to-b from-background to-muted/30">
+                    <div className="flex flex-col gap-4">
+                        {messages.map((message) => (
+                            <div
+                                key={message.id}
+                                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                            >
                                 <div
-                                    key={message.id}
-                                    className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                                    className={`max-w-[85%] rounded-lg p-4 shadow-md animate-in ${message.isUser ? 'slide-in-from-right' : 'slide-in-from-left'} duration-200 ${
+                                        message.isUser
+                                            ? 'bg-gradient-to-br from-primary to-primary/90 text-primary-foreground border border-primary/10'
+                                            : 'bg-gradient-to-br from-card to-muted/50 text-card-foreground border border-muted/30'
+                                    }`}
                                 >
-                                    <div
-                                        className={`max-w-[85%] rounded-lg p-4 shadow-md animate-in ${message.isUser ? 'slide-in-from-right' : 'slide-in-from-left'} duration-200 ${
-                                            message.isUser
-                                                ? 'bg-gradient-to-br from-primary to-primary/90 text-primary-foreground border border-primary/10'
-                                                : 'bg-gradient-to-br from-card to-muted/50 text-card-foreground border border-muted/30'
-                                        }`}
-                                    >
-                                        {message.isUser ? (
-                                            <p className="text-sm leading-relaxed font-medium">{message.content}</p>
-                                        ) : (
-                                            <div className="markdown-content text-sm leading-relaxed">
-                                                <ReactMarkdown
-                                                    components={{
-                                                        code({inline, className, children, ...props}) {
-                                                            const match = /language-(\w+)/.exec(className || '')
-                                                            return !inline && match ? (
-                                                                <SyntaxHighlighter
-                                                                    style={atomDark}
-                                                                    language={match[1]}
-                                                                    PreTag="div"
-                                                                    {...props}
-                                                                >
-                                                                    {String(children).replace(/\n$/, '')}
-                                                                </SyntaxHighlighter>
-                                                            ) : (
-                                                                <code className={className} {...props}>
-                                                                    {children}
-                                                                </code>
-                                                            )
-                                                        }
-                                                    }}
-                                                >
-                                                    {message.content}
-                                                </ReactMarkdown>
-                                            </div>
-                                        )}
-                                        <p className="mt-2 text-right text-xs opacity-70 font-medium">
-                                            {message.timestamp.toLocaleTimeString([], {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                            })}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                            {isLoading && (
-                                <div className="flex justify-start animate-in fade-in duration-200">
-                                    <div className="max-w-[85%] rounded-lg bg-gradient-to-br from-card to-muted/50 p-4 text-card-foreground border border-muted/30 shadow-md">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-3 w-3 animate-pulse rounded-full bg-primary/80"></div>
-                                            <div className="h-3 w-3 animate-pulse rounded-full bg-primary/80" style={{ animationDelay: '0.2s' }}></div>
-                                            <div className="h-3 w-3 animate-pulse rounded-full bg-primary/80" style={{ animationDelay: '0.4s' }}></div>
+                                    {message.isUser ? (
+                                        <p className="text-sm leading-relaxed font-medium">{message.content}</p>
+                                    ) : (
+                                        <div className="markdown-content text-sm leading-relaxed">
+                                            <ReactMarkdown
+                                                components={{
+                                                    code({inline, className, children, ...props}) {
+                                                        const match = /language-(\w+)/.exec(className || '')
+                                                        return !inline && match ? (
+                                                            <SyntaxHighlighter
+                                                                style={atomDark}
+                                                                language={match[1]}
+                                                                PreTag="div"
+                                                                {...props}
+                                                            >
+                                                                {String(children).replace(/\n$/, '')}
+                                                            </SyntaxHighlighter>
+                                                        ) : (
+                                                            <code className={className} {...props}>
+                                                                {children}
+                                                            </code>
+                                                        )
+                                                    }
+                                                }}
+                                            >
+                                                {message.content}
+                                            </ReactMarkdown>
                                         </div>
+                                    )}
+                                    <p className="mt-2 text-right text-xs opacity-70 font-medium">
+                                        {message.timestamp.toLocaleTimeString([], {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                        })}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                        {isLoading && (
+                            <div className="flex justify-start animate-in fade-in duration-200">
+                                <div className="max-w-[85%] rounded-lg bg-gradient-to-br from-card to-muted/50 p-4 text-card-foreground border border-muted/30 shadow-md">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-3 w-3 animate-pulse rounded-full bg-primary/80"></div>
+                                        <div className="h-3 w-3 animate-pulse rounded-full bg-primary/80" style={{ animationDelay: '0.2s' }}></div>
+                                        <div className="h-3 w-3 animate-pulse rounded-full bg-primary/80" style={{ animationDelay: '0.4s' }}></div>
                                     </div>
                                 </div>
-                            )}
-                            <div ref={messagesEndRef} />
-                        </div>
-                    </ScrollArea>
-                    <div className="flex items-center gap-3 border-t border-primary/10 bg-gradient-to-r from-primary/5 to-background p-4 dark:from-primary/10 dark:to-background">
-                        <Input
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            placeholder="Type your message..."
-                            className="flex-1 rounded-full border-primary/20 bg-background px-4 py-2 shadow-md focus-visible:ring-primary/40 focus-visible:border-primary/30"
-                            disabled={isLoading}
-                        />
-                        <Button
-                            onClick={handleSendMessage}
-                            size="icon"
-                            disabled={!inputValue.trim() || isLoading}
-                            className="h-10 w-10 rounded-full bg-primary shadow-md hover:bg-primary/90 hover:shadow-lg transition-all duration-200"
-                        >
-                            <Send className="h-4 w-4" />
-                        </Button>
+                            </div>
+                        )}
+                        <div ref={messagesEndRef} />
                     </div>
-                </CardContent>
-            </Card>
+                </ScrollArea>
+                <div className="flex items-center gap-3 border-t border-primary/10 bg-gradient-to-r from-primary/5 to-background p-4 dark:from-primary/10 dark:to-background">
+                    <Input
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Type your message..."
+                        className="flex-1 rounded-full border-primary/20 bg-background px-4 py-2 shadow-md focus-visible:ring-primary/40 focus-visible:border-primary/30"
+                        disabled={isLoading}
+                    />
+                    <Button
+                        onClick={handleSendMessage}
+                        size="icon"
+                        disabled={!inputValue.trim() || isLoading}
+                        className="h-10 w-10 rounded-full bg-primary shadow-md hover:bg-primary/90 hover:shadow-lg transition-all duration-200"
+                    >
+                        <Send className="h-4 w-4" />
+                    </Button>
+                </div>
+            </div>
         </div>
     )
 }
