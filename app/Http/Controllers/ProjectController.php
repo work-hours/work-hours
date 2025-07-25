@@ -29,7 +29,27 @@ final class ProjectController extends Controller
 
     public function index()
     {
-        return Inertia::render('project/index');
+        $filters = request()->only([
+            'client_id',
+            'team_member_id',
+            'created_date_from',
+            'created_date_to',
+            'search',
+        ]);
+
+        $clients = ClientStore::userClients(auth()->id())
+            ->map(fn ($client): array => [
+                'id' => $client->id,
+                'name' => $client->name,
+            ]);
+
+        $teamMembers = TeamStore::teamMembers(userId: auth()->id());
+
+        return Inertia::render('project/index', [
+            'filters' => $filters,
+            'clients' => $clients,
+            'teamMembers' => $teamMembers,
+        ]);
     }
 
     #[Action(method: 'get', name: 'project.list', middleware: ['auth', 'verified'])]

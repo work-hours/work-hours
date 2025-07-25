@@ -4,27 +4,35 @@ declare(strict_types=1);
 
 namespace App\Http\Stores;
 
+use App\Http\QueryFilters\Project\ClientIdFilter;
+use App\Http\QueryFilters\Project\CreatedDateFromFilter;
+use App\Http\QueryFilters\Project\CreatedDateToFilter;
+use App\Http\QueryFilters\Project\SearchFilter;
+use App\Http\QueryFilters\Project\TeamMemberFilter;
 use App\Models\Project;
 use App\Models\Team;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 
 final class ProjectStore
 {
     public static function userProjects(int $userId): Collection
     {
-        $ownedProjects = Project::query()
+        $ownedProjectsQuery = Project::query()
             ->where('user_id', $userId)
-            ->with(['teamMembers', 'approvers', 'user'])
-            ->get();
+            ->with(['teamMembers', 'approvers', 'user']);
 
-        $assignedProjects = Project::query()
+        $assignedProjectsQuery = Project::query()
             ->whereHas('teamMembers', function ($query) use ($userId): void {
                 $query->where('users.id', $userId);
             })
             ->where('user_id', '!=', $userId)
-            ->with(['teamMembers', 'approvers', 'user'])
-            ->get();
+            ->with(['teamMembers', 'approvers', 'user']);
+
+        $ownedProjects = self::applyFilterPipeline($ownedProjectsQuery)->get();
+        $assignedProjects = self::applyFilterPipeline($assignedProjectsQuery)->get();
 
         return $ownedProjects->concat($assignedProjects);
     }
@@ -77,5 +85,19 @@ final class ProjectStore
             'approvers' => $project->approvers->pluck('name')->implode(', '),
             'created_at' => Carbon::parse($project->created_at)->toDateTimeString(),
         ]);
+    }
+
+    private static function applyFilterPipeline(Builder $query): Builder
+    {
+        return app(Pipeline::class)
+            ->send($query)
+            ->through([
+                ClientIdFilter::class,
+                TeamMemberFilter::class,
+                CreatedDateFromFilter::class,
+                CreatedDateToFilter::class,
+                SearchFilter::class,
+            ])
+            ->thenReturn();
     }
 }
