@@ -219,7 +219,7 @@ export default function AllTeamTimeLogs({
 
                 <Card className="transition-all hover:shadow-md">
                     <CardContent>
-                        <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-6">
+                        <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-7 lg:grid-cols-7">
                             <div className="grid gap-1">
                                 <Label htmlFor="start_date" className="text-xs font-medium">
                                     Start Date
