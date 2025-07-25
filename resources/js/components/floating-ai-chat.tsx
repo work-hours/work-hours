@@ -24,7 +24,6 @@ export default function FloatingAiChat({ projects = [], timeLogs = [] }: Floatin
                         setIsAiChatVisible(false)
                     }}
                     projects={projects}
-                    timeLogs={timeLogs}
                 />
             ) : (
                 <div className="fixed right-4 bottom-24 z-50 animate-in fade-in slide-in-from-right-5 duration-300">

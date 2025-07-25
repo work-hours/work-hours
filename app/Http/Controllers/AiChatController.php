@@ -43,18 +43,9 @@ final class AiChatController extends Controller
 
             if (! empty($context)) {
                 $prompt .= "Here is some context about the user's data:\n";
-
                 if (! empty($context['projects'])) {
-                    $prompt .= 'Projects: ' . implode(', ', array_column($context['projects'], 'name')) . "\n";
+                    $prompt .= 'Project data: ' . json_encode($context['projects']) . "\n";
                 }
-
-                if (! empty($context['timeLogs'])) {
-                    $prompt .= "Recent time logs:\n";
-                    foreach ($context['timeLogs'] as $log) {
-                        $prompt .= "- Project: {$log['project_name']}, Duration: {$log['duration']} hours, Note: {$log['note']}\n";
-                    }
-                }
-
                 $prompt .= "\n";
             }
 

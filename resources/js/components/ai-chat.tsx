@@ -26,7 +26,7 @@ type AiChatProps = {
     }>
 }
 
-export default function AiChat({ onClose, projects = [], timeLogs = [] }: AiChatProps) {
+export default function AiChat({ onClose, projects = [] }: AiChatProps) {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
@@ -62,7 +62,6 @@ export default function AiChat({ onClose, projects = [], timeLogs = [] }: AiChat
             // Prepare context data
             const context = {
                 projects,
-                timeLogs,
             }
 
             // Send message to backend
