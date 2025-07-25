@@ -188,7 +188,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            handleSendMessage()
+            handleSendMessage().then()
         }
     }
 

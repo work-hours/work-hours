@@ -1,12 +1,13 @@
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import AiChat from '@/components/ai-chat'
-import { BrainCircuit, Trash2, Clock, Plus } from 'lucide-react'
+import { BrainCircuit, Clock, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { getChatHistories, deleteChatHistory } from '@actions/AiChatController'
+import { getChatHistories } from '@actions/AiChatController'
+import DeleteChatHistory from '@/components/delete-chat-history'
 
 type ChatHistory = {
     id: number
@@ -60,33 +61,14 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
         }
     }
 
-    // Function to delete a chat history
-    const handleDeleteChat = async (id: number, e: React.MouseEvent) => {
-        e.stopPropagation() // Prevent triggering the click on the parent element
-
-        if (!confirm('Are you sure you want to delete this chat history?')) {
-            return
+    // Function to handle chat deletion
+    const handleChatDeleted = (id: number) => {
+        // If the deleted chat was selected, clear the selection
+        if (selectedChatId === id) {
+            setSelectedChatId(null)
         }
-
-        try {
-            const response = await deleteChatHistory.call({
-                data: { id }
-            })
-
-            if (response && response.ok) {
-                const data = await response.json()
-                if (data.success) {
-                    // If the deleted chat was selected, clear the selection
-                    if (selectedChatId === id) {
-                        setSelectedChatId(null)
-                    }
-                    // Reload chat histories
-                    loadChatHistories()
-                }
-            }
-        } catch (error) {
-            console.error('Error deleting chat history:', error)
-        }
+        // Reload chat histories
+        loadChatHistories()
     }
 
     // Function to start a new chat
@@ -110,7 +92,7 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
                     </Button>
                 </SheetTrigger>
             </div>
-            <SheetContent className="p-0 overflow-hidden sm:max-w-md md:max-w-xl lg:max-w-2xl">
+            <SheetContent className="p-0 overflow-hidden sm:max-w-lg md:max-w-2xl lg:max-w-3xl">
                 <div className="flex h-full">
                     {/* Chat History Sidebar */}
                     <div className="w-64 border-r border-border bg-muted/30">
@@ -145,23 +127,21 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
                                             }`}
                                             onClick={() => setSelectedChatId(chat.id)}
                                         >
-                                            <div className="flex items-start space-x-2 overflow-hidden">
+                                            <div className="flex items-start space-x-2">
                                                 <Clock className="h-4 w-4 mt-0.5 flex-shrink-0 text-muted-foreground" />
                                                 <div className="overflow-hidden">
-                                                    <p className="text-sm font-medium truncate">{chat.title}</p>
+                                                    <p className="text-sm font-medium">{chat.title}</p>
                                                     <p className="text-xs text-muted-foreground">
                                                         {new Date(chat.updated_at).toLocaleDateString()}
                                                     </p>
                                                 </div>
                                             </div>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                onClick={(e) => handleDeleteChat(chat.id, e)}
-                                            >
-                                                <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                                            </Button>
+                                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <DeleteChatHistory
+                                                    chatId={chat.id}
+                                                    onDelete={() => handleChatDeleted(chat.id)}
+                                                />
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
