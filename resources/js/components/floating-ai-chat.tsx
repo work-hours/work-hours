@@ -21,7 +21,7 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
                     <Button
                         variant="outline"
                         size="icon"
-                        className="h-16 w-16 rounded-xl bg-gradient-to-br from-background to-primary/10 border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300"
+                        className="h-16 w-16 rounded-xl bg-background border-2 border-primary/30 shadow-xl shadow-primary/20 hover:shadow-2xl hover:scale-105 hover:border-primary/50 transition-all duration-300"
                     >
                         <div className="relative flex flex-col items-center justify-center gap-1">
                             <BrainCircuit className="h-7 w-7 text-primary animate-float" />
