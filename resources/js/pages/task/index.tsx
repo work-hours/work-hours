@@ -311,7 +311,7 @@ export default function Tasks() {
                 {/* Filters card */}
                 <Card className="transition-all hover:shadow-md">
                     <CardContent>
-                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-7">
                             {/* Search */}
                             <div className="grid gap-1">
                                 <Label htmlFor="search" className="text-xs font-medium">

@@ -213,7 +213,7 @@ export default function Projects() {
                 {/* Filters card */}
                 <Card className="transition-all hover:shadow-md">
                     <CardContent>
-                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-5">
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
                             {/* Search */}
                             <div className="grid gap-1">
                                 <Label htmlFor="search" className="text-xs font-medium">
@@ -411,7 +411,16 @@ export default function Projects() {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a href={route('project.export')} className="inline-block">
+                                <a
+                                    href={`${route('project.export')}?${objectToQueryString({
+                                        client_id: filters.client_id || '',
+                                        team_member_id: filters.team_member_id || '',
+                                        created_date_from: formatDateValue(filters.created_date_from),
+                                        created_date_to: formatDateValue(filters.created_date_to),
+                                        search: filters.search || '',
+                                    })}`}
+                                    className="inline-block"
+                                >
                                     <Button variant="outline" className="flex items-center gap-2">
                                         <Download className="h-4 w-4" />
                                         <span>Export</span>
