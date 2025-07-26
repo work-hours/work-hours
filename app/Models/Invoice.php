@@ -24,6 +24,9 @@ use Illuminate\Support\Carbon;
  * @property float $paid_amount
  * @property string $status
  * @property string|null $notes
+ * @property string|null $discount_type
+ * @property float $discount_value
+ * @property float $discount_amount
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property User $user
@@ -42,6 +45,9 @@ final class Invoice extends Model
         'paid_amount',
         'status',
         'notes',
+        'discount_type',
+        'discount_value',
+        'discount_amount',
     ];
 
     public function user(): BelongsTo
@@ -66,6 +72,8 @@ final class Invoice extends Model
             'due_date' => 'date',
             'total_amount' => 'decimal:2',
             'paid_amount' => 'decimal:2',
+            'discount_value' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
             'status' => InvoiceStatus::class,
         ];
     }

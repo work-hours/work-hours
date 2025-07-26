@@ -69,6 +69,9 @@ type Invoice = {
     total_amount: number
     paid_amount: number
     status: string
+    discount_type: string | null
+    discount_value: number
+    discount_amount: number
     created_at: string
 }
 

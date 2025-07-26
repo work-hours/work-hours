@@ -41,6 +41,8 @@ final class UpdateInvoiceRequest extends FormRequest
             'status' => ['sometimes', new Enum(InvoiceStatus::class)],
             'paid_amount' => ['sometimes', 'numeric', 'min:0'],
             'notes' => ['nullable', 'string'],
+            'discount_type' => ['sometimes', 'nullable', 'in:percentage,fixed'],
+            'discount_value' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'items' => ['sometimes', 'array'],
             'items.*.id' => ['sometimes', 'exists:invoice_items,id'],
             'items.*.time_log_id' => ['nullable', 'exists:time_logs,id'],

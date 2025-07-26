@@ -28,6 +28,8 @@ type InvoiceForm = {
     due_date: Date | null
     status: string
     notes: string
+    discount_type: string | null
+    discount_value: string
     items: InvoiceItemForm[]
 }
 
@@ -87,6 +89,8 @@ export default function CreateInvoice() {
         due_date: new Date(new Date().setDate(new Date().getDate() + 30)), // Default due date: 30 days from now
         status: 'draft',
         notes: '',
+        discount_type: null,
+        discount_value: '0',
         items: [
             {
                 time_log_id: null,
@@ -138,11 +142,41 @@ export default function CreateInvoice() {
         fetchTimeLogs().then()
     }, [data.client_id])
 
-    // Calculate total amount
-    const calculateTotal = (): number => {
+    // Calculate subtotal (sum of all item amounts)
+    const calculateSubtotal = (): number => {
         return data.items.reduce((total, item) => {
             return total + parseFloat(item.amount || '0')
         }, 0)
+    }
+
+    // Calculate discount amount based on type and value
+    const calculateDiscount = (): number => {
+        const subtotal = calculateSubtotal()
+
+        if (!data.discount_type || parseFloat(data.discount_value) <= 0) {
+            return 0
+        }
+
+        if (data.discount_type === 'percentage') {
+            // Calculate percentage discount
+            return (subtotal * parseFloat(data.discount_value)) / 100
+        } else if (data.discount_type === 'fixed') {
+            // Apply fixed discount
+            const discountAmount = parseFloat(data.discount_value)
+
+            // Ensure discount doesn't exceed subtotal
+            return discountAmount > subtotal ? subtotal : discountAmount
+        }
+
+        return 0
+    }
+
+    // Calculate total amount after discount
+    const calculateTotal = (): number => {
+        const subtotal = calculateSubtotal()
+        const discount = calculateDiscount()
+
+        return subtotal - discount
     }
 
     // Add new item
@@ -610,10 +644,62 @@ export default function CreateInvoice() {
                                     </TableBody>
                                 </Table>
 
+                                {/* Discount */}
+                                <div className="mt-4 flex justify-end">
+                                    <div className="w-1/3 grid grid-cols-2 gap-4">
+                                        <div>
+                                            <Label htmlFor="discount_type" className="text-sm font-medium">
+                                                Discount Type
+                                            </Label>
+                                            <Select
+                                                value={data.discount_type || 'none'}
+                                                onValueChange={(value) => setData('discount_type', value === 'none' ? null : value)}
+                                                disabled={processing}
+                                            >
+                                                <SelectTrigger id="discount_type" className="w-full">
+                                                    <SelectValue placeholder="No Discount" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="none">No Discount</SelectItem>
+                                                    <SelectItem value="percentage">Percentage (%)</SelectItem>
+                                                    <SelectItem value="fixed">Fixed Amount</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <InputError message={errors.discount_type} className="mt-1" />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="discount_value" className="text-sm font-medium">
+                                                {data.discount_type === 'percentage' ? 'Discount (%)' : 'Discount Amount'}
+                                            </Label>
+                                            <Input
+                                                id="discount_value"
+                                                type="number"
+                                                min="0"
+                                                step={data.discount_type === 'percentage' ? '1' : '0.01'}
+                                                value={data.discount_value}
+                                                onChange={(e) => setData('discount_value', e.target.value)}
+                                                disabled={processing || !data.discount_type}
+                                                placeholder={data.discount_type === 'percentage' ? 'Enter percentage' : 'Enter amount'}
+                                            />
+                                            <InputError message={errors.discount_value} className="mt-1" />
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* Total */}
                                 <div className="mt-4 flex justify-end">
                                     <div className="w-1/3 rounded-md border p-4">
-                                        <div className="flex items-center justify-between font-medium">
+                                        <div className="flex items-center justify-between text-sm">
+                                            <span>Subtotal:</span>
+                                            <span>{formatCurrency(calculateSubtotal())}</span>
+                                        </div>
+                                        {data.discount_type && parseFloat(data.discount_value) > 0 && (
+                                            <div className="mt-2 flex items-center justify-between text-sm text-red-600 dark:text-red-400">
+                                                <span>Discount {data.discount_type === 'percentage' ? `(${data.discount_value}%)` : ''}:</span>
+                                                <span>-{formatCurrency(calculateDiscount())}</span>
+                                            </div>
+                                        )}
+                                        <div className="mt-2 flex items-center justify-between font-medium">
                                             <span>Total:</span>
                                             <span>{formatCurrency(calculateTotal())}</span>
                                         </div>

@@ -105,6 +105,9 @@ final class InvoiceStore
             'client' => $invoice->client->name,
             'issue_date' => Carbon::parse($invoice->issue_date)->toDateString(),
             'due_date' => Carbon::parse($invoice->due_date)->toDateString(),
+            'discount_type' => $invoice->discount_type,
+            'discount_value' => $invoice->discount_value,
+            'discount_amount' => $invoice->discount_amount,
             'total_amount' => $invoice->total_amount,
             'paid_amount' => $invoice->paid_amount,
             'status' => $invoice->status,
@@ -161,12 +164,38 @@ final class InvoiceStore
     }
 
     /**
-     * Update invoice total amount
+     * Update invoice total amount with discount
      */
     private static function updateInvoiceTotal(Invoice $invoice): void
     {
-        $total = $invoice->items()->sum('amount');
-        $invoice->update(['total_amount' => $total]);
+        // Calculate subtotal (sum of all item amounts)
+        $subtotal = $invoice->items()->sum('amount');
+
+        // Calculate discount amount based on discount type and value
+        $discountAmount = 0;
+        if ($invoice->discount_type && $invoice->discount_value > 0) {
+            if ($invoice->discount_type === 'percentage') {
+                // Calculate percentage discount
+                $discountAmount = ($subtotal * $invoice->discount_value) / 100;
+            } elseif ($invoice->discount_type === 'fixed') {
+                // Apply fixed discount
+                $discountAmount = $invoice->discount_value;
+
+                // Ensure discount doesn't exceed subtotal
+                if ($discountAmount > $subtotal) {
+                    $discountAmount = $subtotal;
+                }
+            }
+        }
+
+        // Calculate final total after discount
+        $total = $subtotal - $discountAmount;
+
+        // Update invoice with new total and discount amount
+        $invoice->update([
+            'total_amount' => $total,
+            'discount_amount' => $discountAmount
+        ]);
     }
 
     /**
