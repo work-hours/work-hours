@@ -1,4 +1,5 @@
 import AppLogoIcon from '@/components/app-logo-icon'
+import CookieConsent from '@/components/cookie-consent'
 import { Link } from '@inertiajs/react'
 import { type PropsWithChildren } from 'react'
 
@@ -86,6 +87,9 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                     <p className="text-sm text-gray-700 dark:text-gray-300">&copy; {new Date().getFullYear()} Work Hours. All rights reserved.</p>
                 </div>
             </div>
+
+            {/* Cookie Consent Banner */}
+            <CookieConsent />
         </div>
     )
 }
