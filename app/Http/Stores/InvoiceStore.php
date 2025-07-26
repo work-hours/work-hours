@@ -53,12 +53,16 @@ final class InvoiceStore
             $data['total_amount'] = 0;
             $data['paid_amount'] = 0;
 
+            // Extract items before creating invoice
+            $items = $data['items'] ?? [];
+            unset($data['items']);
+
             // Create invoice
             $invoice = Invoice::query()->create($data);
 
             // Create invoice items if provided
-            if (isset($data['items']) && is_array($data['items'])) {
-                self::createInvoiceItems($invoice, $data['items']);
+            if (!empty($items) && is_array($items)) {
+                self::createInvoiceItems($invoice, $items);
             }
 
             // Update invoice total
@@ -74,12 +78,16 @@ final class InvoiceStore
     public static function updateInvoice(Invoice $invoice, array $data): Invoice
     {
         return DB::transaction(function () use ($invoice, $data) {
+            // Extract items before updating invoice
+            $items = $data['items'] ?? [];
+            unset($data['items']);
+
             // Update invoice
             $invoice->update($data);
 
             // Update invoice items if provided
-            if (isset($data['items']) && is_array($data['items'])) {
-                self::updateInvoiceItems($invoice, $data['items']);
+            if (!empty($items) && is_array($items)) {
+                self::updateInvoiceItems($invoice, $items);
             }
 
             // Update invoice total

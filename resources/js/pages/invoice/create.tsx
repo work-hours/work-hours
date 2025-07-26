@@ -245,7 +245,7 @@ export default function CreateInvoice() {
 
             if (projectGroup) {
                 // Update all fields at once for project selection
-                const amount = (projectGroup.total_hours * projectGroup.hourly_rate).toFixed(2)
+                const amount = ((projectGroup.total_hours || 0) * (projectGroup.hourly_rate || 0)).toFixed(2)
 
                 updatedItems[index] = {
                     ...updatedItems[index],
@@ -269,7 +269,7 @@ export default function CreateInvoice() {
             const timeLog = projectGroup.time_logs.find((log) => log.id.toString() === timeLogId)
             if (timeLog) {
                 // Update all fields at once for individual time log selection
-                const amount = (timeLog.duration * projectGroup.hourly_rate).toFixed(2)
+                const amount = ((timeLog.duration || 0) * (projectGroup.hourly_rate || 0)).toFixed(2)
 
                 updatedItems[index] = {
                     ...updatedItems[index],
@@ -547,8 +547,8 @@ export default function CreateInvoice() {
                                                                     value={`project-${projectGroup.project_id}`}
                                                                     className="font-medium"
                                                                 >
-                                                                    {projectGroup.project_name} - {projectGroup.total_hours.toFixed(2)} hours ($
-                                                                    {projectGroup.hourly_rate}/hr)
+                                                                    {projectGroup.project_name} - {(projectGroup.total_hours || 0).toFixed(2)} hours ($
+                                                                    {projectGroup.hourly_rate || 0}/hr)
                                                                 </SelectItem>
                                                             ))}
 
@@ -561,16 +561,16 @@ export default function CreateInvoice() {
 
                                                             {timeLogs.map((projectGroup) => (
                                                                 <div key={`logs-${projectGroup.project_id}`}>
-                                                                    {projectGroup.time_logs.length > 0 && (
+                                                                    {projectGroup.time_logs && projectGroup.time_logs.length > 0 && (
                                                                         <div className="px-2 py-1 text-xs font-medium">
                                                                             {projectGroup.project_name}
                                                                         </div>
                                                                     )}
 
-                                                                    {projectGroup.time_logs.map((timeLog) => (
+                                                                    {projectGroup.time_logs && projectGroup.time_logs.map((timeLog) => (
                                                                         <SelectItem key={timeLog.id} value={timeLog.id.toString()} className="pl-4">
                                                                             {new Date(timeLog.start_timestamp).toLocaleDateString()} -{' '}
-                                                                            {timeLog.duration.toFixed(2)} hours
+                                                                            {(timeLog.duration || 0).toFixed(2)} hours
                                                                         </SelectItem>
                                                                     ))}
                                                                 </div>
