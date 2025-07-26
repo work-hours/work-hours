@@ -5,6 +5,7 @@ import Hero from '@/components/landing/Hero'
 import HowItWorks from '@/components/landing/HowItWorks'
 import Navbar from '@/components/landing/Navbar'
 import AiSection from '@/components/landing/AiSection'
+import CookieConsent from '@/components/cookie-consent'
 import { Head } from '@inertiajs/react'
 
 export default function Welcome() {
@@ -93,6 +94,9 @@ export default function Welcome() {
             <div className="relative z-10 mx-auto w-9/12">
                 <Footer />
             </div>
+
+            {/* Cookie Consent Banner */}
+            <CookieConsent />
         </div>
     )
 }
