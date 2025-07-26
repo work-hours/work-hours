@@ -60,6 +60,15 @@ type TimeLog = {
     hourly_rate: number
 }
 
+type ProjectTimeLogGroup = {
+    project_id: number
+    project_name: string
+    total_hours: number
+    hourly_rate: number
+    currency: string
+    time_logs: TimeLog[]
+}
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -74,7 +83,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function CreateInvoice() {
     const [clients, setClients] = useState<Client[]>([])
-    const [timeLogs, setTimeLogs] = useState<TimeLog[]>([])
+    const [timeLogs, setTimeLogs] = useState<ProjectTimeLogGroup[]>([])
     const [loadingClients, setLoadingClients] = useState(true)
 
     const { data, setData, post, processing, errors, reset } = useForm<InvoiceForm>({
@@ -100,7 +109,7 @@ export default function CreateInvoice() {
         const fetchClients = async () => {
             try {
                 setLoadingClients(true)
-                const clientsData = await _clients.data()
+                const clientsData = await _clients.data({})
                 setClients(clientsData)
             } catch (error) {
                 console.error('Error fetching clients:', error)
@@ -180,8 +189,8 @@ export default function CreateInvoice() {
     }
 
     // Handle time log selection
-    const handleTimeLogSelection = (index: number, timeLogId: string): void => {
-        if (timeLogId === 'none') {
+    const handleTimeLogSelection = (index: number, value: string): void => {
+        if (value === 'none') {
             // Use null as string | null type to avoid type error
             updateItem(index, 'time_log_id', null as unknown as string)
             updateItem(index, 'description', '')
@@ -191,13 +200,35 @@ export default function CreateInvoice() {
             return
         }
 
-        const timeLog = timeLogs.find((log) => log.id.toString() === timeLogId)
-        if (timeLog) {
-            updateItem(index, 'time_log_id', timeLogId)
-            updateItem(index, 'description', `Time logged for ${timeLog.project.name}`)
-            updateItem(index, 'quantity', timeLog.duration.toString())
-            updateItem(index, 'unit_price', timeLog.hourly_rate.toString())
-            updateItem(index, 'amount', (timeLog.duration * timeLog.hourly_rate).toFixed(2))
+        // Check if it's a project selection (format: "project-{projectId}")
+        if (value.startsWith('project-')) {
+            const projectId = parseInt(value.replace('project-', ''))
+            const projectGroup = timeLogs.find(group => group.project_id === projectId)
+
+            if (projectGroup) {
+                updateItem(index, 'time_log_id', null as unknown as string)
+                updateItem(index, 'description', `Time logged for ${projectGroup.project_name}`)
+                updateItem(index, 'quantity', projectGroup.total_hours.toString())
+                updateItem(index, 'unit_price', projectGroup.hourly_rate.toString())
+                updateItem(index, 'amount', (projectGroup.total_hours * projectGroup.hourly_rate).toFixed(2))
+            }
+            return
+        }
+
+        // It's an individual time log selection
+        const timeLogId = value
+
+        // Find the project group that contains this time log
+        for (const projectGroup of timeLogs) {
+            const timeLog = projectGroup.time_logs.find(log => log.id.toString() === timeLogId)
+            if (timeLog) {
+                updateItem(index, 'time_log_id', timeLogId)
+                updateItem(index, 'description', `Time logged for ${projectGroup.project_name}`)
+                updateItem(index, 'quantity', timeLog.duration.toString())
+                updateItem(index, 'unit_price', projectGroup.hourly_rate.toString())
+                updateItem(index, 'amount', (timeLog.duration * projectGroup.hourly_rate).toFixed(2))
+                break
+            }
         }
     }
 
@@ -452,10 +483,49 @@ export default function CreateInvoice() {
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             <SelectItem value="none">None</SelectItem>
-                                                            {timeLogs.map((log) => (
-                                                                <SelectItem key={log.id} value={log.id.toString()}>
-                                                                    {log.project.name} - {new Date(log.start_timestamp).toLocaleDateString()}
+
+                                                            {/* Project Groups */}
+                                                            {timeLogs.length > 0 && (
+                                                                <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                                                                    Project Totals
+                                                                </div>
+                                                            )}
+
+                                                            {timeLogs.map((projectGroup) => (
+                                                                <SelectItem
+                                                                    key={`project-${projectGroup.project_id}`}
+                                                                    value={`project-${projectGroup.project_id}`}
+                                                                    className="font-medium"
+                                                                >
+                                                                    {projectGroup.project_name} - {projectGroup.total_hours.toFixed(2)} hours (${projectGroup.hourly_rate}/hr)
                                                                 </SelectItem>
+                                                            ))}
+
+                                                            {/* Individual Time Logs */}
+                                                            {timeLogs.length > 0 && (
+                                                                <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground mt-2">
+                                                                    Individual Time Logs
+                                                                </div>
+                                                            )}
+
+                                                            {timeLogs.map((projectGroup) => (
+                                                                <div key={`logs-${projectGroup.project_id}`}>
+                                                                    {projectGroup.time_logs.length > 0 && (
+                                                                        <div className="px-2 py-1 text-xs font-medium">
+                                                                            {projectGroup.project_name}
+                                                                        </div>
+                                                                    )}
+
+                                                                    {projectGroup.time_logs.map((timeLog) => (
+                                                                        <SelectItem
+                                                                            key={timeLog.id}
+                                                                            value={timeLog.id.toString()}
+                                                                            className="pl-4"
+                                                                        >
+                                                                            {new Date(timeLog.start_timestamp).toLocaleDateString()} - {timeLog.duration.toFixed(2)} hours
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </div>
                                                             ))}
                                                         </SelectContent>
                                                     </Select>

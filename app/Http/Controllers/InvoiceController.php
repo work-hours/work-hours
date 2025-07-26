@@ -49,7 +49,7 @@ final class InvoiceController extends Controller
     public function create(): Response
     {
         $clients = ClientStore::userClients(Auth::id());
-        $timeLogs = TimeLogStore::unpaidTimeLogs(Auth::id());
+        $timeLogs = TimeLogStore::unpaidTimeLog(Auth::id());
 
         return Inertia::render('invoice/create', [
             'clients' => $clients,
@@ -170,5 +170,20 @@ final class InvoiceController extends Controller
         }, $filename, [
             'Content-Type' => 'text/csv',
         ]);
+    }
+
+    /**
+     * Get unpaid time logs grouped by project for a specific client
+     */
+    #[Action(method: 'get', name: 'getUnpaidTimeLogs', middleware: ['auth', 'verified'])]
+    public function getUnpaidTimeLogs(): array
+    {
+        $clientId = request('client_id');
+
+        if (!$clientId) {
+            return [];
+        }
+
+        return TimeLogStore::unpaidTimeLogsGroupedByProject((int) $clientId);
     }
 }

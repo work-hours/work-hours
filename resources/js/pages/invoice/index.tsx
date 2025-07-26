@@ -251,8 +251,7 @@ export default function Invoices() {
                 {/* Filters card */}
                 <Card className="transition-all hover:shadow-md">
                     <CardContent className="pt-6">
-                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-                            {/* Search */}
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
                             <div className="grid gap-1">
                                 <Label htmlFor="search" className="text-xs font-medium">
                                     Search
@@ -268,8 +267,6 @@ export default function Invoices() {
                                     />
                                 </div>
                             </div>
-
-                            {/* Client Filter */}
                             <div className="grid gap-1">
                                 <Label htmlFor="client_id" className="text-xs font-medium">
                                     Client
@@ -287,8 +284,6 @@ export default function Invoices() {
                                     </SelectContent>
                                 </Select>
                             </div>
-
-                            {/* Status Filter */}
                             <div className="grid gap-1">
                                 <Label htmlFor="status" className="text-xs font-medium">
                                     Status
@@ -311,8 +306,6 @@ export default function Invoices() {
                                     </SelectContent>
                                 </Select>
                             </div>
-
-                            {/* Created Date From */}
                             <div className="grid gap-1">
                                 <Label htmlFor="created-date-from" className="text-xs font-medium">
                                     Date From
@@ -333,8 +326,6 @@ export default function Invoices() {
                                     }
                                 />
                             </div>
-
-                            {/* Created Date To */}
                             <div className="grid gap-1">
                                 <Label htmlFor="created-date-to" className="text-xs font-medium">
                                     Date To
@@ -355,23 +346,27 @@ export default function Invoices() {
                                     }
                                 />
                             </div>
+                            <div className="grid gap-1">
+                                <Label className="text-xs font-medium opacity-0">
+                                    Actions
+                                </Label>
+                                <div className="flex items-end gap-2">
+                                    <Button type="submit" className="flex h-9 items-center gap-1 px-3">
+                                        <Search className="h-3.5 w-3.5" />
+                                        <span>Filter</span>
+                                    </Button>
 
-                            <div className="flex items-end gap-2 lg:col-span-5">
-                                <Button type="submit" className="flex h-9 items-center gap-1 px-3">
-                                    <Search className="h-3.5 w-3.5" />
-                                    <span>Filter</span>
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    disabled={!filters.search && !filters.client_id && !filters.status && !filters.created_date_from && !filters.created_date_to}
-                                    onClick={clearFilters}
-                                    className="flex h-9 items-center gap-1 px-3"
-                                >
-                                    <X className="h-3.5 w-3.5" />
-                                    <span>Clear</span>
-                                </Button>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        disabled={!filters.search && !filters.client_id && !filters.status && !filters.created_date_from && !filters.created_date_to}
+                                        onClick={clearFilters}
+                                        className="flex h-9 items-center gap-1 px-3"
+                                    >
+                                        <X className="h-3.5 w-3.5" />
+                                        <span>Clear</span>
+                                    </Button>
+                                </div>
                             </div>
                         </form>
 

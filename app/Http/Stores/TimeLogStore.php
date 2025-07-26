@@ -11,6 +11,7 @@ use App\Http\QueryFilters\TimeLog\ProjectIdFilter;
 use App\Http\QueryFilters\TimeLog\StartDateFilter;
 use App\Http\QueryFilters\TimeLog\StatusFilter;
 use App\Http\QueryFilters\TimeLog\UserIdFilter;
+use App\Models\Client;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
@@ -103,6 +104,70 @@ final class TimeLogStore
             ->where('is_paid', false)
             ->where('status', TimeLogStatus::APPROVED)
             ->get();
+    }
+
+    public static function unpaidTimeLogs(int $teamMemberId): Collection
+    {
+        // Alias for unpaidTimeLog to fix the error in InvoiceController
+        return self::unpaidTimeLog($teamMemberId);
+    }
+
+    public static function unpaidTimeLogsByClient(int $clientId): Collection
+    {
+        // Get the client
+        $client = Client::query()->findOrFail($clientId);
+
+        // Get all projects for the client
+        $projects = ClientStore::clientProjects($client);
+
+        // Get all time logs for these projects
+        $timeLogs = new Collection();
+        foreach ($projects as $project) {
+            $projectTimeLogs = TimeLog::query()
+                ->with('project')
+                ->where('project_id', $project->id)
+                ->where('is_paid', false)
+                ->where('status', TimeLogStatus::APPROVED)
+                ->get();
+
+            $timeLogs = $timeLogs->concat($projectTimeLogs);
+        }
+
+        return $timeLogs;
+    }
+
+    public static function unpaidTimeLogsGroupedByProject(int $clientId): array
+    {
+        // Get unpaid time logs for the client
+        $timeLogs = self::unpaidTimeLogsByClient($clientId);
+
+        // Group time logs by project
+        $groupedTimeLogs = [];
+
+        foreach ($timeLogs as $timeLog) {
+            $projectId = $timeLog->project_id;
+            $projectName = $timeLog->project->name;
+
+            if (!isset($groupedTimeLogs[$projectId])) {
+                $groupedTimeLogs[$projectId] = [
+                    'project_id' => $projectId,
+                    'project_name' => $projectName,
+                    'total_hours' => 0,
+                    'hourly_rate' => auth()->user()->hourly_rate ?? 0,
+                    'currency' => auth()->user()->currency ?? 'USD',
+                    'time_logs' => [],
+                ];
+            }
+
+            // Add time log to the project group
+            $groupedTimeLogs[$projectId]['time_logs'][] = $timeLog;
+
+            // Add duration to total hours
+            $groupedTimeLogs[$projectId]['total_hours'] += $timeLog->duration;
+        }
+
+        // Convert to indexed array
+        return array_values($groupedTimeLogs);
     }
 
     public static function paidAmount(array $teamMembersIds): array
