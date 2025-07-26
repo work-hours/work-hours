@@ -1,14 +1,5 @@
 import { Head, useForm } from '@inertiajs/react'
-import {
-    ArrowLeft,
-    Calendar,
-    FileText,
-    LoaderCircle,
-    Plus,
-    Save,
-    Trash2,
-    User,
-} from 'lucide-react'
+import { ArrowLeft, Calendar, FileText, LoaderCircle, Plus, Save, Trash2, User } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -62,6 +53,15 @@ type TimeLog = {
     hourly_rate: number
 }
 
+type ProjectTimeLogGroup = {
+    project_id: number
+    project_name: string
+    total_hours: number
+    hourly_rate: number
+    currency: string
+    time_logs: TimeLog[]
+}
+
 type Invoice = {
     id: number
     client_id: number
@@ -88,7 +88,7 @@ type Props = {
 
 export default function EditInvoice({ invoice }: Props) {
     const [clients, setClients] = useState<Client[]>([])
-    const [timeLogs, setTimeLogs] = useState<TimeLog[]>([])
+    const [timeLogs, setTimeLogs] = useState<ProjectTimeLogGroup[]>([])
     const [loadingClients, setLoadingClients] = useState(true)
 
     // Create breadcrumbs with invoice number
@@ -110,13 +110,13 @@ export default function EditInvoice({ invoice }: Props) {
 
     // Format invoice items for the form
     const formatInvoiceItems = (items: Invoice['items']): InvoiceItemForm[] => {
-        return items.map(item => ({
+        return items.map((item) => ({
             id: item.id,
             time_log_id: item.time_log_id ? item.time_log_id.toString() : null,
             description: item.description,
             quantity: item.quantity.toString(),
             unit_price: item.unit_price.toString(),
-            amount: item.amount.toString()
+            amount: item.amount.toString(),
         }))
     }
 
@@ -157,7 +157,7 @@ export default function EditInvoice({ invoice }: Props) {
             try {
                 const timeLogsData = await _invoices.data({
                     action: 'getUnpaidTimeLogs',
-                    params: { client_id: data.client_id }
+                    params: { client_id: data.client_id },
                 })
                 setTimeLogs(timeLogsData)
             } catch (error) {
@@ -216,24 +216,69 @@ export default function EditInvoice({ invoice }: Props) {
     }
 
     // Handle time log selection
-    const handleTimeLogSelection = (index: number, timeLogId: string): void => {
-        if (timeLogId === 'none') {
-            // Use null as string | null type to avoid type error
-            updateItem(index, 'time_log_id', null as unknown as string)
-            updateItem(index, 'description', '')
-            updateItem(index, 'quantity', '1')
-            updateItem(index, 'unit_price', '0')
-            updateItem(index, 'amount', '0')
+    const handleTimeLogSelection = (index: number, value: string): void => {
+        const updatedItems = [...data.items]
+
+        if (value === 'none') {
+            // Update all fields at once for 'none' selection
+            updatedItems[index] = {
+                ...updatedItems[index],
+                time_log_id: null as unknown as string,
+                description: '',
+                quantity: '1',
+                unit_price: '0',
+                amount: '0',
+            }
+
+            setData('items', updatedItems)
             return
         }
 
-        const timeLog = timeLogs.find((log) => log.id.toString() === timeLogId)
-        if (timeLog) {
-            updateItem(index, 'time_log_id', timeLogId)
-            updateItem(index, 'description', `Time logged for ${timeLog.project.name}`)
-            updateItem(index, 'quantity', timeLog.duration.toString())
-            updateItem(index, 'unit_price', timeLog.hourly_rate.toString())
-            updateItem(index, 'amount', (timeLog.duration * timeLog.hourly_rate).toFixed(2))
+        // Check if it's a project selection (format: "project-{projectId}")
+        if (value.startsWith('project-')) {
+            const projectId = parseInt(value.replace('project-', ''))
+            const projectGroup = timeLogs.find((group) => group.project_id === projectId)
+
+            if (projectGroup) {
+                // Update all fields at once for project selection
+                const amount = (projectGroup.total_hours * projectGroup.hourly_rate).toFixed(2)
+
+                updatedItems[index] = {
+                    ...updatedItems[index],
+                    time_log_id: null as unknown as string,
+                    description: `Time logged for ${projectGroup.project_name}`,
+                    quantity: projectGroup.total_hours.toString(),
+                    unit_price: projectGroup.hourly_rate.toString(),
+                    amount: amount,
+                }
+
+                setData('items', updatedItems)
+            }
+            return
+        }
+
+        // It's an individual time log selection
+        const timeLogId = value
+
+        // Find the project group that contains this time log
+        for (const projectGroup of timeLogs) {
+            const timeLog = projectGroup.time_logs.find((log) => log.id.toString() === timeLogId)
+            if (timeLog) {
+                // Update all fields at once for individual time log selection
+                const amount = (timeLog.duration * projectGroup.hourly_rate).toFixed(2)
+
+                updatedItems[index] = {
+                    ...updatedItems[index],
+                    time_log_id: timeLogId,
+                    description: `Time logged for ${projectGroup.project_name}`,
+                    quantity: timeLog.duration.toString(),
+                    unit_price: projectGroup.hourly_rate.toString(),
+                    amount: amount,
+                }
+
+                setData('items', updatedItems)
+                break
+            }
         }
     }
 
@@ -408,11 +453,7 @@ export default function EditInvoice({ invoice }: Props) {
                                         Status
                                     </Label>
                                     <div className="relative">
-                                        <Select
-                                            value={data.status}
-                                            onValueChange={(value) => setData('status', value)}
-                                            disabled={processing}
-                                        >
+                                        <Select value={data.status} onValueChange={(value) => setData('status', value)} disabled={processing}>
                                             <SelectTrigger id="status" className="w-full">
                                                 <SelectValue placeholder="Select status" />
                                             </SelectTrigger>
@@ -507,10 +548,47 @@ export default function EditInvoice({ invoice }: Props) {
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             <SelectItem value="none">None</SelectItem>
-                                                            {timeLogs.map((log) => (
-                                                                <SelectItem key={log.id} value={log.id.toString()}>
-                                                                    {log.project.name} - {new Date(log.start_timestamp).toLocaleDateString()}
+
+                                                            {/* Project Groups */}
+                                                            {timeLogs.length > 0 && (
+                                                                <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                                                                    Project Totals
+                                                                </div>
+                                                            )}
+
+                                                            {timeLogs.map((projectGroup) => (
+                                                                <SelectItem
+                                                                    key={`project-${projectGroup.project_id}`}
+                                                                    value={`project-${projectGroup.project_id}`}
+                                                                    className="font-medium"
+                                                                >
+                                                                    {projectGroup.project_name} - {projectGroup.total_hours.toFixed(2)} hours ($
+                                                                    {projectGroup.hourly_rate}/hr)
                                                                 </SelectItem>
+                                                            ))}
+
+                                                            {/* Individual Time Logs */}
+                                                            {timeLogs.length > 0 && (
+                                                                <div className="mt-2 px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                                                                    Individual Time Logs
+                                                                </div>
+                                                            )}
+
+                                                            {timeLogs.map((projectGroup) => (
+                                                                <div key={`logs-${projectGroup.project_id}`}>
+                                                                    {projectGroup.time_logs.length > 0 && (
+                                                                        <div className="px-2 py-1 text-xs font-medium">
+                                                                            {projectGroup.project_name}
+                                                                        </div>
+                                                                    )}
+
+                                                                    {projectGroup.time_logs.map((timeLog) => (
+                                                                        <SelectItem key={timeLog.id} value={timeLog.id.toString()} className="pl-4">
+                                                                            {new Date(timeLog.start_timestamp).toLocaleDateString()} -{' '}
+                                                                            {timeLog.duration.toFixed(2)} hours
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </div>
                                                             ))}
                                                         </SelectContent>
                                                     </Select>

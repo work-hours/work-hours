@@ -175,10 +175,7 @@ export default function ClientInvoices({ client, invoices }: Props) {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a
-                                    href={`${route('invoice.export')}?client_id=${client.id}`}
-                                    className="inline-block"
-                                >
+                                <a href={`${route('invoice.export')}?client_id=${client.id}`} className="inline-block">
                                     <Button variant="outline" className="flex items-center gap-2">
                                         <Download className="h-4 w-4" />
                                         <span>Export</span>

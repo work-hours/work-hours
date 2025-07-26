@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;

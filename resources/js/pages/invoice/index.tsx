@@ -271,10 +271,7 @@ export default function Invoices() {
                                 <Label htmlFor="client_id" className="text-xs font-medium">
                                     Client
                                 </Label>
-                                <Select
-                                    value={filters.client_id}
-                                    onValueChange={(value) => handleFilterChange('client_id', value)}
-                                >
+                                <Select value={filters.client_id} onValueChange={(value) => handleFilterChange('client_id', value)}>
                                     <SelectTrigger id="client_id">
                                         <SelectValue placeholder="All Clients" />
                                     </SelectTrigger>
@@ -288,10 +285,7 @@ export default function Invoices() {
                                 <Label htmlFor="status" className="text-xs font-medium">
                                     Status
                                 </Label>
-                                <Select
-                                    value={filters.status}
-                                    onValueChange={(value) => handleFilterChange('status', value)}
-                                >
+                                <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
                                     <SelectTrigger id="status">
                                         <SelectValue placeholder="All Statuses" />
                                     </SelectTrigger>
@@ -347,9 +341,7 @@ export default function Invoices() {
                                 />
                             </div>
                             <div className="grid gap-1">
-                                <Label className="text-xs font-medium opacity-0">
-                                    Actions
-                                </Label>
+                                <Label className="text-xs font-medium opacity-0">Actions</Label>
                                 <div className="flex items-end gap-2">
                                     <Button type="submit" className="flex h-9 items-center gap-1 px-3">
                                         <Search className="h-3.5 w-3.5" />
@@ -359,7 +351,13 @@ export default function Invoices() {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        disabled={!filters.search && !filters.client_id && !filters.status && !filters.created_date_from && !filters.created_date_to}
+                                        disabled={
+                                            !filters.search &&
+                                            !filters.client_id &&
+                                            !filters.status &&
+                                            !filters.created_date_from &&
+                                            !filters.created_date_to
+                                        }
                                         onClick={clearFilters}
                                         className="flex h-9 items-center gap-1 px-3"
                                     >

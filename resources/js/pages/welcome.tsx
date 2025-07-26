@@ -1,11 +1,11 @@
+import CookieConsent from '@/components/cookie-consent'
+import AiSection from '@/components/landing/AiSection'
 import CTA from '@/components/landing/CTA'
 import Features from '@/components/landing/Features'
 import Footer from '@/components/landing/Footer'
 import Hero from '@/components/landing/Hero'
 import HowItWorks from '@/components/landing/HowItWorks'
 import Navbar from '@/components/landing/Navbar'
-import AiSection from '@/components/landing/AiSection'
-import CookieConsent from '@/components/cookie-consent'
 import { Head } from '@inertiajs/react'
 
 export default function Welcome() {

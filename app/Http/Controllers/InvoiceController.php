@@ -157,12 +157,12 @@ final class InvoiceController extends Controller
         $headers = ['ID', 'Invoice Number', 'Client', 'Issue Date', 'Due Date', 'Total Amount', 'Paid Amount', 'Status', 'Created At'];
         $filename = 'invoices_' . Carbon::now()->format('Y-m-d') . '.csv';
 
-        return response()->streamDownload(function () use ($headers) {
+        return response()->streamDownload(function () use ($headers): void {
             $output = fopen('php://output', 'w');
             fputcsv($output, $headers);
 
             InvoiceStore::invoiceExportMapper(InvoiceStore::userInvoices(Auth::id()))
-                ->each(function ($row) use ($output) {
+                ->each(function ($row) use ($output): void {
                     fputcsv($output, $row);
                 });
 

@@ -49,12 +49,12 @@ final class InvoiceStore
         return DB::transaction(function () use ($data, $userId) {
             // Set default values
             $data['user_id'] = $userId;
-            $data['status'] = $data['status'] ?? InvoiceStatus::DRAFT->value;
+            $data['status'] ??= InvoiceStatus::DRAFT->value;
             $data['total_amount'] = 0;
             $data['paid_amount'] = 0;
 
             // Create invoice
-            $invoice = Invoice::create($data);
+            $invoice = Invoice::query()->create($data);
 
             // Create invoice items if provided
             if (isset($data['items']) && is_array($data['items'])) {
@@ -95,17 +95,35 @@ final class InvoiceStore
     }
 
     /**
+     * Map invoice data for export
+     */
+    public static function invoiceExportMapper(Collection $invoices): Collection
+    {
+        return $invoices->map(fn ($invoice): array => [
+            'id' => $invoice->id,
+            'invoice_number' => $invoice->invoice_number,
+            'client' => $invoice->client->name,
+            'issue_date' => Carbon::parse($invoice->issue_date)->toDateString(),
+            'due_date' => Carbon::parse($invoice->due_date)->toDateString(),
+            'total_amount' => $invoice->total_amount,
+            'paid_amount' => $invoice->paid_amount,
+            'status' => $invoice->status,
+            'created_at' => Carbon::parse($invoice->created_at)->toDateTimeString(),
+        ]);
+    }
+
+    /**
      * Create invoice items
      */
     private static function createInvoiceItems(Invoice $invoice, array $items): void
     {
         foreach ($items as $item) {
             $item['invoice_id'] = $invoice->id;
-            InvoiceItem::create($item);
+            InvoiceItem::query()->create($item);
 
             // If item is linked to a time log, update the time log
             if (isset($item['time_log_id']) && $invoice->status === InvoiceStatus::PAID) {
-                TimeLog::where('id', $item['time_log_id'])->update(['is_paid' => true]);
+                TimeLog::query()->where('id', $item['time_log_id'])->update(['is_paid' => true]);
             }
         }
     }
@@ -122,7 +140,7 @@ final class InvoiceStore
         foreach ($items as $item) {
             if (isset($item['id'])) {
                 // Update existing item
-                $invoiceItem = InvoiceItem::find($item['id']);
+                $invoiceItem = InvoiceItem::query()->find($item['id']);
                 if ($invoiceItem && $invoiceItem->invoice_id === $invoice->id) {
                     $invoiceItem->update($item);
                     $updatedItemIds[] = $invoiceItem->id;
@@ -130,15 +148,15 @@ final class InvoiceStore
             } else {
                 // Create new item
                 $item['invoice_id'] = $invoice->id;
-                $newItem = InvoiceItem::create($item);
+                $newItem = InvoiceItem::query()->create($item);
                 $updatedItemIds[] = $newItem->id;
             }
         }
 
         // Delete items that were not updated
         $itemsToDelete = array_diff($existingItemIds, $updatedItemIds);
-        if (!empty($itemsToDelete)) {
-            InvoiceItem::whereIn('id', $itemsToDelete)->delete();
+        if ($itemsToDelete !== []) {
+            InvoiceItem::query()->whereIn('id', $itemsToDelete)->delete();
         }
     }
 
@@ -161,27 +179,9 @@ final class InvoiceStore
             ->pluck('time_log_id')
             ->toArray();
 
-        if (!empty($timeLogIds)) {
-            TimeLog::whereIn('id', $timeLogIds)->update(['is_paid' => true]);
+        if (! empty($timeLogIds)) {
+            TimeLog::query()->whereIn('id', $timeLogIds)->update(['is_paid' => true]);
         }
-    }
-
-    /**
-     * Map invoice data for export
-     */
-    public static function invoiceExportMapper(Collection $invoices): Collection
-    {
-        return $invoices->map(fn ($invoice): array => [
-            'id' => $invoice->id,
-            'invoice_number' => $invoice->invoice_number,
-            'client' => $invoice->client->name,
-            'issue_date' => Carbon::parse($invoice->issue_date)->toDateString(),
-            'due_date' => Carbon::parse($invoice->due_date)->toDateString(),
-            'total_amount' => $invoice->total_amount,
-            'paid_amount' => $invoice->paid_amount,
-            'status' => $invoice->status,
-            'created_at' => Carbon::parse($invoice->created_at)->toDateTimeString(),
-        ]);
     }
 
     /**

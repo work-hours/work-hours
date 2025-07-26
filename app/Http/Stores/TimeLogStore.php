@@ -148,7 +148,7 @@ final class TimeLogStore
             $projectId = $timeLog->project_id;
             $projectName = $timeLog->project->name;
 
-            if (!isset($groupedTimeLogs[$projectId])) {
+            if (! isset($groupedTimeLogs[$projectId])) {
                 $groupedTimeLogs[$projectId] = [
                     'project_id' => $projectId,
                     'project_name' => $projectName,
