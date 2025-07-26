@@ -7,6 +7,7 @@ use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IntegrationController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
@@ -54,6 +55,11 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('time-log', [TimeLogController::class, 'index'])->name('time-log.index');
     Route::get('time-log/create', [TimeLogController::class, 'create'])->name('time-log.create');
     Route::get('time-log/{timeLog}/edit', [TimeLogController::class, 'edit'])->name('time-log.edit');
+
+    Route::get('invoice', [InvoiceController::class, 'index'])->name('invoice.index');
+    Route::get('invoice/create', [InvoiceController::class, 'create'])->name('invoice.create');
+    Route::get('invoice/{invoice}/edit', [InvoiceController::class, 'edit'])->name('invoice.edit');
+    Route::get('client/{client}/invoices', [InvoiceController::class, 'clientInvoices'])->name('client.invoices');
 
     Route::get('approvals', [ApprovalController::class, 'index'])->name('approvals.index');
 });
