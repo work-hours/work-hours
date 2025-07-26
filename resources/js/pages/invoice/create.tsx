@@ -1,0 +1,562 @@
+import { Head, useForm } from '@inertiajs/react'
+import {
+    ArrowLeft,
+    Calendar,
+    FileText,
+    LoaderCircle,
+    Plus,
+    Save,
+    Trash2,
+    User,
+} from 'lucide-react'
+import { FormEventHandler, useEffect, useState } from 'react'
+import { toast } from 'sonner'
+
+import InputError from '@/components/input-error'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import DatePicker from '@/components/ui/date-picker'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
+import { Textarea } from '@/components/ui/textarea'
+import MasterLayout from '@/layouts/master-layout'
+import { type BreadcrumbItem } from '@/types'
+import { clients as _clients } from '@actions/ClientController'
+import { invoices as _invoices } from '@actions/InvoiceController'
+
+type InvoiceForm = {
+    client_id: string
+    invoice_number: string
+    issue_date: Date | null
+    due_date: Date | null
+    status: string
+    notes: string
+    items: InvoiceItemForm[]
+}
+
+type InvoiceItemForm = {
+    time_log_id: string | null
+    description: string
+    quantity: string
+    unit_price: string
+    amount: string
+}
+
+type Client = {
+    id: number
+    name: string
+}
+
+type TimeLog = {
+    id: number
+    project: {
+        name: string
+    }
+    start_timestamp: string
+    end_timestamp: string
+    duration: number
+    hourly_rate: number
+}
+
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Invoices',
+        href: '/invoice',
+    },
+    {
+        title: 'Create',
+        href: '/invoice/create',
+    },
+]
+
+export default function CreateInvoice() {
+    const [clients, setClients] = useState<Client[]>([])
+    const [timeLogs, setTimeLogs] = useState<TimeLog[]>([])
+    const [loadingClients, setLoadingClients] = useState(true)
+
+    const { data, setData, post, processing, errors, reset } = useForm<InvoiceForm>({
+        client_id: '',
+        invoice_number: `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
+        issue_date: new Date(),
+        due_date: new Date(new Date().setDate(new Date().getDate() + 30)), // Default due date: 30 days from now
+        status: 'draft',
+        notes: '',
+        items: [
+            {
+                time_log_id: null,
+                description: '',
+                quantity: '1',
+                unit_price: '0',
+                amount: '0',
+            },
+        ],
+    })
+
+    // Load clients
+    useEffect(() => {
+        const fetchClients = async () => {
+            try {
+                setLoadingClients(true)
+                const clientsData = await _clients.data()
+                setClients(clientsData)
+            } catch (error) {
+                console.error('Error fetching clients:', error)
+                toast.error('Failed to load clients')
+            } finally {
+                setLoadingClients(false)
+            }
+        }
+
+        fetchClients()
+    }, [])
+
+    // Load time logs when client is selected
+    useEffect(() => {
+        const fetchTimeLogs = async () => {
+            if (!data.client_id) return
+
+            try {
+                const timeLogsData = await _invoices.data({
+                    action: 'getUnpaidTimeLogs',
+                    params: { client_id: data.client_id }
+                })
+                setTimeLogs(timeLogsData)
+            } catch (error) {
+                console.error('Error fetching time logs:', error)
+                toast.error('Failed to load time logs')
+            }
+        }
+
+        fetchTimeLogs()
+    }, [data.client_id])
+
+    // Calculate total amount
+    const calculateTotal = (): number => {
+        return data.items.reduce((total, item) => {
+            return total + parseFloat(item.amount || '0')
+        }, 0)
+    }
+
+    // Add new item
+    const addItem = (): void => {
+        setData('items', [
+            ...data.items,
+            {
+                time_log_id: null,
+                description: '',
+                quantity: '1',
+                unit_price: '0',
+                amount: '0',
+            },
+        ])
+    }
+
+    // Remove item
+    const removeItem = (index: number): void => {
+        const updatedItems = [...data.items]
+        updatedItems.splice(index, 1)
+        setData('items', updatedItems)
+    }
+
+    // Update item
+    const updateItem = (index: number, field: keyof InvoiceItemForm, value: string): void => {
+        const updatedItems = [...data.items]
+        updatedItems[index] = {
+            ...updatedItems[index],
+            [field]: value,
+        }
+
+        // Calculate amount if quantity or unit_price changes
+        if (field === 'quantity' || field === 'unit_price') {
+            const quantity = parseFloat(field === 'quantity' ? value : updatedItems[index].quantity || '0')
+            const unitPrice = parseFloat(field === 'unit_price' ? value : updatedItems[index].unit_price || '0')
+            updatedItems[index].amount = (quantity * unitPrice).toFixed(2)
+        }
+
+        setData('items', updatedItems)
+    }
+
+    // Handle time log selection
+    const handleTimeLogSelection = (index: number, timeLogId: string): void => {
+        if (timeLogId === 'none') {
+            // Use null as string | null type to avoid type error
+            updateItem(index, 'time_log_id', null as unknown as string)
+            updateItem(index, 'description', '')
+            updateItem(index, 'quantity', '1')
+            updateItem(index, 'unit_price', '0')
+            updateItem(index, 'amount', '0')
+            return
+        }
+
+        const timeLog = timeLogs.find((log) => log.id.toString() === timeLogId)
+        if (timeLog) {
+            updateItem(index, 'time_log_id', timeLogId)
+            updateItem(index, 'description', `Time logged for ${timeLog.project.name}`)
+            updateItem(index, 'quantity', timeLog.duration.toString())
+            updateItem(index, 'unit_price', timeLog.hourly_rate.toString())
+            updateItem(index, 'amount', (timeLog.duration * timeLog.hourly_rate).toFixed(2))
+        }
+    }
+
+    // Format date for form submission
+    const formatDate = (date: Date | null): string => {
+        if (!date) return ''
+        return date.toISOString().split('T')[0]
+    }
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault()
+
+        // Format dates for submission
+        const formData = {
+            ...data,
+            issue_date: formatDate(data.issue_date),
+            due_date: formatDate(data.due_date),
+        }
+
+        post(route('invoice.store'), {
+            onSuccess: () => {
+                toast.success('Invoice created successfully')
+                reset()
+            },
+            onError: () => {
+                toast.error('Failed to create invoice')
+            },
+            data: formData,
+        })
+    }
+
+    // Format currency
+    const formatCurrency = (amount: number): string => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(amount)
+    }
+
+    return (
+        <MasterLayout breadcrumbs={breadcrumbs}>
+            <Head title="Create Invoice" />
+            <div className="mx-auto flex flex-col gap-6 p-6">
+                {/* Header section */}
+                <section className="mb-2">
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Create Invoice</h1>
+                    <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new invoice for a client</p>
+                </section>
+
+                <Card className="overflow-hidden transition-all hover:shadow-md">
+                    <CardHeader>
+                        <CardTitle className="text-xl">Invoice Details</CardTitle>
+                        <CardDescription>Enter the information for the new invoice</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form className="flex flex-col gap-6" onSubmit={submit}>
+                            <div className="grid gap-6 md:grid-cols-2">
+                                {/* Client Selection */}
+                                <div className="grid gap-2">
+                                    <Label htmlFor="client_id" className="text-sm font-medium">
+                                        Client
+                                    </Label>
+                                    <div className="relative">
+                                        <Select
+                                            value={data.client_id}
+                                            onValueChange={(value) => setData('client_id', value)}
+                                            disabled={processing || loadingClients}
+                                        >
+                                            <SelectTrigger id="client_id" className="w-full">
+                                                <div className="flex items-center gap-2">
+                                                    <User className="h-4 w-4 text-muted-foreground" />
+                                                    <SelectValue placeholder={loadingClients ? 'Loading clients...' : 'Select a client'} />
+                                                </div>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {clients.map((client) => (
+                                                    <SelectItem key={client.id} value={client.id.toString()}>
+                                                        {client.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <InputError message={errors.client_id} className="mt-1" />
+                                </div>
+
+                                {/* Invoice Number */}
+                                <div className="grid gap-2">
+                                    <Label htmlFor="invoice_number" className="text-sm font-medium">
+                                        Invoice Number
+                                    </Label>
+                                    <div className="relative">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <FileText className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <Input
+                                            id="invoice_number"
+                                            type="text"
+                                            required
+                                            value={data.invoice_number}
+                                            onChange={(e) => setData('invoice_number', e.target.value)}
+                                            disabled={processing}
+                                            placeholder="Invoice number"
+                                            className="pl-10"
+                                        />
+                                    </div>
+                                    <InputError message={errors.invoice_number} className="mt-1" />
+                                </div>
+
+                                {/* Issue Date */}
+                                <div className="grid gap-2">
+                                    <Label htmlFor="issue_date" className="text-sm font-medium">
+                                        Issue Date
+                                    </Label>
+                                    <div className="relative">
+                                        <DatePicker
+                                            selected={data.issue_date}
+                                            onChange={(date) => setData('issue_date', date)}
+                                            dateFormat="yyyy-MM-dd"
+                                            disabled={processing}
+                                            customInput={
+                                                <div className="relative">
+                                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                                                    </div>
+                                                    <Input
+                                                        id="issue_date"
+                                                        placeholder="Select issue date"
+                                                        className="pl-10"
+                                                        value={data.issue_date ? data.issue_date.toLocaleDateString() : ''}
+                                                        readOnly
+                                                    />
+                                                </div>
+                                            }
+                                        />
+                                    </div>
+                                    <InputError message={errors.issue_date as string} className="mt-1" />
+                                </div>
+
+                                {/* Due Date */}
+                                <div className="grid gap-2">
+                                    <Label htmlFor="due_date" className="text-sm font-medium">
+                                        Due Date
+                                    </Label>
+                                    <div className="relative">
+                                        <DatePicker
+                                            selected={data.due_date}
+                                            onChange={(date) => setData('due_date', date)}
+                                            dateFormat="yyyy-MM-dd"
+                                            disabled={processing}
+                                            customInput={
+                                                <div className="relative">
+                                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                                                    </div>
+                                                    <Input
+                                                        id="due_date"
+                                                        placeholder="Select due date"
+                                                        className="pl-10"
+                                                        value={data.due_date ? data.due_date.toLocaleDateString() : ''}
+                                                        readOnly
+                                                    />
+                                                </div>
+                                            }
+                                        />
+                                    </div>
+                                    <InputError message={errors.due_date as string} className="mt-1" />
+                                </div>
+
+                                {/* Status */}
+                                <div className="grid gap-2">
+                                    <Label htmlFor="status" className="text-sm font-medium">
+                                        Status
+                                    </Label>
+                                    <div className="relative">
+                                        <Select
+                                            value={data.status}
+                                            onValueChange={(value) => setData('status', value)}
+                                            disabled={processing}
+                                        >
+                                            <SelectTrigger id="status" className="w-full">
+                                                <SelectValue placeholder="Select status" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="draft">Draft</SelectItem>
+                                                <SelectItem value="sent">Sent</SelectItem>
+                                                <SelectItem value="paid">Paid</SelectItem>
+                                                <SelectItem value="partially_paid">Partially Paid</SelectItem>
+                                                <SelectItem value="overdue">Overdue</SelectItem>
+                                                <SelectItem value="cancelled">Cancelled</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <InputError message={errors.status} className="mt-1" />
+                                </div>
+
+                                {/* Notes */}
+                                <div className="grid gap-2 md:col-span-2">
+                                    <Label htmlFor="notes" className="text-sm font-medium">
+                                        Notes <span className="text-xs text-muted-foreground">(optional)</span>
+                                    </Label>
+                                    <Textarea
+                                        id="notes"
+                                        value={data.notes}
+                                        onChange={(e) => setData('notes', e.target.value)}
+                                        disabled={processing}
+                                        placeholder="Additional notes for the client"
+                                        className="min-h-[80px]"
+                                    />
+                                    <InputError message={errors.notes} />
+                                </div>
+                            </div>
+
+                            {/* Invoice Items */}
+                            <div className="mt-6">
+                                <div className="mb-4 flex items-center justify-between">
+                                    <h3 className="text-lg font-medium">Invoice Items</h3>
+                                    <Button
+                                        type="button"
+                                        onClick={addItem}
+                                        disabled={processing}
+                                        variant="outline"
+                                        className="flex items-center gap-2"
+                                    >
+                                        <Plus className="h-4 w-4" />
+                                        Add Item
+                                    </Button>
+                                </div>
+
+                                <Table>
+                                    <TableHeader>
+                                        <TableHeaderRow>
+                                            <TableHead>Time Log</TableHead>
+                                            <TableHead>Description</TableHead>
+                                            <TableHead>Quantity</TableHead>
+                                            <TableHead>Unit Price</TableHead>
+                                            <TableHead>Amount</TableHead>
+                                            <TableHead className="w-[50px]"></TableHead>
+                                        </TableHeaderRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {data.items.map((item, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>
+                                                    <Select
+                                                        value={item.time_log_id || 'none'}
+                                                        onValueChange={(value) => handleTimeLogSelection(index, value)}
+                                                        disabled={processing}
+                                                    >
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="Select time log (optional)" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="none">None</SelectItem>
+                                                            {timeLogs.map((log) => (
+                                                                <SelectItem key={log.id} value={log.id.toString()}>
+                                                                    {log.project.name} - {new Date(log.start_timestamp).toLocaleDateString()}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <InputError message={errors[`items.${index}.time_log_id`]} className="mt-1" />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Input
+                                                        type="text"
+                                                        value={item.description}
+                                                        onChange={(e) => updateItem(index, 'description', e.target.value)}
+                                                        disabled={processing}
+                                                        placeholder="Item description"
+                                                        required
+                                                    />
+                                                    <InputError message={errors[`items.${index}.description`]} className="mt-1" />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Input
+                                                        type="number"
+                                                        min="0.01"
+                                                        step="0.01"
+                                                        value={item.quantity}
+                                                        onChange={(e) => updateItem(index, 'quantity', e.target.value)}
+                                                        disabled={processing}
+                                                        required
+                                                    />
+                                                    <InputError message={errors[`items.${index}.quantity`]} className="mt-1" />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Input
+                                                        type="number"
+                                                        min="0"
+                                                        step="0.01"
+                                                        value={item.unit_price}
+                                                        onChange={(e) => updateItem(index, 'unit_price', e.target.value)}
+                                                        disabled={processing}
+                                                        required
+                                                    />
+                                                    <InputError message={errors[`items.${index}.unit_price`]} className="mt-1" />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Input
+                                                        type="number"
+                                                        min="0"
+                                                        step="0.01"
+                                                        value={item.amount}
+                                                        onChange={(e) => updateItem(index, 'amount', e.target.value)}
+                                                        disabled={processing}
+                                                        required
+                                                    />
+                                                    <InputError message={errors[`items.${index}.amount`]} className="mt-1" />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        disabled={processing || data.items.length <= 1}
+                                                        onClick={() => removeItem(index)}
+                                                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                        <span className="sr-only">Remove</span>
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+
+                                {/* Total */}
+                                <div className="mt-4 flex justify-end">
+                                    <div className="w-1/3 rounded-md border p-4">
+                                        <div className="flex items-center justify-between font-medium">
+                                            <span>Total:</span>
+                                            <span>{formatCurrency(calculateTotal())}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 flex justify-end gap-3">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => window.history.back()}
+                                    disabled={processing}
+                                    className="flex items-center gap-2"
+                                >
+                                    <ArrowLeft className="h-4 w-4" />
+                                    Back
+                                </Button>
+                                <Button type="submit" disabled={processing} className="flex items-center gap-2">
+                                    {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                                    {processing ? 'Creating...' : 'Create Invoice'}
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
+        </MasterLayout>
+    )
+}

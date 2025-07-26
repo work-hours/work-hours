@@ -6,6 +6,7 @@ import {
     Building,
     CheckSquare,
     ClipboardList,
+    FileText,
     Folder,
     Github,
     LayoutGrid,
@@ -56,6 +57,11 @@ const mainNavItems: NavItem[] = [
         title: 'Time Log',
         href: '/time-log',
         icon: TimerIcon,
+    },
+    {
+        title: 'Invoices',
+        href: '/invoice',
+        icon: FileText,
     },
     {
         title: 'Approvals',
