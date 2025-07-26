@@ -2,6 +2,7 @@ import FloatingAiChat from '@/components/floating-ai-chat'
 import FloatingTimeTracker from '@/components/floating-time-tracker'
 import { MasterContent } from '@/components/master-content'
 import { MasterSidebar } from '@/components/master-sidebar'
+import CookieConsent from '@/components/cookie-consent'
 import { type BreadcrumbItem } from '@/types'
 import { type ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
@@ -95,6 +96,9 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                     <FloatingAiChat projects={userProjects} timeLogs={[]} />
                 </>
             )}
+
+            {/* Cookie Consent Banner */}
+            <CookieConsent />
         </div>
     )
 }
