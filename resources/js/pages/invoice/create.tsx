@@ -23,8 +23,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import { Textarea } from '@/components/ui/textarea'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import { clients as _clients } from '@actions/ClientController'
-import { invoices as _invoices } from '@actions/InvoiceController'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import { invoices as _invoices, getUnpaidTimeLogs } from '@actions/InvoiceController'
 
 type InvoiceForm = {
     client_id: string
@@ -122,16 +126,18 @@ export default function CreateInvoice() {
         fetchClients()
     }, [])
 
-    // Load time logs when client is selected
+    // Load time logs when a client is selected
     useEffect(() => {
         const fetchTimeLogs = async () => {
             if (!data.client_id) return
 
             try {
-                const timeLogsData = await _invoices.data({
-                    action: 'getUnpaidTimeLogs',
-                    params: { client_id: data.client_id }
+                const timeLogsData = await getUnpaidTimeLogs.data({
+                    params: {
+                        client_id: data.client_id,
+                    }
                 })
+
                 setTimeLogs(timeLogsData)
             } catch (error) {
                 console.error('Error fetching time logs:', error)

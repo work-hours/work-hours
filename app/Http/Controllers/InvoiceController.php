@@ -180,7 +180,7 @@ final class InvoiceController extends Controller
     {
         $clientId = request('client_id');
 
-        if (!$clientId) {
+        if (! $clientId) {
             return [];
         }
 
