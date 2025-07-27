@@ -339,8 +339,7 @@ export default function CreateInvoice() {
                     </CardHeader>
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
-                            <div className="grid gap-6 md:grid-cols-2">
-                                {/* Client Selection */}
+                            <div className="grid gap-6 grid-cols-1 md:grid-cols-5">
                                 <div className="grid gap-2">
                                     <Label htmlFor="client_id" className="text-sm font-medium">
                                         Client
@@ -368,8 +367,6 @@ export default function CreateInvoice() {
                                     </div>
                                     <InputError message={errors.client_id} className="mt-1" />
                                 </div>
-
-                                {/* Invoice Number */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="invoice_number" className="text-sm font-medium">
                                         Invoice Number
@@ -391,8 +388,6 @@ export default function CreateInvoice() {
                                     </div>
                                     <InputError message={errors.invoice_number} className="mt-1" />
                                 </div>
-
-                                {/* Issue Date */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="issue_date" className="text-sm font-medium">
                                         Issue Date
@@ -421,8 +416,6 @@ export default function CreateInvoice() {
                                     </div>
                                     <InputError message={errors.issue_date as string} className="mt-1" />
                                 </div>
-
-                                {/* Due Date */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="due_date" className="text-sm font-medium">
                                         Due Date
@@ -451,8 +444,6 @@ export default function CreateInvoice() {
                                     </div>
                                     <InputError message={errors.due_date as string} className="mt-1" />
                                 </div>
-
-                                {/* Status */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="status" className="text-sm font-medium">
                                         Status
@@ -474,9 +465,11 @@ export default function CreateInvoice() {
                                     </div>
                                     <InputError message={errors.status} className="mt-1" />
                                 </div>
-
+                            </div>
+                            {/* Notes in a separate row */}
+                            <div className="grid gap-6 grid-cols-1">
                                 {/* Notes */}
-                                <div className="grid gap-2 md:col-span-2">
+                                <div className="grid gap-2">
                                     <Label htmlFor="notes" className="text-sm font-medium">
                                         Notes <span className="text-xs text-muted-foreground">(optional)</span>
                                     </Label>
@@ -491,10 +484,9 @@ export default function CreateInvoice() {
                                     <InputError message={errors.notes} />
                                 </div>
                             </div>
-
                             {/* Invoice Items */}
-                            <div className="mt-6">
-                                <div className="mb-4 flex items-center justify-between">
+                            <div className="grid gap-6 grid-cols-1">
+                                <div className="flex items-center justify-between">
                                     <h3 className="text-lg font-medium">Invoice Items</h3>
                                     <Button
                                         type="button"
@@ -651,7 +643,7 @@ export default function CreateInvoice() {
                                 </Table>
 
                                 {/* Discount */}
-                                <div className="mt-4 flex justify-end">
+                                <div className="flex justify-end">
                                     <div className="grid w-1/3 grid-cols-2 gap-4">
                                         <div>
                                             <Label htmlFor="discount_type" className="text-sm font-medium">
@@ -693,7 +685,7 @@ export default function CreateInvoice() {
                                 </div>
 
                                 {/* Total */}
-                                <div className="mt-4 flex justify-end">
+                                <div className="flex justify-end">
                                     <div className="w-1/3 rounded-md border p-4">
                                         <div className="flex items-center justify-between text-sm">
                                             <span>Subtotal:</span>
@@ -713,7 +705,7 @@ export default function CreateInvoice() {
                                 </div>
                             </div>
 
-                            <div className="mt-6 flex justify-end gap-3">
+                            <div className="flex justify-end gap-3">
                                 <Button
                                     type="button"
                                     variant="outline"

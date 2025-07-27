@@ -371,7 +371,8 @@ export default function EditInvoice({ invoice }: Props) {
                     </CardHeader>
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
-                            <div className="grid gap-6 md:grid-cols-2">
+                            {/* First row with 6 fields */}
+                            <div className="grid gap-6 grid-cols-1 md:grid-cols-6">
                                 {/* Client Selection */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="client_id" className="text-sm font-medium">
@@ -526,9 +527,12 @@ export default function EditInvoice({ invoice }: Props) {
                                     </div>
                                     <InputError message={errors.paid_amount} className="mt-1" />
                                 </div>
+                            </div>
 
+                            {/* Third row with Notes */}
+                            <div className="grid gap-6 grid-cols-1">
                                 {/* Notes */}
-                                <div className="grid gap-2 md:col-span-2">
+                                <div className="grid gap-2">
                                     <Label htmlFor="notes" className="text-sm font-medium">
                                         Notes <span className="text-xs text-muted-foreground">(optional)</span>
                                     </Label>
@@ -545,8 +549,8 @@ export default function EditInvoice({ invoice }: Props) {
                             </div>
 
                             {/* Invoice Items */}
-                            <div className="mt-6">
-                                <div className="mb-4 flex items-center justify-between">
+                            <div className="grid gap-6 grid-cols-1">
+                                <div className="flex items-center justify-between">
                                     <h3 className="text-lg font-medium">Invoice Items</h3>
                                     <Button
                                         type="button"
@@ -703,7 +707,7 @@ export default function EditInvoice({ invoice }: Props) {
                                 </Table>
 
                                 {/* Discount */}
-                                <div className="mt-4 flex justify-end">
+                                <div className="flex justify-end">
                                     <div className="grid w-1/3 grid-cols-2 gap-4">
                                         <div>
                                             <Label htmlFor="discount_type" className="text-sm font-medium">
@@ -745,7 +749,7 @@ export default function EditInvoice({ invoice }: Props) {
                                 </div>
 
                                 {/* Total */}
-                                <div className="mt-4 flex justify-end">
+                                <div className="flex justify-end">
                                     <div className="w-1/3 rounded-md border p-4">
                                         <div className="flex items-center justify-between text-sm">
                                             <span>Subtotal:</span>
@@ -773,7 +777,7 @@ export default function EditInvoice({ invoice }: Props) {
                                 </div>
                             </div>
 
-                            <div className="mt-6 flex justify-end gap-3">
+                            <div className="flex justify-end gap-3">
                                 <Button
                                     type="button"
                                     variant="outline"
