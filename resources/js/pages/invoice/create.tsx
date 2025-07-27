@@ -339,7 +339,7 @@ export default function CreateInvoice() {
                     </CardHeader>
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
-                            <div className="grid gap-6 grid-cols-1 md:grid-cols-5">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
                                 <div className="grid gap-2">
                                     <Label htmlFor="client_id" className="text-sm font-medium">
                                         Client
@@ -467,7 +467,7 @@ export default function CreateInvoice() {
                                 </div>
                             </div>
                             {/* Notes in a separate row */}
-                            <div className="grid gap-6 grid-cols-1">
+                            <div className="grid grid-cols-1 gap-6">
                                 {/* Notes */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="notes" className="text-sm font-medium">
@@ -485,7 +485,7 @@ export default function CreateInvoice() {
                                 </div>
                             </div>
                             {/* Invoice Items */}
-                            <div className="grid gap-6 grid-cols-1">
+                            <div className="grid grid-cols-1 gap-6">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-lg font-medium">Invoice Items</h3>
                                     <Button

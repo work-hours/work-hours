@@ -11,6 +11,7 @@ use App\Http\Stores\InvoiceStore;
 use App\Http\Stores\TimeLogStore;
 use App\Models\Client;
 use App\Models\Invoice;
+use App\Notifications\InvoiceStatusChanged;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
@@ -18,6 +19,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Inertia\Inertia;
 use Inertia\Response;
 use Msamgan\Lact\Attributes\Action;
@@ -258,10 +260,12 @@ final class InvoiceController extends Controller
             'paid_amount' => 'required_if:status,paid,partially_paid|numeric|min:0',
         ]);
 
+        $newStatus = request('status');
+
         DB::beginTransaction();
         try {
             // Update invoice status and paid amount
-            $invoice->status = request('status');
+            $invoice->status = $newStatus;
 
             // Update paid amount if provided
             if (request()->has('paid_amount')) {
@@ -269,6 +273,22 @@ final class InvoiceController extends Controller
             }
 
             $invoice->save();
+
+            // Notify client if status is sent or overdue
+            if ($newStatus === 'sent') {
+                // For sent status, use the existing method which also updates the status
+                InvoiceStore::sendInvoiceEmail($invoice);
+            } elseif ($newStatus === 'overdue') {
+                if (! $invoice->relationLoaded('client')) {
+                    $invoice->load('client');
+                }
+
+                $clientEmail = $invoice->client->email;
+
+                if ($clientEmail) {
+                    Notification::route('mail', $clientEmail)->notify(new InvoiceStatusChanged($invoice));
+                }
+            }
 
             DB::commit();
         } catch (Exception $e) {

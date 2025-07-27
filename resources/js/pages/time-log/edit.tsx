@@ -298,9 +298,7 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                 {/* Duration text in a separate row */}
                                 {calculatedHours !== null && (
                                     <div className="-mt-4">
-                                        <p className="text-sm font-medium text-green-600 dark:text-green-400">
-                                            Duration: {calculatedHours} hours
-                                        </p>
+                                        <p className="text-sm font-medium text-green-600 dark:text-green-400">Duration: {calculatedHours} hours</p>
                                     </div>
                                 )}
 

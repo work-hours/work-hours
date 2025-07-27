@@ -13,8 +13,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
@@ -311,7 +311,7 @@ export default function Invoices() {
             // Make API call to update the invoice status
             await router.post(route('invoice.updateStatus', selectedInvoice.id), {
                 status: newStatus,
-                paid_amount: newPaidAmount
+                paid_amount: newPaidAmount,
             })
 
             // Update the invoice status in the local state
@@ -321,7 +321,7 @@ export default function Invoices() {
                         return {
                             ...invoice,
                             status: newStatus,
-                            paid_amount: parseFloat(newPaidAmount)
+                            paid_amount: parseFloat(newPaidAmount),
                         }
                     }
                     return invoice
@@ -624,7 +624,9 @@ export default function Invoices() {
                                                         title={invoice.status === 'sent' ? 'Invoice already sent' : 'Send invoice email to client'}
                                                         disabled={invoice.status === 'sent'}
                                                     >
-                                                        <Mail className={`h-3.5 w-3.5 ${invoice.status === 'sent' ? 'text-muted-foreground/50' : ''}`} />
+                                                        <Mail
+                                                            className={`h-3.5 w-3.5 ${invoice.status === 'sent' ? 'text-muted-foreground/50' : ''}`}
+                                                        />
                                                         <span className="sr-only">Send Email</span>
                                                     </Button>
                                                 </div>
@@ -692,11 +694,7 @@ export default function Invoices() {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Update Invoice Status</AlertDialogTitle>
                         <AlertDialogDescription>
-                            {selectedInvoice && (
-                                <>
-                                    Update status for invoice #{selectedInvoice.invoice_number}
-                                </>
-                            )}
+                            {selectedInvoice && <>Update status for invoice #{selectedInvoice.invoice_number}</>}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
 
@@ -709,10 +707,14 @@ export default function Invoices() {
                                 <RadioGroup
                                     value={newStatus}
                                     onValueChange={(value) => {
-                                        setNewStatus(value);
+                                        setNewStatus(value)
                                         // If status is changed to paid, set paid_amount to total invoice amount
                                         if (value === 'paid' && selectedInvoice) {
-                                            setNewPaidAmount(selectedInvoice.total_amount.toString());
+                                            setNewPaidAmount(selectedInvoice.total_amount.toString())
+                                        }
+                                        // If status is changed to partially_paid, reset paid_amount to zero
+                                        else if (value === 'partially_paid') {
+                                            setNewPaidAmount('0')
                                         }
                                     }}
                                     className="flex flex-col space-y-2"

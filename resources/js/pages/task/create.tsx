@@ -346,7 +346,6 @@ export default function CreateTask({ projects }: Props) {
                                     </div>
                                 </div>
 
-
                                 <div className="grid gap-2">
                                     <Label className="text-sm font-medium">
                                         Assignees <span className="text-xs text-muted-foreground">(optional)</span>

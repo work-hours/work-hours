@@ -364,7 +364,6 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                     </div>
                                 </div>
 
-
                                 <div className="grid gap-2">
                                     <Label className="text-sm font-medium">
                                         Assignees <span className="text-xs text-muted-foreground">(optional)</span>

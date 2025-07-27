@@ -372,18 +372,14 @@ export default function EditInvoice({ invoice }: Props) {
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             {/* First row with 6 fields */}
-                            <div className="grid gap-6 grid-cols-1 md:grid-cols-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-6">
                                 {/* Client Selection */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="client_id" className="text-sm font-medium">
                                         Client
                                     </Label>
                                     <div className="relative">
-                                        <Select
-                                            value={data.client_id}
-                                            onValueChange={(value) => setData('client_id', value)}
-                                            disabled={true}
-                                        >
+                                        <Select value={data.client_id} onValueChange={(value) => setData('client_id', value)} disabled={true}>
                                             <SelectTrigger id="client_id" className="w-full">
                                                 <div className="flex items-center gap-2">
                                                     <User className="h-4 w-4 text-muted-foreground" />
@@ -494,13 +490,14 @@ export default function EditInvoice({ invoice }: Props) {
                                         <Select
                                             value={data.status}
                                             onValueChange={(value) => {
-                                                setData('status', value);
+                                                setData('status', value)
                                                 // If status is changed to paid, set paid_amount to total invoice amount
                                                 if (value === 'paid') {
-                                                    setData('paid_amount', calculateTotal().toString());
+                                                    setData('paid_amount', calculateTotal().toString())
                                                 }
                                             }}
-                                            disabled={processing}>
+                                            disabled={processing}
+                                        >
                                             <SelectTrigger id="status" className="w-full">
                                                 <SelectValue placeholder="Select status" />
                                             </SelectTrigger>
@@ -539,7 +536,7 @@ export default function EditInvoice({ invoice }: Props) {
                             </div>
 
                             {/* Third row with Notes */}
-                            <div className="grid gap-6 grid-cols-1">
+                            <div className="grid grid-cols-1 gap-6">
                                 {/* Notes */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="notes" className="text-sm font-medium">
@@ -558,7 +555,7 @@ export default function EditInvoice({ invoice }: Props) {
                             </div>
 
                             {/* Invoice Items */}
-                            <div className="grid gap-6 grid-cols-1">
+                            <div className="grid grid-cols-1 gap-6">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-lg font-medium">Invoice Items</h3>
                                     <Button
