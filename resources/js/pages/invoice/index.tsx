@@ -25,6 +25,7 @@ import { invoices as _invoices } from '@actions/InvoiceController'
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import { Calendar, CalendarRange, Download, Edit, FileText, Loader2, Mail, Plus, Search, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 interface CustomInputProps {
     value?: string
@@ -622,7 +623,7 @@ export default function Invoices() {
                                                         className="h-8 w-8 p-0"
                                                         onClick={() => handleEmailClick(invoice)}
                                                         title={invoice.status === 'sent' ? 'Invoice already sent' : 'Send invoice email to client'}
-                                                        disabled={invoice.status === 'sent'}
+                                                        disabled={invoice.status === 'sent' || invoice.status === 'paid'}
                                                     >
                                                         <Mail
                                                             className={`h-3.5 w-3.5 ${invoice.status === 'sent' ? 'text-muted-foreground/50' : ''}`}
