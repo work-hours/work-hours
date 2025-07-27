@@ -67,7 +67,7 @@ export default function EditClient({ client, currencies }: Props) {
         address: client.address || '',
         notes: client.notes || '',
         hourly_rate: client.hourly_rate ? client.hourly_rate.toString() : '',
-        currency: client.currency || '',
+        currency: client.currency || 'USD',
     })
 
     const submit: FormEventHandler = (e) => {

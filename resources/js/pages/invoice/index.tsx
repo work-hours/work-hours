@@ -84,6 +84,7 @@ type Invoice = {
     discount_type: string | null
     discount_value: number
     discount_amount: number
+    currency: string
     created_at: string
 }
 
@@ -229,10 +230,10 @@ export default function Invoices() {
     }, [])
 
     // Format currency
-    const formatCurrency = (amount: number): string => {
+    const formatCurrency = (amount: number, currency: string = 'USD'): string => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD',
+            currency: currency,
             currencyDisplay: 'code'
         }).format(amount)
     }
@@ -599,7 +600,7 @@ export default function Invoices() {
                                             <TableCell>{invoice.client.name}</TableCell>
                                             <TableCell>{new Date(invoice.issue_date).toISOString().split('T')[0]}</TableCell>
                                             <TableCell>{new Date(invoice.due_date).toISOString().split('T')[0]}</TableCell>
-                                            <TableCell>{formatCurrency(invoice.total_amount)}</TableCell>
+                                            <TableCell>{formatCurrency(invoice.total_amount, invoice.currency)}</TableCell>
                                             <TableCell>
                                                 <span
                                                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeClass(
@@ -787,7 +788,7 @@ export default function Invoices() {
                                 />
                                 {selectedInvoice && (
                                     <p className="text-xs text-muted-foreground">
-                                        Total invoice amount: {formatCurrency(selectedInvoice.total_amount)}
+                                        Total invoice amount: {formatCurrency(selectedInvoice.total_amount, selectedInvoice.currency)}
                                     </p>
                                 )}
                             </div>

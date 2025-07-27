@@ -56,7 +56,7 @@ export default function CreateClient({ currencies }: Props) {
         address: '',
         notes: '',
         hourly_rate: '',
-        currency: '',
+        currency: 'USD',
     })
 
     const submit: FormEventHandler = (e) => {

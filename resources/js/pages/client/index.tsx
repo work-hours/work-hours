@@ -354,6 +354,7 @@ export default function Clients() {
                                         <TableHead>Contact Person</TableHead>
                                         <TableHead>Email</TableHead>
                                         <TableHead>Phone</TableHead>
+                                        <TableHead>Currency</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
@@ -366,6 +367,7 @@ export default function Clients() {
                                             </TableCell>
                                             <TableCell>{client.email || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
                                             <TableCell>{client.phone || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
+                                            <TableCell>{client.currency || 'USD'}</TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <Link href={route('client.projects', client.id)}>

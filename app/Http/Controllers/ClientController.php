@@ -70,6 +70,11 @@ final class ClientController extends Controller
             $data = $request->validated();
             $data['user_id'] = Auth::id();
 
+            // Set USD as default currency if not provided
+            if (!isset($data['currency']) || empty($data['currency'])) {
+                $data['currency'] = 'USD';
+            }
+
             Client::query()->create($data);
 
             DB::commit();
@@ -100,7 +105,14 @@ final class ClientController extends Controller
     {
         DB::beginTransaction();
         try {
-            $client->update($request->validated());
+            $data = $request->validated();
+
+            // Set USD as default currency if not provided
+            if (!isset($data['currency']) || empty($data['currency'])) {
+                $data['currency'] = 'USD';
+            }
+
+            $client->update($data);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
