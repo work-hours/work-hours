@@ -382,7 +382,7 @@ export default function EditInvoice({ invoice }: Props) {
                                         <Select
                                             value={data.client_id}
                                             onValueChange={(value) => setData('client_id', value)}
-                                            disabled={processing || loadingClients}
+                                            disabled={true}
                                         >
                                             <SelectTrigger id="client_id" className="w-full">
                                                 <div className="flex items-center gap-2">
@@ -417,7 +417,7 @@ export default function EditInvoice({ invoice }: Props) {
                                             required
                                             value={data.invoice_number}
                                             onChange={(e) => setData('invoice_number', e.target.value)}
-                                            disabled={processing}
+                                            disabled={true}
                                             placeholder="Invoice number"
                                             className="pl-10"
                                         />
@@ -435,7 +435,7 @@ export default function EditInvoice({ invoice }: Props) {
                                             selected={data.issue_date}
                                             onChange={(date) => setData('issue_date', date)}
                                             dateFormat="yyyy-MM-dd"
-                                            disabled={processing}
+                                            disabled={true}
                                             customInput={
                                                 <div className="relative">
                                                     <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
