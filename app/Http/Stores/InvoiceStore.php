@@ -74,7 +74,7 @@ final class InvoiceStore
 
             // Set currency based on client or user
             if (!isset($data['currency'])) {
-                $data['currency'] = self::determineCurrency($data['client_id'], $userId);
+                $data['currency'] = self::determineCurrency((int) $data['client_id'], $userId);
             }
 
             // Extract items before creating an invoice
@@ -186,7 +186,7 @@ final class InvoiceStore
 
             // Set currency if not provided
             if (!isset($data['currency'])) {
-                $data['currency'] = self::determineCurrency($invoice->client_id, $invoice->user_id);
+                $data['currency'] = self::determineCurrency((int) $invoice->client_id, (int) $invoice->user_id);
             }
 
             // Update invoice
