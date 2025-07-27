@@ -20,6 +20,10 @@ return new class extends Migration
             $table->string('invoice_number')->unique();
             $table->date('issue_date');
             $table->date('due_date');
+            $table->enum('discount_type', ['percentage', 'fixed'])->nullable();
+            $table->decimal('discount_value', 10, 2)->default(0);
+            $table->decimal('discount_amount', 10, 2)->default(0);
+            $table->string('currency')->nullable();
             $table->decimal('total_amount', 10, 2)->default(0);
             $table->decimal('paid_amount', 10, 2)->default(0);
             $table->string('status')->default('draft');

@@ -35,6 +35,7 @@ final class StoreInvoiceRequest extends FormRequest
             'notes' => ['nullable', 'string'],
             'discount_type' => ['nullable', 'in:percentage,fixed'],
             'discount_value' => ['nullable', 'numeric', 'min:0'],
+            'currency' => ['nullable', 'string', 'max:10'],
             'items' => ['sometimes', 'array'],
             'items.*.time_log_id' => ['nullable', 'exists:time_logs,id'],
             'items.*.description' => ['required', 'string'],

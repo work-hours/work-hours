@@ -43,6 +43,7 @@ final class UpdateInvoiceRequest extends FormRequest
             'notes' => ['nullable', 'string'],
             'discount_type' => ['sometimes', 'nullable', 'in:percentage,fixed'],
             'discount_value' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'currency' => ['sometimes', 'nullable', 'string', 'max:10'],
             'items' => ['sometimes', 'array'],
             'items.*.id' => ['sometimes', 'exists:invoice_items,id'],
             'items.*.time_log_id' => ['nullable', 'exists:time_logs,id'],

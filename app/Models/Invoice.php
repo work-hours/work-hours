@@ -27,6 +27,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $discount_type
  * @property float $discount_value
  * @property float $discount_amount
+ * @property string|null $currency
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property User $user
@@ -48,6 +49,7 @@ final class Invoice extends Model
         'discount_type',
         'discount_value',
         'discount_amount',
+        'currency',
     ];
 
     public function user(): BelongsTo

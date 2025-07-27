@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\TimeLog;
+use App\Models\User;
 use App\Notifications\InvoiceStatusChanged;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,6 +32,19 @@ final class InvoiceStore
             ->orderByDesc('created_at');
 
         return self::applyFilterPipeline($query)->get();
+    }
+
+    /**
+     * Apply query filters using pipeline
+     */
+    private static function applyFilterPipeline(Builder $query): Builder
+    {
+        return app(Pipeline::class)
+            ->send($query)
+            ->through([
+                // Add filters here when created
+            ])
+            ->thenReturn();
     }
 
     /**
@@ -58,6 +72,11 @@ final class InvoiceStore
             $data['total_amount'] = 0;
             $data['paid_amount'] = 0;
 
+            // Set currency based on client or user
+            if (!isset($data['currency'])) {
+                $data['currency'] = self::determineCurrency($data['client_id'], $userId);
+            }
+
             // Extract items before creating an invoice
             $items = $data['items'] ?? [];
             unset($data['items']);
@@ -66,7 +85,7 @@ final class InvoiceStore
             $invoice = Invoice::query()->create($data);
 
             // Create invoice items if provided
-            if (! empty($items) && is_array($items)) {
+            if (!empty($items) && is_array($items)) {
                 self::createInvoiceItems($invoice, $items);
             }
 
@@ -78,83 +97,26 @@ final class InvoiceStore
     }
 
     /**
-     * Update an existing invoice and its items
-     *
-     * @throws Throwable
+     * Determine the currency to use for an invoice
+     * Uses client's currency if available, otherwise falls back to user's currency
+     * If neither is available, returns 'USD' as default
      */
-    public static function updateInvoice(Invoice $invoice, array $data): Invoice
+    private static function determineCurrency(int $clientId, int $userId): string
     {
-        return DB::transaction(function () use ($invoice, $data) {
-            $items = $data['items'] ?? [];
-            unset($data['items']);
-
-            // Store the old status for comparison
-            $oldStatus = $invoice->status;
-
-            // Update invoice
-            $invoice->update($data);
-
-            // Update invoice items if provided
-            if (! empty($items) && is_array($items)) {
-                self::updateInvoiceItems($invoice, $items);
-            }
-
-            // Update invoice total
-            self::updateInvoiceTotal($invoice);
-
-            // Update time logs if invoice is paid
-            if ($invoice->status === InvoiceStatus::PAID) {
-                self::markTimeLogsPaid($invoice);
-            }
-
-            // Send notification if status changed to SENT or OVERDUE
-            if ($invoice->status !== $oldStatus &&
-                ($invoice->status === InvoiceStatus::SENT || $invoice->status === InvoiceStatus::OVERDUE)) {
-                self::sendInvoiceStatusNotification($invoice);
-            }
-
-            return $invoice->fresh(['items']);
-        });
-    }
-
-    /**
-     * Map invoice data for export
-     */
-    public static function invoiceExportMapper(Collection $invoices): Collection
-    {
-        return $invoices->map(fn ($invoice): array => [
-            'id' => $invoice->id,
-            'invoice_number' => $invoice->invoice_number,
-            'client' => $invoice->client->name,
-            'issue_date' => Carbon::parse($invoice->issue_date)->toDateString(),
-            'due_date' => Carbon::parse($invoice->due_date)->toDateString(),
-            'discount_type' => $invoice->discount_type,
-            'discount_value' => $invoice->discount_value,
-            'discount_amount' => $invoice->discount_amount,
-            'total_amount' => $invoice->total_amount,
-            'paid_amount' => $invoice->paid_amount,
-            'status' => $invoice->status,
-            'created_at' => Carbon::parse($invoice->created_at)->toDateTimeString(),
-        ]);
-    }
-
-    /**
-     * Send invoice email to client and update status to sent if needed
-     */
-    public static function sendInvoiceEmail(Invoice $invoice): void
-    {
-        // Load client relationship if not already loaded
-        if (! $invoice->relationLoaded('client')) {
-            $invoice->load('client');
+        // Try to get client's currency
+        $client = Client::query()->find($clientId);
+        if ($client && $client->currency) {
+            return $client->currency;
         }
 
-        // Update invoice status to sent if it's not already
-        if ($invoice->status !== InvoiceStatus::SENT) {
-            $invoice->update(['status' => InvoiceStatus::SENT]);
+        // Fall back to user's currency
+        $user = User::query()->find($userId);
+        if ($user && $user->currency) {
+            return $user->currency;
         }
 
-        // Send invoice notification
-        self::sendInvoiceStatusNotification($invoice);
+        // Default fallback
+        return 'USD';
     }
 
     /**
@@ -170,38 +132,6 @@ final class InvoiceStore
             if (isset($item['time_log_id']) && $invoice->status === InvoiceStatus::PAID) {
                 TimeLog::query()->where('id', $item['time_log_id'])->update(['is_paid' => true]);
             }
-        }
-    }
-
-    /**
-     * Update invoice items
-     */
-    private static function updateInvoiceItems(Invoice $invoice, array $items): void
-    {
-        // Get existing item IDs
-        $existingItemIds = $invoice->items->pluck('id')->toArray();
-        $updatedItemIds = [];
-
-        foreach ($items as $item) {
-            if (isset($item['id'])) {
-                // Update existing item
-                $invoiceItem = InvoiceItem::query()->find($item['id']);
-                if ($invoiceItem && $invoiceItem->invoice_id === $invoice->id) {
-                    $invoiceItem->update($item);
-                    $updatedItemIds[] = $invoiceItem->id;
-                }
-            } else {
-                // Create new item
-                $item['invoice_id'] = $invoice->id;
-                $newItem = InvoiceItem::query()->create($item);
-                $updatedItemIds[] = $newItem->id;
-            }
-        }
-
-        // Delete items that were not updated
-        $itemsToDelete = array_diff($existingItemIds, $updatedItemIds);
-        if ($itemsToDelete !== []) {
-            InvoiceItem::query()->whereIn('id', $itemsToDelete)->delete();
         }
     }
 
@@ -241,6 +171,83 @@ final class InvoiceStore
     }
 
     /**
+     * Update an existing invoice and its items
+     *
+     * @throws Throwable
+     */
+    public static function updateInvoice(Invoice $invoice, array $data): Invoice
+    {
+        return DB::transaction(function () use ($invoice, $data) {
+            $items = $data['items'] ?? [];
+            unset($data['items']);
+
+            // Store the old status for comparison
+            $oldStatus = $invoice->status;
+
+            // Set currency if not provided
+            if (!isset($data['currency'])) {
+                $data['currency'] = self::determineCurrency($invoice->client_id, $invoice->user_id);
+            }
+
+            // Update invoice
+            $invoice->update($data);
+
+            // Update invoice items if provided
+            if (!empty($items) && is_array($items)) {
+                self::updateInvoiceItems($invoice, $items);
+            }
+
+            // Update invoice total
+            self::updateInvoiceTotal($invoice);
+
+            // Update time logs if invoice is paid
+            if ($invoice->status === InvoiceStatus::PAID) {
+                self::markTimeLogsPaid($invoice);
+            }
+
+            // Send notification if status changed to SENT or OVERDUE
+            if ($invoice->status !== $oldStatus &&
+                ($invoice->status === InvoiceStatus::SENT || $invoice->status === InvoiceStatus::OVERDUE)) {
+                self::sendInvoiceStatusNotification($invoice);
+            }
+
+            return $invoice->fresh(['items']);
+        });
+    }
+
+    /**
+     * Update invoice items
+     */
+    private static function updateInvoiceItems(Invoice $invoice, array $items): void
+    {
+        // Get existing item IDs
+        $existingItemIds = $invoice->items->pluck('id')->toArray();
+        $updatedItemIds = [];
+
+        foreach ($items as $item) {
+            if (isset($item['id'])) {
+                // Update existing item
+                $invoiceItem = InvoiceItem::query()->find($item['id']);
+                if ($invoiceItem && $invoiceItem->invoice_id === $invoice->id) {
+                    $invoiceItem->update($item);
+                    $updatedItemIds[] = $invoiceItem->id;
+                }
+            } else {
+                // Create new item
+                $item['invoice_id'] = $invoice->id;
+                $newItem = InvoiceItem::query()->create($item);
+                $updatedItemIds[] = $newItem->id;
+            }
+        }
+
+        // Delete items that were not updated
+        $itemsToDelete = array_diff($existingItemIds, $updatedItemIds);
+        if ($itemsToDelete !== []) {
+            InvoiceItem::query()->whereIn('id', $itemsToDelete)->delete();
+        }
+    }
+
+    /**
      * Mark time logs as paid when invoice is paid
      */
     private static function markTimeLogsPaid(Invoice $invoice): void
@@ -250,27 +257,14 @@ final class InvoiceStore
             ->pluck('time_log_id')
             ->toArray();
 
-        if (! empty($timeLogIds)) {
+        if (!empty($timeLogIds)) {
             TimeLog::query()->whereIn('id', $timeLogIds)->update(['is_paid' => true]);
         }
     }
 
-    /**
-     * Apply query filters using pipeline
-     */
-    private static function applyFilterPipeline(Builder $query): Builder
-    {
-        return app(Pipeline::class)
-            ->send($query)
-            ->through([
-                // Add filters here when created
-            ])
-            ->thenReturn();
-    }
-
     private static function sendInvoiceStatusNotification(Invoice $invoice): void
     {
-        if (! $invoice->relationLoaded('client')) {
+        if (!$invoice->relationLoaded('client')) {
             $invoice->load('client');
         }
 
@@ -279,5 +273,45 @@ final class InvoiceStore
         if ($clientEmail) {
             Notification::route('mail', $clientEmail)->notify(new InvoiceStatusChanged($invoice));
         }
+    }
+
+    /**
+     * Map invoice data for export
+     */
+    public static function invoiceExportMapper(Collection $invoices): Collection
+    {
+        return $invoices->map(fn($invoice): array => [
+            'id' => $invoice->id,
+            'invoice_number' => $invoice->invoice_number,
+            'client' => $invoice->client->name,
+            'issue_date' => Carbon::parse($invoice->issue_date)->toDateString(),
+            'due_date' => Carbon::parse($invoice->due_date)->toDateString(),
+            'discount_type' => $invoice->discount_type,
+            'discount_value' => $invoice->discount_value,
+            'discount_amount' => $invoice->discount_amount,
+            'total_amount' => $invoice->total_amount,
+            'paid_amount' => $invoice->paid_amount,
+            'status' => $invoice->status,
+            'created_at' => Carbon::parse($invoice->created_at)->toDateTimeString(),
+        ]);
+    }
+
+    /**
+     * Send invoice email to client and update status to sent if needed
+     */
+    public static function sendInvoiceEmail(Invoice $invoice): void
+    {
+        // Load client relationship if not already loaded
+        if (!$invoice->relationLoaded('client')) {
+            $invoice->load('client');
+        }
+
+        // Update invoice status to sent if it's not already
+        if ($invoice->status !== InvoiceStatus::SENT) {
+            $invoice->update(['status' => InvoiceStatus::SENT]);
+        }
+
+        // Send invoice notification
+        self::sendInvoiceStatusNotification($invoice);
     }
 }
