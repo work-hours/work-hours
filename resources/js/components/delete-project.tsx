@@ -8,9 +8,10 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 
 interface DeleteProjectProps {
     projectId: number
+    onDelete?: () => void
 }
 
-export default function DeleteProject({ projectId }: DeleteProjectProps) {
+export default function DeleteProject({ projectId, onDelete }: DeleteProjectProps) {
     const { delete: destroy, processing, reset, clearErrors } = useForm({})
 
     const deleteProject: FormEventHandler = (e) => {
@@ -18,7 +19,12 @@ export default function DeleteProject({ projectId }: DeleteProjectProps) {
 
         destroy(route('project.destroy', projectId), {
             preserveScroll: true,
-            onSuccess: () => closeModal(),
+            onSuccess: () => {
+                closeModal()
+                if (onDelete) {
+                    onDelete()
+                }
+            },
             onFinish: () => reset(),
         })
     }

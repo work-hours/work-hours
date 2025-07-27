@@ -541,7 +541,7 @@ export default function Projects() {
                                                                     <span className="sr-only">Edit</span>
                                                                 </Button>
                                                             </Link>
-                                                            <DeleteProject projectId={project.id} />
+                                                            <DeleteProject projectId={project.id} onDelete={() => getProjects(filters)} />
                                                         </>
                                                     )}
                                                 </div>
