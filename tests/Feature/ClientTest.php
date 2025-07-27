@@ -37,6 +37,10 @@ it('can create a client', function (): void {
         'name' => 'New Client',
         'email' => 'client@example.com',
     ]);
+
+    // Verify that the client has USD as the default currency
+    $client = Client::query()->where('email', 'client@example.com')->first();
+    $this->assertEquals('USD', $client->currency);
 });
 
 it('can update a client', function (): void {
@@ -71,6 +75,10 @@ it('can update a client', function (): void {
         'name' => 'Updated Client',
         'email' => 'updated@example.com',
     ]);
+
+    // Verify that the client still has USD as the currency after update
+    $updatedClient = Client::query()->find($client->id);
+    $this->assertEquals('USD', $updatedClient->currency);
 });
 
 it('can delete a client', function (): void {

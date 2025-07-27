@@ -100,7 +100,7 @@ export default function CookieConsent() {
     }
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white p-4 shadow-lg dark:bg-gray-800 sm:p-6">
+        <div className="fixed right-0 bottom-0 left-0 z-50 bg-white p-4 shadow-lg sm:p-6 dark:bg-gray-800">
             <div className="mx-auto max-w-7xl">
                 {!showCustomize ? (
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

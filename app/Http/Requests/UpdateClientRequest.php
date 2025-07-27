@@ -31,6 +31,8 @@ final class UpdateClientRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string'],
             'notes' => ['nullable', 'string'],
+            'hourly_rate' => ['nullable', 'numeric', 'min:0'],
+            'currency' => ['nullable', 'string', 'max:5'],
         ];
     }
 }

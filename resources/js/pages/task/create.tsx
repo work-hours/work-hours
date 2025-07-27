@@ -124,7 +124,7 @@ export default function CreateTask({ projects }: Props) {
                 .then((assignees: SetStateAction<{ id: number; name: string; email: string }[]>) => {
                     setPotentialAssignees(assignees)
                 })
-                .catch((error: any) => {
+                .catch((error: never) => {
                     console.error('Failed to fetch potential assignees:', error)
                     toast.error('Failed to load potential assignees')
                     setPotentialAssignees([])
@@ -168,14 +168,14 @@ export default function CreateTask({ projects }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Task" />
-            <div className="mx-auto flex flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Add Task</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new task</p>
                 </section>
 
-                <Card className="max-w-2xl overflow-hidden transition-all hover:shadow-md">
+                <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-xl">Task Details</CardTitle>
                         <CardDescription>Enter the information for the new task</CardDescription>
@@ -183,21 +183,45 @@ export default function CreateTask({ projects }: Props) {
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="project_id" className="text-sm font-medium">
-                                        Project
-                                    </Label>
-                                    <SearchableSelect
-                                        id="project_id"
-                                        value={data.project_id}
-                                        onChange={(value) => setData('project_id', value)}
-                                        options={projects}
-                                        placeholder="Select a project"
-                                        disabled={processing}
-                                        icon={<ClipboardList className="h-4 w-4 text-muted-foreground" />}
-                                        required
-                                    />
-                                    <InputError message={errors.project_id} />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="project_id" className="text-sm font-medium">
+                                            Project
+                                        </Label>
+                                        <SearchableSelect
+                                            id="project_id"
+                                            value={data.project_id}
+                                            onChange={(value) => setData('project_id', value)}
+                                            options={projects}
+                                            placeholder="Select a project"
+                                            disabled={processing}
+                                            icon={<ClipboardList className="h-4 w-4 text-muted-foreground" />}
+                                            required
+                                        />
+                                        <InputError message={errors.project_id} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="due_date" className="text-sm font-medium">
+                                            Due Date <span className="text-xs text-muted-foreground">(optional)</span>
+                                        </Label>
+                                        <DatePicker
+                                            selected={dueDate}
+                                            onChange={handleDueDateChange}
+                                            dateFormat="yyyy-MM-dd"
+                                            isClearable
+                                            disabled={processing}
+                                            placeholderText="Select due date (optional)"
+                                            customInput={
+                                                <CustomInput
+                                                    id="due_date"
+                                                    icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                    disabled={processing}
+                                                    tabIndex={3}
+                                                />
+                                            }
+                                        />
+                                        <InputError message={errors.due_date} />
+                                    </div>
                                 </div>
 
                                 <div className="grid gap-2">
@@ -245,103 +269,81 @@ export default function CreateTask({ projects }: Props) {
                                     <InputError message={errors.description} />
                                 </div>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="status" className="text-sm font-medium">
-                                        Status
-                                    </Label>
-                                    <div className="relative rounded-md border p-3">
-                                        <div className="pointer-events-none absolute top-3 left-3">
-                                            <CheckSquare className="h-4 w-4 text-muted-foreground" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="status" className="text-sm font-medium">
+                                            Status
+                                        </Label>
+                                        <div className="relative rounded-md border p-3">
+                                            <div className="pointer-events-none absolute top-3 left-3">
+                                                <CheckSquare className="h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            <div className="pl-7">
+                                                <RadioGroup
+                                                    value={data.status}
+                                                    onValueChange={(value) => setData('status', value as TaskForm['status'])}
+                                                    className="flex flex-col space-y-2"
+                                                >
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value="pending" id="status-pending" />
+                                                        <Label htmlFor="status-pending" className="cursor-pointer">
+                                                            Pending
+                                                        </Label>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value="in_progress" id="status-in-progress" />
+                                                        <Label htmlFor="status-in-progress" className="cursor-pointer">
+                                                            In Progress
+                                                        </Label>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value="completed" id="status-completed" />
+                                                        <Label htmlFor="status-completed" className="cursor-pointer">
+                                                            Completed
+                                                        </Label>
+                                                    </div>
+                                                </RadioGroup>
+                                            </div>
                                         </div>
-                                        <div className="pl-7">
-                                            <RadioGroup
-                                                value={data.status}
-                                                onValueChange={(value) => setData('status', value as TaskForm['status'])}
-                                                className="flex flex-col space-y-2"
-                                            >
-                                                <div className="flex items-center space-x-2">
-                                                    <RadioGroupItem value="pending" id="status-pending" />
-                                                    <Label htmlFor="status-pending" className="cursor-pointer">
-                                                        Pending
-                                                    </Label>
-                                                </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <RadioGroupItem value="in_progress" id="status-in-progress" />
-                                                    <Label htmlFor="status-in-progress" className="cursor-pointer">
-                                                        In Progress
-                                                    </Label>
-                                                </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <RadioGroupItem value="completed" id="status-completed" />
-                                                    <Label htmlFor="status-completed" className="cursor-pointer">
-                                                        Completed
-                                                    </Label>
-                                                </div>
-                                            </RadioGroup>
-                                        </div>
+                                        <InputError message={errors.status} />
                                     </div>
-                                    <InputError message={errors.status} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="priority" className="text-sm font-medium">
-                                        Priority
-                                    </Label>
-                                    <div className="relative rounded-md border p-3">
-                                        <div className="pointer-events-none absolute top-3 left-3">
-                                            <CheckSquare className="h-4 w-4 text-muted-foreground" />
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="priority" className="text-sm font-medium">
+                                            Priority
+                                        </Label>
+                                        <div className="relative rounded-md border p-3">
+                                            <div className="pointer-events-none absolute top-3 left-3">
+                                                <CheckSquare className="h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            <div className="pl-7">
+                                                <RadioGroup
+                                                    value={data.priority}
+                                                    onValueChange={(value) => setData('priority', value as TaskForm['priority'])}
+                                                    className="flex flex-col space-y-2"
+                                                >
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value="low" id="priority-low" />
+                                                        <Label htmlFor="priority-low" className="cursor-pointer">
+                                                            Low
+                                                        </Label>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value="medium" id="priority-medium" />
+                                                        <Label htmlFor="priority-medium" className="cursor-pointer">
+                                                            Medium
+                                                        </Label>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value="high" id="priority-high" />
+                                                        <Label htmlFor="priority-high" className="cursor-pointer">
+                                                            High
+                                                        </Label>
+                                                    </div>
+                                                </RadioGroup>
+                                            </div>
                                         </div>
-                                        <div className="pl-7">
-                                            <RadioGroup
-                                                value={data.priority}
-                                                onValueChange={(value) => setData('priority', value as TaskForm['priority'])}
-                                                className="flex flex-col space-y-2"
-                                            >
-                                                <div className="flex items-center space-x-2">
-                                                    <RadioGroupItem value="low" id="priority-low" />
-                                                    <Label htmlFor="priority-low" className="cursor-pointer">
-                                                        Low
-                                                    </Label>
-                                                </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <RadioGroupItem value="medium" id="priority-medium" />
-                                                    <Label htmlFor="priority-medium" className="cursor-pointer">
-                                                        Medium
-                                                    </Label>
-                                                </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <RadioGroupItem value="high" id="priority-high" />
-                                                    <Label htmlFor="priority-high" className="cursor-pointer">
-                                                        High
-                                                    </Label>
-                                                </div>
-                                            </RadioGroup>
-                                        </div>
+                                        <InputError message={errors.priority} />
                                     </div>
-                                    <InputError message={errors.priority} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="due_date" className="text-sm font-medium">
-                                        Due Date <span className="text-xs text-muted-foreground">(optional)</span>
-                                    </Label>
-                                    <DatePicker
-                                        selected={dueDate}
-                                        onChange={handleDueDateChange}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        placeholderText="Select due date (optional)"
-                                        customInput={
-                                            <CustomInput
-                                                id="due_date"
-                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                                disabled={processing}
-                                                tabIndex={3}
-                                            />
-                                        }
-                                    />
-                                    <InputError message={errors.due_date} />
                                 </div>
 
                                 <div className="grid gap-2">

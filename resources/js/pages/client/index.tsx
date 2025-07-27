@@ -12,7 +12,7 @@ import { type BreadcrumbItem } from '@/types'
 import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { clients as _clients } from '@actions/ClientController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Calendar, CalendarRange, Download, Edit, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'
+import { Calendar, CalendarRange, Download, Edit, FileText, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 
 interface CustomInputProps {
@@ -65,6 +65,8 @@ type Client = {
     phone: string | null
     address: string | null
     notes: string | null
+    hourly_rate: number | null
+    currency: string | null
 }
 
 type ClientFilters = {
@@ -352,6 +354,7 @@ export default function Clients() {
                                         <TableHead>Contact Person</TableHead>
                                         <TableHead>Email</TableHead>
                                         <TableHead>Phone</TableHead>
+                                        <TableHead>Currency</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
@@ -364,12 +367,19 @@ export default function Clients() {
                                             </TableCell>
                                             <TableCell>{client.email || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
                                             <TableCell>{client.phone || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
+                                            <TableCell>{client.currency || 'USD'}</TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <Link href={route('client.projects', client.id)}>
                                                         <Button variant="outline" size="sm" className="h-8">
                                                             <Folder className="mr-1 h-3.5 w-3.5" />
                                                             Projects
+                                                        </Button>
+                                                    </Link>
+                                                    <Link href={route('client.invoices', client.id)}>
+                                                        <Button variant="outline" size="sm" className="h-8">
+                                                            <FileText className="mr-1 h-3.5 w-3.5" />
+                                                            Invoices
                                                         </Button>
                                                     </Link>
                                                     <Link href={route('client.edit', client.id)}>

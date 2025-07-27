@@ -1,4 +1,4 @@
-import { BrainCircuit, Sparkles, MessageSquareText, Lightbulb, Zap, Clock } from 'lucide-react'
+import { BrainCircuit, Clock, Lightbulb, MessageSquareText, Sparkles, Zap } from 'lucide-react'
 
 export default function AiSection() {
     return (
@@ -10,10 +10,10 @@ export default function AiSection() {
                         <span className="font-bold tracking-widest text-gray-800 uppercase dark:text-gray-200">AI Assistant</span>
                     </div>
                     {/* Decorative elements with pulsing animation */}
-                    <div className="absolute -top-3 -right-3 flex h-10 w-10 rotate-12 items-center justify-center border-2 border-purple-600/80 bg-purple-100/50 animate-pulse dark:border-purple-400/80 dark:bg-purple-900/50">
+                    <div className="absolute -top-3 -right-3 flex h-10 w-10 rotate-12 animate-pulse items-center justify-center border-2 border-purple-600/80 bg-purple-100/50 dark:border-purple-400/80 dark:bg-purple-900/50">
                         <span className="text-sm font-bold text-purple-700 dark:text-purple-300">AI</span>
                     </div>
-                    <div className="absolute -bottom-3 -left-3 flex h-10 w-10 -rotate-12 items-center justify-center border-2 border-purple-600/80 bg-purple-100/50 animate-pulse dark:border-purple-400/80 dark:bg-purple-900/50">
+                    <div className="absolute -bottom-3 -left-3 flex h-10 w-10 -rotate-12 animate-pulse items-center justify-center border-2 border-purple-600/80 bg-purple-100/50 dark:border-purple-400/80 dark:bg-purple-900/50">
                         <Sparkles className="h-5 w-5 text-purple-700 dark:text-purple-300" />
                     </div>
                 </div>
@@ -40,11 +40,13 @@ export default function AiSection() {
                                     : 'border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700'
                             } shadow-sm`}
                         >
-                            <span className={`text-xs font-bold ${
-                                index === 0 || index === 1
-                                    ? 'text-purple-700 dark:text-purple-300'
-                                    : 'text-gray-700 dark:text-gray-300'
-                            }`}>{letter}</span>
+                            <span
+                                className={`text-xs font-bold ${
+                                    index === 0 || index === 1 ? 'text-purple-700 dark:text-purple-300' : 'text-gray-700 dark:text-gray-300'
+                                }`}
+                            >
+                                {letter}
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -56,7 +58,7 @@ export default function AiSection() {
                 <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-purple-300/20 blur-3xl"></div>
 
                 <div className="relative z-10 flex flex-col items-center md:flex-row md:items-start md:gap-8">
-                    <div className="mb-6 flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 p-4 shadow-inner dark:bg-purple-900/50 md:mb-0">
+                    <div className="mb-6 flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 p-4 shadow-inner md:mb-0 dark:bg-purple-900/50">
                         <BrainCircuit className="h-12 w-12 text-purple-600 dark:text-purple-300" />
                     </div>
                     <div>
@@ -68,7 +70,8 @@ export default function AiSection() {
                             </span>
                         </div>
                         <p className="mb-4 text-lg text-gray-700 dark:text-gray-300">
-                            Our AI assistant analyzes your work patterns, provides insights, and helps you optimize your time. Ask questions about your projects, get summaries of your work, and receive personalized recommendations.
+                            Our AI assistant analyzes your work patterns, provides insights, and helps you optimize your time. Ask questions about
+                            your projects, get summaries of your work, and receive personalized recommendations.
                         </p>
                         <div className="flex flex-wrap gap-3">
                             <div className="inline-flex items-center rounded-md border border-purple-200 bg-purple-50 px-3 py-1.5 dark:border-purple-800 dark:bg-purple-900/30">
@@ -159,15 +162,13 @@ export default function AiSection() {
             {/* Call-to-action button */}
             <div className="mt-12 text-center">
                 <button className="group relative inline-flex items-center justify-center overflow-hidden rounded-md bg-gradient-to-r from-purple-600 to-blue-500 px-8 py-3 font-medium text-white transition duration-300 ease-out hover:from-purple-700 hover:to-blue-600">
-                    <span className="absolute -right-8 -top-8 h-20 w-20 rounded-full bg-white/20 transition-all duration-500 ease-in-out group-hover:scale-150"></span>
+                    <span className="absolute -top-8 -right-8 h-20 w-20 rounded-full bg-white/20 transition-all duration-500 ease-in-out group-hover:scale-150"></span>
                     <span className="relative flex items-center">
                         <BrainCircuit className="mr-2 h-5 w-5" />
                         Try AI Assistant Now
                     </span>
                 </button>
-                <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
-                    Powered by advanced machine learning to help you work smarter
-                </p>
+                <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">Powered by advanced machine learning to help you work smarter</p>
             </div>
         </section>
     )

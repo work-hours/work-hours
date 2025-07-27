@@ -52,7 +52,9 @@ final class ClientController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('client/create');
+        return Inertia::render('client/create', [
+            'currencies' => Auth::user()->currencies,
+        ]);
     }
 
     /**
@@ -67,6 +69,11 @@ final class ClientController extends Controller
         try {
             $data = $request->validated();
             $data['user_id'] = Auth::id();
+
+            // Set USD as default currency if not provided
+            if (! isset($data['currency']) || empty($data['currency'])) {
+                $data['currency'] = 'USD';
+            }
 
             Client::query()->create($data);
 
@@ -84,6 +91,7 @@ final class ClientController extends Controller
     {
         return Inertia::render('client/edit', [
             'client' => $client,
+            'currencies' => Auth::user()->currencies,
         ]);
     }
 
@@ -97,7 +105,14 @@ final class ClientController extends Controller
     {
         DB::beginTransaction();
         try {
-            $client->update($request->validated());
+            $data = $request->validated();
+
+            // Set USD as default currency if not provided
+            if (! isset($data['currency']) || empty($data['currency'])) {
+                $data['currency'] = 'USD';
+            }
+
+            $client->update($data);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -148,7 +163,7 @@ final class ClientController extends Controller
     #[Action(method: 'get', name: 'client.export', middleware: ['auth', 'verified'])]
     public function clientExport(): StreamedResponse
     {
-        $headers = ['ID', 'Name', 'Email', 'Contact Person', 'Phone', 'Address', 'Notes', 'Created At'];
+        $headers = ['ID', 'Name', 'Email', 'Contact Person', 'Phone', 'Address', 'Notes', 'Hourly Rate', 'Currency', 'Created At'];
         $filename = 'clients_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv(

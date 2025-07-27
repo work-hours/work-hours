@@ -25,6 +25,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property User $user
  * @property-read Collection|Project[] $projects
+ * @property-read Collection|Invoice[] $invoices
  */
 final class Client extends Model
 {
@@ -36,6 +37,8 @@ final class Client extends Model
         'phone',
         'address',
         'notes',
+        'hourly_rate',
+        'currency',
     ];
 
     public function user(): BelongsTo
@@ -46,5 +49,10 @@ final class Client extends Model
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
     }
 }
