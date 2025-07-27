@@ -100,7 +100,7 @@ type Props = {
     filters: InvoiceFilters
 }
 
-export default function Invoices() {
+export function Invoices() {
     const { filters: pageFilters } = usePage<Props>().props
     const [invoices, setInvoices] = useState<Invoice[]>([])
     const [loading, setLoading] = useState<boolean>(true)
@@ -348,7 +348,8 @@ export default function Invoices() {
             <Head title="Invoices" />
             <div className="mx-auto flex flex-col gap-6 p-6">
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Invoice Management</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Invoice
+                        Management</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your invoices</p>
                 </section>
 
@@ -375,7 +376,8 @@ export default function Invoices() {
                                 <Label htmlFor="client_id" className="text-xs font-medium">
                                     Client
                                 </Label>
-                                <Select value={filters.client_id} onValueChange={(value) => handleFilterChange('client_id', value)}>
+                                <Select value={filters.client_id}
+                                        onValueChange={(value) => handleFilterChange('client_id', value)}>
                                     <SelectTrigger id="client_id">
                                         <SelectValue placeholder="All Clients" />
                                     </SelectTrigger>
@@ -389,7 +391,8 @@ export default function Invoices() {
                                 <Label htmlFor="status" className="text-xs font-medium">
                                     Status
                                 </Label>
-                                <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
+                                <Select value={filters.status}
+                                        onValueChange={(value) => handleFilterChange('status', value)}>
                                     <SelectTrigger id="status">
                                         <SelectValue placeholder="All Statuses" />
                                     </SelectTrigger>
@@ -557,14 +560,18 @@ export default function Invoices() {
                             <div className="flex flex-col items-center justify-center py-12 text-center">
                                 <Loader2 className="mb-4 h-12 w-12 animate-spin text-muted-foreground/50" />
                                 <h3 className="mb-1 text-lg font-medium">Loading Invoices</h3>
-                                <p className="mb-4 text-muted-foreground">Please wait while we fetch your invoices...</p>
+                                <p className="mb-4 text-muted-foreground">Please wait while we fetch your
+                                    invoices...</p>
                             </div>
                         ) : error ? (
-                            <div className="rounded-md border border-red-200 bg-red-50 p-6 dark:border-red-800 dark:bg-red-900/20">
+                            <div
+                                className="rounded-md border border-red-200 bg-red-50 p-6 dark:border-red-800 dark:bg-red-900/20">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
                                     <FileText className="mb-4 h-12 w-12 text-red-500" />
-                                    <h3 className="mb-1 text-lg font-medium text-red-700 dark:text-red-400">Failed to Load Invoices</h3>
-                                    <p className="mb-4 text-red-600 dark:text-red-300">There was an error loading your invoices. Please try again.</p>
+                                    <h3 className="mb-1 text-lg font-medium text-red-700 dark:text-red-400">Failed to
+                                        Load Invoices</h3>
+                                    <p className="mb-4 text-red-600 dark:text-red-300">There was an error loading your
+                                        invoices. Please try again.</p>
                                     <Button onClick={() => getInvoices()} className="flex items-center gap-2">
                                         <Loader2 className="h-4 w-4" />
                                         <span>Retry</span>
@@ -605,7 +612,8 @@ export default function Invoices() {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
-                                                    <a href={route('invoice.downloadPdf', invoice.id)} target="_blank" rel="noopener noreferrer">
+                                                    <a href={route('invoice.downloadPdf', invoice.id)} target="_blank"
+                                                       rel="noopener noreferrer">
                                                         <Button variant="outline" size="sm" className="h-8 w-8 p-0">
                                                             <Download className="h-3.5 w-3.5" />
                                                             <span className="sr-only">Download PDF</span>
@@ -627,7 +635,8 @@ export default function Invoices() {
                                                     >
                                                         <Mail
                                                             className={`h-3.5 w-3.5 ${invoice.status === 'sent' ? 'text-muted-foreground/50' : ''}`}
-                                                        />
+                                                        />.
+                                                        6+++++++++-+--+++-74
                                                         <span className="sr-only">Send Email</span>
                                                     </Button>
                                                 </div>
@@ -642,7 +651,7 @@ export default function Invoices() {
                                     <FileText className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Invoices</h3>
                                     <p className="mb-4 text-muted-foreground">You haven't created any invoices yet.</p>
-                                    <Link href={route('invoice.create')}>
+                                    <Link href={route('invoice.create')}>6;.
                                         <Button className="flex items-center gap-2">
                                             <Plus className="h-4 w-4" />
                                             <span>Create Invoice</span>
@@ -663,8 +672,10 @@ export default function Invoices() {
                         <AlertDialogDescription>
                             {selectedInvoice && (
                                 <>
-                                    This will send invoice #{selectedInvoice.invoice_number} to {selectedInvoice.client.name}.
-                                    {selectedInvoice.status !== 'sent' && <div className="mt-2">The invoice status will be updated to "Sent".</div>}
+                                    This will send invoice
+                                    #{selectedInvoice.invoice_number} to {selectedInvoice.client.name}.
+                                    {selectedInvoice.status !== 'sent' &&
+                                        <div className="mt-2">The invoice status will be updated to "Sent".</div>}
                                 </>
                             )}
                         </AlertDialogDescription>

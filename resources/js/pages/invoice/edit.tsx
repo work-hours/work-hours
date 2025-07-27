@@ -1,7 +1,8 @@
-import { Head, useForm } from '@inertiajs/react'
+import { Head, useForm, usePage } from '@inertiajs/react'
 import { ArrowLeft, Calendar, FileText, LoaderCircle, Plus, Save, Trash2, User } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { type SharedData } from '@/types'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
@@ -92,6 +93,7 @@ type Props = {
 }
 
 export default function EditInvoice({ invoice }: Props) {
+    const { auth } = usePage<SharedData>().props
     const [clients, setClients] = useState<Client[]>([])
     const [timeLogs, setTimeLogs] = useState<ProjectTimeLogGroup[]>([])
     const [loadingClients, setLoadingClients] = useState(true)
@@ -348,9 +350,26 @@ export default function EditInvoice({ invoice }: Props) {
 
     // Format currency
     const formatCurrency = (amount: number): string => {
+        // Get client currency from timeLogs if available
+        let currency = 'USD' // Default fallback
+
+        // In edit mode, we already have the invoice with a client
+        if (invoice.client_id && timeLogs.length > 0) {
+            // Use the first project's currency as the client currency
+            const clientCurrency = timeLogs[0]?.currency
+            if (clientCurrency) {
+                currency = clientCurrency
+            }
+        }
+
+        // If client currency is not available, use user currency as fallback
+        if (currency === 'USD' && auth.user.currency) {
+            currency = auth.user.currency
+        }
+
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD',
+            currency: currency,
         }).format(amount)
     }
 
