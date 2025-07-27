@@ -141,6 +141,9 @@ final class TimeLogStore
         // Get unpaid time logs for the client
         $timeLogs = self::unpaidTimeLogsByClient($clientId);
 
+        // Get client for hourly rate and currency
+        $client = Client::find($clientId);
+
         // Group time logs by project
         $groupedTimeLogs = [];
 
@@ -149,12 +152,16 @@ final class TimeLogStore
             $projectName = $timeLog->project->name;
 
             if (! isset($groupedTimeLogs[$projectId])) {
+                // Use client's hourly_rate and currency if available, otherwise fall back to user's values
+                $hourlyRate = ($client && $client->hourly_rate) ? $client->hourly_rate : (auth()->user()->hourly_rate ?? 0);
+                $currency = ($client && $client->currency) ? $client->currency : (auth()->user()->currency ?? 'USD');
+
                 $groupedTimeLogs[$projectId] = [
                     'project_id' => $projectId,
                     'project_name' => $projectName,
                     'total_hours' => 0,
-                    'hourly_rate' => auth()->user()->hourly_rate ?? 0,
-                    'currency' => auth()->user()->currency ?? 'USD',
+                    'hourly_rate' => $hourlyRate,
+                    'currency' => $currency,
                     'time_logs' => [],
                 ];
             }

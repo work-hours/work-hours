@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
@@ -23,6 +24,14 @@ type ClientForm = {
     currency: string
 }
 
+type Currency = {
+    id: number
+    user_id: number
+    code: string
+    created_at: string
+    updated_at: string
+}
+
 type Props = {
     client: {
         id: number
@@ -35,9 +44,10 @@ type Props = {
         hourly_rate: number | null
         currency: string | null
     }
+    currencies: Currency[]
 }
 
-export default function EditClient({ client }: Props) {
+export default function EditClient({ client, currencies }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Clients',
@@ -230,18 +240,27 @@ export default function EditClient({ client }: Props) {
                                         <Label htmlFor="currency" className="text-sm font-medium">
                                             Currency <span className="text-xs text-muted-foreground">(optional)</span>
                                         </Label>
-                                        <div className="relative">
-                                            <Input
-                                                id="currency"
-                                                type="text"
-                                                maxLength={5}
-                                                tabIndex={7}
-                                                value={data.currency}
-                                                onChange={(e) => setData('currency', e.target.value)}
-                                                disabled={processing}
-                                                placeholder="USD"
-                                            />
-                                        </div>
+                                        <Select
+                                            value={data.currency}
+                                            onValueChange={(value) => setData('currency', value)}
+                                            disabled={processing || currencies.length === 0}
+                                        >
+                                            <SelectTrigger id="currency" className="w-full" tabIndex={7}>
+                                                <SelectValue placeholder="Select a currency" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {currencies.map((currency) => (
+                                                    <SelectItem key={currency.id} value={currency.code}>
+                                                        {currency.code}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        {currencies.length === 0 && (
+                                            <p className="text-xs text-muted-foreground">
+                                                No currencies available. Default USD will be used.
+                                            </p>
+                                        )}
                                         <InputError message={errors.currency} className="mt-1" />
                                     </div>
                                 </div>
