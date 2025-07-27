@@ -407,7 +407,7 @@ export default function CreateInvoice() {
                                                         id="issue_date"
                                                         placeholder="Select issue date"
                                                         className="pl-10"
-                                                        value={data.issue_date ? data.issue_date.toLocaleDateString() : ''}
+                                                        value={data.issue_date ? data.issue_date.toISOString().split('T')[0] : ''}
                                                         readOnly
                                                     />
                                                 </div>
@@ -435,7 +435,7 @@ export default function CreateInvoice() {
                                                         id="due_date"
                                                         placeholder="Select due date"
                                                         className="pl-10"
-                                                        value={data.due_date ? data.due_date.toLocaleDateString() : ''}
+                                                        value={data.due_date ? data.due_date.toISOString().split('T')[0] : ''}
                                                         readOnly
                                                     />
                                                 </div>
@@ -567,7 +567,7 @@ export default function CreateInvoice() {
                                                                                 value={timeLog.id.toString()}
                                                                                 className="pl-4"
                                                                             >
-                                                                                {new Date(timeLog.start_timestamp).toLocaleDateString()} -{' '}
+                                                                                {new Date(timeLog.start_timestamp).toISOString().split('T')[0]} -{' '}
                                                                                 {(timeLog.duration || 0).toFixed(2)} hours
                                                                             </SelectItem>
                                                                         ))}

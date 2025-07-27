@@ -535,8 +535,8 @@ export default function Invoices() {
                                         <TableRow key={invoice.id}>
                                             <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
                                             <TableCell>{invoice.client.name}</TableCell>
-                                            <TableCell>{new Date(invoice.issue_date).toLocaleDateString()}</TableCell>
-                                            <TableCell>{new Date(invoice.due_date).toLocaleDateString()}</TableCell>
+                                            <TableCell>{new Date(invoice.issue_date).toISOString().split('T')[0]}</TableCell>
+                                            <TableCell>{new Date(invoice.due_date).toISOString().split('T')[0]}</TableCell>
                                             <TableCell>{formatCurrency(invoice.total_amount)}</TableCell>
                                             <TableCell>
                                                 <span
