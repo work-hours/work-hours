@@ -708,7 +708,13 @@ export default function Invoices() {
                             <div className="relative rounded-md border p-3">
                                 <RadioGroup
                                     value={newStatus}
-                                    onValueChange={setNewStatus}
+                                    onValueChange={(value) => {
+                                        setNewStatus(value);
+                                        // If status is changed to paid, set paid_amount to total invoice amount
+                                        if (value === 'paid' && selectedInvoice) {
+                                            setNewPaidAmount(selectedInvoice.total_amount.toString());
+                                        }
+                                    }}
                                     className="flex flex-col space-y-2"
                                 >
                                     <div className="flex items-center space-x-2">
