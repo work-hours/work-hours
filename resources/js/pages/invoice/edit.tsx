@@ -370,6 +370,7 @@ export default function EditInvoice({ invoice }: Props) {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: currency,
+            currencyDisplay: 'code'
         }).format(amount)
     }
 

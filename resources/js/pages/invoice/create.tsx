@@ -338,6 +338,7 @@ export default function CreateInvoice() {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: currency,
+            currencyDisplay: 'code'
         }).format(amount)
     }
 
