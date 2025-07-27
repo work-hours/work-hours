@@ -105,8 +105,12 @@ export default function Invoices() {
     const [error, setError] = useState<boolean>(false)
     const [processing, setProcessing] = useState(false)
     const [emailDialogOpen, setEmailDialogOpen] = useState(false)
+    const [statusDialogOpen, setStatusDialogOpen] = useState(false)
     const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
     const [sendingEmail, setSendingEmail] = useState(false)
+    const [updatingStatus, setUpdatingStatus] = useState(false)
+    const [newStatus, setNewStatus] = useState<string>('')
+    const [newPaidAmount, setNewPaidAmount] = useState<string>('')
 
     // Filter states
     const [filters, setFilters] = useState<InvoiceFilters>({
@@ -261,6 +265,14 @@ export default function Invoices() {
         setEmailDialogOpen(true)
     }
 
+    // Handle opening the status update dialog
+    const handleStatusClick = (invoice: Invoice): void => {
+        setSelectedInvoice(invoice)
+        setNewStatus(invoice.status)
+        setNewPaidAmount(invoice.paid_amount.toString())
+        setStatusDialogOpen(true)
+    }
+
     // Handle sending the email
     const handleSendEmail = async (): void => {
         if (!selectedInvoice) return
@@ -286,6 +298,46 @@ export default function Invoices() {
             console.error('Error sending invoice email:', error)
         } finally {
             setSendingEmail(false)
+        }
+    }
+
+    // Handle updating the invoice status
+    const handleStatusUpdate = async (): void => {
+        if (!selectedInvoice) return
+
+        setUpdatingStatus(true)
+        try {
+            // Make API call to update the invoice status
+            await router.post(route('invoice.updateStatus', selectedInvoice.id), {
+                status: newStatus,
+                paid_amount: newPaidAmount
+            })
+
+            // Update the invoice status in the local state
+            setInvoices(
+                invoices.map((invoice) => {
+                    if (invoice.id === selectedInvoice.id) {
+                        return {
+                            ...invoice,
+                            status: newStatus,
+                            paid_amount: parseFloat(newPaidAmount)
+                        }
+                    }
+                    return invoice
+                }),
+            )
+
+            // Show success message
+            toast.success(`Invoice status updated to ${formatStatusLabel(newStatus)}`)
+
+            // Close the dialog
+            setStatusDialogOpen(false)
+            setSelectedInvoice(null)
+        } catch (error) {
+            console.error('Error updating invoice status:', error)
+            toast.error('Failed to update invoice status')
+        } finally {
+            setUpdatingStatus(false)
         }
     }
 
@@ -542,7 +594,9 @@ export default function Invoices() {
                                                 <span
                                                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeClass(
                                                         invoice.status,
-                                                    )}`}
+                                                    )} cursor-pointer hover:opacity-80`}
+                                                    onClick={() => handleStatusClick(invoice)}
+                                                    title="Click to update status"
                                                 >
                                                     {formatStatusLabel(invoice.status)}
                                                 </span>
@@ -625,6 +679,83 @@ export default function Invoices() {
                                 </>
                             ) : (
                                 'Send Email'
+                            )}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Status Update Dialog */}
+            <AlertDialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Update Invoice Status</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {selectedInvoice && (
+                                <>
+                                    Update status for invoice #{selectedInvoice.invoice_number}
+                                </>
+                            )}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="status" className="text-sm font-medium">
+                                Status
+                            </Label>
+                            <Select value={newStatus} onValueChange={setNewStatus}>
+                                <SelectTrigger id="status" className="w-full">
+                                    <SelectValue placeholder="Select status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="draft">Draft</SelectItem>
+                                    <SelectItem value="sent">Sent</SelectItem>
+                                    <SelectItem value="paid">Paid</SelectItem>
+                                    <SelectItem value="partially_paid">Partially Paid</SelectItem>
+                                    <SelectItem value="overdue">Overdue</SelectItem>
+                                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {(newStatus === 'paid' || newStatus === 'partially_paid') && (
+                            <div className="grid gap-2">
+                                <Label htmlFor="paid_amount" className="text-sm font-medium">
+                                    Paid Amount
+                                </Label>
+                                <Input
+                                    id="paid_amount"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    value={newPaidAmount}
+                                    onChange={(e) => setNewPaidAmount(e.target.value)}
+                                    placeholder="0.00"
+                                />
+                                {selectedInvoice && (
+                                    <p className="text-xs text-muted-foreground">
+                                        Total invoice amount: {formatCurrency(selectedInvoice.total_amount)}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={updatingStatus}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleStatusUpdate}
+                            disabled={updatingStatus}
+                            className="bg-primary text-primary-foreground hover:bg-primary/90"
+                        >
+                            {updatingStatus ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Updating...
+                                </>
+                            ) : (
+                                'Update Status'
                             )}
                         </AlertDialogAction>
                     </AlertDialogFooter>

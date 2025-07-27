@@ -243,4 +243,37 @@ final class InvoiceController extends Controller
             throw $e;
         }
     }
+
+    /**
+     * Update invoice status and paid amount
+     *
+     * @throws Throwable
+     */
+    #[Action(method: 'post', name: 'invoice.updateStatus', params: ['invoice'], middleware: ['auth', 'verified'])]
+    public function updateStatus(Invoice $invoice): void
+    {
+        // Validate request data
+        request()->validate([
+            'status' => 'required|string|in:draft,sent,paid,partially_paid,overdue,cancelled',
+            'paid_amount' => 'required_if:status,paid,partially_paid|numeric|min:0',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Update invoice status and paid amount
+            $invoice->status = request('status');
+
+            // Update paid amount if provided
+            if (request()->has('paid_amount')) {
+                $invoice->paid_amount = request('paid_amount');
+            }
+
+            $invoice->save();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }
