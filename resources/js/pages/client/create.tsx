@@ -137,48 +137,49 @@ export default function CreateClient({ currencies }: Props) {
                                     </div>
                                 </div>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="email" className="text-sm font-medium">
-                                        Email <span className="text-xs text-muted-foreground">(optional)</span>
-                                    </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Mail className="h-4 w-4 text-muted-foreground" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="email" className="text-sm font-medium">
+                                            Email <span className="text-xs text-muted-foreground">(optional)</span>
+                                        </Label>
+                                        <div className="relative">
+                                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                tabIndex={3}
+                                                value={data.email}
+                                                onChange={(e) => setData('email', e.target.value)}
+                                                disabled={processing}
+                                                placeholder="Email address"
+                                                className="pl-10"
+                                            />
                                         </div>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            tabIndex={3}
-                                            value={data.email}
-                                            onChange={(e) => setData('email', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="Email address"
-                                            className="pl-10"
-                                        />
+                                        <InputError message={errors.email} className="mt-1" />
                                     </div>
-                                    <InputError message={errors.email} className="mt-1" />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="phone" className="text-sm font-medium">
-                                        Phone <span className="text-xs text-muted-foreground">(optional)</span>
-                                    </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Phone className="h-4 w-4 text-muted-foreground" />
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="phone" className="text-sm font-medium">
+                                            Phone <span className="text-xs text-muted-foreground">(optional)</span>
+                                        </Label>
+                                        <div className="relative">
+                                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                <Phone className="h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            <Input
+                                                id="phone"
+                                                type="text"
+                                                tabIndex={4}
+                                                value={data.phone}
+                                                onChange={(e) => setData('phone', e.target.value)}
+                                                disabled={processing}
+                                                placeholder="Phone number"
+                                                className="pl-10"
+                                            />
                                         </div>
-                                        <Input
-                                            id="phone"
-                                            type="text"
-                                            tabIndex={4}
-                                            value={data.phone}
-                                            onChange={(e) => setData('phone', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="Phone number"
-                                            className="pl-10"
-                                        />
+                                        <InputError message={errors.phone} className="mt-1" />
                                     </div>
-                                    <InputError message={errors.phone} className="mt-1" />
                                 </div>
 
                                 <div className="grid gap-2">
