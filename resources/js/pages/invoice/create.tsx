@@ -31,6 +31,7 @@ type InvoiceForm = {
     notes: string
     discount_type: string | null
     discount_value: string
+    currency: string
     items: InvoiceItemForm[]
 }
 
@@ -93,6 +94,7 @@ export default function CreateInvoice() {
         notes: '',
         discount_type: null,
         discount_value: '0',
+        currency: auth.user.currency || 'USD', // Default to user currency or USD
         items: [
             {
                 time_log_id: null,
@@ -135,6 +137,18 @@ export default function CreateInvoice() {
                 })
 
                 setTimeLogs(timeLogsData)
+
+                // Update currency based on client currency or user currency
+                if (timeLogsData.length > 0) {
+                    const clientCurrency = timeLogsData[0]?.currency
+                    if (clientCurrency) {
+                        setData('currency', clientCurrency)
+                    } else if (auth.user.currency) {
+                        setData('currency', auth.user.currency)
+                    } else {
+                        setData('currency', 'USD')
+                    }
+                }
             } catch (error) {
                 console.error('Error fetching time logs:', error)
                 toast.error('Failed to load time logs')
@@ -316,28 +330,12 @@ export default function CreateInvoice() {
         })
     }
 
+
     // Format currency
     const formatCurrency = (amount: number): string => {
-        // Get client currency from timeLogs if available
-        let currency = 'USD' // Default fallback
-
-        // If client is selected and timeLogs are loaded
-        if (data.client_id && timeLogs.length > 0) {
-            // Use the first project's currency as the client currency
-            const clientCurrency = timeLogs[0]?.currency
-            if (clientCurrency) {
-                currency = clientCurrency
-            }
-        }
-
-        // If client currency is not available, use user currency as fallback
-        if (currency === 'USD' && auth.user.currency) {
-            currency = auth.user.currency
-        }
-
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: currency,
+            currency: data.currency,
             currencyDisplay: 'code'
         }).format(amount)
     }

@@ -28,6 +28,7 @@ type InvoiceForm = {
     notes: string
     discount_type: string | null
     discount_value: string
+    currency: string
     items: InvoiceItemForm[]
 }
 
@@ -78,6 +79,7 @@ type Invoice = {
     discount_type: string | null
     discount_value: number
     discount_amount: number
+    currency: string | null
     items: {
         id: number
         time_log_id: number | null
@@ -137,6 +139,7 @@ export default function EditInvoice({ invoice }: Props) {
         notes: invoice.notes || '',
         discount_type: invoice.discount_type,
         discount_value: invoice.discount_value ? invoice.discount_value.toString() : '0',
+        currency: invoice.currency || auth.user.currency || 'USD', // Use invoice currency, user currency, or USD as fallback
         items: formatInvoiceItems(invoice.items),
     })
 
@@ -169,6 +172,18 @@ export default function EditInvoice({ invoice }: Props) {
                     params: { client_id: data.client_id },
                 })
                 setTimeLogs(timeLogsData)
+
+                // Update currency based on client currency or user currency
+                if (timeLogsData.length > 0) {
+                    const clientCurrency = timeLogsData[0]?.currency
+                    if (clientCurrency) {
+                        setData('currency', clientCurrency)
+                    } else if (auth.user.currency) {
+                        setData('currency', auth.user.currency)
+                    } else {
+                        setData('currency', 'USD')
+                    }
+                }
             } catch (error) {
                 console.error('Error fetching time logs:', error)
                 toast.error('Failed to load time logs')
@@ -350,26 +365,9 @@ export default function EditInvoice({ invoice }: Props) {
 
     // Format currency
     const formatCurrency = (amount: number): string => {
-        // Get client currency from timeLogs if available
-        let currency = 'USD' // Default fallback
-
-        // In edit mode, we already have the invoice with a client
-        if (invoice.client_id && timeLogs.length > 0) {
-            // Use the first project's currency as the client currency
-            const clientCurrency = timeLogs[0]?.currency
-            if (clientCurrency) {
-                currency = clientCurrency
-            }
-        }
-
-        // If client currency is not available, use user currency as fallback
-        if (currency === 'USD' && auth.user.currency) {
-            currency = auth.user.currency
-        }
-
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: currency,
+            currency: data.currency,
             currencyDisplay: 'code'
         }).format(amount)
     }
