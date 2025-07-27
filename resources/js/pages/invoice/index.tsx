@@ -14,6 +14,7 @@ import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
@@ -704,19 +705,50 @@ export default function Invoices() {
                             <Label htmlFor="status" className="text-sm font-medium">
                                 Status
                             </Label>
-                            <Select value={newStatus} onValueChange={setNewStatus}>
-                                <SelectTrigger id="status" className="w-full">
-                                    <SelectValue placeholder="Select status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="draft">Draft</SelectItem>
-                                    <SelectItem value="sent">Sent</SelectItem>
-                                    <SelectItem value="paid">Paid</SelectItem>
-                                    <SelectItem value="partially_paid">Partially Paid</SelectItem>
-                                    <SelectItem value="overdue">Overdue</SelectItem>
-                                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <div className="relative rounded-md border p-3">
+                                <RadioGroup
+                                    value={newStatus}
+                                    onValueChange={setNewStatus}
+                                    className="flex flex-col space-y-2"
+                                >
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="draft" id="status-draft" />
+                                        <Label htmlFor="status-draft" className="cursor-pointer">
+                                            Draft
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="sent" id="status-sent" />
+                                        <Label htmlFor="status-sent" className="cursor-pointer">
+                                            Sent
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="paid" id="status-paid" />
+                                        <Label htmlFor="status-paid" className="cursor-pointer">
+                                            Paid
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="partially_paid" id="status-partially-paid" />
+                                        <Label htmlFor="status-partially-paid" className="cursor-pointer">
+                                            Partially Paid
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="overdue" id="status-overdue" />
+                                        <Label htmlFor="status-overdue" className="cursor-pointer">
+                                            Overdue
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="cancelled" id="status-cancelled" />
+                                        <Label htmlFor="status-cancelled" className="cursor-pointer">
+                                            Cancelled
+                                        </Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
                         </div>
 
                         {(newStatus === 'paid' || newStatus === 'partially_paid') && (
