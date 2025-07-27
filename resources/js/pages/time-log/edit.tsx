@@ -156,14 +156,14 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Time Log" />
-            <div className="mx-auto flex flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Edit Time Entry</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Update the details of your time log</p>
                 </section>
 
-                <Card className="max-w-2xl overflow-hidden transition-all hover:shadow-md">
+                <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-xl">Time Entry Details</CardTitle>
                         <CardDescription>Current duration: {timeLog.duration} minutes</CardDescription>
@@ -171,46 +171,47 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="project_id" className="text-sm font-medium">
-                                        Project
-                                    </Label>
-                                    <SearchableSelect
-                                        id="project_id"
-                                        value={data.project_id ? data.project_id.toString() : ''}
-                                        onChange={(value) => {
-                                            setData('project_id', parseInt(value))
-                                            // Reset task_id when project changes
-                                            setData('task_id', null)
-                                        }}
-                                        options={projects}
-                                        placeholder="Select a project"
-                                        disabled={processing}
-                                    />
-                                    <InputError message={errors.project_id} className="mt-1" />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="task_id" className="text-sm font-medium">
-                                        Task (Optional)
-                                    </Label>
-                                    <SearchableSelect
-                                        id="task_id"
-                                        value={data.task_id ? data.task_id.toString() : ''}
-                                        onChange={(value) => setData('task_id', value ? parseInt(value) : null)}
-                                        options={tasks
-                                            .filter((task) => task.project_id === data.project_id)
-                                            .map((task) => ({
-                                                id: task.id,
-                                                name: task.title,
-                                            }))}
-                                        placeholder="Select a task (optional)"
-                                        disabled={processing || !data.project_id}
-                                    />
-                                    <InputError message={errors.task_id} className="mt-1" />
-                                    {data.project_id && tasks.filter((task) => task.project_id === data.project_id).length === 0 && (
-                                        <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
-                                    )}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="project_id" className="text-sm font-medium">
+                                            Project
+                                        </Label>
+                                        <SearchableSelect
+                                            id="project_id"
+                                            value={data.project_id ? data.project_id.toString() : ''}
+                                            onChange={(value) => {
+                                                setData('project_id', parseInt(value))
+                                                // Reset task_id when project changes
+                                                setData('task_id', null)
+                                            }}
+                                            options={projects}
+                                            placeholder="Select a project"
+                                            disabled={processing}
+                                        />
+                                        <InputError message={errors.project_id} className="mt-1" />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="task_id" className="text-sm font-medium">
+                                            Task (Optional)
+                                        </Label>
+                                        <SearchableSelect
+                                            id="task_id"
+                                            value={data.task_id ? data.task_id.toString() : ''}
+                                            onChange={(value) => setData('task_id', value ? parseInt(value) : null)}
+                                            options={tasks
+                                                .filter((task) => task.project_id === data.project_id)
+                                                .map((task) => ({
+                                                    id: task.id,
+                                                    name: task.title,
+                                                }))}
+                                            placeholder="Select a task (optional)"
+                                            disabled={processing || !data.project_id}
+                                        />
+                                        <InputError message={errors.task_id} className="mt-1" />
+                                        {data.project_id && tasks.filter((task) => task.project_id === data.project_id).length === 0 && (
+                                            <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Show checkbox to mark task as complete only when a task is selected */}
@@ -227,72 +228,73 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                     </div>
                                 )}
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="start_timestamp" className="text-sm font-medium">
-                                        Start Time
-                                    </Label>
-                                    <DatePicker
-                                        selected={startDate}
-                                        onChange={handleStartDateChange}
-                                        showTimeSelect
-                                        timeFormat="HH:mm"
-                                        timeIntervals={15}
-                                        dateFormat="yyyy-MM-dd HH:mm"
-                                        required
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="start_timestamp"
-                                                icon={<Clock className="h-4 w-4 text-muted-foreground" />}
-                                                required
-                                                autoFocus
-                                                tabIndex={1}
-                                                disabled={processing}
-                                            />
-                                        }
-                                    />
-                                    <InputError message={errors.start_timestamp} className="mt-1" />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="end_timestamp" className="text-sm font-medium">
-                                        End Time
-                                    </Label>
-                                    <DatePicker
-                                        selected={endDate}
-                                        onChange={handleEndDateChange}
-                                        showTimeSelect
-                                        timeFormat="HH:mm"
-                                        timeIntervals={15}
-                                        dateFormat="yyyy-MM-dd HH:mm"
-                                        disabled={processing}
-                                        isClearable
-                                        placeholderText="Select end time (optional)"
-                                        filterDate={(date) => {
-                                            // Only allow the same date as the start date
-                                            const start = new Date(data.start_timestamp)
-                                            return (
-                                                date.getDate() === start.getDate() &&
-                                                date.getMonth() === start.getMonth() &&
-                                                date.getFullYear() === start.getFullYear()
-                                            )
-                                        }}
-                                        customInput={
-                                            <CustomInput
-                                                id="end_timestamp"
-                                                icon={<Timer className="h-4 w-4 text-muted-foreground" />}
-                                                tabIndex={2}
-                                                disabled={processing}
-                                            />
-                                        }
-                                    />
-                                    <InputError message={errors.end_timestamp} />
-                                    {calculatedHours !== null && (
-                                        <p className="mt-1 text-sm font-medium text-green-600 dark:text-green-400">
-                                            Duration: {calculatedHours} hours
-                                        </p>
-                                    )}
-                                    <p className="text-xs text-muted-foreground">Leave end time empty if you're still working</p>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="start_timestamp" className="text-sm font-medium">
+                                            Start Time
+                                        </Label>
+                                        <DatePicker
+                                            selected={startDate}
+                                            onChange={handleStartDateChange}
+                                            showTimeSelect
+                                            timeFormat="HH:mm"
+                                            timeIntervals={15}
+                                            dateFormat="yyyy-MM-dd HH:mm"
+                                            required
+                                            disabled={processing}
+                                            customInput={
+                                                <CustomInput
+                                                    id="start_timestamp"
+                                                    icon={<Clock className="h-4 w-4 text-muted-foreground" />}
+                                                    required
+                                                    autoFocus
+                                                    tabIndex={1}
+                                                    disabled={processing}
+                                                />
+                                            }
+                                        />
+                                        <InputError message={errors.start_timestamp} className="mt-1" />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="end_timestamp" className="text-sm font-medium">
+                                            End Time
+                                        </Label>
+                                        <DatePicker
+                                            selected={endDate}
+                                            onChange={handleEndDateChange}
+                                            showTimeSelect
+                                            timeFormat="HH:mm"
+                                            timeIntervals={15}
+                                            dateFormat="yyyy-MM-dd HH:mm"
+                                            disabled={processing}
+                                            isClearable
+                                            placeholderText="Select end time (optional)"
+                                            filterDate={(date) => {
+                                                // Only allow the same date as the start date
+                                                const start = new Date(data.start_timestamp)
+                                                return (
+                                                    date.getDate() === start.getDate() &&
+                                                    date.getMonth() === start.getMonth() &&
+                                                    date.getFullYear() === start.getFullYear()
+                                                )
+                                            }}
+                                            customInput={
+                                                <CustomInput
+                                                    id="end_timestamp"
+                                                    icon={<Timer className="h-4 w-4 text-muted-foreground" />}
+                                                    tabIndex={2}
+                                                    disabled={processing}
+                                                />
+                                            }
+                                        />
+                                        <InputError message={errors.end_timestamp} />
+                                        {calculatedHours !== null && (
+                                            <p className="mt-1 text-sm font-medium text-green-600 dark:text-green-400">
+                                                Duration: {calculatedHours} hours
+                                            </p>
+                                        )}
+                                        <p className="text-xs text-muted-foreground">Leave end time empty if you're still working</p>
+                                    </div>
                                 </div>
 
                                 <div className="grid gap-2">
