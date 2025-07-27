@@ -75,6 +75,7 @@ type Project = {
         name: string
         email: string
     }
+    client: Client | null
 }
 
 type Client = {
@@ -459,6 +460,7 @@ export default function Projects() {
                                 <TableHeader>
                                     <TableHeaderRow>
                                         <TableHead>Name</TableHead>
+                                        <TableHead>Client</TableHead>
                                         <TableHead>Description</TableHead>
                                         <TableHead>Owner</TableHead>
                                         <TableHead>Team Members</TableHead>
@@ -470,6 +472,13 @@ export default function Projects() {
                                     {projects.map((project) => (
                                         <TableRow key={project.id}>
                                             <TableCell className="font-medium">{project.name}</TableCell>
+                                            <TableCell>
+                                                {project.client ? (
+                                                    project.client.name
+                                                ) : (
+                                                    <span className="text-muted-foreground/50">No client</span>
+                                                )}
+                                            </TableCell>
                                             <TableCell className="text-muted-foreground">
                                                 {project.description ? (
                                                     project.description.length > 50 ? (
