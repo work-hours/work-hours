@@ -114,14 +114,14 @@ export default function CreateProject({ teamMembers, clients }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Project" />
-            <div className="mx-auto flex flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Add Project</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new project</p>
                 </section>
 
-                <Card className="max-w-2xl overflow-hidden transition-all hover:shadow-md">
+                <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-xl">Project Details</CardTitle>
                         <CardDescription>Enter the information for the new project</CardDescription>
@@ -129,28 +129,45 @@ export default function CreateProject({ teamMembers, clients }: Props) {
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="name" className="text-sm font-medium">
-                                        Project Name
-                                    </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <FileText className="h-4 w-4 text-muted-foreground" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="name" className="text-sm font-medium">
+                                            Project Name
+                                        </Label>
+                                        <div className="relative">
+                                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                <FileText className="h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            <Input
+                                                id="name"
+                                                type="text"
+                                                required
+                                                autoFocus
+                                                tabIndex={1}
+                                                value={data.name}
+                                                onChange={(e) => setData('name', e.target.value)}
+                                                disabled={processing}
+                                                placeholder="Project name"
+                                                className="pl-10"
+                                            />
                                         </div>
-                                        <Input
-                                            id="name"
-                                            type="text"
-                                            required
-                                            autoFocus
-                                            tabIndex={1}
-                                            value={data.name}
-                                            onChange={(e) => setData('name', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="Project name"
-                                            className="pl-10"
-                                        />
+                                        <InputError message={errors.name} className="mt-1" />
                                     </div>
-                                    <InputError message={errors.name} className="mt-1" />
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="client_id" className="text-sm font-medium">
+                                            Client <span className="text-xs text-muted-foreground">(optional)</span>
+                                        </Label>
+                                        <SearchableSelect
+                                            id="client_id"
+                                            value={data.client_id}
+                                            onChange={(value) => setData('client_id', value)}
+                                            options={clients}
+                                            placeholder="Select a client"
+                                            disabled={processing}
+                                            icon={<Building className="h-4 w-4 text-muted-foreground" />}
+                                        />
+                                        <InputError message={errors.client_id} />
+                                    </div>
                                 </div>
 
                                 <div className="grid gap-2">
@@ -172,22 +189,6 @@ export default function CreateProject({ teamMembers, clients }: Props) {
                                         />
                                     </div>
                                     <InputError message={errors.description} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="client_id" className="text-sm font-medium">
-                                        Client <span className="text-xs text-muted-foreground">(optional)</span>
-                                    </Label>
-                                    <SearchableSelect
-                                        id="client_id"
-                                        value={data.client_id}
-                                        onChange={(value) => setData('client_id', value)}
-                                        options={clients}
-                                        placeholder="Select a client"
-                                        disabled={processing}
-                                        icon={<Building className="h-4 w-4 text-muted-foreground" />}
-                                    />
-                                    <InputError message={errors.client_id} />
                                 </div>
 
                                 <div className="grid gap-2">
