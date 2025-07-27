@@ -541,9 +541,9 @@ export default function CreateInvoice() {
                                                                 </div>
                                                             )}
 
-                                                            {timeLogs.map((projectGroup) => (
+                                                            {timeLogs.map((projectGroup, index) => (
                                                                 <SelectItem
-                                                                    key={`project-${projectGroup.project_id}`}
+                                                                    key={`project-${projectGroup.project_id || `unnamed-${index}`}`}
                                                                     value={`project-${projectGroup.project_id}`}
                                                                     className="font-medium"
                                                                 >
@@ -560,8 +560,8 @@ export default function CreateInvoice() {
                                                                 </div>
                                                             )}
 
-                                                            {timeLogs.map((projectGroup) => (
-                                                                <div key={`logs-${projectGroup.project_id}`}>
+                                                            {timeLogs.map((projectGroup, index) => (
+                                                                <div key={`logs-${projectGroup.project_id || `unnamed-${index}`}`}>
                                                                     {projectGroup.time_logs && projectGroup.time_logs.length > 0 && (
                                                                         <div className="px-2 py-1 text-xs font-medium">
                                                                             {projectGroup.project_name}

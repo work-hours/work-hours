@@ -77,7 +77,7 @@ export default function EditTeamMember({ user, currencies }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Team Member" />
-            <div className="mx-auto flex flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Edit Team Member</h1>
@@ -92,53 +92,54 @@ export default function EditTeamMember({ user, currencies }: Props) {
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="name" className="text-sm font-medium">
-                                        Full Name
-                                    </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <User className="h-4 w-4 text-muted-foreground" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="name" className="text-sm font-medium">
+                                            Full Name
+                                        </Label>
+                                        <div className="relative">
+                                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                <User className="h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            <Input
+                                                id="name"
+                                                type="text"
+                                                required
+                                                autoFocus
+                                                tabIndex={1}
+                                                autoComplete="name"
+                                                value={data.name}
+                                                onChange={(e) => setData('name', e.target.value)}
+                                                disabled={processing}
+                                                placeholder="Full name"
+                                                className="pl-10"
+                                            />
                                         </div>
-                                        <Input
-                                            id="name"
-                                            type="text"
-                                            required
-                                            autoFocus
-                                            tabIndex={1}
-                                            autoComplete="name"
-                                            value={data.name}
-                                            onChange={(e) => setData('name', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="Full name"
-                                            className="pl-10"
-                                        />
+                                        <InputError message={errors.name} className="mt-1" />
                                     </div>
-                                    <InputError message={errors.name} className="mt-1" />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="email" className="text-sm font-medium">
-                                        Email Address
-                                    </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Mail className="h-4 w-4 text-muted-foreground" />
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="email" className="text-sm font-medium">
+                                            Email Address
+                                        </Label>
+                                        <div className="relative">
+                                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                required
+                                                tabIndex={2}
+                                                autoComplete="email"
+                                                value={data.email}
+                                                onChange={(e) => setData('email', e.target.value)}
+                                                disabled={processing}
+                                                placeholder="email@example.com"
+                                                className="pl-10"
+                                            />
                                         </div>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            required
-                                            tabIndex={2}
-                                            autoComplete="email"
-                                            value={data.email}
-                                            onChange={(e) => setData('email', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="email@example.com"
-                                            className="pl-10"
-                                        />
+                                        <InputError message={errors.email} />
                                     </div>
-                                    <InputError message={errors.email} />
                                 </div>
 
                                 <div className="grid gap-2">
@@ -178,7 +179,7 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                 </div>
 
                                 {!data.non_monetary && (
-                                    <>
+                                    <div className="grid grid-cols-2 gap-4">
                                         <div className="grid gap-2">
                                             <Label htmlFor="hourly_rate" className="text-sm font-medium">
                                                 Hourly Rate
@@ -202,7 +203,6 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                             </div>
                                             <InputError message={errors.hourly_rate} />
                                         </div>
-
                                         <div className="grid gap-2">
                                             <Label htmlFor="currency" className="text-sm font-medium">
                                                 Currency{' '}
@@ -233,7 +233,7 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                             )}
                                             <InputError message={errors.currency} />
                                         </div>
-                                    </>
+                                    </div>
                                 )}
 
                                 <div className="mt-4 flex justify-end gap-3">
