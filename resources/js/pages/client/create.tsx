@@ -75,14 +75,14 @@ export default function CreateClient({ currencies }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Client" />
-            <div className="mx-auto flex flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Add Client</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new client</p>
                 </section>
 
-                <Card className="max-w-2xl overflow-hidden transition-all hover:shadow-md">
+                <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader>
                         <CardTitle className="text-xl">Client Details</CardTitle>
                         <CardDescription>Enter the information for the new client</CardDescription>
@@ -90,50 +90,51 @@ export default function CreateClient({ currencies }: Props) {
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="name" className="text-sm font-medium">
-                                        Client Name
-                                    </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Building className="h-4 w-4 text-muted-foreground" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="name" className="text-sm font-medium">
+                                            Client Name
+                                        </Label>
+                                        <div className="relative">
+                                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                <Building className="h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            <Input
+                                                id="name"
+                                                type="text"
+                                                required
+                                                autoFocus
+                                                tabIndex={1}
+                                                value={data.name}
+                                                onChange={(e) => setData('name', e.target.value)}
+                                                disabled={processing}
+                                                placeholder="Client name"
+                                                className="pl-10"
+                                            />
                                         </div>
-                                        <Input
-                                            id="name"
-                                            type="text"
-                                            required
-                                            autoFocus
-                                            tabIndex={1}
-                                            value={data.name}
-                                            onChange={(e) => setData('name', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="Client name"
-                                            className="pl-10"
-                                        />
+                                        <InputError message={errors.name} className="mt-1" />
                                     </div>
-                                    <InputError message={errors.name} className="mt-1" />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="contact_person" className="text-sm font-medium">
-                                        Contact Person <span className="text-xs text-muted-foreground">(optional)</span>
-                                    </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <User className="h-4 w-4 text-muted-foreground" />
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="contact_person" className="text-sm font-medium">
+                                            Contact Person <span className="text-xs text-muted-foreground">(optional)</span>
+                                        </Label>
+                                        <div className="relative">
+                                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                <User className="h-4 w-4 text-muted-foreground" />
+                                            </div>
+                                            <Input
+                                                id="contact_person"
+                                                type="text"
+                                                tabIndex={2}
+                                                value={data.contact_person}
+                                                onChange={(e) => setData('contact_person', e.target.value)}
+                                                disabled={processing}
+                                                placeholder="Contact person name"
+                                                className="pl-10"
+                                            />
                                         </div>
-                                        <Input
-                                            id="contact_person"
-                                            type="text"
-                                            tabIndex={2}
-                                            value={data.contact_person}
-                                            onChange={(e) => setData('contact_person', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="Contact person name"
-                                            className="pl-10"
-                                        />
+                                        <InputError message={errors.contact_person} className="mt-1" />
                                     </div>
-                                    <InputError message={errors.contact_person} className="mt-1" />
                                 </div>
 
                                 <div className="grid gap-2">
