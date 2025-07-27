@@ -558,8 +558,7 @@ export default function CreateInvoice() {
                                                                     className="font-medium"
                                                                 >
                                                                     {projectGroup.project_name} - {(projectGroup.total_hours || 0).toFixed(2)} hours
-                                                                    ($
-                                                                    {projectGroup.hourly_rate || 0}/hr)
+                                                                    ({projectGroup.currency || 'USD'} {projectGroup.hourly_rate || 0}/hr)
                                                                 </SelectItem>
                                                             ))}
 
