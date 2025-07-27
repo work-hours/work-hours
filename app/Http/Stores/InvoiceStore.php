@@ -9,11 +9,14 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\TimeLog;
+use App\Notifications\InvoiceStatusChanged;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
+use Throwable;
 
 final class InvoiceStore
 {
@@ -43,6 +46,8 @@ final class InvoiceStore
 
     /**
      * Create a new invoice with items
+     *
+     * @throws Throwable
      */
     public static function createInvoice(array $data, int $userId): Invoice
     {
@@ -53,7 +58,7 @@ final class InvoiceStore
             $data['total_amount'] = 0;
             $data['paid_amount'] = 0;
 
-            // Extract items before creating invoice
+            // Extract items before creating an invoice
             $items = $data['items'] ?? [];
             unset($data['items']);
 
@@ -61,7 +66,7 @@ final class InvoiceStore
             $invoice = Invoice::query()->create($data);
 
             // Create invoice items if provided
-            if (!empty($items) && is_array($items)) {
+            if (! empty($items) && is_array($items)) {
                 self::createInvoiceItems($invoice, $items);
             }
 
@@ -74,19 +79,23 @@ final class InvoiceStore
 
     /**
      * Update an existing invoice and its items
+     *
+     * @throws Throwable
      */
     public static function updateInvoice(Invoice $invoice, array $data): Invoice
     {
         return DB::transaction(function () use ($invoice, $data) {
-            // Extract items before updating invoice
             $items = $data['items'] ?? [];
             unset($data['items']);
+
+            // Store the old status for comparison
+            $oldStatus = $invoice->status;
 
             // Update invoice
             $invoice->update($data);
 
             // Update invoice items if provided
-            if (!empty($items) && is_array($items)) {
+            if (! empty($items) && is_array($items)) {
                 self::updateInvoiceItems($invoice, $items);
             }
 
@@ -96,6 +105,12 @@ final class InvoiceStore
             // Update time logs if invoice is paid
             if ($invoice->status === InvoiceStatus::PAID) {
                 self::markTimeLogsPaid($invoice);
+            }
+
+            // Send notification if status changed to SENT or OVERDUE
+            if ($invoice->status !== $oldStatus &&
+                ($invoice->status === InvoiceStatus::SENT || $invoice->status === InvoiceStatus::OVERDUE)) {
+                self::sendInvoiceStatusNotification($invoice);
             }
 
             return $invoice->fresh(['items']);
@@ -202,7 +217,7 @@ final class InvoiceStore
         // Update invoice with new total and discount amount
         $invoice->update([
             'total_amount' => $total,
-            'discount_amount' => $discountAmount
+            'discount_amount' => $discountAmount,
         ]);
     }
 
@@ -232,5 +247,18 @@ final class InvoiceStore
                 // Add filters here when created
             ])
             ->thenReturn();
+    }
+
+    private static function sendInvoiceStatusNotification(Invoice $invoice): void
+    {
+        if (! $invoice->relationLoaded('client')) {
+            $invoice->load('client');
+        }
+
+        $clientEmail = $invoice->client->email;
+
+        if ($clientEmail) {
+            Notification::route('mail', $clientEmail)->notify(new InvoiceStatusChanged($invoice));
+        }
     }
 }

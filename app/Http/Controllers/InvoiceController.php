@@ -29,10 +29,7 @@ final class InvoiceController extends Controller
      */
     public function index(): Response
     {
-        $invoices = InvoiceStore::userInvoices(Auth::id());
-
         return Inertia::render('invoice/index', [
-            'invoices' => $invoices,
             'filters' => [
                 'search' => request('search', ''),
                 'client_id' => request('client_id', ''),

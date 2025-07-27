@@ -547,7 +547,8 @@ export default function CreateInvoice() {
                                                                     value={`project-${projectGroup.project_id}`}
                                                                     className="font-medium"
                                                                 >
-                                                                    {projectGroup.project_name} - {(projectGroup.total_hours || 0).toFixed(2)} hours ($
+                                                                    {projectGroup.project_name} - {(projectGroup.total_hours || 0).toFixed(2)} hours
+                                                                    ($
                                                                     {projectGroup.hourly_rate || 0}/hr)
                                                                 </SelectItem>
                                                             ))}
@@ -567,12 +568,17 @@ export default function CreateInvoice() {
                                                                         </div>
                                                                     )}
 
-                                                                    {projectGroup.time_logs && projectGroup.time_logs.map((timeLog) => (
-                                                                        <SelectItem key={timeLog.id} value={timeLog.id.toString()} className="pl-4">
-                                                                            {new Date(timeLog.start_timestamp).toLocaleDateString()} -{' '}
-                                                                            {(timeLog.duration || 0).toFixed(2)} hours
-                                                                        </SelectItem>
-                                                                    ))}
+                                                                    {projectGroup.time_logs &&
+                                                                        projectGroup.time_logs.map((timeLog) => (
+                                                                            <SelectItem
+                                                                                key={timeLog.id}
+                                                                                value={timeLog.id.toString()}
+                                                                                className="pl-4"
+                                                                            >
+                                                                                {new Date(timeLog.start_timestamp).toLocaleDateString()} -{' '}
+                                                                                {(timeLog.duration || 0).toFixed(2)} hours
+                                                                            </SelectItem>
+                                                                        ))}
                                                                 </div>
                                                             ))}
                                                         </SelectContent>
@@ -646,7 +652,7 @@ export default function CreateInvoice() {
 
                                 {/* Discount */}
                                 <div className="mt-4 flex justify-end">
-                                    <div className="w-1/3 grid grid-cols-2 gap-4">
+                                    <div className="grid w-1/3 grid-cols-2 gap-4">
                                         <div>
                                             <Label htmlFor="discount_type" className="text-sm font-medium">
                                                 Discount Type
