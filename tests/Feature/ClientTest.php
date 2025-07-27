@@ -77,7 +77,7 @@ it('can update a client', function (): void {
     ]);
 
     // Verify that the client still has USD as the currency after update
-    $updatedClient = Client::find($client->id);
+    $updatedClient = Client::query()->find($client->id);
     $this->assertEquals('USD', $updatedClient->currency);
 });
 

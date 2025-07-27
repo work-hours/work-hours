@@ -1,8 +1,8 @@
+import { type SharedData } from '@/types'
 import { Head, useForm, usePage } from '@inertiajs/react'
 import { ArrowLeft, Calendar, FileText, LoaderCircle, Plus, Save, Trash2, User } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { type SharedData } from '@/types'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
@@ -330,13 +330,12 @@ export default function CreateInvoice() {
         })
     }
 
-
     // Format currency
     const formatCurrency = (amount: number): string => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: data.currency,
-            currencyDisplay: 'code'
+            currencyDisplay: 'code',
         }).format(amount)
     }
 
@@ -557,8 +556,8 @@ export default function CreateInvoice() {
                                                                     value={`project-${projectGroup.project_id}`}
                                                                     className="font-medium"
                                                                 >
-                                                                    {projectGroup.project_name} - {(projectGroup.total_hours || 0).toFixed(2)} hours
-                                                                    ({projectGroup.currency || 'USD'} {projectGroup.hourly_rate || 0}/hr)
+                                                                    {projectGroup.project_name} - {(projectGroup.total_hours || 0).toFixed(2)} hours (
+                                                                    {projectGroup.currency || 'USD'} {projectGroup.hourly_rate || 0}/hr)
                                                                 </SelectItem>
                                                             ))}
 

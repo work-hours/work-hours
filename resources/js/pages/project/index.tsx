@@ -473,11 +473,7 @@ export default function Projects() {
                                         <TableRow key={project.id}>
                                             <TableCell className="font-medium">{project.name}</TableCell>
                                             <TableCell>
-                                                {project.client ? (
-                                                    project.client.name
-                                                ) : (
-                                                    <span className="text-muted-foreground/50">No client</span>
-                                                )}
+                                                {project.client ? project.client.name : <span className="text-muted-foreground/50">No client</span>}
                                             </TableCell>
                                             <TableCell className="text-muted-foreground">
                                                 {project.description ? (
