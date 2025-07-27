@@ -100,7 +100,7 @@ type Props = {
     filters: InvoiceFilters
 }
 
-export function Invoices() {
+export default function Invoices() {
     const { filters: pageFilters } = usePage<Props>().props
     const [invoices, setInvoices] = useState<Invoice[]>([])
     const [loading, setLoading] = useState<boolean>(true)
@@ -636,8 +636,7 @@ export function Invoices() {
                                                     >
                                                         <Mail
                                                             className={`h-3.5 w-3.5 ${invoice.status === 'sent' ? 'text-muted-foreground/50' : ''}`}
-                                                        />.
-                                                        6+++++++++-+--+++-74
+                                                        />
                                                         <span className="sr-only">Send Email</span>
                                                     </Button>
                                                 </div>
@@ -652,7 +651,7 @@ export function Invoices() {
                                     <FileText className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Invoices</h3>
                                     <p className="mb-4 text-muted-foreground">You haven't created any invoices yet.</p>
-                                    <Link href={route('invoice.create')}>6;.
+                                    <Link href={route('invoice.create')}>
                                         <Button className="flex items-center gap-2">
                                             <Plus className="h-4 w-4" />
                                             <span>Create Invoice</span>
