@@ -44,37 +44,6 @@ export default function Features() {
 
                 {/* Main features grid with typewriter-inspired design */}
                 <div className="mb-16 grid gap-8 md:grid-cols-3">
-                    {/* Feature 1: GitHub Integration */}
-                    <div className="group relative overflow-hidden border-2 border-gray-300 bg-white transition-all dark:border-gray-700 dark:bg-gray-800">
-                        {/* Feature header with typewriter styling */}
-                        <div className="border-b-2 border-gray-400 bg-gray-100 px-4 py-3 dark:border-gray-600 dark:bg-gray-700">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-bold text-gray-800 uppercase dark:text-gray-200">GitHub Integration</h3>
-                                <div className="flex h-8 w-8 items-center justify-center border border-gray-500 bg-gray-200 dark:border-gray-500 dark:bg-gray-600">
-                                    <Github className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Feature content */}
-                        <div className="p-5">
-                            <div className="mb-3 flex">
-                                <span className="mr-2 inline-flex items-center rounded-none border border-red-800/40 px-2 py-0.5 text-xs font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
-                                    Popular
-                                </span>
-                            </div>
-                            <p className="text-sm text-gray-700 dark:text-gray-300">
-                                Connect GitHub to import repositories as projects and track development time efficiently.
-                            </p>
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                <div className="inline-flex items-center border border-gray-400 bg-gray-50 px-2 py-1 dark:border-gray-600 dark:bg-gray-700">
-                                    <span className="mr-1 font-bold text-gray-700 dark:text-gray-300">✓</span>
-                                    <span className="text-xs text-gray-700 uppercase dark:text-gray-300">Repository sync</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     {/* Feature 2: Time Tracking */}
                     <div className="group relative overflow-hidden border-2 border-gray-300 bg-white transition-all dark:border-gray-700 dark:bg-gray-800">
                         {/* Feature header with typewriter styling */}
@@ -257,6 +226,37 @@ export default function Features() {
                                 <div className="inline-flex items-center border border-gray-400 bg-gray-50 px-2 py-1 dark:border-gray-600 dark:bg-gray-700">
                                     <span className="mr-1 font-bold text-gray-700 dark:text-gray-300">✓</span>
                                     <span className="text-xs text-gray-700 uppercase dark:text-gray-300">Currency conversion</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Feature 9: Multi Currency Invoice */}
+                    <div className="group relative overflow-hidden border-2 border-gray-300 bg-white transition-all dark:border-gray-700 dark:bg-gray-800">
+                        {/* Feature header with typewriter styling */}
+                        <div className="border-b-2 border-gray-400 bg-gray-100 px-4 py-3 dark:border-gray-600 dark:bg-gray-700">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-lg font-bold text-gray-800 uppercase dark:text-gray-200">Multi Currency Invoice</h3>
+                                <div className="flex h-8 w-8 items-center justify-center border border-gray-500 bg-gray-200 dark:border-gray-500 dark:bg-gray-600">
+                                    <DollarSign className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Feature content */}
+                        <div className="p-5">
+                            <div className="mb-3 flex">
+                                <span className="mr-2 inline-flex items-center rounded-none border border-red-800/40 px-2 py-0.5 text-xs font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
+                                    New
+                                </span>
+                            </div>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">
+                                Create invoices in multiple currencies for international clients. Simplify billing across different regions.
+                            </p>
+                            <div className="mt-4 flex flex-wrap gap-2">
+                                <div className="inline-flex items-center border border-gray-400 bg-gray-50 px-2 py-1 dark:border-gray-600 dark:bg-gray-700">
+                                    <span className="mr-1 font-bold text-gray-700 dark:text-gray-300">✓</span>
+                                    <span className="text-xs text-gray-700 uppercase dark:text-gray-300">Multiple currencies</span>
                                 </div>
                             </div>
                         </div>
