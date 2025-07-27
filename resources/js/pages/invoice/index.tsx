@@ -502,6 +502,12 @@ export default function Invoices() {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
+                                                    <a href={route('invoice.downloadPdf', invoice.id)} target="_blank" rel="noopener noreferrer">
+                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                                                            <Download className="h-3.5 w-3.5" />
+                                                            <span className="sr-only">Download PDF</span>
+                                                        </Button>
+                                                    </a>
                                                     <Link href={route('invoice.edit', invoice.id)}>
                                                         <Button variant="outline" size="sm" className="h-8 w-8 p-0">
                                                             <Edit className="h-3.5 w-3.5" />

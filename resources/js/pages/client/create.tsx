@@ -19,6 +19,8 @@ type ClientForm = {
     phone: string
     address: string
     notes: string
+    hourly_rate: string
+    currency: string
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -40,6 +42,8 @@ export default function CreateClient() {
         phone: '',
         address: '',
         notes: '',
+        hourly_rate: '',
+        currency: '',
     })
 
     const submit: FormEventHandler = (e) => {
@@ -184,6 +188,51 @@ export default function CreateClient() {
                                     <InputError message={errors.address} />
                                 </div>
 
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="hourly_rate" className="text-sm font-medium">
+                                            Hourly Rate <span className="text-xs text-muted-foreground">(optional)</span>
+                                        </Label>
+                                        <div className="relative">
+                                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                <span className="text-muted-foreground">$</span>
+                                            </div>
+                                            <Input
+                                                id="hourly_rate"
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                tabIndex={6}
+                                                value={data.hourly_rate}
+                                                onChange={(e) => setData('hourly_rate', e.target.value)}
+                                                disabled={processing}
+                                                placeholder="0.00"
+                                                className="pl-10"
+                                            />
+                                        </div>
+                                        <InputError message={errors.hourly_rate} className="mt-1" />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="currency" className="text-sm font-medium">
+                                            Currency <span className="text-xs text-muted-foreground">(optional)</span>
+                                        </Label>
+                                        <div className="relative">
+                                            <Input
+                                                id="currency"
+                                                type="text"
+                                                maxLength={5}
+                                                tabIndex={7}
+                                                value={data.currency}
+                                                onChange={(e) => setData('currency', e.target.value)}
+                                                disabled={processing}
+                                                placeholder="USD"
+                                            />
+                                        </div>
+                                        <InputError message={errors.currency} className="mt-1" />
+                                    </div>
+                                </div>
+
                                 <div className="grid gap-2">
                                     <Label htmlFor="notes" className="text-sm font-medium">
                                         Notes <span className="text-xs text-muted-foreground">(optional)</span>
@@ -194,7 +243,7 @@ export default function CreateClient() {
                                         </div>
                                         <Textarea
                                             id="notes"
-                                            tabIndex={6}
+                                            tabIndex={8}
                                             value={data.notes}
                                             onChange={(e) => setData('notes', e.target.value)}
                                             disabled={processing}
@@ -210,14 +259,14 @@ export default function CreateClient() {
                                         type="button"
                                         variant="outline"
                                         onClick={() => window.history.back()}
-                                        tabIndex={8}
+                                        tabIndex={10}
                                         disabled={processing}
                                         className="flex items-center gap-2"
                                     >
                                         <ArrowLeft className="h-4 w-4" />
                                         Back
                                     </Button>
-                                    <Button type="submit" tabIndex={7} disabled={processing} className="flex items-center gap-2">
+                                    <Button type="submit" tabIndex={9} disabled={processing} className="flex items-center gap-2">
                                         {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                                         {processing ? 'Creating...' : 'Create Client'}
                                     </Button>

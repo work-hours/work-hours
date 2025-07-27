@@ -65,6 +65,8 @@ type Client = {
     phone: string | null
     address: string | null
     notes: string | null
+    hourly_rate: number | null
+    currency: string | null
 }
 
 type ClientFilters = {

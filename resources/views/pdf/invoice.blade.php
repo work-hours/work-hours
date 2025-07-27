@@ -5,52 +5,92 @@
     <title>Invoice #{{ $invoice->invoice_number }}</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
             color: #333;
+            background-color: #fff;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #4a86e8;
+        }
+        .header h1 {
+            color: #4a86e8;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        .header h2 {
+            font-size: 20px;
+            color: #555;
         }
         .invoice-info {
+            margin-bottom: 40px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .invoice-info-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
         }
-        .invoice-info-box {
-            width: 45%;
+        .invoice-info-column {
+            width: 48%;
+        }
+        .invoice-info-column h3 {
+            color: #4a86e8;
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
         }
         .invoice-details {
             margin-bottom: 30px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .invoice-details p {
+            margin: 5px 0;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
+            border: 1px solid #ddd;
         }
         th, td {
-            padding: 10px;
+            padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #4a86e8;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
         .total-row {
             font-weight: bold;
+            background-color: #f2f2f2;
         }
         .footer {
             margin-top: 50px;
             text-align: center;
             font-size: 12px;
             color: #777;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
     </style>
 </head>
@@ -62,16 +102,18 @@
         </div>
 
         <div class="invoice-info">
-            <div class="invoice-info-box">
-                <h3>From:</h3>
-                <p>{{ $invoice->user->name }}<br>
-                {{ $invoice->user->email }}</p>
-            </div>
-            <div class="invoice-info-box">
-                <h3>To:</h3>
-                <p>{{ $client->name }}<br>
-                {{ $client->email ?? '' }}<br>
-                {{ $client->address ?? '' }}</p>
+            <div class="invoice-info-row">
+                <div class="invoice-info-column">
+                    <h3>From:</h3>
+                    <p>{{ $invoice->user->name }}<br>
+                    {{ $invoice->user->email }}</p>
+                </div>
+                <div class="invoice-info-column">
+                    <h3>To:</h3>
+                    <p>{{ $client->name }}<br>
+                    {{ $client->email ?? '' }}<br>
+                    {{ $client->address ?? '' }}</p>
+                </div>
             </div>
         </div>
 
@@ -95,7 +137,7 @@
                 <tr>
                     <td>{{ $item->description }}</td>
                     <td>{{ $item->quantity }}</td>
-                    <td>{{ $item->rate }}</td>
+                    <td>{{ $item->unit_price }}</td>
                     <td>{{ $item->amount }}</td>
                 </tr>
                 @endforeach
@@ -137,6 +179,7 @@
 
         <div class="footer">
             <p>Thank you for your business!</p>
+            <p>Powered by <strong>workhours.us</strong></p>
         </div>
     </div>
 </body>

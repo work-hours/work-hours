@@ -36,6 +36,8 @@ final class Client extends Model
         'phone',
         'address',
         'notes',
+        'hourly_rate',
+        'currency',
     ];
 
     public function user(): BelongsTo

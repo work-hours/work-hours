@@ -11,6 +11,7 @@ use App\Http\Stores\InvoiceStore;
 use App\Http\Stores\TimeLogStore;
 use App\Models\Client;
 use App\Models\Invoice;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Msamgan\Lact\Attributes\Action;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -182,5 +184,42 @@ final class InvoiceController extends Controller
         }
 
         return TimeLogStore::unpaidTimeLogsGroupedByProject((int) $clientId);
+    }
+
+    /**
+     * Download invoice as PDF
+     */
+    #[Action(method: 'get', name: 'invoice.downloadPdf', params: ['invoice'], middleware: ['auth', 'verified'])]
+    public function downloadPdf(Invoice $invoice): SymfonyResponse
+    {
+        // Load necessary relationships if not already loaded
+        if (! $invoice->relationLoaded('client')) {
+            $invoice->load('client');
+        }
+
+        if (! $invoice->relationLoaded('items')) {
+            $invoice->load('items');
+        }
+
+        if (! $invoice->relationLoaded('user')) {
+            $invoice->load('user');
+        }
+
+        try {
+            // Generate PDF using the invoice data
+            $pdf = Pdf::loadView('pdf.invoice', [
+                'invoice' => $invoice,
+                'client' => $invoice->client,
+                'items' => $invoice->items,
+            ]);
+
+            // Return the PDF as a downloadable response
+            return $pdf->download("Invoice_{$invoice->invoice_number}.pdf");
+        } catch (Exception $e) {
+            // Log the error and return a response
+            \Log::error('Failed to generate invoice PDF: ' . $e->getMessage());
+
+            return response()->json(['error' => 'Failed to generate PDF'], 500);
+        }
     }
 }

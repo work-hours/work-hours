@@ -148,7 +148,7 @@ final class ClientController extends Controller
     #[Action(method: 'get', name: 'client.export', middleware: ['auth', 'verified'])]
     public function clientExport(): StreamedResponse
     {
-        $headers = ['ID', 'Name', 'Email', 'Contact Person', 'Phone', 'Address', 'Notes', 'Created At'];
+        $headers = ['ID', 'Name', 'Email', 'Contact Person', 'Phone', 'Address', 'Notes', 'Hourly Rate', 'Currency', 'Created At'];
         $filename = 'clients_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv(

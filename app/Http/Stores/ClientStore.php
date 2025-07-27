@@ -41,6 +41,8 @@ final class ClientStore
             'phone' => $client->phone,
             'address' => $client->address,
             'notes' => $client->notes,
+            'hourly_rate' => $client->hourly_rate,
+            'currency' => $client->currency,
             'created_at' => Carbon::parse($client->created_at)->toDateTimeString(),
         ]);
     }
