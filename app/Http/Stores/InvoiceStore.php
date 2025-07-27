@@ -139,6 +139,25 @@ final class InvoiceStore
     }
 
     /**
+     * Send invoice email to client and update status to sent if needed
+     */
+    public static function sendInvoiceEmail(Invoice $invoice): void
+    {
+        // Load client relationship if not already loaded
+        if (! $invoice->relationLoaded('client')) {
+            $invoice->load('client');
+        }
+
+        // Update invoice status to sent if it's not already
+        if ($invoice->status !== InvoiceStatus::SENT) {
+            $invoice->update(['status' => InvoiceStatus::SENT]);
+        }
+
+        // Send invoice notification
+        self::sendInvoiceStatusNotification($invoice);
+    }
+
+    /**
      * Create invoice items
      */
     private static function createInvoiceItems(Invoice $invoice, array $items): void

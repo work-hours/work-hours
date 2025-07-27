@@ -257,9 +257,7 @@ export default function EditClient({ client, currencies }: Props) {
                                             </SelectContent>
                                         </Select>
                                         {currencies.length === 0 && (
-                                            <p className="text-xs text-muted-foreground">
-                                                No currencies available. Default USD will be used.
-                                            </p>
+                                            <p className="text-xs text-muted-foreground">No currencies available. Default USD will be used.</p>
                                         )}
                                         <InputError message={errors.currency} className="mt-1" />
                                     </div>

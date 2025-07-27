@@ -111,7 +111,7 @@ final class InvoiceStatusChanged extends Notification
     {
         try {
             // Check if the PDF package is installed
-            if (! class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
+            if (! class_exists(Pdf::class)) {
                 // If not, try to use another PDF library or return null
                 return null;
             }

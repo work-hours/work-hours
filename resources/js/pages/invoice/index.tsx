@@ -1,3 +1,13 @@
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
@@ -11,8 +21,8 @@ import { type BreadcrumbItem } from '@/types'
 // @ts-expect-error
 import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { invoices as _invoices } from '@actions/InvoiceController'
-import { Head, Link, usePage } from '@inertiajs/react'
-import { Calendar, CalendarRange, Download, Edit, FileText, Loader2, Plus, Search, X } from 'lucide-react'
+import { Head, Link, router, usePage } from '@inertiajs/react'
+import { Calendar, CalendarRange, Download, Edit, FileText, Loader2, Mail, Plus, Search, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 
 interface CustomInputProps {
@@ -94,6 +104,9 @@ export default function Invoices() {
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
     const [processing, setProcessing] = useState(false)
+    const [emailDialogOpen, setEmailDialogOpen] = useState(false)
+    const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
+    const [sendingEmail, setSendingEmail] = useState(false)
 
     // Filter states
     const [filters, setFilters] = useState<InvoiceFilters>({
@@ -240,6 +253,40 @@ export default function Invoices() {
     // Format status label
     const formatStatusLabel = (status: string): string => {
         return status.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())
+    }
+
+    // Handle opening the email confirmation dialog
+    const handleEmailClick = (invoice: Invoice): void => {
+        setSelectedInvoice(invoice)
+        setEmailDialogOpen(true)
+    }
+
+    // Handle sending the email
+    const handleSendEmail = async (): void => {
+        if (!selectedInvoice) return
+
+        setSendingEmail(true)
+        try {
+            await router.post(route('invoice.sendEmail', selectedInvoice.id))
+
+            // Update the invoice status in the local state
+            setInvoices(
+                invoices.map((invoice) => {
+                    if (invoice.id === selectedInvoice.id) {
+                        return { ...invoice, status: 'sent' }
+                    }
+                    return invoice
+                }),
+            )
+
+            // Close the dialog
+            setEmailDialogOpen(false)
+            setSelectedInvoice(null)
+        } catch (error) {
+            console.error('Error sending invoice email:', error)
+        } finally {
+            setSendingEmail(false)
+        }
     }
 
     return (
@@ -514,6 +561,17 @@ export default function Invoices() {
                                                             <span className="sr-only">Edit</span>
                                                         </Button>
                                                     </Link>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-8 w-8 p-0"
+                                                        onClick={() => handleEmailClick(invoice)}
+                                                        title={invoice.status === 'sent' ? 'Invoice already sent' : 'Send invoice email to client'}
+                                                        disabled={invoice.status === 'sent'}
+                                                    >
+                                                        <Mail className={`h-3.5 w-3.5 ${invoice.status === 'sent' ? 'text-muted-foreground/50' : ''}`} />
+                                                        <span className="sr-only">Send Email</span>
+                                                    </Button>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
@@ -538,6 +596,40 @@ export default function Invoices() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Email Confirmation Dialog */}
+            <AlertDialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Send Invoice Email</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {selectedInvoice && (
+                                <>
+                                    This will send invoice #{selectedInvoice.invoice_number} to {selectedInvoice.client.name}.
+                                    {selectedInvoice.status !== 'sent' && <div className="mt-2">The invoice status will be updated to "Sent".</div>}
+                                </>
+                            )}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={sendingEmail}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleSendEmail}
+                            disabled={sendingEmail}
+                            className="bg-primary text-primary-foreground hover:bg-primary/90"
+                        >
+                            {sendingEmail ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Sending...
+                                </>
+                            ) : (
+                                'Send Email'
+                            )}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </MasterLayout>
     )
 }

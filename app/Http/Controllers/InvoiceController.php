@@ -17,6 +17,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use Msamgan\Lact\Attributes\Action;
@@ -217,7 +218,7 @@ final class InvoiceController extends Controller
             return $pdf->download("Invoice_{$invoice->invoice_number}.pdf");
         } catch (Exception $e) {
             // Log the error and return a response
-            \Log::error('Failed to generate invoice PDF: ' . $e->getMessage());
+            Log::error('Failed to generate invoice PDF: ' . $e->getMessage());
 
             return response()->json(['error' => 'Failed to generate PDF'], 500);
         }
@@ -233,18 +234,8 @@ final class InvoiceController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Load client relationship if not already loaded
-            if (! $invoice->relationLoaded('client')) {
-                $invoice->load('client');
-            }
-
-            // Update invoice status to sent if it's not already
-            if ($invoice->status !== \App\Enums\InvoiceStatus::SENT) {
-                $invoice->update(['status' => \App\Enums\InvoiceStatus::SENT]);
-            }
-
-            // Send invoice notification
-            InvoiceStore::sendInvoiceStatusNotification($invoice);
+            // Send invoice email and update status
+            InvoiceStore::sendInvoiceEmail($invoice);
 
             DB::commit();
         } catch (Exception $e) {
