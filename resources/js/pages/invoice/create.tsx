@@ -449,7 +449,7 @@ export default function CreateInvoice() {
                                         Status
                                     </Label>
                                     <div className="relative">
-                                        <Select value={data.status} onValueChange={(value) => setData('status', value)} disabled={processing}>
+                                        <Select value={data.status} onValueChange={(value) => setData('status', value)} disabled={true}>
                                             <SelectTrigger id="status" className="w-full">
                                                 <SelectValue placeholder="Select status" />
                                             </SelectTrigger>
