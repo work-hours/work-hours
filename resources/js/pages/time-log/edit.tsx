@@ -213,7 +213,7 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
 
                                 {/* No tasks message in a separate row */}
                                 {data.project_id && tasks.filter((task) => task.project_id === data.project_id).length === 0 && (
-                                    <div className="mt-2">
+                                    <div className="-mt-4">
                                         <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
                                     </div>
                                 )}
@@ -297,7 +297,7 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
 
                                 {/* Duration text in a separate row */}
                                 {calculatedHours !== null && (
-                                    <div className="mt-2">
+                                    <div className="-mt-4">
                                         <p className="text-sm font-medium text-green-600 dark:text-green-400">
                                             Duration: {calculatedHours} hours
                                         </p>
@@ -305,9 +305,11 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                 )}
 
                                 {/* Help text in a separate row */}
-                                <div className="mt-2">
-                                    <p className="text-xs text-muted-foreground">Leave end time empty if you're still working</p>
-                                </div>
+                                {calculatedHours === null && (
+                                    <div className="-mt-5">
+                                        <p className="text-xs text-muted-foreground">Leave end time empty if you're still working</p>
+                                    </div>
+                                )}
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="note" className="text-sm font-medium">
