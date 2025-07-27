@@ -124,7 +124,7 @@ export default function CreateTask({ projects }: Props) {
                 .then((assignees: SetStateAction<{ id: number; name: string; email: string }[]>) => {
                     setPotentialAssignees(assignees)
                 })
-                .catch((error: any) => {
+                .catch((error: never) => {
                     console.error('Failed to fetch potential assignees:', error)
                     toast.error('Failed to load potential assignees')
                     setPotentialAssignees([])

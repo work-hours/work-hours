@@ -208,11 +208,15 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                             disabled={processing || !data.project_id}
                                         />
                                         <InputError message={errors.task_id} className="mt-1" />
-                                        {data.project_id && tasks.filter((task) => task.project_id === data.project_id).length === 0 && (
-                                            <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
-                                        )}
                                     </div>
                                 </div>
+
+                                {/* No tasks message in a separate row */}
+                                {data.project_id && tasks.filter((task) => task.project_id === data.project_id).length === 0 && (
+                                    <div className="mt-2">
+                                        <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
+                                    </div>
+                                )}
 
                                 {/* Show checkbox to mark task as complete only when a task is selected */}
                                 {data.task_id && (
@@ -288,13 +292,21 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                             }
                                         />
                                         <InputError message={errors.end_timestamp} />
-                                        {calculatedHours !== null && (
-                                            <p className="mt-1 text-sm font-medium text-green-600 dark:text-green-400">
-                                                Duration: {calculatedHours} hours
-                                            </p>
-                                        )}
-                                        <p className="text-xs text-muted-foreground">Leave end time empty if you're still working</p>
                                     </div>
+                                </div>
+
+                                {/* Duration text in a separate row */}
+                                {calculatedHours !== null && (
+                                    <div className="mt-2">
+                                        <p className="text-sm font-medium text-green-600 dark:text-green-400">
+                                            Duration: {calculatedHours} hours
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* Help text in a separate row */}
+                                <div className="mt-2">
+                                    <p className="text-xs text-muted-foreground">Leave end time empty if you're still working</p>
                                 </div>
 
                                 <div className="grid gap-2">
