@@ -222,4 +222,34 @@ final class InvoiceController extends Controller
             return response()->json(['error' => 'Failed to generate PDF'], 500);
         }
     }
+
+    /**
+     * Send invoice email to client and update status to sent
+     *
+     * @throws Throwable
+     */
+    #[Action(method: 'post', name: 'invoice.sendEmail', params: ['invoice'], middleware: ['auth', 'verified'])]
+    public function sendEmail(Invoice $invoice): void
+    {
+        DB::beginTransaction();
+        try {
+            // Load client relationship if not already loaded
+            if (! $invoice->relationLoaded('client')) {
+                $invoice->load('client');
+            }
+
+            // Update invoice status to sent if it's not already
+            if ($invoice->status !== \App\Enums\InvoiceStatus::SENT) {
+                $invoice->update(['status' => \App\Enums\InvoiceStatus::SENT]);
+            }
+
+            // Send invoice notification
+            InvoiceStore::sendInvoiceStatusNotification($invoice);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }

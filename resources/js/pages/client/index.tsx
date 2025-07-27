@@ -12,7 +12,7 @@ import { type BreadcrumbItem } from '@/types'
 import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { clients as _clients } from '@actions/ClientController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Calendar, CalendarRange, Download, Edit, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'
+import { Calendar, CalendarRange, Download, Edit, FileText, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 
 interface CustomInputProps {
@@ -372,6 +372,12 @@ export default function Clients() {
                                                         <Button variant="outline" size="sm" className="h-8">
                                                             <Folder className="mr-1 h-3.5 w-3.5" />
                                                             Projects
+                                                        </Button>
+                                                    </Link>
+                                                    <Link href={route('client.invoices', client.id)}>
+                                                        <Button variant="outline" size="sm" className="h-8">
+                                                            <FileText className="mr-1 h-3.5 w-3.5" />
+                                                            Invoices
                                                         </Button>
                                                     </Link>
                                                     <Link href={route('client.edit', client.id)}>
