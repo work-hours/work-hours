@@ -123,7 +123,9 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                     </div>
 
                                     <div>
-                                        <p className="text-sm font-bold text-muted-foreground">Paid Amount</p>
+                                        <p className="text-sm font-bold text-muted-foreground">
+                                            {timeLog.is_paid ? "Paid Amount" : "To Pay Amount"}
+                                        </p>
                                         <p className="text-base">
                                             <span className={`inline-flex items-center rounded-full ${timeLog.is_paid ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} px-2 py-0.5 text-xs font-bold`}>
                                                 {timeLog.currency || 'USD'} {
