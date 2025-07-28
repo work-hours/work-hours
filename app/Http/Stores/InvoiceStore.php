@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Stores;
 
 use App\Enums\InvoiceStatus;
+use App\Http\QueryFilters\Invoice\ClientIdFilter;
+use App\Http\QueryFilters\Invoice\CreatedDateFromFilter;
+use App\Http\QueryFilters\Invoice\CreatedDateToFilter;
+use App\Http\QueryFilters\Invoice\SearchFilter;
+use App\Http\QueryFilters\Invoice\StatusFilter;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -176,7 +181,11 @@ final class InvoiceStore
         return app(Pipeline::class)
             ->send($query)
             ->through([
-                // Add filters here when created
+                SearchFilter::class,
+                ClientIdFilter::class,
+                StatusFilter::class,
+                CreatedDateFromFilter::class,
+                CreatedDateToFilter::class,
             ])
             ->thenReturn();
     }
