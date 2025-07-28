@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { BarChart2, Download, FileText, Filter, LineChart, PieChart } from 'lucide-react'
+import { BarChart2, CheckCircle, Download, FileText, Filter, LineChart, PieChart } from 'lucide-react'
 
 export default function DetailedReports() {
     return (
@@ -173,39 +173,27 @@ export default function DetailedReports() {
                     </h2>
                     <div className="grid gap-4 md:grid-cols-2">
                         <div className="flex items-start">
-                            <div className="mr-2 h-5 w-5 flex-shrink-0 rounded-full bg-green-100 p-1 dark:bg-green-900/20">
-                                <div className="h-3 w-3 rounded-full bg-green-600 dark:bg-green-500"></div>
-                            </div>
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
                             <p className="text-gray-700 dark:text-gray-300">Make data-driven decisions about resource allocation</p>
                         </div>
                         <div className="flex items-start">
-                            <div className="mr-2 h-5 w-5 flex-shrink-0 rounded-full bg-green-100 p-1 dark:bg-green-900/20">
-                                <div className="h-3 w-3 rounded-full bg-green-600 dark:bg-green-500"></div>
-                            </div>
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
                             <p className="text-gray-700 dark:text-gray-300">Identify your most profitable projects and clients</p>
                         </div>
                         <div className="flex items-start">
-                            <div className="mr-2 h-5 w-5 flex-shrink-0 rounded-full bg-green-100 p-1 dark:bg-green-900/20">
-                                <div className="h-3 w-3 rounded-full bg-green-600 dark:bg-green-500"></div>
-                            </div>
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
                             <p className="text-gray-700 dark:text-gray-300">Track team performance and productivity</p>
                         </div>
                         <div className="flex items-start">
-                            <div className="mr-2 h-5 w-5 flex-shrink-0 rounded-full bg-green-100 p-1 dark:bg-green-900/20">
-                                <div className="h-3 w-3 rounded-full bg-green-600 dark:bg-green-500"></div>
-                            </div>
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
                             <p className="text-gray-700 dark:text-gray-300">Improve project estimates and budgeting</p>
                         </div>
                         <div className="flex items-start">
-                            <div className="mr-2 h-5 w-5 flex-shrink-0 rounded-full bg-green-100 p-1 dark:bg-green-900/20">
-                                <div className="h-3 w-3 rounded-full bg-green-600 dark:bg-green-500"></div>
-                            </div>
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
                             <p className="text-gray-700 dark:text-gray-300">Provide transparent reporting to clients</p>
                         </div>
                         <div className="flex items-start">
-                            <div className="mr-2 h-5 w-5 flex-shrink-0 rounded-full bg-green-100 p-1 dark:bg-green-900/20">
-                                <div className="h-3 w-3 rounded-full bg-green-600 dark:bg-green-500"></div>
-                            </div>
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
                             <p className="text-gray-700 dark:text-gray-300">Optimize your workflow and eliminate inefficiencies</p>
                         </div>
                     </div>

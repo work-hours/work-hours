@@ -133,41 +133,29 @@ export default function TimeTracking() {
                         Benefits
                     </h2>
                     <div className="grid gap-4 md:grid-cols-2">
-                        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="flex items-start">
-                                <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                                <p className="text-gray-700 dark:text-gray-300">Accurate billing for clients</p>
-                            </div>
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Accurate billing for clients</p>
                         </div>
-                        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="flex items-start">
-                                <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                                <p className="text-gray-700 dark:text-gray-300">Improved productivity tracking</p>
-                            </div>
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Improved productivity tracking</p>
                         </div>
-                        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="flex items-start">
-                                <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                                <p className="text-gray-700 dark:text-gray-300">Better project management</p>
-                            </div>
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Better project management</p>
                         </div>
-                        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="flex items-start">
-                                <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                                <p className="text-gray-700 dark:text-gray-300">Transparent reporting for teams</p>
-                            </div>
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Transparent reporting for teams</p>
                         </div>
-                        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="flex items-start">
-                                <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                                <p className="text-gray-700 dark:text-gray-300">Identify time-consuming tasks</p>
-                            </div>
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Identify time-consuming tasks</p>
                         </div>
-                        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="flex items-start">
-                                <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                                <p className="text-gray-700 dark:text-gray-300">Reduce administrative overhead</p>
-                            </div>
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Reduce administrative overhead</p>
                         </div>
                     </div>
                 </section>

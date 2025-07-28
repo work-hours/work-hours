@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { Bell, Calendar, MessageSquare, Share2, Shield, Users } from 'lucide-react'
+import { Bell, Calendar, CheckCircle, MessageSquare, Users } from 'lucide-react'
 
 export default function TeamCollaboration() {
     return (
@@ -191,28 +191,30 @@ export default function TeamCollaboration() {
                     <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
                         Benefits
                     </h2>
-                    <div className="grid gap-6 md:grid-cols-2">
-                        <div className="flex">
-                            <div className="mr-4 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 border-blue-900 bg-blue-100 dark:border-blue-700 dark:bg-blue-900/20">
-                                <Share2 className="h-6 w-6 text-blue-900 dark:text-blue-400" />
-                            </div>
-                            <div>
-                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Improved Communication</h3>
-                                <p className="text-gray-700 dark:text-gray-300">
-                                    Reduce misunderstandings and keep everyone on the same page with centralized project information.
-                                </p>
-                            </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Improved communication and reduced misunderstandings</p>
                         </div>
-                        <div className="flex">
-                            <div className="mr-4 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border-2 border-blue-900 bg-blue-100 dark:border-blue-700 dark:bg-blue-900/20">
-                                <Shield className="h-6 w-6 text-blue-900 dark:text-blue-400" />
-                            </div>
-                            <div>
-                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Accountability</h3>
-                                <p className="text-gray-700 dark:text-gray-300">
-                                    Create a culture of responsibility with transparent tracking of tasks, time, and contributions.
-                                </p>
-                            </div>
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Increased accountability and transparency</p>
+                        </div>
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Better coordination across team members</p>
+                        </div>
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Enhanced project visibility and oversight</p>
+                        </div>
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Streamlined workflow and reduced bottlenecks</p>
+                        </div>
+                        <div className="flex items-start">
+                            <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
+                            <p className="text-gray-700 dark:text-gray-300">Improved resource allocation and planning</p>
                         </div>
                     </div>
                 </section>
