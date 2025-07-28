@@ -2,17 +2,38 @@ import AppLogoIcon from '@/components/app-logo-icon'
 import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 
 export default function Navbar() {
     const { auth } = usePage<SharedData>().props
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [featuresDropdownOpen, setFeaturesDropdownOpen] = useState(false)
+    const dropdownRef = useRef<HTMLDivElement>(null)
 
     const isLoggedIn = auth && auth.user
 
     const toggleMobileMenu = () => {
         setMobileMenuOpen(!mobileMenuOpen)
     }
+
+    const toggleFeaturesDropdown = () => {
+        setFeaturesDropdownOpen(!featuresDropdownOpen)
+    }
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setFeaturesDropdownOpen(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
 
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 bg-[#f8f6e9] dark:bg-gray-900 shadow-md">
@@ -30,12 +51,108 @@ export default function Navbar() {
 
                 {/* Desktop Navigation Menu */}
                 <div className="hidden md:flex items-center space-x-8">
-                    <a
-                        href="#features"
-                        className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
-                    >
-                        Features
-                    </a>
+                    {/* Features Dropdown */}
+                    <div className="relative" ref={dropdownRef}>
+                        <button
+                            onClick={toggleFeaturesDropdown}
+                            className="flex items-center text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                        >
+                            Features
+                            {featuresDropdownOpen ? (
+                                <ChevronUp className="ml-1 h-4 w-4" />
+                            ) : (
+                                <ChevronDown className="ml-1 h-4 w-4" />
+                            )}
+                        </button>
+
+                        {/* Features Dropdown Menu */}
+                        {featuresDropdownOpen && (
+                            <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
+                                <div className="py-1" role="menu" aria-orientation="vertical">
+                                    <a
+                                        href="#features"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        role="menuitem"
+                                        onClick={() => setFeaturesDropdownOpen(false)}
+                                    >
+                                        All Features
+                                    </a>
+                                    <div className="my-1 border-t border-gray-200 dark:border-gray-700"></div>
+                                    <Link
+                                        href="/features/time-tracking"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        role="menuitem"
+                                    >
+                                        Time Tracking
+                                    </Link>
+                                    <Link
+                                        href="/features/detailed-reports"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        role="menuitem"
+                                    >
+                                        Detailed Reports
+                                    </Link>
+                                    <Link
+                                        href="/features/team-collaboration"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        role="menuitem"
+                                    >
+                                        Team Collaboration
+                                    </Link>
+                                    <Link
+                                        href="/features/client-management"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        role="menuitem"
+                                    >
+                                        Client Management
+                                    </Link>
+                                    <Link
+                                        href="/features/bulk-upload"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        role="menuitem"
+                                    >
+                                        Bulk Upload
+                                    </Link>
+                                    <Link
+                                        href="/features/approval-management"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        role="menuitem"
+                                    >
+                                        Approval Management
+                                    </Link>
+                                    <Link
+                                        href="/features/currency-management"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        role="menuitem"
+                                    >
+                                        Currency Management
+                                    </Link>
+                                    <Link
+                                        href="/features/multi-currency-invoice"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        role="menuitem"
+                                    >
+                                        Multi Currency Invoice
+                                    </Link>
+                                    <Link
+                                        href="/features/task-management"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        role="menuitem"
+                                    >
+                                        Task Management
+                                    </Link>
+                                    <Link
+                                        href="/features/github-integration"
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        role="menuitem"
+                                    >
+                                        GitHub Integration
+                                    </Link>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                     <a
                         href="#ai-section"
                         className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
@@ -84,13 +201,105 @@ export default function Navbar() {
                 {mobileMenuOpen && (
                     <div className="absolute top-20 left-0 right-0 z-50 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 md:hidden">
                         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                            <a
-                                href="#features"
-                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-700"
-                                onClick={toggleMobileMenu}
-                            >
-                                Features
-                            </a>
+                            {/* Mobile Features Menu */}
+                            <div className="block px-3 py-2">
+                                <button
+                                    onClick={toggleFeaturesDropdown}
+                                    className="flex w-full items-center justify-between text-base font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                >
+                                    <span>Features</span>
+                                    {featuresDropdownOpen ? (
+                                        <ChevronUp className="h-4 w-4" />
+                                    ) : (
+                                        <ChevronDown className="h-4 w-4" />
+                                    )}
+                                </button>
+
+                                {/* Mobile Features Dropdown */}
+                                {featuresDropdownOpen && (
+                                    <div className="mt-2 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
+                                        <a
+                                            href="#features"
+                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            All Features
+                                        </a>
+                                        <div className="my-1 border-t border-gray-200 dark:border-gray-700"></div>
+                                        <Link
+                                            href="/features/time-tracking"
+                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            Time Tracking
+                                        </Link>
+                                        <Link
+                                            href="/features/detailed-reports"
+                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            Detailed Reports
+                                        </Link>
+                                        <Link
+                                            href="/features/team-collaboration"
+                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            Team Collaboration
+                                        </Link>
+                                        <Link
+                                            href="/features/client-management"
+                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            Client Management
+                                        </Link>
+                                        <Link
+                                            href="/features/bulk-upload"
+                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            Bulk Upload
+                                        </Link>
+                                        <Link
+                                            href="/features/approval-management"
+                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            Approval Management
+                                        </Link>
+                                        <Link
+                                            href="/features/currency-management"
+                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            Currency Management
+                                        </Link>
+                                        <Link
+                                            href="/features/multi-currency-invoice"
+                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            Multi Currency Invoice
+                                        </Link>
+                                        <Link
+                                            href="/features/task-management"
+                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            Task Management
+                                        </Link>
+                                        <Link
+                                            href="/features/github-integration"
+                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            onClick={toggleMobileMenu}
+                                        >
+                                            GitHub Integration
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
+
                             <a
                                 href="#ai-section"
                                 className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-700"
