@@ -69,7 +69,7 @@ export default function Navbar() {
                             <div className="ring-opacity-5 absolute left-0 z-50 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black dark:bg-gray-800">
                                 <div className="py-1" role="menu" aria-orientation="vertical">
                                     <a
-                                        href={isFeaturePage ? "/#features" : "#features"}
+                                        href={isFeaturePage ? '/#features' : '#features'}
                                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                         role="menuitem"
                                         onClick={() => setFeaturesDropdownOpen(false)}
@@ -153,19 +153,19 @@ export default function Navbar() {
                     </div>
 
                     <a
-                        href={isFeaturePage ? "/#ai-section" : "#ai-section"}
+                        href={isFeaturePage ? '/#ai-section' : '#ai-section'}
                         className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
                     >
                         AI Assistant
                     </a>
                     <a
-                        href={isFeaturePage ? "/#how-it-works" : "#how-it-works"}
+                        href={isFeaturePage ? '/#how-it-works' : '#how-it-works'}
                         className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
                     >
                         How It Works
                     </a>
                     <a
-                        href={isFeaturePage ? "/#cta" : "#cta"}
+                        href={isFeaturePage ? '/#cta' : '#cta'}
                         className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
                     >
                         Get Started
@@ -208,7 +208,7 @@ export default function Navbar() {
                                 {featuresDropdownOpen && (
                                     <div className="mt-2 border-l-2 border-gray-200 pl-4 dark:border-gray-700">
                                         <a
-                                            href={isFeaturePage ? "/#features" : "#features"}
+                                            href={isFeaturePage ? '/#features' : '#features'}
                                             className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
                                             onClick={toggleMobileMenu}
                                         >
@@ -290,21 +290,21 @@ export default function Navbar() {
                             </div>
 
                             <a
-                                href={isFeaturePage ? "/#ai-section" : "#ai-section"}
+                                href={isFeaturePage ? '/#ai-section' : '#ai-section'}
                                 className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                 onClick={toggleMobileMenu}
                             >
                                 AI Assistant
                             </a>
                             <a
-                                href={isFeaturePage ? "/#how-it-works" : "#how-it-works"}
+                                href={isFeaturePage ? '/#how-it-works' : '#how-it-works'}
                                 className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                 onClick={toggleMobileMenu}
                             >
                                 How It Works
                             </a>
                             <a
-                                href={isFeaturePage ? "/#cta" : "#cta"}
+                                href={isFeaturePage ? '/#cta' : '#cta'}
                                 className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                 onClick={toggleMobileMenu}
                             >

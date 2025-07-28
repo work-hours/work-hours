@@ -28,8 +28,8 @@ export default function FeatureLayout({ title, icon, children }: FeatureLayoutPr
                         {/* Beta Release Note */}
                         <div className="mb-6 rounded-md border border-yellow-400 bg-yellow-50 p-4 dark:border-yellow-600 dark:bg-yellow-900/30">
                             <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                                This is a beta release, all the mentioned features may not be available at this moment.
-                                Our Team is working hard to get missing features to you. Thanks for your patience.
+                                This is a beta release, all the mentioned features may not be available at this moment. Our Team is working hard to
+                                get missing features to you. Thanks for your patience.
                             </p>
                         </div>
 
