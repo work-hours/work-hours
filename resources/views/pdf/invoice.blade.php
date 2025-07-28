@@ -10,7 +10,7 @@
         }
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-size: 12px;
+            font-size: 13.8px; /* Increased by 15% from 12px */
             line-height: 1.4;
             color: #333;
             background-color: #fff;
@@ -33,14 +33,14 @@
         }
         .header h1 {
             color: #4a86e8;
-            font-size: 24px;
+            font-size: 27.6px; /* Increased by 15% from 24px */
             margin: 0 0 2px 0;
             letter-spacing: 1px;
             text-transform: uppercase;
             font-weight: 700;
         }
         .header h2 {
-            font-size: 16px;
+            font-size: 18.4px; /* Increased by 15% from 16px */
             color: #555;
             margin: 2px 0;
         }
@@ -53,6 +53,7 @@
         .invoice-info-row {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
         }
         .invoice-info-column {
             width: 48%;
@@ -62,10 +63,11 @@
             margin: 0 0 5px 0;
             border-bottom: 1px solid #ddd;
             padding-bottom: 5px;
-            font-size: 14px;
+            font-size: 16.1px; /* Increased by 15% from 14px */
         }
         .invoice-info-column p {
             margin: 5px 0;
+            font-size: 13.8px; /* Added to match body font size */
         }
         .invoice-details {
             margin-bottom: 15px;
@@ -75,12 +77,12 @@
         }
         .invoice-details p {
             margin: 4px 0;
-            font-size: 12px;
+            font-size: 13.8px; /* Increased by 15% from 12px */
         }
         .invoice-details strong {
             color: #555;
             display: inline-block;
-            width: 100px;
+            width: 115px; /* Increased to accommodate larger font size */
         }
         table {
             width: 100%;
@@ -96,13 +98,13 @@
             color: white;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 11px;
+            font-size: 12.65px; /* Increased by 15% from 11px */
         }
         td {
             padding: 4px 6px;
             text-align: left;
             border-bottom: 1px solid #e0e0e0;
-            font-size: 11px;
+            font-size: 12.65px; /* Increased by 15% from 11px */
         }
         tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -110,7 +112,7 @@
         .total-row {
             font-weight: bold;
             background-color: #f2f2f2;
-            font-size: 13px;
+            font-size: 14.95px; /* Increased by 15% from 13px */
         }
         .currency {
             font-size: 90%;
@@ -131,16 +133,16 @@
         .notes h3 {
             color: #4a86e8;
             margin: 0 0 5px 0;
-            font-size: 13px;
+            font-size: 14.95px; /* Increased by 15% from 13px */
         }
         .notes p {
             margin: 5px 0;
-            font-size: 11px;
+            font-size: 12.65px; /* Increased by 15% from 11px */
         }
         .footer {
             margin-top: 15px;
             text-align: center;
-            font-size: 11px;
+            font-size: 12.65px; /* Increased by 15% from 11px */
             color: #777;
             padding-top: 10px;
             border-top: 1px solid #eee;
@@ -153,7 +155,7 @@
             top: 100px;
             right: 50px;
             transform: rotate(-15deg);
-            font-size: 36px;
+            font-size: 41.4px; /* Increased by 15% from 36px */
             font-weight: bold;
             text-transform: uppercase;
             padding: 8px 16px;
