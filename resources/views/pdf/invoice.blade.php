@@ -148,22 +148,34 @@
         .footer p {
             margin: 2px 0;
         }
-        .status-badge {
-            display: inline-block;
-            padding: 3px 6px;
-            border-radius: 3px;
-            font-size: 10px;
+        .status-stamp {
+            position: absolute;
+            top: 100px;
+            right: 50px;
+            transform: rotate(-15deg);
+            font-size: 36px;
             font-weight: bold;
             text-transform: uppercase;
-            color: white;
-            background-color: #999;
+            padding: 8px 16px;
+            border: 4px solid;
+            border-radius: 8px;
+            opacity: 0.7;
+            text-align: center;
+            z-index: 100;
+            letter-spacing: 2px;
         }
-        .status-draft { background-color: #6c757d; }
-        .status-sent { background-color: #17a2b8; }
-        .status-paid { background-color: #28a745; }
-        .status-partially_paid { background-color: #fd7e14; }
-        .status-overdue { background-color: #dc3545; }
-        .status-cancelled { background-color: #6c757d; }
+        .stamp-paid {
+            color: #28a745;
+            border-color: #28a745;
+        }
+        .stamp-unpaid {
+            color: #fd7e14;
+            border-color: #fd7e14;
+        }
+        .stamp-overdue {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -192,12 +204,30 @@
         <div class="invoice-details">
             <p><strong>Issue Date:</strong> {{ $invoice->issue_date->format('Y-m-d') }}</p>
             <p><strong>Due Date:</strong> {{ $invoice->due_date->format('Y-m-d') }}</p>
-            <p><strong>Status:</strong>
-                <span class="status-badge status-{{ $invoice->status->value }}">
-                    {{ ucfirst($invoice->status->value) }}
-                </span>
-            </p>
             <p><strong>Currency:</strong> {{ $invoice->currency ?? $client->currency ?? 'USD' }}</p>
+        </div>
+
+        @php
+            // Determine which stamp to show based on invoice status
+            // Only show PAID, UNPAID, or OVERDUE as requested
+            $statusClass = '';
+            $statusText = '';
+
+            if ($invoice->status->value === 'paid' || ($invoice->status->value === 'partially_paid' && $invoice->paid_amount >= $invoice->total_amount)) {
+                $statusClass = 'stamp-paid';
+                $statusText = 'PAID';
+            } elseif ($invoice->status->value === 'overdue') {
+                $statusClass = 'stamp-overdue';
+                $statusText = 'OVERDUE';
+            } else {
+                // All other statuses (draft, sent, partially_paid with partial payment, cancelled) show as UNPAID
+                $statusClass = 'stamp-unpaid';
+                $statusText = 'UNPAID';
+            }
+        @endphp
+
+        <div class="status-stamp {{ $statusClass }}">
+            {{ $statusText }}
         </div>
 
         <table>
