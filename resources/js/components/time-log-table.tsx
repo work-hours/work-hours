@@ -136,7 +136,7 @@ export default function TimeLogTable({
                                                typeof log.hourly_rate === 'number' &&
                                                log.hourly_rate > 0 &&
                                                log.duration)
-                                              ? (log.hourly_rate * (log.duration / 60)).toFixed(2)
+                                              ? (log.hourly_rate * log.duration).toFixed(2)
                                               : '0.00'
                                         }
                                     </span>

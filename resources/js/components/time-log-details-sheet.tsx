@@ -137,7 +137,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                                        typeof timeLog.hourly_rate === 'number' &&
                                                        timeLog.hourly_rate > 0 &&
                                                        timeLog.duration)
-                                                      ? (timeLog.hourly_rate * (timeLog.duration / 60)).toFixed(2)
+                                                      ? (timeLog.hourly_rate * timeLog.duration).toFixed(2)
                                                       : '0.00'
                                                 }
                                             </span>
