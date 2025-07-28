@@ -43,6 +43,12 @@ const quickLinks: NavItem[] = [
 ]
 
 export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps) {
+    // Function to handle Track Time button click
+    const handleTrackTimeClick = () => {
+        // Dispatch custom event to open time tracker
+        window.dispatchEvent(new Event('open-time-tracker'))
+    }
+
     return (
         <div
             className={`sticky top-0 flex h-screen flex-col border-l border-gray-300 bg-[#f8f6e9] shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-58'}`}
@@ -80,6 +86,38 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                                     )}
                                 </div>
                             ))}
+                        </nav>
+                    </TooltipProvider>
+                </div>
+
+                {/* Tools section */}
+                <div className="mb-6 px-4">
+                    <div className="mb-3 border-b border-gray-400 pb-2 dark:border-gray-600">
+                        <h3
+                            className={`text-sm font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
+                        >
+                            {collapsed ? 'Tools' : 'Tools'}
+                        </h3>
+                    </div>
+                    <TooltipProvider>
+                        <nav className="relative z-10 space-y-1">
+                            <div className="relative">
+                                <button
+                                    onClick={handleTrackTimeClick}
+                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+                                >
+                                    <ClockIcon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                    {!collapsed && <span>Track Time</span>}
+                                </button>
+                                {collapsed && (
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="left">Track Time</TooltipContent>
+                                    </Tooltip>
+                                )}
+                            </div>
                         </nav>
                     </TooltipProvider>
                 </div>

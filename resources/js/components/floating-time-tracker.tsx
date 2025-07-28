@@ -31,6 +31,21 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     const [isOpen, setIsOpen] = useState(false)
     const [view, setView] = useState<'select' | 'tracking' | 'note'>('select')
 
+    // Listen for custom event to open the time tracker
+    useEffect(() => {
+        const handleOpenTimeTracker = () => {
+            setIsOpen(true)
+        }
+
+        // Add event listener
+        window.addEventListener('open-time-tracker', handleOpenTimeTracker)
+
+        // Clean up
+        return () => {
+            window.removeEventListener('open-time-tracker', handleOpenTimeTracker)
+        }
+    }, [])
+
     const [activeTimeLog, setActiveTimeLog] = useState<{
         id: number | null
         project_id: number | null
