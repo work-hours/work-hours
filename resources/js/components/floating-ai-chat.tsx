@@ -36,10 +36,26 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
     const [chatHistories, setChatHistories] = useState<ChatHistory[]>([])
     const [selectedChatId, setSelectedChatId] = useState<number | null>(null)
     const [isLoading, setIsLoading] = useState(false)
+    const [isOpen, setIsOpen] = useState(false)
 
     // Load chat histories when the component mounts
     useEffect(() => {
         loadChatHistories().then()
+    }, [])
+
+    // Listen for custom event to open the AI chat
+    useEffect(() => {
+        const handleOpenAiChat = () => {
+            setIsOpen(true)
+        }
+
+        // Add event listener
+        window.addEventListener('open-ai-chat', handleOpenAiChat)
+
+        // Clean up
+        return () => {
+            window.removeEventListener('open-ai-chat', handleOpenAiChat)
+        }
     }, [])
 
     // Function to load chat histories
@@ -77,8 +93,8 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
     }
 
     return (
-        <Sheet>
-            <div className="fixed right-4 bottom-24 z-50 duration-300 animate-in fade-in slide-in-from-right-5">
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <div className="fixed right-4 bottom-24 z-50 duration-300 animate-in fade-in slide-in-from-right-5 hidden">
                 <SheetTrigger asChild>
                     <Button
                         variant="outline"

@@ -215,7 +215,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             {/* Floating button or compact tracking view */}
-            <div className="fixed right-4 bottom-4 z-50 duration-300 animate-in fade-in slide-in-from-right-5">
+            <div className="fixed right-4 bottom-4 z-50 duration-300 animate-in fade-in slide-in-from-right-5 hidden">
                 <div className="flex flex-col items-end gap-2">
                     {activeTimeLog && activeTimeLog.task_id && (
                         <div className="rounded-md bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
