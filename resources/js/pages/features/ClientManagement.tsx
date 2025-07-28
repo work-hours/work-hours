@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { Briefcase, Users, FileText, BarChart2, DollarSign, CheckCircle } from 'lucide-react'
+import { BarChart2, Briefcase, CheckCircle, DollarSign, FileText, Users } from 'lucide-react'
 
 export default function ClientManagement() {
     return (
@@ -8,8 +8,8 @@ export default function ClientManagement() {
                 {/* Introduction Section */}
                 <section className="space-y-4">
                     <p className="text-lg leading-relaxed">
-                        Organize and manage your clients effortlessly with our comprehensive client management system. Keep track of client information,
-                        projects, and billing details all in one place for a more streamlined workflow.
+                        Organize and manage your clients effortlessly with our comprehensive client management system. Keep track of client
+                        information, projects, and billing details all in one place for a more streamlined workflow.
                     </p>
                     <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-900/20">
                         <p className="text-blue-900 dark:text-blue-400">
@@ -175,9 +175,7 @@ export default function ClientManagement() {
                                 <DollarSign className="mr-2 h-5 w-5 text-blue-900 dark:text-blue-400" />
                                 <h3 className="font-semibold text-gray-800 dark:text-gray-200">Invoicing</h3>
                             </div>
-                            <p className="text-sm text-gray-700 dark:text-gray-300">
-                                Generate invoices directly from client projects and time logs.
-                            </p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">Generate invoices directly from client projects and time logs.</p>
                         </div>
                         <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             <div className="mb-2 flex items-center">
@@ -203,7 +201,7 @@ export default function ClientManagement() {
                 {/* CTA Section */}
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
-                        <div className="mb-4 md:mb-0 md:mr-6 md:w-2/3">
+                        <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
                             <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Streamline Client Management?</h3>
                             <p className="text-blue-800 dark:text-blue-300">
                                 Sign up for Work Hours today and start organizing your clients more efficiently.

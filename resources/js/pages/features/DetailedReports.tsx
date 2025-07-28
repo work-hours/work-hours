@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { BarChart2, PieChart, LineChart, FileText, Download, Filter } from 'lucide-react'
+import { BarChart2, Download, FileText, Filter, LineChart, PieChart } from 'lucide-react'
 
 export default function DetailedReports() {
     return (
@@ -214,7 +214,7 @@ export default function DetailedReports() {
                 {/* CTA Section */}
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
-                        <div className="mb-4 md:mb-0 md:mr-6 md:w-2/3">
+                        <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
                             <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Gain Valuable Insights?</h3>
                             <p className="text-blue-800 dark:text-blue-300">
                                 Sign up for Work Hours today and start making data-driven decisions with our detailed reports.

@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { CheckSquare, Clock, Users, AlertCircle, CheckCircle, FileText } from 'lucide-react'
+import { AlertCircle, CheckCircle, CheckSquare, Clock, FileText, Users } from 'lucide-react'
 
 export default function ApprovalManagement() {
     return (
@@ -131,7 +131,8 @@ export default function ApprovalManagement() {
                             <div>
                                 <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Configure Approval Settings</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Set up approval requirements for different types of submissions and assign approvers based on roles or departments.
+                                    Set up approval requirements for different types of submissions and assign approvers based on roles or
+                                    departments.
                                 </p>
                             </div>
                         </li>
@@ -230,7 +231,7 @@ export default function ApprovalManagement() {
                 {/* CTA Section */}
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
-                        <div className="mb-4 md:mb-0 md:mr-6 md:w-2/3">
+                        <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
                             <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Streamline Your Approval Process?</h3>
                             <p className="text-blue-800 dark:text-blue-300">
                                 Sign up for Work Hours today and implement efficient approval workflows for your team.

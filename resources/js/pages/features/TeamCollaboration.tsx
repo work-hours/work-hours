@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { Users, MessageSquare, Calendar, Bell, Share2, Shield } from 'lucide-react'
+import { Bell, Calendar, MessageSquare, Share2, Shield, Users } from 'lucide-react'
 
 export default function TeamCollaboration() {
     return (
@@ -89,43 +89,41 @@ export default function TeamCollaboration() {
                                 </p>
                                 <ul className="space-y-2 pl-5">
                                     <li className="flex items-start">
-                                        <div className="mr-2 mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
+                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
                                         <span className="text-gray-700 dark:text-gray-300">Current active tasks for each team member</span>
                                     </li>
                                     <li className="flex items-start">
-                                        <div className="mr-2 mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
+                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
                                         <span className="text-gray-700 dark:text-gray-300">Weekly and monthly time summaries</span>
                                     </li>
                                     <li className="flex items-start">
-                                        <div className="mr-2 mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
+                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
                                         <span className="text-gray-700 dark:text-gray-300">Project progress indicators</span>
                                     </li>
                                     <li className="flex items-start">
-                                        <div className="mr-2 mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
+                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
                                         <span className="text-gray-700 dark:text-gray-300">Upcoming deadlines and milestones</span>
                                     </li>
                                 </ul>
                             </div>
                             <div>
                                 <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-200">Workload Management</h3>
-                                <p className="mb-4 text-gray-700 dark:text-gray-300">
-                                    Optimize your team's workload with tools designed to:
-                                </p>
+                                <p className="mb-4 text-gray-700 dark:text-gray-300">Optimize your team's workload with tools designed to:</p>
                                 <ul className="space-y-2 pl-5">
                                     <li className="flex items-start">
-                                        <div className="mr-2 mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
+                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
                                         <span className="text-gray-700 dark:text-gray-300">Visualize capacity and availability</span>
                                     </li>
                                     <li className="flex items-start">
-                                        <div className="mr-2 mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
+                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
                                         <span className="text-gray-700 dark:text-gray-300">Balance tasks across team members</span>
                                     </li>
                                     <li className="flex items-start">
-                                        <div className="mr-2 mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
+                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
                                         <span className="text-gray-700 dark:text-gray-300">Identify bottlenecks and overallocations</span>
                                     </li>
                                     <li className="flex items-start">
-                                        <div className="mr-2 mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
+                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
                                         <span className="text-gray-700 dark:text-gray-300">Plan resources for upcoming projects</span>
                                     </li>
                                 </ul>
@@ -180,7 +178,8 @@ export default function TeamCollaboration() {
                             <div>
                                 <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Analyze & Optimize</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Generate team reports to identify trends, bottlenecks, and opportunities for improvement in your collaborative workflow.
+                                    Generate team reports to identify trends, bottlenecks, and opportunities for improvement in your collaborative
+                                    workflow.
                                 </p>
                             </div>
                         </li>
@@ -221,7 +220,7 @@ export default function TeamCollaboration() {
                 {/* CTA Section */}
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
-                        <div className="mb-4 md:mb-0 md:mr-6 md:w-2/3">
+                        <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
                             <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Boost Team Productivity?</h3>
                             <p className="text-blue-800 dark:text-blue-300">
                                 Sign up for Work Hours today and transform how your team works together.

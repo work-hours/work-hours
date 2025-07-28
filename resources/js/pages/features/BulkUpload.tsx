@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { Upload, FileText, Clock, CheckCircle, Download, AlertCircle } from 'lucide-react'
+import { AlertCircle, CheckCircle, Clock, Download, FileText, Upload } from 'lucide-react'
 
 export default function BulkUpload() {
     return (
@@ -208,15 +208,15 @@ export default function BulkUpload() {
                         <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200">Migrating from Another System</h3>
                             <p className="text-gray-700 dark:text-gray-300">
-                                Export your data from your previous time tracking system, map it to our template format, and import it all at once to get
-                                started quickly with Work Hours.
+                                Export your data from your previous time tracking system, map it to our template format, and import it all at once to
+                                get started quickly with Work Hours.
                             </p>
                         </div>
                         <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200">Importing Historical Data</h3>
                             <p className="text-gray-700 dark:text-gray-300">
-                                Add past time logs from spreadsheets or other sources to ensure your reporting includes all historical data for accurate
-                                analysis and billing.
+                                Add past time logs from spreadsheets or other sources to ensure your reporting includes all historical data for
+                                accurate analysis and billing.
                             </p>
                         </div>
                     </div>
@@ -225,7 +225,7 @@ export default function BulkUpload() {
                 {/* CTA Section */}
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
-                        <div className="mb-4 md:mb-0 md:mr-6 md:w-2/3">
+                        <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
                             <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Save Time with Bulk Uploads?</h3>
                             <p className="text-blue-800 dark:text-blue-300">
                                 Sign up for Work Hours today and start importing your data in bulk for more efficient time tracking.

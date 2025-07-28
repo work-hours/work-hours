@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { CheckSquare, Calendar, Clock, Users, CheckCircle, List } from 'lucide-react'
+import { Calendar, CheckCircle, CheckSquare, Clock, List, Users } from 'lucide-react'
 
 export default function TaskManagement() {
     return (
@@ -13,13 +13,13 @@ export default function TaskManagement() {
                 {/* Introduction Section */}
                 <section className="space-y-4">
                     <p className="text-lg leading-relaxed">
-                        Create, assign, and track tasks efficiently with our comprehensive task management system. Organize your work with
-                        priorities, due dates, and detailed descriptions to keep your team aligned and projects on schedule.
+                        Create, assign, and track tasks efficiently with our comprehensive task management system. Organize your work with priorities,
+                        due dates, and detailed descriptions to keep your team aligned and projects on schedule.
                     </p>
                     <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-900/20">
                         <p className="text-blue-900 dark:text-blue-400">
-                            <span className="font-semibold">Pro Tip:</span> Use task templates for recurring work to save time and ensure
-                            consistency in your task creation process.
+                            <span className="font-semibold">Pro Tip:</span> Use task templates for recurring work to save time and ensure consistency
+                            in your task creation process.
                         </p>
                     </div>
                 </section>
@@ -213,15 +213,15 @@ export default function TaskManagement() {
                         <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200">Project Management</h3>
                             <p className="text-gray-700 dark:text-gray-300">
-                                Break down complex projects into manageable tasks, assign them to team members, and track progress to ensure
-                                timely completion and clear accountability.
+                                Break down complex projects into manageable tasks, assign them to team members, and track progress to ensure timely
+                                completion and clear accountability.
                             </p>
                         </div>
                         <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200">Client Deliverables</h3>
                             <p className="text-gray-700 dark:text-gray-300">
-                                Create tasks for client deliverables with clear deadlines, track time spent for accurate billing, and ensure
-                                nothing falls through the cracks in your client work.
+                                Create tasks for client deliverables with clear deadlines, track time spent for accurate billing, and ensure nothing
+                                falls through the cracks in your client work.
                             </p>
                         </div>
                     </div>
@@ -230,7 +230,7 @@ export default function TaskManagement() {
                 {/* CTA Section */}
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
-                        <div className="mb-4 md:mb-0 md:mr-6 md:w-2/3">
+                        <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
                             <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Streamline Your Task Management?</h3>
                             <p className="text-blue-800 dark:text-blue-300">
                                 Sign up for Work Hours today and start organizing your work more efficiently.

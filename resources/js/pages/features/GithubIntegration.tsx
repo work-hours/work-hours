@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { Github, BarChart2, Clock, CheckCircle, Code, GitBranch } from 'lucide-react'
+import { BarChart2, CheckCircle, Clock, Code, GitBranch, Github } from 'lucide-react'
 
 export default function GithubIntegration() {
     return (
@@ -8,14 +8,14 @@ export default function GithubIntegration() {
                 {/* Introduction Section */}
                 <section className="space-y-4">
                     <p className="text-lg leading-relaxed">
-                        Seamlessly connect your GitHub account to import repositories as projects and track development time efficiently.
-                        Monitor your coding productivity, generate reports based on repositories, and streamline your workflow with our
-                        powerful GitHub integration.
+                        Seamlessly connect your GitHub account to import repositories as projects and track development time efficiently. Monitor your
+                        coding productivity, generate reports based on repositories, and streamline your workflow with our powerful GitHub
+                        integration.
                     </p>
                     <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-900/20">
                         <p className="text-blue-900 dark:text-blue-400">
-                            <span className="font-semibold">Pro Tip:</span> Link your time entries to specific GitHub issues or pull requests
-                            to provide detailed context for your work and improve project transparency.
+                            <span className="font-semibold">Pro Tip:</span> Link your time entries to specific GitHub issues or pull requests to
+                            provide detailed context for your work and improve project transparency.
                         </p>
                     </div>
                 </section>
@@ -209,15 +209,15 @@ export default function GithubIntegration() {
                         <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200">Development Agencies</h3>
                             <p className="text-gray-700 dark:text-gray-300">
-                                Software development agencies can track time spent on client repositories for accurate billing and provide
-                                detailed reports on development progress.
+                                Software development agencies can track time spent on client repositories for accurate billing and provide detailed
+                                reports on development progress.
                             </p>
                         </div>
                         <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200">Open Source Contributors</h3>
                             <p className="text-gray-700 dark:text-gray-300">
-                                Track time spent on open source contributions across different repositories to document your work and
-                                measure your impact on the community.
+                                Track time spent on open source contributions across different repositories to document your work and measure your
+                                impact on the community.
                             </p>
                         </div>
                     </div>
@@ -240,7 +240,9 @@ export default function GithubIntegration() {
                         <div className="text-sm text-gray-700 dark:text-gray-300">
                             <div className="mb-2">$ git status</div>
                             <div className="mb-2 text-green-600 dark:text-green-400">On branch feature/new-dashboard</div>
-                            <div className="mb-2 text-green-600 dark:text-green-400">Your branch is up to date with 'origin/feature/new-dashboard'</div>
+                            <div className="mb-2 text-green-600 dark:text-green-400">
+                                Your branch is up to date with 'origin/feature/new-dashboard'
+                            </div>
                             <div className="mb-2">$ git log --oneline</div>
                             <div className="mb-1 text-blue-600 dark:text-blue-400">a1b2c3d Implement responsive layout for dashboard</div>
                             <div className="mb-1 text-blue-600 dark:text-blue-400">e4f5g6h Add chart components to dashboard</div>
@@ -249,15 +251,15 @@ export default function GithubIntegration() {
                         </div>
                     </div>
                     <p className="text-gray-700 dark:text-gray-300">
-                        With GitHub integration, you can track time spent on specific branches like "feature/new-dashboard" and link your time
-                        entries to commits like "Implement responsive layout for dashboard" for detailed work context.
+                        With GitHub integration, you can track time spent on specific branches like "feature/new-dashboard" and link your time entries
+                        to commits like "Implement responsive layout for dashboard" for detailed work context.
                     </p>
                 </section>
 
                 {/* CTA Section */}
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
-                        <div className="mb-4 md:mb-0 md:mr-6 md:w-2/3">
+                        <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
                             <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Connect Your GitHub Account?</h3>
                             <p className="text-blue-800 dark:text-blue-300">
                                 Sign up for Work Hours today and streamline your development time tracking with GitHub integration.

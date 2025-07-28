@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { DollarSign, FileText, Globe, CheckCircle, Settings, Printer } from 'lucide-react'
+import { CheckCircle, DollarSign, FileText, Globe, Printer, Settings } from 'lucide-react'
 
 export default function MultiCurrencyInvoice() {
     return (
@@ -142,7 +142,8 @@ export default function MultiCurrencyInvoice() {
                             <div>
                                 <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Create Invoice</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Generate an invoice with time entries and other billable items, which will automatically use the client's currency.
+                                    Generate an invoice with time entries and other billable items, which will automatically use the client's
+                                    currency.
                                 </p>
                             </div>
                         </li>
@@ -164,7 +165,8 @@ export default function MultiCurrencyInvoice() {
                             <div>
                                 <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Send & Track</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Send the invoice to your client and track payments in the original currency, with automatic conversion for your records.
+                                    Send the invoice to your client and track payments in the original currency, with automatic conversion for your
+                                    records.
                                 </p>
                             </div>
                         </li>
@@ -220,8 +222,8 @@ export default function MultiCurrencyInvoice() {
                         <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200">International Agencies</h3>
                             <p className="text-gray-700 dark:text-gray-300">
-                                Marketing and development agencies with clients in multiple countries can maintain consistent billing practices
-                                while accommodating each client's currency preferences.
+                                Marketing and development agencies with clients in multiple countries can maintain consistent billing practices while
+                                accommodating each client's currency preferences.
                             </p>
                         </div>
                     </div>
@@ -230,7 +232,7 @@ export default function MultiCurrencyInvoice() {
                 {/* CTA Section */}
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
-                        <div className="mb-4 md:mb-0 md:mr-6 md:w-2/3">
+                        <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
                             <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Simplify International Billing?</h3>
                             <p className="text-blue-800 dark:text-blue-300">
                                 Sign up for Work Hours today and start creating professional invoices in any currency.

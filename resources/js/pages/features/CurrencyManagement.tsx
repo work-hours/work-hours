@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { DollarSign, Globe, BarChart2, Settings, CheckCircle, RefreshCw } from 'lucide-react'
+import { BarChart2, CheckCircle, DollarSign, Globe, RefreshCw, Settings } from 'lucide-react'
 
 export default function CurrencyManagement() {
     return (
@@ -159,7 +159,8 @@ export default function CurrencyManagement() {
                             <div>
                                 <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Generate Reports & Invoices</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Create financial reports and invoices in the appropriate currency, with automatic conversion for consolidated reporting.
+                                    Create financial reports and invoices in the appropriate currency, with automatic conversion for consolidated
+                                    reporting.
                                 </p>
                             </div>
                         </li>
@@ -215,8 +216,8 @@ export default function CurrencyManagement() {
                         <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200">Multi-National Organizations</h3>
                             <p className="text-gray-700 dark:text-gray-300">
-                                Companies with teams in different countries can track time and expenses in local currencies while providing
-                                management with unified financial reports in a single currency.
+                                Companies with teams in different countries can track time and expenses in local currencies while providing management
+                                with unified financial reports in a single currency.
                             </p>
                         </div>
                     </div>
@@ -225,7 +226,7 @@ export default function CurrencyManagement() {
                 {/* CTA Section */}
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
-                        <div className="mb-4 md:mb-0 md:mr-6 md:w-2/3">
+                        <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
                             <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Manage Multiple Currencies?</h3>
                             <p className="text-blue-800 dark:text-blue-300">
                                 Sign up for Work Hours today and simplify your international time tracking and billing.

@@ -2,8 +2,8 @@ import AppLogoIcon from '@/components/app-logo-icon'
 import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
-import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Navbar() {
     const { auth } = usePage<SharedData>().props
@@ -36,7 +36,7 @@ export default function Navbar() {
     }, [])
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-[#f8f6e9] dark:bg-gray-900 shadow-md">
+        <nav className="fixed top-0 right-0 left-0 z-50 bg-[#f8f6e9] shadow-md dark:bg-gray-900">
             <div className="container mx-auto flex items-center justify-between px-6 py-6 lg:px-8">
                 {/* Logo with timesheet-style container */}
                 <Link href="/" className="flex items-center gap-3">
@@ -50,7 +50,7 @@ export default function Navbar() {
                 </Link>
 
                 {/* Desktop Navigation Menu */}
-                <div className="hidden md:flex items-center space-x-8">
+                <div className="hidden items-center space-x-8 md:flex">
                     {/* Features Dropdown */}
                     <div className="relative" ref={dropdownRef}>
                         <button
@@ -58,16 +58,12 @@ export default function Navbar() {
                             className="flex items-center text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
                         >
                             Features
-                            {featuresDropdownOpen ? (
-                                <ChevronUp className="ml-1 h-4 w-4" />
-                            ) : (
-                                <ChevronDown className="ml-1 h-4 w-4" />
-                            )}
+                            {featuresDropdownOpen ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />}
                         </button>
 
                         {/* Features Dropdown Menu */}
                         {featuresDropdownOpen && (
-                            <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
+                            <div className="ring-opacity-5 absolute left-0 z-50 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black dark:bg-gray-800">
                                 <div className="py-1" role="menu" aria-orientation="vertical">
                                     <a
                                         href="#features"
@@ -165,10 +161,7 @@ export default function Navbar() {
                     >
                         How It Works
                     </a>
-                    <a
-                        href="#cta"
-                        className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
-                    >
+                    <a href="#cta" className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400">
                         Get Started
                     </a>
                 </div>
@@ -177,17 +170,11 @@ export default function Navbar() {
                 <div className="md:hidden">
                     <button
                         onClick={toggleMobileMenu}
-                        className="flex items-center p-2 rounded-md text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                        className="flex items-center rounded-md p-2 text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
                     >
                         <span className="sr-only">Open main menu</span>
                         {/* Hamburger icon */}
-                        <svg
-                            className="h-6 w-6"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
+                        <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             {mobileMenuOpen ? (
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             ) : (
@@ -199,8 +186,8 @@ export default function Navbar() {
 
                 {/* Mobile menu dropdown */}
                 {mobileMenuOpen && (
-                    <div className="absolute top-20 left-0 right-0 z-50 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 md:hidden">
-                        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <div className="absolute top-20 right-0 left-0 z-50 border border-gray-200 bg-white shadow-lg md:hidden dark:border-gray-700 dark:bg-gray-800">
+                        <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
                             {/* Mobile Features Menu */}
                             <div className="block px-3 py-2">
                                 <button
@@ -208,16 +195,12 @@ export default function Navbar() {
                                     className="flex w-full items-center justify-between text-base font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
                                 >
                                     <span>Features</span>
-                                    {featuresDropdownOpen ? (
-                                        <ChevronUp className="h-4 w-4" />
-                                    ) : (
-                                        <ChevronDown className="h-4 w-4" />
-                                    )}
+                                    {featuresDropdownOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                                 </button>
 
                                 {/* Mobile Features Dropdown */}
                                 {featuresDropdownOpen && (
-                                    <div className="mt-2 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
+                                    <div className="mt-2 border-l-2 border-gray-200 pl-4 dark:border-gray-700">
                                         <a
                                             href="#features"
                                             className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
@@ -302,21 +285,21 @@ export default function Navbar() {
 
                             <a
                                 href="#ai-section"
-                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-700"
+                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                 onClick={toggleMobileMenu}
                             >
                                 AI Assistant
                             </a>
                             <a
                                 href="#how-it-works"
-                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-700"
+                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                 onClick={toggleMobileMenu}
                             >
                                 How It Works
                             </a>
                             <a
                                 href="#cta"
-                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-700"
+                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                 onClick={toggleMobileMenu}
                             >
                                 Get Started
