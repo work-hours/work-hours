@@ -3,13 +3,7 @@ import { ArrowRight } from 'lucide-react'
 
 export default function CTA() {
     return (
-        <section className="relative w-full border-y border-gray-300/20 bg-[#f8f6e9] py-16 md:py-24 dark:border-gray-700/20 dark:bg-gray-900">
-            {/* Timesheet punch holes on the left side only (matching main page) */}
-            <div
-                className="absolute top-0 bottom-0 left-4 w-4 bg-[radial-gradient(circle,rgba(0,0,0,0.07)_3px,transparent_3px)] bg-[length:8px_24px] bg-[position:center] bg-repeat-y dark:bg-[radial-gradient(circle,rgba(255,255,255,0.07)_3px,transparent_3px)]"
-                aria-hidden="true"
-            ></div>
-
+        <section className="relative w-full py-16 md:py-24">
             {/* Typewriter-style form */}
             <div className="mx-auto w-9/12 max-w-3xl">
                 <div className="relative border border-gray-300/60 bg-[#f8f6e9]/80 p-8 text-center dark:border-gray-700/60 dark:bg-gray-800/80">
