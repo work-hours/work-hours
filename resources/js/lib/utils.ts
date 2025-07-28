@@ -13,6 +13,26 @@ export function formatDateTime(dateString: string | null | undefined): string {
     return date.local().format('YYYY-MM-DD HH:mm')
 }
 
+export function formatTimeEntry(startTimestamp: string | null | undefined, endTimestamp: string | null | undefined): string {
+    if (!startTimestamp) return '-'
+
+    const startDate = moment.utc(startTimestamp)
+    if (!startDate.isValid()) return '-'
+
+    const formattedDate = startDate.local().format('YYYY-MM-DD')
+    const formattedStartTime = startDate.local().format('HH:mm')
+
+    let formattedEndTime = '-'
+    if (endTimestamp) {
+        const endDate = moment.utc(endTimestamp)
+        if (endDate.isValid()) {
+            formattedEndTime = endDate.local().format('HH:mm')
+        }
+    }
+
+    return `${formattedDate} (${formattedStartTime} - ${formattedEndTime})`
+}
+
 /**
  * Round a number to 2 decimal places
  */

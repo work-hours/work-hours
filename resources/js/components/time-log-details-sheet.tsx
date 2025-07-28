@@ -1,5 +1,5 @@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { formatDateTime } from '@/lib/utils'
+import { formatDateTime, formatTimeEntry } from '@/lib/utils'
 import { Info } from 'lucide-react'
 import { TimeLogEntry } from './time-log-table'
 
@@ -92,6 +92,11 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                     <div className="space-y-2">
                         <h3 className="ml-4 text-lg font-semibold text-primary">Time Information</h3>
                         <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                            <div>
+                                <p className="text-sm font-bold text-muted-foreground">Entry</p>
+                                <p className="text-base">{formatTimeEntry(timeLog.start_timestamp, timeLog.end_timestamp)}</p>
+                            </div>
+
                             <div>
                                 <p className="text-sm font-bold text-muted-foreground">Start Time</p>
                                 <p className="text-base">{formatDateTime(timeLog.start_timestamp)}</p>
