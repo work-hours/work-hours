@@ -10,8 +10,8 @@
         }
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-size: 13.8px; /* Increased by 15% from 12px */
-            line-height: 1.4;
+            font-size: 16px;
+            line-height: 1.5;
             color: #333;
             background-color: #fff;
             margin: 0;
@@ -20,33 +20,39 @@
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
             border: 1px solid #e0e0e0;
             background-color: #fff;
         }
         .header {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #4a86e8;
+            border-bottom: 3px solid #4a86e8;
             position: relative;
+            background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+            padding-top: 15px;
+            border-radius: 6px 6px 0 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .header h1 {
             color: #4a86e8;
-            font-size: 27.6px; /* Increased by 15% from 24px */
-            margin: 0 0 2px 0;
-            letter-spacing: 1px;
+            font-size: 34px; /* Increased for better visibility */
+            margin: 0 0 4px 0;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            font-weight: 700;
+            font-weight: 800;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
         }
         .header h2 {
-            font-size: 18.4px; /* Increased by 15% from 16px */
+            font-size: 22px;
             color: #555;
-            margin: 2px 0;
+            margin: 4px 0;
+            font-weight: 600;
         }
         .invoice-info {
-            margin-bottom: 15px;
-            padding: 10px;
+            margin-bottom: 12px;
+            padding: 8px;
             background-color: #f9f9f9;
             border-radius: 4px;
         }
@@ -60,59 +66,71 @@
         }
         .invoice-info-column h3 {
             color: #4a86e8;
-            margin: 0 0 5px 0;
+            margin: 0 0 3px 0;
             border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-            font-size: 16.1px; /* Increased by 15% from 14px */
+            padding-bottom: 3px;
+            font-size: 18.52px; /* Increased by additional 15% from 16.1px */
         }
         .invoice-info-column p {
-            margin: 5px 0;
-            font-size: 13.8px; /* Added to match body font size */
+            margin: 3px 0;
+            font-size: 15.87px; /* Increased by additional 15% from 13.8px */
         }
         .invoice-details {
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-left: 4px solid #4a86e8;
         }
         .invoice-details p {
-            margin: 4px 0;
-            font-size: 13.8px; /* Increased by 15% from 12px */
+            margin: 8px 0;
+            font-size: 16px;
+            line-height: 1.6;
         }
         .invoice-details strong {
-            color: #555;
+            color: #4a86e8;
             display: inline-block;
-            width: 115px; /* Increased to accommodate larger font size */
+            width: 130px;
+            font-weight: 600;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         th {
-            padding: 6px;
+            padding: 10px 12px;
             text-align: left;
-            border-bottom: 1px solid #e0e0e0;
             background-color: #4a86e8;
             color: white;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 12.65px; /* Increased by 15% from 11px */
+            font-size: 16px;
+            letter-spacing: 0.5px;
         }
         td {
-            padding: 4px 6px;
+            padding: 10px 12px;
             text-align: left;
             border-bottom: 1px solid #e0e0e0;
-            font-size: 12.65px; /* Increased by 15% from 11px */
+            font-size: 16px;
+            vertical-align: middle;
         }
         tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #f1f5fd;
         }
         .total-row {
             font-weight: bold;
-            background-color: #f2f2f2;
-            font-size: 14.95px; /* Increased by 15% from 13px */
+            background-color: #edf2fd !important;
+            font-size: 17px;
+            border-top: 2px solid #4a86e8;
         }
         .currency {
             font-size: 90%;
@@ -120,63 +138,101 @@
             margin-right: 2px;
         }
         .amount {
-            font-family: 'Courier New', monospace;
+            /* Using the same font as the rest of the document */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             white-space: nowrap;
         }
         .notes {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            border-left: 3px solid #4a86e8;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #4a86e8;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .notes h3 {
             color: #4a86e8;
-            margin: 0 0 5px 0;
-            font-size: 14.95px; /* Increased by 15% from 13px */
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
         .notes p {
-            margin: 5px 0;
-            font-size: 12.65px; /* Increased by 15% from 11px */
+            margin: 8px 0;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #555;
         }
         .footer {
-            margin-top: 15px;
+            margin-top: 25px;
             text-align: center;
-            font-size: 12.65px; /* Increased by 15% from 11px */
+            font-size: 15px;
             color: #777;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
+            padding: 15px 0;
+            border-top: 2px solid #eee;
+            background-color: #f8f9fa;
+            border-radius: 0 0 6px 6px;
         }
         .footer p {
             margin: 2px 0;
+        }
+        .info-table {
+            width: 100%;
+            margin-bottom: 20px;
+            border: none;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .info-cell {
+            padding: 15px;
+            vertical-align: top;
+            border: none;
+        }
+        .info-heading {
+            color: #4a86e8;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .info-content {
+            line-height: 1.6;
         }
         .status-stamp {
             position: absolute;
             top: 100px;
             right: 50px;
             transform: rotate(-15deg);
-            font-size: 41.4px; /* Increased by 15% from 36px */
-            font-weight: bold;
+            font-size: 48px;
+            font-weight: 800;
             text-transform: uppercase;
-            padding: 8px 16px;
-            border: 4px solid;
-            border-radius: 8px;
-            opacity: 0.7;
+            padding: 10px 20px;
+            border: 5px solid;
+            border-radius: 12px;
+            opacity: 0.8;
             text-align: center;
             z-index: 100;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         .stamp-paid {
             color: #28a745;
             border-color: #28a745;
+            background-color: rgba(40, 167, 69, 0.05);
         }
         .stamp-unpaid {
             color: #fd7e14;
             border-color: #fd7e14;
+            background-color: rgba(253, 126, 20, 0.05);
         }
         .stamp-overdue {
             color: #dc3545;
             border-color: #dc3545;
+            background-color: rgba(220, 53, 69, 0.05);
         }
     </style>
 </head>
@@ -187,21 +243,26 @@
             <h2>#{{ $invoice->invoice_number }}</h2>
         </div>
 
-        <div class="invoice-info">
-            <div class="invoice-info-row">
-                <div class="invoice-info-column">
-                    <h3>From:</h3>
-                    <p>{{ $invoice->user->name }}<br>
-                    {{ $invoice->user->email }}</p>
-                </div>
-                <div class="invoice-info-column">
-                    <h3>To:</h3>
-                    <p>{{ $client->name }}<br>
-                    {{ $client->email ?? '' }}<br>
-                    {{ $client->address ?? '' }}</p>
-                </div>
-            </div>
-        </div>
+        <table class="info-table">
+            <tr>
+                <td class="info-cell">
+                    <div class="info-heading">From:</div>
+                    <div class="info-content">
+                        <strong>{{ $invoice->user->name }}</strong><br>
+                        {{ $invoice->user->email }}<br>
+                        {{ $invoice->user->address ?? '' }}
+                    </div>
+                </td>
+                <td class="info-cell" style="text-align: right;">
+                    <div class="info-heading">To:</div>
+                    <div class="info-content">
+                        <strong>{{ $client->name }}</strong><br>
+                        {{ $client->email ?? '' }}<br>
+                        {{ $client->address ?? '' }}
+                    </div>
+                </td>
+            </tr>
+        </table>
 
         <div class="invoice-details">
             <p><strong>Issue Date:</strong> {{ $invoice->issue_date->format('Y-m-d') }}</p>
