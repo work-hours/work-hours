@@ -266,31 +266,30 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                 )}
 
                                 <div className="grid gap-6">
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="log_date" className="text-sm font-medium">
-                                            Date
-                                        </Label>
-                                        <DatePicker
-                                            selected={startDate}
-                                            onChange={handleDateChange}
-                                            dateFormat="yyyy-MM-dd"
-                                            required
-                                            disabled={processing}
-                                            customInput={
-                                                <CustomInput
-                                                    id="log_date"
-                                                    icon={<Clock className="h-4 w-4 text-muted-foreground" />}
-                                                    required
-                                                    autoFocus
-                                                    tabIndex={1}
-                                                    disabled={processing}
-                                                />
-                                            }
-                                        />
-                                        <InputError message={errors.start_timestamp} className="mt-1" />
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="log_date" className="text-sm font-medium">
+                                                Date
+                                            </Label>
+                                            <DatePicker
+                                                selected={startDate}
+                                                onChange={handleDateChange}
+                                                dateFormat="yyyy-MM-dd"
+                                                required
+                                                disabled={processing}
+                                                customInput={
+                                                    <CustomInput
+                                                        id="log_date"
+                                                        icon={<Clock className="h-4 w-4 text-muted-foreground" />}
+                                                        required
+                                                        autoFocus
+                                                        tabIndex={1}
+                                                        disabled={processing}
+                                                    />
+                                                }
+                                            />
+                                            <InputError message={errors.start_timestamp} className="mt-1" />
+                                        </div>
                                         <div className="grid gap-2">
                                             <Label htmlFor="start_time" className="text-sm font-medium">
                                                 Start Time
