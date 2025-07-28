@@ -98,13 +98,12 @@ export default function TimeLogTable({
                                     />
                                 </TableCell>
                             )}
-                            {showTeamMember && (
-                                <TableCell className="font-medium">
-                                    {log.user_name} <br />
-                                    {showProject && <small>{log.project_name || 'No Project'}</small>}
-                                </TableCell>
-                            )}
-                            <TableCell className="font-medium">{formatTimeEntry(log.start_timestamp, log.end_timestamp)}</TableCell>
+                            {showTeamMember && <TableCell className="font-medium">{log.user_name}</TableCell>}
+                            <TableCell className="font-medium">
+                                {formatTimeEntry(log.start_timestamp, log.end_timestamp)}
+                                <br />
+                                {showProject && <small>{log.project_name || 'No Project'}</small>}
+                            </TableCell>
                             <TableCell>
                                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                                     {log.duration}
