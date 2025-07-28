@@ -15,8 +15,8 @@ export default function FeatureLayout({ title, icon, children }: FeatureLayoutPr
             <Head title={`${title} - Work Hours`} />
             <Navbar />
 
-            <div className="container mx-auto px-6 py-16 lg:px-8">
-                <div className="mx-auto max-w-4xl">
+            <div className="container mx-auto px-6 pt-28 lg:px-8">
+                <div className="mx-auto w-9/12">
                     <div className="rounded-lg border border-border/60 bg-card p-8 shadow-sm">
                         <div className="mb-6 flex items-center">
                             {icon && <div className="mr-4">{icon}</div>}
