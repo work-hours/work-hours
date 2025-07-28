@@ -19,10 +19,10 @@ import {
 import { useEffect, useState } from 'react'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
+import Background from '@/components/ui/background'
 import { count } from '@actions/ApprovalController'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
-import Background from '@/components/ui/background'
 
 interface MasterSidebarProps {
     collapsed: boolean
@@ -123,7 +123,9 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
             <Background />
 
             {/* Header with improved styling */}
-            <div className={`relative z-20 p-4 pt-6 pb-6 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : 'ml-8'}`}>
+            <div
+                className={`relative z-20 p-4 pt-6 pb-6 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : 'ml-8'}`}
+            >
                 <div className={`flex w-full items-center ${collapsed ? 'flex-col' : ''}`}>
                     <Link
                         href="/dashboard"

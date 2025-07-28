@@ -1,10 +1,10 @@
 import AiChat from '@/components/ai-chat'
+import DeleteChatHistory from '@/components/delete-chat-history'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { BrainCircuit, Clock, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import DeleteChatHistory from '@/components/delete-chat-history'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { getChatHistories } from '@actions/AiChatController'
@@ -94,7 +94,7 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
 
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <div className="fixed right-4 bottom-24 z-50 duration-300 animate-in fade-in slide-in-from-right-5 hidden">
+            <div className="fixed right-4 bottom-24 z-50 hidden duration-300 animate-in fade-in slide-in-from-right-5">
                 <SheetTrigger asChild>
                     <Button
                         variant="outline"

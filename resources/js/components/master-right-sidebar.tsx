@@ -1,8 +1,8 @@
+import Background from '@/components/ui/background'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem } from '@/types'
-import { BarChart3, BrainCircuit, CheckSquare, ClockIcon, Folder, PlusCircle, UsersIcon } from 'lucide-react'
-import Background from '@/components/ui/background'
 import { Link } from '@inertiajs/react'
+import { BarChart3, BrainCircuit, CheckSquare, ClockIcon, Folder, PlusCircle, UsersIcon } from 'lucide-react'
 
 interface MasterRightSidebarProps {
     collapsed?: boolean
@@ -59,10 +59,10 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
         <div
             className={`sticky top-0 flex h-screen flex-col border-l border-gray-300 bg-[#f8f6e9] shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-58'}`}
         >
-            <Background  showPunches={false} showMarginLine={false} />
+            <Background showPunches={false} showMarginLine={false} />
 
             {/* Quick Actions section */}
-            <div className={`flex flex-col overflow-y-auto mt-2 ${collapsed ? '' : 'mr-8'}`}>
+            <div className={`mt-2 flex flex-col overflow-y-auto ${collapsed ? '' : 'mr-8'}`}>
                 <div className="mb-6 px-4">
                     <div className="mb-3 border-b border-gray-400 pb-2 dark:border-gray-600">
                         <h3
@@ -113,7 +113,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                                     className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
                                 >
                                     <ClockIcon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                    {!collapsed && <span className={'cursor-pointer'} >Track Time</span>}
+                                    {!collapsed && <span className={'cursor-pointer'}>Track Time</span>}
                                 </button>
                                 {collapsed && (
                                     <Tooltip>
@@ -131,7 +131,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                                     className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
                                 >
                                     <BrainCircuit className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                    {!collapsed && <span className={'cursor-pointer'} >Ask AI</span>}
+                                    {!collapsed && <span className={'cursor-pointer'}>Ask AI</span>}
                                 </button>
                                 {collapsed && (
                                     <Tooltip>

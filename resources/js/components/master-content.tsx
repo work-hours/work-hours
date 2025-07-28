@@ -7,8 +7,8 @@ import { Bell, ChevronRight, Home } from 'lucide-react'
 import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState } from 'react'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { all } from '@actions/NotificationsController'
 import Background from '@/components/ui/background'
+import { all } from '@actions/NotificationsController'
 
 interface MasterContentProps {
     children: ReactNode

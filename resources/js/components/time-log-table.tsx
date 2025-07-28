@@ -63,7 +63,6 @@ export default function TimeLogTable({
                     <TableHeaderRow>
                         {showCheckboxes && <TableHead className="w-[50px]">Select</TableHead>}
                         {showTeamMember && <TableHead>Team Member</TableHead>}
-                        {showProject && <TableHead>Project</TableHead>}
                         <TableHead>Entry</TableHead>
                         <TableHead>Duration</TableHead>
                         <TableHead>Hourly Rate</TableHead>
@@ -99,11 +98,13 @@ export default function TimeLogTable({
                                     />
                                 </TableCell>
                             )}
-                            {showTeamMember && <TableCell className="font-medium">{log.user_name}</TableCell>}
-                            {showProject && <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>}
-                            <TableCell className="font-medium">
-                                {formatTimeEntry(log.start_timestamp, log.end_timestamp)}
-                            </TableCell>
+                            {showTeamMember && (
+                                <TableCell className="font-medium">
+                                    {log.user_name} <br />
+                                    {showProject && <small>{log.project_name || 'No Project'}</small>}
+                                </TableCell>
+                            )}
+                            <TableCell className="font-medium">{formatTimeEntry(log.start_timestamp, log.end_timestamp)}</TableCell>
                             <TableCell>
                                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                                     {log.duration}
@@ -124,29 +125,30 @@ export default function TimeLogTable({
                             <TableCell>
                                 <div className="flex items-center gap-2">
                                     {/* Always show the amount, calculated if not paid */}
-                                    <span className={`inline-flex items-center rounded-full ${log.is_paid ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} px-2 py-0.5 text-xs font-medium`}>
-                                        {log.currency || 'USD'} {
-                                            (log.paid_amount !== undefined &&
-                                            log.paid_amount !== null &&
-                                            typeof log.paid_amount === 'number' &&
-                                            log.paid_amount > 0)
+                                    <span
+                                        className={`inline-flex items-center rounded-full ${log.is_paid ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} px-2 py-0.5 text-xs font-medium`}
+                                    >
+                                        {log.currency || 'USD'}{' '}
+                                        {log.paid_amount !== undefined &&
+                                        log.paid_amount !== null &&
+                                        typeof log.paid_amount === 'number' &&
+                                        log.paid_amount > 0
                                             ? log.paid_amount.toFixed(2)
-                                            : (log.hourly_rate !== undefined &&
-                                               log.hourly_rate !== null &&
-                                               typeof log.hourly_rate === 'number' &&
-                                               log.hourly_rate > 0 &&
-                                               log.duration)
+                                            : log.hourly_rate !== undefined &&
+                                                log.hourly_rate !== null &&
+                                                typeof log.hourly_rate === 'number' &&
+                                                log.hourly_rate > 0 &&
+                                                log.duration
                                               ? (log.hourly_rate * log.duration).toFixed(2)
-                                              : '0.00'
-                                        }
+                                              : '0.00'}
                                     </span>
 
                                     {/* Payment status badge */}
                                     {log.hourly_rate !== undefined &&
-                                     log.hourly_rate !== null &&
-                                     typeof log.hourly_rate === 'number' &&
-                                     log.hourly_rate > 0 && (
-                                        log.is_paid ? (
+                                        log.hourly_rate !== null &&
+                                        typeof log.hourly_rate === 'number' &&
+                                        log.hourly_rate > 0 &&
+                                        (log.is_paid ? (
                                             <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                                                 Paid
                                             </span>
@@ -154,8 +156,7 @@ export default function TimeLogTable({
                                             <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
                                                 Unpaid
                                             </span>
-                                        )
-                                    )}
+                                        ))}
                                 </div>
                             </TableCell>
                             <TableCell>

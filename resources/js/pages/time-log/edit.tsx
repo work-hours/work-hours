@@ -126,25 +126,13 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
         if (date) {
             // Preserve the time from the existing start_timestamp
             const currentStart = new Date(data.start_timestamp)
-            const localDate = new Date(
-                date.getFullYear(),
-                date.getMonth(),
-                date.getDate(),
-                currentStart.getHours(),
-                currentStart.getMinutes()
-            )
+            const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), currentStart.getHours(), currentStart.getMinutes())
             setData('start_timestamp', localDate.toISOString())
 
             // If end_timestamp exists, update it to use the same date
             if (data.end_timestamp) {
                 const currentEnd = new Date(data.end_timestamp)
-                const newEndDate = new Date(
-                    date.getFullYear(),
-                    date.getMonth(),
-                    date.getDate(),
-                    currentEnd.getHours(),
-                    currentEnd.getMinutes()
-                )
+                const newEndDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), currentEnd.getHours(), currentEnd.getMinutes())
                 setData('end_timestamp', newEndDate.toISOString())
             }
         }
@@ -159,7 +147,7 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                 currentStart.getMonth(),
                 currentStart.getDate(),
                 date.getHours(),
-                date.getMinutes()
+                date.getMinutes(),
             )
             setData('start_timestamp', localDate.toISOString())
         }
@@ -169,13 +157,7 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
         if (date) {
             // Use the date from start_timestamp but time from the selected end time
             const startDate = new Date(data.start_timestamp)
-            const localDate = new Date(
-                startDate.getFullYear(),
-                startDate.getMonth(),
-                startDate.getDate(),
-                date.getHours(),
-                date.getMinutes()
-            )
+            const localDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), date.getHours(), date.getMinutes())
             setData('end_timestamp', localDate.toISOString())
         } else {
             setData('end_timestamp', '')
