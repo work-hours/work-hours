@@ -1,7 +1,6 @@
 import CookieConsent from '@/components/cookie-consent'
-import FloatingAiChat from '@/components/floating-ai-chat'
-import FloatingTimeTracker from '@/components/floating-time-tracker'
 import { MasterContent } from '@/components/master-content'
+import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
 import Background from '@/components/ui/background'
 import { type BreadcrumbItem } from '@/types'
@@ -66,7 +65,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
         <div className="flex min-h-screen bg-[#f8f6e9] dark:bg-gray-900">
             <Background />
 
-            {/* Sidebar */}
+            {/* Left Sidebar */}
             <MasterSidebar collapsed={collapsed} />
 
             {/* Content */}
@@ -74,16 +73,13 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                 {children}
             </MasterContent>
 
+            {/* Right Sidebar */}
+            {dataLoaded && (
+                <MasterRightSidebar projects={userProjects} tasks={userTasks} collapsed={collapsed} />
+            )}
+
             {/* Toaster for notifications with improved positioning */}
             <Toaster position="top-right" closeButton={true} />
-
-            {/* Floating Time Tracker and AI Chat */}
-            {dataLoaded && (
-                <>
-                    <FloatingTimeTracker projects={userProjects} tasks={userTasks} />
-                    <FloatingAiChat projects={userProjects} timeLogs={[]} />
-                </>
-            )}
 
             {/* Cookie Consent Banner */}
             <CookieConsent />
