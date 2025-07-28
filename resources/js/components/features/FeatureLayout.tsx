@@ -24,6 +24,15 @@ export default function FeatureLayout({ title, icon, children }: FeatureLayoutPr
                             {icon && <div className="mr-4">{icon}</div>}
                             <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">{title}</h1>
                         </div>
+
+                        {/* Beta Release Note */}
+                        <div className="mb-6 rounded-md border border-yellow-400 bg-yellow-50 p-4 dark:border-yellow-600 dark:bg-yellow-900/30">
+                            <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                                This is a beta release, all the mentioned features may not be available at this moment.
+                                Our Team is working hard to get missing features to you. Thanks for your patience.
+                            </p>
+                        </div>
+
                         <div className="prose prose-lg max-w-none text-muted-foreground">
                             <div className="mt-6">{children}</div>
                         </div>
