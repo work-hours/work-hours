@@ -8,9 +8,8 @@ interface MasterRightSidebarProps {
     collapsed?: boolean
 }
 
-// Quick links from master-sidebar.tsx and QuickActions
+// Quick links for the right sidebar
 const quickLinks: NavItem[] = [
-    // QuickActions links
     {
         title: 'Log Time',
         href: route('time-log.create'),
