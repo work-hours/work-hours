@@ -1,4 +1,6 @@
 import CookieConsent from '@/components/cookie-consent'
+import FloatingAiChat from '@/components/floating-ai-chat'
+import FloatingTimeTracker from '@/components/floating-time-tracker'
 import { MasterContent } from '@/components/master-content'
 import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
@@ -75,7 +77,15 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
 
             {/* Right Sidebar */}
             {dataLoaded && (
-                <MasterRightSidebar projects={userProjects} tasks={userTasks} collapsed={collapsed} />
+                <MasterRightSidebar collapsed={collapsed} />
+            )}
+
+            {/* Floating Time Tracker and AI Chat */}
+            {dataLoaded && (
+                <>
+                    <FloatingTimeTracker projects={userProjects} tasks={userTasks} />
+                    <FloatingAiChat projects={userProjects} />
+                </>
             )}
 
             {/* Toaster for notifications with improved positioning */}
