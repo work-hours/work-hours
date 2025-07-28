@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react'
 import { count } from '@actions/ApprovalController'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
+import Background from '@/components/ui/background'
 
 interface MasterSidebarProps {
     collapsed: boolean
@@ -117,22 +118,12 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
     return (
         <div
-            className={`sticky top-0 flex h-screen flex-col border-r border-gray-300 bg-[#f8f6e9] shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-52'}`}
+            className={`sticky top-0 flex h-screen flex-col border-r border-gray-300 bg-[#f8f6e9] shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-68'}`}
         >
-            {/* Enhanced horizontal lines with slightly increased contrast */}
-            <div
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.04)_1px,transparent_1px)] bg-[length:100%_2rem] dark:bg-[linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)]"
-                aria-hidden="true"
-            ></div>
-
-            {/* Enhanced vertical lines with slightly increased contrast */}
-            <div
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] bg-[length:2rem_100%] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]"
-                aria-hidden="true"
-            ></div>
+            <Background />
 
             {/* Header with improved styling */}
-            <div className={`relative z-20 p-4 pt-6 pb-6 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : ''}`}>
+            <div className={`relative z-20 p-4 pt-6 pb-6 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : 'ml-8'}`}>
                 <div className={`flex w-full items-center ${collapsed ? 'flex-col' : ''}`}>
                     <Link
                         href="/dashboard"
@@ -146,7 +137,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
             </div>
 
             {/* Navigation - scrollable content */}
-            <div className="flex flex-1 flex-col overflow-y-auto pt-3">
+            <div className={`flex flex-1 flex-col overflow-y-auto pt-3 ${collapsed ? '' : 'ml-8'}`}>
                 {/* Platform Navigation */}
                 <div className="mb-6 px-4">
                     <div className="mb-3 border-b border-gray-400 pb-2 dark:border-gray-600">
@@ -240,7 +231,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
             </div>
 
             {/* Footer with enhanced styling */}
-            <div className="border-t border-gray-400 pt-4 pb-4 dark:border-gray-600">
+            <div className={`border-t border-gray-400 pt-4 pb-4 dark:border-gray-600 ${collapsed ? '' : 'ml-8'}`}>
                 <div className="mb-4 px-4">
                     <h3
                         className={`mb-2 text-xs font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
