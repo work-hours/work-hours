@@ -34,6 +34,8 @@ final class InvoiceController extends Controller
      */
     public function index(): Response
     {
+        $clients = ClientStore::userClients(Auth::id());
+
         return Inertia::render('invoice/index', [
             'filters' => [
                 'search' => request('search', ''),
@@ -42,6 +44,7 @@ final class InvoiceController extends Controller
                 'created_date_from' => request('created_date_from', ''),
                 'created_date_to' => request('created_date_to', ''),
             ],
+            'clients' => $clients,
         ]);
     }
 

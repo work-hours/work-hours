@@ -69,6 +69,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
+type Client = {
+    id: number
+    name: string
+}
+
 type Invoice = {
     id: number
     invoice_number: string
@@ -99,10 +104,11 @@ type InvoiceFilters = {
 type Props = {
     invoices: Invoice[]
     filters: InvoiceFilters
+    clients: Client[]
 }
 
 export default function Invoices() {
-    const { filters: pageFilters } = usePage<Props>().props
+    const { filters: pageFilters, clients } = usePage<Props>().props
     const [invoices, setInvoices] = useState<Invoice[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
@@ -383,7 +389,11 @@ export default function Invoices() {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">All Clients</SelectItem>
-                                        {/* Client options would be populated here */}
+                                        {clients?.map((client) => (
+                                            <SelectItem key={client.id} value={client.id.toString()}>
+                                                {client.name}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
