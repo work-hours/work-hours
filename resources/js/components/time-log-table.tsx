@@ -2,6 +2,7 @@ import DeleteTimeLog from '@/components/delete-time-log'
 import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
+import { formatTimeEntry } from '@/lib/utils'
 import { Link } from '@inertiajs/react'
 import { Edit, Eye, Trash2 } from 'lucide-react'
 import { useState } from 'react'
@@ -63,6 +64,7 @@ export default function TimeLogTable({
                         {showCheckboxes && <TableHead className="w-[50px]">Select</TableHead>}
                         {showTeamMember && <TableHead>Team Member</TableHead>}
                         {showProject && <TableHead>Project</TableHead>}
+                        <TableHead>Entry</TableHead>
                         <TableHead>Duration</TableHead>
                         <TableHead>Hourly Rate</TableHead>
                         <TableHead>Paid Amount</TableHead>
@@ -99,6 +101,9 @@ export default function TimeLogTable({
                             )}
                             {showTeamMember && <TableCell className="font-medium">{log.user_name}</TableCell>}
                             {showProject && <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>}
+                            <TableCell className="font-medium">
+                                {formatTimeEntry(log.start_timestamp, log.end_timestamp)}
+                            </TableCell>
                             <TableCell>
                                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                                     {log.duration}
@@ -117,41 +122,31 @@ export default function TimeLogTable({
                                 )}
                             </TableCell>
                             <TableCell>
-                                {log.paid_amount !== undefined &&
-                                log.paid_amount !== null &&
-                                typeof log.paid_amount === 'number' &&
-                                log.paid_amount > 0 &&
-                                log.is_paid ? (
-                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
-                                        {log.currency || 'USD'} {log.paid_amount.toFixed(2)}
+                                <div className="flex items-center gap-2">
+                                    {/* Always show the amount, calculated if not paid */}
+                                    <span className={`inline-flex items-center rounded-full ${log.is_paid ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} px-2 py-0.5 text-xs font-medium`}>
+                                        {log.currency || 'USD'} {
+                                            (log.paid_amount !== undefined &&
+                                            log.paid_amount !== null &&
+                                            typeof log.paid_amount === 'number' &&
+                                            log.paid_amount > 0)
+                                            ? log.paid_amount.toFixed(2)
+                                            : (log.hourly_rate !== undefined &&
+                                               log.hourly_rate !== null &&
+                                               typeof log.hourly_rate === 'number' &&
+                                               log.hourly_rate > 0 &&
+                                               log.duration)
+                                              ? (log.hourly_rate * log.duration).toFixed(2)
+                                              : '0.00'
+                                        }
                                     </span>
-                                ) : (
-                                    <span className="text-gray-500">-</span>
-                                )}
-                            </TableCell>
-                            <TableCell>
-                                <div className="flex flex-col gap-1">
-                                    {/* Approval Status */}
-                                    {log.status === 'approved' ? (
-                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
-                                            Approved
-                                        </span>
-                                    ) : log.status === 'rejected' ? (
-                                        <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
-                                            Rejected
-                                        </span>
-                                    ) : (
-                                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                                            Pending
-                                        </span>
-                                    )}
 
-                                    {/* Payment Status - Only shown for monetary users */}
+                                    {/* Payment status badge */}
                                     {log.hourly_rate !== undefined &&
-                                        log.hourly_rate !== null &&
-                                        typeof log.hourly_rate === 'number' &&
-                                        log.hourly_rate > 0 &&
-                                        (log.is_paid ? (
+                                     log.hourly_rate !== null &&
+                                     typeof log.hourly_rate === 'number' &&
+                                     log.hourly_rate > 0 && (
+                                        log.is_paid ? (
                                             <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                                                 Paid
                                             </span>
@@ -159,8 +154,25 @@ export default function TimeLogTable({
                                             <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
                                                 Unpaid
                                             </span>
-                                        ))}
+                                        )
+                                    )}
                                 </div>
+                            </TableCell>
+                            <TableCell>
+                                {/* Approval Status Only */}
+                                {log.status === 'approved' ? (
+                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                        Approved
+                                    </span>
+                                ) : log.status === 'rejected' ? (
+                                    <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
+                                        Rejected
+                                    </span>
+                                ) : (
+                                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                        Pending
+                                    </span>
+                                )}
                             </TableCell>
                             {showActions && (
                                 <TableCell className="text-right">

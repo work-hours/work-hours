@@ -8,6 +8,7 @@ import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { all } from '@actions/NotificationsController'
+import Background from '@/components/ui/background'
 
 interface MasterContentProps {
     children: ReactNode
@@ -41,27 +42,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
 
     return (
         <div className="relative flex flex-1 flex-col bg-[#f8f6e9] dark:bg-gray-900">
-            {/* Enhanced horizontal lines with slightly increased contrast */}
-            <div
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.04)_1px,transparent_1px)] bg-[length:100%_2rem] dark:bg-[linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)]"
-                aria-hidden="true"
-            ></div>
-
-            {/* Enhanced vertical lines with slightly increased contrast */}
-            <div
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] bg-[length:2rem_100%] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]"
-                aria-hidden="true"
-            ></div>
-
-            {/* Enhanced punch card holes with slightly increased contrast */}
-            <div
-                className="pointer-events-none absolute top-0 bottom-0 left-4 w-4 bg-[radial-gradient(circle,rgba(0,0,0,0.12)_3px,transparent_3px)] bg-[length:8px_24px] bg-[position:center] bg-repeat-y dark:bg-[radial-gradient(circle,rgba(255,255,255,0.1)_3px,transparent_3px)]"
-                aria-hidden="true"
-            ></div>
-
-            {/* Enhanced red margin line with slightly increased opacity */}
-            <div className="absolute top-0 bottom-0 left-12 w-[1px] bg-red-400/40 dark:bg-red-500/20" aria-hidden="true"></div>
-
+            <Background />
             {/* Enhanced header with improved styling */}
             <div className="relative z-10 border-b border-gray-300 bg-white p-4 shadow-md dark:border-gray-700 dark:bg-gray-800">
                 <div className="flex items-center justify-between">

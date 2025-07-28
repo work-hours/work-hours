@@ -112,20 +112,61 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
         return Math.round(diffHours * 100) / 100 // Round to 2 decimal places
     }, [data.start_timestamp, data.end_timestamp])
 
-    // Handle date changes
-    const handleStartDateChange = (date: Date | null) => {
+    // Handle date and time changes
+    const handleDateChange = (date: Date | null) => {
         if (date) {
-            const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes())
+            // Preserve the time from the existing start_timestamp
+            const currentStart = new Date(data.start_timestamp)
+            const localDate = new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate(),
+                currentStart.getHours(),
+                currentStart.getMinutes()
+            )
+            setData('start_timestamp', localDate.toISOString())
 
+            // If end_timestamp exists, update it to use the same date
+            if (data.end_timestamp) {
+                const currentEnd = new Date(data.end_timestamp)
+                const newEndDate = new Date(
+                    date.getFullYear(),
+                    date.getMonth(),
+                    date.getDate(),
+                    currentEnd.getHours(),
+                    currentEnd.getMinutes()
+                )
+                setData('end_timestamp', newEndDate.toISOString())
+            }
+        }
+    }
+
+    const handleStartTimeChange = (date: Date | null) => {
+        if (date) {
+            // Preserve the date from the existing start_timestamp
+            const currentStart = new Date(data.start_timestamp)
+            const localDate = new Date(
+                currentStart.getFullYear(),
+                currentStart.getMonth(),
+                currentStart.getDate(),
+                date.getHours(),
+                date.getMinutes()
+            )
             setData('start_timestamp', localDate.toISOString())
         }
     }
 
-    const handleEndDateChange = (date: Date | null) => {
+    const handleEndTimeChange = (date: Date | null) => {
         if (date) {
             // Use the date from start_timestamp but time from the selected end time
             const startDate = new Date(data.start_timestamp)
-            const localDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), date.getHours(), date.getMinutes())
+            const localDate = new Date(
+                startDate.getFullYear(),
+                startDate.getMonth(),
+                startDate.getDate(),
+                date.getHours(),
+                date.getMinutes()
+            )
             setData('end_timestamp', localDate.toISOString())
         } else {
             setData('end_timestamp', '')
@@ -224,66 +265,91 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                     </div>
                                 )}
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="start_timestamp" className="text-sm font-medium">
-                                            Start Time
-                                        </Label>
-                                        <DatePicker
-                                            selected={startDate}
-                                            onChange={handleStartDateChange}
-                                            showTimeSelect
-                                            timeFormat="HH:mm"
-                                            timeIntervals={15}
-                                            dateFormat="yyyy-MM-dd HH:mm"
-                                            required
-                                            disabled={processing}
-                                            customInput={
-                                                <CustomInput
-                                                    id="start_timestamp"
-                                                    icon={<Clock className="h-4 w-4 text-muted-foreground" />}
-                                                    required
-                                                    autoFocus
-                                                    tabIndex={1}
-                                                    disabled={processing}
-                                                />
-                                            }
-                                        />
-                                        <InputError message={errors.start_timestamp} className="mt-1" />
-                                    </div>
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="end_timestamp" className="text-sm font-medium">
-                                            End Time
-                                        </Label>
-                                        <DatePicker
-                                            selected={endDate}
-                                            onChange={handleEndDateChange}
-                                            showTimeSelect
-                                            timeFormat="HH:mm"
-                                            timeIntervals={15}
-                                            dateFormat="yyyy-MM-dd HH:mm"
-                                            disabled={processing}
-                                            isClearable
-                                            placeholderText="Select end time (optional)"
-                                            filterDate={(date) => {
-                                                // Only allow the same date as the start date
-                                                const start = new Date(data.start_timestamp)
-                                                return (
-                                                    date.getDate() === start.getDate() &&
-                                                    date.getMonth() === start.getMonth() &&
-                                                    date.getFullYear() === start.getFullYear()
-                                                )
-                                            }}
-                                            customInput={
-                                                <CustomInput
-                                                    id="end_timestamp"
-                                                    icon={<Timer className="h-4 w-4 text-muted-foreground" />}
-                                                    tabIndex={2}
-                                                    disabled={processing}
-                                                />
-                                            }
-                                        />
-                                        <InputError message={errors.end_timestamp} />
+                                <div className="grid gap-6">
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="log_date" className="text-sm font-medium">
+                                                Date
+                                            </Label>
+                                            <DatePicker
+                                                selected={startDate}
+                                                onChange={handleDateChange}
+                                                dateFormat="yyyy-MM-dd"
+                                                required
+                                                disabled={processing}
+                                                customInput={
+                                                    <CustomInput
+                                                        id="log_date"
+                                                        icon={<Clock className="h-4 w-4 text-muted-foreground" />}
+                                                        required
+                                                        autoFocus
+                                                        tabIndex={1}
+                                                        disabled={processing}
+                                                    />
+                                                }
+                                            />
+                                            <InputError message={errors.start_timestamp} className="mt-1" />
+                                        </div>
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="start_time" className="text-sm font-medium">
+                                                Start Time
+                                            </Label>
+                                            <DatePicker
+                                                selected={startDate}
+                                                onChange={handleStartTimeChange}
+                                                showTimeSelect
+                                                showTimeSelectOnly
+                                                timeFormat="HH:mm"
+                                                timeIntervals={15}
+                                                dateFormat="HH:mm"
+                                                required
+                                                disabled={processing}
+                                                customInput={
+                                                    <CustomInput
+                                                        id="start_time"
+                                                        icon={<Clock className="h-4 w-4 text-muted-foreground" />}
+                                                        required
+                                                        tabIndex={2}
+                                                        disabled={processing}
+                                                    />
+                                                }
+                                            />
+                                        </div>
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="end_time" className="text-sm font-medium">
+                                                End Time
+                                            </Label>
+                                            <DatePicker
+                                                selected={endDate}
+                                                onChange={handleEndTimeChange}
+                                                showTimeSelect
+                                                showTimeSelectOnly
+                                                timeFormat="HH:mm"
+                                                timeIntervals={15}
+                                                dateFormat="HH:mm"
+                                                disabled={processing}
+                                                isClearable
+                                                placeholderText="Select end time (optional)"
+                                                filterDate={(date) => {
+                                                    // Only allow the same date as the start date
+                                                    const start = new Date(data.start_timestamp)
+                                                    return (
+                                                        date.getDate() === start.getDate() &&
+                                                        date.getMonth() === start.getMonth() &&
+                                                        date.getFullYear() === start.getFullYear()
+                                                    )
+                                                }}
+                                                customInput={
+                                                    <CustomInput
+                                                        id="end_time"
+                                                        icon={<Timer className="h-4 w-4 text-muted-foreground" />}
+                                                        tabIndex={3}
+                                                        disabled={processing}
+                                                    />
+                                                }
+                                            />
+                                            <InputError message={errors.end_timestamp} />
+                                        </div>
                                     </div>
                                 </div>
 

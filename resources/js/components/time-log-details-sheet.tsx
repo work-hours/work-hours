@@ -1,5 +1,5 @@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { formatDateTime } from '@/lib/utils'
+import { formatDateTime, formatTimeEntry } from '@/lib/utils'
 import { Info } from 'lucide-react'
 import { TimeLogEntry } from './time-log-table'
 
@@ -93,6 +93,11 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                         <h3 className="ml-4 text-lg font-semibold text-primary">Time Information</h3>
                         <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
                             <div>
+                                <p className="text-sm font-bold text-muted-foreground">Entry</p>
+                                <p className="text-base">{formatTimeEntry(timeLog.start_timestamp, timeLog.end_timestamp)}</p>
+                            </div>
+
+                            <div>
                                 <p className="text-sm font-bold text-muted-foreground">Start Time</p>
                                 <p className="text-base">{formatDateTime(timeLog.start_timestamp)}</p>
                             </div>
@@ -118,14 +123,26 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                     </div>
 
                                     <div>
-                                        <p className="text-sm font-bold text-muted-foreground">Paid Amount</p>
+                                        <p className="text-sm font-bold text-muted-foreground">
+                                            {timeLog.is_paid ? "Paid Amount" : "To Pay Amount"}
+                                        </p>
                                         <p className="text-base">
-                                            {timeLog.paid_amount !== undefined &&
-                                            timeLog.paid_amount !== null &&
-                                            typeof timeLog.paid_amount === 'number' &&
-                                            timeLog.paid_amount > 0
-                                                ? `${timeLog.currency || 'USD'} ${timeLog.paid_amount.toFixed(2)}`
-                                                : '-'}
+                                            <span className={`inline-flex items-center rounded-full ${timeLog.is_paid ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} px-2 py-0.5 text-xs font-bold`}>
+                                                {timeLog.currency || 'USD'} {
+                                                    (timeLog.paid_amount !== undefined &&
+                                                    timeLog.paid_amount !== null &&
+                                                    typeof timeLog.paid_amount === 'number' &&
+                                                    timeLog.paid_amount > 0)
+                                                    ? timeLog.paid_amount.toFixed(2)
+                                                    : (timeLog.hourly_rate !== undefined &&
+                                                       timeLog.hourly_rate !== null &&
+                                                       typeof timeLog.hourly_rate === 'number' &&
+                                                       timeLog.hourly_rate > 0 &&
+                                                       timeLog.duration)
+                                                      ? (timeLog.hourly_rate * timeLog.duration).toFixed(2)
+                                                      : '0.00'
+                                                }
+                                            </span>
                                         </p>
                                     </div>
 
