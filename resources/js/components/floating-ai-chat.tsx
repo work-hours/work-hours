@@ -4,9 +4,9 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { BrainCircuit, Clock, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import DeleteChatHistory from '@/components/delete-chat-history'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import DeleteChatHistory from '@/components/delete-chat-history'
 import { getChatHistories } from '@actions/AiChatController'
 
 type ChatHistory = {
