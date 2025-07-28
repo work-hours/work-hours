@@ -86,11 +86,19 @@ export default function Welcome() {
             </div>
             <Hero />
             <div className="mx-auto w-9/12">
-                <Features />
-                <AiSection />
-                <HowItWorks />
+                <div id="features">
+                    <Features />
+                </div>
+                <div id="ai-section">
+                    <AiSection />
+                </div>
+                <div id="how-it-works">
+                    <HowItWorks />
+                </div>
             </div>
-            <CTA />
+            <div id="cta">
+                <CTA />
+            </div>
             <div className="relative z-10 mx-auto w-9/12">
                 <Footer />
             </div>
