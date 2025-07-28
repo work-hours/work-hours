@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { AlertCircle, CheckCircle, Clock } from 'lucide-react'
+import { AlertCircle, BarChart2, CheckCircle, Clock, FileText, Users } from 'lucide-react'
 
 export default function TimeTracking() {
     return (
@@ -156,6 +156,43 @@ export default function TimeTracking() {
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
                             <p className="text-gray-700 dark:text-gray-300">Reduce administrative overhead</p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Integration Section */}
+                <section className="space-y-4">
+                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
+                        Integrations
+                    </h2>
+                    <p className="text-gray-700 dark:text-gray-300">
+                        Our time tracking system integrates seamlessly with other Work Hours features:
+                    </p>
+                    <div className="grid gap-4 md:grid-cols-3">
+                        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                            <div className="mb-2 flex items-center">
+                                <FileText className="mr-2 h-5 w-5 text-blue-900 dark:text-blue-400" />
+                                <h3 className="font-semibold text-gray-800 dark:text-gray-200">Project Management</h3>
+                            </div>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">Link time entries directly to specific projects and tasks.</p>
+                        </div>
+                        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                            <div className="mb-2 flex items-center">
+                                <BarChart2 className="mr-2 h-5 w-5 text-blue-900 dark:text-blue-400" />
+                                <h3 className="font-semibold text-gray-800 dark:text-gray-200">Reporting</h3>
+                            </div>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">
+                                Generate detailed time reports for analysis and client billing.
+                            </p>
+                        </div>
+                        <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                            <div className="mb-2 flex items-center">
+                                <Users className="mr-2 h-5 w-5 text-blue-900 dark:text-blue-400" />
+                                <h3 className="font-semibold text-gray-800 dark:text-gray-200">Team Collaboration</h3>
+                            </div>
+                            <p className="text-sm text-gray-700 dark:text-gray-300">
+                                Share time tracking data with team members for better coordination.
+                            </p>
                         </div>
                     </div>
                 </section>
