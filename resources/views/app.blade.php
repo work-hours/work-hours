@@ -37,6 +37,10 @@
         <link rel="icon" href="/logo.png" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/logo.png">
 
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+
         @if(app()->environment('production'))
             <!-- Google tag (gtag.js) -->
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-3RHMLRXFBG"></script>
