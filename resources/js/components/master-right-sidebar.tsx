@@ -3,7 +3,7 @@ import Background from '@/components/ui/background'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/react'
-import { BarChart3, BrainCircuit, CheckSquare, ClockIcon, Folder, PlusCircle, UsersIcon } from 'lucide-react'
+import { BarChart3, BrainCircuit, ClockIcon, PlusCircle, UsersIcon } from 'lucide-react'
 import { useState } from 'react'
 
 interface MasterRightSidebarProps {
@@ -31,17 +31,7 @@ const quickLinks: NavItem[] = [
         title: 'All Team Log',
         href: route('team.all-time-logs'),
         icon: BarChart3,
-    },
-    {
-        title: 'Approvals',
-        href: '/approvals',
-        icon: CheckSquare,
-    },
-    {
-        title: 'Feedback & Issues',
-        href: 'https://github.com/msamgan/work-hours/issues',
-        icon: Folder,
-    },
+    }
 ]
 
 export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps) {

@@ -64,7 +64,7 @@ export default function TimeLogTable({
                         {showCheckboxes && <TableHead className="w-[50px]">Select</TableHead>}
                         {showTeamMember && <TableHead>Team Member</TableHead>}
                         <TableHead>Entry</TableHead>
-                        <TableHead>Duration</TableHead>
+                        <TableHead>Hours</TableHead>
                         <TableHead>Hourly Rate</TableHead>
                         <TableHead>Paid Amount</TableHead>
                         <TableHead>Status</TableHead>
