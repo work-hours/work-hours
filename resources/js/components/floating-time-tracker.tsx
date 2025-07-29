@@ -30,22 +30,6 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     const [isVisible, setIsVisible] = useState(true)
     const [isOpen, setIsOpen] = useState(false)
     const [view, setView] = useState<'select' | 'tracking' | 'note'>('select')
-
-    // Listen for custom event to open the time tracker
-    useEffect(() => {
-        const handleOpenTimeTracker = () => {
-            setIsOpen(true)
-        }
-
-        // Add event listener
-        window.addEventListener('open-time-tracker', handleOpenTimeTracker)
-
-        // Clean up
-        return () => {
-            window.removeEventListener('open-time-tracker', handleOpenTimeTracker)
-        }
-    }, [])
-
     const [activeTimeLog, setActiveTimeLog] = useState<{
         id: number | null
         project_id: number | null
@@ -59,6 +43,25 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
 
     const [note, setNote] = useState('')
     const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null)
+
+    // Listen for custom event to open the time tracker
+    useEffect(() => {
+        const handleOpenTimeTracker = () => {
+            setIsOpen(true)
+            const savedTimeLog = localStorage.getItem('activeTimeLog')
+            if (savedTimeLog) {
+                setView('note')
+            }
+        }
+
+        // Add event listener
+        window.addEventListener('open-time-tracker', handleOpenTimeTracker)
+
+        // Clean up
+        return () => {
+            window.removeEventListener('open-time-tracker', handleOpenTimeTracker)
+        }
+    }, [])
 
     // Load active time log from localStorage on the component mount
     useEffect(() => {
@@ -131,7 +134,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
 
         setActiveTimeLog(newTimeLog)
         setNote('')
-        setView('tracking')
+        setView('note')
         localStorage.setItem('activeTimeLog', JSON.stringify(newTimeLog))
     }
 
@@ -215,10 +218,10 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             {/* Floating button or compact tracking view */}
-            <div className="fixed right-4 bottom-4 z-50 hidden duration-300 animate-in fade-in slide-in-from-right-5">
+            <div className="fixed right-4 bottom-4 z-50 duration-300 animate-in fade-in slide-in-from-right-5">
                 <div className="flex flex-col items-end gap-2">
                     {activeTimeLog && activeTimeLog.task_id && (
-                        <div className="rounded-md bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">{activeTimeLog.task_title}</div>
+                        <div className="rounded-md bg-white px-3 py-1 text-xs font-medium text-primary shadow-md hidden">{activeTimeLog.task_title}</div>
                     )}
 
                     {activeTimeLog ? (
@@ -228,7 +231,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 onClick={toggleExpand}
                                 variant="outline"
                                 size="icon"
-                                className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5"
+                                className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5 hidden"
                             >
                                 <div className="relative flex flex-col items-center justify-center gap-1">
                                     <ClockIcon className="h-7 w-7 text-primary" />
@@ -245,7 +248,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 onClick={handleOpenSheet}
                                 variant="outline"
                                 size="icon"
-                                className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5"
+                                className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5 hidden"
                             >
                                 <div className="relative flex flex-col items-center justify-center gap-1">
                                     <ClockIcon className="h-7 w-7 text-primary" />

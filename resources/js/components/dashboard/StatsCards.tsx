@@ -110,7 +110,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
             {(teamStats.count >= 0 || teamStats.clientCount >= 0) && (
                 <div>
                     <h4 className="mb-2 text-xs font-medium text-muted-foreground">Team Information</h4>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-6">
                         {teamStats.count >= 0 && (
                             <StatsCard
                                 title="Team Members"
@@ -141,7 +141,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 teamStats.weeklyAverage >= 0) && (
                 <div>
                     <h4 className="mb-2 text-xs font-medium text-muted-foreground">Time Metrics</h4>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-6">
                         {teamStats.totalHours >= 0 && (
                             <StatsCard
                                 title="Total Hours"
@@ -197,7 +197,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 (teamStats.unpaidAmountsByCurrency && Object.values(teamStats.unpaidAmountsByCurrency).some((amount) => amount >= 0))) && (
                 <div>
                     <h4 className="mb-2 text-xs font-medium text-muted-foreground">Financial Summary</h4>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-6">
                         {renderPaidAmountCards()}
                         {renderUnpaidAmountCards()}
                     </div>

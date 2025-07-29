@@ -5,9 +5,9 @@ import { type BreadcrumbItem } from '@/types'
 import { Link } from '@inertiajs/react'
 import { Bell, ChevronRight, Home } from 'lucide-react'
 import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState } from 'react'
+import Background from '@/components/ui/background'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import Background from '@/components/ui/background'
 import { all } from '@actions/NotificationsController'
 
 interface MasterContentProps {
@@ -42,7 +42,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
 
     return (
         <div className="relative flex flex-1 flex-col bg-[#f8f6e9] dark:bg-gray-900">
-            <Background />
+            <Background showMarginLine={false} showPunches={false} />
             {/* Enhanced header with improved styling */}
             <div className="relative z-10 border-b border-gray-300 bg-white p-4 shadow-md dark:border-gray-700 dark:bg-gray-800">
                 <div className="flex items-center justify-between">
