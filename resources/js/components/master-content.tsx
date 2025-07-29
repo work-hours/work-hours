@@ -1,11 +1,11 @@
 import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { HourlyRateStatusBar } from '@/components/hourly-rate-status-bar'
+import Background from '@/components/ui/background'
 import { Badge } from '@/components/ui/badge'
 import { type BreadcrumbItem } from '@/types'
 import { Link } from '@inertiajs/react'
 import { Bell, ChevronRight, Home } from 'lucide-react'
 import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState } from 'react'
-import Background from '@/components/ui/background'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { all } from '@actions/NotificationsController'
@@ -138,7 +138,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                 <HourlyRateStatusBar />
 
                 {/* Enhanced content container with improved padding */}
-                <div className="p-5">{children}</div>
+                <div className="">{children}</div>
             </main>
         </div>
     )

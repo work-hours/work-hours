@@ -293,7 +293,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Approvals" />
-            <div className="mx-auto flex flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-6 p-3">
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Pending Approvals</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Approve or reject time logs from your team members</p>

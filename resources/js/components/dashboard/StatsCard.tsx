@@ -18,7 +18,9 @@ interface StatsCardProps {
 
 export default function StatsCard({ title, icon, value, description, trend, borderColor = 'blue-500' }: StatsCardProps) {
     return (
-        <Card className={`overflow-hidden border-l-4 border-l-${borderColor} dark:border-l-${borderColor.replace('-500', '-400')} transition-colors w-full`}>
+        <Card
+            className={`overflow-hidden border-l-4 border-l-${borderColor} dark:border-l-${borderColor.replace('-500', '-400')} w-full transition-colors`}
+        >
             <CardContent className="">
                 <div className="flex flex-row items-center justify-between">
                     <CardTitle className="text-xs font-bold uppercase">{title}</CardTitle>

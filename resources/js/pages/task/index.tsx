@@ -301,7 +301,7 @@ export default function Tasks() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Tasks" />
-            <div className="mx-auto flex flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-6 p-3">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Task Management</h1>

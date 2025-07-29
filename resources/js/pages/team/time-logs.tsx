@@ -186,7 +186,7 @@ export default function TeamMemberTimeLogs({
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title={`${user.name}'s Time Logs`} />
-            <div className="mx-auto flex flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-6 p-3">
                 {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">

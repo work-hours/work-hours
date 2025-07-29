@@ -6,10 +6,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
+import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { clients as _clients } from '@actions/ClientController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { Calendar, CalendarRange, Download, Edit, FileText, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'
@@ -175,7 +175,7 @@ export default function Clients() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Clients" />
-            <div className="mx-auto flex flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-6 p-3">
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Client Management</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your clients</p>

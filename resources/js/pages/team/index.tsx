@@ -114,7 +114,7 @@ export default function Team({ teamMembers, filters }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Team" />
-            <div className="mx-auto flex flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-6 p-3">
                 <section className="mb-2">
                     <div className="mb-2 flex items-center justify-between">
                         <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Team Management</h1>

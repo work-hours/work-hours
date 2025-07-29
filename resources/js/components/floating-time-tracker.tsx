@@ -221,7 +221,9 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
             <div className="fixed right-4 bottom-4 z-50 duration-300 animate-in fade-in slide-in-from-right-5">
                 <div className="flex flex-col items-end gap-2">
                     {activeTimeLog && activeTimeLog.task_id && (
-                        <div className="rounded-md bg-white px-3 py-1 text-xs font-medium text-primary shadow-md hidden">{activeTimeLog.task_title}</div>
+                        <div className="hidden rounded-md bg-white px-3 py-1 text-xs font-medium text-primary shadow-md">
+                            {activeTimeLog.task_title}
+                        </div>
                     )}
 
                     {activeTimeLog ? (
@@ -231,7 +233,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 onClick={toggleExpand}
                                 variant="outline"
                                 size="icon"
-                                className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5 hidden"
+                                className="hidden h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5"
                             >
                                 <div className="relative flex flex-col items-center justify-center gap-1">
                                     <ClockIcon className="h-7 w-7 text-primary" />
@@ -248,7 +250,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 onClick={handleOpenSheet}
                                 variant="outline"
                                 size="icon"
-                                className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5 hidden"
+                                className="hidden h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5"
                             >
                                 <div className="relative flex flex-col items-center justify-center gap-1">
                                     <ClockIcon className="h-7 w-7 text-primary" />

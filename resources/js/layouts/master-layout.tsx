@@ -35,6 +35,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
             const savedState = localStorage.getItem('sidebar_collapsed')
             return savedState === 'true'
         }
+
         return false
     })
 
