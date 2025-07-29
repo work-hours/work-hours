@@ -11,10 +11,10 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
+import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
@@ -30,6 +30,7 @@ import {
     FileText,
     Flag,
     Loader2,
+    Play,
     Plus,
     Search,
     X,
@@ -91,6 +92,7 @@ export default function Tasks() {
     const [selectedStatus, setSelectedStatus] = useState<Task['status'] | null>(null)
     const [isUpdating, setIsUpdating] = useState(false)
     const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null)
+    const [isThereRunningTracker, setIsThereRunningTracker] = useState(localStorage.getItem('activeTimeLog') !== null)
 
     // Filter states
     const [filters, setFilters] = useState<TaskFilters>({
@@ -282,6 +284,10 @@ export default function Tasks() {
         })
     }
 
+    const isAssignedToCurrentUser = (task: Task): boolean => {
+        return task.assignees.some((assignee) => assignee.id === auth.user.id)
+    }
+
     useEffect(() => {
         const queryParams = queryStringToObject()
 
@@ -296,6 +302,10 @@ export default function Tasks() {
 
         setFilters(initialFilters)
         getTasks(initialFilters).then()
+
+        window.addEventListener('time-tracker-stopped', () => {
+            setIsThereRunningTracker(false)
+        })
     }, [])
 
     return (
@@ -627,6 +637,27 @@ export default function Tasks() {
                                                         <Eye className="h-3.5 w-3.5" />
                                                         <span className="sr-only">View Details</span>
                                                     </Button>
+
+                                                    {isAssignedToCurrentUser(task) && (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-8 w-8 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
+                                                            onClick={() => {
+                                                                setIsThereRunningTracker(true)
+                                                                window.dispatchEvent(
+                                                                    new CustomEvent('task-time-tracker-start', {
+                                                                        detail: { taskId: task.id, projectId: task.project.id },
+                                                                    }),
+                                                                )
+                                                            }}
+                                                            disabled={isThereRunningTracker}
+                                                            title="Start Time Tracking"
+                                                        >
+                                                            <Play className="h-3.5 w-3.5" />
+                                                            <span className="sr-only">Start Time Tracker</span>
+                                                        </Button>
+                                                    )}
 
                                                     {task.project.user_id === auth.user.id && (
                                                         <>

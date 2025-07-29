@@ -54,12 +54,20 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
             }
         }
 
-        // Add event listener
-        window.addEventListener('open-time-tracker', handleOpenTimeTracker)
+        const handleTaskTimeTrackerStart = (e: { detail: { projectId: number; taskId: number } }) => {
+            startTimeLog(e.detail.projectId, e.detail.taskId)
+        }
 
-        // Clean up
+        window.addEventListener('open-time-tracker', handleOpenTimeTracker)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        window.addEventListener('task-time-tracker-start', handleTaskTimeTrackerStart)
+
         return () => {
             window.removeEventListener('open-time-tracker', handleOpenTimeTracker)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            window.addEventListener('task-time-tracker-start', handleTaskTimeTrackerStart)
         }
     }, [])
 
@@ -116,9 +124,12 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
         localStorage.setItem('timeTrackerVisible', isVisible.toString())
     }, [isVisible])
 
-    const startTimeLog = () => {
-        const project = projects.find((p) => p.id === selectedProject) || null
-        const task = selectedTask ? tasks.find((t) => t.id === selectedTask) || null : null
+    const startTimeLog = (projectId?: number, taskId?: number) => {
+        projectId = selectedProject ? selectedProject : projectId
+        taskId = selectedTask ? selectedTask : taskId
+
+        const project = projects.find((p) => p.id === projectId) || null
+        const task = taskId ? tasks.find((t) => t.id === taskId) || null : null
 
         const now = new Date().toISOString()
         const newTimeLog = {
@@ -136,6 +147,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
         setNote('')
         setView('note')
         localStorage.setItem('activeTimeLog', JSON.stringify(newTimeLog))
+        window.dispatchEvent(new Event('time-tracker-started'))
     }
 
     const stopTimeLog = () => {
@@ -161,11 +173,14 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                     setNote('')
                     setView('select')
                     localStorage.removeItem('activeTimeLog')
-
                     if (timerInterval) {
                         clearInterval(timerInterval)
                         setTimerInterval(null)
                     }
+
+                    setTimeout(() => {
+                        window.dispatchEvent(new Event('time-tracker-stopped'))
+                    }, 500)
                 },
             },
         )
@@ -370,7 +385,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                 </div>
                             )}
                             <Button
-                                onClick={startTimeLog}
+                                onClick={() => startTimeLog()}
                                 variant="default"
                                 size="lg"
                                 className="mt-2 flex w-full items-center gap-2"

@@ -1,8 +1,10 @@
+import { SidebarTrackerDisplay } from '@/components/sidebar-tracker-display'
 import Background from '@/components/ui/background'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/react'
 import { BarChart3, BrainCircuit, CheckSquare, ClockIcon, Folder, PlusCircle, UsersIcon } from 'lucide-react'
+import { useState } from 'react'
 
 interface MasterRightSidebarProps {
     collapsed?: boolean
@@ -54,6 +56,8 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
         // Dispatch custom event to open AI chat
         window.dispatchEvent(new Event('open-ai-chat'))
     }
+
+    const [isThereRunningTimeLog, setIsThereRunningTimeLog] = useState(localStorage.getItem('activeTimeLog') !== null)
 
     return (
         <div
@@ -113,7 +117,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                                     className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
                                 >
                                     <ClockIcon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                    {!collapsed && <span className={'cursor-pointer'}>Track Time</span>}
+                                    {!collapsed && <span className={'cursor-pointer'}>{isThereRunningTimeLog ? 'Stop Tracking' : 'Track Time'}</span>}
                                 </button>
                                 {collapsed && (
                                     <Tooltip>
@@ -149,6 +153,8 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
 
             {/* Spacer to push links to bottom */}
             <div className="flex-1"></div>
+
+            <SidebarTrackerDisplay collapsed={collapsed} setIsThereRunningTimeLog={setIsThereRunningTimeLog} />
         </div>
     )
 }
