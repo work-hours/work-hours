@@ -77,7 +77,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
             </MasterContent>
 
             {/* Right Sidebar */}
-            {dataLoaded && <MasterRightSidebar collapsed={collapsed} />}
+            <MasterRightSidebar collapsed={collapsed} />
 
             {/* Floating Time Tracker and AI Chat */}
             {dataLoaded && (
