@@ -1,10 +1,9 @@
+import { SidebarTrackerDisplay } from '@/components/sidebar-tracker-display'
 import Background from '@/components/ui/background'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/react'
 import { BarChart3, BrainCircuit, CheckSquare, ClockIcon, Folder, PlusCircle, UsersIcon } from 'lucide-react'
-import { CardDescription, CardTitle } from '@/components/ui/card'
-import { useEffect, useState } from 'react'
 
 interface MasterRightSidebarProps {
     collapsed?: boolean
@@ -45,13 +44,6 @@ const quickLinks: NavItem[] = [
 ]
 
 export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps) {
-    const [activeTimeLog, setActiveTimeLog] = useState({
-        project_name: '',
-        task_id: null,
-        task_title: '',
-        start_timestamp: ''
-    })
-
     // Function to handle Track Time button click
     const handleTrackTimeClick = () => {
         // Dispatch custom event to open time tracker
@@ -63,31 +55,6 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
         // Dispatch custom event to open AI chat
         window.dispatchEvent(new Event('open-ai-chat'))
     }
-
-    const updateActiveTimeLog = () => {
-        const storedTimeLog = localStorage.getItem('activeTimeLog')
-        if (storedTimeLog) {
-            setActiveTimeLog(JSON.parse(storedTimeLog))
-        } else {
-            setActiveTimeLog({
-                project_name: '',
-                task_id: null,
-                task_title: '',
-                start_timestamp: ''
-            })
-        }
-    }
-
-    useEffect(() => {
-        updateActiveTimeLog()
-
-        window.addEventListener('time-tracker-started', updateActiveTimeLog)
-        window.addEventListener('time-tracker-stopped', updateActiveTimeLog)
-        return () => {
-            window.removeEventListener('time-tracker-started', updateActiveTimeLog)
-            window.removeEventListener('time-tracker-stopped', updateActiveTimeLog)
-        }
-    }, [])
 
     return (
         <div
@@ -184,30 +151,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
             {/* Spacer to push links to bottom */}
             <div className="flex-1"></div>
 
-            {
-                activeTimeLog.project_name && (<div className={`border-t border-gray-400 pt-4 pb-4 dark:border-gray-600 ${collapsed ? '' : 'ml-4'}`}>
-                    <div className="mb-4">
-                        <h3
-                            className={`mb-2 text-xs font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
-                        >
-                            {collapsed ? 'Running' : 'Running'}
-                        </h3>
-                        <TooltipProvider>
-                            <div>
-                                <CardTitle className="flex items-center gap-2 text-left text-lg font-bold">
-                                    <span>{activeTimeLog.project_name}</span>
-                                </CardTitle>
-                                {activeTimeLog.task_id && (
-                                    <div className="mt-1 text-sm font-medium text-primary">{activeTimeLog.task_title}</div>
-                                )}
-                                <CardDescription className="mt-1">
-                                    Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
-                                </CardDescription>
-                            </div>
-                        </TooltipProvider>
-                    </div>
-                </div>)
-            }
+            <SidebarTrackerDisplay collapsed={collapsed} />
         </div>
     )
 }
