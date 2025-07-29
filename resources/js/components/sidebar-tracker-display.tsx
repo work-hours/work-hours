@@ -3,7 +3,13 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { ClockIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-export function SidebarTrackerDisplay({ collapsed }: { collapsed?: boolean }) {
+export function SidebarTrackerDisplay({
+    collapsed,
+    setIsThereRunningTimeLog,
+}: {
+    collapsed?: boolean
+    setIsThereRunningTimeLog: (value: boolean) => void
+}) {
     const [activeTimeLog, setActiveTimeLog] = useState({
         project_name: '',
         task_id: null,
@@ -16,6 +22,7 @@ export function SidebarTrackerDisplay({ collapsed }: { collapsed?: boolean }) {
         const storedTimeLog = localStorage.getItem('activeTimeLog')
         if (storedTimeLog) {
             setActiveTimeLog(JSON.parse(storedTimeLog))
+            setIsThereRunningTimeLog(true)
         } else {
             setActiveTimeLog({
                 project_name: '',
@@ -24,6 +31,7 @@ export function SidebarTrackerDisplay({ collapsed }: { collapsed?: boolean }) {
                 start_timestamp: '',
                 elapsed: 0,
             })
+            setIsThereRunningTimeLog(false)
         }
     }
 
@@ -50,8 +58,7 @@ export function SidebarTrackerDisplay({ collapsed }: { collapsed?: boolean }) {
                     setActiveTimeLog(timeLog)
                 }
             }
-        }
-        , 1000) // Update every second
+        }, 1000) // Update every second
 
         window.addEventListener('time-tracker-started', updateActiveTimeLog)
         window.addEventListener('time-tracker-stopped', updateActiveTimeLog)
@@ -92,7 +99,7 @@ export function SidebarTrackerDisplay({ collapsed }: { collapsed?: boolean }) {
                         ) : (
                             <TooltipProvider>
                                 <div>
-                                    <CardTitle className="flex items-center gap-2 text-left text-lg font-bold">
+                                    <CardTitle className="mt-2 flex items-center gap-2 text-left text-lg font-bold">
                                         <span>{activeTimeLog.project_name}</span>
                                     </CardTitle>
                                     {activeTimeLog.task_id && <div className="mt-1 text-sm font-medium text-primary">{activeTimeLog.task_title}</div>}
