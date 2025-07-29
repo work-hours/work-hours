@@ -585,7 +585,6 @@ export default function Tasks() {
                                 <TableHeader>
                                     <TableHeaderRow>
                                         <TableHead>Title</TableHead>
-                                        <TableHead>Project</TableHead>
                                         <TableHead>Status</TableHead>
                                         <TableHead>Priority</TableHead>
                                         <TableHead>Due Date</TableHead>
@@ -596,8 +595,10 @@ export default function Tasks() {
                                 <TableBody>
                                     {tasks.map((task) => (
                                         <TableRow key={task.id}>
-                                            <TableCell className="font-medium">{task.title}</TableCell>
-                                            <TableCell>{task.project.name}</TableCell>
+                                            <TableCell className="font-medium">
+                                                {task.title} <br />
+                                                <small>{task.project.name}</small>
+                                            </TableCell>
                                             <TableCell>{getStatusBadge(task, task.status)}</TableCell>
                                             <TableCell>{getPriorityBadge(task.priority)}</TableCell>
                                             <TableCell>
