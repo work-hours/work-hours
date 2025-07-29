@@ -17,9 +17,9 @@ import {
     TimerIcon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import Background from '@/components/ui/background'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import Background from '@/components/ui/background'
 import { count } from '@actions/ApprovalController'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'

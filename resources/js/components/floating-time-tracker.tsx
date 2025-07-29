@@ -136,6 +136,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
         setNote('')
         setView('note')
         localStorage.setItem('activeTimeLog', JSON.stringify(newTimeLog))
+        window.dispatchEvent(new Event('time-tracker-started'))
     }
 
     const stopTimeLog = () => {
@@ -161,11 +162,14 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                     setNote('')
                     setView('select')
                     localStorage.removeItem('activeTimeLog')
-
                     if (timerInterval) {
                         clearInterval(timerInterval)
                         setTimerInterval(null)
                     }
+
+                    setTimeout(() => {
+                        window.dispatchEvent(new Event('time-tracker-stopped'))
+                    }, 500)
                 },
             },
         )
