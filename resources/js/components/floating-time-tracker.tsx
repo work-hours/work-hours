@@ -25,7 +25,7 @@ type FloatingTimeTrackerProps = {
 }
 
 export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTrackerProps) {
-    const [selectedProject, setSelectedProject] = useState<number | null>(projects.length > 0 ? projects[0].id : null)
+    const [selectedProject, setSelectedProject] = useState<number | null>(null)
     const [selectedTask, setSelectedTask] = useState<number | null>(null)
     const [isVisible, setIsVisible] = useState(true)
     const [isOpen, setIsOpen] = useState(false)
