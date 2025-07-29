@@ -69,7 +69,12 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
         if (storedTimeLog) {
             setActiveTimeLog(JSON.parse(storedTimeLog))
         } else {
-            setActiveTimeLog(null)
+            setActiveTimeLog({
+                project_name: '',
+                task_id: null,
+                task_title: '',
+                start_timestamp: ''
+            })
         }
     }
 
@@ -180,7 +185,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
             <div className="flex-1"></div>
 
             {
-                activeTimeLog && (<div className={`border-t border-gray-400 pt-4 pb-4 dark:border-gray-600 ${collapsed ? '' : 'ml-4'}`}>
+                activeTimeLog.project_name && (<div className={`border-t border-gray-400 pt-4 pb-4 dark:border-gray-600 ${collapsed ? '' : 'ml-4'}`}>
                     <div className="mb-4">
                         <h3
                             className={`mb-2 text-xs font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
