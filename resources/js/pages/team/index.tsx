@@ -259,7 +259,7 @@ export default function Team({ teamMembers, filters }: Props) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <a href={route('team.export') + window.location.search} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
+                                    <Button variant="outline" className="flex items-center gap-2 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/30 dark:text-emerald-300 transition-all shadow-sm">
                                         <Download className="h-4 w-4" />
                                         <span>Export</span>
                                     </Button>
