@@ -5,6 +5,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
 import { ArrowLeft, Download, Edit, FileText, Plus } from 'lucide-react'
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 
 type Invoice = {
     id: number
@@ -177,12 +178,10 @@ export default function ClientInvoices({ client, invoices }: Props) {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a href={`${route('invoice.export')}?client_id=${client.id}`} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
+                                <ExportButton
+                                    href={`${route('invoice.export')}?client_id=${client.id}`}
+                                    label="Export"
+                                />
                                 <Link href={route('invoice.create')}>
                                     <Button className="flex items-center gap-2">
                                         <Plus className="h-4 w-4" />
@@ -218,7 +217,7 @@ export default function ClientInvoices({ client, invoices }: Props) {
                                             <TableCell>{formatCurrency(invoice.total_amount - invoice.paid_amount)}</TableCell>
                                             <TableCell>
                                                 <span
-                                                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeClass(
+                                                    className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeClass(
                                                         invoice.status,
                                                     )}`}
                                                 >
@@ -227,12 +226,15 @@ export default function ClientInvoices({ client, invoices }: Props) {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
-                                                    <Link href={route('invoice.edit', invoice.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Edit className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Edit</span>
-                                                        </Button>
-                                                    </Link>
+                                                    <ActionButtonGroup>
+                                                        <ActionButton
+                                                            href={route('invoice.edit', invoice.id)}
+                                                            title="Edit Invoice"
+                                                            icon={Edit}
+                                                            variant="amber"
+                                                            size="icon"
+                                                        />
+                                                    </ActionButtonGroup>
                                                 </div>
                                             </TableCell>
                                         </TableRow>

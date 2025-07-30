@@ -15,6 +15,7 @@ import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { Briefcase, Calendar, CalendarRange, Clock, Download, Edit, FolderPlus, Folders, Loader2, Search, User, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
+import { ExportButton } from '@/components/action-buttons'
 
 interface CustomInputProps {
     value?: string
@@ -412,21 +413,10 @@ export default function Projects() {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a
-                                    href={`${route('project.export')}?${objectToQueryString({
-                                        client_id: filters.client_id || '',
-                                        team_member_id: filters.team_member_id || '',
-                                        created_date_from: formatDateValue(filters.created_date_from),
-                                        created_date_to: formatDateValue(filters.created_date_to),
-                                        search: filters.search || '',
-                                    })}`}
-                                    className="inline-block"
-                                >
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
+                                <ExportButton
+                                    href={`$${route('project.export')}?team_member_id=${filters.team_member_id || ''}&created_date_from=${formatDateValue(filters.created_date_from)}&created_date_to=${formatDateValue(filters.created_date_to)}&search=${filters.search || ''}`}
+                                    label="Export"
+                                />
                                 <Link href={route('project.create')}>
                                     <Button className="flex items-center gap-2">
                                         <FolderPlus className="h-4 w-4" />
