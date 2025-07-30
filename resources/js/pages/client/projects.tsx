@@ -1,3 +1,4 @@
+import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
@@ -5,7 +6,6 @@ import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
 import { ArrowLeft, Clock, Edit, FileText, FolderPlus, Users } from 'lucide-react'
-import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 
 type Project = {
     id: number
@@ -73,60 +73,70 @@ export default function ClientProjects({ client, projects }: Props) {
                 </section>
 
                 {/* Client Info Card */}
-                <Card className="flex-1 overflow-hidden transition-all hover:shadow-md" >
+                <Card className="flex-1 overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="py-2">
-                        <CardTitle className="text-lg flex items-center gap-2">
-                            <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                            <span className="inline-flex items-center justify-center rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
                                 <FileText className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                             </span>
                             Client Information
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="py-2">
-                        <div className="flex flex-wrap gap-4 items-center">
-                            <div className="flex items-center gap-2 min-w-[120px]">
-                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
-                                    <span className="text-gray-500 dark:text-gray-400 text-xs">👤</span>
+                        <div className="flex flex-wrap items-center gap-4">
+                            <div className="flex min-w-[120px] items-center gap-2">
+                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">👤</span>
                                 </span>
                                 <div>
-                                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Contact Person</h3>
+                                    <h3 className="text-xs leading-tight font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                                        Contact Person
+                                    </h3>
                                     <p className="text-xs leading-tight">{client.contact_person || 'Not specified'}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 min-w-[120px]">
-                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
-                                    <span className="text-gray-500 dark:text-gray-400 text-xs">✉️</span>
+                            <div className="flex min-w-[120px] items-center gap-2">
+                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">✉️</span>
                                 </span>
                                 <div>
-                                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Email</h3>
+                                    <h3 className="text-xs leading-tight font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                                        Email
+                                    </h3>
                                     <p className="text-xs leading-tight">{client.email || 'Not specified'}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 min-w-[100px]">
-                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
-                                    <span className="text-gray-500 dark:text-gray-400 text-xs">📞</span>
+                            <div className="flex min-w-[100px] items-center gap-2">
+                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">📞</span>
                                 </span>
                                 <div>
-                                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Phone</h3>
+                                    <h3 className="text-xs leading-tight font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                                        Phone
+                                    </h3>
                                     <p className="text-xs leading-tight">{client.phone || 'Not specified'}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 min-w-[120px]">
-                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
-                                    <span className="text-gray-500 dark:text-gray-400 text-xs">🏠</span>
+                            <div className="flex min-w-[120px] items-center gap-2">
+                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">🏠</span>
                                 </span>
                                 <div>
-                                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Address</h3>
+                                    <h3 className="text-xs leading-tight font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                                        Address
+                                    </h3>
                                     <p className="text-xs leading-tight">{client.address || 'Not specified'}</p>
                                 </div>
                             </div>
                             {client.notes && (
-                                <div className="flex items-center gap-2 min-w-[180px]">
-                                    <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
-                                        <span className="text-gray-500 dark:text-gray-400 text-xs">📝</span>
+                                <div className="flex min-w-[180px] items-center gap-2">
+                                    <span className="inline-flex items-center justify-center rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
+                                        <span className="text-xs text-gray-500 dark:text-gray-400">📝</span>
                                     </span>
                                     <div>
-                                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Notes</h3>
+                                        <h3 className="text-xs leading-tight font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">
+                                            Notes
+                                        </h3>
                                         <p className="text-xs leading-tight">{client.notes}</p>
                                     </div>
                                 </div>

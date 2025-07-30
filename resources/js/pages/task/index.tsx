@@ -15,6 +15,7 @@ import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
+import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
@@ -26,9 +27,9 @@ import {
     ClipboardList,
     Download,
     Edit,
-    Eye,
     FileText,
     Flag,
+    Glasses,
     Loader2,
     Play,
     Plus,
@@ -614,7 +615,7 @@ export default function Tasks() {
                                                         {task.assignees.map((assignee) => (
                                                             <span
                                                                 key={assignee.id}
-                                                                className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
+                                                                className="inline-flex items-center bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
                                                                 title={assignee.email}
                                                             >
                                                                 {assignee.name}
@@ -631,11 +632,11 @@ export default function Tasks() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="h-8 w-8 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
+                                                        className="h-7 w-7 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
                                                         onClick={() => handleViewDetails(task)}
                                                         title="View Details"
                                                     >
-                                                        <Eye className="h-3.5 w-3.5" />
+                                                        <Glasses className="h-3.5 w-3.5" />
                                                         <span className="sr-only">View Details</span>
                                                     </Button>
 
@@ -643,12 +644,15 @@ export default function Tasks() {
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-8 w-8 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
+                                                            className="h-7 w-7 border-cyan-500 bg-cyan-200 p-0 text-cyan-700 hover:bg-cyan-300"
                                                             onClick={() => {
                                                                 setIsThereRunningTracker(true)
                                                                 window.dispatchEvent(
                                                                     new CustomEvent('task-time-tracker-start', {
-                                                                        detail: { taskId: task.id, projectId: task.project.id },
+                                                                        detail: {
+                                                                            taskId: task.id,
+                                                                            projectId: task.project.id,
+                                                                        },
                                                                     }),
                                                                 )
                                                             }}
@@ -661,18 +665,19 @@ export default function Tasks() {
                                                     )}
 
                                                     {task.project.user_id === auth.user.id && (
-                                                        <>
-                                                            <Link href={route('task.edit', task.id)}>
-                                                                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                                    <Edit className="h-3.5 w-3.5" />
-                                                                    <span className="sr-only">Edit</span>
-                                                                </Button>
-                                                            </Link>
+                                                        <ActionButtonGroup>
+                                                            <ActionButton
+                                                                href={route('task.edit', task.id)}
+                                                                title="Edit Task"
+                                                                icon={Edit}
+                                                                variant="amber"
+                                                                size="icon"
+                                                            />
                                                             <DeleteTask
                                                                 taskId={task.id}
                                                                 onDelete={() => setTasks(tasks.filter((t) => t.id !== task.id))}
                                                             />
-                                                        </>
+                                                        </ActionButtonGroup>
                                                     )}
                                                 </div>
                                             </TableCell>
