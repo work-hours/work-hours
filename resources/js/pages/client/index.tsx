@@ -313,7 +313,7 @@ export default function Clients() {
                                     })}`}
                                     className="inline-block"
                                 >
-                                    <Button variant="outline" className="flex items-center gap-2">
+                                    <Button variant="outline" className="flex items-center gap-2 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/30 dark:text-emerald-300 transition-all shadow-sm">
                                         <Download className="h-4 w-4" />
                                         <span>Export</span>
                                     </Button>
@@ -369,22 +369,37 @@ export default function Clients() {
                                             <TableCell>{client.phone || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
                                             <TableCell>{client.currency || 'USD'}</TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
+                                                <div className="flex justify-end gap-1">
                                                     <Link href={route('client.projects', client.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8">
-                                                            <Folder className="mr-1 h-3.5 w-3.5" />
-                                                            Projects
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 px-2 text-xs border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:border-indigo-700 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 dark:text-indigo-300 transition-all shadow-sm"
+                                                            title="View Projects"
+                                                        >
+                                                            <Folder className="h-3 w-3 mr-1" />
+                                                            <span className="hidden sm:inline">Projects</span>
                                                         </Button>
                                                     </Link>
                                                     <Link href={route('client.invoices', client.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8">
-                                                            <FileText className="mr-1 h-3.5 w-3.5" />
-                                                            Invoices
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 px-2 text-xs border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-700 dark:border-violet-700 dark:bg-violet-900/20 dark:hover:bg-violet-900/30 dark:text-violet-300 transition-all shadow-sm"
+                                                            title="View Invoices"
+                                                        >
+                                                            <FileText className="h-3 w-3 mr-1" />
+                                                            <span className="hidden sm:inline">Invoices</span>
                                                         </Button>
                                                     </Link>
                                                     <Link href={route('client.edit', client.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Edit className="h-3.5 w-3.5" />
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 w-7 p-0 border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 dark:border-amber-700 dark:bg-amber-900/20 dark:hover:bg-amber-900/30 dark:text-amber-300 transition-all shadow-sm"
+                                                            title="Edit Client"
+                                                        >
+                                                            <Edit className="h-3 w-3" />
                                                             <span className="sr-only">Edit</span>
                                                         </Button>
                                                     </Link>
