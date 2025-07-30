@@ -1,13 +1,12 @@
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { BrainCircuit, Send, X } from 'lucide-react'
+import { BrainCircuit, Loader2, Send, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+// @ts-expect-error: No type definitions for react-syntax-highlighter
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+// @ts-expect-error: No type definitions for atomDark style
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { getChatHistory, sendMessage } from '@actions/AiChatController'
 import '../../css/markdown.css'
 
@@ -43,8 +42,9 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
     const [inputValue, setInputValue] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [currentChatId, setCurrentChatId] = useState<number | null>(null)
+    const [error, setError] = useState<string | null>(null)
     const messagesEndRef = useRef<HTMLDivElement>(null)
-    const inputRef = useRef<HTMLInputElement>(null)
+    const inputRef = useRef<HTMLTextAreaElement>(null)
 
     // Scroll to the bottom of messages when messages change
     useEffect(() => {
@@ -108,6 +108,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
 
     const handleSendMessage = async () => {
         if (!inputValue.trim() || isLoading) return
+        setError(null)
 
         const userMessage: Message = {
             id: Date.now().toString(),
@@ -166,6 +167,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
             }
         } catch (error) {
             console.error('Error sending message:', error)
+            setError('Sorry, I encountered an error. Please try again.')
 
             // Add error message
             const errorMessage: Message = {
@@ -185,22 +187,31 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
         }
     }
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            handleSendMessage().then()
+    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setInputValue(e.target.value)
+        // Auto-resize logic: adjust textarea height based on content
+        if (inputRef.current) {
+            inputRef.current.style.height = 'auto'
+            inputRef.current.style.height = `${inputRef.current.scrollHeight}px`
         }
     }
 
     return (
-        <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between border-b bg-card p-4 shadow-sm">
+        <div
+            className="flex h-full flex-col max-w-2xl w-full mx-auto shadow-2xl border border-border bg-gradient-to-br from-background via-white to-slate-100/80"
+            role="region"
+            aria-label="AI chat window"
+            tabIndex={0}
+            style={{ minHeight: 0 }}
+        >
+            <div className="flex items-center justify-between border-b bg-white/80 p-5 shadow-sm">
                 <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 shadow-sm">
-                        <BrainCircuit className="h-6 w-6 text-primary" />
+                    <div className="flex h-12 w-12 items-center justify-center bg-gradient-to-br from-primary/20 to-primary/40 shadow">
+                        <BrainCircuit className="h-7 w-7 text-primary" />
                     </div>
                     <div>
-                        <span className="text-lg font-bold text-foreground">AI Assistant</span>
-                        <p className="text-xs text-muted-foreground">Powered by Google Gemini</p>
+                        <span className="text-xl font-extrabold text-foreground tracking-tight">AI Assistant</span>
+                        <p className="text-xs text-muted-foreground font-medium">Powered by Google Gemini</p>
                     </div>
                 </div>
                 {onClose && (
@@ -208,86 +219,113 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                         onClick={onClose}
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 rounded-full p-1 transition-colors hover:bg-muted hover:text-primary"
+                        className="h-9 w-9 p-1 transition-colors hover:bg-muted/60 hover:text-primary"
+                        aria-label="Close chat"
                     >
-                        <X className="h-4 w-4" />
+                        <X className="h-5 w-5" />
                     </Button>
                 )}
             </div>
             <div className="flex flex-grow flex-col overflow-hidden">
-                <ScrollArea className="flex-grow bg-background p-4">
-                    <div className="flex flex-col gap-4">
+                <ScrollArea className="flex-grow bg-transparent p-6 max-h-[60vh] sm:max-h-[80vh] overflow-y-auto">
+                    <div className="flex flex-col gap-6">
                         {messages.map((message) => (
-                            <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
-                                <div
-                                    className={`max-w-[85%] rounded-lg p-4 shadow-sm animate-in ${message.isUser ? 'slide-in-from-right' : 'slide-in-from-left'} duration-200 ${
-                                        message.isUser ? 'bg-primary text-primary-foreground' : 'border border-border bg-card text-card-foreground'
-                                    }`}
-                                >
-                                    {message.isUser ? (
-                                        <p className="text-sm leading-relaxed font-medium">{message.content}</p>
-                                    ) : (
-                                        <div className="markdown-content text-sm leading-relaxed">
-                                            <ReactMarkdown
-                                                components={{
-                                                    code({ inline, className, children, ...props }) {
-                                                        const match = /language-(\w+)/.exec(className || '')
-                                                        return !inline && match ? (
-                                                            <SyntaxHighlighter style={atomDark} language={match[1]} PreTag="div" {...props}>
-                                                                {String(children).replace(/\n$/, '')}
-                                                            </SyntaxHighlighter>
-                                                        ) : (
-                                                            <code className={className} {...props}>
-                                                                {children}
-                                                            </code>
-                                                        )
-                                                    },
-                                                }}
-                                            >
-                                                {message.content}
-                                            </ReactMarkdown>
-                                        </div>
-                                    )}
-                                    <p className="mt-2 text-right text-xs font-medium opacity-70">
-                                        {message.timestamp.toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                        })}
-                                    </p>
+                            <div key={message.id} className={`flex items-end ${message.isUser ? 'justify-end' : 'justify-start'}`}>
+                                {/* Avatar */}
+                                {!message.isUser && (
+                                    <div className="mr-3 flex h-9 w-9 items-center justify-center bg-gradient-to-br from-primary/20 to-primary/40 shadow rounded-full">
+                                        <BrainCircuit className="h-5 w-5 text-primary" />
+                                    </div>
+                                )}
+                                <div className="flex flex-col max-w-[80%]">
+                                    <div
+                                        className={`rounded-2xl px-5 py-3 shadow-md transition-all duration-200 ${
+                                            message.isUser
+                                                ? 'bg-gradient-to-br from-primary to-primary/80 text-primary-foreground ml-auto rounded-2xl'
+                                                : 'bg-white border border-border text-card-foreground rounded-2xl'
+                                        }`}
+                                    >
+                                        {message.isUser ? (
+                                            <p className="text-base leading-relaxed font-semibold">{message.content}</p>
+                                        ) : (
+                                            <div className="markdown-content text-base leading-relaxed">
+                                                <ReactMarkdown
+                                                    components={{
+                                                        code({ className, children, ...props }) {
+                                                            const match = /language-(\\w+)/.exec(className || '')
+                                                            return match ? (
+                                                                <SyntaxHighlighter style={atomDark} language={match[1]} PreTag="div" {...props}>
+                                                                    {String(children).replace(/\\n$/, '')}
+                                                                </SyntaxHighlighter>
+                                                            ) : (
+                                                                <code className={className} {...props}>
+                                                                    {children}
+                                                                </code>
+                                                            )
+                                                        },
+                                                    }}
+                                                >
+                                                    {message.content}
+                                                </ReactMarkdown>
+                                            </div>
+                                        )}
+                                    </div>
+                                    {/* Timestamp */}
+                                    <div className="mt-1 text-xs text-muted-foreground text-right pr-2">
+                                        {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </div>
                                 </div>
+                                {/* User Avatar */}
+                                {message.isUser && (
+                                    <div className="ml-3 flex h-9 w-9 items-center justify-center bg-gradient-to-br from-primary to-primary/80 text-primary-foreground font-bold shadow rounded-full">
+                                        <span className="text-lg">U</span>
+                                    </div>
+                                )}
                             </div>
                         ))}
                         {isLoading && (
-                            <div className="flex justify-start duration-200 animate-in fade-in">
-                                <div className="max-w-[85%] rounded-lg border border-border bg-card p-4 text-card-foreground shadow-sm">
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-2 w-16 rounded-full bg-muted-foreground/30"></div>
-                                        <div className="h-2 w-10 rounded-full bg-muted-foreground/20"></div>
-                                        <div className="h-2 w-6 rounded-full bg-muted-foreground/10"></div>
-                                    </div>
-                                </div>
+                            <div className="flex items-center gap-2 mt-2 animate-pulse">
+                                <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '0ms' }} />
+                                <div className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: '100ms' }} />
+                                <div className="h-2 w-2 rounded-full bg-muted-foreground/20 animate-bounce" style={{ animationDelay: '200ms' }} />
+                                <span className="text-xs text-muted-foreground ml-2">AI is typing…</span>
+                            </div>
+                        )}
+                        {error && (
+                            <div className="flex items-center gap-2 mt-2 text-xs text-destructive">
+                                <span>{error}</span>
+                                <Button variant="outline" onClick={handleSendMessage} disabled={isLoading} className="h-7 px-2 py-1 text-xs">
+                                    Retry
+                                </Button>
                             </div>
                         )}
                         <div ref={messagesEndRef} />
                     </div>
                 </ScrollArea>
-                <div className="flex items-center gap-3 border-t bg-card/50 p-4 shadow-sm">
-                    <Input
+                <div className="flex items-center gap-3 border-t bg-white/80 p-5 shadow-inner">
+                    <textarea
                         ref={inputRef}
                         value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Type your message..."
-                        className="flex-1 rounded-full border-border bg-background px-4 py-2 shadow-sm focus-visible:border-primary/20 focus-visible:ring-primary/30"
-                        disabled={isLoading}
+                        onChange={handleInputChange}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault()
+                                handleSendMessage().then()
+                            }
+                        }}
+                        rows={1}
+                        className="flex-grow resize-none border border-border bg-white px-4 py-3 text-base placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all duration-200 shadow-sm"
+                        placeholder="Type your message here..."
+                        aria-label="Type your message"
                     />
                     <Button
                         onClick={handleSendMessage}
                         size="icon"
                         disabled={!inputValue.trim() || isLoading}
-                        className="h-10 w-10 rounded-full bg-primary transition-all duration-200 hover:bg-primary/90"
+                        className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 transition-all duration-200 hover:from-primary/90 hover:to-primary/90 flex items-center justify-center shadow-lg"
+                        aria-label="Send message"
                     >
-                        <Send className="h-4 w-4" />
+                        {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                     </Button>
                 </div>
             </div>
