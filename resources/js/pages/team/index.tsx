@@ -304,16 +304,26 @@ export default function Team({ teamMembers, filters }: Props) {
                                             </TableCell>
                                             <TableCell>{roundToTwoDecimals(member.weeklyAverage)}</TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
+                                                <div className="flex justify-end gap-1">
                                                     <Link href={route('team.time-logs', member.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8">
-                                                            <Clock className="mr-1 h-3.5 w-3.5" />
-                                                            Time Logs
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 px-2 text-xs border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 dark:border-blue-700 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 dark:text-blue-300 transition-all shadow-sm"
+                                                            title="View Time Logs"
+                                                        >
+                                                            <Clock className="h-3 w-3 mr-1" />
+                                                            <span className="hidden sm:inline">Logs</span>
                                                         </Button>
                                                     </Link>
                                                     <Link href={route('team.edit', member.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Edit className="h-3.5 w-3.5" />
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 w-7 p-0 border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 dark:border-amber-700 dark:bg-amber-900/20 dark:hover:bg-amber-900/30 dark:text-amber-300 transition-all shadow-sm"
+                                                            title="Edit Member"
+                                                        >
+                                                            <Edit className="h-3 w-3" />
                                                             <span className="sr-only">Edit</span>
                                                         </Button>
                                                     </Link>

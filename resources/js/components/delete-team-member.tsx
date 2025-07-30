@@ -31,8 +31,13 @@ export default function DeleteTeamMember({ userId }: DeleteTeamMemberProps) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                    <Trash2 className="h-4 w-4" />
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 w-7 p-0 border-red-200 bg-red-50 hover:bg-red-100 text-red-700 dark:border-red-700 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:text-red-300 transition-all shadow-sm"
+                    title="Delete Member"
+                >
+                    <Trash2 className="h-3 w-3" />
                     <span className="sr-only">Delete</span>
                 </Button>
             </DialogTrigger>
