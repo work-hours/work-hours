@@ -5,6 +5,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
 import { ArrowLeft, Clock, Edit, FolderPlus, Users } from 'lucide-react'
+import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 
 type Project = {
     id: number
@@ -173,18 +174,22 @@ export default function ClientProjects({ client, projects }: Props) {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
-                                                    <Link href={route('project.time-logs', project.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8">
-                                                            <Clock className="mr-1 h-3.5 w-3.5" />
-                                                            Time Logs
-                                                        </Button>
-                                                    </Link>
-                                                    <Link href={route('project.edit', project.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Edit className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Edit</span>
-                                                        </Button>
-                                                    </Link>
+                                                    <ActionButtonGroup>
+                                                        <ActionButton
+                                                            href={route('project.time-logs', project.id)}
+                                                            title="View Time Logs"
+                                                            icon={Clock}
+                                                            label="Logs"
+                                                            variant="blue"
+                                                        />
+                                                        <ActionButton
+                                                            href={route('project.edit', project.id)}
+                                                            title="Edit Project"
+                                                            icon={Edit}
+                                                            variant="amber"
+                                                            size="icon"
+                                                        />
+                                                    </ActionButtonGroup>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
