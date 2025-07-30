@@ -15,7 +15,7 @@ import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
@@ -547,12 +547,10 @@ export default function Tasks() {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a href={route('task.export')} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
+                                <ExportButton
+                                    href={route('task.export')}
+                                    label="Export"
+                                />
                                 <Link href={route('task.create')}>
                                     <Button className="flex items-center gap-2">
                                         <Plus className="h-4 w-4" />

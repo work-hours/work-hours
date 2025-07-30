@@ -26,6 +26,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import { Calendar, CalendarRange, Download, Edit, FileText, Loader2, Mail, Plus, Search, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 
 interface CustomInputProps {
     value?: string
@@ -460,7 +461,7 @@ export default function Invoices() {
                                 <Label className="text-xs font-medium opacity-0">Actions</Label>
                                 <div className="flex items-end gap-2">
                                     <Button type="submit" className="flex h-9 items-center gap-1 px-3">
-                                        <Search className="h-3.5 w-3.5" />
+                                        <Search className="h-3 w-3" />
                                         <span>Filter</span>
                                     </Button>
 
@@ -477,7 +478,7 @@ export default function Invoices() {
                                         onClick={clearFilters}
                                         className="flex h-9 items-center gap-1 px-3"
                                     >
-                                        <X className="h-3.5 w-3.5" />
+                                        <X className="h-3 w-3" />
                                         <span>Clear</span>
                                     </Button>
                                 </div>
@@ -540,7 +541,7 @@ export default function Invoices() {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a
+                                <ExportButton
                                     href={`${route('invoice.export')}?${objectToQueryString({
                                         search: filters.search || '',
                                         client_id: filters.client_id || '',
@@ -548,16 +549,11 @@ export default function Invoices() {
                                         created_date_from: formatDateValue(filters.created_date_from),
                                         created_date_to: formatDateValue(filters.created_date_to),
                                     })}`}
-                                    className="inline-block"
-                                >
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
+                                    label="Export"
+                                />
                                 <Link href={route('invoice.create')}>
                                     <Button className="flex items-center gap-2">
-                                        <Plus className="h-4 w-4" />
+                                        <Plus className="h-3 w-3" />
                                         <span>Create Invoice</span>
                                     </Button>
                                 </Link>
@@ -618,27 +614,30 @@ export default function Invoices() {
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <a href={route('invoice.downloadPdf', invoice.id)} target="_blank" rel="noopener noreferrer">
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Download className="h-3.5 w-3.5" />
+                                                        <Button variant="outline" size="sm" className="h-7 w-7 p-0">
+                                                            <Download className="h-3 w-3" />
                                                             <span className="sr-only">Download PDF</span>
                                                         </Button>
                                                     </a>
-                                                    <Link href={route('invoice.edit', invoice.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Edit className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Edit</span>
-                                                        </Button>
-                                                    </Link>
+                                                    <ActionButtonGroup>
+                                                        <ActionButton
+                                                            href={route('invoice.edit', invoice.id)}
+                                                            title="Edit Task"
+                                                            icon={Edit}
+                                                            variant="amber"
+                                                            size="icon"
+                                                        />
+                                                    </ActionButtonGroup>
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="h-8 w-8 p-0"
+                                                        className="h-7 w-7 p-0"
                                                         onClick={() => handleEmailClick(invoice)}
                                                         title={invoice.status === 'sent' ? 'Invoice already sent' : 'Send invoice email to client'}
                                                         disabled={invoice.status === 'sent' || invoice.status === 'paid'}
                                                     >
                                                         <Mail
-                                                            className={`h-3.5 w-3.5 ${invoice.status === 'sent' ? 'text-muted-foreground/50' : ''}`}
+                                                            className={`h-3 w-3 ${invoice.status === 'sent' ? 'text-muted-foreground/50' : ''}`}
                                                         />
                                                         <span className="sr-only">Send Email</span>
                                                     </Button>

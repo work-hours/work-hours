@@ -28,6 +28,7 @@ import {
     Upload,
 } from 'lucide-react'
 import { ChangeEvent, FormEventHandler, forwardRef, ReactNode, useRef, useState } from 'react'
+import { ExportButton } from '@/components/action-buttons'
 
 interface CustomInputProps {
     value?: string
@@ -476,31 +477,29 @@ export default function TimeLog({
                                 </CardDescription>
                             </div>
                             <div className="flex gap-2">
-                                <a href={route('time-log.export') + window.location.search} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
+                                <ExportButton
+                                    href={route('time-log.export') + window.location.search}
+                                    label="Export"
+                                />
                                 <a href={route('time-log.template')} className="inline-block">
                                     <Button variant="outline" className="flex items-center gap-2">
-                                        <FileSpreadsheet className="h-4 w-4" />
+                                        <FileSpreadsheet className="h-3 w-3" />
                                         <span>Template</span>
                                     </Button>
                                 </a>
                                 <Button variant="outline" className="flex items-center gap-2" onClick={() => setImportDialogOpen(true)}>
-                                    <Upload className="h-4 w-4" />
+                                    <Upload className="h-3 w-3" />
                                     <span>Import</span>
                                 </Button>
                                 {selectedLogs.length > 0 && (
                                     <Button onClick={markAsPaid} variant="secondary" className="flex items-center gap-2">
-                                        <CheckCircle className="h-4 w-4" />
+                                        <CheckCircle className="h-3 w-3" />
                                         <span>Mark as Paid ({selectedLogs.length})</span>
                                     </Button>
                                 )}
                                 <Link href={route('time-log.create')}>
                                     <Button className="flex items-center gap-2">
-                                        <ClockIcon className="h-4 w-4" />
+                                        <ClockIcon className="h-3 w-3" />
                                         <span>Log Time</span>
                                     </Button>
                                 </Link>
@@ -524,7 +523,7 @@ export default function TimeLog({
                                     <p className="mb-4 text-muted-foreground">You haven't added any time logs yet.</p>
                                     <Link href={route('time-log.create')}>
                                         <Button className="flex items-center gap-2">
-                                            <PlusCircle className="h-4 w-4" />
+                                            <PlusCircle className="h-3 w-3" />
                                             <span>Add Time Log</span>
                                         </Button>
                                     </Link>
@@ -562,7 +561,7 @@ export default function TimeLog({
 
                             {importSuccess && (
                                 <Alert className="border-green-200 bg-green-50 dark:border-green-900/30 dark:bg-green-900/20">
-                                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                                    <CheckCircle className="h-3 w-3 text-green-600 dark:text-green-400" />
                                     <AlertTitle className="text-green-800 dark:text-green-400">Success</AlertTitle>
                                     <AlertDescription className="text-green-700 dark:text-green-400">{importSuccess}</AlertDescription>
                                 </Alert>
@@ -570,7 +569,7 @@ export default function TimeLog({
 
                             {importErrors.length > 0 && (
                                 <Alert className="border-red-200 bg-red-50 dark:border-red-900/30 dark:bg-red-900/20">
-                                    <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                                    <AlertCircle className="h-3 w-3 text-red-600 dark:text-red-400" />
                                     <AlertTitle className="text-red-800 dark:text-red-400">Error</AlertTitle>
                                     <AlertDescription className="text-red-700 dark:text-red-400">
                                         <ul className="mt-2 list-disc space-y-1 pl-5">
