@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
-import { ArrowLeft, Clock, Edit, FolderPlus, Users } from 'lucide-react'
+import { ArrowLeft, Clock, Edit, FileText, FolderPlus, Users } from 'lucide-react'
 import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 
 type Project = {
@@ -55,7 +55,7 @@ export default function ClientProjects({ client, projects }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title={`${client.name} - Projects`} />
-            <div className="mx-auto flex flex-col gap-6 p-3">
+            <div className="mx-auto flex flex-col gap-2 p-3">
                 {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
@@ -73,32 +73,62 @@ export default function ClientProjects({ client, projects }: Props) {
                 </section>
 
                 {/* Client Info Card */}
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Client Information</CardTitle>
+                <Card className="flex-1 overflow-hidden transition-all hover:shadow-md" >
+                    <CardHeader className="py-2">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                            <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                <FileText className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                            </span>
+                            Client Information
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Contact Person</h3>
-                                <p className="mt-1">{client.contact_person || 'Not specified'}</p>
+                    <CardContent className="py-2">
+                        <div className="flex flex-wrap gap-4 items-center">
+                            <div className="flex items-center gap-2 min-w-[120px]">
+                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                    <span className="text-gray-500 dark:text-gray-400 text-xs">👤</span>
+                                </span>
+                                <div>
+                                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Contact Person</h3>
+                                    <p className="text-xs leading-tight">{client.contact_person || 'Not specified'}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</h3>
-                                <p className="mt-1">{client.email || 'Not specified'}</p>
+                            <div className="flex items-center gap-2 min-w-[120px]">
+                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                    <span className="text-gray-500 dark:text-gray-400 text-xs">✉️</span>
+                                </span>
+                                <div>
+                                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Email</h3>
+                                    <p className="text-xs leading-tight">{client.email || 'Not specified'}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Phone</h3>
-                                <p className="mt-1">{client.phone || 'Not specified'}</p>
+                            <div className="flex items-center gap-2 min-w-[100px]">
+                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                    <span className="text-gray-500 dark:text-gray-400 text-xs">📞</span>
+                                </span>
+                                <div>
+                                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Phone</h3>
+                                    <p className="text-xs leading-tight">{client.phone || 'Not specified'}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Address</h3>
-                                <p className="mt-1">{client.address || 'Not specified'}</p>
+                            <div className="flex items-center gap-2 min-w-[120px]">
+                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                    <span className="text-gray-500 dark:text-gray-400 text-xs">🏠</span>
+                                </span>
+                                <div>
+                                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Address</h3>
+                                    <p className="text-xs leading-tight">{client.address || 'Not specified'}</p>
+                                </div>
                             </div>
                             {client.notes && (
-                                <div className="col-span-2">
-                                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Notes</h3>
-                                    <p className="mt-1">{client.notes}</p>
+                                <div className="flex items-center gap-2 min-w-[180px]">
+                                    <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs">📝</span>
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Notes</h3>
+                                        <p className="text-xs leading-tight">{client.notes}</p>
+                                    </div>
                                 </div>
                             )}
                         </div>

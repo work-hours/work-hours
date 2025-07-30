@@ -451,7 +451,6 @@ export default function Projects() {
                                     <TableHeaderRow>
                                         <TableHead>Name</TableHead>
                                         <TableHead>Client</TableHead>
-                                        <TableHead>Description</TableHead>
                                         <TableHead>Owner</TableHead>
                                         <TableHead>Team Members</TableHead>
                                         <TableHead>Approvers</TableHead>
@@ -465,17 +464,6 @@ export default function Projects() {
                                             <TableCell>
                                                 {project.client ? project.client.name : <span className="text-muted-foreground/50">No client</span>}
                                             </TableCell>
-                                            <TableCell className="text-muted-foreground">
-                                                {project.description ? (
-                                                    project.description.length > 50 ? (
-                                                        project.description.substring(0, 50) + '...'
-                                                    ) : (
-                                                        project.description
-                                                    )
-                                                ) : (
-                                                    <span className="text-muted-foreground/50">No description</span>
-                                                )}
-                                            </TableCell>
                                             <TableCell className="font-medium">{project.user.name}</TableCell>
                                             <TableCell>
                                                 {project.team_members && project.team_members.length > 0 ? (
@@ -483,7 +471,7 @@ export default function Projects() {
                                                         {project.team_members.map((member) => (
                                                             <span
                                                                 key={member.id}
-                                                                className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
+                                                                className="inline-flex items-center bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
                                                                 title={member.email}
                                                             >
                                                                 {member.name}
@@ -500,7 +488,7 @@ export default function Projects() {
                                                         {project.approvers.map((approver) => (
                                                             <span
                                                                 key={approver.id}
-                                                                className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-700/10 ring-inset dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30"
+                                                                className="inline-flex items-center bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-700/10 ring-inset dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30"
                                                                 title={approver.email}
                                                             >
                                                                 {approver.name}
@@ -519,7 +507,7 @@ export default function Projects() {
                                                                 href={route('project.time-logs', project.id)}
                                                                 title="View Time Logs"
                                                                 icon={Clock}
-                                                                label="Time Logs"
+                                                                label="Logs"
                                                                 variant="blue"
                                                             />
                                                             <ActionButton

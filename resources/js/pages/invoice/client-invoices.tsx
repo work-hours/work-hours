@@ -92,7 +92,7 @@ export default function ClientInvoices({ client, invoices }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title={`${client.name} - Invoices`} />
-            <div className="mx-auto flex flex-col gap-6 p-3">
+            <div className="mx-auto flex flex-col gap-2 p-3">
                 {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
@@ -219,7 +219,7 @@ export default function ClientInvoices({ client, invoices }: Props) {
                 </div>
 
                 {/* Divider */}
-                <div className="my-1 border-t border-gray-200 dark:border-gray-700" />
+                <div className="border-t border-gray-200 dark:border-gray-700" />
 
                 {/* Invoices Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
