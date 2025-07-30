@@ -1,7 +1,7 @@
+import Background from '@/components/ui/background'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { BarChart3, BriefcaseIcon, ClockIcon, DollarSign, TrendingUp, UsersIcon } from 'lucide-react'
 import StatsCard from './StatsCard'
-import Background from '@/components/ui/background'
 
 interface TeamStats {
     count: number
@@ -109,26 +109,22 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
     const currentDate = new Date().toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
     })
 
     return (
         <div className="p-2">
             <Background showPunches={false} showMarginLine={false} />
             {/* Timesheet Form Header */}
-            <div className="border-b-2 border-gray-400 dark:border-gray-600 pb-4 mb-6">
-                <div className="flex justify-between items-start">
+            <div className="mb-6 border-b-2 border-gray-400 pb-4 dark:border-gray-600">
+                <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-lg font-bold uppercase tracking-wider text-gray-800 dark:text-gray-200">
-                            EMPLOYEE TIMESHEET SUMMARY
-                        </h2>
-                        <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                            FORM TS-001 | REV. 07/2025
-                        </div>
+                        <h2 className="text-lg font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">EMPLOYEE TIMESHEET SUMMARY</h2>
+                        <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">FORM TS-001 | REV. 07/2025</div>
                     </div>
                     <div className="text-right">
-                        <div className="border-2 border-gray-400 dark:border-gray-600 p-2 bg-white dark:bg-gray-800">
-                            <div className="text-xs text-gray-500 dark:text-gray-400 uppercase">DATE PREPARED</div>
+                        <div className="border-2 border-gray-400 bg-white p-2 dark:border-gray-600 dark:bg-gray-800">
+                            <div className="text-xs text-gray-500 uppercase dark:text-gray-400">DATE PREPARED</div>
                             <div className="text-sm font-bold text-gray-800 dark:text-gray-200">{currentDate}</div>
                         </div>
                     </div>
@@ -137,26 +133,26 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
 
             {/* Team Information Section */}
             {(teamStats.count >= 0 || teamStats.clientCount >= 0) && (
-                <div className="border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-800 mb-6">
+                <div className="mb-6 border-2 border-gray-400 bg-white dark:border-gray-600 dark:bg-gray-800">
                     {/* Section header with form styling */}
-                    <div className="bg-gray-200 dark:bg-gray-700 border-b-2 border-gray-400 dark:border-gray-600 px-4 py-3">
+                    <div className="border-b-2 border-gray-400 bg-gray-200 px-4 py-3 dark:border-gray-600 dark:bg-gray-700">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="w-6 h-6 border-2 border-gray-500 dark:border-gray-400 bg-white dark:bg-gray-600 flex items-center justify-center">
+                                <div className="flex h-6 w-6 items-center justify-center border-2 border-gray-500 bg-white dark:border-gray-400 dark:bg-gray-600">
                                     <span className="text-xs font-bold text-gray-700 dark:text-gray-300">A</span>
                                 </div>
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-gray-800 dark:text-gray-200">
+                                <h3 className="text-sm font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">
                                     PERSONNEL & CLIENT DATA
                                 </h3>
                             </div>
                             <div className="flex gap-2">
                                 <div className="text-xs text-gray-500 dark:text-gray-400">STATUS:</div>
-                                <div className="w-4 h-4 border border-gray-400 dark:border-gray-500 bg-green-200 dark:bg-green-700"></div>
+                                <div className="h-4 w-4 border border-gray-400 bg-green-200 dark:border-gray-500 dark:bg-green-700"></div>
                                 <div className="text-xs text-gray-600 dark:text-gray-300">ACTIVE</div>
                             </div>
                         </div>
                     </div>
-                    <div className="p-4 bg-amber-25 dark:bg-gray-850">
+                    <div className="bg-amber-25 dark:bg-gray-850 p-4">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {teamStats.count >= 0 && (
                                 <StatsCard
@@ -187,26 +183,24 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 teamStats.unpaidHours >= 0 ||
                 teamStats.totalHours - teamStats.unpaidHours >= 0 ||
                 teamStats.weeklyAverage >= 0) && (
-                <div className="border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-800 mb-6">
-                    <div className="bg-gray-200 dark:bg-gray-700 border-b-2 border-gray-400 dark:border-gray-600 px-4 py-3">
+                <div className="mb-6 border-2 border-gray-400 bg-white dark:border-gray-600 dark:bg-gray-800">
+                    <div className="border-b-2 border-gray-400 bg-gray-200 px-4 py-3 dark:border-gray-600 dark:bg-gray-700">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="w-6 h-6 border-2 border-gray-500 dark:border-gray-400 bg-white dark:bg-gray-600 flex items-center justify-center">
+                                <div className="flex h-6 w-6 items-center justify-center border-2 border-gray-500 bg-white dark:border-gray-400 dark:bg-gray-600">
                                     <span className="text-xs font-bold text-gray-700 dark:text-gray-300">B</span>
                                 </div>
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-gray-800 dark:text-gray-200">
+                                <h3 className="text-sm font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">
                                     HOURS WORKED & ATTENDANCE
                                 </h3>
                             </div>
                             <div className="flex gap-2">
                                 <div className="text-xs text-gray-500 dark:text-gray-400">PERIOD:</div>
-                                <div className="text-xs text-gray-600 dark:text-gray-300 border-b border-dotted border-gray-400">
-                                    CURRENT
-                                </div>
+                                <div className="border-b border-dotted border-gray-400 text-xs text-gray-600 dark:text-gray-300">CURRENT</div>
                             </div>
                         </div>
                     </div>
-                    <div className="p-4 bg-amber-25 dark:bg-gray-850">
+                    <div className="bg-amber-25 dark:bg-gray-850 p-4">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {teamStats.totalHours >= 0 && (
                                 <StatsCard
@@ -261,20 +255,20 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 (teamStats.paidAmountsByCurrency && Object.values(teamStats.paidAmountsByCurrency).some((amount) => amount >= 0)) ||
                 teamStats.unpaidAmount >= 0 ||
                 (teamStats.unpaidAmountsByCurrency && Object.values(teamStats.unpaidAmountsByCurrency).some((amount) => amount >= 0))) && (
-                <div className="border-2 border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-800 mb-6">
-                    <div className="bg-gray-200 dark:bg-gray-700 border-b-2 border-gray-400 dark:border-gray-600 px-4 py-3">
+                <div className="mb-6 border-2 border-gray-400 bg-white dark:border-gray-600 dark:bg-gray-800">
+                    <div className="border-b-2 border-gray-400 bg-gray-200 px-4 py-3 dark:border-gray-600 dark:bg-gray-700">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="w-6 h-6 border-2 border-gray-500 dark:border-gray-400 bg-white dark:bg-gray-600 flex items-center justify-center">
+                                <div className="flex h-6 w-6 items-center justify-center border-2 border-gray-500 bg-white dark:border-gray-400 dark:bg-gray-600">
                                     <span className="text-xs font-bold text-gray-700 dark:text-gray-300">C</span>
                                 </div>
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-gray-800 dark:text-gray-200">
+                                <h3 className="text-sm font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">
                                     COMPENSATION & BILLING
                                 </h3>
                             </div>
                         </div>
                     </div>
-                    <div className="p-4 bg-amber-25 dark:bg-gray-850">
+                    <div className="bg-amber-25 dark:bg-gray-850 p-4">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {renderPaidAmountCards()}
                             {renderUnpaidAmountCards()}

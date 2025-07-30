@@ -12,7 +12,7 @@ import { type BreadcrumbItem } from '@/types'
 // @ts-expect-error
 import { stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
-import { BarChart2, Clock, LayoutGrid } from 'lucide-react'
+import { BarChart2, Clock } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface TeamStats {

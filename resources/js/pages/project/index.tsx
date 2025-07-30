@@ -1,3 +1,4 @@
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import DeleteProject from '@/components/delete-project'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -7,15 +8,14 @@ import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
+import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Briefcase, Calendar, CalendarRange, Clock, Download, Edit, FolderPlus, Folders, Loader2, Search, User, X } from 'lucide-react'
+import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, Loader2, Search, User, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
-import { ExportButton } from '@/components/action-buttons'
 
 interface CustomInputProps {
     value?: string
@@ -514,21 +514,22 @@ export default function Projects() {
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     {project.user.id === auth.user.id && (
-                                                        <>
-                                                            <Link href={route('project.time-logs', project.id)}>
-                                                                <Button variant="outline" size="sm" className="h-8">
-                                                                    <Clock className="mr-1 h-3.5 w-3.5" />
-                                                                    Time Logs
-                                                                </Button>
-                                                            </Link>
-                                                            <Link href={route('project.edit', project.id)}>
-                                                                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                                    <Edit className="h-3.5 w-3.5" />
-                                                                    <span className="sr-only">Edit</span>
-                                                                </Button>
-                                                            </Link>
+                                                        <ActionButtonGroup>
+                                                            <ActionButton
+                                                                href={route('project.time-logs', project.id)}
+                                                                title="View Time Logs"
+                                                                icon={Clock}
+                                                                label="Time Logs"
+                                                                variant="blue"
+                                                            />
+                                                            <ActionButton
+                                                                href={route('project.edit', project.id)}
+                                                                title="Edit Project"
+                                                                icon={Edit}
+                                                                variant="amber"
+                                                            />
                                                             <DeleteProject projectId={project.id} onDelete={() => getProjects(filters)} />
-                                                        </>
+                                                        </ActionButtonGroup>
                                                     )}
                                                 </div>
                                             </TableCell>

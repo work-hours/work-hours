@@ -1,11 +1,11 @@
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
-import { ArrowLeft, Download, Edit, FileText, Plus } from 'lucide-react'
-import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import { ArrowLeft, Edit, FileText, Plus } from 'lucide-react'
 
 type Invoice = {
     id: number
@@ -178,10 +178,7 @@ export default function ClientInvoices({ client, invoices }: Props) {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <ExportButton
-                                    href={`${route('invoice.export')}?client_id=${client.id}`}
-                                    label="Export"
-                                />
+                                <ExportButton href={`${route('invoice.export')}?client_id=${client.id}`} label="Export" />
                                 <Link href={route('invoice.create')}>
                                     <Button className="flex items-center gap-2">
                                         <Plus className="h-4 w-4" />

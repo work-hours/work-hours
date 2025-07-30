@@ -36,7 +36,7 @@ export default function DeleteClient({ clientId, getClients }: DeleteClientProps
                 <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 w-7 p-0 border-red-200 bg-red-50 hover:bg-red-100 text-red-700 dark:border-red-700 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:text-red-300 transition-all shadow-sm"
+                    className="h-7 w-7 border-red-200 bg-red-50 p-0 text-red-700 shadow-sm transition-all hover:bg-red-100 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
                     title="Delete Client"
                 >
                     <Trash2 className="h-3 w-3" />
