@@ -113,7 +113,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
     })
 
     return (
-        <div className="space-y-6 bg-[#f8f6e9] dark:bg-gray-900 border-2 border-gray-400 dark:border-gray-600 p-6">
+        <div className="p-2">
             <Background showPunches={false} showMarginLine={false} />
             {/* Timesheet Form Header */}
             <div className="border-b-2 border-gray-400 dark:border-gray-600 pb-4 mb-6">
