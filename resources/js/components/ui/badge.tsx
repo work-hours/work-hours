@@ -22,9 +22,9 @@ const badgeVariants = cva(
                 outline:
                     'text-foreground border-border [a&]:hover:bg-accent [a&]:hover:text-accent-foreground [a&]:hover:shadow-md',
                 success:
-                    'border-transparent bg-success text-success-foreground [a&]:hover:bg-success/90 [a&]:hover:shadow-md',
+                    'border-transparent bg-green-200 text-success-foreground [a&]:hover:bg-success/90 [a&]:hover:shadow-md',
                 warning:
-                    'border-transparent bg-warning text-warning-foreground [a&]:hover:bg-warning/90 [a&]:hover:shadow-md',
+                    'border-transparent bg-yellow-200 text-warning-foreground [a&]:hover:bg-warning/90 [a&]:hover:shadow-md',
                 'outline-primary':
                     'border-primary/50 text-primary bg-primary/5 [a&]:hover:bg-primary/10 [a&]:hover:shadow-md'
             }

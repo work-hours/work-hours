@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { formatTimeEntry } from '@/lib/utils'
 import { Link } from '@inertiajs/react'
-import { Edit, Eye, Trash2 } from 'lucide-react'
+import { Edit, Eye, Glasses, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 
 export type TimeLogEntry = {
     id: number
@@ -105,7 +106,7 @@ export default function TimeLogTable({
                                 {showProject && <small>{log.project_name || 'No Project'}</small>}
                             </TableCell>
                             <TableCell>
-                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                                <span className="inline-flex items-center bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                                     {log.duration}
                                 </span>
                             </TableCell>
@@ -114,7 +115,7 @@ export default function TimeLogTable({
                                 log.hourly_rate !== null &&
                                 typeof log.hourly_rate === 'number' &&
                                 log.hourly_rate > 0 ? (
-                                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-100">
+                                    <span className="inline-flex items-center bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-100">
                                         {log.currency || 'USD'} {log.hourly_rate.toFixed(2)}
                                     </span>
                                 ) : (
@@ -125,7 +126,7 @@ export default function TimeLogTable({
                                 <div className="flex items-center gap-2">
                                     {/* Always show the amount, calculated if not paid */}
                                     <span
-                                        className={`inline-flex items-center rounded-full ${log.is_paid ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} px-2 py-0.5 text-xs font-medium`}
+                                        className={`inline-flex items-center ${log.is_paid ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} px-2 py-0.5 text-xs font-medium`}
                                     >
                                         {log.currency || 'USD'}{' '}
                                         {log.paid_amount !== undefined &&
@@ -148,11 +149,11 @@ export default function TimeLogTable({
                                         typeof log.hourly_rate === 'number' &&
                                         log.hourly_rate > 0 &&
                                         (log.is_paid ? (
-                                            <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                            <span className="inline-flex items-center bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                                                 Paid
                                             </span>
                                         ) : (
-                                            <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
+                                            <span className="inline-flex items-center bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
                                                 Unpaid
                                             </span>
                                         ))}
@@ -161,15 +162,15 @@ export default function TimeLogTable({
                             <TableCell>
                                 {/* Approval Status Only */}
                                 {log.status === 'approved' ? (
-                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+                                    <span className="inline-flex items-center bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                                         Approved
                                     </span>
                                 ) : log.status === 'rejected' ? (
-                                    <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
+                                    <span className="inline-flex items-center bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
                                         Rejected
                                     </span>
                                 ) : (
-                                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                    <span className="inline-flex items-center bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
                                         Pending
                                     </span>
                                 )}
@@ -181,54 +182,57 @@ export default function TimeLogTable({
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="h-8 w-8 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
+                                            className="h-7 w-7 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
                                             onClick={() => handleViewDetails(log)}
                                             title="View Details"
                                         >
-                                            <Eye className="h-3.5 w-3.5" />
+                                            <Glasses className="h-3.5 w-3.5" />
                                             <span className="sr-only">View Details</span>
                                         </Button>
 
-                                        {showEditDelete && (
-                                            <>
-                                                {/* Edit Button */}
-                                                {!log.is_paid ? (
-                                                    <Link href={route('time-log.edit', log.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                                        <ActionButtonGroup>
+                                            {showEditDelete && (
+                                                <>
+                                                    {/* Edit Button */}
+                                                    {!log.is_paid ? (
+                                                            <ActionButton
+                                                                href={route('time-log.edit', log.id)}
+                                                                title="Edit Log"
+                                                                icon={Edit}
+                                                                variant="amber"
+                                                                size="icon"
+                                                            />
+                                                    ) : (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 w-7 p-0"
+                                                            disabled
+                                                            title="Paid time logs cannot be edited"
+                                                        >
                                                             <Edit className="h-3.5 w-3.5" />
                                                             <span className="sr-only">Edit</span>
                                                         </Button>
-                                                    </Link>
-                                                ) : (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-8 w-8 p-0"
-                                                        disabled
-                                                        title="Paid time logs cannot be edited"
-                                                    >
-                                                        <Edit className="h-3.5 w-3.5" />
-                                                        <span className="sr-only">Edit</span>
-                                                    </Button>
-                                                )}
+                                                    )}
 
-                                                {/* Delete Button */}
-                                                {!log.is_paid ? (
-                                                    <DeleteTimeLog timeLogId={log.id} />
-                                                ) : (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-8 w-8 p-0"
-                                                        disabled
-                                                        title="Paid time logs cannot be deleted"
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                        <span className="sr-only">Delete</span>
-                                                    </Button>
-                                                )}
-                                            </>
-                                        )}
+                                                    {/* Delete Button */}
+                                                    {!log.is_paid ? (
+                                                        <DeleteTimeLog timeLogId={log.id} />
+                                                    ) : (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 w-7 p-0"
+                                                            disabled
+                                                            title="Paid time logs cannot be deleted"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                            <span className="sr-only">Delete</span>
+                                                        </Button>
+                                                    )}
+                                                </>
+                                            )}
+                                        </ActionButtonGroup>
                                     </div>
                                 </TableCell>
                             )}

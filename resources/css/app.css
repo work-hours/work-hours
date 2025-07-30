@@ -8,7 +8,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --font-sans: monospace, ui-monospace, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans:
+        'Roboto Mono', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto', 'Courier New', monospace, ui-monospace, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -194,7 +196,7 @@
 }
 
 body {
-    font-family: "Special Elite", system-ui;
+    font-family: 'Roboto Mono', system-ui;
     font-weight: 400;
     font-style: normal;
 }

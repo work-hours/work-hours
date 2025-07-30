@@ -31,7 +31,7 @@ const quickLinks: NavItem[] = [
         title: 'All Team Log',
         href: route('team.all-time-logs'),
         icon: BarChart3,
-    }
+    },
 ]
 
 export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps) {

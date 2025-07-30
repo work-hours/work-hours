@@ -1,3 +1,4 @@
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import DeleteProject from '@/components/delete-project'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -7,13 +8,13 @@ import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
+import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Briefcase, Calendar, CalendarRange, Clock, Download, Edit, FolderPlus, Folders, Loader2, Search, User, X } from 'lucide-react'
+import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, Loader2, Search, User, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 
 interface CustomInputProps {
@@ -412,21 +413,10 @@ export default function Projects() {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a
-                                    href={`${route('project.export')}?${objectToQueryString({
-                                        client_id: filters.client_id || '',
-                                        team_member_id: filters.team_member_id || '',
-                                        created_date_from: formatDateValue(filters.created_date_from),
-                                        created_date_to: formatDateValue(filters.created_date_to),
-                                        search: filters.search || '',
-                                    })}`}
-                                    className="inline-block"
-                                >
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
+                                <ExportButton
+                                    href={`$${route('project.export')}?team_member_id=${filters.team_member_id || ''}&created_date_from=${formatDateValue(filters.created_date_from)}&created_date_to=${formatDateValue(filters.created_date_to)}&search=${filters.search || ''}`}
+                                    label="Export"
+                                />
                                 <Link href={route('project.create')}>
                                     <Button className="flex items-center gap-2">
                                         <FolderPlus className="h-4 w-4" />
@@ -461,7 +451,6 @@ export default function Projects() {
                                     <TableHeaderRow>
                                         <TableHead>Name</TableHead>
                                         <TableHead>Client</TableHead>
-                                        <TableHead>Description</TableHead>
                                         <TableHead>Owner</TableHead>
                                         <TableHead>Team Members</TableHead>
                                         <TableHead>Approvers</TableHead>
@@ -475,17 +464,6 @@ export default function Projects() {
                                             <TableCell>
                                                 {project.client ? project.client.name : <span className="text-muted-foreground/50">No client</span>}
                                             </TableCell>
-                                            <TableCell className="text-muted-foreground">
-                                                {project.description ? (
-                                                    project.description.length > 50 ? (
-                                                        project.description.substring(0, 50) + '...'
-                                                    ) : (
-                                                        project.description
-                                                    )
-                                                ) : (
-                                                    <span className="text-muted-foreground/50">No description</span>
-                                                )}
-                                            </TableCell>
                                             <TableCell className="font-medium">{project.user.name}</TableCell>
                                             <TableCell>
                                                 {project.team_members && project.team_members.length > 0 ? (
@@ -493,7 +471,7 @@ export default function Projects() {
                                                         {project.team_members.map((member) => (
                                                             <span
                                                                 key={member.id}
-                                                                className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
+                                                                className="inline-flex items-center bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
                                                                 title={member.email}
                                                             >
                                                                 {member.name}
@@ -510,7 +488,7 @@ export default function Projects() {
                                                         {project.approvers.map((approver) => (
                                                             <span
                                                                 key={approver.id}
-                                                                className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-700/10 ring-inset dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30"
+                                                                className="inline-flex items-center bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-700/10 ring-inset dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30"
                                                                 title={approver.email}
                                                             >
                                                                 {approver.name}
@@ -524,21 +502,22 @@ export default function Projects() {
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     {project.user.id === auth.user.id && (
-                                                        <>
-                                                            <Link href={route('project.time-logs', project.id)}>
-                                                                <Button variant="outline" size="sm" className="h-8">
-                                                                    <Clock className="mr-1 h-3.5 w-3.5" />
-                                                                    Time Logs
-                                                                </Button>
-                                                            </Link>
-                                                            <Link href={route('project.edit', project.id)}>
-                                                                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                                    <Edit className="h-3.5 w-3.5" />
-                                                                    <span className="sr-only">Edit</span>
-                                                                </Button>
-                                                            </Link>
+                                                        <ActionButtonGroup>
+                                                            <ActionButton
+                                                                href={route('project.time-logs', project.id)}
+                                                                title="View Time Logs"
+                                                                icon={Clock}
+                                                                label="Logs"
+                                                                variant="blue"
+                                                            />
+                                                            <ActionButton
+                                                                href={route('project.edit', project.id)}
+                                                                title="Edit Project"
+                                                                icon={Edit}
+                                                                variant="amber"
+                                                            />
                                                             <DeleteProject projectId={project.id} onDelete={() => getProjects(filters)} />
-                                                        </>
+                                                        </ActionButtonGroup>
                                                     )}
                                                 </div>
                                             </TableCell>

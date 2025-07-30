@@ -12,7 +12,7 @@ import { type BreadcrumbItem } from '@/types'
 // @ts-expect-error
 import { stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
-import { BarChart2, Clock, LayoutGrid } from 'lucide-react'
+import { BarChart2, Clock } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface TeamStats {
@@ -92,19 +92,7 @@ export default function Dashboard() {
                     </div>
                 ) : (
                     <>
-                        <section className="relative mb-6 border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-                            {/* Form-like header */}
-                            <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
-                                <div className="flex items-center">
-                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
-                                        <LayoutGrid className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-gray-800 uppercase dark:text-gray-200">Metrics Dashboard</h3>
-                                </div>
-                            </div>
-
-                            <StatsCards teamStats={teamStats} />
-                        </section>
+                        <StatsCards teamStats={teamStats} />
 
                         <section className="relative mb-6 border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                             {/* Form-like header */}

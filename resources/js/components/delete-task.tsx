@@ -37,8 +37,12 @@ export default function DeleteTask({ taskId, onDelete }: DeleteTaskProps) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                    <Trash2 className="h-4 w-4" />
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 w-7 border-red-200 bg-red-50 p-0 text-red-700 shadow-sm transition-all hover:bg-red-100 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
+                >
+                    <Trash2 className="h-3 w-3" />
                     <span className="sr-only">Delete</span>
                 </Button>
             </DialogTrigger>

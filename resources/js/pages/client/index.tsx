@@ -1,3 +1,4 @@
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import DeleteClient from '@/components/delete-client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,7 +13,7 @@ import { type BreadcrumbItem } from '@/types'
 // @ts-expect-error
 import { clients as _clients } from '@actions/ClientController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Calendar, CalendarRange, Download, Edit, FileText, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'
+import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 
 interface CustomInputProps {
@@ -305,19 +306,13 @@ export default function Clients() {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a
+                                <ExportButton
                                     href={`${route('client.export')}?${objectToQueryString({
                                         search: filters.search || '',
                                         created_date_from: formatDateValue(filters.created_date_from),
                                         created_date_to: formatDateValue(filters.created_date_to),
                                     })}`}
-                                    className="inline-block"
-                                >
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
+                                />
                                 <Link href={route('client.create')}>
                                     <Button className="flex items-center gap-2">
                                         <Plus className="h-4 w-4" />
@@ -369,27 +364,30 @@ export default function Clients() {
                                             <TableCell>{client.phone || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
                                             <TableCell>{client.currency || 'USD'}</TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    <Link href={route('client.projects', client.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8">
-                                                            <Folder className="mr-1 h-3.5 w-3.5" />
-                                                            Projects
-                                                        </Button>
-                                                    </Link>
-                                                    <Link href={route('client.invoices', client.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8">
-                                                            <FileText className="mr-1 h-3.5 w-3.5" />
-                                                            Invoices
-                                                        </Button>
-                                                    </Link>
-                                                    <Link href={route('client.edit', client.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Edit className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Edit</span>
-                                                        </Button>
-                                                    </Link>
+                                                <ActionButtonGroup>
+                                                    <ActionButton
+                                                        href={route('client.projects', client.id)}
+                                                        title="View Projects"
+                                                        icon={Folder}
+                                                        label="Projects"
+                                                        variant="indigo"
+                                                    />
+                                                    <ActionButton
+                                                        href={route('client.invoices', client.id)}
+                                                        title="View Invoices"
+                                                        icon={FileText}
+                                                        label="Invoices"
+                                                        variant="violet"
+                                                    />
+                                                    <ActionButton
+                                                        href={route('client.edit', client.id)}
+                                                        title="Edit Client"
+                                                        icon={Edit}
+                                                        variant="amber"
+                                                        size="icon"
+                                                    />
                                                     <DeleteClient clientId={client.id} getClients={getClients} />
-                                                </div>
+                                                </ActionButtonGroup>
                                             </TableCell>
                                         </TableRow>
                                     ))}

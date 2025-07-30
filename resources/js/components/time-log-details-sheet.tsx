@@ -23,7 +23,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                     <SheetDescription>Viewing complete information for this time log entry</SheetDescription>
                 </SheetHeader>
 
-                <div className="mt-6 space-y-6">
+                <div className="space-y-6">
                     {/* Basic Information */}
                     <div className="space-y-2">
                         <h3 className="ml-4 text-lg font-semibold text-primary">Basic Information</h3>
@@ -95,16 +95,6 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                             <div>
                                 <p className="text-sm font-bold text-muted-foreground">Entry</p>
                                 <p className="text-base">{formatTimeEntry(timeLog.start_timestamp, timeLog.end_timestamp)}</p>
-                            </div>
-
-                            <div>
-                                <p className="text-sm font-bold text-muted-foreground">Start Time</p>
-                                <p className="text-base">{formatDateTime(timeLog.start_timestamp)}</p>
-                            </div>
-
-                            <div>
-                                <p className="text-sm font-bold text-muted-foreground">End Time</p>
-                                <p className="text-base">{formatDateTime(timeLog.end_timestamp)}</p>
                             </div>
                         </div>
                     </div>

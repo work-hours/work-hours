@@ -1,3 +1,4 @@
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import DeleteTeamMember from '@/components/delete-team-member'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,7 +10,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, useForm } from '@inertiajs/react'
-import { Calendar, CalendarRange, Clock, Download, Edit, Search, TimerReset, UserPlus, Users } from 'lucide-react'
+import { Calendar, CalendarRange, Clock, Edit, Search, TimerReset, UserPlus, Users } from 'lucide-react'
 import { FormEventHandler, forwardRef } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -258,12 +259,7 @@ export default function Team({ teamMembers, filters }: Props) {
                                 <CardDescription>You have {teamMembers.length} team members</CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a href={route('team.export') + window.location.search} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
+                                <ExportButton href={route('team.export') + window.location.search} />
                                 <Link href={route('team.create')}>
                                     <Button className="flex items-center gap-2">
                                         <UserPlus className="h-4 w-4" />
@@ -304,21 +300,23 @@ export default function Team({ teamMembers, filters }: Props) {
                                             </TableCell>
                                             <TableCell>{roundToTwoDecimals(member.weeklyAverage)}</TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    <Link href={route('team.time-logs', member.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8">
-                                                            <Clock className="mr-1 h-3.5 w-3.5" />
-                                                            Time Logs
-                                                        </Button>
-                                                    </Link>
-                                                    <Link href={route('team.edit', member.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Edit className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Edit</span>
-                                                        </Button>
-                                                    </Link>
+                                                <ActionButtonGroup>
+                                                    <ActionButton
+                                                        href={route('team.time-logs', member.id)}
+                                                        title="View Time Logs"
+                                                        icon={Clock}
+                                                        label="Logs"
+                                                        variant="blue"
+                                                    />
+                                                    <ActionButton
+                                                        href={route('team.edit', member.id)}
+                                                        title="Edit Member"
+                                                        icon={Edit}
+                                                        variant="amber"
+                                                        size="icon"
+                                                    />
                                                     <DeleteTeamMember userId={member.id} />
-                                                </div>
+                                                </ActionButtonGroup>
                                             </TableCell>
                                         </TableRow>
                                     ))}

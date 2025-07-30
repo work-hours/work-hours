@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Info } from 'lucide-react'
+import { Calendar, Flag, User as UserIcon, Edit, CheckCircle, Trash2 } from 'lucide-react'
 
 type User = {
     id: number
@@ -84,7 +85,7 @@ export default function TaskDetailsSheet({ task, open, onOpenChange }: TaskDetai
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent side="right" className="overflow-y-auto sm:max-w-md md:max-w-lg">
+            <SheetContent side="right" className="overflow-y-auto sm:max-w-md md:max-w-lg bg-background shadow-2xl">
                 <SheetHeader>
                     <SheetTitle className="flex items-center gap-2">
                         <Info className="h-5 w-5 text-primary" />
@@ -93,35 +94,36 @@ export default function TaskDetailsSheet({ task, open, onOpenChange }: TaskDetai
                     <SheetDescription>Viewing complete information for this task</SheetDescription>
                 </SheetHeader>
 
-                <div className="mt-6 space-y-6">
+                <div className="space-y-8">
                     {/* Basic Information */}
                     <div className="space-y-2">
-                        <h3 className="ml-4 text-lg font-semibold text-primary">Basic Information</h3>
-                        <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                        <h3 className="ml-4 text-lg font-semibold text-primary flex items-center gap-2">
+                            <Info className="h-5 w-5 text-primary" /> Basic Information
+                        </h3>
+                        <div className="grid grid-cols-1 gap-4 rounded-lg border p-4 bg-muted/40">
                             <div>
                                 <p className="text-sm font-bold text-muted-foreground">Title</p>
                                 <p className="text-base">{task.title}</p>
                             </div>
-
                             <div>
                                 <p className="text-sm font-bold text-muted-foreground">Project</p>
                                 <p className="text-base">{task.project.name}</p>
                             </div>
-
-                            <div>
+                            <div className="flex items-center gap-2">
+                                <Flag className="h-4 w-4 text-warning" />
                                 <p className="text-sm font-bold text-muted-foreground">Status</p>
-                                <p className="text-base">{getStatusBadge(task.status)}</p>
+                                <span className="ml-2">{getStatusBadge(task.status)}</span>
                             </div>
-
-                            <div>
+                            <div className="flex items-center gap-2">
+                                <Flag className="h-4 w-4 text-primary" />
                                 <p className="text-sm font-bold text-muted-foreground">Priority</p>
-                                <p className="text-base">{getPriorityBadge(task.priority)}</p>
+                                <span className="ml-2">{getPriorityBadge(task.priority)}</span>
                             </div>
-
                             {task.due_date && (
-                                <div>
+                                <div className="flex items-center gap-2">
+                                    <Calendar className="h-4 w-4 text-muted-foreground" />
                                     <p className="text-sm font-bold text-muted-foreground">Due Date</p>
-                                    <p className="text-base">{new Date(task.due_date).toISOString().split('T')[0]}</p>
+                                    <span className="ml-2">{new Date(task.due_date).toLocaleDateString()}</span>
                                 </div>
                             )}
                         </div>
@@ -130,8 +132,10 @@ export default function TaskDetailsSheet({ task, open, onOpenChange }: TaskDetai
                     {/* Description */}
                     {task.description && (
                         <div className="space-y-2">
-                            <h3 className="ml-4 text-lg font-semibold text-primary">Description</h3>
-                            <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                            <h3 className="ml-4 text-lg font-semibold text-primary flex items-center gap-2">
+                                <Info className="h-5 w-5 text-primary" /> Description
+                            </h3>
+                            <div className="grid grid-cols-1 gap-4 rounded-lg border p-4 bg-muted/40">
                                 <div>
                                     <p className="text-base whitespace-pre-wrap">{task.description}</p>
                                 </div>
@@ -142,35 +146,26 @@ export default function TaskDetailsSheet({ task, open, onOpenChange }: TaskDetai
                     {/* Assignees */}
                     {task.assignees && task.assignees.length > 0 && (
                         <div className="space-y-2">
-                            <h3 className="ml-4 text-lg font-semibold text-primary">Assignees</h3>
-                            <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
-                                <div className="flex flex-wrap gap-2">
+                            <h3 className="ml-4 text-lg font-semibold text-primary flex items-center gap-2">
+                                <UserIcon className="h-5 w-5 text-primary" /> Assignees
+                            </h3>
+                            <div className="grid grid-cols-1 gap-4 rounded-lg border p-4 bg-muted/40">
+                                <div className="flex flex-wrap gap-3">
                                     {task.assignees.map((assignee) => (
                                         <span
                                             key={assignee.id}
-                                            className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
-                                            title={assignee.email}
+                                            className="flex items-center gap-2 bg-background border rounded-full px-3 py-1 shadow-sm"
                                         >
-                                            {assignee.name}
+                                            <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-primary text-white font-bold">
+                                                {assignee.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                            </span>
+                                            <span className="text-sm">{assignee.name}</span>
                                         </span>
                                     ))}
                                 </div>
                             </div>
                         </div>
                     )}
-
-                    {/* Additional Information */}
-                    <div className="space-y-2">
-                        <h3 className="ml-4 text-lg font-semibold text-primary">Additional Information</h3>
-                        <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
-                            {task.created_at && (
-                                <div>
-                                    <p className="text-sm font-bold text-muted-foreground">Created At</p>
-                                    <p className="text-base">{new Date(task.created_at).toISOString().split('T')[0]}</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
                 </div>
             </SheetContent>
         </Sheet>
