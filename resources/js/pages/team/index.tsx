@@ -1,4 +1,5 @@
 import DeleteTeamMember from '@/components/delete-team-member'
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
@@ -9,7 +10,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, useForm } from '@inertiajs/react'
-import { Calendar, CalendarRange, Clock, Download, Edit, Search, TimerReset, UserPlus, Users } from 'lucide-react'
+import { Calendar, CalendarRange, Clock, Edit, Search, TimerReset, UserPlus, Users } from 'lucide-react'
 import { FormEventHandler, forwardRef } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -258,12 +259,7 @@ export default function Team({ teamMembers, filters }: Props) {
                                 <CardDescription>You have {teamMembers.length} team members</CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a href={route('team.export') + window.location.search} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/30 dark:text-emerald-300 transition-all shadow-sm">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
+                                <ExportButton href={route('team.export') + window.location.search} />
                                 <Link href={route('team.create')}>
                                     <Button className="flex items-center gap-2">
                                         <UserPlus className="h-4 w-4" />
@@ -304,31 +300,23 @@ export default function Team({ teamMembers, filters }: Props) {
                                             </TableCell>
                                             <TableCell>{roundToTwoDecimals(member.weeklyAverage)}</TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-1">
-                                                    <Link href={route('team.time-logs', member.id)}>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="h-7 px-2 text-xs border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 dark:border-blue-700 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 dark:text-blue-300 transition-all shadow-sm"
-                                                            title="View Time Logs"
-                                                        >
-                                                            <Clock className="h-3 w-3 mr-1" />
-                                                            <span className="hidden sm:inline">Logs</span>
-                                                        </Button>
-                                                    </Link>
-                                                    <Link href={route('team.edit', member.id)}>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="h-7 w-7 p-0 border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 dark:border-amber-700 dark:bg-amber-900/20 dark:hover:bg-amber-900/30 dark:text-amber-300 transition-all shadow-sm"
-                                                            title="Edit Member"
-                                                        >
-                                                            <Edit className="h-3 w-3" />
-                                                            <span className="sr-only">Edit</span>
-                                                        </Button>
-                                                    </Link>
+                                                <ActionButtonGroup>
+                                                    <ActionButton
+                                                        href={route('team.time-logs', member.id)}
+                                                        title="View Time Logs"
+                                                        icon={Clock}
+                                                        label="Logs"
+                                                        variant="blue"
+                                                    />
+                                                    <ActionButton
+                                                        href={route('team.edit', member.id)}
+                                                        title="Edit Member"
+                                                        icon={Edit}
+                                                        variant="amber"
+                                                        size="icon"
+                                                    />
                                                     <DeleteTeamMember userId={member.id} />
-                                                </div>
+                                                </ActionButtonGroup>
                                             </TableCell>
                                         </TableRow>
                                     ))}

@@ -1,4 +1,5 @@
 import DeleteClient from '@/components/delete-client'
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
@@ -12,7 +13,7 @@ import { type BreadcrumbItem } from '@/types'
 // @ts-expect-error
 import { clients as _clients } from '@actions/ClientController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Calendar, CalendarRange, Download, Edit, FileText, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'
+import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 
 interface CustomInputProps {
@@ -305,19 +306,13 @@ export default function Clients() {
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a
+                                <ExportButton
                                     href={`${route('client.export')}?${objectToQueryString({
                                         search: filters.search || '',
                                         created_date_from: formatDateValue(filters.created_date_from),
                                         created_date_to: formatDateValue(filters.created_date_to),
                                     })}`}
-                                    className="inline-block"
-                                >
-                                    <Button variant="outline" className="flex items-center gap-2 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/30 dark:text-emerald-300 transition-all shadow-sm">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
+                                />
                                 <Link href={route('client.create')}>
                                     <Button className="flex items-center gap-2">
                                         <Plus className="h-4 w-4" />
@@ -369,42 +364,30 @@ export default function Clients() {
                                             <TableCell>{client.phone || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
                                             <TableCell>{client.currency || 'USD'}</TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-1">
-                                                    <Link href={route('client.projects', client.id)}>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="h-7 px-2 text-xs border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:border-indigo-700 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 dark:text-indigo-300 transition-all shadow-sm"
-                                                            title="View Projects"
-                                                        >
-                                                            <Folder className="h-3 w-3 mr-1" />
-                                                            <span className="hidden sm:inline">Projects</span>
-                                                        </Button>
-                                                    </Link>
-                                                    <Link href={route('client.invoices', client.id)}>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="h-7 px-2 text-xs border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-700 dark:border-violet-700 dark:bg-violet-900/20 dark:hover:bg-violet-900/30 dark:text-violet-300 transition-all shadow-sm"
-                                                            title="View Invoices"
-                                                        >
-                                                            <FileText className="h-3 w-3 mr-1" />
-                                                            <span className="hidden sm:inline">Invoices</span>
-                                                        </Button>
-                                                    </Link>
-                                                    <Link href={route('client.edit', client.id)}>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="h-7 w-7 p-0 border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 dark:border-amber-700 dark:bg-amber-900/20 dark:hover:bg-amber-900/30 dark:text-amber-300 transition-all shadow-sm"
-                                                            title="Edit Client"
-                                                        >
-                                                            <Edit className="h-3 w-3" />
-                                                            <span className="sr-only">Edit</span>
-                                                        </Button>
-                                                    </Link>
+                                                <ActionButtonGroup>
+                                                    <ActionButton
+                                                        href={route('client.projects', client.id)}
+                                                        title="View Projects"
+                                                        icon={Folder}
+                                                        label="Projects"
+                                                        variant="indigo"
+                                                    />
+                                                    <ActionButton
+                                                        href={route('client.invoices', client.id)}
+                                                        title="View Invoices"
+                                                        icon={FileText}
+                                                        label="Invoices"
+                                                        variant="violet"
+                                                    />
+                                                    <ActionButton
+                                                        href={route('client.edit', client.id)}
+                                                        title="Edit Client"
+                                                        icon={Edit}
+                                                        variant="amber"
+                                                        size="icon"
+                                                    />
                                                     <DeleteClient clientId={client.id} getClients={getClients} />
-                                                </div>
+                                                </ActionButtonGroup>
                                             </TableCell>
                                         </TableRow>
                                     ))}
