@@ -109,61 +109,117 @@ export default function ClientInvoices({ client, invoices }: Props) {
                     </div>
                 </section>
 
-                {/* Client Info Card */}
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Client Information</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Contact Person</h3>
-                                <p className="mt-1">{client.contact_person || 'Not specified'}</p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</h3>
-                                <p className="mt-1">{client.email || 'Not specified'}</p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Phone</h3>
-                                <p className="mt-1">{client.phone || 'Not specified'}</p>
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Address</h3>
-                                <p className="mt-1">{client.address || 'Not specified'}</p>
-                            </div>
-                            {client.notes && (
-                                <div className="col-span-2">
-                                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Notes</h3>
-                                    <p className="mt-1">{client.notes}</p>
+                {/* Info and Summary side by side */}
+                <div className="flex flex-col md:flex-row gap-2">
+                    {/* Client Info Card */}
+                    <Card className="flex-1 overflow-hidden transition-all hover:shadow-md" >
+                        <CardHeader className="py-2">
+                            <CardTitle className="text-lg flex items-center gap-2">
+                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                    <FileText className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                </span>
+                                Client Information
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="py-2">
+                            <div className="flex flex-wrap gap-4 items-center">
+                                <div className="flex items-center gap-2 min-w-[120px]">
+                                    <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs">👤</span>
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Contact Person</h3>
+                                        <p className="text-xs leading-tight">{client.contact_person || 'Not specified'}</p>
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
+                                <div className="flex items-center gap-2 min-w-[120px]">
+                                    <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs">✉️</span>
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Email</h3>
+                                        <p className="text-xs leading-tight">{client.email || 'Not specified'}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 min-w-[100px]">
+                                    <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs">📞</span>
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Phone</h3>
+                                        <p className="text-xs leading-tight">{client.phone || 'Not specified'}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 min-w-[120px]">
+                                    <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs">🏠</span>
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Address</h3>
+                                        <p className="text-xs leading-tight">{client.address || 'Not specified'}</p>
+                                    </div>
+                                </div>
+                                {client.notes && (
+                                    <div className="flex items-center gap-2 min-w-[180px]">
+                                        <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                            <span className="text-gray-500 dark:text-gray-400 text-xs">📝</span>
+                                        </span>
+                                        <div>
+                                            <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Notes</h3>
+                                            <p className="text-xs leading-tight">{client.notes}</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                {/* Summary Card */}
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Invoice Summary</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                            <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Invoiced</h3>
-                                <p className="mt-1 text-2xl font-semibold">{formatCurrency(totalInvoiced)}</p>
+                    {/* Summary Card */}
+                    <Card className="flex-1 overflow-hidden transition-all hover:shadow-md">
+                        <CardHeader className="py-2">
+                            <CardTitle className="text-lg flex items-center gap-2">
+                                <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                    <span className="text-gray-500 dark:text-gray-400 text-xs">💰</span>
+                                </span>
+                                Invoice Summary
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="py-2">
+                            <div className="flex flex-wrap gap-4 items-center">
+                                <div className="rounded-lg border bg-card p-3 text-card-foreground shadow-sm flex items-center gap-2 min-w-[160px]">
+                                    <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs">📄</span>
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Total Invoiced</h3>
+                                        <p className="text-lg font-bold leading-tight">{formatCurrency(totalInvoiced)}</p>
+                                    </div>
+                                </div>
+                                <div className="rounded-lg border bg-card p-3 text-card-foreground shadow-sm flex items-center gap-2 min-w-[160px]">
+                                    <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs">✅</span>
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Total Paid</h3>
+                                        <p className="text-lg font-bold leading-tight">{formatCurrency(totalPaid)}</p>
+                                    </div>
+                                </div>
+                                <div className="rounded-lg border bg-card p-3 text-card-foreground shadow-sm flex items-center gap-2 min-w-[160px]">
+                                    <span className="inline-flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 p-1.5">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs">⏳</span>
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Outstanding</h3>
+                                        <p className="text-lg font-bold leading-tight">{formatCurrency(totalOutstanding)}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Paid</h3>
-                                <p className="mt-1 text-2xl font-semibold text-green-600 dark:text-green-400">{formatCurrency(totalPaid)}</p>
-                            </div>
-                            <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Outstanding</h3>
-                                <p className="mt-1 text-2xl font-semibold text-red-600 dark:text-red-400">{formatCurrency(totalOutstanding)}</p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Divider */}
+                <div className="my-1 border-t border-gray-200 dark:border-gray-700" />
 
                 {/* Invoices Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
