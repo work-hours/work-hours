@@ -81,15 +81,15 @@ export function SidebarTrackerDisplay({
                         {collapsed ? (
                             <div className="relative flex flex-col items-center justify-center gap-1">
                                 <ClockIcon className="h-7 w-7 text-primary" />
-                                <span className="text-xs font-semibold text-primary">
-                                    {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
+                                <span className="text-3xl font-bold text-primary">
+                                    {formatElapsedTime(activeTimeLog.elapsed)}
                                 </span>
                             </div>
                         ) : (
                             <div className="relative flex flex-row items-center justify-start gap-2">
                                 <ClockIcon className="h-7 w-7 text-primary" />
-                                <span className="text-xs font-semibold text-primary">
-                                    {formatElapsedTime(activeTimeLog.elapsed).split(':').slice(0, 2).join(':')}
+                                <span className="text-3xl font-bold text-primary">
+                                    {formatElapsedTime(activeTimeLog.elapsed)}
                                 </span>
                             </div>
                         )}
