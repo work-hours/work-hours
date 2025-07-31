@@ -18,7 +18,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
-import { objectToQueryString, queryStringToObject } from '@/lib/utils'
+import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { invoices as _invoices } from '@actions/InvoiceController'
 import { Head, Link, router, usePage } from '@inertiajs/react'
@@ -283,7 +283,7 @@ export default function Invoices() {
     }
 
     // Handle sending the email
-    const handleSendEmail = async (): void => {
+    const handleSendEmail = async ()  => {
         if (!selectedInvoice) return
 
         setSendingEmail(true)
@@ -311,7 +311,7 @@ export default function Invoices() {
     }
 
     // Handle updating the invoice status
-    const handleStatusUpdate = async (): void => {
+    const handleStatusUpdate = async () => {
         if (!selectedInvoice) return
 
         setUpdatingStatus(true)
@@ -420,7 +420,7 @@ export default function Invoices() {
                                     Date From
                                 </Label>
                                 <DatePicker
-                                    selected={filters.created_date_from}
+                                    selected={parseDate(filters.created_date_from)}
                                     onChange={(date) => handleFilterChange('created_date_from', date)}
                                     dateFormat="yyyy-MM-dd"
                                     isClearable
@@ -440,7 +440,7 @@ export default function Invoices() {
                                     Date To
                                 </Label>
                                 <DatePicker
-                                    selected={filters.created_date_to}
+                                    selected={parseDate(filters.created_date_to)}
                                     onChange={(date) => handleFilterChange('created_date_to', date)}
                                     dateFormat="yyyy-MM-dd"
                                     isClearable

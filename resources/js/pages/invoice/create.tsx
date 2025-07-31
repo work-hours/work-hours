@@ -634,7 +634,7 @@ export default function CreateInvoice() {
                                                         disabled={processing}
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.amount`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.amount`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Button
