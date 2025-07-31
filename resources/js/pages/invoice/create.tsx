@@ -290,7 +290,7 @@ export default function CreateInvoice() {
 
                 updatedItems[index] = {
                     ...updatedItems[index],
-                    time_log_id: timeLogId,
+                    time_log_id: timeLogId ? timeLogId.toString() : null,
                     description: `Time logged for ${projectGroup.project_name}`,
                     quantity: timeLog.duration.toString(),
                     unit_price: projectGroup.hourly_rate.toString(),
