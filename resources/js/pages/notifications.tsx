@@ -5,12 +5,10 @@ import Loader from '@/components/ui/loader'
 import { Separator } from '@/components/ui/separator'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head } from '@inertiajs/react'
-import { useEffect, useState } from 'react'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { all, markAllAsRead, markAsRead } from '@actions/NotificationsController'
+import { Head } from '@inertiajs/react'
 import { AlertCircle, Bell, BellOff, CheckCircle, ChevronLeft, ChevronRight, Clock, Info, Mail } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 /**
