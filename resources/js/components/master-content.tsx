@@ -44,7 +44,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
         <div className="relative flex flex-1 flex-col bg-[#f8f6e9] dark:bg-gray-900">
             <Background showMarginLine={false} showPunches={false} />
             {/* Enhanced header with improved styling */}
-            <div className="relative z-10 border-b border-gray-300 bg-white p-4 shadow-md dark:border-gray-700 dark:bg-gray-800">
+            <div className="relative z-10 border-b border-gray-300 bg-white p-2 shadow-md dark:border-gray-700 dark:bg-gray-800">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center">
                         <div className="relative flex items-center">
