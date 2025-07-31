@@ -45,8 +45,8 @@ export default function Navbar() {
                 <Link href="/" className="flex items-center gap-3">
                     <AppLogoIcon className="h-20 w-20 text-gray-700 dark:text-gray-300" />
                     <div>
-                        <span className="text-xl font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200 -ml-6">Work Hours</span>
-                        <div className="mt-1 h-1 w-full bg-gray-300 dark:bg-gray-600 -ml-6"></div>
+                        <span className="-ml-6 text-xl font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">Work Hours</span>
+                        <div className="mt-1 -ml-6 h-1 w-full bg-gray-300 dark:bg-gray-600"></div>
                     </div>
                 </Link>
 

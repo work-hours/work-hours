@@ -120,20 +120,15 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
         <div
             className={`sticky top-0 flex h-screen flex-col border-r border-gray-300 bg-[#f8f6e9] shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-68'}`}
         >
-            <Background />
+            <Background showMarginLine={false} />
 
             {/* Header with improved styling */}
             <div
-                className={`relative z-20 p-4 pt-6 pb-6 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : 'ml-8'}`}
+                className={`relative z-20 p-4 pt-2 pb-2 transition-all duration-300 ease-in-out ${collapsed ? 'flex flex-col items-center' : 'ml-8'}`}
             >
                 <div className={`flex w-full items-center ${collapsed ? 'flex-col' : ''}`}>
-                    <Link
-                        href="/dashboard"
-                        className={`rounded-none border-2 border-gray-700 bg-white/50 transition-all duration-300 ease-in-out hover:bg-white hover:shadow-sm dark:border-gray-400 dark:bg-gray-800/50 dark:hover:bg-gray-700 ${
-                            collapsed ? 'mb-2 flex items-center justify-center p-1' : 'flex items-center p-2'
-                        }`}
-                    >
-                        {collapsed ? <AppLogoIcon className="h-8 w-8 text-gray-700 dark:text-gray-300" /> : <AppLogo />}
+                    <Link href={route('dashboard')} className={`${collapsed ? 'mb-2 flex items-center justify-center p-1' : 'flex items-center'}`}>
+                        {collapsed ? <AppLogoIcon className="h-12 w-24 text-gray-700 dark:text-gray-300" /> : <AppLogo />}
                     </Link>
                 </div>
             </div>

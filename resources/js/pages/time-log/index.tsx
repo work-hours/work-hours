@@ -1,3 +1,4 @@
+import { ExportButton } from '@/components/action-buttons'
 import StatsCards from '@/components/dashboard/StatsCards'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -20,7 +21,6 @@ import {
     CalendarRange,
     CheckCircle,
     ClockIcon,
-    Download,
     FileSpreadsheet,
     PlusCircle,
     Search,
@@ -28,7 +28,6 @@ import {
     Upload,
 } from 'lucide-react'
 import { ChangeEvent, FormEventHandler, forwardRef, ReactNode, useRef, useState } from 'react'
-import { ExportButton } from '@/components/action-buttons'
 
 interface CustomInputProps {
     value?: string
@@ -477,10 +476,7 @@ export default function TimeLog({
                                 </CardDescription>
                             </div>
                             <div className="flex gap-2">
-                                <ExportButton
-                                    href={route('time-log.export') + window.location.search}
-                                    label="Export"
-                                />
+                                <ExportButton href={route('time-log.export') + window.location.search} label="Export" />
                                 <a href={route('time-log.template')} className="inline-block">
                                     <Button variant="outline" className="flex items-center gap-2">
                                         <FileSpreadsheet className="h-3 w-3" />

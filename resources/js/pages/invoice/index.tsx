@@ -20,13 +20,13 @@ import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { invoices as _invoices } from '@actions/InvoiceController'
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import { Calendar, CalendarRange, Download, Edit, FileText, Loader2, Mail, Plus, Search, X } from 'lucide-react'
 import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 
 interface CustomInputProps {
     value?: string
@@ -636,9 +636,7 @@ export default function Invoices() {
                                                         title={invoice.status === 'sent' ? 'Invoice already sent' : 'Send invoice email to client'}
                                                         disabled={invoice.status === 'sent' || invoice.status === 'paid'}
                                                     >
-                                                        <Mail
-                                                            className={`h-3 w-3 ${invoice.status === 'sent' ? 'text-muted-foreground/50' : ''}`}
-                                                        />
+                                                        <Mail className={`h-3 w-3 ${invoice.status === 'sent' ? 'text-muted-foreground/50' : ''}`} />
                                                         <span className="sr-only">Send Email</span>
                                                     </Button>
                                                 </div>

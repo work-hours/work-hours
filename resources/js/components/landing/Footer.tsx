@@ -8,11 +8,9 @@ export default function Footer() {
             <div className="container mx-auto px-6 lg:px-8">
                 <div className="grid gap-8 md:grid-cols-3">
                     <div className="flex flex-col">
-                        <div className="mb-4 flex items-center gap-2">
-                            <div className="flex h-10 w-10 items-center justify-center border border-gray-500/60 bg-[#f8f6e9]/90 dark:border-gray-600/60 dark:bg-gray-800/90">
-                                <AppLogoIcon className="h-6 w-6 text-gray-700 dark:text-gray-300" />
-                            </div>
-                            <span className="text-lg font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">WorkHours</span>
+                        <div className="mb-2 flex items-center gap-2">
+                            <AppLogoIcon className="h-20 w-20 text-gray-700 dark:text-gray-300" />
+                            <span className="-ml-6 text-lg font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">Work Hours</span>
                         </div>
                         <p className="mb-4 text-sm text-gray-700 dark:text-gray-300">
                             Simplifying time tracking for teams and individuals since 2025.

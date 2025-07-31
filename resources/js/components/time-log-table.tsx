@@ -1,12 +1,11 @@
+import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 import DeleteTimeLog from '@/components/delete-time-log'
 import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { formatTimeEntry } from '@/lib/utils'
-import { Link } from '@inertiajs/react'
-import { Edit, Eye, Glasses, Trash2 } from 'lucide-react'
+import { Edit, Glasses, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 
 export type TimeLogEntry = {
     id: number
@@ -195,13 +194,13 @@ export default function TimeLogTable({
                                                 <>
                                                     {/* Edit Button */}
                                                     {!log.is_paid ? (
-                                                            <ActionButton
-                                                                href={route('time-log.edit', log.id)}
-                                                                title="Edit Log"
-                                                                icon={Edit}
-                                                                variant="amber"
-                                                                size="icon"
-                                                            />
+                                                        <ActionButton
+                                                            href={route('time-log.edit', log.id)}
+                                                            title="Edit Log"
+                                                            icon={Edit}
+                                                            variant="amber"
+                                                            size="icon"
+                                                        />
                                                     ) : (
                                                         <Button
                                                             variant="outline"

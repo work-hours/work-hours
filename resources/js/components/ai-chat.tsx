@@ -6,8 +6,8 @@ import ReactMarkdown from 'react-markdown'
 // @ts-expect-error: No type definitions for react-syntax-highlighter
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 // @ts-expect-error: No type definitions for atomDark style
-import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { getChatHistory, sendMessage } from '@actions/AiChatController'
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import '../../css/markdown.css'
 
 type Message = {
@@ -198,7 +198,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
 
     return (
         <div
-            className="flex h-full flex-col max-w-2xl w-full mx-auto shadow-2xl border border-border bg-gradient-to-br from-background via-white to-slate-100/80"
+            className="mx-auto flex h-full w-full max-w-2xl flex-col border border-border bg-gradient-to-br from-background via-white to-slate-100/80 shadow-2xl"
             role="region"
             aria-label="AI chat window"
             tabIndex={0}
@@ -210,8 +210,8 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                         <BrainCircuit className="h-7 w-7 text-primary" />
                     </div>
                     <div>
-                        <span className="text-xl font-extrabold text-foreground tracking-tight">AI Assistant</span>
-                        <p className="text-xs text-muted-foreground font-medium">Powered by Google Gemini</p>
+                        <span className="text-xl font-extrabold tracking-tight text-foreground">AI Assistant</span>
+                        <p className="text-xs font-medium text-muted-foreground">Powered by Google Gemini</p>
                     </div>
                 </div>
                 {onClose && (
@@ -227,22 +227,22 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                 )}
             </div>
             <div className="flex flex-grow flex-col overflow-hidden">
-                <ScrollArea className="flex-grow bg-transparent p-6 max-h-[60vh] sm:max-h-[80vh] overflow-y-auto">
+                <ScrollArea className="max-h-[60vh] flex-grow overflow-y-auto bg-transparent p-6 sm:max-h-[80vh]">
                     <div className="flex flex-col gap-6">
                         {messages.map((message) => (
                             <div key={message.id} className={`flex items-end ${message.isUser ? 'justify-end' : 'justify-start'}`}>
                                 {/* Avatar */}
                                 {!message.isUser && (
-                                    <div className="mr-3 flex h-9 w-9 items-center justify-center bg-gradient-to-br from-primary/20 to-primary/40 shadow rounded-full">
+                                    <div className="mr-3 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/40 shadow">
                                         <BrainCircuit className="h-5 w-5 text-primary" />
                                     </div>
                                 )}
-                                <div className="flex flex-col max-w-[80%]">
+                                <div className="flex max-w-[80%] flex-col">
                                     <div
                                         className={`rounded-2xl px-5 py-3 shadow-md transition-all duration-200 ${
                                             message.isUser
-                                                ? 'bg-gradient-to-br from-primary to-primary/80 text-primary-foreground ml-auto rounded-2xl'
-                                                : 'bg-white border border-border text-card-foreground rounded-2xl'
+                                                ? 'ml-auto rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground'
+                                                : 'rounded-2xl border border-border bg-white text-card-foreground'
                                         }`}
                                     >
                                         {message.isUser ? (
@@ -271,28 +271,28 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                                         )}
                                     </div>
                                     {/* Timestamp */}
-                                    <div className="mt-1 text-xs text-muted-foreground text-right pr-2">
+                                    <div className="mt-1 pr-2 text-right text-xs text-muted-foreground">
                                         {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </div>
                                 </div>
                                 {/* User Avatar */}
                                 {message.isUser && (
-                                    <div className="ml-3 flex h-9 w-9 items-center justify-center bg-gradient-to-br from-primary to-primary/80 text-primary-foreground font-bold shadow rounded-full">
+                                    <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 font-bold text-primary-foreground shadow">
                                         <span className="text-lg">U</span>
                                     </div>
                                 )}
                             </div>
                         ))}
                         {isLoading && (
-                            <div className="flex items-center gap-2 mt-2 animate-pulse">
-                                <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '0ms' }} />
-                                <div className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: '100ms' }} />
-                                <div className="h-2 w-2 rounded-full bg-muted-foreground/20 animate-bounce" style={{ animationDelay: '200ms' }} />
-                                <span className="text-xs text-muted-foreground ml-2">AI is typing…</span>
+                            <div className="mt-2 flex animate-pulse items-center gap-2">
+                                <div className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60" style={{ animationDelay: '0ms' }} />
+                                <div className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/40" style={{ animationDelay: '100ms' }} />
+                                <div className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/20" style={{ animationDelay: '200ms' }} />
+                                <span className="ml-2 text-xs text-muted-foreground">AI is typing…</span>
                             </div>
                         )}
                         {error && (
-                            <div className="flex items-center gap-2 mt-2 text-xs text-destructive">
+                            <div className="mt-2 flex items-center gap-2 text-xs text-destructive">
                                 <span>{error}</span>
                                 <Button variant="outline" onClick={handleSendMessage} disabled={isLoading} className="h-7 px-2 py-1 text-xs">
                                     Retry
@@ -314,7 +314,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                             }
                         }}
                         rows={1}
-                        className="flex-grow resize-none border border-border bg-white px-4 py-3 text-base placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all duration-200 shadow-sm"
+                        className="flex-grow resize-none border border-border bg-white px-4 py-3 text-base shadow-sm transition-all duration-200 placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/30"
                         placeholder="Type your message here..."
                         aria-label="Type your message"
                     />
@@ -322,7 +322,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                         onClick={handleSendMessage}
                         size="icon"
                         disabled={!inputValue.trim() || isLoading}
-                        className="h-12 w-12 bg-gradient-to-br from-primary to-primary/80 transition-all duration-200 hover:from-primary/90 hover:to-primary/90 flex items-center justify-center shadow-lg"
+                        className="flex h-12 w-12 items-center justify-center bg-gradient-to-br from-primary to-primary/80 shadow-lg transition-all duration-200 hover:from-primary/90 hover:to-primary/90"
                         aria-label="Send message"
                     >
                         {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}

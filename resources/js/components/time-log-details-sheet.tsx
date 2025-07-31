@@ -1,5 +1,5 @@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { formatDateTime, formatTimeEntry } from '@/lib/utils'
+import { formatTimeEntry } from '@/lib/utils'
 import { Info } from 'lucide-react'
 import { TimeLogEntry } from './time-log-table'
 
