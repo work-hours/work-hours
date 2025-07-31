@@ -1,3 +1,4 @@
+import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import DeleteTask from '@/components/delete-task'
 import TaskDetailsSheet from '@/components/task-details-sheet'
 import { Badge } from '@/components/ui/badge'
@@ -13,9 +14,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import MasterLayout from '@/layouts/master-layout'
 import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem, type SharedData } from '@/types'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
