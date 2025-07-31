@@ -587,7 +587,7 @@ export default function CreateInvoice() {
                                                             ))}
                                                         </SelectContent>
                                                     </Select>
-                                                    <InputError message={errors[`items.${index}.time_log_id`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.time_log_id`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
@@ -598,7 +598,7 @@ export default function CreateInvoice() {
                                                         placeholder="Item description"
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.description`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.description`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
@@ -610,7 +610,7 @@ export default function CreateInvoice() {
                                                         disabled={processing}
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.quantity`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.quantity`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
@@ -622,7 +622,7 @@ export default function CreateInvoice() {
                                                         disabled={processing}
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.unit_price`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.unit_price`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
