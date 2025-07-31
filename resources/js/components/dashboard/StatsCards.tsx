@@ -119,7 +119,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
             <div className="mb-6 border-b-2 border-gray-400 pb-4 dark:border-gray-600">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-lg font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">EMPLOYEE TIMESHEET SUMMARY</h2>
+                        <h2 className="text-lg font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">TIMESHEET SUMMARY</h2>
                         <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">FORM TS-001 | REV. 07/2025</div>
                     </div>
                     <div className="text-right">
