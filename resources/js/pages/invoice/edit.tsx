@@ -28,7 +28,7 @@ type InvoiceForm = {
     notes: string
     discount_type: string | null
     discount_value: string
-    currency: string
+    currency: string | null
     items: InvoiceItemForm[]
 }
 
@@ -139,7 +139,7 @@ export default function EditInvoice({ invoice }: Props) {
         notes: invoice.notes || '',
         discount_type: invoice.discount_type,
         discount_value: invoice.discount_value ? invoice.discount_value.toString() : '0',
-        currency: invoice.currency || auth.user.currency || 'USD', // Use invoice currency, user currency, or USD as fallback
+        currency: invoice.currency,
         items: formatInvoiceItems(invoice.items),
     })
 
@@ -179,7 +179,7 @@ export default function EditInvoice({ invoice }: Props) {
                     if (clientCurrency) {
                         setData('currency', clientCurrency)
                     } else if (auth.user.currency) {
-                        setData('currency', auth.user.currency)
+                        setData('currency', auth.user.currency ? auth.user.currency.toString() : 'USD')
                     } else {
                         setData('currency', 'USD')
                     }
@@ -336,22 +336,8 @@ export default function EditInvoice({ invoice }: Props) {
         }
     }
 
-    // Format date for form submission
-    const formatDate = (date: Date | null): string => {
-        if (!date) return ''
-        return date.toISOString().split('T')[0]
-    }
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-
-        // Format dates for submission
-        const formData = {
-            ...data,
-            issue_date: formatDate(data.issue_date),
-            due_date: formatDate(data.due_date),
-        }
-
         put(route('invoice.update', invoice.id), {
             onSuccess: () => {
                 toast.success('Invoice updated successfully')
@@ -359,7 +345,6 @@ export default function EditInvoice({ invoice }: Props) {
             onError: () => {
                 toast.error('Failed to update invoice')
             },
-            data: formData,
         })
     }
 
@@ -367,7 +352,7 @@ export default function EditInvoice({ invoice }: Props) {
     const formatCurrency = (amount: number): string => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: data.currency,
+            currency: data.currency || 'USD',
             currencyDisplay: 'code',
         }).format(amount)
     }
@@ -596,7 +581,7 @@ export default function EditInvoice({ invoice }: Props) {
                                             <TableHead>Quantity</TableHead>
                                             <TableHead>Unit Price</TableHead>
                                             <TableHead>Amount</TableHead>
-                                            <TableHead className="w-[50px]"></TableHead>
+                                            <TableHead className="w-[50px]">#</TableHead>
                                         </TableHeaderRow>
                                     </TableHeader>
                                     <TableBody>
@@ -662,7 +647,7 @@ export default function EditInvoice({ invoice }: Props) {
                                                             ))}
                                                         </SelectContent>
                                                     </Select>
-                                                    <InputError message={errors[`items.${index}.time_log_id`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.time_log_id`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
@@ -673,7 +658,7 @@ export default function EditInvoice({ invoice }: Props) {
                                                         placeholder="Item description"
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.description`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.description`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
@@ -685,7 +670,7 @@ export default function EditInvoice({ invoice }: Props) {
                                                         disabled={processing}
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.quantity`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.quantity`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
@@ -697,7 +682,7 @@ export default function EditInvoice({ invoice }: Props) {
                                                         disabled={processing}
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.unit_price`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.unit_price`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
@@ -709,7 +694,7 @@ export default function EditInvoice({ invoice }: Props) {
                                                         disabled={processing}
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.amount`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.amount`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Button

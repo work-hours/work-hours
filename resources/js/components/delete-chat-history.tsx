@@ -4,8 +4,6 @@ import { Button } from '@/components/ui/button'
 import { Trash2 } from 'lucide-react'
 
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { deleteChatHistory } from '@actions/AiChatController'
 
 interface DeleteChatHistoryProps {

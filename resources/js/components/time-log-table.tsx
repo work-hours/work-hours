@@ -25,6 +25,11 @@ export type TimeLogEntry = {
     approver_name?: string
     comment?: string
     user_non_monetary: boolean
+    task_title?: string
+    task_status?: string
+    task_priority?: string
+    task_due_date?: string | null
+    task_description?: string | null
 }
 
 type TimeLogTableProps = {

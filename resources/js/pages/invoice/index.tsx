@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,48 +19,13 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
-import { objectToQueryString, queryStringToObject } from '@/lib/utils'
+import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { invoices as _invoices } from '@actions/InvoiceController'
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import { Calendar, CalendarRange, Download, Edit, FileText, Loader2, Mail, Plus, Search, X } from 'lucide-react'
-import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-
-interface CustomInputProps {
-    value?: string
-    onClick?: () => void
-    onChange?: (e: ChangeEvent<HTMLInputElement>) => void
-    icon: ReactNode
-    placeholder?: string
-    disabled?: boolean
-    required?: boolean
-    autoFocus?: boolean
-    tabIndex?: number
-    id: string
-}
-
-const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
-        <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
-            <Input
-                id={id}
-                ref={ref}
-                value={value}
-                onClick={onClick}
-                onChange={onChange}
-                placeholder={placeholder}
-                disabled={disabled}
-                required={required}
-                autoFocus={autoFocus}
-                tabIndex={tabIndex}
-                className="pl-10"
-                readOnly={!onChange}
-            />
-        </div>
-    ),
-)
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -283,7 +249,7 @@ export default function Invoices() {
     }
 
     // Handle sending the email
-    const handleSendEmail = async (): void => {
+    const handleSendEmail = async () => {
         if (!selectedInvoice) return
 
         setSendingEmail(true)
@@ -311,7 +277,7 @@ export default function Invoices() {
     }
 
     // Handle updating the invoice status
-    const handleStatusUpdate = async (): void => {
+    const handleStatusUpdate = async () => {
         if (!selectedInvoice) return
 
         setUpdatingStatus(true)
@@ -420,7 +386,7 @@ export default function Invoices() {
                                     Date From
                                 </Label>
                                 <DatePicker
-                                    selected={filters.created_date_from}
+                                    selected={parseDate(filters.created_date_from)}
                                     onChange={(date) => handleFilterChange('created_date_from', date)}
                                     dateFormat="yyyy-MM-dd"
                                     isClearable
@@ -440,7 +406,7 @@ export default function Invoices() {
                                     Date To
                                 </Label>
                                 <DatePicker
-                                    selected={filters.created_date_to}
+                                    selected={parseDate(filters.created_date_to)}
                                     onChange={(date) => handleFilterChange('created_date_to', date)}
                                     dateFormat="yyyy-MM-dd"
                                     isClearable

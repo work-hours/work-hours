@@ -1,8 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Loader from '@/components/ui/loader'
 import { roundToTwoDecimals } from '@/lib/utils'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { recentLogs as _recentLogs } from '@actions/DashboardController'
 import { Link } from '@inertiajs/react'
 import { ClockIcon } from 'lucide-react'

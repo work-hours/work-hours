@@ -2,53 +2,19 @@ import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/acti
 import DeleteProject from '@/components/delete-project'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
-import { objectToQueryString, queryStringToObject } from '@/lib/utils'
+import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, Loader2, Search, User, X } from 'lucide-react'
-import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
-
-interface CustomInputProps {
-    value?: string
-    onClick?: () => void
-    onChange?: (e: ChangeEvent<HTMLInputElement>) => void
-    icon: ReactNode
-    placeholder?: string
-    disabled?: boolean
-    required?: boolean
-    autoFocus?: boolean
-    tabIndex?: number
-    id: string
-}
-
-const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
-        <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
-            <Input
-                id={id}
-                ref={ref}
-                value={value}
-                onClick={onClick}
-                onChange={onChange}
-                placeholder={placeholder}
-                disabled={disabled}
-                required={required}
-                autoFocus={autoFocus}
-                tabIndex={tabIndex}
-                className="pl-10"
-                readOnly={!onChange}
-            />
-        </div>
-    ),
-)
+import { useEffect, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -281,7 +247,7 @@ export default function Projects() {
                                     Created Date From
                                 </Label>
                                 <DatePicker
-                                    selected={filters.created_date_from}
+                                    selected={parseDate(filters.created_date_from)}
                                     onChange={(date) => handleFilterChange('created_date_from', date)}
                                     dateFormat="yyyy-MM-dd"
                                     isClearable
@@ -303,7 +269,7 @@ export default function Projects() {
                                     Created Date To
                                 </Label>
                                 <DatePicker
-                                    selected={filters.created_date_to}
+                                    selected={parseDate(filters.created_date_to)}
                                     onChange={(date) => handleFilterChange('created_date_to', date)}
                                     dateFormat="yyyy-MM-dd"
                                     isClearable

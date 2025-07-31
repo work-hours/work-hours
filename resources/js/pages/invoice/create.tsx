@@ -15,11 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import { Textarea } from '@/components/ui/textarea'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { clients as _clients } from '@actions/ClientController'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { getUnpaidTimeLogs } from '@actions/InvoiceController'
 
 type InvoiceForm = {
@@ -85,16 +81,20 @@ export default function CreateInvoice() {
     const [timeLogs, setTimeLogs] = useState<ProjectTimeLogGroup[]>([])
     const [loadingClients, setLoadingClients] = useState(true)
 
+    const generateInvoiceNumber = (): string => {
+        return `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`
+    }
+
     const { data, setData, post, processing, errors, reset } = useForm<InvoiceForm>({
         client_id: '',
-        invoice_number: `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
+        invoice_number: generateInvoiceNumber(),
         issue_date: new Date(),
-        due_date: new Date(new Date().setDate(new Date().getDate() + 30)), // Default due date: 30 days from now
+        due_date: new Date(new Date().setDate(new Date().getDate() + 30)),
         status: 'draft',
         notes: '',
         discount_type: null,
         discount_value: '0',
-        currency: auth.user.currency || 'USD', // Default to user currency or USD
+        currency: auth.user.currency ? auth.user.currency.toString() : 'USD',
         items: [
             {
                 time_log_id: null,
@@ -144,7 +144,7 @@ export default function CreateInvoice() {
                     if (clientCurrency) {
                         setData('currency', clientCurrency)
                     } else if (auth.user.currency) {
-                        setData('currency', auth.user.currency)
+                        setData('currency', auth.user.currency ? auth.user.currency.toString() : 'USD')
                     } else {
                         setData('currency', 'USD')
                     }
@@ -222,13 +222,13 @@ export default function CreateInvoice() {
 
         updatedItems[index] = {
             ...updatedItems[index],
-            [field]: value,
+            [field]: value.toString(), // Convert value to string to match InvoiceItemForm type
         }
 
         // Calculate the amount if quantity or unit_price changes
         if (field === 'quantity' || field === 'unit_price') {
-            const quantity = parseFloat(field === 'quantity' ? value : updatedItems[index].quantity || '0')
-            const unitPrice = parseFloat(field === 'unit_price' ? value : updatedItems[index].unit_price || '0')
+            const quantity = parseFloat(field === 'quantity' ? value.toString() : updatedItems[index].quantity || '0')
+            const unitPrice = parseFloat(field === 'unit_price' ? value.toString() : updatedItems[index].unit_price || '0')
             updatedItems[index].amount = (quantity * unitPrice).toFixed(2)
         }
 
@@ -236,10 +236,13 @@ export default function CreateInvoice() {
     }
 
     // Handle time log selection
-    const handleTimeLogSelection = (index: number, value: string): void => {
+    const handleTimeLogSelection = (index: number, value: string | object): void => {
         const updatedItems = [...data.items]
 
-        if (value === 'none') {
+        // Check if value is an empty object and convert it to 'none'
+        const stringValue = typeof value === 'object' && Object.keys(value).length === 0 ? 'none' : (value as string)
+
+        if (stringValue === 'none') {
             // Update all fields at once for 'none' selection
             updatedItems[index] = {
                 ...updatedItems[index],
@@ -255,8 +258,8 @@ export default function CreateInvoice() {
         }
 
         // Check if it's a project selection (format: "project-{projectId}")
-        if (value.startsWith('project-')) {
-            const projectId = parseInt(value.replace('project-', ''))
+        if (stringValue.startsWith('project-')) {
+            const projectId = parseInt(stringValue.replace('project-', ''))
             const projectGroup = timeLogs.find((group) => group.project_id === projectId)
 
             if (projectGroup) {
@@ -289,7 +292,7 @@ export default function CreateInvoice() {
 
                 updatedItems[index] = {
                     ...updatedItems[index],
-                    time_log_id: timeLogId,
+                    time_log_id: timeLogId ? timeLogId.toString() : null,
                     description: `Time logged for ${projectGroup.project_name}`,
                     quantity: timeLog.duration.toString(),
                     unit_price: projectGroup.hourly_rate.toString(),
@@ -302,22 +305,8 @@ export default function CreateInvoice() {
         }
     }
 
-    // Format date for form submission
-    const formatDate = (date: Date | null): string => {
-        if (!date) return ''
-        return date.toISOString().split('T')[0]
-    }
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-
-        // Format dates for submission
-        const formData = {
-            ...data,
-            issue_date: formatDate(data.issue_date),
-            due_date: formatDate(data.due_date),
-        }
-
         post(route('invoice.store'), {
             onSuccess: () => {
                 toast.success('Invoice created successfully')
@@ -326,7 +315,6 @@ export default function CreateInvoice() {
             onError: () => {
                 toast.error('Failed to create invoice')
             },
-            data: formData,
         })
     }
 
@@ -591,7 +579,7 @@ export default function CreateInvoice() {
                                                             ))}
                                                         </SelectContent>
                                                     </Select>
-                                                    <InputError message={errors[`items.${index}.time_log_id`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.time_log_id`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
@@ -602,7 +590,7 @@ export default function CreateInvoice() {
                                                         placeholder="Item description"
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.description`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.description`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
@@ -614,7 +602,7 @@ export default function CreateInvoice() {
                                                         disabled={processing}
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.quantity`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.quantity`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
@@ -626,7 +614,7 @@ export default function CreateInvoice() {
                                                         disabled={processing}
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.unit_price`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.unit_price`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Input
@@ -638,7 +626,7 @@ export default function CreateInvoice() {
                                                         disabled={processing}
                                                         required
                                                     />
-                                                    <InputError message={errors[`items.${index}.amount`]} className="mt-1" />
+                                                    <InputError message={(errors as never)[`items.${index}.amount`]} className="mt-1" />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Button
