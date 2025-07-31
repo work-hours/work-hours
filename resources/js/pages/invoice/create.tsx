@@ -81,16 +81,20 @@ export default function CreateInvoice() {
     const [timeLogs, setTimeLogs] = useState<ProjectTimeLogGroup[]>([])
     const [loadingClients, setLoadingClients] = useState(true)
 
+    const generateInvoiceNumber = (): string => {
+        return `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`
+    }
+
     const { data, setData, post, processing, errors, reset } = useForm<InvoiceForm>({
         client_id: '',
-        invoice_number: `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
+        invoice_number: generateInvoiceNumber(),
         issue_date: new Date(),
-        due_date: new Date(new Date().setDate(new Date().getDate() + 30)), // Default due date: 30 days from now
+        due_date: new Date(new Date().setDate(new Date().getDate() + 30)),
         status: 'draft',
         notes: '',
         discount_type: null,
         discount_value: '0',
-        currency: auth.user.currency || 'USD', // Default to user currency or USD
+        currency: auth.user.currency ? auth.user.currency.toString() : 'USD',
         items: [
             {
                 time_log_id: null,
@@ -140,7 +144,7 @@ export default function CreateInvoice() {
                     if (clientCurrency) {
                         setData('currency', clientCurrency)
                     } else if (auth.user.currency) {
-                        setData('currency', auth.user.currency)
+                        setData('currency', auth.user.currency ? auth.user.currency.toString() : 'USD')
                     } else {
                         setData('currency', 'USD')
                     }

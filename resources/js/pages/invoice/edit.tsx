@@ -139,7 +139,7 @@ export default function EditInvoice({ invoice }: Props) {
         notes: invoice.notes || '',
         discount_type: invoice.discount_type,
         discount_value: invoice.discount_value ? invoice.discount_value.toString() : '0',
-        currency: invoice.currency || auth.user.currency || 'USD', // Use invoice currency, user currency, or USD as fallback
+        currency: invoice.currency || auth.user.currency || 'USD',
         items: formatInvoiceItems(invoice.items),
     })
 
