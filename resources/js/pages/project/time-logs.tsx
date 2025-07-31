@@ -41,6 +41,7 @@ type TimeLog = {
     hourly_rate?: number
     paid_amount?: number
     currency?: string
+    user_non_monetary: boolean
 }
 
 type Filters = {
