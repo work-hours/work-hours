@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 
 export default function Navbar() {
     const page = usePage()
-    const { auth } = page.props as SharedData
+    const { auth } = page.props as unknown as SharedData
     const currentPath = page.url
     const isFeaturePage = currentPath.startsWith('/features/')
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -40,15 +40,13 @@ export default function Navbar() {
 
     return (
         <nav className="fixed top-0 right-0 left-0 z-50 bg-[#f8f6e9] shadow-md dark:bg-gray-900">
-            <div className="container mx-auto flex items-center justify-between px-6 py-6 lg:px-8">
+            <div className="container mx-auto flex items-center justify-between px-6 lg:px-8">
                 {/* Logo with timesheet-style container */}
                 <Link href="/" className="flex items-center gap-3">
-                    <div className="flex h-14 w-14 items-center justify-center border-2 border-gray-700 bg-white dark:border-gray-400 dark:bg-gray-800">
-                        <AppLogoIcon className="h-8 w-8 text-gray-700 dark:text-gray-300" />
-                    </div>
+                    <AppLogoIcon className="h-20 w-20 text-gray-700 dark:text-gray-300" />
                     <div>
-                        <span className="text-xl font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">Work Hours</span>
-                        <div className="mt-1 h-1 w-full bg-gray-300 dark:bg-gray-600"></div>
+                        <span className="text-xl font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200 -ml-6">Work Hours</span>
+                        <div className="mt-1 h-1 w-full bg-gray-300 dark:bg-gray-600 -ml-6"></div>
                     </div>
                 </Link>
 
