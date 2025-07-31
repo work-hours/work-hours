@@ -4,6 +4,7 @@ import TaskDetailsSheet from '@/components/task-details-sheet'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
@@ -36,7 +37,6 @@ import {
 import { JSX, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Task, TaskFilters } from './types'
-import CustomInput from '@/components/ui/custom-input'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -183,8 +183,8 @@ export default function Tasks() {
     }
 
     const getStatusBadge = (task: Task, status: Task['status']): JSX.Element => {
-        const displayStatus = status ? status.toString() : '';
-        
+        const displayStatus = status ? status.toString() : ''
+
         switch (status) {
             case 'completed':
                 return (

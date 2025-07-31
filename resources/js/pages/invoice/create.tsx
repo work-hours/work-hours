@@ -240,9 +240,7 @@ export default function CreateInvoice() {
         const updatedItems = [...data.items]
 
         // Check if value is an empty object and convert it to 'none'
-        const stringValue = typeof value === 'object' && Object.keys(value).length === 0
-            ? 'none'
-            : value as string;
+        const stringValue = typeof value === 'object' && Object.keys(value).length === 0 ? 'none' : (value as string)
 
         if (stringValue === 'none') {
             // Update all fields at once for 'none' selection

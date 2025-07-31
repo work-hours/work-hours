@@ -283,7 +283,7 @@ export default function Invoices() {
     }
 
     // Handle sending the email
-    const handleSendEmail = async ()  => {
+    const handleSendEmail = async () => {
         if (!selectedInvoice) return
 
         setSendingEmail(true)
