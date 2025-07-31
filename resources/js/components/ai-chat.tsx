@@ -250,10 +250,14 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                                                 <ReactMarkdown
                                                     components={{
                                                         code({ className, children, ...props }) {
-                                                            const match = /language-(\\w+)/.exec(className || '')
+                                                            const match = /language-(\w+)/.exec(className || '')
                                                             return match ? (
-                                                                <SyntaxHighlighter style={atomDark} language={match[1]} PreTag="div" {...props}>
-                                                                    {String(children).replace(/\\n$/, '')}
+                                                                <SyntaxHighlighter
+                                                                    style={atomDark as never}
+                                                                    language={match[1]}
+                                                                    PreTag="div"
+                                                                >
+                                                                    {String(children).replace(/\n$/, '')}
                                                                 </SyntaxHighlighter>
                                                             ) : (
                                                                 <code className={className} {...props}>
