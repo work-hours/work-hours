@@ -70,7 +70,7 @@ export function queryStringToObject(): Record<string, string> {
 }
 
 export function parseDate(dateValue: Date | string | null): Date | null {
-    if (dateValue === null) return null;
+    if (dateValue === null || dateValue === '') return null;
     if (typeof dateValue === 'string') return new Date(dateValue);
     return dateValue;
 }

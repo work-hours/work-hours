@@ -211,7 +211,6 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                             placeholder="Select a project"
                                             disabled={processing}
                                             icon={<ClipboardList className="h-4 w-4 text-muted-foreground" />}
-                                            required
                                         />
                                         <InputError message={errors.project_id} />
                                     </div>

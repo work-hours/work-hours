@@ -3,8 +3,6 @@ import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus, Text } from 'lucide-react'
 import { FormEventHandler, forwardRef, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 
 import InputError from '@/components/input-error'
@@ -196,7 +194,6 @@ export default function CreateTask({ projects }: Props) {
                                             placeholder="Select a project"
                                             disabled={processing}
                                             icon={<ClipboardList className="h-4 w-4 text-muted-foreground" />}
-                                            required
                                         />
                                         <InputError message={errors.project_id} />
                                     </div>
