@@ -9,8 +9,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import MasterLayout from '@/layouts/master-layout'
 import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { clients as _clients } from '@actions/ClientController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'

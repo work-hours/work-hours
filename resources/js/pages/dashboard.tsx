@@ -8,8 +8,6 @@ import Loader from '@/components/ui/loader'
 import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
 import { BarChart2, Clock } from 'lucide-react'
