@@ -70,8 +70,8 @@ type Client = {
 
 type ClientFilters = {
     search: string
-    created_date_from: string | Date | null
-    created_date_to: string | Date | null
+    created_date_from: Date | string | null
+    created_date_to: Date | string | null
 }
 
 type Props = {
@@ -85,6 +85,13 @@ export default function Clients() {
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
     const [processing, setProcessing] = useState(false)
+
+    // Convert string date to Date object if needed
+    const parseDate = (dateValue: Date | string | null): Date | null => {
+        if (dateValue === null) return null;
+        if (typeof dateValue === 'string') return new Date(dateValue);
+        return dateValue;
+    };
 
     // Filter states
     const [filters, setFilters] = useState<ClientFilters>({
@@ -207,7 +214,7 @@ export default function Clients() {
                                     Created Date From
                                 </Label>
                                 <DatePicker
-                                    selected={filters.created_date_from}
+                                    selected={parseDate(filters.created_date_from)}
                                     onChange={(date) => handleFilterChange('created_date_from', date)}
                                     dateFormat="yyyy-MM-dd"
                                     isClearable
@@ -229,7 +236,7 @@ export default function Clients() {
                                     Created Date To
                                 </Label>
                                 <DatePicker
-                                    selected={filters.created_date_to}
+                                    selected={parseDate(filters.created_date_to)}
                                     onChange={(date) => handleFilterChange('created_date_to', date)}
                                     dateFormat="yyyy-MM-dd"
                                     isClearable
