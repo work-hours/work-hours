@@ -218,13 +218,13 @@ export default function CreateInvoice() {
 
         updatedItems[index] = {
             ...updatedItems[index],
-            [field]: value,
+            [field]: value.toString(), // Convert value to string to match InvoiceItemForm type
         }
 
         // Calculate the amount if quantity or unit_price changes
         if (field === 'quantity' || field === 'unit_price') {
-            const quantity = parseFloat(field === 'quantity' ? value : updatedItems[index].quantity || '0')
-            const unitPrice = parseFloat(field === 'unit_price' ? value : updatedItems[index].unit_price || '0')
+            const quantity = parseFloat(field === 'quantity' ? value.toString() : updatedItems[index].quantity || '0')
+            const unitPrice = parseFloat(field === 'unit_price' ? value.toString() : updatedItems[index].unit_price || '0')
             updatedItems[index].amount = (quantity * unitPrice).toFixed(2)
         }
 
@@ -232,10 +232,15 @@ export default function CreateInvoice() {
     }
 
     // Handle time log selection
-    const handleTimeLogSelection = (index: number, value: string): void => {
+    const handleTimeLogSelection = (index: number, value: string | object): void => {
         const updatedItems = [...data.items]
 
-        if (value === 'none') {
+        // Check if value is an empty object and convert it to 'none'
+        const stringValue = typeof value === 'object' && Object.keys(value).length === 0
+            ? 'none'
+            : value as string;
+
+        if (stringValue === 'none') {
             // Update all fields at once for 'none' selection
             updatedItems[index] = {
                 ...updatedItems[index],
@@ -251,8 +256,8 @@ export default function CreateInvoice() {
         }
 
         // Check if it's a project selection (format: "project-{projectId}")
-        if (value.startsWith('project-')) {
-            const projectId = parseInt(value.replace('project-', ''))
+        if (stringValue.startsWith('project-')) {
+            const projectId = parseInt(stringValue.replace('project-', ''))
             const projectGroup = timeLogs.find((group) => group.project_id === projectId)
 
             if (projectGroup) {
@@ -298,22 +303,8 @@ export default function CreateInvoice() {
         }
     }
 
-    // Format date for form submission
-    const formatDate = (date: Date | null): string => {
-        if (!date) return ''
-        return date.toISOString().split('T')[0]
-    }
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-
-        // Format dates for submission
-        const formData = {
-            ...data,
-            issue_date: formatDate(data.issue_date),
-            due_date: formatDate(data.due_date),
-        }
-
         post(route('invoice.store'), {
             onSuccess: () => {
                 toast.success('Invoice created successfully')
@@ -322,7 +313,6 @@ export default function CreateInvoice() {
             onError: () => {
                 toast.error('Failed to create invoice')
             },
-            data: formData,
         })
     }
 
