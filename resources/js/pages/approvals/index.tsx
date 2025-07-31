@@ -3,15 +3,9 @@ import StatsCard from '@/components/dashboard/StatsCard'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Textarea } from '@/components/ui/textarea'
@@ -20,20 +14,8 @@ import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { Head, useForm } from '@inertiajs/react'
 import axios from 'axios'
-import {
-    AlertCircle,
-    Briefcase,
-    Calendar,
-    CalendarRange,
-    CheckCircle,
-    CheckSquare,
-    ClockIcon,
-    Search,
-    TimerReset,
-    User
-} from 'lucide-react'
+import { AlertCircle, Briefcase, Calendar, CalendarRange, CheckCircle, CheckSquare, ClockIcon, Search, TimerReset, User } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
-import CustomInput from '@/components/ui/custom-input'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

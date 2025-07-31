@@ -2,6 +2,7 @@ import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/acti
 import DeleteProject from '@/components/delete-project'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,8 +14,7 @@ import { type BreadcrumbItem } from '@/types'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, Loader2, Search, User, X } from 'lucide-react'
-import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
-import CustomInput from '@/components/ui/custom-input'
+import { useEffect, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

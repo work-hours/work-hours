@@ -3,8 +3,8 @@ import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
@@ -26,8 +26,7 @@ import {
     TimerReset,
     User,
 } from 'lucide-react'
-import { FormEventHandler, forwardRef, useState } from 'react'
-import CustomInput from '@/components/ui/custom-input'
+import { FormEventHandler, useState } from 'react'
 
 type TimeLog = {
     id: number
