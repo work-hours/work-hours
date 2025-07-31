@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
-import { objectToQueryString, queryStringToObject } from '@/lib/utils'
+import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
@@ -33,44 +33,10 @@ import {
     Search,
     X,
 } from 'lucide-react'
-import { ChangeEvent, forwardRef, JSX, ReactNode, useEffect, useState } from 'react'
+import { JSX, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Task, TaskFilters } from './types'
-
-interface CustomInputProps {
-    value?: string
-    onClick?: () => void
-    onChange?: (e: ChangeEvent<HTMLInputElement>) => void
-    icon: ReactNode
-    placeholder?: string
-    disabled?: boolean
-    required?: boolean
-    autoFocus?: boolean
-    tabIndex?: number
-    id: string
-}
-
-const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
-        <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
-            <Input
-                id={id}
-                ref={ref}
-                value={value}
-                onClick={onClick}
-                onChange={onChange}
-                placeholder={placeholder}
-                disabled={disabled}
-                required={required}
-                autoFocus={autoFocus}
-                tabIndex={tabIndex}
-                className="pl-10"
-                readOnly={!onChange}
-            />
-        </div>
-    ),
-)
+import CustomInput from '@/components/ui/custom-input'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -217,29 +183,31 @@ export default function Tasks() {
     }
 
     const getStatusBadge = (task: Task, status: Task['status']): JSX.Element => {
+        const displayStatus = status ? status.toString() : '';
+        
         switch (status) {
             case 'completed':
                 return (
                     <Badge variant="success" className="cursor-pointer capitalize hover:opacity-80" onClick={() => handleStatusClick(task, status)}>
-                        {status.replace('_', ' ')}
+                        {displayStatus.replace('_', ' ')}
                     </Badge>
                 )
             case 'in_progress':
                 return (
                     <Badge variant="warning" className="cursor-pointer capitalize hover:opacity-80" onClick={() => handleStatusClick(task, status)}>
-                        {status.replace('_', ' ')}
+                        {displayStatus.replace('_', ' ')}
                     </Badge>
                 )
             case 'pending':
                 return (
                     <Badge variant="secondary" className="cursor-pointer capitalize hover:opacity-80" onClick={() => handleStatusClick(task, status)}>
-                        {status.replace('_', ' ')}
+                        {displayStatus.replace('_', ' ')}
                     </Badge>
                 )
             default:
                 return (
                     <Badge variant="secondary" className="cursor-pointer capitalize hover:opacity-80" onClick={() => handleStatusClick(task, status)}>
-                        {status.replace('_', ' ')}
+                        {displayStatus.replace('_', ' ')}
                     </Badge>
                 )
         }
@@ -407,7 +375,7 @@ export default function Tasks() {
                                     Due Date From
                                 </Label>
                                 <DatePicker
-                                    selected={filters.due_date_from}
+                                    selected={parseDate(filters.due_date_from)}
                                     onChange={(date) => handleFilterChange('due_date_from', date)}
                                     dateFormat="yyyy-MM-dd"
                                     isClearable
@@ -429,7 +397,7 @@ export default function Tasks() {
                                     Due Date To
                                 </Label>
                                 <DatePicker
-                                    selected={filters.due_date_to}
+                                    selected={parseDate(filters.due_date_to)}
                                     onChange={(date) => handleFilterChange('due_date_to', date)}
                                     dateFormat="yyyy-MM-dd"
                                     isClearable

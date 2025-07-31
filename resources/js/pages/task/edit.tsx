@@ -3,8 +3,6 @@ import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Save, Text } from 'lucide-react'
 import { FormEventHandler, forwardRef, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 
 import InputError from '@/components/input-error'
@@ -130,11 +128,10 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                         project: parseInt(data.project_id),
                     },
                 })
-                .then((assignees) => {
+                .then((assignees: User[]) => {
                     setPotentialAssignees(assignees)
                 })
-                .catch((error) => {
-                    console.error('Failed to fetch potential assignees:', error)
+                .catch(() => {
                     toast.error('Failed to load potential assignees')
                     setPotentialAssignees([])
                 })
