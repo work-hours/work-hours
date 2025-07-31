@@ -68,3 +68,18 @@ export function queryStringToObject(): Record<string, string> {
 
     return obj
 }
+
+export function parseDate(dateValue: Date | string | null): Date | null {
+    if (dateValue === null) return null;
+    if (typeof dateValue === 'string') return new Date(dateValue);
+    return dateValue;
+}
+
+export function formatDateValue(dateValue: Date | string | null): string {
+    if (dateValue instanceof Date) {
+        return dateValue.toISOString().split('T')[0]
+    } else if (typeof dateValue === 'string' && dateValue) {
+        return dateValue
+    }
+    return ''
+}
