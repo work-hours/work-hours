@@ -2,6 +2,7 @@ import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/acti
 import DeleteTeamMember from '@/components/delete-team-member'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,7 +12,7 @@ import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, useForm } from '@inertiajs/react'
 import { Calendar, CalendarRange, Clock, Edit, Search, TimerReset, UserPlus, Users } from 'lucide-react'
-import { FormEventHandler, forwardRef } from 'react'
+import { FormEventHandler } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -19,41 +20,6 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/team',
     },
 ]
-
-interface CustomInputProps {
-    value?: string
-    onClick?: () => void
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-    icon: React.ReactNode
-    placeholder?: string
-    disabled?: boolean
-    required?: boolean
-    autoFocus?: boolean
-    tabIndex?: number
-    id: string
-}
-
-const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
-        <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
-            <Input
-                id={id}
-                ref={ref}
-                value={value}
-                onClick={onClick}
-                onChange={onChange}
-                placeholder={placeholder}
-                disabled={disabled}
-                required={required}
-                autoFocus={autoFocus}
-                tabIndex={tabIndex}
-                className="pl-10"
-                readOnly={!onChange}
-            />
-        </div>
-    ),
-)
 
 type TeamMember = {
     id: number

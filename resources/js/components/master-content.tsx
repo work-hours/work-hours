@@ -3,12 +3,10 @@ import { HourlyRateStatusBar } from '@/components/hourly-rate-status-bar'
 import Background from '@/components/ui/background'
 import { Badge } from '@/components/ui/badge'
 import { type BreadcrumbItem } from '@/types'
+import { all } from '@actions/NotificationsController'
 import { Link } from '@inertiajs/react'
 import { Bell, ChevronRight, Home } from 'lucide-react'
 import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState } from 'react'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import { all } from '@actions/NotificationsController'
 
 interface MasterContentProps {
     children: ReactNode

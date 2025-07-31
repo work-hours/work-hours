@@ -1,13 +1,14 @@
 import DatePicker from '@/components/ui/date-picker'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
-import { FormEventHandler, forwardRef, useMemo } from 'react'
+import { FormEventHandler, useMemo } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import CustomInput from '@/components/ui/custom-input'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
@@ -27,42 +28,6 @@ type TimeLogForm = {
     note: string
     mark_task_complete: boolean
 }
-
-// Custom input component for DatePicker with icon
-interface CustomInputProps {
-    value?: string
-    onClick?: () => void
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-    icon: React.ReactNode
-    placeholder?: string
-    disabled?: boolean
-    required?: boolean
-    autoFocus?: boolean
-    tabIndex?: number
-    id: string
-}
-
-const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
-        <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
-            <Input
-                id={id}
-                ref={ref}
-                value={value}
-                onClick={onClick}
-                onChange={onChange}
-                placeholder={placeholder}
-                disabled={disabled}
-                required={required}
-                autoFocus={autoFocus}
-                tabIndex={tabIndex}
-                className="pl-10"
-                readOnly={!onChange}
-            />
-        </div>
-    ),
-)
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

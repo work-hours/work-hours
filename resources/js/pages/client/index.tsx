@@ -2,52 +2,18 @@ import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/acti
 import DeleteClient from '@/components/delete-client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
-import { objectToQueryString, queryStringToObject } from '@/lib/utils'
+import { formatDateValue, objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'
-import { ChangeEvent, forwardRef, ReactNode, useEffect, useState } from 'react'
-
-interface CustomInputProps {
-    value?: string
-    onClick?: () => void
-    onChange?: (e: ChangeEvent<HTMLInputElement>) => void
-    icon: ReactNode
-    placeholder?: string
-    disabled?: boolean
-    required?: boolean
-    autoFocus?: boolean
-    tabIndex?: number
-    id: string
-}
-
-const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
-        <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
-            <Input
-                id={id}
-                ref={ref}
-                value={value}
-                onClick={onClick}
-                onChange={onChange}
-                placeholder={placeholder}
-                disabled={disabled}
-                required={required}
-                autoFocus={autoFocus}
-                tabIndex={tabIndex}
-                className="pl-10"
-                readOnly={!onChange}
-            />
-        </div>
-    ),
-)
+import { useEffect, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -129,15 +95,6 @@ export default function Clients() {
             setLoading(false)
             setProcessing(false)
         }
-    }
-
-    const formatDateValue = (dateValue: Date | string | null): string => {
-        if (dateValue instanceof Date) {
-            return dateValue.toISOString().split('T')[0]
-        } else if (typeof dateValue === 'string' && dateValue) {
-            return dateValue
-        }
-        return ''
     }
 
     const handleSubmit = (e: { preventDefault: () => void }): void => {

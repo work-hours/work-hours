@@ -1,12 +1,10 @@
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { getChatHistory, sendMessage } from '@actions/AiChatController'
 import { BrainCircuit, Loader2, Send, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-// @ts-expect-error: No type definitions for react-syntax-highlighter
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-// @ts-expect-error: No type definitions for atomDark style
-import { getChatHistory, sendMessage } from '@actions/AiChatController'
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import '../../css/markdown.css'
 
@@ -252,10 +250,14 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                                                 <ReactMarkdown
                                                     components={{
                                                         code({ className, children, ...props }) {
-                                                            const match = /language-(\\w+)/.exec(className || '')
+                                                            const match = /language-(\w+)/.exec(className || '')
                                                             return match ? (
-                                                                <SyntaxHighlighter style={atomDark} language={match[1]} PreTag="div" {...props}>
-                                                                    {String(children).replace(/\\n$/, '')}
+                                                                <SyntaxHighlighter
+                                                                    style={atomDark as never}
+                                                                    language={match[1]}
+                                                                    PreTag="div"
+                                                                >
+                                                                    {String(children).replace(/\n$/, '')}
                                                                 </SyntaxHighlighter>
                                                             ) : (
                                                                 <code className={className} {...props}>

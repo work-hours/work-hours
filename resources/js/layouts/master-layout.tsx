@@ -6,11 +6,9 @@ import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
 import Background from '@/components/ui/background'
 import { type BreadcrumbItem } from '@/types'
+import { projects, tasks } from '@actions/DashboardController'
 import { type ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import { projects, tasks } from '@actions/DashboardController'
 
 interface Project {
     id: number

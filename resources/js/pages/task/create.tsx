@@ -1,16 +1,15 @@
 import { SearchableSelect } from '@/components/ui/searchable-select'
+import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus, Text } from 'lucide-react'
-import { FormEventHandler, forwardRef, SetStateAction, useEffect, useState } from 'react'
+import { FormEventHandler, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -37,42 +36,6 @@ type TaskForm = {
 type Props = {
     projects: Project[]
 }
-
-// Custom input component for DatePicker with icon
-interface CustomInputProps {
-    value?: string
-    onClick?: () => void
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-    icon: React.ReactNode
-    placeholder?: string
-    disabled?: boolean
-    required?: boolean
-    autoFocus?: boolean
-    tabIndex?: number
-    id: string
-}
-
-const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
-        <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
-            <Input
-                id={id}
-                ref={ref}
-                value={value}
-                onClick={onClick}
-                onChange={onChange}
-                placeholder={placeholder}
-                disabled={disabled}
-                required={required}
-                autoFocus={autoFocus}
-                tabIndex={tabIndex}
-                className="pl-10"
-                readOnly={!onChange}
-            />
-        </div>
-    ),
-)
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -196,7 +159,6 @@ export default function CreateTask({ projects }: Props) {
                                             placeholder="Select a project"
                                             disabled={processing}
                                             icon={<ClipboardList className="h-4 w-4 text-muted-foreground" />}
-                                            required
                                         />
                                         <InputError message={errors.project_id} />
                                     </div>

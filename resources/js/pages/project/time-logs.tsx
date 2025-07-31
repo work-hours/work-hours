@@ -3,8 +3,8 @@ import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
@@ -26,7 +26,7 @@ import {
     TimerReset,
     User,
 } from 'lucide-react'
-import { FormEventHandler, forwardRef, useState } from 'react'
+import { FormEventHandler, useState } from 'react'
 
 type TimeLog = {
     id: number
@@ -41,6 +41,7 @@ type TimeLog = {
     hourly_rate?: number
     paid_amount?: number
     currency?: string
+    user_non_monetary: boolean
 }
 
 type Filters = {
@@ -68,42 +69,6 @@ type TeamMember = {
     name: string
     email: string
 }
-
-// Custom input component for DatePicker with icon
-interface CustomInputProps {
-    value?: string
-    onClick?: () => void
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-    icon: React.ReactNode
-    placeholder?: string
-    disabled?: boolean
-    required?: boolean
-    autoFocus?: boolean
-    tabIndex?: number
-    id: string
-}
-
-const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
-        <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
-            <Input
-                id={id}
-                ref={ref}
-                value={value}
-                onClick={onClick}
-                onChange={onChange}
-                placeholder={placeholder}
-                disabled={disabled}
-                required={required}
-                autoFocus={autoFocus}
-                tabIndex={tabIndex}
-                className="pl-10"
-                readOnly={!onChange}
-            />
-        </div>
-    ),
-)
 
 type Task = {
     id: number

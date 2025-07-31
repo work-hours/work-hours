@@ -2,6 +2,7 @@ import Background from '@/components/ui/background'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem, type SharedData } from '@/types'
+import { count } from '@actions/ApprovalController'
 import { Link, usePage } from '@inertiajs/react'
 import {
     Building,
@@ -18,9 +19,6 @@ import {
     TimerIcon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import { count } from '@actions/ApprovalController'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
 
