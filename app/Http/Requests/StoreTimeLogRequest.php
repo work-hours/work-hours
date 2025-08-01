@@ -31,6 +31,7 @@ final class StoreTimeLogRequest extends FormRequest
             'end_timestamp' => ['date', 'after_or_equal:start_timestamp', 'nullable'],
             'note' => ['required', 'string'],
             'mark_task_complete' => ['boolean', 'nullable'],
+            'close_github_issue' => ['boolean', 'nullable'],
         ];
     }
 }

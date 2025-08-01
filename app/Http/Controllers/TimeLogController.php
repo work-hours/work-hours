@@ -108,7 +108,7 @@ final class TimeLogController extends Controller
                         $task->update(['status' => 'completed']);
                     }
 
-                    // Close GitHub issue if requested and task is imported from GitHub
+                    // Close GitHub issue if requested and a task is imported from GitHub
                     if ($closeGitHubIssue && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
                         $this->gitHubAdapter->closeGitHubIssue($task);
                     }
@@ -138,11 +138,17 @@ final class TimeLogController extends Controller
             ->whereHas('assignees', function ($query): void {
                 $query->where('users.id', auth()->id());
             })
-            ->get(['id', 'title', 'project_id'])
+            ->with('meta')
+            ->get(['id', 'title', 'project_id', 'is_imported'])
             ->map(fn ($task): array => [
                 'id' => $task->id,
                 'title' => $task->title,
                 'project_id' => $task->project_id,
+                'is_imported' => $task->is_imported,
+                'meta' => [
+                    'source' => $task->meta?->source,
+                    'source_state' => $task->meta?->source_state,
+                ],
             ]);
 
         return Inertia::render('time-log/create', [
@@ -189,7 +195,9 @@ final class TimeLogController extends Controller
             }
 
             $markAsComplete = $data['mark_task_complete'] ?? false;
+            $closeGitHubIssue = $data['close_github_issue'] ?? false;
             unset($data['mark_task_complete']);
+            unset($data['close_github_issue']);
 
             $timeLog->update($data);
 
@@ -197,6 +205,11 @@ final class TimeLogController extends Controller
                 $task = Task::query()->find($data['task_id']);
                 if ($task) {
                     $task->update(['status' => 'completed']);
+                }
+
+                // Close GitHub issue if requested and a task is imported from GitHub
+                if ($closeGitHubIssue && $task && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
+                    $this->gitHubAdapter->closeGitHubIssue($task);
                 }
             }
 
