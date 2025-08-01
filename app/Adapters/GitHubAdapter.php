@@ -145,6 +145,9 @@ final class GitHubAdapter
 
     /**
      * Close a GitHub issue using the GitHub API
+     *
+     * @param  Task  $task  The task containing GitHub issue information
+     * @return bool Whether the issue was successfully closed
      */
     public function closeGitHubIssue(Task $task): bool
     {
@@ -180,7 +183,7 @@ final class GitHubAdapter
             $repo = $matches[2];
             $issueNumber = $matches[3];
 
-            // Make API request to close the issue
+            // We need to use PATCH request to close GitHub issues
             $response = Http::withToken($token)
                 ->acceptJson()
                 ->patch("https://api.github.com/repos/{$owner}/{$repo}/issues/{$issueNumber}", [
