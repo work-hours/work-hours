@@ -239,11 +239,16 @@ final class TimeLogController extends Controller
             ->whereHas('assignees', function ($query): void {
                 $query->where('users.id', auth()->id());
             })
-            ->get(['id', 'title', 'project_id'])
+            ->get(['id', 'title', 'project_id', 'is_imported'])
             ->map(fn ($task): array => [
                 'id' => $task->id,
                 'title' => $task->title,
                 'project_id' => $task->project_id,
+                'is_imported' => $task->is_imported,
+                'meta' => [
+                    'source' => $task->meta?->source,
+                    'source_state' => $task->meta?->source_state,
+                ],
             ]);
 
         return Inertia::render('time-log/edit', [
