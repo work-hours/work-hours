@@ -33,7 +33,7 @@ use Illuminate\Support\Carbon;
 #[UsePolicy(ProjectPolicy::class)]
 final class Project extends Model
 {
-    protected $fillable = ['user_id', 'client_id', 'name', 'description', 'paid_amount', 'repo_id'];
+    protected $fillable = ['user_id', 'client_id', 'name', 'description', 'paid_amount', 'repo_id', 'source'];
 
     public function user(): BelongsTo
     {

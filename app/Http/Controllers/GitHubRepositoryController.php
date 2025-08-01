@@ -137,7 +137,8 @@ final class GitHubRepositoryController extends Controller
             'user_id' => $user->getKey(),
             'name' => $data['full_name'],
             'description' => $data['description'] . "\n\nGitHub Repository: " . $data['html_url'],
-            'repo_id' => $data['repo_id'],
+            'repo_id' => $data['id'],
+            'source' => 'github', // Set the source as github for imported repositories
         ]);
     }
 
