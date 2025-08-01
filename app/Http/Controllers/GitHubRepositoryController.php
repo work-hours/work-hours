@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Adapters\GitHubAdapter;
+use App\Http\Requests\GitRepoToProjectRequest;
 use App\Models\Project;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -45,10 +45,10 @@ final class GitHubRepositoryController extends Controller
     /**
      * Import a GitHub repository as a project.
      */
-    public function importRepository(Request $request): JsonResponse
+    public function importRepository(GitRepoToProjectRequest $request): JsonResponse
     {
         try {
-            $validatedData = $this->validateRepositoryData($request);
+            $validatedData = $request->validated();
 
             if ($this->isRepositoryImported($validatedData['full_name'])) {
                 return $this->errorResponse('Repository is already imported as a project.', 400);
@@ -124,22 +124,6 @@ final class GitHubRepositoryController extends Controller
     }
 
     /**
-     * Validate repository data from the request.
-     *
-     * @param  Request  $request  The HTTP request
-     * @return array The validated data
-     */
-    private function validateRepositoryData(Request $request): array
-    {
-        return $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'full_name' => 'required|string',
-            'html_url' => 'required|string|url',
-        ]);
-    }
-
-    /**
      * Create a new project from repository data.
      *
      * @param  array  $data  The repository data
@@ -153,6 +137,7 @@ final class GitHubRepositoryController extends Controller
             'user_id' => $user->getKey(),
             'name' => $data['full_name'],
             'description' => $data['description'] . "\n\nGitHub Repository: " . $data['html_url'],
+            'repo_id' => $data['repo_id'],
         ]);
     }
 
