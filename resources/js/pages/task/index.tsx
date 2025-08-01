@@ -556,8 +556,15 @@ export default function Tasks() {
                                 <TableBody>
                                     {tasks.map((task) => (
                                         <TableRow key={task.id}>
-                                            <TableCell className="font-medium">
-                                                {task.title} <br />
+                                            <TableCell className="font-medium max-w-xl">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <span>{task.title}</span>
+                                                    {task.is_imported && (
+                                                        <Badge variant="secondary" className="bg-purple-100 text-purple-800 hover:bg-purple-100 dark:bg-purple-900/30 dark:text-purple-300">
+                                                            Imported
+                                                        </Badge>
+                                                    )}
+                                                </div>
                                                 <small>{task.project.name}</small>
                                             </TableCell>
                                             <TableCell>{getStatusBadge(task, task.status)}</TableCell>

@@ -22,6 +22,7 @@ export type Task = {
     status: 'pending' | 'in_progress' | 'completed'
     priority: 'low' | 'medium' | 'high'
     due_date: string | null
+    is_imported: boolean
     project: Project
     assignees: User[]
 }
