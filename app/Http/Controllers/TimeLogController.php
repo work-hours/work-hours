@@ -20,11 +20,13 @@ use App\Notifications\TimeLogPaid;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
+use Http;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Msamgan\Lact\Attributes\Action;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
@@ -83,14 +85,25 @@ final class TimeLogController extends Controller
             }
 
             $markAsComplete = $data['mark_task_complete'] ?? false;
+            $closeGitHubIssue = $data['close_github_issue'] ?? false;
             unset($data['mark_task_complete']);
+            unset($data['close_github_issue']);
 
             $timeLog = TimeLog::query()->create($data);
 
-            if ($isLogCompleted && ! empty($data['task_id']) && $markAsComplete) {
+            if ($isLogCompleted && ! empty($data['task_id'])) {
                 $task = Task::query()->find($data['task_id']);
+
                 if ($task) {
-                    $task->update(['status' => 'completed']);
+                    // Mark task as complete if requested
+                    if ($markAsComplete) {
+                        $task->update(['status' => 'completed']);
+                    }
+
+                    // Close GitHub issue if requested and task is imported from GitHub
+                    if ($closeGitHubIssue && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
+                        $this->closeGitHubIssue($task);
+                    }
                 }
             }
 
@@ -438,6 +451,80 @@ final class TimeLogController extends Controller
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
+    }
+
+    /**
+     * Close a GitHub issue using the GitHub API
+     */
+    private function closeGitHubIssue(Task $task): void
+    {
+        try {
+            // Get the task owner's GitHub token
+            $user = User::query()->find($task->project->user_id);
+            if (! $user || ! $user->github_token) {
+                Log::warning('Cannot close GitHub issue: No GitHub token found for user', ['user_id' => $task->project->user_id]);
+
+                return;
+            }
+
+            $token = $user->github_token;
+            $meta = $task->meta;
+
+            if (! $meta || ! $meta->source_url) {
+                Log::warning('Cannot close GitHub issue: Missing metadata', ['task_id' => $task->id]);
+
+                return;
+            }
+
+            // Parse the GitHub repository information from the issue URL
+            // Example URL: https://github.com/username/repo/issues/123
+            preg_match('/github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)/', $meta->source_url, $matches);
+
+            if (count($matches) < 4) {
+                Log::warning('Cannot close GitHub issue: Invalid URL format', ['url' => $meta->source_url]);
+
+                return;
+            }
+
+            $owner = $matches[1];
+            $repo = $matches[2];
+            $issueNumber = $matches[3];
+
+            // Make API request to close the issue
+            $response = Http::withToken($token)
+                ->acceptJson()
+                ->patch("https://api.github.com/repos/{$owner}/{$repo}/issues/{$issueNumber}", [
+                    'state' => 'closed',
+                ]);
+
+            if ($response->successful()) {
+                // Update the local task metadata to reflect the closed state
+                $meta->update([
+                    'source_state' => 'closed',
+                    'extra_data' => array_merge($meta->extra_data ?? [], [
+                        'closed_at' => now()->toIso8601String(),
+                        'closed_by' => auth()->user()->name,
+                    ]),
+                ]);
+
+                Log::info('Successfully closed GitHub issue', [
+                    'task_id' => $task->id,
+                    'issue_number' => $issueNumber,
+                    'repository' => "{$owner}/{$repo}",
+                ]);
+            } else {
+                Log::error('Failed to close GitHub issue', [
+                    'task_id' => $task->id,
+                    'status' => $response->status(),
+                    'response' => $response->json(),
+                ]);
+            }
+        } catch (Exception $e) {
+            Log::error('Exception when closing GitHub issue', [
+                'task_id' => $task->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     private function baseQuery()
