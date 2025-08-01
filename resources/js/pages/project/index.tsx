@@ -13,7 +13,20 @@ import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils
 import { type BreadcrumbItem } from '@/types'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, Loader2, Search, User, X } from 'lucide-react'
+import {
+    Briefcase,
+    Calendar,
+    CalendarRange,
+    Clock,
+    Edit,
+    FolderPlus,
+    Folders,
+    GitBranch,
+    Loader2,
+    Search,
+    User,
+    X
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -429,9 +442,7 @@ export default function Projects() {
                                             <TableCell className="font-medium">
                                                 <div className="flex items-center gap-2">
                                                     {project.source === 'github' && project.repo_id ? (
-                                                        <span className="inline-flex items-center rounded bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800 ring-1 ring-purple-500/20 ring-inset dark:bg-purple-900/30 dark:text-purple-300 dark:ring-purple-400/30">
-                                                            GitHub
-                                                        </span>
+                                                        <GitBranch className="h-3 w-3 text-purple-600 dark:text-purple-400" />
                                                     ) : null}
                                                     {project.name}
                                                 </div>
