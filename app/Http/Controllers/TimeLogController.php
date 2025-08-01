@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Adapters\GitHubAdapter;
 use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
@@ -38,6 +39,13 @@ use Throwable;
 final class TimeLogController extends Controller
 {
     use ExportableTrait;
+
+    private GitHubAdapter $gitHubAdapter;
+
+    public function __construct(GitHubAdapter $gitHubAdapter)
+    {
+        $this->gitHubAdapter = $gitHubAdapter;
+    }
 
     public function index()
     {
@@ -102,7 +110,7 @@ final class TimeLogController extends Controller
 
                     // Close GitHub issue if requested and task is imported from GitHub
                     if ($closeGitHubIssue && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
-                        $this->closeGitHubIssue($task);
+                        $this->gitHubAdapter->closeGitHubIssue($task);
                     }
                 }
             }
