@@ -116,6 +116,33 @@ final class GitHubAdapter
     }
 
     /**
+     * Get issues from a GitHub repository.
+     *
+     * @param  string  $token  The GitHub access token
+     * @param  string  $repoOwner  The repository owner (user or organization)
+     * @param  string  $repoName  The repository name
+     * @return array|JsonResponse The issues or an error response
+     */
+    public function getRepositoryIssues(string $token, string $repoOwner, string $repoName)
+    {
+        $url = "https://api.github.com/repos/{$repoOwner}/{$repoName}/issues";
+        $params = [
+            'state' => 'all', // Get both open and closed issues
+            'per_page' => 100, // Maximum number of issues per page
+            'sort' => 'created',
+            'direction' => 'desc',
+        ];
+
+        return $this->makeGitHubRequest(
+            $token,
+            $url,
+            $params,
+            "Failed to fetch issues from GitHub repository: {$repoOwner}/{$repoName}.",
+            'issues'
+        );
+    }
+
+    /**
      * Make a request to the GitHub API with error handling.
      *
      * @param  string  $token  The GitHub access token
