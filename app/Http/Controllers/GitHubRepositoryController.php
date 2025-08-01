@@ -284,10 +284,6 @@ final class GitHubRepositoryController extends Controller
                     return 'medium';
                 }
 
-                if (str_contains($labelName, 'low')) {
-                    return 'low';
-                }
-
                 return 'low';
             }
         }
