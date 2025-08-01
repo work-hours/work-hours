@@ -179,18 +179,37 @@ export default function GitHubRepositories() {
         if (isLoading) {
             return (
                 <div className="flex flex-col items-center justify-center py-12">
-                    <Loader2 className="mb-4 h-10 w-10 animate-spin text-muted-foreground" />
-                    <p className="text-muted-foreground">Loading repositories...</p>
+                    <div className="mb-6 rounded-full bg-primary/10 p-4">
+                        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                    </div>
+                    <h3 className="mb-2 text-lg font-medium">Loading Repositories</h3>
+                    <p className="text-sm text-muted-foreground">Fetching repositories from GitHub...</p>
                 </div>
             )
         }
 
         if (filteredRepos.length === 0) {
             return (
-                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                    <Github className="mb-4 h-12 w-12 opacity-20" />
-                    <p className="mb-1 text-lg font-medium">{searchTerm ? 'No repositories match your search' : 'No repositories found'}</p>
-                    <p className="text-sm">{searchTerm ? 'Try a different search term' : 'Connect more repositories to get started'}</p>
+                <div className="flex flex-col items-center justify-center py-12">
+                    <div className="mb-6 rounded-full bg-muted p-4">
+                        <Github className="h-12 w-12 text-muted-foreground opacity-80" />
+                    </div>
+                    <h3 className="mb-2 text-lg font-medium">{searchTerm ? 'No repositories match your search' : 'No repositories found'}</h3>
+                    <p className="max-w-md text-center text-sm text-muted-foreground">
+                        {searchTerm
+                            ? 'Try a different search term or clear your search to see all repositories.'
+                            : 'No repositories were found for this account. If you expect to see repositories, ensure you have granted the necessary permissions.'}
+                    </p>
+                    {searchTerm && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSearchTerm('')}
+                            className="mt-4 border-primary/30 text-primary hover:bg-primary/10"
+                        >
+                            Clear Search
+                        </Button>
+                    )}
                 </div>
             )
         }
@@ -199,14 +218,20 @@ export default function GitHubRepositories() {
             <ScrollArea className="h-[450px] pr-2">
                 <div className="space-y-4">
                     {filteredRepos.map((repo) => (
-                        <div key={repo.id} className="flex flex-col rounded-lg border p-4 shadow-sm transition-colors hover:bg-muted/30">
+                        <div
+                            key={repo.id}
+                            className="flex flex-col rounded-lg border bg-card p-4 shadow-sm transition-all hover:bg-accent/10 hover:shadow-md"
+                        >
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 text-lg font-medium">
-                                        <Github className="h-4 w-4" />
+                                        <Github className="h-4 w-4 text-primary" />
                                         {repo.name}
                                         {repo.private && (
-                                            <Badge variant="outline" className="ml-1 text-xs font-normal">
+                                            <Badge
+                                                variant="outline"
+                                                className="ml-1 border-amber-200 bg-amber-100 text-xs font-normal text-amber-700 dark:border-amber-800 dark:bg-amber-900 dark:text-amber-300"
+                                            >
                                                 Private
                                             </Badge>
                                         )}
@@ -218,7 +243,7 @@ export default function GitHubRepositories() {
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            className="text-muted-foreground hover:text-foreground"
+                                            className="border-primary/30 p-4 text-primary transition-all hover:bg-primary/10 hover:text-primary-foreground"
                                             onClick={() => handleImportRepository(repo)}
                                             disabled={importingRepo === repo.id}
                                         >
@@ -235,11 +260,19 @@ export default function GitHubRepositories() {
                                             )}
                                         </Button>
                                     ) : (
-                                        <Badge variant="secondary" className="mr-2">
+                                        <Badge
+                                            variant="secondary"
+                                            className="mr-2 border-green-200 bg-green-100 p-2 text-green-700 dark:border-green-800 dark:bg-green-900 dark:text-green-300"
+                                        >
                                             Imported
                                         </Badge>
                                     )}
-                                    <Button variant="ghost" size="icon" asChild className="text-muted-foreground hover:text-foreground">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        asChild
+                                        className="text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                                    >
                                         <a href={repo.html_url} target="_blank" rel="noopener noreferrer" title="Open in GitHub">
                                             <ExternalLink className="h-4 w-4" />
                                         </a>
@@ -247,8 +280,13 @@ export default function GitHubRepositories() {
                                 </div>
                             </div>
                             <Separator className="my-3" />
-                            <div className="flex items-center text-xs text-muted-foreground">
-                                <span>{repo.full_name}</span>
+                            <div className="flex items-center justify-between text-xs">
+                                <span className="text-muted-foreground">{repo.full_name}</span>
+                                {repo.organization && (
+                                    <Badge variant="outline" className="text-xs font-normal">
+                                        {repo.organization}
+                                    </Badge>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -265,17 +303,20 @@ export default function GitHubRepositories() {
                     {/* Header section */}
                     <section className="mb-2">
                         <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-                            <Github className="h-8 w-8" />
+                            <Github className="h-8 w-8 text-primary" />
                             GitHub Repositories
                         </h1>
                         <p className="mt-1 text-gray-500 dark:text-gray-400">Loading GitHub repositories</p>
                     </section>
 
-                    <Card>
-                        <CardContent>
+                    <Card className="border-primary/10">
+                        <CardContent className="pt-6">
                             <div className="flex flex-col items-center justify-center py-12">
-                                <Loader2 className="mb-4 h-10 w-10 animate-spin text-muted-foreground" />
-                                <p className="text-muted-foreground">Checking GitHub connection...</p>
+                                <div className="mb-6 rounded-full bg-primary/10 p-4">
+                                    <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                                </div>
+                                <h3 className="mb-2 text-xl font-medium">Checking GitHub Connection</h3>
+                                <p className="text-muted-foreground">Please wait while we verify your GitHub authentication status...</p>
                             </div>
                         </CardContent>
                     </Card>
@@ -301,18 +342,23 @@ export default function GitHubRepositories() {
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-xl">
-                                <Github className="h-5 w-5" />
+                                <Github className="h-5 w-5 text-primary" />
                                 GitHub Repositories
                             </CardTitle>
                             <CardDescription>Connect your GitHub account to view your repositories</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="flex flex-col items-center justify-center py-6">
-                                <Github className="mb-4 h-12 w-12 text-muted-foreground" />
-                                <p className="mb-4 text-center">You need to authenticate with GitHub to access your repositories.</p>
+                                <div className="mb-6 rounded-full bg-primary/10 p-4">
+                                    <Github className="h-16 w-16 text-primary" />
+                                </div>
+                                <h3 className="mb-2 text-xl font-medium">Connect with GitHub</h3>
+                                <p className="mb-6 max-w-md text-center text-muted-foreground">
+                                    Link your GitHub account to access and manage your repositories directly from this application.
+                                </p>
                                 <a
                                     href={route('auth.github')}
-                                    className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                                    className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-all hover:bg-primary/90 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
                                 >
                                     <Github className="mr-2 h-4 w-4" />
                                     Connect GitHub Account
@@ -361,7 +407,7 @@ export default function GitHubRepositories() {
                                             key={`${item.href}-${index}`}
                                             size="sm"
                                             variant="ghost"
-                                            className={cn('mb-1 w-full justify-start', {
+                                            className={cn('mb-1 w-full justify-start p-5', {
                                                 'bg-primary/10 text-primary hover:bg-primary/15': isActive,
                                                 'hover:bg-muted/80': !isActive,
                                             })}
@@ -386,7 +432,7 @@ export default function GitHubRepositories() {
 
                     <Separator className="my-6 md:hidden" />
 
-                    <div className="flex-1 md:max-w-2xl">
+                    <div className="flex-1 md:max-w-4xl">
                         <Card className="overflow-hidden transition-all hover:shadow-sm">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-xl">

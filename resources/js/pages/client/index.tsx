@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
-import { formatDateValue, objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
+import { formatDateValue, objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
 import { Head, Link, usePage } from '@inertiajs/react'
@@ -54,10 +54,10 @@ export default function Clients() {
 
     // Convert string date to Date object if needed
     const parseDate = (dateValue: Date | string | null): Date | null => {
-        if (dateValue === null) return null;
-        if (typeof dateValue === 'string') return new Date(dateValue);
-        return dateValue;
-    };
+        if (dateValue === null) return null
+        if (typeof dateValue === 'string') return new Date(dateValue)
+        return dateValue
+    }
 
     // Filter states
     const [filters, setFilters] = useState<ClientFilters>({
