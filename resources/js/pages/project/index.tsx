@@ -41,6 +41,8 @@ type Project = {
         email: string
     }
     client: Client | null
+    repo_id: string | null
+    source: string | null
 }
 
 type Client = {
@@ -424,7 +426,16 @@ export default function Projects() {
                                 <TableBody>
                                     {projects.map((project) => (
                                         <TableRow key={project.id}>
-                                            <TableCell className="font-medium">{project.name}</TableCell>
+                                            <TableCell className="font-medium">
+                                                <div className="flex items-center gap-2">
+                                                    {project.source === 'github' && project.repo_id ? (
+                                                        <span className="inline-flex items-center rounded bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800 ring-1 ring-purple-500/20 ring-inset dark:bg-purple-900/30 dark:text-purple-300 dark:ring-purple-400/30">
+                                                            GitHub
+                                                        </span>
+                                                    ) : null}
+                                                    {project.name}
+                                                </div>
+                                            </TableCell>
                                             <TableCell>
                                                 {project.client ? project.client.name : <span className="text-muted-foreground/50">No client</span>}
                                             </TableCell>

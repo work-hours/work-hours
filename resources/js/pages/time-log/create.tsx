@@ -1,7 +1,7 @@
 import DatePicker from '@/components/ui/date-picker'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
-import { FormEventHandler, useMemo } from 'react'
+import { FormEventHandler, useEffect, useMemo } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
@@ -27,6 +27,7 @@ type TimeLogForm = {
     end_timestamp: string
     note: string
     mark_task_complete: boolean
+    close_github_issue: boolean
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -44,6 +45,11 @@ type Task = {
     id: number
     title: string
     project_id: number
+    is_imported: boolean
+    meta?: {
+        source: string
+        source_state: string
+    }
 }
 
 type Props = {
@@ -59,6 +65,7 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
         end_timestamp: '',
         note: '',
         mark_task_complete: false,
+        close_github_issue: false,
     })
 
     // Convert string timestamps to Date objects for DatePicker
@@ -200,15 +207,33 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
 
                                 {/* Show checkbox to mark task as complete only when a task is selected */}
                                 {data.task_id && (
-                                    <div className="mt-2 flex items-center space-x-2">
-                                        <Checkbox
-                                            id="mark_task_complete"
-                                            checked={data.mark_task_complete}
-                                            onCheckedChange={(checked) => setData('mark_task_complete', checked as boolean)}
-                                        />
-                                        <Label htmlFor="mark_task_complete" className="cursor-pointer text-sm font-medium">
-                                            Mark task as complete when time log is complete
-                                        </Label>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id="mark_task_complete"
+                                                checked={data.mark_task_complete}
+                                                onCheckedChange={(checked) => setData('mark_task_complete', checked as boolean)}
+                                            />
+                                            <Label htmlFor="mark_task_complete" className="cursor-pointer text-sm font-medium">
+                                                Mark task as complete when time log is complete
+                                            </Label>
+                                        </div>
+
+                                        {/* Show checkbox to close GitHub issue only for imported GitHub tasks that are open */}
+                                        {tasks.find(task => task.id === data.task_id)?.is_imported &&
+                                         tasks.find(task => task.id === data.task_id)?.meta?.source === 'github' &&
+                                         tasks.find(task => task.id === data.task_id)?.meta?.source_state !== 'closed' && (
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id="close_github_issue"
+                                                    checked={data.close_github_issue}
+                                                    onCheckedChange={(checked) => setData('close_github_issue', checked as boolean)}
+                                                />
+                                                <Label htmlFor="close_github_issue" className="cursor-pointer text-sm font-medium">
+                                                    Close issue on GitHub
+                                                </Label>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
 

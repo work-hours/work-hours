@@ -7,7 +7,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class UpdateTimeLogRequest extends FormRequest
+final class GitRepoToProjectRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,13 +25,11 @@ final class UpdateTimeLogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'project_id' => ['required', 'exists:projects,id'],
-            'task_id' => ['nullable', 'exists:tasks,id'],
-            'start_timestamp' => ['required', 'date'],
-            'end_timestamp' => ['required', 'date', 'after_or_equal:start_timestamp'],
-            'note' => ['required', 'string'],
-            'mark_task_complete' => ['boolean', 'nullable'],
-            'close_github_issue' => ['boolean', 'nullable'],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'full_name' => ['required', 'string', 'max:255'],
+            'html_url' => ['required', 'url'],
+            'repo_id' => ['required', 'numeric'],
         ];
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -20,10 +21,12 @@ use Illuminate\Support\Carbon;
  * @property string $status
  * @property string $priority
  * @property Carbon|null $due_date
+ * @property bool $is_imported
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Project $project
  * @property Collection|User[] $assignees
+ * @property TaskMeta|null $meta
  */
 final class Task extends Model
 {
@@ -34,6 +37,7 @@ final class Task extends Model
         'status',
         'priority',
         'due_date',
+        'is_imported',
     ];
 
     public function project(): BelongsTo
@@ -47,10 +51,19 @@ final class Task extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Get the meta information for the task.
+     */
+    public function meta(): HasOne
+    {
+        return $this->hasOne(TaskMeta::class);
+    }
+
     protected function casts(): array
     {
         return [
             'due_date' => 'date',
+            'is_imported' => 'boolean',
         ];
     }
 }
