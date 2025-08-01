@@ -171,7 +171,7 @@ final class GitHubAdapter
 
             // Parse the GitHub repository information from the issue URL
             // Example URL: https://github.com/username/repo/issues/123
-            preg_match('/github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)/', $meta->source_url, $matches);
+            preg_match('/github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)/', (string) $meta->source_url, $matches);
 
             if (count($matches) < 4) {
                 Log::warning('Cannot close GitHub issue: Invalid URL format', ['url' => $meta->source_url]);
@@ -207,15 +207,14 @@ final class GitHubAdapter
                 ]);
 
                 return true;
-            } else {
-                Log::error('Failed to close GitHub issue', [
-                    'task_id' => $task->id,
-                    'status' => $response->status(),
-                    'response' => $response->json(),
-                ]);
-
-                return false;
             }
+            Log::error('Failed to close GitHub issue', [
+                'task_id' => $task->id,
+                'status' => $response->status(),
+                'response' => $response->json(),
+            ]);
+
+            return false;
         } catch (Exception $e) {
             Log::error('Exception when closing GitHub issue', [
                 'task_id' => $task->id,

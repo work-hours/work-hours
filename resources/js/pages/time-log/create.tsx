@@ -1,7 +1,7 @@
 import DatePicker from '@/components/ui/date-picker'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
-import { FormEventHandler, useEffect, useMemo } from 'react'
+import { FormEventHandler, useMemo } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
@@ -220,20 +220,20 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                         </div>
 
                                         {/* Show checkbox to close GitHub issue only for imported GitHub tasks that are open */}
-                                        {tasks.find(task => task.id === data.task_id)?.is_imported &&
-                                         tasks.find(task => task.id === data.task_id)?.meta?.source === 'github' &&
-                                         tasks.find(task => task.id === data.task_id)?.meta?.source_state !== 'closed' && (
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox
-                                                    id="close_github_issue"
-                                                    checked={data.close_github_issue}
-                                                    onCheckedChange={(checked) => setData('close_github_issue', checked as boolean)}
-                                                />
-                                                <Label htmlFor="close_github_issue" className="cursor-pointer text-sm font-medium">
-                                                    Close issue on GitHub
-                                                </Label>
-                                            </div>
-                                        )}
+                                        {tasks.find((task) => task.id === data.task_id)?.is_imported &&
+                                            tasks.find((task) => task.id === data.task_id)?.meta?.source === 'github' &&
+                                            tasks.find((task) => task.id === data.task_id)?.meta?.source_state !== 'closed' && (
+                                                <div className="flex items-center space-x-2">
+                                                    <Checkbox
+                                                        id="close_github_issue"
+                                                        checked={data.close_github_issue}
+                                                        onCheckedChange={(checked) => setData('close_github_issue', checked as boolean)}
+                                                    />
+                                                    <Label htmlFor="close_github_issue" className="cursor-pointer text-sm font-medium">
+                                                        Close issue on GitHub
+                                                    </Label>
+                                                </div>
+                                            )}
                                     </div>
                                 )}
 
