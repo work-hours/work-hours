@@ -112,6 +112,31 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                         {/* Theme Switcher */}
                         <AppearanceToggleDropdown className="rounded-md text-gray-600 dark:text-gray-300" />
 
+                        {/* Calendar Link */}
+                        <Link
+                            href="/calendar"
+                            className="relative flex items-center rounded-md p-1.5 text-gray-600 transition-all hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+                            aria-label="View calendar"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="h-5 w-5"
+                            >
+                                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </Link>
+
                         {/* Notification Link */}
                         <Link
                             href="/notifications"
