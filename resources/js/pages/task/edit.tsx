@@ -76,7 +76,7 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
         priority: task.priority,
         due_date: task.due_date || '',
         assignees: assignedUsers || [],
-        github_update: false,
+        github_update: true,
     })
 
     // State for potential assignees
@@ -367,7 +367,7 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                 </div>
 
                                 {isGithub && (
-                                    <div className="grid gap-2">
+                                    <div className="grid gap-2 ml-1">
                                         <Label className="flex items-center space-x-2">
                                             <Checkbox
                                                 id="github_update"
