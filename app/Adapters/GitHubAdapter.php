@@ -8,6 +8,7 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use Exception;
+use Illuminate\Http\Client\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
@@ -25,7 +26,7 @@ final class GitHubAdapter
      * @param  string  $token  The GitHub access token
      * @return array|JsonResponse The repositories or an error response
      */
-    public function getPersonalRepositories(string $token)
+    public function getPersonalRepositories(string $token): array|JsonResponse
     {
         return $this->makeGitHubRequest(
             $token,
@@ -42,7 +43,7 @@ final class GitHubAdapter
      * @param  string  $token  The GitHub access token
      * @return array|JsonResponse The repositories or an error response
      */
-    public function getOrganizationRepositories(string $token)
+    public function getOrganizationRepositories(string $token): array|JsonResponse
     {
         $orgsResponse = $this->makeGitHubRequest(
             $token,
@@ -127,7 +128,7 @@ final class GitHubAdapter
      * @param  string  $repoName  The repository name
      * @return array|JsonResponse The issues or an error response
      */
-    public function getRepositoryIssues(string $token, string $repoOwner, string $repoName)
+    public function getRepositoryIssues(string $token, string $repoOwner, string $repoName): array|JsonResponse
     {
         $url = self::API_BASE_URL . "/repos/{$repoOwner}/{$repoName}/issues";
         $params = [
@@ -163,7 +164,7 @@ final class GitHubAdapter
      * @param  Task  $task  The task to create an issue for
      * @return bool|array False if failed, or array with issue details if successful
      */
-    public function createGitHubIssue(Task $task)
+    public function createGitHubIssue(Task $task): bool|array
     {
         try {
             $token = $this->getTaskUserToken($task);
@@ -254,7 +255,7 @@ final class GitHubAdapter
                 'PATCH'
             );
 
-            if ($response && $response->successful()) {
+            if ($response instanceof Response && $response->successful()) {
                 $task->meta->update(['source_state' => $payload['state']]);
 
                 return true;
@@ -302,7 +303,7 @@ final class GitHubAdapter
                 'PATCH'
             );
 
-            if ($response && $response->successful()) {
+            if ($response instanceof Response && $response->successful()) {
                 // Add a comment indicating the issue was deleted from the application
                 $this->makeGitHubIssueRequest(
                     $token,
@@ -334,7 +335,7 @@ final class GitHubAdapter
      * @param  string|null  $errorMessage  Custom error message on failure
      * @param  string|null  $resourceType  Type of resource being fetched (for error logging)
      * @param  bool  $returnErrorResponse  Whether to return an error response on failure
-     * @return array|JsonResponse The response data or an error response
+     * @return array|JsonResponse|null The response data or an error response
      */
     private function makeGitHubRequest(
         string $token,
@@ -343,7 +344,7 @@ final class GitHubAdapter
         ?string $errorMessage = null,
         ?string $resourceType = null,
         bool $returnErrorResponse = true
-    ) {
+    ): JsonResponse|array|null {
         try {
             $response = Http::withToken($token)->get($url, $params);
 
@@ -418,7 +419,7 @@ final class GitHubAdapter
                 'PATCH'
             );
 
-            if ($response && $response->successful()) {
+            if ($response instanceof Response && $response->successful()) {
                 $task->meta->update(['source_state' => $state]);
 
                 return true;
@@ -472,8 +473,6 @@ final class GitHubAdapter
 
     /**
      * Make a GitHub issue-related request
-     *
-     * @return \Illuminate\Http\Client\Response|null
      */
     private function makeGitHubIssueRequest(
         string $token,
@@ -483,7 +482,7 @@ final class GitHubAdapter
         array $payload,
         string $method = 'PATCH',
         string $suffix = ''
-    ) {
+    ): ?Response {
         $url = self::API_BASE_URL . "/repos/{$owner}/{$repo}/issues/{$issueNumber}{$suffix}";
 
         try {
