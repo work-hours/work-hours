@@ -32,28 +32,30 @@ export default function WeekView({ timeLogs, date, onTimeLogClick }: WeekViewPro
     // Create hours array (from 0 to 23)
     const hours = Array.from({ length: 24 }, (_, i) => i)
 
-    // Position time logs on the grid
-    const getTimeLogPosition = (timeLog: any, day: Date) => {
-        const startTime = parseISO(timeLog.start)
-        const endTime = parseISO(timeLog.end)
+    // Position time logs on the grid - only get logs that start in the current hour
+    const getTimeLogsForCell = (day: Date, hour: number) => {
+        return timeLogs.filter(log => {
+            const startTime = parseISO(log.start);
 
-        // Check if the time log is on the current day
-        if (!isSameDay(startTime, day)) return null
+            // Check if the log is on this day and starts in this hour
+            return isSameDay(startTime, day) && startTime.getHours() === hour;
+        });
+    }
 
-        const hourStart = startTime.getHours() + startTime.getMinutes() / 60
-        const hourEnd = endTime.getHours() + endTime.getMinutes() / 60
-        const duration = hourEnd - hourStart
+    // Calculate position for a time log within an hour cell
+    const getTimeLogStyle = (timeLog: any) => {
+        const startTime = parseISO(timeLog.start);
+        const startMinutes = startTime.getMinutes();
 
         return {
-            top: `${hourStart * 60}px`, // 1 hour = 60px
-            height: `${duration * 60}px`,
-            timeLog,
-        }
+            top: `${startMinutes}px`,
+            height: `40px`, // Fixed height for better visibility
+        };
     }
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-            <div className="min-w-[800px] overflow-x-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
+            <div className="min-w-[800px]">
                 {/* Header with days */}
                 <div className="grid grid-cols-8 border-b dark:border-gray-700">
                     <div className="p-3 text-center font-medium border-r dark:border-gray-700 sticky left-0 bg-white dark:bg-gray-800 z-10">
@@ -79,7 +81,7 @@ export default function WeekView({ timeLogs, date, onTimeLogClick }: WeekViewPro
                 {/* Time grid */}
                 <div className="relative">
                     {hours.map(hour => (
-                        <div key={hour} className="grid grid-cols-8 border-b dark:border-gray-700 relative">
+                        <div key={hour} className="grid grid-cols-8 border-b dark:border-gray-700">
                             <div className="p-2 text-center border-r dark:border-gray-700 h-[60px] sticky left-0 bg-white dark:bg-gray-800 z-10 flex items-center justify-center">
                                 <span className="text-sm text-gray-600 dark:text-gray-400">
                                     {hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`}
@@ -92,49 +94,44 @@ export default function WeekView({ timeLogs, date, onTimeLogClick }: WeekViewPro
                                     <div className="absolute top-1/2 left-0 right-0 border-t border-dotted border-gray-200 dark:border-gray-700"></div>
 
                                     {/* Render time logs for this day and hour */}
-                                    {timeLogs
-                                        .map(log => getTimeLogPosition(log, day))
-                                        .filter(Boolean)
-                                        .map((position: any) => {
-                                            const { timeLog } = position;
-                                            const startHour = parseISO(timeLog.start).getHours();
+                                    {getTimeLogsForCell(day, hour).map((timeLog, logIndex) => {
+                                        const style = getTimeLogStyle(timeLog);
 
-                                            if (startHour === hour) {
-                                                return (
-                                                    <div
-                                                        key={timeLog.id}
-                                                        className="absolute left-0 right-0 mx-1 rounded-md p-1.5 overflow-hidden cursor-pointer text-xs shadow-sm border border-opacity-20 hover:z-20 hover:shadow-md transition-shadow group"
-                                                        style={{
-                                                            top: position.top,
-                                                            height: position.height,
-                                                            backgroundColor: timeLog.project.color + '20',
-                                                            borderColor: timeLog.project.color,
-                                                            borderLeftWidth: '3px'
-                                                        }}
-                                                        onClick={() => onTimeLogClick(timeLog.id)}
-                                                    >
-                                                        <div className="font-medium truncate text-gray-800 dark:text-gray-200">{timeLog.project.name}</div>
-                                                        <div className="flex justify-between items-center text-xs text-gray-600 dark:text-gray-300">
-                                                            <div className="truncate flex items-center">
-                                                                <Clock className="h-3 w-3 mr-1 shrink-0" />
-                                                                {format(parseISO(timeLog.start), 'HH:mm')} -
-                                                                {format(parseISO(timeLog.end), 'HH:mm')}
-                                                            </div>
-                                                        </div>
-                                                        {timeLog.task && (
-                                                            <div className="truncate opacity-0 group-hover:opacity-100 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white dark:from-gray-800 p-1 transition-opacity text-gray-600 dark:text-gray-300 flex items-center text-[10px]">
-                                                                <CalendarIcon className="h-3 w-3 mr-1 shrink-0" />
-                                                                {timeLog.task.title}
-                                                            </div>
-                                                        )}
-                                                        <div className="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <ChevronRight className="h-3 w-3 text-gray-500" />
-                                                        </div>
+                                        return (
+                                            <div
+                                                key={`${timeLog.id}-${hour}`}
+                                                className="absolute left-1 right-1 rounded-md p-1.5 overflow-hidden cursor-pointer shadow-sm border border-opacity-20 hover:z-20 hover:shadow-md transition-shadow group"
+                                                style={{
+                                                    ...style,
+                                                    zIndex: logIndex + 1,
+                                                    backgroundColor: timeLog.project.color + '15',
+                                                    borderColor: timeLog.project.color,
+                                                    borderLeftWidth: '4px',
+                                                    // Add a slight offset based on index to avoid complete overlap
+                                                    left: `${Math.min(5 * logIndex, 40)}%`,
+                                                    width: `${Math.max(60 - (5 * logIndex), 40)}%`,
+                                                }}
+                                                onClick={() => onTimeLogClick(timeLog.id)}
+                                            >
+                                                <div className="flex justify-between">
+                                                    <div className="font-medium truncate text-gray-800 dark:text-gray-200">{timeLog.project.name}</div>
+                                                    <ChevronRight className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                </div>
+                                                <div className="flex items-center text-gray-600 dark:text-gray-400 text-xs">
+                                                    <Clock className="h-3 w-3 mr-1 shrink-0" />
+                                                    {format(parseISO(timeLog.start), 'HH:mm')}
+                                                    <span className="mx-1">·</span>
+                                                    {timeLog.duration}h
+                                                </div>
+                                                {timeLog.task && (
+                                                    <div className="mt-0.5 truncate text-gray-600 dark:text-gray-400 flex items-center text-xs">
+                                                        <CalendarIcon className="h-3 w-3 mr-1 shrink-0" />
+                                                        {timeLog.task.title}
                                                     </div>
-                                                );
-                                            }
-                                            return null;
-                                        })}
+                                                )}
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             ))}
                         </div>
@@ -142,11 +139,11 @@ export default function WeekView({ timeLogs, date, onTimeLogClick }: WeekViewPro
 
                     {/* Current time indicator */}
                     {days.some(day => isSameDay(day, new Date())) && (
-                        <div className="absolute left-0 right-0 z-10 pointer-events-none" style={{
-                            top: `${new Date().getHours() * 60 + new Date().getMinutes()}px`
+                        <div className="absolute left-0 right-0 z-20 pointer-events-none" style={{
+                            top: `${(new Date().getHours() * 60) + new Date().getMinutes()}px`
                         }}>
-                            <div className="h-0.5 w-full bg-red-500"></div>
-                            <div className="h-3 w-3 rounded-full bg-red-500 absolute -left-1.5 -top-1.5"></div>
+                            <div className="ml-[12.5%] h-0.5 w-[87.5%] bg-red-500"></div>
+                            <div className="ml-[12.5%] h-3 w-3 rounded-full bg-red-500 absolute -left-1 -top-1.5"></div>
                         </div>
                     )}
                 </div>
