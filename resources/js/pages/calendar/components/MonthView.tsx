@@ -111,11 +111,14 @@ export default function MonthView({ timeLogs, date, onTimeLogClick, onSwitchToDa
                                         </div>
                                     )}
                                     <button
-                                        className={`text-xs flex items-center justify-center rounded-md p-1 transition-opacity hover:bg-gray-100 dark:hover:bg-gray-700
+                                        className={`text-xs flex items-center justify-center rounded-md p-1 transition-opacity hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer
                                         ${isCurrentMonth ? 'text-blue-500 dark:text-blue-400' : 'opacity-60 text-gray-500 dark:text-gray-400'}`}
                                         onClick={(e) => {
+                                            e.preventDefault();
                                             e.stopPropagation();
-                                            onSwitchToDay(format(day, 'yyyy-MM-dd'));
+                                            // Use a more direct approach with window.location
+                                            const dayDate = format(day, 'yyyy-MM-dd');
+                                            window.location.href = `/calendar?view=day&date=${dayDate}`;
                                         }}
                                         title="View day"
                                     >

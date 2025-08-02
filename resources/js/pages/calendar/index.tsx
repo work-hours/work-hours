@@ -1,13 +1,15 @@
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
 import MasterLayout from '@/layouts/master-layout'
 import { PageProps } from '@/types'
 import { Head, router } from '@inertiajs/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DayView from './components/DayView'
-import LogDetailOffCanvas from './components/LogDetailOffCanvas'
 import MonthView from './components/MonthView'
 import WeekView from './components/WeekView'
+import { TimeLogEntry } from '@/components/time-log-table'
+import axios from 'axios'
 
 interface CalendarProps extends PageProps {
     timeLogs: Array<{
@@ -37,23 +39,65 @@ interface CalendarProps extends PageProps {
 
 export default function Calendar({ timeLogs, view = 'month', date, period }: CalendarProps) {
     const [selectedTimeLog, setSelectedTimeLog] = useState<number | null>(null)
-    const [isOffCanvasOpen, setIsOffCanvasOpen] = useState(false)
+    const [isSheetOpen, setIsSheetOpen] = useState(false)
+    const [timeLogDetails, setTimeLogDetails] = useState<TimeLogEntry | null>(null)
+    const [activeView, setActiveView] = useState(view)
+
+    // Update activeView whenever the view prop changes (from URL)
+    useEffect(() => {
+        setActiveView(view)
+    }, [view])
 
     const handleViewChange = (newView: string) => {
-        router.get(route('calendar.index'), { view: newView, date }, { preserveState: true })
+        setActiveView(newView)
+        router.get(route('calendar.index'), { view: newView, date }, {
+            preserveState: true,
+            preserveScroll: true
+        })
     }
 
     const handleDateChange = (newDate: string) => {
-        router.get(route('calendar.index'), { view, date: newDate }, { preserveState: true })
+        router.get(route('calendar.index'), { view, date: newDate }, {
+            preserveState: true,
+            preserveScroll: true
+        })
     }
 
     const handleTimeLogClick = (timeLogId: number) => {
         setSelectedTimeLog(timeLogId)
-        setIsOffCanvasOpen(true)
+
+        // Fetch time log details for the sheet
+        axios.get(route('calendar.detail', timeLogId))
+            .then(response => {
+                const data = response.data;
+
+                // Format the data to match TimeLogEntry expected by TimeLogDetailsSheet
+                const formattedData: TimeLogEntry = {
+                    id: data.id,
+                    project_name: data.project ? data.project.name : null,
+                    project_id: data.project ? data.project.id : undefined,
+                    start_timestamp: data.start_timestamp,
+                    end_timestamp: data.end_timestamp,
+                    duration: data.duration,
+                    is_paid: data.is_paid,
+                    hourly_rate: data.hourly_rate,
+                    currency: data.currency,
+                    note: data.note,
+                    status: data.status,
+                    user_name: data.user ? data.user.name : undefined,
+                    task_title: data.task ? data.task.title : undefined,
+                };
+
+                setTimeLogDetails(formattedData);
+                setIsSheetOpen(true);
+            })
+            .catch(error => {
+                console.error('Error fetching time log details:', error);
+            });
     }
 
     const closeOffCanvas = () => {
-        setIsOffCanvasOpen(false)
+        setIsSheetOpen(false)
         setTimeout(() => {
             setSelectedTimeLog(null)
         }, 300) // Wait for animation to complete
@@ -160,8 +204,12 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                 </Tabs>
             </div>
 
-            {/* Off-canvas for time log details */}
-            <LogDetailOffCanvas timeLogId={selectedTimeLog} isOpen={isOffCanvasOpen} onClose={closeOffCanvas} />
+            {/* Time log details sheet */}
+            <TimeLogDetailsSheet
+                timeLog={timeLogDetails}
+                open={isSheetOpen}
+                onOpenChange={setIsSheetOpen}
+            />
         </MasterLayout>
     )
 }
