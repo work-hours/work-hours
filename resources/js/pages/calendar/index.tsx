@@ -1,26 +1,26 @@
+import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
+import { TimeLogEntry } from '@/components/time-log-table'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
 import MasterLayout from '@/layouts/master-layout'
 import { Head, router } from '@inertiajs/react'
+import axios from 'axios'
+import { endOfWeek, format, startOfWeek } from 'date-fns'
+import { CalendarDays, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import DayView from './components/DayView'
 import MonthView from './components/MonthView'
 import WeekView from './components/WeekView'
-import { TimeLogEntry } from '@/components/time-log-table'
-import axios from 'axios'
-import { format, startOfWeek, endOfWeek } from 'date-fns'
-import { CalendarDays, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react'
 
 // Define a basic PageProps interface since it's not available in @/types
 interface PageProps {
     auth?: {
         user: {
-            id: number;
-            name: string;
-            email: string;
-        };
-    };
+            id: number
+            name: string
+            email: string
+        }
+    }
 }
 
 interface CalendarProps extends PageProps {
@@ -62,26 +62,35 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
 
     const handleViewChange = (newView: string) => {
         setActiveView(newView)
-        router.get(route('calendar.index'), { view: newView, date }, {
-            preserveState: true,
-            preserveScroll: true
-        })
+        router.get(
+            route('calendar.index'),
+            { view: newView, date },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
+        )
     }
 
     const handleDateChange = (newDate: string) => {
-        router.get(route('calendar.index'), { view, date: newDate }, {
-            preserveState: true,
-            preserveScroll: true
-        })
+        router.get(
+            route('calendar.index'),
+            { view, date: newDate },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
+        )
     }
 
     const handleTimeLogClick = (timeLogId: number) => {
         setSelectedTimeLog(timeLogId)
 
         // Fetch time log details for the sheet
-        axios.get(route('calendar.detail', timeLogId))
-            .then(response => {
-                const data = response.data;
+        axios
+            .get(route('calendar.detail', timeLogId))
+            .then((response) => {
+                const data = response.data
 
                 // Format the data to match TimeLogEntry expected by TimeLogDetailsSheet
                 const formattedData: TimeLogEntry = {
@@ -107,14 +116,14 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                     approver_name: data.approver_name || undefined,
                     user_non_monetary: data.user_non_monetary || false,
                     paid_amount: data.paid_amount,
-                };
+                }
 
-                setTimeLogDetails(formattedData);
-                setIsSheetOpen(true);
+                setTimeLogDetails(formattedData)
+                setIsSheetOpen(true)
             })
-            .catch(error => {
-                console.error('Error fetching time log details:', error);
-            });
+            .catch((error) => {
+                console.error('Error fetching time log details:', error)
+            })
     }
 
     const closeOffCanvas = () => {
@@ -134,7 +143,7 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                         <Button
                             variant="outline"
                             size="sm"
-                            className="flex items-center gap-1 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 shadow-sm"
+                            className="dark:hover:bg-gray-750 flex items-center gap-1 bg-white shadow-sm hover:bg-gray-50 dark:bg-gray-800"
                             onClick={() => {
                                 const today = new Date().toISOString().split('T')[0]
                                 handleDateChange(today)
@@ -147,7 +156,7 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="rounded-r-none border-r-0 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750"
+                                className="dark:hover:bg-gray-750 rounded-r-none border-r-0 bg-white hover:bg-gray-50 dark:bg-gray-800"
                                 onClick={() => {
                                     const currentDate = new Date(date)
                                     let newDate: Date
@@ -174,7 +183,7 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="rounded-l-none bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750"
+                                className="dark:hover:bg-gray-750 rounded-l-none bg-white hover:bg-gray-50 dark:bg-gray-800"
                                 onClick={() => {
                                     const currentDate = new Date(date)
                                     let newDate: Date
@@ -206,30 +215,30 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                 <div className="mb-4 text-center">
                     <h2 className="text-xl font-semibold">
                         {(() => {
-                            const currentDate = new Date(date);
+                            const currentDate = new Date(date)
 
                             switch (view) {
                                 case 'month':
-                                    return format(currentDate, 'MMMM yyyy');
+                                    return format(currentDate, 'MMMM yyyy')
                                 case 'week':
-                                    const weekStart = startOfWeek(currentDate);
-                                    const weekEnd = endOfWeek(currentDate);
+                                    const weekStart = startOfWeek(currentDate)
+                                    const weekEnd = endOfWeek(currentDate)
                                     if (format(weekStart, 'MMM') === format(weekEnd, 'MMM')) {
-                                        return format(weekStart, 'MMMM yyyy');
+                                        return format(weekStart, 'MMMM yyyy')
                                     } else {
-                                        return `${format(weekStart, 'MMM d')} - ${format(weekEnd, 'MMM d, yyyy')}`;
+                                        return `${format(weekStart, 'MMM d')} - ${format(weekEnd, 'MMM d, yyyy')}`
                                     }
                                 case 'day':
-                                    return format(currentDate, 'MMMM d, yyyy');
+                                    return format(currentDate, 'MMMM d, yyyy')
                                 default:
-                                    return '';
+                                    return ''
                             }
                         })()}
                     </h2>
                 </div>
 
                 <Tabs defaultValue={view} onValueChange={handleViewChange}>
-                    <TabsList className="mb-4 p-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                    <TabsList className="mb-4 rounded-lg border border-gray-200 bg-white p-1 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                         <TabsTrigger value="month" className="flex items-center gap-2 px-4 py-2">
                             <CalendarDays className="h-4 w-4" />
                             Month
@@ -251,11 +260,7 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                             onTimeLogClick={handleTimeLogClick}
                             onSwitchToDay={(selectedDate) => {
                                 // Switch to day view and update the date
-                                router.get(
-                                    route('calendar.index'),
-                                    { view: 'day', date: selectedDate },
-                                    { preserveState: true }
-                                )
+                                router.get(route('calendar.index'), { view: 'day', date: selectedDate }, { preserveState: true })
                             }}
                         />
                     </TabsContent>
@@ -271,11 +276,7 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
             </div>
 
             {/* Time log details sheet */}
-            <TimeLogDetailsSheet
-                timeLog={timeLogDetails}
-                open={isSheetOpen}
-                onOpenChange={setIsSheetOpen}
-            />
+            <TimeLogDetailsSheet timeLog={timeLogDetails} open={isSheetOpen} onOpenChange={setIsSheetOpen} />
         </MasterLayout>
     )
 }

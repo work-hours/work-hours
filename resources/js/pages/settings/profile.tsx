@@ -31,13 +31,11 @@ type ProfileForm = {
 export default function Profile({ mustVerifyEmail, status, currencies }: { mustVerifyEmail: boolean; status?: string; currencies: string[] }) {
     const { auth } = usePage<SharedData>().props
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
         name: auth.user.name,
         email: auth.user.email,
         hourly_rate: auth.user.hourly_rate !== null ? String(auth.user.hourly_rate) : '',
-        currency: auth.user.currency || 'USD',
+        currency: auth.user.currency ? auth.user.currency.toString() : 'USD',
     })
 
     const submit: FormEventHandler = (e) => {

@@ -1,5 +1,5 @@
 import { eachDayOfInterval, endOfMonth, format, isSameDay, isSameMonth, parseISO, startOfMonth } from 'date-fns'
-import { Clock, Calendar, CalendarDays } from 'lucide-react'
+import { Calendar, CalendarDays, Clock } from 'lucide-react'
 
 interface MonthViewProps {
     timeLogs: Array<{
@@ -52,103 +52,100 @@ export default function MonthView({ timeLogs, date, onTimeLogClick, onSwitchToDa
     const allDays = [...daysBeforeMonth, ...days, ...daysAfterMonth]
 
     // Group logs by date
-    const logsByDate: Record<string, any[]> = {};
+    const logsByDate: Record<string, any[]> = {}
 
-    timeLogs.forEach(log => {
-        const startDate = parseISO(log.start);
-        const dateKey = format(startDate, 'yyyy-MM-dd');
+    timeLogs.forEach((log) => {
+        const startDate = parseISO(log.start)
+        const dateKey = format(startDate, 'yyyy-MM-dd')
 
         if (!logsByDate[dateKey]) {
-            logsByDate[dateKey] = [];
+            logsByDate[dateKey] = []
         }
 
-        logsByDate[dateKey].push(log);
-    });
+        logsByDate[dateKey].push(log)
+    })
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
             <div className="grid grid-cols-7 gap-px bg-gray-200 dark:bg-gray-700">
-                <div className="bg-gray-100 dark:bg-gray-750 p-3 text-center font-medium">Sun</div>
-                <div className="bg-gray-100 dark:bg-gray-750 p-3 text-center font-medium">Mon</div>
-                <div className="bg-gray-100 dark:bg-gray-750 p-3 text-center font-medium">Tue</div>
-                <div className="bg-gray-100 dark:bg-gray-750 p-3 text-center font-medium">Wed</div>
-                <div className="bg-gray-100 dark:bg-gray-750 p-3 text-center font-medium">Thu</div>
-                <div className="bg-gray-100 dark:bg-gray-750 p-3 text-center font-medium">Fri</div>
-                <div className="bg-gray-100 dark:bg-gray-750 p-3 text-center font-medium">Sat</div>
+                <div className="dark:bg-gray-750 bg-gray-100 p-3 text-center font-medium">Sun</div>
+                <div className="dark:bg-gray-750 bg-gray-100 p-3 text-center font-medium">Mon</div>
+                <div className="dark:bg-gray-750 bg-gray-100 p-3 text-center font-medium">Tue</div>
+                <div className="dark:bg-gray-750 bg-gray-100 p-3 text-center font-medium">Wed</div>
+                <div className="dark:bg-gray-750 bg-gray-100 p-3 text-center font-medium">Thu</div>
+                <div className="dark:bg-gray-750 bg-gray-100 p-3 text-center font-medium">Fri</div>
+                <div className="dark:bg-gray-750 bg-gray-100 p-3 text-center font-medium">Sat</div>
             </div>
 
             <div className="grid grid-cols-7 gap-px bg-gray-200 dark:bg-gray-700">
                 {allDays.map((day, index) => {
-                    const dateKey = format(day, 'yyyy-MM-dd');
-                    const isCurrentMonth = isSameMonth(day, currentDate);
-                    const isToday = isSameDay(day, new Date());
-                    const dayLogs = logsByDate[dateKey] || [];
+                    const dateKey = format(day, 'yyyy-MM-dd')
+                    const isCurrentMonth = isSameMonth(day, currentDate)
+                    const isToday = isSameDay(day, new Date())
+                    const dayLogs = logsByDate[dateKey] || []
 
                     // Calculate total hours logged for this day
-                    const totalHours = dayLogs.reduce((sum, log) => sum + log.duration, 0);
-                    const hasLogs = dayLogs.length > 0;
+                    const totalHours = dayLogs.reduce((sum, log) => sum + log.duration, 0)
+                    const hasLogs = dayLogs.length > 0
 
                     return (
                         <div
                             key={index}
-                            className={`min-h-[140px] p-3 bg-white dark:bg-gray-800 transition-colors ${
+                            className={`min-h-[140px] bg-white p-3 transition-colors dark:bg-gray-800 ${
                                 isCurrentMonth ? '' : 'opacity-40'
-                            } ${hasLogs ? 'hover:bg-gray-50 dark:hover:bg-gray-750' : ''}`}
+                            } ${hasLogs ? 'dark:hover:bg-gray-750 hover:bg-gray-50' : ''}`}
                         >
-                            <div className="flex justify-between items-center mb-2">
-                                <div className={`
-                                    ${isToday ? 'bg-blue-500 text-white' : 'text-gray-700 dark:text-gray-200'}
-                                    ${isToday ? 'rounded-full w-8 h-8 flex items-center justify-center' : ''}
-                                    font-semibold
-                                `}>
+                            <div className="mb-2 flex items-center justify-between">
+                                <div
+                                    className={` ${isToday ? 'bg-blue-500 text-white' : 'text-gray-700 dark:text-gray-200'} ${isToday ? 'flex h-8 w-8 items-center justify-center rounded-full' : ''} font-semibold`}
+                                >
                                     {format(day, 'd')}
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     {totalHours > 0 && (
-                                        <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                                            <Clock className="w-3 h-3 mr-1" />
+                                        <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                            <Clock className="mr-1 h-3 w-3" />
                                             {totalHours.toFixed(1)}h
                                         </div>
                                     )}
                                     <button
-                                        className={`text-xs flex items-center justify-center rounded-md p-1 transition-opacity hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer
-                                        ${isCurrentMonth ? 'text-blue-500 dark:text-blue-400' : 'opacity-60 text-gray-500 dark:text-gray-400'}`}
+                                        className={`flex cursor-pointer items-center justify-center rounded-md p-1 text-xs transition-opacity hover:bg-gray-100 dark:hover:bg-gray-700 ${isCurrentMonth ? 'text-blue-500 dark:text-blue-400' : 'text-gray-500 opacity-60 dark:text-gray-400'}`}
                                         onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
+                                            e.preventDefault()
+                                            e.stopPropagation()
                                             // Use a more direct approach with window.location
-                                            const dayDate = format(day, 'yyyy-MM-dd');
-                                            window.location.href = `/calendar?view=day&date=${dayDate}`;
+                                            const dayDate = format(day, 'yyyy-MM-dd')
+                                            window.location.href = `/calendar?view=day&date=${dayDate}`
                                         }}
                                         title="View day"
                                     >
-                                        <CalendarDays className="w-3.5 h-3.5" />
+                                        <CalendarDays className="h-3.5 w-3.5" />
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="space-y-1.5 overflow-y-auto max-h-[90px]">
-                                {dayLogs.slice(0, 3).map(log => (
+                            <div className="max-h-[90px] space-y-1.5 overflow-y-auto">
+                                {dayLogs.slice(0, 3).map((log) => (
                                     <div
                                         key={log.id}
-                                        className="text-xs p-1.5 rounded-md cursor-pointer hover:opacity-80 transition-opacity flex flex-col"
+                                        className="flex cursor-pointer flex-col rounded-md p-1.5 text-xs transition-opacity hover:opacity-80"
                                         style={{
                                             backgroundColor: log.project.color + '26',
-                                            borderLeft: `3px solid ${log.project.color}`
+                                            borderLeft: `3px solid ${log.project.color}`,
                                         }}
                                         onClick={() => onTimeLogClick(log.id)}
                                     >
-                                        <div className="font-medium truncate">{log.project.name}</div>
-                                        <div className="flex justify-between items-center text-gray-600 dark:text-gray-300">
+                                        <div className="truncate font-medium">{log.project.name}</div>
+                                        <div className="flex items-center justify-between text-gray-600 dark:text-gray-300">
                                             <div className="truncate">{format(parseISO(log.start), 'HH:mm')}</div>
                                             <div className="flex items-center">
-                                                <Clock className="w-3 h-3 mr-1" />
+                                                <Clock className="mr-1 h-3 w-3" />
                                                 {log.duration}h
                                             </div>
                                         </div>
                                         {log.task && (
-                                            <div className="truncate text-gray-500 dark:text-gray-400 mt-0.5 flex items-center">
-                                                <Calendar className="w-3 h-3 mr-1" />
+                                            <div className="mt-0.5 flex items-center truncate text-gray-500 dark:text-gray-400">
+                                                <Calendar className="mr-1 h-3 w-3" />
                                                 {log.task.title}
                                             </div>
                                         )}
@@ -157,7 +154,7 @@ export default function MonthView({ timeLogs, date, onTimeLogClick, onSwitchToDa
 
                                 {dayLogs.length > 3 && (
                                     <div
-                                        className="text-xs py-1 px-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-center"
+                                        className="cursor-pointer rounded-md bg-gray-100 px-2 py-1 text-center text-xs text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                                         onClick={() => onTimeLogClick(dayLogs[3].id)}
                                     >
                                         +{dayLogs.length - 3} more
@@ -165,9 +162,9 @@ export default function MonthView({ timeLogs, date, onTimeLogClick, onSwitchToDa
                                 )}
                             </div>
                         </div>
-                    );
+                    )
                 })}
             </div>
         </div>
-    );
+    )
 }
