@@ -17,6 +17,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
 import { getUnpaidTimeLogs } from '@actions/InvoiceController'
+import CustomInput from '@/components/ui/custom-input'
 
 type InvoiceForm = {
     client_id: string
@@ -426,18 +427,13 @@ export default function CreateInvoice() {
                                             dateFormat="yyyy-MM-dd"
                                             disabled={processing}
                                             customInput={
-                                                <div className="relative">
-                                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                                                    </div>
-                                                    <Input
-                                                        id="issue_date"
-                                                        placeholder="Select issue date"
-                                                        className="pl-10"
-                                                        value={data.issue_date ? data.issue_date.toISOString().split('T')[0] : ''}
-                                                        readOnly
-                                                    />
-                                                </div>
+                                                <CustomInput
+                                                    id="issue_date"
+                                                    icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                    placeholder="Select issue date"
+                                                    value={data.issue_date ? data.issue_date.toISOString().split('T')[0] : ''}
+                                                    disabled={processing}
+                                                />
                                             }
                                         />
                                     </div>
@@ -454,18 +450,13 @@ export default function CreateInvoice() {
                                             dateFormat="yyyy-MM-dd"
                                             disabled={processing}
                                             customInput={
-                                                <div className="relative">
-                                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                                                    </div>
-                                                    <Input
-                                                        id="due_date"
-                                                        placeholder="Select due date"
-                                                        className="pl-10"
-                                                        value={data.due_date ? data.due_date.toISOString().split('T')[0] : ''}
-                                                        readOnly
-                                                    />
-                                                </div>
+                                                <CustomInput
+                                                    id="due_date"
+                                                    icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                    placeholder="Select due date"
+                                                    value={data.due_date ? data.due_date.toISOString().split('T')[0] : ''}
+                                                    disabled={processing}
+                                                />
                                             }
                                         />
                                     </div>
