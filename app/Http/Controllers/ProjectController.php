@@ -122,7 +122,14 @@ final class ProjectController extends Controller
             ]);
 
         return Inertia::render('project/edit', [
-            'project' => $project,
+            'project' => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'description' => $project->description,
+                'client_id' => $project->client_id,
+                'source' => $project->source,
+                'is_imported' => $project->source !== null,
+            ],
             'teamMembers' => $teamMembers,
             'assignedTeamMembers' => $assignedTeamMembers,
             'assignedApprovers' => $assignedApprovers,
