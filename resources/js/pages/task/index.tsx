@@ -4,6 +4,7 @@ import TaskDetailsSheet from '@/components/task-details-sheet'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -57,6 +58,7 @@ export default function Tasks() {
     const [selectedStatus, setSelectedStatus] = useState<Task['status'] | null>(null)
     const [isUpdating, setIsUpdating] = useState(false)
     const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null)
+    const [updateGithub, setUpdateGithub] = useState<boolean>(true)
     const [isThereRunningTracker, setIsThereRunningTracker] = useState(localStorage.getItem('activeTimeLog') !== null)
 
     // Filter states
@@ -78,6 +80,7 @@ export default function Tasks() {
     const handleStatusClick = (task: Task, status: Task['status']): void => {
         setTaskToUpdate(task)
         setSelectedStatus(status)
+        setUpdateGithub(true) // Default to checked
         setStatusDialogOpen(true)
     }
 
@@ -89,7 +92,16 @@ export default function Tasks() {
 
         setIsUpdating(true)
         try {
-            await axios.put(route('task.update', taskToUpdate.id), {
+            const payload: {
+                status: 'pending' | 'in_progress' | 'completed'
+                title: string
+                project_id: number
+                priority: 'low' | 'medium' | 'high'
+                description: string | null
+                due_date: string | null
+                assignees: number[]
+                github_update?: boolean
+            } = {
                 status: selectedStatus,
                 // Include other required fields to avoid validation errors
                 title: taskToUpdate.title,
@@ -98,7 +110,14 @@ export default function Tasks() {
                 description: taskToUpdate.description,
                 due_date: taskToUpdate.due_date,
                 assignees: taskToUpdate.assignees.map((a) => a.id),
-            })
+            }
+
+            // Add github_update parameter for GitHub tasks
+            if (taskToUpdate.is_imported && taskToUpdate.meta?.source === 'github') {
+                payload.github_update = updateGithub
+            }
+
+            await axios.put(route('task.update', taskToUpdate.id), payload)
 
             // Update the task status locally
             const updatedTasks = tasks.map((task) => {
@@ -703,6 +722,19 @@ export default function Tasks() {
                                     </Label>
                                 </div>
                             </RadioGroup>
+
+                            {taskToUpdate?.is_imported && taskToUpdate?.meta?.source === 'github' && (
+                                <div className="flex items-center space-x-2 pt-2">
+                                    <Checkbox
+                                        id="update_github"
+                                        checked={updateGithub}
+                                        onCheckedChange={(checked) => setUpdateGithub(checked === true)}
+                                    />
+                                    <Label htmlFor="update_github" className="text-sm">
+                                        Update in GitHub?
+                                    </Label>
+                                </div>
+                            )}
                         </div>
                         <DialogFooter>
                             <Button type="button" variant="outline" onClick={() => setStatusDialogOpen(false)} disabled={isUpdating}>

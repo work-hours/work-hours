@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/react'
-import { FormEventHandler, useEffect, useState } from 'react'
+import { FormEventHandler, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -15,7 +15,13 @@ interface DeleteTaskProps {
 }
 
 export default function DeleteTask({ taskId, isGithub = false, onDelete }: DeleteTaskProps) {
-    const { delete: destroy, processing, reset, clearErrors, setData } = useForm({
+    const {
+        delete: destroy,
+        processing,
+        reset,
+        clearErrors,
+        setData,
+    } = useForm({
         delete_from_github: true,
     })
 
@@ -25,7 +31,7 @@ export default function DeleteTask({ taskId, isGithub = false, onDelete }: Delet
         e.preventDefault()
 
         if (isGithub) {
-            setData('delete_from_github', deleteFromGithub as never);
+            setData('delete_from_github', deleteFromGithub as never)
         }
 
         destroy(route('task.destroy', taskId), {

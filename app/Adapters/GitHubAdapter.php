@@ -307,11 +307,7 @@ final class GitHubAdapter
             ];
 
             // Set issue state based on task status
-            if ($task->status === 'completed') {
-                $payload['state'] = 'closed';
-            } else {
-                $payload['state'] = 'open';
-            }
+            $payload['state'] = $task->status === 'completed' ? 'closed' : 'open';
 
             $response = Http::withToken($token)
                 ->patch("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues/{$issueNumber}", $payload);

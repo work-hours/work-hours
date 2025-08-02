@@ -278,14 +278,12 @@ final class TaskController extends Controller
     #[Action(method: 'delete', name: 'task.destroy', params: ['task'], middleware: ['auth', 'verified'])]
     public function destroy(Task $task): void
     {
-        // Check if user has access to delete this task
         $isProjectOwner = $task->project->user_id === auth()->id();
 
         abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
 
         DB::beginTransaction();
         try {
-            // Delete the GitHub issue if requested and if the task is from GitHub
             if (request()->boolean('delete_from_github') && $task->is_imported && $task->meta && $task->meta->source === 'github') {
                 $this->gitHubAdapter->deleteGitHubIssue($task);
             }

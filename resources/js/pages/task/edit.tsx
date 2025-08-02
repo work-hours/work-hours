@@ -367,7 +367,7 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                 </div>
 
                                 {isGithub && (
-                                    <div className="grid gap-2 ml-1">
+                                    <div className="ml-1 grid gap-2">
                                         <Label className="flex items-center space-x-2">
                                             <Checkbox
                                                 id="github_update"
