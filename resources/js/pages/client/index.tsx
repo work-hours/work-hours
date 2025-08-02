@@ -12,7 +12,7 @@ import { formatDateValue, objectToQueryString, queryStringToObject } from '@/lib
 import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, Plus, Search, Users, X } from 'lucide-react'
+import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, Plus, Search, TimerReset, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -144,128 +144,40 @@ export default function Clients() {
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your clients</p>
                 </section>
 
-                {/* Filters card */}
-                <Card className="transition-all hover:shadow-md">
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4">
-                            {/* Search */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="search" className="text-xs font-medium">
-                                    Search
-                                </Label>
-                                <div className="relative">
-                                    <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                        id="search"
-                                        placeholder="Search"
-                                        className="pl-10"
-                                        value={filters.search}
-                                        onChange={(e) => handleFilterChange('search', e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Created Date From */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="created-date-from" className="text-xs font-medium">
-                                    Created Date From
-                                </Label>
-                                <DatePicker
-                                    selected={parseDate(filters.created_date_from)}
-                                    onChange={(date) => handleFilterChange('created_date_from', date)}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="created-date-from"
-                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select start date"
-                                        />
-                                    }
-                                />
-                            </div>
-
-                            {/* Created Date To */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="created-date-to" className="text-xs font-medium">
-                                    Created Date To
-                                </Label>
-                                <DatePicker
-                                    selected={parseDate(filters.created_date_to)}
-                                    onChange={(date) => handleFilterChange('created_date_to', date)}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="created-date-to"
-                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select end date"
-                                        />
-                                    }
-                                />
-                            </div>
-
-                            <div className="flex items-end gap-2">
-                                <Button type="submit" className="flex h-9 items-center gap-1 px-3">
-                                    <Search className="h-3.5 w-3.5" />
-                                    <span>Filter</span>
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    disabled={!filters.search && !filters.created_date_from && !filters.created_date_to}
-                                    onClick={clearFilters}
-                                    className="flex h-9 items-center gap-1 px-3"
-                                >
-                                    <X className="h-3.5 w-3.5" />
-                                    <span>Clear</span>
-                                </Button>
-                            </div>
-                        </form>
-
-                        <div className={'mt-4 text-sm text-muted-foreground'}>
-                            {(filters.search || filters.created_date_from || filters.created_date_to) && (
-                                <CardDescription>
-                                    {(() => {
-                                        let description = ''
-
-                                        if (filters.created_date_from && filters.created_date_to) {
-                                            description = `Showing clients from ${formatDateValue(filters.created_date_from)} to ${formatDateValue(filters.created_date_to)}`
-                                        } else if (filters.created_date_from) {
-                                            description = `Showing clients from ${formatDateValue(filters.created_date_from)}`
-                                        } else if (filters.created_date_to) {
-                                            description = `Showing clients until ${formatDateValue(filters.created_date_to)}`
-                                        }
-
-                                        if (filters.search) {
-                                            if (description) {
-                                                description += ` matching "${filters.search}"`
-                                            } else {
-                                                description = `Showing clients matching "${filters.search}"`
-                                            }
-                                        }
-
-                                        return description
-                                    })()}
-                                </CardDescription>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Clients</CardTitle>
                                 <CardDescription>
                                     {loading ? 'Loading clients...' : error ? 'Failed to load clients' : `You have ${clients.length} clients`}
                                 </CardDescription>
+
+                                {(filters.search || filters.created_date_from || filters.created_date_to) && (
+                                    <CardDescription className="mt-1">
+                                        {(() => {
+                                            let description = ''
+
+                                            if (filters.created_date_from && filters.created_date_to) {
+                                                description = `Showing clients from ${formatDateValue(filters.created_date_from)} to ${formatDateValue(filters.created_date_to)}`
+                                            } else if (filters.created_date_from) {
+                                                description = `Showing clients from ${formatDateValue(filters.created_date_from)}`
+                                            } else if (filters.created_date_to) {
+                                                description = `Showing clients until ${formatDateValue(filters.created_date_to)}`
+                                            }
+
+                                            if (filters.search) {
+                                                if (description) {
+                                                    description += ` matching "${filters.search}"`
+                                                } else {
+                                                    description = `Showing clients matching "${filters.search}"`
+                                                }
+                                            }
+
+                                            return description
+                                        })()}
+                                    </CardDescription>
+                                )}
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton
@@ -274,6 +186,7 @@ export default function Clients() {
                                         created_date_from: formatDateValue(filters.created_date_from),
                                         created_date_to: formatDateValue(filters.created_date_to),
                                     })}`}
+                                    label="Export"
                                 />
                                 <Link href={route('client.create')}>
                                     <Button className="flex items-center gap-2">
@@ -282,6 +195,91 @@ export default function Clients() {
                                     </Button>
                                 </Link>
                             </div>
+                        </div>
+
+                        <div className="mt-4 border-t pt-4">
+                            <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="search" className="text-xs font-medium">
+                                        Search
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="search"
+                                            placeholder="Search"
+                                            className="pl-9"
+                                            value={filters.search}
+                                            onChange={(e) => handleFilterChange('search', e.target.value)}
+                                        />
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <Search className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="created-date-from" className="text-xs font-medium">
+                                        Created Date From
+                                    </Label>
+                                    <DatePicker
+                                        selected={parseDate(filters.created_date_from)}
+                                        onChange={(date) => handleFilterChange('created_date_from', date)}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="created-date-from"
+                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select start date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="created-date-to" className="text-xs font-medium">
+                                        Created Date To
+                                    </Label>
+                                    <DatePicker
+                                        selected={parseDate(filters.created_date_to)}
+                                        onChange={(date) => handleFilterChange('created_date_to', date)}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="created-date-to"
+                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select end date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                <div className="flex items-end gap-2">
+                                    <Button
+                                        type="submit"
+                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        title="Apply filters"
+                                    >
+                                        <Search className="h-4 w-4" />
+                                    </Button>
+
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        disabled={!filters.search && !filters.created_date_from && !filters.created_date_to}
+                                        onClick={clearFilters}
+                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        title="Clear filters"
+                                    >
+                                        <TimerReset className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </form>
                         </div>
                     </CardHeader>
                     <CardContent>

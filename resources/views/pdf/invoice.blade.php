@@ -10,8 +10,8 @@
         }
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-size: 16px;
-            line-height: 1.5;
+            font-size: 14px;
+            line-height: 1.6;
             color: #333;
             background-color: #fff;
             margin: 0;
@@ -20,204 +20,207 @@
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 15px;
+            padding: 30px 40px;
             border: 1px solid #e0e0e0;
             background-color: #fff;
         }
         .header {
-            text-align: center;
-            margin-bottom: 18px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #4a86e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4a86e8;
             position: relative;
-            background: linear-gradient(to bottom, #f8f9fa, #ffffff);
-            padding-top: 15px;
-            border-radius: 6px 6px 0 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .header-left {
+            text-align: left;
+        }
+        .header-right {
+            text-align: right;
         }
         .header h1 {
             color: #4a86e8;
-            font-size: 34px; /* Increased for better visibility */
-            margin: 0 0 4px 0;
+            font-size: 28px;
+            margin: 0;
             letter-spacing: 2px;
             text-transform: uppercase;
-            font-weight: 800;
-            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+            font-weight: 700;
         }
         .header h2 {
-            font-size: 22px;
+            font-size: 20px;
             color: #555;
-            margin: 4px 0;
+            margin: 5px 0 0;
             font-weight: 600;
         }
         .invoice-info {
-            margin-bottom: 12px;
-            padding: 8px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
+            margin-bottom: 25px;
         }
         .invoice-info-row {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            margin-bottom: 20px;
         }
         .invoice-info-column {
             width: 48%;
         }
         .invoice-info-column h3 {
             color: #4a86e8;
-            margin: 0 0 3px 0;
+            margin: 0 0 10px 0;
             border-bottom: 1px solid #ddd;
-            padding-bottom: 3px;
-            font-size: 18.52px; /* Increased by additional 15% from 16.1px */
+            padding-bottom: 5px;
+            font-size: 16px;
+            font-weight: 600;
         }
         .invoice-info-column p {
-            margin: 3px 0;
-            font-size: 15.87px; /* Increased by additional 15% from 13.8px */
+            margin: 5px 0;
+            font-size: 14px;
         }
         .invoice-details {
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-bottom: 30px;
+            padding: 15px 20px;
             background-color: #f8f9fa;
             border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             border-left: 4px solid #4a86e8;
+        }
+        .invoice-details-grid {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .invoice-details-item {
+            min-width: 30%;
+            margin-bottom: 5px;
         }
         .invoice-details p {
             margin: 8px 0;
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1.6;
         }
         .invoice-details strong {
-            color: #4a86e8;
-            display: inline-block;
-            width: 130px;
+            color: #555;
             font-weight: 600;
+            display: inline-block;
+            width: 100px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             border: 1px solid #e0e0e0;
             border-radius: 6px;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         th {
-            padding: 10px 12px;
+            padding: 12px 15px;
             text-align: left;
             background-color: #4a86e8;
             color: white;
             font-weight: 600;
-            text-transform: uppercase;
-            font-size: 16px;
+            font-size: 14px;
             letter-spacing: 0.5px;
         }
         td {
-            padding: 10px 12px;
+            padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #e0e0e0;
-            font-size: 16px;
+            font-size: 14px;
             vertical-align: middle;
         }
         tr:nth-child(even) {
             background-color: #f8f9fa;
         }
-        tr:hover {
-            background-color: #f1f5fd;
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
         }
         .total-row {
             font-weight: bold;
             background-color: #edf2fd !important;
-            font-size: 17px;
+            font-size: 15px;
             border-top: 2px solid #4a86e8;
         }
         .currency {
-            font-size: 90%;
             color: #666;
             margin-right: 2px;
+            font-size: 85%;
         }
         .amount {
-            /* Using the same font as the rest of the document */
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             white-space: nowrap;
+            font-weight: 500;
         }
         .notes {
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-top: 25px;
+            margin-bottom: 30px;
+            padding: 15px 20px;
             background-color: #f8f9fa;
             border-radius: 6px;
             border-left: 4px solid #4a86e8;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .notes h3 {
             color: #4a86e8;
-            margin: 0 0 8px 0;
-            font-size: 18px;
+            margin: 0 0 10px 0;
+            font-size: 16px;
             font-weight: 600;
             letter-spacing: 0.5px;
         }
         .notes p {
             margin: 8px 0;
-            font-size: 15px;
+            font-size: 14px;
             line-height: 1.6;
             color: #555;
         }
         .footer {
-            margin-top: 25px;
+            margin-top: 35px;
             text-align: center;
-            font-size: 15px;
+            font-size: 13px;
             color: #777;
             padding: 15px 0;
-            border-top: 2px solid #eee;
-            background-color: #f8f9fa;
-            border-radius: 0 0 6px 6px;
+            border-top: 1px solid #eee;
         }
         .footer p {
             margin: 2px 0;
         }
         .info-table {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             border: none;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            background-color: transparent;
         }
         .info-cell {
-            padding: 15px;
+            padding: 0;
             vertical-align: top;
             border: none;
         }
         .info-heading {
             color: #4a86e8;
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 600;
             margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         .info-content {
             line-height: 1.6;
         }
         .status-stamp {
             position: absolute;
-            top: 100px;
-            right: 50px;
+            top: 50px;
+            right: 30px;
             transform: rotate(-15deg);
-            font-size: 48px;
+            font-size: 36px;
             font-weight: 800;
             text-transform: uppercase;
-            padding: 10px 20px;
-            border: 5px solid;
-            border-radius: 12px;
-            opacity: 0.8;
+            padding: 8px 25px;
+            border: 4px solid;
+            border-radius: 10px;
+            opacity: 0.9;
             text-align: center;
             z-index: 100;
-            letter-spacing: 3px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            letter-spacing: 2px;
         }
         .stamp-paid {
             color: #28a745;
@@ -239,22 +242,24 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>INVOICE</h1>
-            <h2>#{{ $invoice->invoice_number }}</h2>
+            <div class="header-left">
+                <h1>INVOICE</h1>
+                <h2>#{{ $invoice->invoice_number }}</h2>
+            </div>
         </div>
 
         <table class="info-table">
             <tr>
-                <td class="info-cell">
-                    <div class="info-heading">From:</div>
+                <td class="info-cell" width="50%">
+                    <div class="info-heading">From</div>
                     <div class="info-content">
                         <strong>{{ $invoice->user->name }}</strong><br>
                         {{ $invoice->user->email }}<br>
                         {{ $invoice->user->address ?? '' }}
                     </div>
                 </td>
-                <td class="info-cell" style="text-align: right;">
-                    <div class="info-heading">To:</div>
+                <td class="info-cell" width="50%" style="text-align: right;">
+                    <div class="info-heading">To</div>
                     <div class="info-content">
                         <strong>{{ $client->name }}</strong><br>
                         {{ $client->email ?? '' }}<br>
@@ -265,14 +270,21 @@
         </table>
 
         <div class="invoice-details">
-            <p><strong>Issue Date:</strong> {{ $invoice->issue_date->format('Y-m-d') }}</p>
-            <p><strong>Due Date:</strong> {{ $invoice->due_date->format('Y-m-d') }}</p>
-            <p><strong>Currency:</strong> {{ $invoice->currency ?? $client->currency ?? 'USD' }}</p>
+            <div class="invoice-details-grid">
+                <div class="invoice-details-item">
+                    <p><strong>Issue Date:</strong> {{ $invoice->issue_date->format('Y-m-d') }}</p>
+                </div>
+                <div class="invoice-details-item">
+                    <p><strong>Due Date:</strong> {{ $invoice->due_date->format('Y-m-d') }}</p>
+                </div>
+                <div class="invoice-details-item">
+                    <p><strong>Currency:</strong> {{ $invoice->currency ?? $client->currency ?? 'USD' }}</p>
+                </div>
+            </div>
         </div>
 
         @php
             // Determine which stamp to show based on invoice status
-            // Only show PAID, UNPAID, or OVERDUE as requested
             $statusClass = '';
             $statusText = '';
 
@@ -283,7 +295,7 @@
                 $statusClass = 'stamp-overdue';
                 $statusText = 'OVERDUE';
             } else {
-                // All other statuses (draft, sent, partially_paid with partial payment, cancelled) show as UNPAID
+                // All other statuses show as UNPAID
                 $statusClass = 'stamp-unpaid';
                 $statusText = 'UNPAID';
             }
@@ -296,22 +308,22 @@
         <table>
             <thead>
                 <tr>
-                    <th>Description</th>
-                    <th>Quantity</th>
-                    <th>Rate</th>
-                    <th>Amount</th>
+                    <th width="45%">Description</th>
+                    <th width="15%" class="text-center">Quantity</th>
+                    <th width="20%" class="text-right">Rate</th>
+                    <th width="20%" class="text-right">Amount</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($items as $item)
                 <tr>
                     <td>{{ $item->description }}</td>
-                    <td>{{ $item->quantity }}</td>
-                    <td class="amount">
+                    <td class="text-center">{{ $item->quantity }}</td>
+                    <td class="text-right amount">
                         <span class="currency">{{ $invoice->currency ?? $client->currency ?? 'USD' }}</span>
                         {{ number_format($item->unit_price, 2) }}
                     </td>
-                    <td class="amount">
+                    <td class="text-right amount">
                         <span class="currency">{{ $invoice->currency ?? $client->currency ?? 'USD' }}</span>
                         {{ number_format($item->amount, 2) }}
                     </td>
@@ -320,39 +332,39 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="3" style="text-align: right;"><strong>Subtotal:</strong></td>
-                    <td class="amount">
+                    <td colspan="3" class="text-right"><strong>Subtotal:</strong></td>
+                    <td class="text-right amount">
                         <span class="currency">{{ $invoice->currency ?? $client->currency ?? 'USD' }}</span>
                         {{ number_format($invoice->total_amount + $invoice->discount_amount, 2) }}
                     </td>
                 </tr>
                 @if($invoice->discount_amount > 0)
                 <tr>
-                    <td colspan="3" style="text-align: right;"><strong>Discount:</strong></td>
-                    <td class="amount">
+                    <td colspan="3" class="text-right"><strong>Discount:</strong></td>
+                    <td class="text-right amount">
                         <span class="currency">{{ $invoice->currency ?? $client->currency ?? 'USD' }}</span>
                         {{ number_format($invoice->discount_amount, 2) }}
                     </td>
                 </tr>
                 @endif
                 <tr class="total-row">
-                    <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
-                    <td class="amount">
+                    <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                    <td class="text-right amount">
                         <span class="currency">{{ $invoice->currency ?? $client->currency ?? 'USD' }}</span>
                         {{ number_format($invoice->total_amount, 2) }}
                     </td>
                 </tr>
                 @if($invoice->paid_amount > 0)
                 <tr>
-                    <td colspan="3" style="text-align: right;"><strong>Paid:</strong></td>
-                    <td class="amount">
+                    <td colspan="3" class="text-right"><strong>Paid:</strong></td>
+                    <td class="text-right amount">
                         <span class="currency">{{ $invoice->currency ?? $client->currency ?? 'USD' }}</span>
                         {{ number_format($invoice->paid_amount, 2) }}
                     </td>
                 </tr>
                 <tr class="total-row">
-                    <td colspan="3" style="text-align: right;"><strong>Balance Due:</strong></td>
-                    <td class="amount">
+                    <td colspan="3" class="text-right"><strong>Balance Due:</strong></td>
+                    <td class="text-right amount">
                         <span class="currency">{{ $invoice->currency ?? $client->currency ?? 'USD' }}</span>
                         {{ number_format($invoice->total_amount - $invoice->paid_amount, 2) }}
                     </td>
@@ -369,7 +381,8 @@
         @endif
 
         <div class="footer">
-            <p>Thank you for your business! | Invoice generated on {{ date('Y-m-d') }} | Powered by <strong>workhours.us</strong></p>
+            <p>Thank you for your business!</p>
+            <p>Invoice generated on {{ date('Y-m-d') }} | Powered by <strong>workhours.us</strong></p>
         </div>
     </div>
 </body>

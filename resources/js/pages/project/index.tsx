@@ -14,7 +14,7 @@ import { type BreadcrumbItem } from '@/types'
 import { syncRepository } from '@actions/GitHubRepositoryController'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, User, X } from 'lucide-react'
+import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, TimerReset, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -180,147 +180,21 @@ export default function Projects() {
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your projects</p>
                 </section>
 
-                {/* Filters card */}
-                <Card className="transition-all hover:shadow-md">
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
-                            {/* Search */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="search" className="text-xs font-medium">
-                                    Search
-                                </Label>
-                                <div className="relative">
-                                    <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                        id="search"
-                                        placeholder="Search"
-                                        className="pl-10"
-                                        value={filters.search}
-                                        onChange={(e) => handleFilterChange('search', e.target.value)}
-                                    />
-                                </div>
-                            </div>
+                <Card className="overflow-hidden transition-all hover:shadow-md">
+                    <CardHeader className="">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-xl">Projects</CardTitle>
+                                <CardDescription>
+                                    {loading ? 'Loading projects...' : error ? 'Failed to load projects' : `You have ${projects.length} projects`}
+                                </CardDescription>
 
-                            {/* Client Filter */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="client" className="text-xs font-medium">
-                                    Client
-                                </Label>
-                                <SearchableSelect
-                                    id="client"
-                                    value={filters.client_id}
-                                    onChange={(value) => handleFilterChange('client_id', value)}
-                                    options={[
-                                        { id: '', name: 'All Clients' },
-                                        ...clients.map((client) => ({
-                                            id: client.id.toString(),
-                                            name: client.name,
-                                        })),
-                                    ]}
-                                    placeholder="All Clients"
-                                    disabled={processing}
-                                    icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-
-                            {/* Team Member Filter */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="team-member" className="text-xs font-medium">
-                                    Team Member
-                                </Label>
-                                <SearchableSelect
-                                    id="team-member"
-                                    value={filters.team_member_id}
-                                    onChange={(value) => handleFilterChange('team_member_id', value)}
-                                    options={[
-                                        { id: '', name: 'All Team Members' },
-                                        ...teamMembers.map((member) => ({
-                                            id: member.id.toString(),
-                                            name: member.name,
-                                        })),
-                                    ]}
-                                    placeholder="All Team Members"
-                                    disabled={processing}
-                                    icon={<User className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-
-                            {/* Created Date From */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="created-date-from" className="text-xs font-medium">
-                                    Created Date From
-                                </Label>
-                                <DatePicker
-                                    selected={parseDate(filters.created_date_from)}
-                                    onChange={(date) => handleFilterChange('created_date_from', date)}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="created-date-from"
-                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select start date"
-                                        />
-                                    }
-                                />
-                            </div>
-
-                            {/* Created Date To */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="created-date-to" className="text-xs font-medium">
-                                    Created Date To
-                                </Label>
-                                <DatePicker
-                                    selected={parseDate(filters.created_date_to)}
-                                    onChange={(date) => handleFilterChange('created_date_to', date)}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="created-date-to"
-                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select end date"
-                                        />
-                                    }
-                                />
-                            </div>
-
-                            <div className="flex items-end gap-2">
-                                <Button type="submit" className="flex h-9 items-center gap-1 px-3">
-                                    <Search className="h-3.5 w-3.5" />
-                                    <span>Filter</span>
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    disabled={
-                                        !filters.client_id &&
-                                        !filters.team_member_id &&
-                                        !filters.created_date_from &&
-                                        !filters.created_date_to &&
-                                        !filters.search
-                                    }
-                                    onClick={clearFilters}
-                                    className="flex h-9 items-center gap-1 px-3"
-                                >
-                                    <X className="h-3.5 w-3.5" />
-                                    <span>Clear</span>
-                                </Button>
-                            </div>
-                        </form>
-
-                        <div className={'mt-4 text-sm text-muted-foreground'}>
-                            {(filters.client_id ||
+                                {(filters.client_id ||
                                 filters.team_member_id ||
                                 filters.created_date_from ||
                                 filters.created_date_to ||
                                 filters.search) && (
-                                <CardDescription>
+                                <CardDescription className="mt-1">
                                     {(() => {
                                         let description = ''
 
@@ -366,23 +240,10 @@ export default function Projects() {
                                     })()}
                                 </CardDescription>
                             )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Projects card */}
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="text-xl">Projects</CardTitle>
-                                <CardDescription>
-                                    {loading ? 'Loading projects...' : error ? 'Failed to load projects' : `You have ${projects.length} projects`}
-                                </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton
-                                    href={`$${route('project.export')}?team_member_id=${filters.team_member_id || ''}&created_date_from=${formatDateValue(filters.created_date_from)}&created_date_to=${formatDateValue(filters.created_date_to)}&search=${filters.search || ''}`}
+                                    href={`${route('project.export')}?team_member_id=${filters.team_member_id || ''}&client_id=${filters.client_id || ''}&created_date_from=${formatDateValue(filters.created_date_from)}&created_date_to=${formatDateValue(filters.created_date_to)}&search=${filters.search || ''}`}
                                     label="Export"
                                 />
                                 <Link href={route('project.create')}>
@@ -392,6 +253,141 @@ export default function Projects() {
                                     </Button>
                                 </Link>
                             </div>
+                        </div>
+
+                        <div className="mt-4 border-t pt-4">
+                            <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="search" className="text-xs font-medium">
+                                        Search
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="search"
+                                            placeholder="Search"
+                                            className="pl-9"
+                                            value={filters.search}
+                                            onChange={(e) => handleFilterChange('search', e.target.value)}
+                                        />
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <Search className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="client" className="text-xs font-medium">
+                                        Client
+                                    </Label>
+                                    <SearchableSelect
+                                        id="client"
+                                        value={filters.client_id}
+                                        onChange={(value) => handleFilterChange('client_id', value)}
+                                        options={[
+                                            { id: '', name: 'All Clients' },
+                                            ...clients.map((client) => ({
+                                                id: client.id.toString(),
+                                                name: client.name,
+                                            })),
+                                        ]}
+                                        placeholder="All Clients"
+                                        disabled={processing}
+                                        icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="team-member" className="text-xs font-medium">
+                                        Team Member
+                                    </Label>
+                                    <SearchableSelect
+                                        id="team-member"
+                                        value={filters.team_member_id}
+                                        onChange={(value) => handleFilterChange('team_member_id', value)}
+                                        options={[
+                                            { id: '', name: 'All Team Members' },
+                                            ...teamMembers.map((member) => ({
+                                                id: member.id.toString(),
+                                                name: member.name,
+                                            })),
+                                        ]}
+                                        placeholder="All Team Members"
+                                        disabled={processing}
+                                        icon={<User className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="created-date-from" className="text-xs font-medium">
+                                        Created Date From
+                                    </Label>
+                                    <DatePicker
+                                        selected={parseDate(filters.created_date_from)}
+                                        onChange={(date) => handleFilterChange('created_date_from', date)}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="created-date-from"
+                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select start date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="created-date-to" className="text-xs font-medium">
+                                        Created Date To
+                                    </Label>
+                                    <DatePicker
+                                        selected={parseDate(filters.created_date_to)}
+                                        onChange={(date) => handleFilterChange('created_date_to', date)}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="created-date-to"
+                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select end date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                <div className="flex items-end gap-2">
+                                    <Button
+                                        type="submit"
+                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        title="Apply filters"
+                                        disabled={processing}
+                                    >
+                                        <Search className="h-4 w-4" />
+                                    </Button>
+
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        disabled={
+                                            processing ||
+                                            (!filters.client_id &&
+                                            !filters.team_member_id &&
+                                            !filters.created_date_from &&
+                                            !filters.created_date_to &&
+                                            !filters.search)
+                                        }
+                                        onClick={clearFilters}
+                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        title="Clear filters"
+                                    >
+                                        <TimerReset className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </form>
                         </div>
                     </CardHeader>
                     <CardContent>
