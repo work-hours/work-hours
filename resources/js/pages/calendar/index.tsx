@@ -62,7 +62,7 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
     return (
         <MasterLayout>
             <Head title="Calendar" />
-            <div className="container py-6">
+            <div className="container p-4">
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Calendar</h1>
                     <div className="flex gap-2">
