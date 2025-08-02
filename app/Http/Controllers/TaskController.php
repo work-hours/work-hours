@@ -158,7 +158,7 @@ final class TaskController extends Controller
     public function edit(Task $task)
     {
         // Load relationships
-        $task->load(['project', 'assignees']);
+        $task->load(['project', 'assignees', 'meta']);
 
         // Check if a user has access to edit this task
         $isProjectOwner = $task->project->user_id === auth()->id();
@@ -182,11 +182,14 @@ final class TaskController extends Controller
 
         $assignedUsers = $task->assignees->pluck('id')->toArray();
 
+        $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
+
         return Inertia::render('task/edit', [
             'task' => $task,
             'projects' => $projects,
             'potentialAssignees' => $potentialAssignees,
             'assignedUsers' => $assignedUsers,
+            'isGithub' => $isGithub,
         ]);
     }
 
@@ -253,6 +256,11 @@ final class TaskController extends Controller
 
                 // Send a notification to the project owner
                 $projectOwner->notify(new TaskCompleted($task, auth()->user()));
+            }
+
+            // Update GitHub issue if requested
+            if ($task->is_imported && $task->meta && $task->meta->source === 'github' && $request->boolean('github_update')) {
+                $this->gitHubAdapter->updateGitHubIssue($task);
             }
 
             DB::commit();

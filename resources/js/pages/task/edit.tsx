@@ -37,6 +37,7 @@ type TaskForm = {
     priority: 'low' | 'medium' | 'high'
     due_date: string
     assignees: number[]
+    github_update: boolean
 }
 
 type Props = {
@@ -52,6 +53,7 @@ type Props = {
     projects: Project[]
     potentialAssignees: User[]
     assignedUsers: number[]
+    isGithub: boolean
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -65,7 +67,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-export default function EditTask({ task, projects, potentialAssignees: initialAssignees, assignedUsers }: Props) {
+export default function EditTask({ task, projects, potentialAssignees: initialAssignees, assignedUsers, isGithub }: Props) {
     const { data, setData, put, processing, errors } = useForm<TaskForm>({
         project_id: task.project_id.toString(),
         title: task.title,
@@ -74,6 +76,7 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
         priority: task.priority,
         due_date: task.due_date || '',
         assignees: assignedUsers || [],
+        github_update: false,
     })
 
     // State for potential assignees
@@ -362,6 +365,21 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                     </div>
                                     <InputError message={errors.assignees} />
                                 </div>
+
+                                {isGithub && (
+                                    <div className="grid gap-2">
+                                        <Label className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id="github_update"
+                                                checked={data.github_update}
+                                                onCheckedChange={(checked) => setData('github_update', checked === true)}
+                                                disabled={processing}
+                                            />
+                                            <span className="text-sm font-medium">Update GitHub issue when task is updated</span>
+                                        </Label>
+                                        <InputError message={errors.github_update} />
+                                    </div>
+                                )}
 
                                 <div className="mt-4 flex justify-end gap-3">
                                     <Button
