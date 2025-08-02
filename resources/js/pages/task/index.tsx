@@ -27,6 +27,7 @@ import {
     Edit,
     FileText,
     Flag,
+    GithubIcon,
     Glasses,
     Loader2,
     Play,
@@ -560,12 +561,7 @@ export default function Tasks() {
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <span>{task.title}</span>
                                                     {task.is_imported && (
-                                                        <Badge
-                                                            variant="secondary"
-                                                            className="bg-purple-100 text-purple-800 hover:bg-purple-100 dark:bg-purple-900/30 dark:text-purple-300"
-                                                        >
-                                                            Imported
-                                                        </Badge>
+                                                        <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />
                                                     )}
                                                 </div>
                                                 <small>{task.project.name}</small>
