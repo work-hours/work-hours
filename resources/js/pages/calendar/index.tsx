@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
 import MasterLayout from '@/layouts/master-layout'
-import { PageProps } from '@/types'
 import { Head, router } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
 import DayView from './components/DayView'
@@ -10,6 +9,17 @@ import MonthView from './components/MonthView'
 import WeekView from './components/WeekView'
 import { TimeLogEntry } from '@/components/time-log-table'
 import axios from 'axios'
+
+// Define a basic PageProps interface since it's not available in @/types
+interface PageProps {
+    auth?: {
+        user: {
+            id: number;
+            name: string;
+            email: string;
+        };
+    };
+}
 
 interface CalendarProps extends PageProps {
     timeLogs: Array<{
@@ -134,7 +144,7 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                             size="sm"
                             onClick={() => {
                                 const currentDate = new Date(date)
-                                let newDate
+                                let newDate: Date
 
                                 switch (view) {
                                     case 'month':
@@ -144,6 +154,7 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                                         newDate = new Date(currentDate.setDate(currentDate.getDate() - 7))
                                         break
                                     case 'day':
+                                    default:
                                         newDate = new Date(currentDate.setDate(currentDate.getDate() - 1))
                                         break
                                 }
@@ -158,7 +169,7 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                             size="sm"
                             onClick={() => {
                                 const currentDate = new Date(date)
-                                let newDate
+                                let newDate: Date
 
                                 switch (view) {
                                     case 'month':
@@ -168,6 +179,7 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                                         newDate = new Date(currentDate.setDate(currentDate.getDate() + 7))
                                         break
                                     case 'day':
+                                    default:
                                         newDate = new Date(currentDate.setDate(currentDate.getDate() + 1))
                                         break
                                 }
