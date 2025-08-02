@@ -29,17 +29,14 @@ final class TaskController extends Controller
     use ExportableTrait;
 
     /**
-     * GitHub adapter for handling GitHub-related operations
-     */
-    private GitHubAdapter $gitHubAdapter;
-
-    /**
      * Constructor for TaskController
      */
-    public function __construct(GitHubAdapter $gitHubAdapter)
-    {
-        $this->gitHubAdapter = $gitHubAdapter;
-    }
+    public function __construct(
+        /**
+         * GitHub adapter for handling GitHub-related operations
+         */
+        private GitHubAdapter $gitHubAdapter
+    ) {}
 
     /**
      * Display a listing of the resource.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Adapters;
 
+use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use Exception;
@@ -128,7 +129,7 @@ final class GitHubAdapter
     {
         $url = "https://api.github.com/repos/{$repoOwner}/{$repoName}/issues";
         $params = [
-            'state' => 'all', // Get both open and closed issues
+            'state' => 'all',
             'per_page' => 100, // Maximum number of issues per page
             'sort' => 'created',
             'direction' => 'desc',
@@ -152,12 +153,11 @@ final class GitHubAdapter
     public function closeGitHubIssue(Task $task): bool
     {
         try {
-            // Check if the task has the necessary metadata
             if (! $task->meta || ! $task->meta->source_url || ! $task->meta->source_number) {
                 return false;
             }
 
-            // Get the authenticated user's token
+            $project = $task->project;
             $authenticatedUser = $task->project->user;
             $token = $authenticatedUser?->github_token;
 
@@ -165,10 +165,9 @@ final class GitHubAdapter
                 return false;
             }
 
-            // Extract repository owner and name from the GitHub URL
-            $repoInfo = $this->extractRepoInfoFromUrl($task->meta->source_url);
+            $repoInfo = $this->exportRepoInfo($project);
 
-            if (! $repoInfo) {
+            if ($repoInfo === []) {
                 Log::error('Invalid GitHub issue URL format', [
                     'task_id' => $task->id,
                     'url' => $task->meta->source_url,
@@ -181,14 +180,12 @@ final class GitHubAdapter
             $repoName = $repoInfo['repo'];
             $issueNumber = $task->meta->source_number;
 
-            // Update the issue state to closed
             $response = Http::withToken($token)
                 ->patch("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues/{$issueNumber}", [
                     'state' => 'closed',
                 ]);
 
             if ($response->successful()) {
-                // Update the task's metadata to reflect that the issue is now closed
                 $task->meta->update(['source_state' => 'closed']);
 
                 return true;
@@ -222,32 +219,26 @@ final class GitHubAdapter
                 return false;
             }
 
-            // Create the issue payload
             $payload = [
                 'title' => $task->title,
                 'body' => $task->description ?? '',
                 'labels' => [$task->priority, $task->status],
             ];
 
-            // Add due date as part of the body if exists
             if ($task->due_date) {
                 $payload['body'] .= "\n\nDue date: " . $task->due_date->format('Y-m-d');
             }
 
-            // Extract repository owner and name from the GitHub URL
-            $repoInfo = $this->extractRepoInfoFromUrl($task->meta->source_url);
-
+            $repoInfo = $this->exportRepoInfo($task->project);
             $repoOwner = $repoInfo['owner'];
             $repoName = $repoInfo['repo'];
 
-            // Create the issue on GitHub
             $response = Http::withToken($token)
                 ->post("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues", $payload);
 
             if ($response->successful()) {
                 $issueData = $response->json();
-
-                // Create or update task metadata with GitHub issue details
+                $task->update(['is_imported' => true]);
                 $task->meta()->updateOrCreate(
                     ['task_id' => $task->id],
                     [
@@ -255,6 +246,7 @@ final class GitHubAdapter
                         'source_number' => $issueData['number'],
                         'source_state' => $issueData['state'],
                         'source_url' => $issueData['html_url'],
+                        'source_id' => $issueData['id'],
                     ]
                 );
 
@@ -314,30 +306,13 @@ final class GitHubAdapter
         }
     }
 
-    /**
-     * Extract repository owner and name from GitHub URL
-     *
-     * @param  string  $url  GitHub URL (issue or repository URL)
-     * @return array|false Returns [owner, repo] array or false if extraction fails
-     */
-    private function extractRepoInfoFromUrl(string $url): array|false
+    private function exportRepoInfo(Project $project): array
     {
-        // Match standard GitHub URLs: github.com/{owner}/{repo} or github.com/{owner}/{repo}/issues/{number}
-        if (preg_match('/github\.com\/([^\/]+)\/([^\/]+)(\/|$|\?)/', $url, $matches)) {
-            return [
-                'owner' => $matches[1],
-                'repo' => $matches[2],
-            ];
-        }
+        [$owner, $repo] = explode('/', $project->name, 2);
 
-        // Match GitHub API URLs: api.github.com/repos/{owner}/{repo}
-        if (preg_match('/api\.github\.com\/repos\/([^\/]+)\/([^\/]+)(\/|$|\?)/', $url, $matches)) {
-            return [
-                'owner' => $matches[1],
-                'repo' => $matches[2],
-            ];
-        }
-
-        return false;
+        return [
+            'owner' => $owner,
+            'repo' => $repo,
+        ];
     }
 }
