@@ -292,7 +292,7 @@ final class GitHubAdapter
                 return false;
             }
 
-            // GitHub API doesn't actually allow deleting issues, so we close it instead
+            // GitHub API doesn't allow deleting issues, so we close it instead
             // with a comment indicating it was deleted from the application
             $response = $this->makeGitHubIssueRequest(
                 $token,

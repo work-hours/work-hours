@@ -8,7 +8,7 @@ interface ActionButtonProps {
     title?: string
     icon: LucideIcon
     label?: string
-    variant?: 'blue' | 'amber' | 'indigo' | 'violet' | 'emerald' | 'red'
+    variant?: 'blue' | 'amber' | 'indigo' | 'violet' | 'emerald' | 'red' | 'purple'
     size?: 'default' | 'icon'
     className?: string
 }
@@ -21,6 +21,7 @@ const variantStyles = {
     emerald:
         'border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/30 dark:text-emerald-300',
     red: 'border-red-200 bg-red-50 hover:bg-red-100 text-red-700 dark:border-red-700 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:text-red-300',
+    purple: 'border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-700 dark:border-purple-700 dark:bg-purple-900/20 dark:hover:bg-purple-900/30 dark:text-purple-300',
 }
 
 export function ActionButton({ href, title, icon: Icon, label, variant = 'blue', size = 'default', className = '' }: ActionButtonProps) {

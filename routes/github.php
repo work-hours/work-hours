@@ -18,5 +18,4 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::post('github/repositories/import', [GitHubRepositoryController::class, 'importRepository'])
         ->name('github.repositories.import');
-
 });
