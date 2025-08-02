@@ -55,6 +55,7 @@ final class CalendarController extends Controller
         $timeLog = TimeLog::with(['project', 'task', 'user'])
             ->findOrFail($id);
 
+        // We don't need to modify the response as we'll handle the approver details on the frontend
         return response()->json($timeLog);
     }
 
