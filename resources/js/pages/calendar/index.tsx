@@ -9,6 +9,8 @@ import MonthView from './components/MonthView'
 import WeekView from './components/WeekView'
 import { TimeLogEntry } from '@/components/time-log-table'
 import axios from 'axios'
+import { format, startOfWeek, endOfWeek } from 'date-fns'
+import { CalendarDays, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react'
 
 // Define a basic PageProps interface since it's not available in @/types
 interface PageProps {
@@ -132,71 +134,114 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                         <Button
                             variant="outline"
                             size="sm"
+                            className="flex items-center gap-1 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 shadow-sm"
                             onClick={() => {
                                 const today = new Date().toISOString().split('T')[0]
                                 handleDateChange(today)
                             }}
                         >
+                            <CalendarDays className="h-4 w-4" />
                             Today
                         </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                                const currentDate = new Date(date)
-                                let newDate: Date
+                        <div className="flex rounded-md shadow-sm">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="rounded-r-none border-r-0 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750"
+                                onClick={() => {
+                                    const currentDate = new Date(date)
+                                    let newDate: Date
 
-                                switch (view) {
-                                    case 'month':
-                                        newDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1))
-                                        break
-                                    case 'week':
-                                        newDate = new Date(currentDate.setDate(currentDate.getDate() - 7))
-                                        break
-                                    case 'day':
-                                    default:
-                                        newDate = new Date(currentDate.setDate(currentDate.getDate() - 1))
-                                        break
-                                }
+                                    switch (view) {
+                                        case 'month':
+                                            newDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1))
+                                            break
+                                        case 'week':
+                                            newDate = new Date(currentDate.setDate(currentDate.getDate() - 7))
+                                            break
+                                        case 'day':
+                                        default:
+                                            newDate = new Date(currentDate.setDate(currentDate.getDate() - 1))
+                                            break
+                                    }
 
-                                handleDateChange(newDate.toISOString().split('T')[0])
-                            }}
-                        >
-                            Previous
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                                const currentDate = new Date(date)
-                                let newDate: Date
+                                    handleDateChange(newDate.toISOString().split('T')[0])
+                                }}
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                                <span className="sr-only">Previous</span>
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="rounded-l-none bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750"
+                                onClick={() => {
+                                    const currentDate = new Date(date)
+                                    let newDate: Date
 
-                                switch (view) {
-                                    case 'month':
-                                        newDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1))
-                                        break
-                                    case 'week':
-                                        newDate = new Date(currentDate.setDate(currentDate.getDate() + 7))
-                                        break
-                                    case 'day':
-                                    default:
-                                        newDate = new Date(currentDate.setDate(currentDate.getDate() + 1))
-                                        break
-                                }
+                                    switch (view) {
+                                        case 'month':
+                                            newDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1))
+                                            break
+                                        case 'week':
+                                            newDate = new Date(currentDate.setDate(currentDate.getDate() + 7))
+                                            break
+                                        case 'day':
+                                        default:
+                                            newDate = new Date(currentDate.setDate(currentDate.getDate() + 1))
+                                            break
+                                    }
 
-                                handleDateChange(newDate.toISOString().split('T')[0])
-                            }}
-                        >
-                            Next
-                        </Button>
+                                    handleDateChange(newDate.toISOString().split('T')[0])
+                                }}
+                            >
+                                <ChevronRight className="h-4 w-4" />
+                                <span className="sr-only">Next</span>
+                            </Button>
+                        </div>
                     </div>
                 </div>
 
+                {/* Current Month/Week/Day Display */}
+                <div className="mb-4 text-center">
+                    <h2 className="text-xl font-semibold">
+                        {(() => {
+                            const currentDate = new Date(date);
+
+                            switch (view) {
+                                case 'month':
+                                    return format(currentDate, 'MMMM yyyy');
+                                case 'week':
+                                    const weekStart = startOfWeek(currentDate);
+                                    const weekEnd = endOfWeek(currentDate);
+                                    if (format(weekStart, 'MMM') === format(weekEnd, 'MMM')) {
+                                        return format(weekStart, 'MMMM yyyy');
+                                    } else {
+                                        return `${format(weekStart, 'MMM d')} - ${format(weekEnd, 'MMM d, yyyy')}`;
+                                    }
+                                case 'day':
+                                    return format(currentDate, 'MMMM d, yyyy');
+                                default:
+                                    return '';
+                            }
+                        })()}
+                    </h2>
+                </div>
+
                 <Tabs defaultValue={view} onValueChange={handleViewChange}>
-                    <TabsList className="mb-4">
-                        <TabsTrigger value="month">Month</TabsTrigger>
-                        <TabsTrigger value="week">Week</TabsTrigger>
-                        <TabsTrigger value="day">Day</TabsTrigger>
+                    <TabsList className="mb-4 p-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                        <TabsTrigger value="month" className="flex items-center gap-2 px-4 py-2">
+                            <CalendarDays className="h-4 w-4" />
+                            Month
+                        </TabsTrigger>
+                        <TabsTrigger value="week" className="flex items-center gap-2 px-4 py-2">
+                            <CalendarIcon className="h-4 w-4" />
+                            Week
+                        </TabsTrigger>
+                        <TabsTrigger value="day" className="flex items-center gap-2 px-4 py-2">
+                            <CalendarIcon className="h-4 w-4" />
+                            Day
+                        </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="month">

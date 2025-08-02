@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Stores\TeamStore;
 use App\Models\TimeLog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,9 +20,12 @@ final class CalendarController extends Controller
         // Get the start and end dates based on the view
         $period = $this->getPeriod($date, $view);
 
+        $teamIds = TeamStore::teamMembersIds(userId: auth()->id());
+        $teamIds = $teamIds->merge([auth()->id()]);
+
         // Get time logs for the given period
         $timeLogs = TimeLog::with(['project', 'task'])
-            ->where('user_id', auth()->id())
+            ->whereIn('user_id', $teamIds)
             ->whereBetween('start_timestamp', [$period['start'], $period['end']])
             ->get()
             ->map(fn ($log): array => [
