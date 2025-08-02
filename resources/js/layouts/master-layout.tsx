@@ -40,6 +40,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     const [userProjects, setUserProjects] = useState<Project[]>([])
     const [userTasks, setUserTasks] = useState<Task[]>([])
     const [dataLoaded, setDataLoaded] = useState(false)
+    const [pageLoaded, setPageLoaded] = useState(false)
 
     // Fetch projects and tasks for the time tracker
     const fetchData = async (): Promise<void> => {
@@ -60,7 +61,13 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     // Save collapsed state to localStorage when it changes
     useEffect(() => {
         localStorage.setItem('sidebar_collapsed', String(collapsed))
-    }, [collapsed])
+    }, [])
+
+    // Add page transition effect
+    useEffect(() => {
+        setPageLoaded(true)
+        return () => setPageLoaded(false)
+    }, [])
 
     return (
         <div className="flex min-h-screen bg-[#f8f6e9] dark:bg-gray-900">
@@ -70,9 +77,11 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
             <MasterSidebar collapsed={collapsed} />
 
             {/* Content */}
-            <MasterContent breadcrumbs={breadcrumbs} collapsed={collapsed} setCollapsed={setCollapsed}>
-                {children}
-            </MasterContent>
+            <div className={`flex-1 transition-all duration-300 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+                <MasterContent breadcrumbs={breadcrumbs} collapsed={collapsed} setCollapsed={setCollapsed}>
+                    {children}
+                </MasterContent>
+            </div>
 
             {/* Right Sidebar */}
             <MasterRightSidebar collapsed={collapsed} />
@@ -85,8 +94,15 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                 </>
             )}
 
-            {/* Toaster for notifications with improved positioning */}
-            <Toaster position="top-right" closeButton={true} />
+            {/* Enhanced Toaster for notifications */}
+            <Toaster
+                position="top-right"
+                closeButton={true}
+                toastOptions={{
+                    className: 'shadow-lg rounded-lg border border-gray-100 dark:border-gray-700',
+                    duration: 5000,
+                }}
+            />
 
             {/* Cookie Consent Banner */}
             <CookieConsent />
