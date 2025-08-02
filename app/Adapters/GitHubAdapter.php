@@ -334,6 +334,70 @@ final class GitHubAdapter
     }
 
     /**
+     * Delete a GitHub issue using the GitHub API
+     *
+     * @param  Task  $task  The task containing GitHub issue information
+     * @return bool Whether the issue was successfully deleted
+     */
+    public function deleteGitHubIssue(Task $task): bool
+    {
+        try {
+            if (! $task->meta || ! $task->meta->source_url || ! $task->meta->source_number) {
+                return false;
+            }
+
+            $project = $task->project;
+            $authenticatedUser = $task->project->user;
+            $token = $authenticatedUser?->github_token;
+
+            if (! $token) {
+                return false;
+            }
+
+            $repoInfo = $this->exportRepoInfo($project);
+
+            if ($repoInfo === []) {
+                Log::error('Invalid GitHub issue URL format', [
+                    'task_id' => $task->id,
+                    'url' => $task->meta->source_url,
+                ]);
+
+                return false;
+            }
+
+            $repoOwner = $repoInfo['owner'];
+            $repoName = $repoInfo['repo'];
+            $issueNumber = $task->meta->source_number;
+
+            // GitHub API doesn't actually allow deleting issues, so we close it instead
+            // with a comment indicating it was deleted from the application
+            $response = Http::withToken($token)
+                ->patch("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues/{$issueNumber}", [
+                    'state' => 'closed',
+                ]);
+
+            if ($response->successful()) {
+                // Add a comment indicating the issue was deleted from the application
+                Http::withToken($token)
+                    ->post("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues/{$issueNumber}/comments", [
+                        'body' => 'This issue was deleted from the Work Hours application.',
+                    ]);
+
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            Log::error('Error deleting GitHub issue:', [
+                'task_id' => $task->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
      * Make a request to the GitHub API with error handling.
      *
      * @param  string  $token  The GitHub access token

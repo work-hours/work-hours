@@ -25,7 +25,7 @@ final class TaskStore
             ->whereHas('project', function ($query) use ($userId): void {
                 $query->where('user_id', $userId);
             })
-            ->with(['project', 'assignees'])
+            ->with(['project', 'assignees', 'meta'])
             ->orderByDesc('created_at');
 
         // Get tasks assigned to the user
@@ -33,7 +33,7 @@ final class TaskStore
             ->whereHas('assignees', function ($query) use ($userId): void {
                 $query->where('users.id', $userId);
             })
-            ->with(['project', 'assignees'])
+            ->with(['project', 'assignees', 'meta'])
             ->orderByDesc('created_at');
 
         $ownedProjectTasks = self::applyFilterPipeline($ownedProjectTasksQuery)->get();

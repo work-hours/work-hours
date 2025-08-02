@@ -639,6 +639,7 @@ export default function Tasks() {
                                                             />
                                                             <DeleteTask
                                                                 taskId={task.id}
+                                                                isGithub={task.is_imported && task.meta?.source === 'github'}
                                                                 onDelete={() => setTasks(tasks.filter((t) => t.id !== task.id))}
                                                             />
                                                         </ActionButtonGroup>

@@ -285,6 +285,11 @@ final class TaskController extends Controller
 
         DB::beginTransaction();
         try {
+            // Delete the GitHub issue if requested and if the task is from GitHub
+            if (request()->boolean('delete_from_github') && $task->is_imported && $task->meta && $task->meta->source === 'github') {
+                $this->gitHubAdapter->deleteGitHubIssue($task);
+            }
+
             // Detach all assignees first
             $task->assignees()->detach();
 
