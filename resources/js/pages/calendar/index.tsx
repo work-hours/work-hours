@@ -9,6 +9,7 @@ import MonthView from './components/MonthView'
 import WeekView from './components/WeekView'
 import { TimeLogEntry } from '@/components/time-log-table'
 import axios from 'axios'
+import { format, startOfWeek, endOfWeek } from 'date-fns'
 
 // Define a basic PageProps interface since it's not available in @/types
 interface PageProps {
@@ -190,6 +191,32 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                             Next
                         </Button>
                     </div>
+                </div>
+
+                {/* Current Month/Week/Day Display */}
+                <div className="mb-4 text-center">
+                    <h2 className="text-xl font-semibold">
+                        {(() => {
+                            const currentDate = new Date(date);
+
+                            switch (view) {
+                                case 'month':
+                                    return format(currentDate, 'MMMM yyyy');
+                                case 'week':
+                                    const weekStart = startOfWeek(currentDate);
+                                    const weekEnd = endOfWeek(currentDate);
+                                    if (format(weekStart, 'MMM') === format(weekEnd, 'MMM')) {
+                                        return format(weekStart, 'MMMM yyyy');
+                                    } else {
+                                        return `${format(weekStart, 'MMM d')} - ${format(weekEnd, 'MMM d, yyyy')}`;
+                                    }
+                                case 'day':
+                                    return format(currentDate, 'MMMM d, yyyy');
+                                default:
+                                    return '';
+                            }
+                        })()}
+                    </h2>
                 </div>
 
                 <Tabs defaultValue={view} onValueChange={handleViewChange}>
