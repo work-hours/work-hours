@@ -82,6 +82,8 @@ final class TaskController extends Controller
             ->map(fn ($project): array => [
                 'id' => $project->id,
                 'name' => $project->name,
+                'source' => $project->source,
+                'is_github' => $project->source === 'github',
             ]);
 
         return Inertia::render('task/create', [
@@ -124,26 +126,7 @@ final class TaskController extends Controller
 
             // Check if we need to create a GitHub issue for this task
             if ($request->boolean('create_github_issue')) {
-                // Make sure the project is loaded
-                if (!$task->relationLoaded('project')) {
-                    $task->load('project');
-                }
-
-                // Get the project's default GitHub repository if available
-                // This is a simplified approach - in a real implementation,
-                // you might want to allow the user to select a repository
-                $project = $task->project;
-
-                // Check if the project has GitHub repository information
-                // For now, using the project name as a simplification
-                // In a real implementation, you'd store GitHub repo details in the project
-                $repoOwner = $project->user->github_username ?? null;
-                $repoName = $project->github_repo_name ?? str_replace(' ', '-', strtolower($project->name));
-
-                if ($repoOwner) {
-                    // Create the GitHub issue
-                    $this->gitHubAdapter->createGitHubIssue($task, $repoOwner, $repoName);
-                }
+                $this->gitHubAdapter->createGitHubIssue($task);
             }
 
             DB::commit();

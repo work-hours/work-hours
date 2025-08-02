@@ -21,6 +21,8 @@ import { type BreadcrumbItem } from '@/types'
 type Project = {
     id: number
     name: string
+    source?: string
+    is_github?: boolean
 }
 
 type TaskForm = {
@@ -65,6 +67,9 @@ export default function CreateTask({ projects }: Props) {
     const [potentialAssignees, setPotentialAssignees] = useState<{ id: number; name: string; email: string }[]>([])
     const [loadingAssignees, setLoadingAssignees] = useState<boolean>(false)
 
+    // State to track if the selected project is from GitHub
+    const [isGithubProject, setIsGithubProject] = useState<boolean>(false)
+
     // State for due date
     const [dueDate, setDueDate] = useState<Date | null>(data.due_date ? new Date(data.due_date) : null)
 
@@ -101,6 +106,12 @@ export default function CreateTask({ projects }: Props) {
             setPotentialAssignees([])
         }
     }, [data.project_id])
+
+    // Check if the selected project is a GitHub project
+    useEffect(() => {
+        const selectedProject = projects.find((project) => project.id === Number(data.project_id))
+        setIsGithubProject(!!selectedProject?.is_github)
+    }, [data.project_id, projects])
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
@@ -348,17 +359,19 @@ export default function CreateTask({ projects }: Props) {
                                     <InputError message={errors.assignees} />
                                 </div>
 
-                                <div className="flex items-center space-x-2">
-                                    <Checkbox
-                                        id="create_github_issue"
-                                        checked={data.create_github_issue}
-                                        onCheckedChange={(checked) => setData('create_github_issue', !!checked)}
-                                        disabled={processing}
-                                    />
-                                    <Label htmlFor="create_github_issue" className="cursor-pointer text-sm">
-                                        Create issue on GitHub
-                                    </Label>
-                                </div>
+                                {isGithubProject && (
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                            id="create_github_issue"
+                                            checked={data.create_github_issue}
+                                            onCheckedChange={(checked) => setData('create_github_issue', !!checked)}
+                                            disabled={processing}
+                                        />
+                                        <Label htmlFor="create_github_issue" className="cursor-pointer text-sm">
+                                            Create issue on GitHub
+                                        </Label>
+                                    </div>
+                                )}
 
                                 <div className="mt-4 flex justify-end gap-3">
                                     <Button

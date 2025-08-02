@@ -166,10 +166,9 @@ final class GitHubAdapter
             }
 
             // Extract repository owner and name from the GitHub URL
-            // GitHub issue URLs have the format: https://github.com/{owner}/{repo}/issues/{number}
-            preg_match('/github\.com\/([^\/]+)\/([^\/]+)\/issues/', $task->meta->source_url, $matches);
+            $repoInfo = $this->extractRepoInfoFromUrl($task->meta->source_url);
 
-            if (count($matches) < 3) {
+            if (! $repoInfo) {
                 Log::error('Invalid GitHub issue URL format', [
                     'task_id' => $task->id,
                     'url' => $task->meta->source_url,
@@ -178,8 +177,8 @@ final class GitHubAdapter
                 return false;
             }
 
-            $repoOwner = $matches[1];
-            $repoName = $matches[2];
+            $repoOwner = $repoInfo['owner'];
+            $repoName = $repoInfo['repo'];
             $issueNumber = $task->meta->source_number;
 
             // Update the issue state to closed
@@ -210,11 +209,9 @@ final class GitHubAdapter
      * Create a GitHub issue for a task
      *
      * @param  Task  $task  The task to create an issue for
-     * @param  string  $repoOwner  The repository owner
-     * @param  string  $repoName  The repository name
      * @return bool|array False if failed, or array with issue details if successful
      */
-    public function createGitHubIssue(Task $task, string $repoOwner, string $repoName)
+    public function createGitHubIssue(Task $task)
     {
         try {
             // Get the authenticated user's token
@@ -237,6 +234,12 @@ final class GitHubAdapter
                 $payload['body'] .= "\n\nDue date: " . $task->due_date->format('Y-m-d');
             }
 
+            // Extract repository owner and name from the GitHub URL
+            $repoInfo = $this->extractRepoInfoFromUrl($task->meta->source_url);
+
+            $repoOwner = $repoInfo['owner'];
+            $repoName = $repoInfo['repo'];
+
             // Create the issue on GitHub
             $response = Http::withToken($token)
                 ->post("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues", $payload);
@@ -249,8 +252,6 @@ final class GitHubAdapter
                     ['task_id' => $task->id],
                     [
                         'source' => 'github',
-                        'source_owner' => $repoOwner,
-                        'source_repo' => $repoName,
                         'source_number' => $issueData['number'],
                         'source_state' => $issueData['state'],
                         'source_url' => $issueData['html_url'],
@@ -311,5 +312,32 @@ final class GitHubAdapter
 
             return null;
         }
+    }
+
+    /**
+     * Extract repository owner and name from GitHub URL
+     *
+     * @param  string  $url  GitHub URL (issue or repository URL)
+     * @return array|false Returns [owner, repo] array or false if extraction fails
+     */
+    private function extractRepoInfoFromUrl(string $url): array|false
+    {
+        // Match standard GitHub URLs: github.com/{owner}/{repo} or github.com/{owner}/{repo}/issues/{number}
+        if (preg_match('/github\.com\/([^\/]+)\/([^\/]+)(\/|$|\?)/', $url, $matches)) {
+            return [
+                'owner' => $matches[1],
+                'repo' => $matches[2],
+            ];
+        }
+
+        // Match GitHub API URLs: api.github.com/repos/{owner}/{repo}
+        if (preg_match('/api\.github\.com\/repos\/([^\/]+)\/([^\/]+)(\/|$|\?)/', $url, $matches)) {
+            return [
+                'owner' => $matches[1],
+                'repo' => $matches[2],
+            ];
+        }
+
+        return false;
     }
 }
