@@ -17,6 +17,8 @@ use Laravel\Socialite\Facades\Socialite;
 
 final class GitHubAdapter
 {
+    private const string API_BASE_URL = 'https://api.github.com';
+
     /**
      * Get the authenticated user's personal repositories from GitHub.
      *
@@ -27,7 +29,7 @@ final class GitHubAdapter
     {
         return $this->makeGitHubRequest(
             $token,
-            'https://api.github.com/user/repos',
+            self::API_BASE_URL . '/user/repos',
             ['per_page' => 100, 'sort' => 'updated'],
             'Failed to fetch repositories from GitHub.',
             'repositories'
@@ -44,7 +46,7 @@ final class GitHubAdapter
     {
         $orgsResponse = $this->makeGitHubRequest(
             $token,
-            'https://api.github.com/user/orgs',
+            self::API_BASE_URL . '/user/orgs',
             ['per_page' => 100],
             'Failed to fetch organizations from GitHub.',
             'organizations'
@@ -60,7 +62,7 @@ final class GitHubAdapter
         foreach ($organizations as $org) {
             $reposResponse = $this->makeGitHubRequest(
                 $token,
-                "https://api.github.com/orgs/{$org['login']}/repos",
+                self::API_BASE_URL . "/orgs/{$org['login']}/repos",
                 ['per_page' => 100, 'sort' => 'updated'],
                 null,
                 null,
@@ -127,7 +129,7 @@ final class GitHubAdapter
      */
     public function getRepositoryIssues(string $token, string $repoOwner, string $repoName)
     {
-        $url = "https://api.github.com/repos/{$repoOwner}/{$repoName}/issues";
+        $url = self::API_BASE_URL . "/repos/{$repoOwner}/{$repoName}/issues";
         $params = [
             'state' => 'all',
             'per_page' => 100, // Maximum number of issues per page
@@ -152,54 +154,7 @@ final class GitHubAdapter
      */
     public function closeGitHubIssue(Task $task): bool
     {
-        try {
-            if (! $task->meta || ! $task->meta->source_url || ! $task->meta->source_number) {
-                return false;
-            }
-
-            $project = $task->project;
-            $authenticatedUser = $task->project->user;
-            $token = $authenticatedUser?->github_token;
-
-            if (! $token) {
-                return false;
-            }
-
-            $repoInfo = $this->exportRepoInfo($project);
-
-            if ($repoInfo === []) {
-                Log::error('Invalid GitHub issue URL format', [
-                    'task_id' => $task->id,
-                    'url' => $task->meta->source_url,
-                ]);
-
-                return false;
-            }
-
-            $repoOwner = $repoInfo['owner'];
-            $repoName = $repoInfo['repo'];
-            $issueNumber = $task->meta->source_number;
-
-            $response = Http::withToken($token)
-                ->patch("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues/{$issueNumber}", [
-                    'state' => 'closed',
-                ]);
-
-            if ($response->successful()) {
-                $task->meta->update(['source_state' => 'closed']);
-
-                return true;
-            }
-
-            return false;
-        } catch (Exception $e) {
-            Log::error('Error closing GitHub issue:', [
-                'task_id' => $task->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return false;
-        }
+        return $this->updateIssueState($task, 'closed');
     }
 
     /**
@@ -211,10 +166,7 @@ final class GitHubAdapter
     public function createGitHubIssue(Task $task)
     {
         try {
-            // Get the authenticated user's token
-            $authenticatedUser = $task->project->user;
-            $token = $authenticatedUser?->github_token;
-
+            $token = $this->getTaskUserToken($task);
             if (! $token) {
                 return false;
             }
@@ -234,7 +186,7 @@ final class GitHubAdapter
             $repoName = $repoInfo['repo'];
 
             $response = Http::withToken($token)
-                ->post("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues", $payload);
+                ->post(self::API_BASE_URL . "/repos/{$repoOwner}/{$repoName}/issues", $payload);
 
             if ($response->successful()) {
                 $issueData = $response->json();
@@ -255,10 +207,7 @@ final class GitHubAdapter
 
             return false;
         } catch (Exception $e) {
-            Log::error('Error creating GitHub issue:', [
-                'task_id' => $task->id,
-                'error' => $e->getMessage(),
-            ]);
+            $this->logError('Error creating GitHub issue', $task, $e);
 
             return false;
         }
@@ -273,32 +222,19 @@ final class GitHubAdapter
     public function updateGitHubIssue(Task $task): bool
     {
         try {
-            if (! $task->meta || ! $task->meta->source_url || ! $task->meta->source_number) {
+            if (! $this->validateTaskIssueData($task)) {
                 return false;
             }
 
-            $project = $task->project;
-            $authenticatedUser = $task->project->user;
-            $token = $authenticatedUser?->github_token;
-
+            $token = $this->getTaskUserToken($task);
             if (! $token) {
                 return false;
             }
 
-            $repoInfo = $this->exportRepoInfo($project);
-
-            if ($repoInfo === []) {
-                Log::error('Invalid GitHub issue URL format', [
-                    'task_id' => $task->id,
-                    'url' => $task->meta->source_url,
-                ]);
-
+            $repoInfo = $this->getRepoInfoFromTask($task);
+            if (! $repoInfo) {
                 return false;
             }
-
-            $repoOwner = $repoInfo['owner'];
-            $repoName = $repoInfo['repo'];
-            $issueNumber = $task->meta->source_number;
 
             $payload = [
                 'title' => $task->title,
@@ -309,10 +245,16 @@ final class GitHubAdapter
             // Set issue state based on task status
             $payload['state'] = $task->status === 'completed' ? 'closed' : 'open';
 
-            $response = Http::withToken($token)
-                ->patch("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues/{$issueNumber}", $payload);
+            $response = $this->makeGitHubIssueRequest(
+                $token,
+                $repoInfo['owner'],
+                $repoInfo['repo'],
+                $task->meta->source_number,
+                $payload,
+                'PATCH'
+            );
 
-            if ($response->successful()) {
+            if ($response && $response->successful()) {
                 $task->meta->update(['source_state' => $payload['state']]);
 
                 return true;
@@ -320,10 +262,7 @@ final class GitHubAdapter
 
             return false;
         } catch (Exception $e) {
-            Log::error('Error updating GitHub issue:', [
-                'task_id' => $task->id,
-                'error' => $e->getMessage(),
-            ]);
+            $this->logError('Error updating GitHub issue', $task, $e);
 
             return false;
         }
@@ -338,56 +277,49 @@ final class GitHubAdapter
     public function deleteGitHubIssue(Task $task): bool
     {
         try {
-            if (! $task->meta || ! $task->meta->source_url || ! $task->meta->source_number) {
+            if (! $this->validateTaskIssueData($task)) {
                 return false;
             }
 
-            $project = $task->project;
-            $authenticatedUser = $task->project->user;
-            $token = $authenticatedUser?->github_token;
-
+            $token = $this->getTaskUserToken($task);
             if (! $token) {
                 return false;
             }
 
-            $repoInfo = $this->exportRepoInfo($project);
-
-            if ($repoInfo === []) {
-                Log::error('Invalid GitHub issue URL format', [
-                    'task_id' => $task->id,
-                    'url' => $task->meta->source_url,
-                ]);
-
+            $repoInfo = $this->getRepoInfoFromTask($task);
+            if (! $repoInfo) {
                 return false;
             }
 
-            $repoOwner = $repoInfo['owner'];
-            $repoName = $repoInfo['repo'];
-            $issueNumber = $task->meta->source_number;
-
             // GitHub API doesn't actually allow deleting issues, so we close it instead
             // with a comment indicating it was deleted from the application
-            $response = Http::withToken($token)
-                ->patch("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues/{$issueNumber}", [
-                    'state' => 'closed',
-                ]);
+            $response = $this->makeGitHubIssueRequest(
+                $token,
+                $repoInfo['owner'],
+                $repoInfo['repo'],
+                $task->meta->source_number,
+                ['state' => 'closed'],
+                'PATCH'
+            );
 
-            if ($response->successful()) {
+            if ($response && $response->successful()) {
                 // Add a comment indicating the issue was deleted from the application
-                Http::withToken($token)
-                    ->post("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues/{$issueNumber}/comments", [
-                        'body' => 'This issue was deleted from the Work Hours application.',
-                    ]);
+                $this->makeGitHubIssueRequest(
+                    $token,
+                    $repoInfo['owner'],
+                    $repoInfo['repo'],
+                    $task->meta->source_number,
+                    ['body' => 'This issue was deleted from the Work Hours application.'],
+                    'POST',
+                    '/comments'
+                );
 
                 return true;
             }
 
             return false;
         } catch (Exception $e) {
-            Log::error('Error deleting GitHub issue:', [
-                'task_id' => $task->id,
-                'error' => $e->getMessage(),
-            ]);
+            $this->logError('Error deleting GitHub issue', $task, $e);
 
             return false;
         }
@@ -435,13 +367,145 @@ final class GitHubAdapter
         }
     }
 
+    /**
+     * Extract repository information from project name
+     */
     private function exportRepoInfo(Project $project): array
     {
-        [$owner, $repo] = explode('/', $project->name, 2);
+        try {
+            [$owner, $repo] = explode('/', $project->name, 2);
 
-        return [
-            'owner' => $owner,
-            'repo' => $repo,
-        ];
+            return [
+                'owner' => $owner,
+                'repo' => $repo,
+            ];
+        } catch (Exception $e) {
+            Log::error('Error extracting repo info: ' . $e->getMessage(), [
+                'project_id' => $project->id,
+                'project_name' => $project->name,
+            ]);
+
+            return [];
+        }
+    }
+
+    /**
+     * Update a GitHub issue state
+     */
+    private function updateIssueState(Task $task, string $state): bool
+    {
+        try {
+            if (! $this->validateTaskIssueData($task)) {
+                return false;
+            }
+
+            $token = $this->getTaskUserToken($task);
+            if (! $token) {
+                return false;
+            }
+
+            $repoInfo = $this->getRepoInfoFromTask($task);
+            if (! $repoInfo) {
+                return false;
+            }
+
+            $response = $this->makeGitHubIssueRequest(
+                $token,
+                $repoInfo['owner'],
+                $repoInfo['repo'],
+                $task->meta->source_number,
+                ['state' => $state],
+                'PATCH'
+            );
+
+            if ($response && $response->successful()) {
+                $task->meta->update(['source_state' => $state]);
+
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            $this->logError("Error updating GitHub issue state to {$state}", $task, $e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Get user token for task's project
+     */
+    private function getTaskUserToken(Task $task): ?string
+    {
+        $user = $task->project->user;
+
+        return $user?->github_token;
+    }
+
+    /**
+     * Validate that task has required GitHub issue data
+     */
+    private function validateTaskIssueData(Task $task): bool
+    {
+        return $task->meta && $task->meta->source_url && $task->meta->source_number;
+    }
+
+    /**
+     * Get repository info from a task
+     */
+    private function getRepoInfoFromTask(Task $task): ?array
+    {
+        $project = $task->project;
+        $repoInfo = $this->exportRepoInfo($project);
+
+        if ($repoInfo === []) {
+            Log::error('Invalid GitHub issue URL format', [
+                'task_id' => $task->id,
+                'url' => $task->meta->source_url,
+            ]);
+
+            return null;
+        }
+
+        return $repoInfo;
+    }
+
+    /**
+     * Make a GitHub issue-related request
+     *
+     * @return \Illuminate\Http\Client\Response|null
+     */
+    private function makeGitHubIssueRequest(
+        string $token,
+        string $owner,
+        string $repo,
+        string $issueNumber,
+        array $payload,
+        string $method = 'PATCH',
+        string $suffix = ''
+    ) {
+        $url = self::API_BASE_URL . "/repos/{$owner}/{$repo}/issues/{$issueNumber}{$suffix}";
+
+        try {
+            return Http::withToken($token)->$method($url, $payload);
+        } catch (Exception $e) {
+            Log::error('Error making GitHub issue request: ' . $e->getMessage(), [
+                'url' => $url,
+                'method' => $method,
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Log an error with task context
+     */
+    private function logError(string $message, Task $task, Exception $exception): void
+    {
+        Log::error($message . ':', [
+            'task_id' => $task->id,
+            'error' => $exception->getMessage(),
+        ]);
     }
 }
