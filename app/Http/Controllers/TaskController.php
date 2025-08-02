@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Adapters\GitHubAdapter;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Stores\ProjectStore;
@@ -26,6 +27,16 @@ use Throwable;
 final class TaskController extends Controller
 {
     use ExportableTrait;
+
+    /**
+     * Constructor for TaskController
+     */
+    public function __construct(
+        /**
+         * GitHub adapter for handling GitHub-related operations
+         */
+        private GitHubAdapter $gitHubAdapter
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -68,6 +79,8 @@ final class TaskController extends Controller
             ->map(fn ($project): array => [
                 'id' => $project->id,
                 'name' => $project->name,
+                'source' => $project->source,
+                'is_github' => $project->source === 'github',
             ]);
 
         return Inertia::render('task/create', [
@@ -108,6 +121,11 @@ final class TaskController extends Controller
                 }
             }
 
+            // Check if we need to create a GitHub issue for this task
+            if ($request->boolean('create_github_issue')) {
+                $this->gitHubAdapter->createGitHubIssue($task);
+            }
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -140,7 +158,7 @@ final class TaskController extends Controller
     public function edit(Task $task)
     {
         // Load relationships
-        $task->load(['project', 'assignees']);
+        $task->load(['project', 'assignees', 'meta']);
 
         // Check if a user has access to edit this task
         $isProjectOwner = $task->project->user_id === auth()->id();
@@ -164,11 +182,14 @@ final class TaskController extends Controller
 
         $assignedUsers = $task->assignees->pluck('id')->toArray();
 
+        $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
+
         return Inertia::render('task/edit', [
             'task' => $task,
             'projects' => $projects,
             'potentialAssignees' => $potentialAssignees,
             'assignedUsers' => $assignedUsers,
+            'isGithub' => $isGithub,
         ]);
     }
 
@@ -237,6 +258,11 @@ final class TaskController extends Controller
                 $projectOwner->notify(new TaskCompleted($task, auth()->user()));
             }
 
+            // Update GitHub issue if requested
+            if ($task->is_imported && $task->meta && $task->meta->source === 'github' && $request->boolean('github_update')) {
+                $this->gitHubAdapter->updateGitHubIssue($task);
+            }
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -252,13 +278,16 @@ final class TaskController extends Controller
     #[Action(method: 'delete', name: 'task.destroy', params: ['task'], middleware: ['auth', 'verified'])]
     public function destroy(Task $task): void
     {
-        // Check if user has access to delete this task
         $isProjectOwner = $task->project->user_id === auth()->id();
 
         abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
 
         DB::beginTransaction();
         try {
+            if (request()->boolean('delete_from_github') && $task->is_imported && $task->meta && $task->meta->source === 'github') {
+                $this->gitHubAdapter->deleteGitHubIssue($task);
+            }
+
             // Detach all assignees first
             $task->assignees()->detach();
 

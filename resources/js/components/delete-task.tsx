@@ -1,21 +1,38 @@
 import { useForm } from '@inertiajs/react'
-import { FormEventHandler } from 'react'
+import { FormEventHandler, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 import { Trash2 } from 'lucide-react'
 
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
 interface DeleteTaskProps {
     taskId: number
+    isGithub?: boolean
     onDelete?: () => void
 }
 
-export default function DeleteTask({ taskId, onDelete }: DeleteTaskProps) {
-    const { delete: destroy, processing, reset, clearErrors } = useForm({})
+export default function DeleteTask({ taskId, isGithub = false, onDelete }: DeleteTaskProps) {
+    const {
+        delete: destroy,
+        processing,
+        reset,
+        clearErrors,
+        setData,
+    } = useForm({
+        delete_from_github: true,
+    })
+
+    const [deleteFromGithub, setDeleteFromGithub] = useState<boolean>(true)
 
     const deleteTask: FormEventHandler = (e) => {
         e.preventDefault()
+
+        if (isGithub) {
+            setData('delete_from_github', deleteFromGithub as never)
+        }
 
         destroy(route('task.destroy', taskId), {
             preserveScroll: true,
@@ -52,6 +69,18 @@ export default function DeleteTask({ taskId, onDelete }: DeleteTaskProps) {
                     Once the task is deleted, all of its data will be permanently removed. This action cannot be undone.
                 </DialogDescription>
                 <form className="space-y-6" onSubmit={deleteTask}>
+                    {isGithub && (
+                        <div className="flex items-center space-x-2 pt-2">
+                            <Checkbox
+                                id="delete_from_github"
+                                checked={deleteFromGithub}
+                                onCheckedChange={(checked) => setDeleteFromGithub(checked === true)}
+                            />
+                            <Label htmlFor="delete_from_github" className="text-sm">
+                                Delete from GitHub?
+                            </Label>
+                        </div>
+                    )}
                     <DialogFooter className="gap-2">
                         <DialogClose asChild>
                             <Button variant="secondary" onClick={closeModal}>

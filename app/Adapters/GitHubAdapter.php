@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Adapters;
 
+use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use Exception;
+use Illuminate\Http\Client\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
@@ -16,17 +18,19 @@ use Laravel\Socialite\Facades\Socialite;
 
 final class GitHubAdapter
 {
+    private const string API_BASE_URL = 'https://api.github.com';
+
     /**
      * Get the authenticated user's personal repositories from GitHub.
      *
      * @param  string  $token  The GitHub access token
      * @return array|JsonResponse The repositories or an error response
      */
-    public function getPersonalRepositories(string $token)
+    public function getPersonalRepositories(string $token): array|JsonResponse
     {
         return $this->makeGitHubRequest(
             $token,
-            'https://api.github.com/user/repos',
+            self::API_BASE_URL . '/user/repos',
             ['per_page' => 100, 'sort' => 'updated'],
             'Failed to fetch repositories from GitHub.',
             'repositories'
@@ -39,11 +43,11 @@ final class GitHubAdapter
      * @param  string  $token  The GitHub access token
      * @return array|JsonResponse The repositories or an error response
      */
-    public function getOrganizationRepositories(string $token)
+    public function getOrganizationRepositories(string $token): array|JsonResponse
     {
         $orgsResponse = $this->makeGitHubRequest(
             $token,
-            'https://api.github.com/user/orgs',
+            self::API_BASE_URL . '/user/orgs',
             ['per_page' => 100],
             'Failed to fetch organizations from GitHub.',
             'organizations'
@@ -59,7 +63,7 @@ final class GitHubAdapter
         foreach ($organizations as $org) {
             $reposResponse = $this->makeGitHubRequest(
                 $token,
-                "https://api.github.com/orgs/{$org['login']}/repos",
+                self::API_BASE_URL . "/orgs/{$org['login']}/repos",
                 ['per_page' => 100, 'sort' => 'updated'],
                 null,
                 null,
@@ -124,11 +128,11 @@ final class GitHubAdapter
      * @param  string  $repoName  The repository name
      * @return array|JsonResponse The issues or an error response
      */
-    public function getRepositoryIssues(string $token, string $repoOwner, string $repoName)
+    public function getRepositoryIssues(string $token, string $repoOwner, string $repoName): array|JsonResponse
     {
-        $url = "https://api.github.com/repos/{$repoOwner}/{$repoName}/issues";
+        $url = self::API_BASE_URL . "/repos/{$repoOwner}/{$repoName}/issues";
         $params = [
-            'state' => 'all', // Get both open and closed issues
+            'state' => 'all',
             'per_page' => 100, // Maximum number of issues per page
             'sort' => 'created',
             'direction' => 'desc',
@@ -151,75 +155,172 @@ final class GitHubAdapter
      */
     public function closeGitHubIssue(Task $task): bool
     {
+        return $this->updateIssueState($task, 'closed');
+    }
+
+    /**
+     * Create a GitHub issue for a task
+     *
+     * @param  Task  $task  The task to create an issue for
+     * @return bool|array False if failed, or array with issue details if successful
+     */
+    public function createGitHubIssue(Task $task): bool|array
+    {
         try {
-            // Get the task owner's GitHub token
-            $user = User::query()->find($task->project->user_id);
-            if (! $user || ! $user->github_token) {
-                Log::warning('Cannot close GitHub issue: No GitHub token found for user', ['user_id' => $task->project->user_id]);
-
+            $token = $this->getTaskUserToken($task);
+            if (! $token) {
                 return false;
             }
 
-            $token = $user->github_token;
-            $meta = $task->meta;
+            $payload = [
+                'title' => $task->title,
+                'body' => $task->description ?? '',
+                'labels' => [$task->priority, $task->status],
+            ];
 
-            if (! $meta || ! $meta->source_url) {
-                Log::warning('Cannot close GitHub issue: Missing metadata', ['task_id' => $task->id]);
-
-                return false;
+            if ($task->due_date) {
+                $payload['body'] .= "\n\nDue date: " . $task->due_date->format('Y-m-d');
             }
 
-            // Parse the GitHub repository information from the issue URL
-            // Example URL: https://github.com/username/repo/issues/123
-            preg_match('/github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)/', (string) $meta->source_url, $matches);
+            $repoInfo = $this->exportRepoInfo($task->project);
+            $repoOwner = $repoInfo['owner'];
+            $repoName = $repoInfo['repo'];
 
-            if (count($matches) < 4) {
-                Log::warning('Cannot close GitHub issue: Invalid URL format', ['url' => $meta->source_url]);
-
-                return false;
-            }
-
-            $owner = $matches[1];
-            $repo = $matches[2];
-            $issueNumber = $matches[3];
-
-            // We need to use PATCH request to close GitHub issues
             $response = Http::withToken($token)
-                ->acceptJson()
-                ->patch("https://api.github.com/repos/{$owner}/{$repo}/issues/{$issueNumber}", [
-                    'state' => 'closed',
-                ]);
+                ->post(self::API_BASE_URL . "/repos/{$repoOwner}/{$repoName}/issues", $payload);
 
             if ($response->successful()) {
-                // Update the local task metadata to reflect the closed state
-                $meta->update([
-                    'source_state' => 'closed',
-                    'extra_data' => array_merge($meta->extra_data ?? [], [
-                        'closed_at' => now()->toIso8601String(),
-                        'closed_by' => auth()->user()->name,
-                    ]),
-                ]);
+                $issueData = $response->json();
+                $task->update(['is_imported' => true]);
+                $task->meta()->updateOrCreate(
+                    ['task_id' => $task->id],
+                    [
+                        'source' => 'github',
+                        'source_number' => $issueData['number'],
+                        'source_state' => $issueData['state'],
+                        'source_url' => $issueData['html_url'],
+                        'source_id' => $issueData['id'],
+                    ]
+                );
 
-                Log::info('Successfully closed GitHub issue', [
-                    'task_id' => $task->id,
-                    'issue_number' => $issueNumber,
-                    'repository' => "{$owner}/{$repo}",
-                ]);
-
-                return true;
+                return $issueData;
             }
-            Log::error('Failed to close GitHub issue', [
-                'task_id' => $task->id,
-                'status' => $response->status(),
-                'response' => $response->json(),
-            ]);
 
             return false;
         } catch (Exception $e) {
-            Log::error('Exception when closing GitHub issue', [
-                'task_id' => $task->id,
-                'error' => $e->getMessage(),
-            ]);
+            $this->logError('Error creating GitHub issue', $task, $e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Update a GitHub issue using the GitHub API
+     *
+     * @param  Task  $task  The task containing GitHub issue information
+     * @return bool Whether the issue was successfully updated
+     */
+    public function updateGitHubIssue(Task $task): bool
+    {
+        try {
+            if (! $this->validateTaskIssueData($task)) {
+                return false;
+            }
+
+            $token = $this->getTaskUserToken($task);
+            if (! $token) {
+                return false;
+            }
+
+            $repoInfo = $this->getRepoInfoFromTask($task);
+            if (! $repoInfo) {
+                return false;
+            }
+
+            $payload = [
+                'title' => $task->title,
+                'body' => $task->description ?? '',
+                'labels' => [$task->priority, $task->status],
+            ];
+
+            // Set issue state based on task status
+            $payload['state'] = $task->status === 'completed' ? 'closed' : 'open';
+
+            $response = $this->makeGitHubIssueRequest(
+                $token,
+                $repoInfo['owner'],
+                $repoInfo['repo'],
+                $task->meta->source_number,
+                $payload,
+                'PATCH'
+            );
+
+            if ($response instanceof Response && $response->successful()) {
+                $task->meta->update(['source_state' => $payload['state']]);
+
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            $this->logError('Error updating GitHub issue', $task, $e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Delete a GitHub issue using the GitHub API
+     *
+     * @param  Task  $task  The task containing GitHub issue information
+     * @return bool Whether the issue was successfully deleted
+     */
+    public function deleteGitHubIssue(Task $task): bool
+    {
+        try {
+            if (! $this->validateTaskIssueData($task)) {
+                return false;
+            }
+
+            $token = $this->getTaskUserToken($task);
+            if (! $token) {
+                return false;
+            }
+
+            $repoInfo = $this->getRepoInfoFromTask($task);
+            if (! $repoInfo) {
+                return false;
+            }
+
+            // GitHub API doesn't allow deleting issues, so we close it instead
+            // with a comment indicating it was deleted from the application
+            $response = $this->makeGitHubIssueRequest(
+                $token,
+                $repoInfo['owner'],
+                $repoInfo['repo'],
+                $task->meta->source_number,
+                ['state' => 'closed'],
+                'PATCH'
+            );
+
+            if ($response instanceof Response && $response->successful()) {
+                // Add a comment indicating the issue was deleted from the application
+                $this->makeGitHubIssueRequest(
+                    $token,
+                    $repoInfo['owner'],
+                    $repoInfo['repo'],
+                    $task->meta->source_number,
+                    ['body' => 'This issue was deleted from the Work Hours application.'],
+                    'POST',
+                    '/comments'
+                );
+
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            $this->logError('Error deleting GitHub issue', $task, $e);
 
             return false;
         }
@@ -234,7 +335,7 @@ final class GitHubAdapter
      * @param  string|null  $errorMessage  Custom error message on failure
      * @param  string|null  $resourceType  Type of resource being fetched (for error logging)
      * @param  bool  $returnErrorResponse  Whether to return an error response on failure
-     * @return array|JsonResponse The response data or an error response
+     * @return array|JsonResponse|null The response data or an error response
      */
     private function makeGitHubRequest(
         string $token,
@@ -243,7 +344,7 @@ final class GitHubAdapter
         ?string $errorMessage = null,
         ?string $resourceType = null,
         bool $returnErrorResponse = true
-    ) {
+    ): JsonResponse|array|null {
         try {
             $response = Http::withToken($token)->get($url, $params);
 
@@ -265,5 +366,145 @@ final class GitHubAdapter
 
             return null;
         }
+    }
+
+    /**
+     * Extract repository information from project name
+     */
+    private function exportRepoInfo(Project $project): array
+    {
+        try {
+            [$owner, $repo] = explode('/', $project->name, 2);
+
+            return [
+                'owner' => $owner,
+                'repo' => $repo,
+            ];
+        } catch (Exception $e) {
+            Log::error('Error extracting repo info: ' . $e->getMessage(), [
+                'project_id' => $project->id,
+                'project_name' => $project->name,
+            ]);
+
+            return [];
+        }
+    }
+
+    /**
+     * Update a GitHub issue state
+     */
+    private function updateIssueState(Task $task, string $state): bool
+    {
+        try {
+            if (! $this->validateTaskIssueData($task)) {
+                return false;
+            }
+
+            $token = $this->getTaskUserToken($task);
+            if (! $token) {
+                return false;
+            }
+
+            $repoInfo = $this->getRepoInfoFromTask($task);
+            if (! $repoInfo) {
+                return false;
+            }
+
+            $response = $this->makeGitHubIssueRequest(
+                $token,
+                $repoInfo['owner'],
+                $repoInfo['repo'],
+                $task->meta->source_number,
+                ['state' => $state],
+                'PATCH'
+            );
+
+            if ($response instanceof Response && $response->successful()) {
+                $task->meta->update(['source_state' => $state]);
+
+                return true;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            $this->logError("Error updating GitHub issue state to {$state}", $task, $e);
+
+            return false;
+        }
+    }
+
+    /**
+     * Get user token for task's project
+     */
+    private function getTaskUserToken(Task $task): ?string
+    {
+        $user = $task->project->user;
+
+        return $user?->github_token;
+    }
+
+    /**
+     * Validate that task has required GitHub issue data
+     */
+    private function validateTaskIssueData(Task $task): bool
+    {
+        return $task->meta && $task->meta->source_url && $task->meta->source_number;
+    }
+
+    /**
+     * Get repository info from a task
+     */
+    private function getRepoInfoFromTask(Task $task): ?array
+    {
+        $project = $task->project;
+        $repoInfo = $this->exportRepoInfo($project);
+
+        if ($repoInfo === []) {
+            Log::error('Invalid GitHub issue URL format', [
+                'task_id' => $task->id,
+                'url' => $task->meta->source_url,
+            ]);
+
+            return null;
+        }
+
+        return $repoInfo;
+    }
+
+    /**
+     * Make a GitHub issue-related request
+     */
+    private function makeGitHubIssueRequest(
+        string $token,
+        string $owner,
+        string $repo,
+        string $issueNumber,
+        array $payload,
+        string $method = 'PATCH',
+        string $suffix = ''
+    ): ?Response {
+        $url = self::API_BASE_URL . "/repos/{$owner}/{$repo}/issues/{$issueNumber}{$suffix}";
+
+        try {
+            return Http::withToken($token)->$method($url, $payload);
+        } catch (Exception $e) {
+            Log::error('Error making GitHub issue request: ' . $e->getMessage(), [
+                'url' => $url,
+                'method' => $method,
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Log an error with task context
+     */
+    private function logError(string $message, Task $task, Exception $exception): void
+    {
+        Log::error($message . ':', [
+            'task_id' => $task->id,
+            'error' => $exception->getMessage(),
+        ]);
     }
 }

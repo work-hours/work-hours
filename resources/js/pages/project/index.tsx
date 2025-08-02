@@ -11,10 +11,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import MasterLayout from '@/layouts/master-layout'
 import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
+import { syncRepository } from '@actions/GitHubRepositoryController'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, Loader2, Search, User, X } from 'lucide-react'
+import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, User, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -429,9 +431,7 @@ export default function Projects() {
                                             <TableCell className="font-medium">
                                                 <div className="flex items-center gap-2">
                                                     {project.source === 'github' && project.repo_id ? (
-                                                        <span className="inline-flex items-center rounded bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800 ring-1 ring-purple-500/20 ring-inset dark:bg-purple-900/30 dark:text-purple-300 dark:ring-purple-400/30">
-                                                            GitHub
-                                                        </span>
+                                                        <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />
                                                     ) : null}
                                                     {project.name}
                                                 </div>
@@ -485,6 +485,38 @@ export default function Projects() {
                                                                 label="Logs"
                                                                 variant="blue"
                                                             />
+                                                            {project.source === 'github' && project.repo_id && (
+                                                                <Button
+                                                                    onClick={(e) => {
+                                                                        e.preventDefault()
+                                                                        setLoading(true)
+
+                                                                        syncRepository
+                                                                            .call({
+                                                                                params: { project: project.id },
+                                                                            })
+                                                                            .then((response) => response.json())
+                                                                            .then((data) => {
+                                                                                if (data.success) {
+                                                                                    toast.success('Project synced successfully!')
+                                                                                    getProjects(filters).then()
+                                                                                } else {
+                                                                                    console.error('Error syncing project:', data.error)
+                                                                                    setLoading(false)
+                                                                                }
+                                                                            })
+                                                                            .catch(() => {
+                                                                                setLoading(false)
+                                                                            })
+                                                                    }}
+                                                                    title="Sync with GitHub"
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className="h-7 border-purple-200 bg-purple-50 text-xs text-purple-700 shadow-sm transition-all hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
+                                                                >
+                                                                    <GithubIcon className="mr-1 h-3 w-3" />
+                                                                </Button>
+                                                            )}
                                                             <ActionButton
                                                                 href={route('project.edit', project.id)}
                                                                 title="Edit Project"

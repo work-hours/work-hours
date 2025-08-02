@@ -25,6 +25,13 @@ export type Task = {
     is_imported: boolean
     project: Project
     assignees: User[]
+    meta?: {
+        source?: string
+        source_url?: string
+        source_number?: string
+        source_id?: string
+        source_state?: string
+    }
 }
 
 /**

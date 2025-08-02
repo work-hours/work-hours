@@ -39,6 +39,8 @@ type Props = {
         name: string
         description: string | null
         client_id: number | null
+        source?: string
+        is_imported?: boolean
     }
     teamMembers: TeamMember[]
     assignedTeamMembers: number[]
@@ -153,7 +155,7 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                 tabIndex={1}
                                                 value={data.name}
                                                 onChange={(e) => setData('name', e.target.value)}
-                                                disabled={processing}
+                                                disabled={processing || project.is_imported}
                                                 placeholder="Project name"
                                                 className="pl-10"
                                             />

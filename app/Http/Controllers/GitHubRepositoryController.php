@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
+use Msamgan\Lact\Attributes\Action;
 
 final class GitHubRepositoryController extends Controller
 {
@@ -75,6 +76,152 @@ final class GitHubRepositoryController extends Controller
             Log::error('Error importing GitHub repository: ' . $e->getMessage());
 
             return $this->errorResponse('Failed to import repository: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Sync a GitHub repository project and its issues.
+     *
+     * @param  Project  $project  The project to sync
+     * @return JsonResponse The response
+     */
+    #[Action(method: 'post', name: 'github.repositories.sync', params: ['project'])]
+    public function syncRepository(Project $project): JsonResponse
+    {
+        try {
+            // Check if the project is a GitHub repository
+            if ($project->source !== 'github') {
+                return $this->errorResponse('This project is not a GitHub repository.', 400);
+            }
+
+            // Get the GitHub token
+            $token = $this->getGitHubToken();
+            if ($token instanceof JsonResponse) {
+                return $token;
+            }
+
+            // Extract owner and repo name from the project name (format: "owner/repo")
+            [$repoOwner, $repoName] = explode('/', $project->name);
+
+            // Get existing task source IDs to avoid duplicates
+            $existingTaskSourceIds = $project->tasks()
+                ->with('meta')
+                ->whereHas('meta', function ($query): void {
+                    $query->where('source', 'github');
+                })
+                ->get()
+                ->pluck('meta.source_id')
+                ->filter()
+                ->toArray();
+
+            // Fetch issues from GitHub repository
+            $issues = $this->githubAdapter->getRepositoryIssues($token, $repoOwner, $repoName);
+
+            if ($issues instanceof JsonResponse || ! is_array($issues)) {
+                return $this->errorResponse("Failed to fetch issues from GitHub repository: {$repoOwner}/{$repoName}", 500);
+            }
+
+            $newCount = 0;
+            $updatedCount = 0;
+
+            // Process each issue
+            foreach ($issues as $issue) {
+                try {
+                    // Skip pull requests (which are also returned by the issues API)
+                    if (isset($issue['pull_request'])) {
+                        continue;
+                    }
+
+                    // Check if the issue already exists as a task
+                    $existingTask = $project->tasks()
+                        ->whereHas('meta', function ($query) use ($issue): void {
+                            $query->where('source', 'github')
+                                ->where('source_id', (string) $issue['id']);
+                        })
+                        ->first();
+
+                    if ($existingTask) {
+                        // Update the existing task
+                        $status = $this->mapGitHubIssueStatus($issue['state']);
+                        $priority = $this->determineIssuePriority($issue);
+
+                        $existingTask->update([
+                            'title' => $issue['title'],
+                            'description' => $issue['body'] ?? '',
+                            'status' => $status,
+                            'priority' => $priority,
+                        ]);
+
+                        // Update the metadata
+                        $existingTask->meta->update([
+                            'source_state' => $issue['state'],
+                            'source_url' => $issue['html_url'],
+                            'extra_data' => [
+                                'labels' => $issue['labels'] ?? [],
+                                'created_at' => $issue['created_at'] ?? null,
+                                'updated_at' => $issue['updated_at'] ?? null,
+                                'closed_at' => $issue['closed_at'] ?? null,
+                                'user' => isset($issue['user']) ? [
+                                    'id' => $issue['user']['id'] ?? null,
+                                    'login' => $issue['user']['login'] ?? null,
+                                ] : null,
+                            ],
+                        ]);
+
+                        $updatedCount++;
+                    } else {
+                        // Create a new task for this issue
+                        $status = $this->mapGitHubIssueStatus($issue['state']);
+                        $priority = $this->determineIssuePriority($issue);
+
+                        $task = $project->tasks()->create([
+                            'title' => $issue['title'],
+                            'description' => $issue['body'] ?? '',
+                            'status' => $status,
+                            'priority' => $priority,
+                            'is_imported' => true,
+                        ]);
+
+                        // Store GitHub-specific metadata
+                        $task->meta()->create([
+                            'source' => 'github',
+                            'source_id' => (string) $issue['id'],
+                            'source_number' => (string) $issue['number'],
+                            'source_url' => $issue['html_url'],
+                            'source_state' => $issue['state'],
+                            'extra_data' => [
+                                'labels' => $issue['labels'] ?? [],
+                                'created_at' => $issue['created_at'] ?? null,
+                                'updated_at' => $issue['updated_at'] ?? null,
+                                'closed_at' => $issue['closed_at'] ?? null,
+                                'user' => isset($issue['user']) ? [
+                                    'id' => $issue['user']['id'] ?? null,
+                                    'login' => $issue['user']['login'] ?? null,
+                                ] : null,
+                            ],
+                        ]);
+
+                        $newCount++;
+                    }
+                } catch (Exception $e) {
+                    Log::error("Failed to sync GitHub issue #{$issue['number']}: " . $e->getMessage());
+
+                    continue; // Continue with the next issue even if one fails
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully synced project from GitHub. {$newCount} new issues imported, {$updatedCount} issues updated.",
+                'project_id' => $project->id,
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error syncing GitHub repository: ' . $e->getMessage(), [
+                'project_id' => $project->id,
+                'project_name' => $project->name,
+            ]);
+
+            return $this->errorResponse('Failed to sync repository: ' . $e->getMessage(), 500);
         }
     }
 
