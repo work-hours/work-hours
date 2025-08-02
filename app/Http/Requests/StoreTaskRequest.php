@@ -32,6 +32,7 @@ final class StoreTaskRequest extends FormRequest
             'due_date' => ['nullable', 'date'],
             'assignees' => ['nullable', 'array'],
             'assignees.*' => ['integer', 'exists:users,id'],
+            'create_github_issue' => ['nullable', 'boolean'],
         ];
     }
 }

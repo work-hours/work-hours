@@ -31,6 +31,7 @@ type TaskForm = {
     priority: 'low' | 'medium' | 'high'
     due_date: string
     assignees: number[]
+    create_github_issue: boolean
 }
 
 type Props = {
@@ -57,6 +58,7 @@ export default function CreateTask({ projects }: Props) {
         priority: 'medium',
         due_date: '',
         assignees: [],
+        create_github_issue: false,
     })
 
     // State to store potential assignees
@@ -344,6 +346,18 @@ export default function CreateTask({ projects }: Props) {
                                         </div>
                                     </div>
                                     <InputError message={errors.assignees} />
+                                </div>
+
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id="create_github_issue"
+                                        checked={data.create_github_issue}
+                                        onCheckedChange={(checked) => setData('create_github_issue', !!checked)}
+                                        disabled={processing}
+                                    />
+                                    <Label htmlFor="create_github_issue" className="cursor-pointer text-sm">
+                                        Create issue on GitHub
+                                    </Label>
                                 </div>
 
                                 <div className="mt-4 flex justify-end gap-3">

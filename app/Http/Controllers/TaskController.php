@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Adapters\GitHubAdapter;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Stores\ProjectStore;
@@ -26,6 +27,19 @@ use Throwable;
 final class TaskController extends Controller
 {
     use ExportableTrait;
+
+    /**
+     * GitHub adapter for handling GitHub-related operations
+     */
+    private GitHubAdapter $gitHubAdapter;
+
+    /**
+     * Constructor for TaskController
+     */
+    public function __construct(GitHubAdapter $gitHubAdapter)
+    {
+        $this->gitHubAdapter = $gitHubAdapter;
+    }
 
     /**
      * Display a listing of the resource.
@@ -105,6 +119,30 @@ final class TaskController extends Controller
                 $users = User::query()->whereIn('id', $assigneeIds)->get();
                 foreach ($users as $user) {
                     $user->notify(new TaskAssigned($task, auth()->user()));
+                }
+            }
+
+            // Check if we need to create a GitHub issue for this task
+            if ($request->boolean('create_github_issue')) {
+                // Make sure the project is loaded
+                if (!$task->relationLoaded('project')) {
+                    $task->load('project');
+                }
+
+                // Get the project's default GitHub repository if available
+                // This is a simplified approach - in a real implementation,
+                // you might want to allow the user to select a repository
+                $project = $task->project;
+
+                // Check if the project has GitHub repository information
+                // For now, using the project name as a simplification
+                // In a real implementation, you'd store GitHub repo details in the project
+                $repoOwner = $project->user->github_username ?? null;
+                $repoName = $project->github_repo_name ?? str_replace(' ', '-', strtolower($project->name));
+
+                if ($repoOwner) {
+                    // Create the GitHub issue
+                    $this->gitHubAdapter->createGitHubIssue($task, $repoOwner, $repoName);
                 }
             }
 

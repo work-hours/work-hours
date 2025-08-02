@@ -152,71 +152,117 @@ final class GitHubAdapter
     public function closeGitHubIssue(Task $task): bool
     {
         try {
-            // Get the task owner's GitHub token
-            $user = User::query()->find($task->project->user_id);
-            if (! $user || ! $user->github_token) {
-                Log::warning('Cannot close GitHub issue: No GitHub token found for user', ['user_id' => $task->project->user_id]);
+            // Check if the task has the necessary metadata
+            if (! $task->meta || ! $task->meta->source_url || ! $task->meta->source_number) {
+                return false;
+            }
+
+            // Get the authenticated user's token
+            $authenticatedUser = $task->project->user;
+            $token = $authenticatedUser?->github_token;
+
+            if (! $token) {
+                return false;
+            }
+
+            // Extract repository owner and name from the GitHub URL
+            // GitHub issue URLs have the format: https://github.com/{owner}/{repo}/issues/{number}
+            preg_match('/github\.com\/([^\/]+)\/([^\/]+)\/issues/', $task->meta->source_url, $matches);
+
+            if (count($matches) < 3) {
+                Log::error('Invalid GitHub issue URL format', [
+                    'task_id' => $task->id,
+                    'url' => $task->meta->source_url,
+                ]);
 
                 return false;
             }
 
-            $token = $user->github_token;
-            $meta = $task->meta;
+            $repoOwner = $matches[1];
+            $repoName = $matches[2];
+            $issueNumber = $task->meta->source_number;
 
-            if (! $meta || ! $meta->source_url) {
-                Log::warning('Cannot close GitHub issue: Missing metadata', ['task_id' => $task->id]);
-
-                return false;
-            }
-
-            // Parse the GitHub repository information from the issue URL
-            // Example URL: https://github.com/username/repo/issues/123
-            preg_match('/github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)/', (string) $meta->source_url, $matches);
-
-            if (count($matches) < 4) {
-                Log::warning('Cannot close GitHub issue: Invalid URL format', ['url' => $meta->source_url]);
-
-                return false;
-            }
-
-            $owner = $matches[1];
-            $repo = $matches[2];
-            $issueNumber = $matches[3];
-
-            // We need to use PATCH request to close GitHub issues
+            // Update the issue state to closed
             $response = Http::withToken($token)
-                ->acceptJson()
-                ->patch("https://api.github.com/repos/{$owner}/{$repo}/issues/{$issueNumber}", [
+                ->patch("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues/{$issueNumber}", [
                     'state' => 'closed',
                 ]);
 
             if ($response->successful()) {
-                // Update the local task metadata to reflect the closed state
-                $meta->update([
-                    'source_state' => 'closed',
-                    'extra_data' => array_merge($meta->extra_data ?? [], [
-                        'closed_at' => now()->toIso8601String(),
-                        'closed_by' => auth()->user()->name,
-                    ]),
-                ]);
-
-                Log::info('Successfully closed GitHub issue', [
-                    'task_id' => $task->id,
-                    'issue_number' => $issueNumber,
-                    'repository' => "{$owner}/{$repo}",
-                ]);
+                // Update the task's metadata to reflect that the issue is now closed
+                $task->meta->update(['source_state' => 'closed']);
 
                 return true;
             }
-            Log::error('Failed to close GitHub issue', [
-                'task_id' => $task->id,
-                'status' => $response->status(),
-                'response' => $response->json(),
-            ]);
 
             return false;
         } catch (Exception $e) {
-            Log::error('Exception when closing GitHub issue', [
+            Log::error('Error closing GitHub issue:', [
+                'task_id' => $task->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Create a GitHub issue for a task
+     *
+     * @param  Task  $task  The task to create an issue for
+     * @param  string  $repoOwner  The repository owner
+     * @param  string  $repoName  The repository name
+     * @return bool|array False if failed, or array with issue details if successful
+     */
+    public function createGitHubIssue(Task $task, string $repoOwner, string $repoName)
+    {
+        try {
+            // Get the authenticated user's token
+            $authenticatedUser = $task->project->user;
+            $token = $authenticatedUser?->github_token;
+
+            if (! $token) {
+                return false;
+            }
+
+            // Create the issue payload
+            $payload = [
+                'title' => $task->title,
+                'body' => $task->description ?? '',
+                'labels' => [$task->priority, $task->status],
+            ];
+
+            // Add due date as part of the body if exists
+            if ($task->due_date) {
+                $payload['body'] .= "\n\nDue date: " . $task->due_date->format('Y-m-d');
+            }
+
+            // Create the issue on GitHub
+            $response = Http::withToken($token)
+                ->post("https://api.github.com/repos/{$repoOwner}/{$repoName}/issues", $payload);
+
+            if ($response->successful()) {
+                $issueData = $response->json();
+
+                // Create or update task metadata with GitHub issue details
+                $task->meta()->updateOrCreate(
+                    ['task_id' => $task->id],
+                    [
+                        'source' => 'github',
+                        'source_owner' => $repoOwner,
+                        'source_repo' => $repoName,
+                        'source_number' => $issueData['number'],
+                        'source_state' => $issueData['state'],
+                        'source_url' => $issueData['html_url'],
+                    ]
+                );
+
+                return $issueData;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            Log::error('Error creating GitHub issue:', [
                 'task_id' => $task->id,
                 'error' => $e->getMessage(),
             ]);
