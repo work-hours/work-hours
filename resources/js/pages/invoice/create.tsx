@@ -344,8 +344,8 @@ export default function CreateInvoice() {
                     </CardHeader>
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
-                                <div className="grid gap-2">
+                            <div className="flex flex-row gap-2">
+                                <div className="w-full">
                                     <Label htmlFor="client_id" className="text-sm font-medium">
                                         Client
                                     </Label>
@@ -372,7 +372,7 @@ export default function CreateInvoice() {
                                     </div>
                                     <InputError message={errors.client_id} className="mt-1" />
                                 </div>
-                                <div className="grid gap-2">
+                                <div className="w-full">
                                     <Label htmlFor="invoice_number" className="text-sm font-medium">
                                         Invoice Number
                                     </Label>
@@ -393,7 +393,29 @@ export default function CreateInvoice() {
                                     </div>
                                     <InputError message={errors.invoice_number} className="mt-1" />
                                 </div>
-                                <div className="grid gap-2">
+
+                                <div className="w-full">
+                                    <Label htmlFor="status" className="text-sm font-medium">
+                                        Status
+                                    </Label>
+                                    <div className="relative">
+                                        <Select value={data.status} onValueChange={(value) => setData('status', value)} disabled={true}>
+                                            <SelectTrigger id="status" className="w-full">
+                                                <SelectValue placeholder="Select status" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="draft">Draft</SelectItem>
+                                                <SelectItem value="sent">Sent</SelectItem>
+                                                <SelectItem value="paid">Paid</SelectItem>
+                                                <SelectItem value="partially_paid">Partially Paid</SelectItem>
+                                                <SelectItem value="overdue">Overdue</SelectItem>
+                                                <SelectItem value="cancelled">Cancelled</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <InputError message={errors.status} className="mt-1" />
+                                </div>
+                                <div className="w-full">
                                     <Label htmlFor="issue_date" className="text-sm font-medium">
                                         Issue Date
                                     </Label>
@@ -421,7 +443,7 @@ export default function CreateInvoice() {
                                     </div>
                                     <InputError message={errors.issue_date as string} className="mt-1" />
                                 </div>
-                                <div className="grid gap-2">
+                                <div className="w-full">
                                     <Label htmlFor="due_date" className="text-sm font-medium">
                                         Due Date
                                     </Label>
@@ -448,27 +470,6 @@ export default function CreateInvoice() {
                                         />
                                     </div>
                                     <InputError message={errors.due_date as string} className="mt-1" />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="status" className="text-sm font-medium">
-                                        Status
-                                    </Label>
-                                    <div className="relative">
-                                        <Select value={data.status} onValueChange={(value) => setData('status', value)} disabled={true}>
-                                            <SelectTrigger id="status" className="w-full">
-                                                <SelectValue placeholder="Select status" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="draft">Draft</SelectItem>
-                                                <SelectItem value="sent">Sent</SelectItem>
-                                                <SelectItem value="paid">Paid</SelectItem>
-                                                <SelectItem value="partially_paid">Partially Paid</SelectItem>
-                                                <SelectItem value="overdue">Overdue</SelectItem>
-                                                <SelectItem value="cancelled">Cancelled</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <InputError message={errors.status} className="mt-1" />
                                 </div>
                             </div>
                             {/* Notes in a separate row */}
