@@ -228,14 +228,13 @@ export default function TimeLog({
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Time Log" />
             <div className="mx-auto flex flex-col gap-6 p-3">
-                <section className="mb-2">
+                <section className="">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Time Logs</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage your work hours</p>
                 </section>
 
                 {timeLogs.length > 0 && (
-                    <section className="mb-4">
-                        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
+                    <section className="">
                         <StatsCards
                             teamStats={{
                                 count: -1, // Just one user (personal time logs)
@@ -253,8 +252,8 @@ export default function TimeLog({
                     </section>
                 )}
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
+                <Card className="transition-all hover:shadow-md">
+                    <CardHeader className="">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Your Time Logs</CardTitle>
@@ -346,8 +345,8 @@ export default function TimeLog({
                         </div>
 
                         <div className="mt-4 border-t pt-4">
-                            <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
-                                <div className="grid gap-1">
+                            <form onSubmit={submit} className="flex w-full flex-row gap-4">
+                                <div className="flex w-full flex-col gap-1">
                                     <Label htmlFor="start_date" className="text-xs font-medium">
                                         Start Date
                                     </Label>
@@ -367,7 +366,7 @@ export default function TimeLog({
                                         }
                                     />
                                 </div>
-                                <div className="grid gap-1">
+                                <div className="flex w-full flex-col gap-1">
                                     <Label htmlFor="end_date" className="text-xs font-medium">
                                         End Date
                                     </Label>
@@ -387,7 +386,7 @@ export default function TimeLog({
                                         }
                                     />
                                 </div>
-                                <div className="grid gap-1">
+                                <div className="flex w-full flex-col gap-1">
                                     <Label htmlFor="project_id" className="text-xs font-medium">
                                         Project
                                     </Label>
@@ -401,7 +400,7 @@ export default function TimeLog({
                                         icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
                                     />
                                 </div>
-                                <div className="grid gap-1">
+                                <div className="flex w-full flex-col gap-1">
                                     <Label htmlFor="is_paid" className="text-xs font-medium">
                                         Payment Status
                                     </Label>
@@ -419,7 +418,7 @@ export default function TimeLog({
                                         icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
                                     />
                                 </div>
-                                <div className="grid gap-1">
+                                <div className="flex w-full flex-col gap-1">
                                     <Label htmlFor="status" className="text-xs font-medium">
                                         Approval Status
                                     </Label>
@@ -434,14 +433,21 @@ export default function TimeLog({
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
-                                    <Button type="submit" disabled={processing} className="flex h-9 w-9 items-center justify-center p-0" title="Apply filters">
+                                    <Button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        title="Apply filters"
+                                    >
                                         <Search className="h-4 w-4" />
                                     </Button>
 
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        disabled={processing || (!data.start_date && !data.end_date && !data.project_id && !data.is_paid && !data.status)}
+                                        disabled={
+                                            processing || (!data.start_date && !data.end_date && !data.project_id && !data.is_paid && !data.status)
+                                        }
                                         onClick={() => {
                                             setData({
                                                 start_date: '',
