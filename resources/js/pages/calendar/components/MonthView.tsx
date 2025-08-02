@@ -1,5 +1,5 @@
 import { eachDayOfInterval, endOfMonth, format, isSameDay, isSameMonth, parseISO, startOfMonth } from 'date-fns'
-import { Clock, Calendar } from 'lucide-react'
+import { Clock, Calendar, CalendarDays } from 'lucide-react'
 
 interface MonthViewProps {
     timeLogs: Array<{
@@ -21,9 +21,10 @@ interface MonthViewProps {
     }>
     date: string
     onTimeLogClick: (timeLogId: number) => void
+    onSwitchToDay: (date: string) => void
 }
 
-export default function MonthView({ timeLogs, date, onTimeLogClick }: MonthViewProps) {
+export default function MonthView({ timeLogs, date, onTimeLogClick, onSwitchToDay }: MonthViewProps) {
     const currentDate = parseISO(date)
     const monthStart = startOfMonth(currentDate)
     const monthEnd = endOfMonth(currentDate)
@@ -102,12 +103,25 @@ export default function MonthView({ timeLogs, date, onTimeLogClick }: MonthViewP
                                 `}>
                                     {format(day, 'd')}
                                 </div>
-                                {totalHours > 0 && (
-                                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                                        <Clock className="w-3 h-3 mr-1" />
-                                        {totalHours.toFixed(1)}h
-                                    </div>
-                                )}
+                                <div className="flex items-center space-x-2">
+                                    {totalHours > 0 && (
+                                        <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                                            <Clock className="w-3 h-3 mr-1" />
+                                            {totalHours.toFixed(1)}h
+                                        </div>
+                                    )}
+                                    <button
+                                        className={`text-xs flex items-center justify-center rounded-md p-1 transition-opacity hover:bg-gray-100 dark:hover:bg-gray-700
+                                        ${isCurrentMonth ? 'text-blue-500 dark:text-blue-400' : 'opacity-60 text-gray-500 dark:text-gray-400'}`}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onSwitchToDay(format(day, 'yyyy-MM-dd'));
+                                        }}
+                                        title="View day"
+                                    >
+                                        <CalendarDays className="w-3.5 h-3.5" />
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="space-y-1.5 overflow-y-auto max-h-[90px]">

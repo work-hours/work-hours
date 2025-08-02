@@ -135,7 +135,19 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                     </TabsList>
 
                     <TabsContent value="month">
-                        <MonthView timeLogs={timeLogs} date={date} onTimeLogClick={handleTimeLogClick} />
+                        <MonthView
+                            timeLogs={timeLogs}
+                            date={date}
+                            onTimeLogClick={handleTimeLogClick}
+                            onSwitchToDay={(selectedDate) => {
+                                // Switch to day view and update the date
+                                router.get(
+                                    route('calendar.index'),
+                                    { view: 'day', date: selectedDate },
+                                    { preserveState: true }
+                                )
+                            }}
+                        />
                     </TabsContent>
 
                     <TabsContent value="week">
