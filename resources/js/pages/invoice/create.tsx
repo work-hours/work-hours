@@ -1,25 +1,24 @@
 import { type SharedData } from '@/types'
 import { Head, useForm, usePage } from '@inertiajs/react'
-import { ArrowLeft, Calendar, FileText, LoaderCircle, Plus, Save, Trash2, User, Hash, Receipt } from 'lucide-react'
+import { ArrowLeft, Calendar, FileText, Hash, LoaderCircle, Plus, Save, Trash2, User } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
 import { getUnpaidTimeLogs } from '@actions/InvoiceController'
-import CustomInput from '@/components/ui/custom-input'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 
 type InvoiceForm = {
     client_id: string
@@ -387,7 +386,7 @@ export default function CreateInvoice() {
 
                 <form className="flex flex-col gap-6" onSubmit={submit}>
                     {/* Invoice Details Section */}
-                    <h2 className="text-xl font-semibold flex items-center gap-2 mt-2 border-b pb-2">
+                    <h2 className="mt-2 flex items-center gap-2 border-b pb-2 text-xl font-semibold">
                         <FileText className="h-5 w-5" />
                         Invoice Details
                     </h2>
@@ -395,16 +394,14 @@ export default function CreateInvoice() {
                         {/* Basic Info Card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardHeader>
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    Basic Information
-                                </CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-lg">Basic Information</CardTitle>
                                 <CardDescription>Enter the core details for your invoice</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                         <div>
-                                            <Label htmlFor="client_id" className="text-sm font-medium flex items-center gap-1">
+                                            <Label htmlFor="client_id" className="flex items-center gap-1 text-sm font-medium">
                                                 Client <span className="text-destructive">*</span>
                                             </Label>
                                             <div className="relative">
@@ -431,7 +428,7 @@ export default function CreateInvoice() {
                                             <InputError message={errors.client_id} className="mt-1" />
                                         </div>
                                         <div>
-                                            <Label htmlFor="invoice_number" className="text-sm font-medium flex items-center gap-1">
+                                            <Label htmlFor="invoice_number" className="flex items-center gap-1 text-sm font-medium">
                                                 Invoice Number <span className="text-destructive">*</span>
                                             </Label>
                                             <div className="relative">
@@ -455,7 +452,7 @@ export default function CreateInvoice() {
 
                                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                         <div>
-                                            <Label htmlFor="issue_date" className="text-sm font-medium flex items-center gap-1">
+                                            <Label htmlFor="issue_date" className="flex items-center gap-1 text-sm font-medium">
                                                 Issue Date <span className="text-destructive">*</span>
                                             </Label>
                                             <div className="relative">
@@ -479,7 +476,7 @@ export default function CreateInvoice() {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="due_date" className="text-sm font-medium flex items-center gap-1">
+                                            <Label htmlFor="due_date" className="flex items-center gap-1 text-sm font-medium">
                                                 Due Date <span className="text-destructive">*</span>
                                             </Label>
                                             <div className="relative">
@@ -531,9 +528,7 @@ export default function CreateInvoice() {
                         {/* Additional Info Card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardHeader>
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    Additional Information
-                                </CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-lg">Additional Information</CardTitle>
                                 <CardDescription>Add notes for this invoice</CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -561,18 +556,13 @@ export default function CreateInvoice() {
                                 <CardTitle className="text-lg">Invoice Items</CardTitle>
                                 <CardDescription>Add the products or services you're invoicing for</CardDescription>
                             </div>
-                            <Button
-                                type="button"
-                                onClick={addItem}
-                                disabled={processing}
-                                className="flex items-center gap-2"
-                            >
+                            <Button type="button" onClick={addItem} disabled={processing} className="flex items-center gap-2">
                                 <Plus className="h-4 w-4" />
                                 Add Item
                             </Button>
                         </CardHeader>
                         <CardContent>
-                            <div className="rounded-md border overflow-hidden">
+                            <div className="overflow-hidden rounded-md border">
                                 <Table>
                                     <TableHeader className="bg-muted/50">
                                         <TableHeaderRow>
@@ -704,7 +694,7 @@ export default function CreateInvoice() {
                                                         size="sm"
                                                         disabled={processing || data.items.length <= 1}
                                                         onClick={() => removeItem(index)}
-                                                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-100/50"
+                                                        className="h-8 w-8 p-0 text-red-500 hover:bg-red-100/50 hover:text-red-700"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                         <span className="sr-only">Remove</span>
@@ -719,12 +709,10 @@ export default function CreateInvoice() {
                     </Card>
 
                     {/* Tax, Discount and Summary Section */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardHeader>
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    Discount & Taxes
-                                </CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-lg">Discount & Taxes</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-6">
@@ -818,7 +806,7 @@ export default function CreateInvoice() {
                                 <CardTitle className="text-lg">Invoice Summary</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="rounded-md border p-4 bg-muted/20">
+                                <div className="rounded-md border bg-muted/20 p-4">
                                     <div className="flex items-center justify-between text-sm">
                                         <span>Subtotal:</span>
                                         <span className="font-medium">{formatCurrency(calculateSubtotal())}</span>
@@ -843,11 +831,7 @@ export default function CreateInvoice() {
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-end border-t p-4">
-                                <Button
-                                    type="submit"
-                                    disabled={processing}
-                                    className="flex items-center gap-2"
-                                >
+                                <Button type="submit" disabled={processing} className="flex items-center gap-2">
                                     {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                                     {processing ? 'Creating...' : 'Create Invoice'}
                                 </Button>

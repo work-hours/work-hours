@@ -489,7 +489,11 @@ export default function Invoices() {
                             </form>
 
                             <div className={'mt-4 text-sm text-muted-foreground'}>
-                                {(filters.search || filters.client_id !== 'all' || filters.status !== 'all' || filters.created_date_from || filters.created_date_to) && (
+                                {(filters.search ||
+                                    filters.client_id !== 'all' ||
+                                    filters.status !== 'all' ||
+                                    filters.created_date_from ||
+                                    filters.created_date_to) && (
                                     <CardDescription>
                                         {(() => {
                                             let description = ''

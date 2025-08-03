@@ -167,9 +167,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                 <HourlyRateStatusBar />
 
                 {/* Enhanced content container with improved padding */}
-                <div className="container mx-auto pb-16 pt-4">
-                    {children}
-                </div>
+                <div className="container mx-auto pt-4 pb-16">{children}</div>
             </main>
         </div>
     )
