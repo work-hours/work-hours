@@ -1,12 +1,12 @@
 import { type SharedData } from '@/types'
 import { Head, useForm, usePage } from '@inertiajs/react'
-import { ArrowLeft, Calendar, FileText, LoaderCircle, Plus, Save, Trash2, User } from 'lucide-react'
+import { ArrowLeft, Calendar, FileText, LoaderCircle, Plus, Save, Trash2, User, Hash, Receipt } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,6 +18,7 @@ import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
 import { invoices as _invoices } from '@actions/InvoiceController'
 import CustomInput from '@/components/ui/custom-input'
+import { Separator } from '@/components/ui/separator'
 
 type InvoiceForm = {
     client_id: string
@@ -390,176 +391,197 @@ export default function EditInvoice({ invoice }: Props) {
             <Head title={`Edit Invoice - ${invoice.invoice_number}`} />
             <div className="mx-auto flex flex-col gap-6 p-3">
                 {/* Header section */}
-                <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Edit Invoice</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Update invoice {invoice.invoice_number}</p>
+                <section className="mb-2 flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Edit Invoice</h1>
+                        <p className="mt-1 text-gray-500 dark:text-gray-400">Update invoice {invoice.invoice_number}</p>
+                    </div>
+                    <div className="flex gap-3">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => window.history.back()}
+                            disabled={processing}
+                            className="flex items-center gap-2"
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                            Back
+                        </Button>
+                    </div>
                 </section>
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Invoice Details</CardTitle>
-                        <CardDescription>Update the information for this invoice</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form className="flex flex-col gap-6" onSubmit={submit}>
-                            {/* First row with 6 fields */}
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-6">
-                                {/* Client Selection */}
-                                <div className="grid gap-2">
-                                    <Label htmlFor="client_id" className="text-sm font-medium">
-                                        Client
-                                    </Label>
-                                    <div className="relative">
-                                        <Select value={data.client_id} onValueChange={(value) => setData('client_id', value)} disabled={true}>
-                                            <SelectTrigger id="client_id" className="w-full">
-                                                <div className="flex items-center gap-2">
-                                                    <User className="h-4 w-4 text-muted-foreground" />
-                                                    <SelectValue placeholder={loadingClients ? 'Loading clients...' : 'Select a client'} />
-                                                </div>
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {clients.map((client) => (
-                                                    <SelectItem key={client.id} value={client.id.toString()}>
-                                                        {client.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <InputError message={errors.client_id} className="mt-1" />
-                                </div>
-
-                                {/* Invoice Number */}
-                                <div className="grid gap-2">
-                                    <Label htmlFor="invoice_number" className="text-sm font-medium">
-                                        Invoice Number
-                                    </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <FileText className="h-4 w-4 text-muted-foreground" />
+                <form className="flex flex-col gap-6" onSubmit={submit}>
+                    {/* Invoice Details Section */}
+                    <h2 className="text-xl font-semibold flex items-center gap-2 mt-2 border-b pb-2">
+                        <FileText className="h-5 w-5" />
+                        Invoice Details
+                    </h2>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        {/* Basic Info Card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader>
+                                <CardTitle className="text-lg flex items-center gap-2">
+                                    Basic Information
+                                </CardTitle>
+                                <CardDescription>Update the core details for this invoice</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <div>
+                                            <Label htmlFor="client_id" className="text-sm font-medium flex items-center gap-1">
+                                                Client <span className="text-destructive">*</span>
+                                            </Label>
+                                            <div className="relative">
+                                                <Select
+                                                    value={data.client_id}
+                                                    onValueChange={(value) => setData('client_id', value)}
+                                                    disabled={processing || loadingClients}
+                                                >
+                                                    <SelectTrigger id="client_id" className="w-full">
+                                                        <div className="flex items-center gap-2">
+                                                            <User className="h-4 w-4 text-muted-foreground" />
+                                                            <SelectValue placeholder={loadingClients ? 'Loading clients...' : 'Select a client'} />
+                                                        </div>
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {clients.map((client) => (
+                                                            <SelectItem key={client.id} value={client.id.toString()}>
+                                                                {client.name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <InputError message={errors.client_id} className="mt-1" />
                                         </div>
-                                        <Input
-                                            id="invoice_number"
-                                            type="text"
-                                            required
-                                            value={data.invoice_number}
-                                            onChange={(e) => setData('invoice_number', e.target.value)}
-                                            disabled={true}
-                                            placeholder="Invoice number"
-                                            className="pl-10"
-                                        />
-                                    </div>
-                                    <InputError message={errors.invoice_number} className="mt-1" />
-                                </div>
-
-                                {/* Issue Date */}
-                                <div className="grid gap-2">
-                                    <Label htmlFor="issue_date" className="text-sm font-medium">
-                                        Issue Date
-                                    </Label>
-                                    <div className="relative">
-                                        <DatePicker
-                                            selected={data.issue_date}
-                                            onChange={(date) => setData('issue_date', date)}
-                                            dateFormat="yyyy-MM-dd"
-                                            disabled={true}
-                                            customInput={
-                                                <CustomInput
-                                                    id="issue_date"
-                                                    icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                                    placeholder="Select issue date"
-                                                    value={data.issue_date ? data.issue_date.toISOString().split('T')[0] : ''}
-                                                    disabled={true}
-                                                />
-                                            }
-                                        />
-                                    </div>
-                                    <InputError message={errors.issue_date as string} className="mt-1" />
-                                </div>
-
-                                {/* Due Date */}
-                                <div className="grid gap-2">
-                                    <Label htmlFor="due_date" className="text-sm font-medium">
-                                        Due Date
-                                    </Label>
-                                    <div className="relative">
-                                        <DatePicker
-                                            selected={data.due_date}
-                                            onChange={(date) => setData('due_date', date)}
-                                            dateFormat="yyyy-MM-dd"
-                                            disabled={processing}
-                                            customInput={
-                                                <CustomInput
-                                                    id="due_date"
-                                                    icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                                    placeholder="Select due date"
-                                                    value={data.due_date ? data.due_date.toISOString().split('T')[0] : ''}
+                                        <div>
+                                            <Label htmlFor="invoice_number" className="text-sm font-medium flex items-center gap-1">
+                                                Invoice Number <span className="text-destructive">*</span>
+                                            </Label>
+                                            <div className="relative">
+                                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                    <Hash className="h-4 w-4 text-muted-foreground" />
+                                                </div>
+                                                <Input
+                                                    id="invoice_number"
+                                                    type="text"
+                                                    required
+                                                    value={data.invoice_number}
+                                                    onChange={(e) => setData('invoice_number', e.target.value)}
                                                     disabled={processing}
+                                                    placeholder="Invoice number"
+                                                    className="pl-10"
                                                 />
-                                            }
-                                        />
+                                            </div>
+                                            <InputError message={errors.invoice_number} className="mt-1" />
+                                        </div>
                                     </div>
-                                    <InputError message={errors.due_date as string} className="mt-1" />
-                                </div>
 
-                                {/* Status */}
-                                <div className="grid gap-2">
-                                    <Label htmlFor="status" className="text-sm font-medium">
-                                        Status
-                                    </Label>
-                                    <div className="relative">
-                                        <Select
-                                            value={data.status}
-                                            onValueChange={(value) => {
-                                                setData('status', value)
-                                                // If status is changed to paid, set paid_amount to total invoice amount
-                                                if (value === 'paid') {
-                                                    setData('paid_amount', calculateTotal().toString())
-                                                }
-                                            }}
-                                            disabled={processing}
-                                        >
-                                            <SelectTrigger id="status" className="w-full">
-                                                <SelectValue placeholder="Select status" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="draft">Draft</SelectItem>
-                                                <SelectItem value="sent">Sent</SelectItem>
-                                                <SelectItem value="paid">Paid</SelectItem>
-                                                <SelectItem value="partially_paid">Partially Paid</SelectItem>
-                                                <SelectItem value="overdue">Overdue</SelectItem>
-                                                <SelectItem value="cancelled">Cancelled</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <div>
+                                            <Label htmlFor="issue_date" className="text-sm font-medium flex items-center gap-1">
+                                                Issue Date <span className="text-destructive">*</span>
+                                            </Label>
+                                            <div className="relative">
+                                                <DatePicker
+                                                    selected={data.issue_date}
+                                                    onChange={(date) => setData('issue_date', date)}
+                                                    dateFormat="yyyy-MM-dd"
+                                                    disabled={processing}
+                                                    customInput={
+                                                        <CustomInput
+                                                            id="issue_date"
+                                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                            placeholder="Select issue date"
+                                                            value={data.issue_date ? data.issue_date.toISOString().split('T')[0] : ''}
+                                                            disabled={processing}
+                                                        />
+                                                    }
+                                                />
+                                            </div>
+                                            <InputError message={errors.issue_date as string} className="mt-1" />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="due_date" className="text-sm font-medium flex items-center gap-1">
+                                                Due Date <span className="text-destructive">*</span>
+                                            </Label>
+                                            <div className="relative">
+                                                <DatePicker
+                                                    selected={data.due_date}
+                                                    onChange={(date) => setData('due_date', date)}
+                                                    dateFormat="yyyy-MM-dd"
+                                                    disabled={processing}
+                                                    customInput={
+                                                        <CustomInput
+                                                            id="due_date"
+                                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                            placeholder="Select due date"
+                                                            value={data.due_date ? data.due_date.toISOString().split('T')[0] : ''}
+                                                            disabled={processing}
+                                                        />
+                                                    }
+                                                />
+                                            </div>
+                                            <InputError message={errors.due_date as string} className="mt-1" />
+                                        </div>
                                     </div>
-                                    <InputError message={errors.status} className="mt-1" />
-                                </div>
 
-                                {/* Paid Amount */}
-                                <div className="grid gap-2">
-                                    <Label htmlFor="paid_amount" className="text-sm font-medium">
-                                        Paid Amount
-                                    </Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="paid_amount"
-                                            type="number"
-                                            min="0"
-                                            step="0.01"
-                                            value={data.paid_amount}
-                                            onChange={(e) => setData('paid_amount', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="0.00"
-                                        />
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <div>
+                                            <Label htmlFor="status" className="text-sm font-medium">
+                                                Status <span className="text-destructive">*</span>
+                                            </Label>
+                                            <div className="relative">
+                                                <Select value={data.status} onValueChange={(value) => setData('status', value)}>
+                                                    <SelectTrigger id="status" className="w-full">
+                                                        <SelectValue placeholder="Select status" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="draft">Draft</SelectItem>
+                                                        <SelectItem value="sent">Sent</SelectItem>
+                                                        <SelectItem value="paid">Paid</SelectItem>
+                                                        <SelectItem value="partially_paid">Partially Paid</SelectItem>
+                                                        <SelectItem value="overdue">Overdue</SelectItem>
+                                                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <InputError message={errors.status} className="mt-1" />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="paid_amount" className="text-sm font-medium flex items-center gap-1">
+                                                Paid Amount
+                                            </Label>
+                                            <div className="relative">
+                                                <Input
+                                                    id="paid_amount"
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.01"
+                                                    value={data.paid_amount}
+                                                    onChange={(e) => setData('paid_amount', e.target.value)}
+                                                    disabled={processing || data.status !== 'partially_paid' && data.status !== 'paid'}
+                                                    placeholder="Enter amount paid"
+                                                />
+                                            </div>
+                                            <InputError message={errors.paid_amount} className="mt-1" />
+                                        </div>
                                     </div>
-                                    <InputError message={errors.paid_amount} className="mt-1" />
                                 </div>
-                            </div>
+                            </CardContent>
+                        </Card>
 
-                            {/* Third row with Notes */}
-                            <div className="grid grid-cols-1 gap-6">
-                                {/* Notes */}
-                                <div className="grid gap-2">
+                        {/* Additional Info Card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader>
+                                <CardTitle className="text-lg flex items-center gap-2">
+                                    Additional Information
+                                </CardTitle>
+                                <CardDescription>Add notes for this invoice</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div>
                                     <Label htmlFor="notes" className="text-sm font-medium">
                                         Notes <span className="text-xs text-muted-foreground">(optional)</span>
                                     </Label>
@@ -569,42 +591,46 @@ export default function EditInvoice({ invoice }: Props) {
                                         onChange={(e) => setData('notes', e.target.value)}
                                         disabled={processing}
                                         placeholder="Additional notes for the client"
-                                        className="min-h-[80px]"
+                                        className="min-h-[120px] resize-y"
                                     />
-                                    <InputError message={errors.notes} />
+                                    <InputError message={errors.notes} className="mt-1" />
                                 </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    <Card className="overflow-hidden transition-all hover:shadow-md">
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <div>
+                                <CardTitle className="text-lg">Invoice Items</CardTitle>
+                                <CardDescription>Add or update the products or services you're invoicing for</CardDescription>
                             </div>
-
-                            {/* Invoice Items */}
-                            <div className="grid grid-cols-1 gap-6">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="text-lg font-medium">Invoice Items</h3>
-                                    <Button
-                                        type="button"
-                                        onClick={addItem}
-                                        disabled={processing}
-                                        variant="outline"
-                                        className="flex items-center gap-2"
-                                    >
-                                        <Plus className="h-4 w-4" />
-                                        Add Item
-                                    </Button>
-                                </div>
-
+                            <Button
+                                type="button"
+                                onClick={addItem}
+                                disabled={processing}
+                                className="flex items-center gap-2"
+                            >
+                                <Plus className="h-4 w-4" />
+                                Add Item
+                            </Button>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="rounded-md border overflow-hidden">
                                 <Table>
-                                    <TableHeader>
+                                    <TableHeader className="bg-muted/50">
                                         <TableHeaderRow>
                                             <TableHead>Time Log</TableHead>
                                             <TableHead>Description</TableHead>
-                                            <TableHead>Quantity</TableHead>
+                                            <TableHead>Quantity (hrs)</TableHead>
                                             <TableHead>Unit Price</TableHead>
                                             <TableHead>Amount</TableHead>
-                                            <TableHead className="w-[50px]">#</TableHead>
+                                            <TableHead className="w-[50px]" children={undefined}></TableHead>
                                         </TableHeaderRow>
                                     </TableHeader>
                                     <TableBody>
                                         {data.items.map((item, index) => (
-                                            <TableRow key={index}>
+                                            <TableRow key={index} className="hover:bg-muted/30">
                                                 <TableCell>
                                                     <Select
                                                         value={item.time_log_id || 'none'}
@@ -624,9 +650,9 @@ export default function EditInvoice({ invoice }: Props) {
                                                                 </div>
                                                             )}
 
-                                                            {timeLogs.map((projectGroup, index) => (
+                                                            {timeLogs.map((projectGroup, idx) => (
                                                                 <SelectItem
-                                                                    key={`project-${projectGroup.project_id || `unnamed-${index}`}`}
+                                                                    key={`project-${projectGroup.project_id || `unnamed-${idx}`}`}
                                                                     value={`project-${projectGroup.project_id}`}
                                                                     className="font-medium"
                                                                 >
@@ -642,8 +668,8 @@ export default function EditInvoice({ invoice }: Props) {
                                                                 </div>
                                                             )}
 
-                                                            {timeLogs.map((projectGroup, index) => (
-                                                                <div key={`logs-${projectGroup.project_id || `unnamed-${index}`}`}>
+                                                            {timeLogs.map((projectGroup, idx) => (
+                                                                <div key={`logs-${projectGroup.project_id || `unnamed-${idx}`}`}>
                                                                     {projectGroup.time_logs && projectGroup.time_logs.length > 0 && (
                                                                         <div className="px-2 py-1 text-xs font-medium">
                                                                             {projectGroup.project_name}
@@ -652,11 +678,7 @@ export default function EditInvoice({ invoice }: Props) {
 
                                                                     {projectGroup.time_logs &&
                                                                         projectGroup.time_logs.map((timeLog) => (
-                                                                            <SelectItem
-                                                                                key={timeLog.id}
-                                                                                value={timeLog.id.toString()}
-                                                                                className="pl-4"
-                                                                            >
+                                                                            <SelectItem key={timeLog.id} value={timeLog.id.toString()} className="pl-4">
                                                                                 {new Date(timeLog.start_timestamp).toISOString().split('T')[0]} -{' '}
                                                                                 {(timeLog.duration || 0).toFixed(2)} hours
                                                                             </SelectItem>
@@ -709,8 +731,9 @@ export default function EditInvoice({ invoice }: Props) {
                                                         step="0.01"
                                                         value={item.amount}
                                                         onChange={(e) => updateItem(index, 'amount', e.target.value)}
-                                                        disabled={processing}
+                                                        disabled={true}
                                                         required
+                                                        className="bg-muted/40"
                                                     />
                                                     <InputError message={(errors as never)[`items.${index}.amount`]} className="mt-1" />
                                                 </TableCell>
@@ -721,7 +744,7 @@ export default function EditInvoice({ invoice }: Props) {
                                                         size="sm"
                                                         disabled={processing || data.items.length <= 1}
                                                         onClick={() => removeItem(index)}
-                                                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                                                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-100/50"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                         <span className="sr-only">Remove</span>
@@ -731,10 +754,22 @@ export default function EditInvoice({ invoice }: Props) {
                                         ))}
                                     </TableBody>
                                 </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                                {/* Discount */}
-                                <div className="flex justify-end">
-                                    <div className="grid w-1/3 grid-cols-2 gap-4">
+                    {/* Tax, Discount and Summary Section */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader>
+                                <CardTitle className="text-lg flex items-center gap-2">
+                                    Discount & Taxes
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-6">
+                                    {/* Discount */}
+                                    <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <Label htmlFor="discount_type" className="text-sm font-medium">
                                                 Discount Type
@@ -772,11 +807,11 @@ export default function EditInvoice({ invoice }: Props) {
                                             <InputError message={errors.discount_value} className="mt-1" />
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Tax */}
-                                <div className="flex justify-end">
-                                    <div className="grid w-1/3 grid-cols-2 gap-4">
+                                    <Separator />
+
+                                    {/* Tax */}
+                                    <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <Label htmlFor="tax_type" className="text-sm font-medium">
                                                 Tax Type
@@ -815,61 +850,51 @@ export default function EditInvoice({ invoice }: Props) {
                                         </div>
                                     </div>
                                 </div>
+                            </CardContent>
+                        </Card>
 
-                                {/* Total */}
-                                <div className="flex justify-end">
-                                    <div className="w-1/3 rounded-md border p-4">
-                                        <div className="flex items-center justify-between text-sm">
-                                            <span>Subtotal:</span>
-                                            <span>{formatCurrency(calculateSubtotal())}</span>
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader>
+                                <CardTitle className="text-lg">Invoice Summary</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="rounded-md border p-4 bg-muted/20">
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span>Subtotal:</span>
+                                        <span className="font-medium">{formatCurrency(calculateSubtotal())}</span>
+                                    </div>
+                                    {data.discount_type && parseFloat(data.discount_value) > 0 && (
+                                        <div className="mt-2 flex items-center justify-between text-sm text-red-600 dark:text-red-400">
+                                            <span>Discount {data.discount_type === 'percentage' ? `(${data.discount_value}%)` : ''}:</span>
+                                            <span>-{formatCurrency(calculateDiscount())}</span>
                                         </div>
-                                        {data.discount_type && parseFloat(data.discount_value) > 0 && (
-                                            <div className="mt-2 flex items-center justify-between text-sm text-red-600 dark:text-red-400">
-                                                <span>Discount {data.discount_type === 'percentage' ? `(${data.discount_value}%)` : ''}:</span>
-                                                <span>-{formatCurrency(calculateDiscount())}</span>
-                                            </div>
-                                        )}
-                                        {data.tax_type && parseFloat(data.tax_rate) > 0 && (
-                                            <div className="mt-2 flex items-center justify-between text-sm text-green-600 dark:text-green-400">
-                                                <span>Tax {data.tax_type === 'percentage' ? `(${data.tax_rate}%)` : ''}:</span>
-                                                <span>+{formatCurrency(calculateTax())}</span>
-                                            </div>
-                                        )}
-                                        <div className="mt-2 flex items-center justify-between font-medium">
-                                            <span>Total:</span>
-                                            <span>{formatCurrency(calculateTotal())}</span>
+                                    )}
+                                    {data.tax_type && parseFloat(data.tax_rate) > 0 && (
+                                        <div className="mt-2 flex items-center justify-between text-sm text-green-600 dark:text-green-400">
+                                            <span>Tax {data.tax_type === 'percentage' ? `(${data.tax_rate}%)` : ''}:</span>
+                                            <span>+{formatCurrency(calculateTax())}</span>
                                         </div>
-                                        <div className="mt-2 flex items-center justify-between text-sm text-muted-foreground">
-                                            <span>Paid:</span>
-                                            <span>{formatCurrency(parseFloat(data.paid_amount || '0'))}</span>
-                                        </div>
-                                        <div className="mt-2 flex items-center justify-between font-medium">
-                                            <span>Balance:</span>
-                                            <span>{formatCurrency(calculateTotal() - parseFloat(data.paid_amount || '0'))}</span>
-                                        </div>
+                                    )}
+                                    <Separator className="my-3" />
+                                    <div className="flex items-center justify-between font-medium">
+                                        <span className="text-base">Total:</span>
+                                        <span className="text-base">{formatCurrency(calculateTotal())}</span>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div className="flex justify-end gap-3">
+                            </CardContent>
+                            <CardFooter className="flex justify-end border-t p-4">
                                 <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => window.history.back()}
+                                    type="submit"
                                     disabled={processing}
                                     className="flex items-center gap-2"
                                 >
-                                    <ArrowLeft className="h-4 w-4" />
-                                    Back
-                                </Button>
-                                <Button type="submit" disabled={processing} className="flex items-center gap-2">
                                     {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                                     {processing ? 'Updating...' : 'Update Invoice'}
                                 </Button>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card>
+                            </CardFooter>
+                        </Card>
+                    </div>
+                </form>
             </div>
         </MasterLayout>
     )
