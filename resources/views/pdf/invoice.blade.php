@@ -8,8 +8,12 @@
             size: A4;
             margin: 0;
         }
+        @font-face {
+            font-family: 'Roboto Mono';
+            src: url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap');
+        }
         body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Roboto Mono', monospace;
             font-size: 14px;
             line-height: 1.6;
             color: #333;
