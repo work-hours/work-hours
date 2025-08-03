@@ -418,7 +418,7 @@ export default function EditInvoice({ invoice }: Props) {
                     </h2>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         {/* Basic Info Card */}
-                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                        <Card className="transition-all hover:shadow-md">
                             <CardHeader>
                                 <CardTitle className="text-lg flex items-center gap-2">
                                     Basic Information
