@@ -533,7 +533,16 @@ export default function EditInvoice({ invoice }: Props) {
                                                 Status <span className="text-destructive">*</span>
                                             </Label>
                                             <div className="relative">
-                                                <Select value={data.status} onValueChange={(value) => setData('status', value)}>
+                                                <Select
+                                                    value={data.status}
+                                                    onValueChange={(value) => {
+                                                        setData('status', value)
+                                                        // If status is changed to 'paid', set paid_amount to full invoice amount
+                                                        if (value === 'paid') {
+                                                            setData('paid_amount', calculateTotal().toFixed(2))
+                                                        }
+                                                    }}
+                                                >
                                                     <SelectTrigger id="status" className="w-full">
                                                         <SelectValue placeholder="Select status" />
                                                     </SelectTrigger>
