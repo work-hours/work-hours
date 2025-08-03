@@ -347,6 +347,19 @@
                     </td>
                 </tr>
                 @endif
+
+                @if($invoice->tax_rate > 0)
+                <tr>
+                    <td colspan="3" class="text-right">
+                        <strong>Tax{{ $invoice->tax_type === 'percentage' ? ' (' . number_format($invoice->tax_rate, 2) . '%)' : '' }}:</strong>
+                    </td>
+                    <td class="text-right amount">
+                        <span class="currency">{{ $invoice->currency ?? $client->currency ?? 'USD' }}</span>
+                        {{ number_format(($invoice->total_amount - $invoice->discount_amount) * ($invoice->tax_rate / 100), 2) }}
+                    </td>
+                </tr>
+                @endif
+
                 <tr class="total-row">
                     <td colspan="3" class="text-right"><strong>Total:</strong></td>
                     <td class="text-right amount">

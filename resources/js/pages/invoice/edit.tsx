@@ -849,7 +849,7 @@ export default function EditInvoice({ invoice }: Props) {
                                                 id="tax_rate"
                                                 type="number"
                                                 min="0"
-                                                step={data.tax_type === 'percentage' ? '1' : '0.01'}
+                                                step="0.01"
                                                 value={data.tax_rate}
                                                 onChange={(e) => setData('tax_rate', e.target.value)}
                                                 disabled={processing || !data.tax_type}
