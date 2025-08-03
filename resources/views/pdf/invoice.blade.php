@@ -259,7 +259,9 @@
                     <div class="info-content">
                         <strong>{{ $invoice->user->name }}</strong><br>
                         {{ $invoice->user->email }}<br>
-                        {{ $invoice->user->address ?? '' }}
+                        {{ $invoice->user->address ?? '' }}<br>
+                        <strong>Issue Date:</strong> {{ $invoice->issue_date->format('Y-m-d') }}<br>
+                        <strong>Due Date:</strong> {{ $invoice->due_date->format('Y-m-d') }}
                     </div>
                 </td>
                 <td class="info-cell" width="50%" style="text-align: right;">
@@ -273,19 +275,6 @@
             </tr>
         </table>
 
-        <div class="invoice-details">
-            <div class="invoice-details-grid">
-                <div class="invoice-details-item">
-                    <p><strong>Issue Date:</strong> {{ $invoice->issue_date->format('Y-m-d') }}</p>
-                </div>
-                <div class="invoice-details-item">
-                    <p><strong>Due Date:</strong> {{ $invoice->due_date->format('Y-m-d') }}</p>
-                </div>
-                <div class="invoice-details-item">
-                    <p><strong>Currency:</strong> {{ $invoice->currency ?? $client->currency ?? 'USD' }}</p>
-                </div>
-            </div>
-        </div>
 
         @php
             // Determine which stamp to show based on invoice status
