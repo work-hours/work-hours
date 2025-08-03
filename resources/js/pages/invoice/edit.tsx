@@ -83,6 +83,8 @@ type Invoice = {
     discount_type: string | null
     discount_value: number
     discount_amount: number
+    tax_type: string | null
+    tax_rate: number
     currency: string | null
     items: {
         id: number
