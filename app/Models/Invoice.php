@@ -27,6 +27,9 @@ use Illuminate\Support\Carbon;
  * @property string|null $discount_type
  * @property float $discount_value
  * @property float $discount_amount
+ * @property string|null $tax_type
+ * @property float $tax_rate
+ * @property float $tax_amount
  * @property string|null $currency
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -49,6 +52,9 @@ final class Invoice extends Model
         'discount_type',
         'discount_value',
         'discount_amount',
+        'tax_type',
+        'tax_rate',
+        'tax_amount',
         'currency',
     ];
 
@@ -76,6 +82,8 @@ final class Invoice extends Model
             'paid_amount' => 'decimal:2',
             'discount_value' => 'decimal:2',
             'discount_amount' => 'decimal:2',
+            'tax_rate' => 'decimal:2',
+            'tax_amount' => 'decimal:2',
             'status' => InvoiceStatus::class,
         ];
     }

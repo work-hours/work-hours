@@ -29,6 +29,8 @@ type InvoiceForm = {
     notes: string
     discount_type: string | null
     discount_value: string
+    tax_type: string | null
+    tax_rate: string
     currency: string | null
     items: InvoiceItemForm[]
 }
@@ -140,6 +142,8 @@ export default function EditInvoice({ invoice }: Props) {
         notes: invoice.notes || '',
         discount_type: invoice.discount_type,
         discount_value: invoice.discount_value ? invoice.discount_value.toString() : '0',
+        tax_type: invoice.tax_type,
+        tax_rate: invoice.tax_rate ? invoice.tax_rate.toString() : '0',
         currency: invoice.currency,
         items: formatInvoiceItems(invoice.items),
     })
@@ -223,12 +227,35 @@ export default function EditInvoice({ invoice }: Props) {
         return 0
     }
 
-    // Calculate total amount after discount
+    // Calculate tax amount based on type and rate
+    const calculateTax = (): number => {
+        const subtotal = calculateSubtotal()
+
+        if (!data.tax_type || parseFloat(data.tax_rate) <= 0) {
+            return 0
+        }
+
+        if (data.tax_type === 'percentage') {
+            // Calculate percentage tax
+            return (subtotal * parseFloat(data.tax_rate)) / 100
+        } else if (data.tax_type === 'fixed') {
+            // Apply fixed tax amount
+            const taxAmount = parseFloat(data.tax_rate)
+
+            // Ensure tax doesn't exceed subtotal
+            return taxAmount > subtotal ? subtotal : taxAmount
+        }
+
+        return 0
+    }
+
+    // Calculate total amount after discount and tax
     const calculateTotal = (): number => {
         const subtotal = calculateSubtotal()
         const discount = calculateDiscount()
+        const tax = calculateTax()
 
-        return subtotal - discount
+        return subtotal - discount + tax
     }
 
     // Add new item
@@ -747,6 +774,48 @@ export default function EditInvoice({ invoice }: Props) {
                                     </div>
                                 </div>
 
+                                {/* Tax */}
+                                <div className="flex justify-end">
+                                    <div className="grid w-1/3 grid-cols-2 gap-4">
+                                        <div>
+                                            <Label htmlFor="tax_type" className="text-sm font-medium">
+                                                Tax Type
+                                            </Label>
+                                            <Select
+                                                value={data.tax_type || 'none'}
+                                                onValueChange={(value) => setData('tax_type', value === 'none' ? null : value)}
+                                                disabled={processing}
+                                            >
+                                                <SelectTrigger id="tax_type" className="w-full">
+                                                    <SelectValue placeholder="No Tax" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="none">No Tax</SelectItem>
+                                                    <SelectItem value="percentage">Percentage (%)</SelectItem>
+                                                    <SelectItem value="fixed">Fixed Amount</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <InputError message={errors.tax_type} className="mt-1" />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="tax_rate" className="text-sm font-medium">
+                                                {data.tax_type === 'percentage' ? 'Tax (%)' : 'Tax Amount'}
+                                            </Label>
+                                            <Input
+                                                id="tax_rate"
+                                                type="number"
+                                                min="0"
+                                                step={data.tax_type === 'percentage' ? '1' : '0.01'}
+                                                value={data.tax_rate}
+                                                onChange={(e) => setData('tax_rate', e.target.value)}
+                                                disabled={processing || !data.tax_type}
+                                                placeholder={data.tax_type === 'percentage' ? 'Enter percentage' : 'Enter amount'}
+                                            />
+                                            <InputError message={errors.tax_rate} className="mt-1" />
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* Total */}
                                 <div className="flex justify-end">
                                     <div className="w-1/3 rounded-md border p-4">
@@ -758,6 +827,12 @@ export default function EditInvoice({ invoice }: Props) {
                                             <div className="mt-2 flex items-center justify-between text-sm text-red-600 dark:text-red-400">
                                                 <span>Discount {data.discount_type === 'percentage' ? `(${data.discount_value}%)` : ''}:</span>
                                                 <span>-{formatCurrency(calculateDiscount())}</span>
+                                            </div>
+                                        )}
+                                        {data.tax_type && parseFloat(data.tax_rate) > 0 && (
+                                            <div className="mt-2 flex items-center justify-between text-sm text-green-600 dark:text-green-400">
+                                                <span>Tax {data.tax_type === 'percentage' ? `(${data.tax_rate}%)` : ''}:</span>
+                                                <span>+{formatCurrency(calculateTax())}</span>
                                             </div>
                                         )}
                                         <div className="mt-2 flex items-center justify-between font-medium">
