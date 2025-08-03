@@ -8,8 +8,12 @@
             size: A4;
             margin: 0;
         }
+        @font-face {
+            font-family: 'Roboto Mono';
+            src: url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap');
+        }
         body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Roboto Mono', monospace;
             font-size: 14px;
             line-height: 1.6;
             color: #333;
@@ -255,7 +259,9 @@
                     <div class="info-content">
                         <strong>{{ $invoice->user->name }}</strong><br>
                         {{ $invoice->user->email }}<br>
-                        {{ $invoice->user->address ?? '' }}
+                        {{ $invoice->user->address ?? '' }}<br>
+                        <strong>Issue Date:</strong> {{ $invoice->issue_date->format('Y-m-d') }}<br>
+                        <strong>Due Date:</strong> {{ $invoice->due_date->format('Y-m-d') }}
                     </div>
                 </td>
                 <td class="info-cell" width="50%" style="text-align: right;">
@@ -269,19 +275,6 @@
             </tr>
         </table>
 
-        <div class="invoice-details">
-            <div class="invoice-details-grid">
-                <div class="invoice-details-item">
-                    <p><strong>Issue Date:</strong> {{ $invoice->issue_date->format('Y-m-d') }}</p>
-                </div>
-                <div class="invoice-details-item">
-                    <p><strong>Due Date:</strong> {{ $invoice->due_date->format('Y-m-d') }}</p>
-                </div>
-                <div class="invoice-details-item">
-                    <p><strong>Currency:</strong> {{ $invoice->currency ?? $client->currency ?? 'USD' }}</p>
-                </div>
-            </div>
-        </div>
 
         @php
             // Determine which stamp to show based on invoice status
@@ -347,6 +340,19 @@
                     </td>
                 </tr>
                 @endif
+
+                @if($invoice->tax_rate > 0)
+                <tr>
+                    <td colspan="3" class="text-right">
+                        <strong>Tax{{ $invoice->tax_type === 'percentage' ? ' (' . number_format($invoice->tax_rate, 2) . '%)' : '' }}:</strong>
+                    </td>
+                    <td class="text-right amount">
+                        <span class="currency">{{ $invoice->currency ?? $client->currency ?? 'USD' }}</span>
+                        {{ number_format(($invoice->total_amount - $invoice->discount_amount) * ($invoice->tax_rate / 100), 2) }}
+                    </td>
+                </tr>
+                @endif
+
                 <tr class="total-row">
                     <td colspan="3" class="text-right"><strong>Total:</strong></td>
                     <td class="text-right amount">

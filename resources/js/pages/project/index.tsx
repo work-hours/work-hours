@@ -190,56 +190,56 @@ export default function Projects() {
                                 </CardDescription>
 
                                 {(filters.client_id ||
-                                filters.team_member_id ||
-                                filters.created_date_from ||
-                                filters.created_date_to ||
-                                filters.search) && (
-                                <CardDescription className="mt-1">
-                                    {(() => {
-                                        let description = ''
+                                    filters.team_member_id ||
+                                    filters.created_date_from ||
+                                    filters.created_date_to ||
+                                    filters.search) && (
+                                    <CardDescription className="mt-1">
+                                        {(() => {
+                                            let description = ''
 
-                                        if (filters.created_date_from && filters.created_date_to) {
-                                            description = `Showing projects from ${formatDateValue(filters.created_date_from)} to ${formatDateValue(filters.created_date_to)}`
-                                        } else if (filters.created_date_from) {
-                                            description = `Showing projects from ${formatDateValue(filters.created_date_from)}`
-                                        } else if (filters.created_date_to) {
-                                            description = `Showing projects until ${formatDateValue(filters.created_date_to)}`
-                                        }
+                                            if (filters.created_date_from && filters.created_date_to) {
+                                                description = `Showing projects from ${formatDateValue(filters.created_date_from)} to ${formatDateValue(filters.created_date_to)}`
+                                            } else if (filters.created_date_from) {
+                                                description = `Showing projects from ${formatDateValue(filters.created_date_from)}`
+                                            } else if (filters.created_date_to) {
+                                                description = `Showing projects until ${formatDateValue(filters.created_date_to)}`
+                                            }
 
-                                        if (filters.client_id) {
-                                            const client = clients.find((c) => c.id.toString() === filters.client_id)
-                                            if (client) {
-                                                if (description) {
-                                                    description += ` for client "${client.name}"`
-                                                } else {
-                                                    description = `Showing projects for client "${client.name}"`
+                                            if (filters.client_id) {
+                                                const client = clients.find((c) => c.id.toString() === filters.client_id)
+                                                if (client) {
+                                                    if (description) {
+                                                        description += ` for client "${client.name}"`
+                                                    } else {
+                                                        description = `Showing projects for client "${client.name}"`
+                                                    }
                                                 }
                                             }
-                                        }
 
-                                        if (filters.team_member_id) {
-                                            const member = teamMembers.find((m) => m.id.toString() === filters.team_member_id)
-                                            if (member) {
-                                                if (description) {
-                                                    description += ` with team member "${member.name}"`
-                                                } else {
-                                                    description = `Showing projects with team member "${member.name}"`
+                                            if (filters.team_member_id) {
+                                                const member = teamMembers.find((m) => m.id.toString() === filters.team_member_id)
+                                                if (member) {
+                                                    if (description) {
+                                                        description += ` with team member "${member.name}"`
+                                                    } else {
+                                                        description = `Showing projects with team member "${member.name}"`
+                                                    }
                                                 }
                                             }
-                                        }
 
-                                        if (filters.search) {
-                                            if (description) {
-                                                description += ` matching "${filters.search}"`
-                                            } else {
-                                                description = `Showing projects matching "${filters.search}"`
+                                            if (filters.search) {
+                                                if (description) {
+                                                    description += ` matching "${filters.search}"`
+                                                } else {
+                                                    description = `Showing projects matching "${filters.search}"`
+                                                }
                                             }
-                                        }
 
-                                        return description
-                                    })()}
-                                </CardDescription>
-                            )}
+                                            return description
+                                        })()}
+                                    </CardDescription>
+                                )}
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton
@@ -375,10 +375,10 @@ export default function Projects() {
                                         disabled={
                                             processing ||
                                             (!filters.client_id &&
-                                            !filters.team_member_id &&
-                                            !filters.created_date_from &&
-                                            !filters.created_date_to &&
-                                            !filters.search)
+                                                !filters.team_member_id &&
+                                                !filters.created_date_from &&
+                                                !filters.created_date_to &&
+                                                !filters.search)
                                         }
                                         onClick={clearFilters}
                                         className="flex h-9 w-9 items-center justify-center p-0"

@@ -375,7 +375,9 @@ export default function TeamMemberTimeLogs({
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        disabled={processing || (!data.start_date && !data.end_date && !data.project_id && !data.is_paid && !data.status)}
+                                        disabled={
+                                            processing || (!data.start_date && !data.end_date && !data.project_id && !data.is_paid && !data.status)
+                                        }
                                         onClick={() => {
                                             setData({
                                                 start_date: '',

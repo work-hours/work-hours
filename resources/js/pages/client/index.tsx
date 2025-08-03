@@ -260,11 +260,7 @@ export default function Clients() {
                                 </div>
 
                                 <div className="flex items-end gap-2">
-                                    <Button
-                                        type="submit"
-                                        className="flex h-9 w-9 items-center justify-center p-0"
-                                        title="Apply filters"
-                                    >
+                                    <Button type="submit" className="flex h-9 w-9 items-center justify-center p-0" title="Apply filters">
                                         <Search className="h-4 w-4" />
                                     </Button>
 
