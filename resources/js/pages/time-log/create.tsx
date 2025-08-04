@@ -68,7 +68,7 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
         note: '',
         mark_task_complete: false,
         close_github_issue: false,
-        tags: [], // Initialize empty tags array
+        tags: [],
     })
 
     // Convert string timestamps to Date objects for DatePicker

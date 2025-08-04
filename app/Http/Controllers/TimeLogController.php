@@ -91,6 +91,7 @@ final class TimeLogController extends Controller
             $closeGitHubIssue = $data['close_github_issue'] ?? false;
             unset($data['mark_task_complete']);
             unset($data['close_github_issue']);
+            unset($data['tags']);
 
             $timeLog = TimeLog::query()->create($data);
 
@@ -193,8 +194,10 @@ final class TimeLogController extends Controller
 
             $markAsComplete = $data['mark_task_complete'] ?? false;
             $closeGitHubIssue = $data['close_github_issue'] ?? false;
+
             unset($data['mark_task_complete']);
             unset($data['close_github_issue']);
+            unset($data['tags']);
 
             $timeLog->update($data);
 
@@ -486,7 +489,7 @@ final class TimeLogController extends Controller
      */
     public function attachTags(Request $request, TimeLog $timeLog): JsonResponse
     {
-        $tags = $request->validated()['tags'] ?? [];
+        $tags = $request->input('tags', []);
         $tagIds = [];
 
         foreach ($tags as $tagName) {

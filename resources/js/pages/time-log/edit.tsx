@@ -78,6 +78,7 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
         note: timeLog.note,
         mark_task_complete: false,
         close_github_issue: false,
+        tags: [],
     })
 
     // Initialize tags state with the tags received from the timeLog
@@ -145,10 +146,6 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
         put(route('time-log.update', timeLog.id), {
-            data: {
-                ...data,
-                tags, // Include the tags in the submission data
-            },
             onSuccess: () => {
                 toast.success('Time log updated successfully')
             },
