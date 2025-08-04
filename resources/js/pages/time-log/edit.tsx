@@ -375,12 +375,9 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                         Tags
                                     </Label>
                                     <TagInput
-                                        id="tags"
                                         value={data.tags}
                                         onChange={(value) => setData('tags', value)}
                                         placeholder="Add tags (press enter to add)"
-                                        disabled={processing}
-                                        tabIndex={4}
                                     />
                                     <InputError message={errors.tags} className="mt-1" />
                                 </div>

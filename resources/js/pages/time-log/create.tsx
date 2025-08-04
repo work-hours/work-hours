@@ -363,14 +363,7 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                     <Label htmlFor="tags" className="text-sm font-medium">
                                         Tags (Optional)
                                     </Label>
-                                    <TagInput
-                                        id="tags"
-                                        value={data.tags}
-                                        onChange={(tags) => setData('tags', tags)}
-                                        placeholder="Add tags for this time log"
-                                        disabled={processing}
-                                        tabIndex={4}
-                                    />
+                                    <TagInput value={data.tags} onChange={(tags) => setData('tags', tags)} placeholder="Add tags for this time log" />
                                     <InputError message={errors.tags} className="mt-1" />
                                 </div>
 
