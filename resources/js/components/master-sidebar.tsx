@@ -58,6 +58,11 @@ const mainNavItems: NavItem[] = [
         icon: TimerIcon,
     },
     {
+        title: 'Tags',
+        href: '/tags',
+        icon: FileText,
+    },
+    {
         title: 'Invoices',
         href: '/invoice',
         icon: FileText,

@@ -40,20 +40,13 @@ final class TimeLogController extends Controller
 {
     use ExportableTrait;
 
-    public function __construct(private GitHubAdapter $gitHubAdapter)
-    {
-    }
+    public function __construct(private GitHubAdapter $gitHubAdapter) {}
 
     public function index()
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseQuery());
 
         return Inertia::render('time-log/index', TimeLogStore::resData(timeLogs: $timeLogs));
-    }
-
-    private function baseQuery()
-    {
-        return TimeLog::query()->where('user_id', auth()->id());
     }
 
     /**
@@ -73,7 +66,7 @@ final class TimeLogController extends Controller
             $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
             $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
 
-            $isLogCompleted = !empty($data['start_timestamp']) && !empty($data['end_timestamp']);
+            $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
             if ($isLogCompleted) {
                 $start = Carbon::parse($data['start_timestamp']);
@@ -101,7 +94,9 @@ final class TimeLogController extends Controller
 
             $timeLog = TimeLog::query()->create($data);
 
-            if ($isLogCompleted && !empty($data['task_id'])) {
+            $this->attachTags($request, $timeLog);
+
+            if ($isLogCompleted && ! empty($data['task_id'])) {
                 $task = Task::query()->find($data['task_id']);
 
                 if ($task) {
@@ -142,7 +137,7 @@ final class TimeLogController extends Controller
             })
             ->with('meta')
             ->get(['id', 'title', 'project_id', 'is_imported'])
-            ->map(fn($task): array => [
+            ->map(fn ($task): array => [
                 'id' => $task->id,
                 'title' => $task->title,
                 'project_id' => $task->project_id,
@@ -175,7 +170,7 @@ final class TimeLogController extends Controller
             $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
             $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
 
-            $isLogCompleted = !empty($data['start_timestamp']) && !empty($data['end_timestamp']);
+            $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
             if ($isLogCompleted) {
                 $start = Carbon::parse($data['start_timestamp']);
@@ -203,7 +198,9 @@ final class TimeLogController extends Controller
 
             $timeLog->update($data);
 
-            if ($isLogCompleted && !empty($data['task_id']) && $markAsComplete) {
+            $this->attachTags($request, $timeLog);
+
+            if ($isLogCompleted && ! empty($data['task_id']) && $markAsComplete) {
                 $task = Task::query()->find($data['task_id']);
                 if ($task) {
                     $task->update(['status' => 'completed']);
@@ -242,7 +239,7 @@ final class TimeLogController extends Controller
                 $query->where('users.id', auth()->id());
             })
             ->get(['id', 'title', 'project_id', 'is_imported'])
-            ->map(fn($task): array => [
+            ->map(fn ($task): array => [
                 'id' => $task->id,
                 'title' => $task->title,
                 'project_id' => $task->project_id,
@@ -332,7 +329,7 @@ final class TimeLogController extends Controller
 
                 $amount = $timeLog->duration * $hourlyRate;
 
-                if (!isset($projectAmounts[$timeLog->project_id])) {
+                if (! isset($projectAmounts[$timeLog->project_id])) {
                     $projectAmounts[$timeLog->project_id] = 0;
                 }
 
@@ -517,5 +514,10 @@ final class TimeLogController extends Controller
     public function getTags(TimeLog $timeLog): JsonResponse
     {
         return response()->json($timeLog->tags);
+    }
+
+    private function baseQuery()
+    {
+        return TimeLog::query()->where('user_id', auth()->id());
     }
 }

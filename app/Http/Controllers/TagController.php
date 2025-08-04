@@ -7,9 +7,24 @@ namespace App\Http\Controllers;
 use App\Models\Tag;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
-class TagController extends Controller
+final class TagController extends Controller
 {
+    /**
+     * Display the tags management interface
+     */
+    public function index()
+    {
+        $tags = Tag::query()->where('user_id', auth()->id())
+            ->orderBy('name')
+            ->paginate(20);
+
+        return Inertia::render('tags/index', [
+            'tags' => $tags,
+        ]);
+    }
+
     /**
      * Return a list of tags for autocomplete
      */
@@ -36,11 +51,60 @@ class TagController extends Controller
             'name' => 'required|string|max:50',
         ]);
 
-        $tag = Tag::firstOrCreate([
+        $tag = Tag::query()->firstOrCreate([
             'name' => $validated['name'],
             'user_id' => $request->user()->id,
         ]);
 
         return response()->json($tag);
+    }
+
+    /**
+     * Update a tag
+     */
+    public function update(Request $request, Tag $tag): JsonResponse
+    {
+        // Check if the tag belongs to the current user
+        if ($tag->user_id !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:50',
+        ]);
+
+        // Check if another tag with the same name exists for this user
+        $existingTag = Tag::query()->where('user_id', auth()->id())
+            ->where('name', $validated['name'])
+            ->where('id', '!=', $tag->id)
+            ->first();
+
+        if ($existingTag) {
+            return response()->json([
+                'error' => 'You already have a tag with this name',
+            ], 422);
+        }
+
+        $tag->update([
+            'name' => $validated['name'],
+        ]);
+
+        return response()->json($tag);
+    }
+
+    /**
+     * Delete a tag
+     */
+    public function destroy(Tag $tag): JsonResponse
+    {
+        // Check if the tag belongs to the current user
+        if ($tag->user_id !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Delete the tag
+        $tag->delete();
+
+        return response()->json(['success' => true]);
     }
 }
