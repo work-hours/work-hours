@@ -165,7 +165,7 @@ export default function Tags({ tags }: TagsPageProps) {
                     <CardHeader>
                         <CardTitle>Your Tags</CardTitle>
                         <CardDescription>
-                            You have {tags.meta.total} {tags.meta.total === 1 ? 'tag' : 'tags'}
+                            You have {tags.meta?.total || 0} {(tags.meta?.total || 0) === 1 ? 'tag' : 'tags'}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -214,14 +214,14 @@ export default function Tags({ tags }: TagsPageProps) {
                         )}
 
                         {/* Pagination if there are multiple pages */}
-                        {tags.meta.last_page > 1 && (
+                        {tags.meta?.last_page > 1 && (
                             <div className="mt-4 flex items-center justify-between border-t pt-4">
                                 <div className="text-sm text-gray-700">
-                                    Showing <span className="font-medium">{tags.meta.current_page}</span> of{' '}
-                                    <span className="font-medium">{tags.meta.last_page}</span> pages
+                                    Showing <span className="font-medium">{tags.meta?.current_page}</span> of{' '}
+                                    <span className="font-medium">{tags.meta?.last_page}</span> pages
                                 </div>
                                 <div className="flex space-x-2">
-                                    {tags.links.map((link: any, i: number) => {
+                                    {tags.links?.map((link: any, i: number) => {
                                         // Skip the "prev" and "next" links
                                         if (link.label === '&laquo; Previous' || link.label === 'Next &raquo;') {
                                             return null
