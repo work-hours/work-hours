@@ -1,7 +1,7 @@
 import DatePicker from '@/components/ui/date-picker'
 import { Head, useForm } from '@inertiajs/react'
 import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
-import { FormEventHandler, useMemo, useState } from 'react'
+import { FormEventHandler, useMemo } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
@@ -29,6 +29,7 @@ type TimeLogForm = {
     note: string
     mark_task_complete: boolean
     close_github_issue: boolean
+    tags: string[]
 }
 
 type Task = {
@@ -70,6 +71,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
+    // Initialize tags in the form data
     const { data, setData, put, processing, errors } = useForm<TimeLogForm>({
         project_id: timeLog.project_id,
         task_id: timeLog.task_id,
@@ -78,11 +80,8 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
         note: timeLog.note,
         mark_task_complete: false,
         close_github_issue: false,
-        tags: [],
+        tags: timeLog.tags || [],
     })
-
-    // Initialize tags state with the tags received from the timeLog
-    const [tags, setTags] = useState<string[]>(timeLog.tags || [])
 
     // Convert string timestamps to Date objects for DatePicker
     const startDate = data.start_timestamp ? new Date(data.start_timestamp) : new Date()
@@ -377,8 +376,8 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                     </Label>
                                     <TagInput
                                         id="tags"
-                                        value={tags}
-                                        onChange={setTags}
+                                        value={data.tags}
+                                        onChange={(value) => setData('tags', value)}
                                         placeholder="Add tags (press enter to add)"
                                         disabled={processing}
                                         tabIndex={4}
