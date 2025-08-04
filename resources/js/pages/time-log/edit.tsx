@@ -52,6 +52,7 @@ type Props = {
         end_timestamp: string
         duration: number
         note: string
+        tags: string[]
     }
     projects: Project[]
     tasks: Task[]
@@ -79,7 +80,8 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
         close_github_issue: false,
     })
 
-    const [tags, setTags] = useState<string[]>([])
+    // Initialize tags state with the tags received from the timeLog
+    const [tags, setTags] = useState<string[]>(timeLog.tags || [])
 
     // Convert string timestamps to Date objects for DatePicker
     const startDate = data.start_timestamp ? new Date(data.start_timestamp) : new Date()
@@ -143,6 +145,10 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
         put(route('time-log.update', timeLog.id), {
+            data: {
+                ...data,
+                tags, // Include the tags in the submission data
+            },
             onSuccess: () => {
                 toast.success('Time log updated successfully')
             },
