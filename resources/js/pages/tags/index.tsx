@@ -17,15 +17,19 @@ type Tag = {
     created_at: string
 }
 
+type TagsLinks = {
+    active: boolean
+    label: string
+    url: string | null
+}
+
 type TagsPageProps = {
     tags: {
         data: Tag[]
-        links: any[]
-        meta: {
-            current_page: number
-            last_page: number
-            total: number
-        }
+        links: TagsLinks[]
+        total: number
+        current_page: number
+        last_page: number
     }
 }
 
@@ -38,7 +42,7 @@ export default function Tags({ tags }: TagsPageProps) {
     const [isLoading, setIsLoading] = useState(false)
     const [tagsList, setTagsList] = useState<Tag[]>(tags.data)
 
-    const { data, setData, post, reset, errors, processing } = useForm({
+    const { data, setData, reset, errors } = useForm({
         name: '',
     })
 
@@ -149,7 +153,7 @@ export default function Tags({ tags }: TagsPageProps) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Manage Tags" />
-            <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
                 <section className="mb-4 flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Manage Tags</h1>
@@ -165,7 +169,7 @@ export default function Tags({ tags }: TagsPageProps) {
                     <CardHeader>
                         <CardTitle>Your Tags</CardTitle>
                         <CardDescription>
-                            You have {tags.meta?.total || 0} {(tags.meta?.total || 0) === 1 ? 'tag' : 'tags'}
+                            You have {tags.total} {(tags.total || 0) === 1 ? 'tag' : 'tags'}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -182,7 +186,6 @@ export default function Tags({ tags }: TagsPageProps) {
                                     <thead className="bg-gray-50 text-xs uppercase dark:bg-gray-800">
                                         <tr>
                                             <th className="px-6 py-3">Tag Name</th>
-                                            <th className="px-6 py-3">Created At</th>
                                             <th className="px-6 py-3 text-right">Actions</th>
                                         </tr>
                                     </thead>
@@ -190,7 +193,6 @@ export default function Tags({ tags }: TagsPageProps) {
                                         {tagsList.map((tag) => (
                                             <tr key={tag.id} className="border-b bg-white dark:border-gray-700 dark:bg-gray-900">
                                                 <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{tag.name}</td>
-                                                <td className="px-6 py-4">{new Date(tag.created_at).toLocaleDateString()}</td>
                                                 <td className="space-x-2 px-6 py-4 text-right">
                                                     <Button onClick={() => openEditDialog(tag)} variant="ghost" size="icon" className="h-8 w-8">
                                                         <Edit className="h-4 w-4" />
@@ -214,14 +216,14 @@ export default function Tags({ tags }: TagsPageProps) {
                         )}
 
                         {/* Pagination if there are multiple pages */}
-                        {tags.meta?.last_page > 1 && (
+                        {tags.last_page > 1 && (
                             <div className="mt-4 flex items-center justify-between border-t pt-4">
                                 <div className="text-sm text-gray-700">
-                                    Showing <span className="font-medium">{tags.meta?.current_page}</span> of{' '}
-                                    <span className="font-medium">{tags.meta?.last_page}</span> pages
+                                    Showing <span className="font-medium">{tags?.current_page}</span> of{' '}
+                                    <span className="font-medium">{tags?.last_page}</span> pages
                                 </div>
                                 <div className="flex space-x-2">
-                                    {tags.links?.map((link: any, i: number) => {
+                                    {tags.links?.map((link: TagsLinks, i: number) => {
                                         // Skip the "prev" and "next" links
                                         if (link.label === '&laquo; Previous' || link.label === 'Next &raquo;') {
                                             return null
