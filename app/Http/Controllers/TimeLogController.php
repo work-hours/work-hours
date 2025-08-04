@@ -250,7 +250,6 @@ final class TimeLogController extends Controller
                 ],
             ]);
 
-        // Load the tags relationship
         $timeLog->load('tags');
 
         return Inertia::render('time-log/edit', [
@@ -487,14 +486,10 @@ final class TimeLogController extends Controller
      */
     public function attachTags(Request $request, TimeLog $timeLog): JsonResponse
     {
-        $validated = $request->validate([
-            'tags' => 'required|array',
-            'tags.*' => 'required|string|max:50',
-        ]);
-
+        $tags = $request->validated()['tags'] ?? [];
         $tagIds = [];
 
-        foreach ($validated['tags'] as $tagName) {
+        foreach ($tags as $tagName) {
             $tag = Tag::query()->firstOrCreate([
                 'name' => $tagName,
                 'user_id' => $request->user()->id,
