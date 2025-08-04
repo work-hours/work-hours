@@ -250,6 +250,9 @@ final class TimeLogController extends Controller
                 ],
             ]);
 
+        // Load the tags relationship
+        $timeLog->load('tags');
+
         return Inertia::render('time-log/edit', [
             'timeLog' => [
                 'id' => $timeLog->id,
@@ -259,6 +262,7 @@ final class TimeLogController extends Controller
                 'end_timestamp' => $timeLog->end_timestamp,
                 'duration' => $timeLog->duration,
                 'note' => $timeLog->note,
+                'tags' => $timeLog->tags->pluck('name'),
             ],
             'projects' => $projects,
             'tasks' => $tasks,
