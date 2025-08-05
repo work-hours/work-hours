@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TaskStore;
 use App\Models\Project;
+use App\Models\Tag;
 use App\Models\Task;
 use App\Models\User;
 use App\Notifications\TaskAssigned;
@@ -357,7 +358,7 @@ final class TaskController extends Controller
         $tagIds = [];
 
         foreach ($tags as $tagName) {
-            $tag = \App\Models\Tag::query()->firstOrCreate([
+            $tag = Tag::query()->firstOrCreate([
                 'name' => $tagName,
                 'user_id' => auth()->id(),
             ]);

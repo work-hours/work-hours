@@ -366,11 +366,7 @@ export default function CreateTask({ projects }: Props) {
                                     <Label className="text-sm font-medium">
                                         Tags <span className="text-xs text-muted-foreground">(optional)</span>
                                     </Label>
-                                    <TagInput
-                                        value={data.tags}
-                                        onChange={(tags) => setData('tags', tags)}
-                                        placeholder="Add tags (optional)"
-                                    />
+                                    <TagInput value={data.tags} onChange={(tags) => setData('tags', tags)} placeholder="Add tags (optional)" />
                                     <InputError message={errors.tags} />
                                 </div>
 

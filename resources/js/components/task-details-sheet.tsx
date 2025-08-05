@@ -186,10 +186,7 @@ export default function TaskDetailsSheet({ task, open, onOpenChange }: TaskDetai
                             <div className="grid grid-cols-1 gap-4 rounded-lg border bg-muted/40 p-4">
                                 <div className="flex flex-wrap gap-2">
                                     {task.tags.map((tag) => (
-                                        <Badge
-                                            key={tag.id}
-                                            style={{ backgroundColor: tag.color, color: '#fff' }}
-                                        >
+                                        <Badge key={tag.id} style={{ backgroundColor: tag.color, color: '#fff' }}>
                                             {tag.name}
                                         </Badge>
                                     ))}

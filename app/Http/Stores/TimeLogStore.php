@@ -340,13 +340,11 @@ final class TimeLogStore
                 'approver_name' => $approverName,
                 'comment' => $timeLog->comment,
                 'user_non_monetary' => $isNonMonetary,
-                'tags' => $timeLog->tags ? $timeLog->tags->map(function ($tag) {
-                    return [
-                        'id' => $tag->id,
-                        'name' => $tag->name,
-                        'color' => $tag->color ?? '#3b82f6', // Default to blue if no color is set
-                    ];
-                }) : [],
+                'tags' => $timeLog->tags ? $timeLog->tags->map(fn ($tag): array => [
+                    'id' => $tag->id,
+                    'name' => $tag->name,
+                    'color' => $tag->color ?? '#3b82f6', // Default to blue if no color is set
+                ]) : [],
             ];
         });
     }

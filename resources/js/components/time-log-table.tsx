@@ -1,8 +1,8 @@
 import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 import DeleteTimeLog from '@/components/delete-time-log'
 import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { formatTimeEntry } from '@/lib/utils'
 import { Edit, Glasses, Trash2 } from 'lucide-react'
@@ -31,7 +31,7 @@ export type TimeLogEntry = {
     task_priority?: string
     task_due_date?: string | null
     task_description?: string | null
-    tags?: Array<{ id: number, name: string, color: string }>
+    tags?: Array<{ id: number; name: string; color: string }>
 }
 
 type TimeLogTableProps = {
@@ -109,16 +109,12 @@ export default function TimeLogTable({
                             <TableCell className="font-medium">
                                 {formatTimeEntry(log.start_timestamp, log.end_timestamp)}
                                 <br />
-                                <div className="flex flex-wrap gap-1 items-center">
+                                <div className="flex flex-wrap items-center gap-1">
                                     {showProject && <small className="mr-1">{log.project_name || 'No Project'}</small>}
                                     {log.tags && log.tags.length > 0 && (
                                         <div className="flex flex-wrap gap-1">
                                             {log.tags.map((tag) => (
-                                                <Badge
-                                                    key={tag.id}
-                                                    className="text-xs"
-                                                    style={{ backgroundColor: tag.color, color: '#fff' }}
-                                                >
+                                                <Badge key={tag.id} className="text-xs" style={{ backgroundColor: tag.color, color: '#fff' }}>
                                                     {tag.name}
                                                 </Badge>
                                             ))}

@@ -583,7 +583,7 @@ export default function Tasks() {
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <small>{task.project.name}</small>
                                                     {task.tags && task.tags.length > 0 && (
-                                                        <div className="flex flex-wrap gap-1 mt-1">
+                                                        <div className="mt-1 flex flex-wrap gap-1">
                                                             {task.tags.map((tag) => (
                                                                 <Badge
                                                                     key={tag.id}
