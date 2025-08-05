@@ -48,6 +48,7 @@ export interface TaskFilters {
     status: string
     priority: string
     project_id: string
+    tag_id: string
     due_date_from: Date | string | ''
     due_date_to: Date | string | ''
     search: string

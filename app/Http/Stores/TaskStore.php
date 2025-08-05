@@ -9,6 +9,8 @@ use App\Http\QueryFilters\Task\DueDateToFilter;
 use App\Http\QueryFilters\Task\PriorityFilter;
 use App\Http\QueryFilters\Task\ProjectIdFilter;
 use App\Http\QueryFilters\Task\SearchFilter;
+use App\Http\QueryFilters\Task\TagFilter;
+use AppHttpQueryFiltersTaskTagFilter;
 use App\Http\QueryFilters\Task\StatusFilter;
 use App\Models\Project;
 use App\Models\Task;
@@ -91,6 +93,7 @@ final class TaskStore
                 ProjectIdFilter::class,
                 DueDateFromFilter::class,
                 DueDateToFilter::class,
+                TagFilter::class,
                 SearchFilter::class,
             ])
             ->thenReturn();

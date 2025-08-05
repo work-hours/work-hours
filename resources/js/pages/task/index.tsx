@@ -66,6 +66,7 @@ export default function Tasks() {
         status: 'all',
         priority: 'all',
         project_id: 'all',
+        tag_id: 'all',
         due_date_from: '',
         due_date_to: '',
         search: '',
@@ -167,6 +168,7 @@ export default function Tasks() {
             status: 'all',
             priority: 'all',
             project_id: 'all',
+            tag_id: 'all',
             due_date_from: '',
             due_date_to: '',
             search: '',
@@ -354,12 +356,12 @@ export default function Tasks() {
                                         value={filters.status}
                                         onChange={(value) => handleFilterChange('status', value)}
                                         options={[
-                                            { id: 'all', name: 'All Statuses' },
+                                            { id: 'all', name: 'Statuses' },
                                             { id: 'pending', name: 'Pending' },
                                             { id: 'in_progress', name: 'In Progress' },
                                             { id: 'completed', name: 'Completed' },
                                         ]}
-                                        placeholder="All Statuses"
+                                        placeholder="Statuses"
                                         disabled={processing}
                                         icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
                                     />
@@ -375,12 +377,12 @@ export default function Tasks() {
                                         value={filters.priority}
                                         onChange={(value) => handleFilterChange('priority', value)}
                                         options={[
-                                            { id: 'all', name: 'All Priorities' },
+                                            { id: 'all', name: 'Priorities' },
                                             { id: 'low', name: 'Low' },
                                             { id: 'medium', name: 'Medium' },
                                             { id: 'high', name: 'High' },
                                         ]}
-                                        placeholder="All Priorities"
+                                        placeholder="Priorities"
                                         disabled={processing}
                                         icon={<Flag className="h-4 w-4 text-muted-foreground" />}
                                     />
@@ -396,15 +398,34 @@ export default function Tasks() {
                                         value={filters.project_id}
                                         onChange={(value) => handleFilterChange('project_id', value)}
                                         options={[
-                                            { id: 'all', name: 'All Projects' },
+                                            { id: 'all', name: 'Projects' },
                                             ...projects.map((project) => ({
                                                 id: project.id.toString(),
                                                 name: project.name,
                                             })),
                                         ]}
-                                        placeholder="All Projects"
+                                        placeholder="Projects"
                                         disabled={processing}
                                         icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+
+                                {/* Tag Filter */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="tag" className="text-xs font-medium">
+                                        Tag
+                                    </Label>
+                                    <SearchableSelect
+                                        id="tag"
+                                        value={filters.tag_id}
+                                        onChange={(value) => handleFilterChange('tag_id', value)}
+                                        options={[
+                                            { id: 'all', name: 'Tags' },
+                                            // Add your tag options here
+                                        ]}
+                                        placeholder="Tags"
+                                        disabled={processing}
+                                        icon={<Flag className="h-4 w-4 text-muted-foreground" />}
                                     />
                                 </div>
 
@@ -466,6 +487,7 @@ export default function Tasks() {
                                             filters.status === 'all' &&
                                             filters.priority === 'all' &&
                                             filters.project_id === 'all' &&
+                                            filters.tag_id === 'all' &&
                                             !filters.due_date_from &&
                                             !filters.due_date_to &&
                                             !filters.search
@@ -484,6 +506,7 @@ export default function Tasks() {
                                 {(filters.status !== 'all' ||
                                     filters.priority !== 'all' ||
                                     filters.project_id !== 'all' ||
+                                    filters.tag_id !== 'all' ||
                                     filters.due_date_from ||
                                     filters.due_date_to ||
                                     filters.search) && (
@@ -522,6 +545,17 @@ export default function Tasks() {
                                                         description += ` in project "${project.name}"`
                                                     } else {
                                                         description = `Showing tasks in project "${project.name}"`
+                                                    }
+                                                }
+                                            }
+
+                                            if (filters.tag_id !== 'all') {
+                                                const tag = projects.find((t) => t.id.toString() === filters.tag_id)
+                                                if (tag) {
+                                                    if (description) {
+                                                        description += ` with tag "${tag.name}"`
+                                                    } else {
+                                                        description = `Showing tasks with tag "${tag.name}"`
                                                     }
                                                 }
                                             }
