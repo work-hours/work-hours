@@ -8,7 +8,7 @@ use Closure;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-final class ClientIdFilter
+final class ClientFilter
 {
     /**
      * @throws ContainerExceptionInterface

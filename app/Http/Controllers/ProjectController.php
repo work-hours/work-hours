@@ -30,8 +30,8 @@ final class ProjectController extends Controller
     public function index()
     {
         $filters = request()->only([
-            'client_id',
-            'team_member_id',
+            'client',
+            'team-member',
             'created-date-from',
             'created-date-to',
             'search',

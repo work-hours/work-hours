@@ -53,8 +53,8 @@ type Client = {
 }
 
 type ProjectFilters = {
-    client_id: string
-    team_member_id: string
+    client: string
+    'team-member': string
     'created-date-from': string | Date | null
     'created-date-to': string | Date | null
     search: string
@@ -81,8 +81,8 @@ export default function Projects() {
 
     // Filter states
     const [filters, setFilters] = useState<ProjectFilters>({
-        client_id: pageFilters?.client_id || '',
-        team_member_id: pageFilters?.team_member_id || '',
+        client: pageFilters?.client || '',
+        'team-member': pageFilters?.['team-member'] || '',
         'created-date-from': pageFilters?.['created-date-from'] || null,
         'created-date-to': pageFilters?.['created-date-to'] || null,
         search: pageFilters?.search || '',
@@ -94,8 +94,8 @@ export default function Projects() {
 
     const clearFilters = (): void => {
         setFilters({
-            client_id: '',
-            team_member_id: '',
+            client: '',
+            'team-member': '',
             'created-date-from': null,
             'created-date-to': null,
             search: '',
@@ -159,8 +159,8 @@ export default function Projects() {
         const queryParams = queryStringToObject()
 
         const initialFilters: ProjectFilters = {
-            client_id: queryParams.client_id || '',
-            team_member_id: queryParams.team_member_id || '',
+            client: queryParams.client || '',
+            'team-member': queryParams['team-member'] || '',
             'created-date-from': queryParams['created-date-from'] || null,
             'created-date-to': queryParams['created-date-to'] || null,
             search: queryParams.search || '',
@@ -189,8 +189,8 @@ export default function Projects() {
                                     {loading ? 'Loading projects...' : error ? 'Failed to load projects' : `You have ${projects.length} projects`}
                                 </CardDescription>
 
-                                {(filters.client_id ||
-                                    filters.team_member_id ||
+                                {(filters.client ||
+                                    filters['team-member'] ||
                                     filters['created-date-from'] ||
                                     filters['created-date-to'] ||
                                     filters.search) && (
@@ -206,8 +206,8 @@ export default function Projects() {
                                                 description = `Showing projects until ${formatDateValue(filters['created-date-to'])}`
                                             }
 
-                                            if (filters.client_id) {
-                                                const client = clients.find((c) => c.id.toString() === filters.client_id)
+                                            if (filters.client) {
+                                                const client = clients.find((c) => c.id.toString() === filters.client)
                                                 if (client) {
                                                     if (description) {
                                                         description += ` for client "${client.name}"`
@@ -217,8 +217,8 @@ export default function Projects() {
                                                 }
                                             }
 
-                                            if (filters.team_member_id) {
-                                                const member = teamMembers.find((m) => m.id.toString() === filters.team_member_id)
+                                            if (filters['team-member']) {
+                                                const member = teamMembers.find((m) => m.id.toString() === filters['team-member'])
                                                 if (member) {
                                                     if (description) {
                                                         description += ` with team member "${member.name}"`
@@ -243,7 +243,7 @@ export default function Projects() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton
-                                    href={`${route('project.export')}?team_member_id=${filters.team_member_id || ''}&client_id=${filters.client_id || ''}&created-date-from=${formatDateValue(filters['created-date-from'])}&created-date-to=${formatDateValue(filters['created-date-to'])}&search=${filters.search || ''}`}
+                                    href={`${route('project.export')}?team-member=${filters['team-member'] || ''}&client=${filters.client || ''}&created-date-from=${formatDateValue(filters['created-date-from'])}&created-date-to=${formatDateValue(filters['created-date-to'])}&search=${filters.search || ''}`}
                                     label="Export"
                                 />
                                 <Link href={route('project.create')}>
@@ -281,8 +281,8 @@ export default function Projects() {
                                     </Label>
                                     <SearchableSelect
                                         id="client"
-                                        value={filters.client_id}
-                                        onChange={(value) => handleFilterChange('client_id', value)}
+                                        value={filters.client}
+                                        onChange={(value) => handleFilterChange('client', value)}
                                         options={[
                                             { id: '', name: 'All Clients' },
                                             ...clients.map((client) => ({
@@ -302,8 +302,8 @@ export default function Projects() {
                                     </Label>
                                     <SearchableSelect
                                         id="team-member"
-                                        value={filters.team_member_id}
-                                        onChange={(value) => handleFilterChange('team_member_id', value)}
+                                        value={filters['team-member']}
+                                        onChange={(value) => handleFilterChange('team-member', value)}
                                         options={[
                                             { id: '', name: 'All Team Members' },
                                             ...teamMembers.map((member) => ({
@@ -374,8 +374,8 @@ export default function Projects() {
                                         variant="outline"
                                         disabled={
                                             processing ||
-                                            (!filters.client_id &&
-                                                !filters.team_member_id &&
+                                            (!filters.client &&
+                                                !filters['team-member'] &&
                                                 !filters['created-date-from'] &&
                                                 !filters['created-date-to'] &&
                                                 !filters.search)
