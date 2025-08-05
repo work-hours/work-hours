@@ -2,6 +2,7 @@ import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 import DeleteTimeLog from '@/components/delete-time-log'
 import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { formatTimeEntry } from '@/lib/utils'
 import { Edit, Glasses, Trash2 } from 'lucide-react'
@@ -113,13 +114,13 @@ export default function TimeLogTable({
                                     {log.tags && log.tags.length > 0 && (
                                         <div className="flex flex-wrap gap-1">
                                             {log.tags.map((tag) => (
-                                                <span
+                                                <Badge
                                                     key={tag.id}
-                                                    className="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
-                                                    style={{ backgroundColor: tag.color + '20', color: tag.color }}
+                                                    className="text-xs"
+                                                    style={{ backgroundColor: tag.color, color: '#fff' }}
                                                 >
                                                     {tag.name}
-                                                </span>
+                                                </Badge>
                                             ))}
                                         </div>
                                     )}
