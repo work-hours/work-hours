@@ -12,7 +12,7 @@ use Inertia\Inertia;
 final class TagController extends Controller
 {
     /**
-     * Display the tags management interface
+     * Display the tag management interface
      */
     public function index()
     {
