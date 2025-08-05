@@ -10,6 +10,7 @@ use App\Http\QueryFilters\TimeLog\IsPaidFilter;
 use App\Http\QueryFilters\TimeLog\ProjectIdFilter;
 use App\Http\QueryFilters\TimeLog\StartDateFilter;
 use App\Http\QueryFilters\TimeLog\StatusFilter;
+use App\Http\QueryFilters\TimeLog\TagFilter;
 use App\Http\QueryFilters\TimeLog\UserIdFilter;
 use App\Models\Client;
 use App\Models\Project;
@@ -45,6 +46,7 @@ final class TimeLogStore
                 IsPaidFilter::class,
                 ProjectIdFilter::class,
                 StatusFilter::class,
+                TagFilter::class,
             ])
             ->thenReturn()
             ->with(['user', 'project', 'task', 'tags'])
@@ -343,7 +345,7 @@ final class TimeLogStore
                 'tags' => $timeLog->tags ? $timeLog->tags->map(fn ($tag): array => [
                     'id' => $tag->id,
                     'name' => $tag->name,
-                    'color' => $tag->color ?? '#3b82f6', // Default to blue if no color is set
+                    'color' => $tag->color ?? '#032C95', // Default to blue if no color is set
                 ]) : [],
             ];
         });
@@ -405,6 +407,7 @@ final class TimeLogStore
             'project_id' => request('project_id', ''),
             'is_paid' => request('is_paid', ''),
             'status' => request('status', ''),
+            'tag' => request('tag', ''),
         ];
     }
 }
