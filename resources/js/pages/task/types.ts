@@ -14,6 +14,12 @@ export type Project = {
     user_id: number
 }
 
+export type Tag = {
+    id: number
+    name: string
+    color: string
+}
+
 export type Task = {
     id: number
     project_id: number
@@ -25,6 +31,7 @@ export type Task = {
     is_imported: boolean
     project: Project
     assignees: User[]
+    tags?: Tag[]
     meta?: {
         source?: string
         source_url?: string

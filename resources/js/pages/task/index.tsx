@@ -580,7 +580,22 @@ export default function Tasks() {
                                                     <span>{task.title}</span>
                                                     {task.is_imported && <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />}
                                                 </div>
-                                                <small>{task.project.name}</small>
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <small>{task.project.name}</small>
+                                                    {task.tags && task.tags.length > 0 && (
+                                                        <div className="flex flex-wrap gap-1 mt-1">
+                                                            {task.tags.map((tag) => (
+                                                                <Badge
+                                                                    key={tag.id}
+                                                                    className="text-xs"
+                                                                    style={{ backgroundColor: tag.color, color: '#fff' }}
+                                                                >
+                                                                    {tag.name}
+                                                                </Badge>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </TableCell>
                                             <TableCell>{getStatusBadge(task, task.status)}</TableCell>
                                             <TableCell>{getPriorityBadge(task.priority)}</TableCell>
