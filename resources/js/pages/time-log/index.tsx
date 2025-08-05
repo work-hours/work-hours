@@ -55,6 +55,7 @@ type Filters = {
     project_id: string
     is_paid: string
     status: string
+    tag: string
 }
 
 type Project = {
@@ -72,6 +73,7 @@ type Props = {
     paidHours: number
     paidAmountsByCurrency: Record<string, number>
     weeklyAverage: number
+    tags: { id: number; name: string }[]
 }
 
 export default function TimeLog({
@@ -83,6 +85,7 @@ export default function TimeLog({
     unpaidAmountsByCurrency,
     paidAmountsByCurrency,
     weeklyAverage,
+    tags,
 }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
@@ -90,6 +93,7 @@ export default function TimeLog({
         project_id: filters.project_id || '',
         is_paid: filters.is_paid || '',
         status: filters.status || '',
+        tag: filters.tag || '',
     })
 
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
@@ -432,6 +436,20 @@ export default function TimeLog({
                                         icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
                                     />
                                 </div>
+                                <div className="flex w-full flex-col gap-1">
+                                    <Label htmlFor="tag" className="text-xs font-medium">
+                                        Tag
+                                    </Label>
+                                    <SearchableSelect
+                                        id="tag"
+                                        value={data.tag}
+                                        onChange={(value) => setData('tag', value)}
+                                        options={[{ id: '', name: 'All Tags' }, ...tags]}
+                                        placeholder="Select tag"
+                                        disabled={processing}
+                                        icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
                                 <div className="flex items-end gap-2">
                                     <Button
                                         type="submit"
@@ -446,7 +464,8 @@ export default function TimeLog({
                                         type="button"
                                         variant="outline"
                                         disabled={
-                                            processing || (!data.start_date && !data.end_date && !data.project_id && !data.is_paid && !data.status)
+                                            processing ||
+                                            (!data.start_date && !data.end_date && !data.project_id && !data.is_paid && !data.status && !data.tag)
                                         }
                                         onClick={() => {
                                             setData({
@@ -455,6 +474,7 @@ export default function TimeLog({
                                                 project_id: '',
                                                 is_paid: '',
                                                 status: '',
+                                                tag: '',
                                             })
                                             get(route('time-log.index'), {
                                                 preserveState: true,

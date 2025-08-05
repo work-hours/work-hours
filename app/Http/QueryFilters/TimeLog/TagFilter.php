@@ -8,7 +8,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-final class TagFilter
+final readonly class TagFilter
 {
     public function __construct(private Request $request) {}
 
@@ -20,9 +20,8 @@ final class TagFilter
             return $next($query);
         }
 
-        $query->whereHas('tags', function ($query) use ($tag) {
-            $query->where('name', $tag)
-                  ->where('user_id', auth()->id());
+        $query->whereHas('tags', function ($query) use ($tag): void {
+            $query->where('tags.id', $tag)->where('tags.user_id', auth()->id());
         });
 
         return $next($query);

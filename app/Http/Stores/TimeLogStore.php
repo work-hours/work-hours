@@ -14,6 +14,7 @@ use App\Http\QueryFilters\TimeLog\TagFilter;
 use App\Http\QueryFilters\TimeLog\UserIdFilter;
 use App\Models\Client;
 use App\Models\Project;
+use App\Models\Tag;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
@@ -226,6 +227,7 @@ final class TimeLogStore
     public static function resData(\Illuminate\Support\Collection $timeLogs): array
     {
         $timeLogStats = self::stats($timeLogs);
+        $tags = Tag::query()->where('user_id', auth()->id())->get(['id', 'name']);
 
         return [
             'timeLogs' => self::timeLogMapper($timeLogs),
@@ -237,6 +239,7 @@ final class TimeLogStore
             'weeklyAverage' => $timeLogStats['weekly_average'],
             'unpaidAmountsByCurrency' => $timeLogStats['unpaid_amounts_by_currency'],
             'paidAmountsByCurrency' => $timeLogStats['paid_amounts_by_currency'],
+            'tags' => $tags,
         ];
     }
 
