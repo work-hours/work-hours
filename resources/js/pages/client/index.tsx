@@ -144,7 +144,7 @@ export default function Clients() {
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your clients</p>
                 </section>
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
+                <Card className="transition-all hover:shadow-md">
                     <CardHeader className="">
                         <div className="flex items-center justify-between">
                             <div>

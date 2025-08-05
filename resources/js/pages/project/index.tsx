@@ -55,8 +55,8 @@ type Client = {
 type ProjectFilters = {
     client_id: string
     team_member_id: string
-    created_date_from: string | Date | null
-    created_date_to: string | Date | null
+    'created-date-from': string | Date | null
+    'created-date-to': string | Date | null
     search: string
 }
 
@@ -83,8 +83,8 @@ export default function Projects() {
     const [filters, setFilters] = useState<ProjectFilters>({
         client_id: pageFilters?.client_id || '',
         team_member_id: pageFilters?.team_member_id || '',
-        created_date_from: pageFilters?.created_date_from || null,
-        created_date_to: pageFilters?.created_date_to || null,
+        'created-date-from': pageFilters?.['created-date-from'] || null,
+        'created-date-to': pageFilters?.['created-date-to'] || null,
         search: pageFilters?.search || '',
     })
 
@@ -96,8 +96,8 @@ export default function Projects() {
         setFilters({
             client_id: '',
             team_member_id: '',
-            created_date_from: null,
-            created_date_to: null,
+            'created-date-from': null,
+            'created-date-to': null,
             search: '',
         })
     }
@@ -134,18 +134,18 @@ export default function Projects() {
         e.preventDefault()
         const formattedFilters = { ...filters }
 
-        if (formattedFilters.created_date_from instanceof Date) {
-            const year = formattedFilters.created_date_from.getFullYear()
-            const month = String(formattedFilters.created_date_from.getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters.created_date_from.getDate()).padStart(2, '0')
-            formattedFilters.created_date_from = `${year}-${month}-${day}`
+        if (formattedFilters['created-date-from'] instanceof Date) {
+            const year = formattedFilters['created-date-from'].getFullYear()
+            const month = String(formattedFilters['created-date-from'].getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters['created-date-from'].getDate()).padStart(2, '0')
+            formattedFilters['created-date-from'] = `${year}-${month}-${day}`
         }
 
-        if (formattedFilters.created_date_to instanceof Date) {
-            const year = formattedFilters.created_date_to.getFullYear()
-            const month = String(formattedFilters.created_date_to.getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters.created_date_to.getDate()).padStart(2, '0')
-            formattedFilters.created_date_to = `${year}-${month}-${day}`
+        if (formattedFilters['created-date-to'] instanceof Date) {
+            const year = formattedFilters['created-date-to'].getFullYear()
+            const month = String(formattedFilters['created-date-to'].getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters['created-date-to'].getDate()).padStart(2, '0')
+            formattedFilters['created-date-to'] = `${year}-${month}-${day}`
         }
 
         const filtersString = objectToQueryString(formattedFilters)
@@ -161,8 +161,8 @@ export default function Projects() {
         const initialFilters: ProjectFilters = {
             client_id: queryParams.client_id || '',
             team_member_id: queryParams.team_member_id || '',
-            created_date_from: queryParams.created_date_from || null,
-            created_date_to: queryParams.created_date_to || null,
+            'created-date-from': queryParams['created-date-from'] || null,
+            'created-date-to': queryParams['created-date-to'] || null,
             search: queryParams.search || '',
         }
 
@@ -191,19 +191,19 @@ export default function Projects() {
 
                                 {(filters.client_id ||
                                     filters.team_member_id ||
-                                    filters.created_date_from ||
-                                    filters.created_date_to ||
+                                    filters['created-date-from'] ||
+                                    filters['created-date-to'] ||
                                     filters.search) && (
                                     <CardDescription className="mt-1">
                                         {(() => {
                                             let description = ''
 
-                                            if (filters.created_date_from && filters.created_date_to) {
-                                                description = `Showing projects from ${formatDateValue(filters.created_date_from)} to ${formatDateValue(filters.created_date_to)}`
-                                            } else if (filters.created_date_from) {
-                                                description = `Showing projects from ${formatDateValue(filters.created_date_from)}`
-                                            } else if (filters.created_date_to) {
-                                                description = `Showing projects until ${formatDateValue(filters.created_date_to)}`
+                                            if (filters['created-date-from'] && filters['created-date-to']) {
+                                                description = `Showing projects from ${formatDateValue(filters['created-date-from'])} to ${formatDateValue(filters['created-date-to'])}`
+                                            } else if (filters['created-date-from']) {
+                                                description = `Showing projects from ${formatDateValue(filters['created-date-from'])}`
+                                            } else if (filters['created-date-to']) {
+                                                description = `Showing projects until ${formatDateValue(filters['created-date-to'])}`
                                             }
 
                                             if (filters.client_id) {
@@ -243,7 +243,7 @@ export default function Projects() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton
-                                    href={`${route('project.export')}?team_member_id=${filters.team_member_id || ''}&client_id=${filters.client_id || ''}&created_date_from=${formatDateValue(filters.created_date_from)}&created_date_to=${formatDateValue(filters.created_date_to)}&search=${filters.search || ''}`}
+                                    href={`${route('project.export')}?team_member_id=${filters.team_member_id || ''}&client_id=${filters.client_id || ''}&created-date-from=${formatDateValue(filters['created-date-from'])}&created-date-to=${formatDateValue(filters['created-date-to'])}&search=${filters.search || ''}`}
                                     label="Export"
                                 />
                                 <Link href={route('project.create')}>
@@ -322,8 +322,8 @@ export default function Projects() {
                                         Created Date From
                                     </Label>
                                     <DatePicker
-                                        selected={parseDate(filters.created_date_from)}
-                                        onChange={(date) => handleFilterChange('created_date_from', date)}
+                                        selected={parseDate(filters['created-date-from'])}
+                                        onChange={(date) => handleFilterChange('created-date-from', date)}
                                         dateFormat="yyyy-MM-dd"
                                         isClearable
                                         disabled={processing}
@@ -343,8 +343,8 @@ export default function Projects() {
                                         Created Date To
                                     </Label>
                                     <DatePicker
-                                        selected={parseDate(filters.created_date_to)}
-                                        onChange={(date) => handleFilterChange('created_date_to', date)}
+                                        selected={parseDate(filters['created-date-to'])}
+                                        onChange={(date) => handleFilterChange('created-date-to', date)}
                                         dateFormat="yyyy-MM-dd"
                                         isClearable
                                         disabled={processing}
@@ -376,8 +376,8 @@ export default function Projects() {
                                             processing ||
                                             (!filters.client_id &&
                                                 !filters.team_member_id &&
-                                                !filters.created_date_from &&
-                                                !filters.created_date_to &&
+                                                !filters['created-date-from'] &&
+                                                !filters['created-date-to'] &&
                                                 !filters.search)
                                         }
                                         onClick={clearFilters}

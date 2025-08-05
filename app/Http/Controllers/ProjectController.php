@@ -32,8 +32,8 @@ final class ProjectController extends Controller
         $filters = request()->only([
             'client_id',
             'team_member_id',
-            'created_date_from',
-            'created_date_to',
+            'created-date-from',
+            'created-date-to',
             'search',
         ]);
 
