@@ -237,13 +237,22 @@ final class TeamController extends Controller
         }
     }
 
+    /**
+     * Display the all-time logs page.
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    #[Action(method: 'get', name: 'team.all-time-logs', middleware: ['auth', 'verified'])]
     public function allTimeLogs()
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseTimeLogQuery());
         $teamMembersList = TeamStore::teamMembers(userId: auth()->id());
+        $tags = \App\Models\Tag::query()->where('user_id', auth()->id())->get();
 
         return Inertia::render('team/all-time-logs', [
             'teamMembers' => $teamMembersList,
+            'tags' => $tags,
             ...TimeLogStore::resData(timeLogs: $timeLogs),
         ]);
     }

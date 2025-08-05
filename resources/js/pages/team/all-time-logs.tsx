@@ -33,6 +33,7 @@ type Filters = {
     project_id: string
     is_paid: string
     status: string
+    tag_id: string
 }
 
 type TeamMember = {
@@ -45,11 +46,17 @@ type Project = {
     name: string
 }
 
+type Tag = {
+    id: number
+    name: string
+}
+
 type Props = {
     timeLogs: TimeLog[]
     filters: Filters
     teamMembers: TeamMember[]
     projects: Project[]
+    tags: Tag[]
     totalDuration: number
     unpaidHours: number
     paidHours: number
@@ -64,6 +71,7 @@ export default function AllTeamTimeLogs({
     filters,
     teamMembers,
     projects,
+    tags,
     totalDuration,
     unpaidHours,
     unpaidAmountsByCurrency,
@@ -116,6 +124,7 @@ export default function AllTeamTimeLogs({
         project_id: filters.project_id || '',
         is_paid: filters.is_paid || '',
         status: filters.status || '',
+        tag_id: filters.tag_id || '',
     })
 
     const startDate = data.start_date ? new Date(data.start_date) : null
@@ -334,7 +343,7 @@ export default function AllTeamTimeLogs({
                                         id="project_id"
                                         value={data.project_id}
                                         onChange={(value) => setData('project_id', value)}
-                                        options={[{ id: '', name: 'All Projects' }, ...projects]}
+                                        options={[{ id: '', name: ' Projects' }, ...projects]}
                                         placeholder="Select project"
                                         disabled={processing}
                                         icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
@@ -349,7 +358,7 @@ export default function AllTeamTimeLogs({
                                         value={data.is_paid}
                                         onChange={(value) => setData('is_paid', value)}
                                         options={[
-                                            { id: '', name: 'All Statuses' },
+                                            { id: '', name: 'Statuses' },
                                             { id: 'true', name: 'Paid' },
                                             { id: 'false', name: 'Unpaid' },
                                         ]}
@@ -367,7 +376,7 @@ export default function AllTeamTimeLogs({
                                         value={data.status}
                                         onChange={(value) => setData('status', value)}
                                         options={[
-                                            { id: '', name: 'All Statuses' },
+                                            { id: '', name: 'Statuses' },
                                             { id: 'pending', name: 'Pending' },
                                             { id: 'approved', name: 'Approved' },
                                             { id: 'rejected', name: 'Rejected' },
@@ -375,6 +384,19 @@ export default function AllTeamTimeLogs({
                                         placeholder="Select approval status"
                                         disabled={processing}
                                         icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="tag_id" className="text-xs font-medium">
+                                        Tag
+                                    </Label>
+                                    <SearchableSelect
+                                        id="tag_id"
+                                        value={data.tag_id}
+                                        onChange={(value) => setData('tag_id', value)}
+                                        options={[{ id: '', name: 'Tags' }, ...tags]}
+                                        placeholder="Select tag"
+                                        disabled={processing}
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
@@ -402,6 +424,7 @@ export default function AllTeamTimeLogs({
                                                 project_id: '',
                                                 is_paid: '',
                                                 status: '',
+                                                tag_id: '',
                                             })
                                             get(route('team.all-time-logs'), {
                                                 preserveState: true,
