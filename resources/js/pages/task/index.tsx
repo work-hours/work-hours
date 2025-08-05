@@ -70,10 +70,10 @@ export default function Tasks() {
     const [filters, setFilters] = useState<TaskFilters>({
         status: 'all',
         priority: 'all',
-        project_id: 'all',
-        tag_id: 'all',
-        due_date_from: '',
-        due_date_to: '',
+        project: 'all',
+        tag: 'all',
+        'due-date-from': '',
+        'due-date-to': '',
         search: '',
     })
     const [processing, setProcessing] = useState(false)
@@ -172,10 +172,10 @@ export default function Tasks() {
         setFilters({
             status: 'all',
             priority: 'all',
-            project_id: 'all',
-            tag_id: 'all',
-            due_date_from: '',
-            due_date_to: '',
+            project: 'all',
+            tag: 'all',
+            'due-date-from': '',
+            'due-date-to': '',
             search: '',
         })
     }
@@ -256,18 +256,18 @@ export default function Tasks() {
         e.preventDefault()
         const formattedFilters = { ...filters }
 
-        if (formattedFilters.due_date_from instanceof Date) {
-            const year = formattedFilters.due_date_from.getFullYear()
-            const month = String(formattedFilters.due_date_from.getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters.due_date_from.getDate()).padStart(2, '0')
-            formattedFilters.due_date_from = `${year}-${month}-${day}`
+        if (formattedFilters['due-date-from'] instanceof Date) {
+            const year = formattedFilters['due-date-from'].getFullYear()
+            const month = String(formattedFilters['due-date-from'].getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters['due-date-from'].getDate()).padStart(2, '0')
+            formattedFilters['due-date-from'] = `${year}-${month}-${day}`
         }
 
-        if (formattedFilters.due_date_to instanceof Date) {
-            const year = formattedFilters.due_date_to.getFullYear()
-            const month = String(formattedFilters.due_date_to.getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters.due_date_to.getDate()).padStart(2, '0')
-            formattedFilters.due_date_to = `${year}-${month}-${day}`
+        if (formattedFilters['due-date-to'] instanceof Date) {
+            const year = formattedFilters['due-date-to'].getFullYear()
+            const month = String(formattedFilters['due-date-to'].getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters['due-date-to'].getDate()).padStart(2, '0')
+            formattedFilters['due-date-to'] = `${year}-${month}-${day}`
         }
 
         const filtersString = objectToQueryString(formattedFilters)
@@ -287,10 +287,10 @@ export default function Tasks() {
         const initialFilters: TaskFilters = {
             status: queryParams.status || 'all',
             priority: queryParams.priority || 'all',
-            project_id: queryParams.project_id || 'all',
-            tag_id: queryParams.tag_id || 'all',
-            due_date_from: queryParams.due_date_from || '',
-            due_date_to: queryParams.due_date_to || '',
+            project: queryParams.project || 'all',
+            tag: queryParams.tag || 'all',
+            'due-date-from': queryParams['due-date-from'] || '',
+            'due-date-to': queryParams['due-date-to'] || '',
             search: queryParams.search || '',
         }
 
@@ -401,8 +401,8 @@ export default function Tasks() {
                                     </Label>
                                     <SearchableSelect
                                         id="project"
-                                        value={filters.project_id}
-                                        onChange={(value) => handleFilterChange('project_id', value)}
+                                        value={filters.project}
+                                        onChange={(value) => handleFilterChange('project', value)}
                                         options={[
                                             { id: 'all', name: 'Projects' },
                                             ...projects.map((project) => ({
@@ -423,8 +423,8 @@ export default function Tasks() {
                                     </Label>
                                     <SearchableSelect
                                         id="tag"
-                                        value={filters.tag_id}
-                                        onChange={(value) => handleFilterChange('tag_id', value)}
+                                        value={filters.tag}
+                                        onChange={(value) => handleFilterChange('tag', value)}
                                         options={[
                                             { id: 'all', name: 'Tags' },
                                             ...tags.map((tag) => ({
@@ -444,8 +444,8 @@ export default function Tasks() {
                                         Due Date From
                                     </Label>
                                     <DatePicker
-                                        selected={parseDate(filters.due_date_from)}
-                                        onChange={(date) => handleFilterChange('due_date_from', date)}
+                                        selected={parseDate(filters['due-date-from'])}
+                                        onChange={(date) => handleFilterChange('due-date-from', date)}
                                         dateFormat="yyyy-MM-dd"
                                         isClearable
                                         disabled={processing}
@@ -466,8 +466,8 @@ export default function Tasks() {
                                         Due Date To
                                     </Label>
                                     <DatePicker
-                                        selected={parseDate(filters.due_date_to)}
-                                        onChange={(date) => handleFilterChange('due_date_to', date)}
+                                        selected={parseDate(filters['due-date-to'])}
+                                        onChange={(date) => handleFilterChange('due-date-to', date)}
                                         dateFormat="yyyy-MM-dd"
                                         isClearable
                                         disabled={processing}
@@ -495,10 +495,10 @@ export default function Tasks() {
                                         disabled={
                                             filters.status === 'all' &&
                                             filters.priority === 'all' &&
-                                            filters.project_id === 'all' &&
-                                            filters.tag_id === 'all' &&
-                                            !filters.due_date_from &&
-                                            !filters.due_date_to &&
+                                            filters.project === 'all' &&
+                                            filters.tag === 'all' &&
+                                            !filters['due-date-from'] &&
+                                            !filters['due-date-to'] &&
                                             !filters.search
                                         }
                                         onClick={clearFilters}
@@ -514,21 +514,21 @@ export default function Tasks() {
                             <div className={'mt-4 text-sm text-muted-foreground'}>
                                 {(filters.status !== 'all' ||
                                     filters.priority !== 'all' ||
-                                    filters.project_id !== 'all' ||
-                                    filters.tag_id !== 'all' ||
-                                    filters.due_date_from ||
-                                    filters.due_date_to ||
+                                    filters.project !== 'all' ||
+                                    filters.tag !== 'all' ||
+                                    filters['due-date-from'] ||
+                                    filters['due-date-to'] ||
                                     filters.search) && (
                                     <CardDescription>
                                         {(() => {
                                             let description = ''
 
-                                            if (filters.due_date_from && filters.due_date_to) {
-                                                description = `Showing tasks from ${formatDateValue(filters.due_date_from)} to ${formatDateValue(filters.due_date_to)}`
-                                            } else if (filters.due_date_from) {
-                                                description = `Showing tasks from ${formatDateValue(filters.due_date_from)}`
-                                            } else if (filters.due_date_to) {
-                                                description = `Showing tasks until ${formatDateValue(filters.due_date_to)}`
+                                            if (filters['due-date-from'] && filters['due-date-to']) {
+                                                description = `Showing tasks from ${formatDateValue(filters['due-date-from'])} to ${formatDateValue(filters['due-date-to'])}`
+                                            } else if (filters['due-date-from']) {
+                                                description = `Showing tasks from ${formatDateValue(filters['due-date-from'])}`
+                                            } else if (filters['due-date-to']) {
+                                                description = `Showing tasks until ${formatDateValue(filters['due-date-to'])}`
                                             }
 
                                             if (filters.status !== 'all') {
@@ -547,8 +547,8 @@ export default function Tasks() {
                                                 }
                                             }
 
-                                            if (filters.project_id !== 'all') {
-                                                const project = projects.find((p) => p.id.toString() === filters.project_id)
+                                            if (filters.project !== 'all') {
+                                                const project = projects.find((p) => p.id.toString() === filters.project)
                                                 if (project) {
                                                     if (description) {
                                                         description += ` in project "${project.name}"`
@@ -558,8 +558,8 @@ export default function Tasks() {
                                                 }
                                             }
 
-                                            if (filters.tag_id !== 'all') {
-                                                const tag = projects.find((t) => t.id.toString() === filters.tag_id)
+                                            if (filters.tag !== 'all') {
+                                                const tag = projects.find((t) => t.id.toString() === filters.tag)
                                                 if (tag) {
                                                     if (description) {
                                                         description += ` with tag "${tag.name}"`
