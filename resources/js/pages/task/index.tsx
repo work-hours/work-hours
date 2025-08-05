@@ -48,7 +48,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function Tasks() {
-    const { auth, projects } = usePage<SharedData & { projects: { id: number; name: string }[] }>().props
+    const { auth, projects, tags } = usePage<
+        SharedData & {
+            projects: { id: number; name: string }[]
+            tags: { id: number; name: string; color: string }[]
+        }
+    >().props
     const [tasks, setTasks] = useState<Task[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
@@ -283,6 +288,7 @@ export default function Tasks() {
             status: queryParams.status || 'all',
             priority: queryParams.priority || 'all',
             project_id: queryParams.project_id || 'all',
+            tag_id: queryParams.tag_id || 'all',
             due_date_from: queryParams.due_date_from || '',
             due_date_to: queryParams.due_date_to || '',
             search: queryParams.search || '',
@@ -421,7 +427,10 @@ export default function Tasks() {
                                         onChange={(value) => handleFilterChange('tag_id', value)}
                                         options={[
                                             { id: 'all', name: 'Tags' },
-                                            // Add your tag options here
+                                            ...tags.map((tag) => ({
+                                                id: tag.id.toString(),
+                                                name: tag.name,
+                                            })),
                                         ]}
                                         placeholder="Tags"
                                         disabled={processing}

@@ -50,6 +50,11 @@ final class TaskController extends Controller
                 'name' => $project->name,
             ]);
 
+        $tags = Tag::all()->map(fn ($tag): array => [
+            'id' => $tag->id,
+            'name' => $tag->name,
+        ]);
+
         $filters = request()->only([
             'status',
             'priority',
@@ -61,6 +66,7 @@ final class TaskController extends Controller
 
         return Inertia::render('task/index', [
             'projects' => $projects,
+            'tags' => $tags,
             'filters' => $filters,
         ]);
     }
