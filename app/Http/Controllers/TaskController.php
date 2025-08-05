@@ -126,6 +126,11 @@ final class TaskController extends Controller
                 $this->gitHubAdapter->createGitHubIssue($task);
             }
 
+            // Attach tags if provided
+            if ($request->has('tags')) {
+                $this->attachTags($request->input('tags'), $task);
+            }
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -158,7 +163,7 @@ final class TaskController extends Controller
     public function edit(Task $task)
     {
         // Load relationships
-        $task->load(['project', 'assignees', 'meta']);
+        $task->load(['project', 'assignees', 'meta', 'tags']);
 
         // Check if a user has access to edit this task
         $isProjectOwner = $task->project->user_id === auth()->id();
@@ -181,6 +186,7 @@ final class TaskController extends Controller
             ]);
 
         $assignedUsers = $task->assignees->pluck('id')->toArray();
+        $taskTags = $task->tags->pluck('name')->toArray();
 
         $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
 
@@ -189,6 +195,7 @@ final class TaskController extends Controller
             'projects' => $projects,
             'potentialAssignees' => $potentialAssignees,
             'assignedUsers' => $assignedUsers,
+            'taskTags' => $taskTags,
             'isGithub' => $isGithub,
         ]);
     }
@@ -263,6 +270,11 @@ final class TaskController extends Controller
                 $this->gitHubAdapter->updateGitHubIssue($task);
             }
 
+            // Attach tags if provided
+            if ($request->has('tags')) {
+                $this->attachTags($request->input('tags'), $task);
+            }
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -335,5 +347,25 @@ final class TaskController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
             ]);
+    }
+
+    /**
+     * Attach tags to a task
+     */
+    private function attachTags(array $tags, Task $task): void
+    {
+        $tagIds = [];
+
+        foreach ($tags as $tagName) {
+            $tag = \App\Models\Tag::query()->firstOrCreate([
+                'name' => $tagName,
+                'user_id' => auth()->id(),
+            ]);
+
+            $tagIds[] = $tag->id;
+        }
+
+        // Sync the tags with the task
+        $task->tags()->sync($tagIds);
     }
 }

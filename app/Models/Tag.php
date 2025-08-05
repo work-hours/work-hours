@@ -33,6 +33,14 @@ final class Tag extends Model
     }
 
     /**
+     * Get the tasks associated with the tag.
+     */
+    public function tasks(): BelongsToMany
+    {
+        return $this->belongsToMany(Task::class);
+    }
+
+    /**
      * Get the user that owns the tag.
      */
     public function user()
