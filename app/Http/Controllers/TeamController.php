@@ -79,8 +79,8 @@ final class TeamController extends Controller
         return Inertia::render('team/index', [
             'teamMembers' => $teamMembers,
             'filters' => [
-                'start_date' => request('start_date', ''),
-                'end_date' => request('end_date', ''),
+                'start-date' => request('start-date', ''),
+                'end-date' => request('end-date', ''),
                 'search' => request('search', ''),
             ],
         ]);
