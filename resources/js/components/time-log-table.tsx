@@ -30,6 +30,7 @@ export type TimeLogEntry = {
     task_priority?: string
     task_due_date?: string | null
     task_description?: string | null
+    tags?: Array<{ id: number, name: string, color: string }>
 }
 
 type TimeLogTableProps = {
@@ -107,7 +108,22 @@ export default function TimeLogTable({
                             <TableCell className="font-medium">
                                 {formatTimeEntry(log.start_timestamp, log.end_timestamp)}
                                 <br />
-                                {showProject && <small>{log.project_name || 'No Project'}</small>}
+                                <div className="flex flex-wrap gap-1 items-center">
+                                    {showProject && <small className="mr-1">{log.project_name || 'No Project'}</small>}
+                                    {log.tags && log.tags.length > 0 && (
+                                        <div className="flex flex-wrap gap-1">
+                                            {log.tags.map((tag) => (
+                                                <span
+                                                    key={tag.id}
+                                                    className="inline-flex items-center rounded-full px-2 py-0.5 text-xs"
+                                                    style={{ backgroundColor: tag.color + '20', color: tag.color }}
+                                                >
+                                                    {tag.name}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </TableCell>
                             <TableCell>
                                 <span className="inline-flex items-center bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">

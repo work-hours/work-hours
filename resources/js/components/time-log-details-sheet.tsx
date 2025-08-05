@@ -33,6 +33,23 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                 <p className="text-base">{timeLog.project_name || 'No Project'}</p>
                             </div>
 
+                            {timeLog.tags && timeLog.tags.length > 0 && (
+                                <div>
+                                    <p className="text-sm font-bold text-muted-foreground">Tags</p>
+                                    <div className="mt-1 flex flex-wrap gap-1">
+                                        {timeLog.tags.map((tag) => (
+                                            <span
+                                                key={tag.id}
+                                                className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                                                style={{ backgroundColor: tag.color + '20', color: tag.color }}
+                                            >
+                                                {tag.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {timeLog.user_name && (
                                 <div>
                                     <p className="text-sm font-bold text-muted-foreground">Team Member</p>
