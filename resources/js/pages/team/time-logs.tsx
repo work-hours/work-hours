@@ -28,7 +28,7 @@ type TimeLog = {
 type Filters = {
     start_date: string
     end_date: string
-    project_id: string
+    project: string
     is_paid: string
     status: string
 }
@@ -115,7 +115,7 @@ export default function TeamMemberTimeLogs({
     const { data, setData, get, processing } = useForm<Filters>({
         start_date: filters.start_date || '',
         end_date: filters.end_date || '',
-        project_id: filters.project_id || '',
+        project: filters.project || '',
         is_paid: filters.is_paid || '',
         status: filters.status || '',
     })
@@ -201,7 +201,7 @@ export default function TeamMemberTimeLogs({
                                         : 'No time logs found for the selected period'}
                                 </CardDescription>
 
-                                {(data.start_date || data.end_date || data.project_id || data.is_paid || data.status) && (
+                                {(data.start_date || data.end_date || data.project || data.is_paid || data.status) && (
                                     <CardDescription className="mt-1">
                                         {(() => {
                                             let description = ''
@@ -216,8 +216,8 @@ export default function TeamMemberTimeLogs({
                                             }
 
                                             // Project description
-                                            if (data.project_id) {
-                                                const selectedProject = projects.find((project) => project.id.toString() === data.project_id)
+                                            if (data.project) {
+                                                const selectedProject = projects.find((project) => project.id.toString() === data.project)
                                                 const projectName = selectedProject ? selectedProject.name : ''
 
                                                 if (description) {
@@ -312,13 +312,13 @@ export default function TeamMemberTimeLogs({
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="project_id" className="text-xs font-medium">
+                                    <Label htmlFor="project" className="text-xs font-medium">
                                         Project
                                     </Label>
                                     <SearchableSelect
-                                        id="project_id"
-                                        value={data.project_id}
-                                        onChange={(value) => setData('project_id', value)}
+                                        id="project"
+                                        value={data.project}
+                                        onChange={(value) => setData('project', value)}
                                         options={[{ id: '', name: 'All Projects' }, ...projects]}
                                         placeholder="Select project"
                                         disabled={processing}
@@ -376,13 +376,13 @@ export default function TeamMemberTimeLogs({
                                         type="button"
                                         variant="outline"
                                         disabled={
-                                            processing || (!data.start_date && !data.end_date && !data.project_id && !data.is_paid && !data.status)
+                                            processing || (!data.start_date && !data.end_date && !data.project && !data.is_paid && !data.status)
                                         }
                                         onClick={() => {
                                             setData({
                                                 start_date: '',
                                                 end_date: '',
-                                                project_id: '',
+                                                project: '',
                                                 is_paid: '',
                                                 status: '',
                                             })

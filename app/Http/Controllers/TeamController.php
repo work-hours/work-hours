@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateTeamMemberRequest;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
+use App\Models\Tag;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
@@ -248,7 +249,7 @@ final class TeamController extends Controller
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseTimeLogQuery());
         $teamMembersList = TeamStore::teamMembers(userId: auth()->id());
-        $tags = \App\Models\Tag::query()->where('user_id', auth()->id())->get();
+        $tags = Tag::query()->where('user_id', auth()->id())->get();
 
         return Inertia::render('team/all-time-logs', [
             'teamMembers' => $teamMembersList,

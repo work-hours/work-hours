@@ -176,7 +176,7 @@ final class TimeLogStore
             $groupedTimeLogs[$projectId]['total_hours'] += $timeLog->duration;
         }
 
-        // Convert to indexed array
+        // Convert to an indexed array
         return array_values($groupedTimeLogs);
     }
 
@@ -405,10 +405,10 @@ final class TimeLogStore
     public static function filters(): array
     {
         return [
-            'start_date' => request('start_date', ''),
-            'end_date' => request('end_date', ''),
-            'project_id' => request('project_id', ''),
-            'is_paid' => request('is_paid', ''),
+            'start-date' => request('start-date', ''),
+            'end-date' => request('end-date', ''),
+            'project' => request('project', ''),
+            'is-paid' => request('is-paid', ''),
             'status' => request('status', ''),
             'tag' => request('tag', ''),
         ];
