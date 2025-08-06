@@ -107,9 +107,7 @@ export default function Tags({ tags }: TagsPageProps) {
             const response = await axios.put(`/tags/${editingTag.id}`, editData)
 
             // Update the tag in the list
-            setTagsList(
-                tagsList.map((tag) => (tag.id === editingTag.id ? { ...tag, name: response.data.name, color: response.data.color } : tag))
-            )
+            setTagsList(tagsList.map((tag) => (tag.id === editingTag.id ? { ...tag, name: response.data.name, color: response.data.color } : tag)))
 
             // Close the dialog
             setIsEditDialogOpen(false)
@@ -198,10 +196,7 @@ export default function Tags({ tags }: TagsPageProps) {
                                             <tr key={tag.id} className="border-b bg-white dark:border-gray-700 dark:bg-gray-900">
                                                 <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                                     <div className="flex items-center gap-2">
-                                                        <div
-                                                            className="h-4 w-4 rounded-full"
-                                                            style={{ backgroundColor: tag.color || '#6366f1' }}
-                                                        />
+                                                        <div className="h-4 w-4 rounded-full" style={{ backgroundColor: tag.color || '#6366f1' }} />
                                                         {tag.name}
                                                     </div>
                                                 </td>
