@@ -40,7 +40,7 @@ final class TimeLogController extends Controller
 {
     use ExportableTrait;
 
-    public function __construct(private GitHubAdapter $gitHubAdapter) {}
+    public function __construct(private readonly GitHubAdapter $gitHubAdapter) {}
 
     public function index()
     {
