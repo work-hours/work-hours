@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Adapters\GitHubAdapter;
 use App\Http\Requests\GitRepoToProjectRequest;
 use App\Models\Project;
+use App\Models\Tag;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -168,6 +169,36 @@ final class GitHubRepositoryController extends Controller
                             ],
                         ]);
 
+                        // Update tags based on GitHub issue labels
+                        if (! empty($issue['labels']) && is_array($issue['labels'])) {
+                            $tagIds = [];
+
+                            foreach ($issue['labels'] as $label) {
+                                // Skip status and priority labels as they're already mapped
+                                if ($label['name'] === $status || $label['name'] === $priority) {
+                                    continue;
+                                }
+
+                                // Find or create tag
+                                $tag = Tag::query()->firstOrCreate(
+                                    [
+                                        'name' => $label['name'],
+                                        'user_id' => $project->user_id,
+                                    ],
+                                    [
+                                        'color' => $label['color'] ? '#' . $label['color'] : Tag::generateRandomColor(),
+                                    ]
+                                );
+
+                                $tagIds[] = $tag->id;
+                            }
+
+                            // Sync tags with the task (this will add new ones and remove old ones)
+                            if (! empty($tagIds)) {
+                                $existingTask->tags()->sync($tagIds);
+                            }
+                        }
+
                         $updatedCount++;
                     } else {
                         // Create a new task for this issue
@@ -200,6 +231,36 @@ final class GitHubRepositoryController extends Controller
                                 ] : null,
                             ],
                         ]);
+
+                        // Create and attach tags based on GitHub issue labels
+                        if (! empty($issue['labels']) && is_array($issue['labels'])) {
+                            $tagIds = [];
+
+                            foreach ($issue['labels'] as $label) {
+                                // Skip status and priority labels as they're already mapped
+                                if ($label['name'] === $status || $label['name'] === $priority) {
+                                    continue;
+                                }
+
+                                // Find or create tag
+                                $tag = Tag::firstOrCreate(
+                                    [
+                                        'name' => $label['name'],
+                                        'user_id' => $project->user_id,
+                                    ],
+                                    [
+                                        'color' => $label['color'] ? '#' . $label['color'] : Tag::generateRandomColor(),
+                                    ]
+                                );
+
+                                $tagIds[] = $tag->id;
+                            }
+
+                            // Attach tags to the task if any were created
+                            if (! empty($tagIds)) {
+                                $task->tags()->attach($tagIds);
+                            }
+                        }
 
                         $newCount++;
                     }
@@ -387,6 +448,36 @@ final class GitHubRepositoryController extends Controller
                         ] : null,
                     ],
                 ]);
+
+                // Create and attach tags based on GitHub issue labels
+                if (! empty($issue['labels']) && is_array($issue['labels'])) {
+                    $tagIds = [];
+
+                    foreach ($issue['labels'] as $label) {
+                        // Skip status and priority labels as they're already mapped
+                        if ($label['name'] === $status || $label['name'] === $priority) {
+                            continue;
+                        }
+
+                        // Find or create tag
+                        $tag = Tag::query()->firstOrCreate(
+                            [
+                                'name' => $label['name'],
+                                'user_id' => $project->user_id,
+                            ],
+                            [
+                                'color' => $label['color'] ? '#' . $label['color'] : Tag::generateRandomColor(),
+                            ]
+                        );
+
+                        $tagIds[] = $tag->id;
+                    }
+
+                    // Attach tags to the task if any were created
+                    if (! empty($tagIds)) {
+                        $task->tags()->attach($tagIds);
+                    }
+                }
 
                 Log::info("Created task from GitHub issue #{$issue['number']} for project {$project->name}");
             } catch (Exception $e) {
