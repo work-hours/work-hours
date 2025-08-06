@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tags', function (Blueprint $table) {
-            $table->string('color')->nullable();
+            $table->string('color')->after('user_id')->nullable();
         });
     }
 
