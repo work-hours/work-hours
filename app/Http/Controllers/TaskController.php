@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TaskStore;
 use App\Models\Project;
+use App\Models\Tag;
 use App\Models\Task;
 use App\Models\User;
 use App\Notifications\TaskAssigned;
@@ -49,17 +50,24 @@ final class TaskController extends Controller
                 'name' => $project->name,
             ]);
 
+        $tags = Tag::all()->map(fn ($tag): array => [
+            'id' => $tag->id,
+            'name' => $tag->name,
+        ]);
+
         $filters = request()->only([
             'status',
             'priority',
-            'project_id',
-            'due_date_from',
-            'due_date_to',
+            'project',
+            'tag',
+            'due-date-from',
+            'due-date-to',
             'search',
         ]);
 
         return Inertia::render('task/index', [
             'projects' => $projects,
+            'tags' => $tags,
             'filters' => $filters,
         ]);
     }
@@ -126,6 +134,11 @@ final class TaskController extends Controller
                 $this->gitHubAdapter->createGitHubIssue($task);
             }
 
+            // Attach tags if provided
+            if ($request->has('tags')) {
+                $this->attachTags($request->input('tags'), $task);
+            }
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -158,7 +171,7 @@ final class TaskController extends Controller
     public function edit(Task $task)
     {
         // Load relationships
-        $task->load(['project', 'assignees', 'meta']);
+        $task->load(['project', 'assignees', 'meta', 'tags']);
 
         // Check if a user has access to edit this task
         $isProjectOwner = $task->project->user_id === auth()->id();
@@ -181,6 +194,7 @@ final class TaskController extends Controller
             ]);
 
         $assignedUsers = $task->assignees->pluck('id')->toArray();
+        $taskTags = $task->tags->pluck('name')->toArray();
 
         $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
 
@@ -189,6 +203,7 @@ final class TaskController extends Controller
             'projects' => $projects,
             'potentialAssignees' => $potentialAssignees,
             'assignedUsers' => $assignedUsers,
+            'taskTags' => $taskTags,
             'isGithub' => $isGithub,
         ]);
     }
@@ -263,6 +278,11 @@ final class TaskController extends Controller
                 $this->gitHubAdapter->updateGitHubIssue($task);
             }
 
+            // Attach tags if provided
+            if ($request->has('tags')) {
+                $this->attachTags($request->input('tags'), $task);
+            }
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -335,5 +355,42 @@ final class TaskController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
             ]);
+    }
+
+    /**
+     * Get the count of pending tasks for the current user
+     */
+    #[Action(method: 'get', name: 'tasks.count', middleware: ['auth', 'verified'])]
+    public function count()
+    {
+        $pendingTasksCount = Task::query()->where('status', 'pending')
+            ->whereHas('assignees', function ($query): void {
+                $query->where('user_id', auth()->id());
+            })
+            ->count();
+
+        return response()->json([
+            'count' => $pendingTasksCount,
+        ]);
+    }
+
+    /**
+     * Attach tags to a task
+     */
+    private function attachTags(array $tags, Task $task): void
+    {
+        $tagIds = [];
+
+        foreach ($tags as $tagName) {
+            $tag = Tag::query()->firstOrCreate([
+                'name' => $tagName,
+                'user_id' => auth()->id(),
+            ]);
+
+            $tagIds[] = $tag->id;
+        }
+
+        // Sync the tags with the task
+        $task->tags()->sync($tagIds);
     }
 }

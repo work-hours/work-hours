@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem, type SharedData } from '@/types'
 import { count } from '@actions/ApprovalController'
+import { count as taskCount } from '@actions/TaskController'
 import { Link, usePage } from '@inertiajs/react'
 import {
     Building,
@@ -58,6 +59,11 @@ const mainNavItems: NavItem[] = [
         icon: TimerIcon,
     },
     {
+        title: 'Tags',
+        href: '/tags',
+        icon: FileText,
+    },
+    {
         title: 'Invoices',
         href: '/invoice',
         icon: FileText,
@@ -93,6 +99,7 @@ const footerNavItems: NavItem[] = [
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     const { isGitHubIntegrated, auth } = usePage<SharedData>().props
     const [approvalCount, setApprovalCount] = useState(0)
+    const [pendingTaskCount, setPendingTaskCount] = useState(0)
 
     // Fetch approval count when component mounts
     useEffect(() => {
@@ -109,6 +116,26 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
         // Set up an interval to refresh the count every minute
         const intervalId = setInterval(fetchApprovalCount, 60000)
+
+        // Cleanup interval on component unmount
+        return () => clearInterval(intervalId)
+    }, [])
+
+    // Fetch pending task count when component mounts
+    useEffect(() => {
+        const fetchPendingTaskCount = async () => {
+            try {
+                const response = await taskCount.data({})
+                setPendingTaskCount(response.count)
+            } catch (error) {
+                console.error('Failed to fetch pending task count', error)
+            }
+        }
+
+        fetchPendingTaskCount().then()
+
+        // Set up an interval to refresh the count every minute
+        const intervalId = setInterval(fetchPendingTaskCount, 60000)
 
         // Cleanup interval on component unmount
         return () => clearInterval(intervalId)
@@ -176,9 +203,17 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                                                 {item.href === '/approvals' && approvalCount > 0 && (
                                                     <Badge
                                                         variant="destructive"
-                                                        className="absolute top-0 right-0 flex h-4 min-w-4 translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
+                                                        className="absolute top-0 -right-24 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
                                                     >
                                                         {approvalCount > 99 ? '99+' : approvalCount}
+                                                    </Badge>
+                                                )}
+                                                {item.href === '/task' && pendingTaskCount > 0 && (
+                                                    <Badge
+                                                        variant="destructive"
+                                                        className="absolute top-0 -right-16 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
+                                                    >
+                                                        {pendingTaskCount > 99 ? '99+' : pendingTaskCount}
                                                     </Badge>
                                                 )}
                                             </div>
@@ -195,6 +230,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                                                 <TooltipContent side="right" className="shadow-lg">
                                                     {item.title}
                                                     {item.href === '/approvals' && approvalCount > 0 && ` (${approvalCount})`}
+                                                    {item.href === '/task' && pendingTaskCount > 0 && ` (${pendingTaskCount})`}
                                                 </TooltipContent>
                                             </Tooltip>
                                         )}
