@@ -245,7 +245,6 @@ final class TeamController extends Controller
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    #[Action(method: 'get', name: 'team.all-time-logs', middleware: ['auth', 'verified'])]
     public function allTimeLogs()
     {
         $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseTimeLogQuery());
