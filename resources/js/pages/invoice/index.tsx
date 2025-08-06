@@ -23,7 +23,7 @@ import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils
 import { type BreadcrumbItem } from '@/types'
 import { invoices as _invoices } from '@actions/InvoiceController'
 import { Head, Link, router, usePage } from '@inertiajs/react'
-import { Calendar, CalendarRange, Download, Edit, FileText, Loader2, Mail, Plus, Search, X } from 'lucide-react'
+import { Calendar, CalendarRange, Download, Edit, FileText, Loader2, Mail, Plus, Search, TimerReset } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -60,10 +60,10 @@ type Invoice = {
 
 type InvoiceFilters = {
     search: string
-    client_id: string
+    client: string
     status: string
-    created_date_from: string | Date | null
-    created_date_to: string | Date | null
+    'created-date-from': string | Date | null
+    'created-date-to': string | Date | null
 }
 
 type Props = {
@@ -89,10 +89,10 @@ export default function Invoices() {
     // Filter states
     const [filters, setFilters] = useState<InvoiceFilters>({
         search: pageFilters?.search || '',
-        client_id: pageFilters?.client_id || 'all',
+        client: pageFilters?.client || 'all',
         status: pageFilters?.status || 'all',
-        created_date_from: pageFilters?.created_date_from || null,
-        created_date_to: pageFilters?.created_date_to || null,
+        'created-date-from': pageFilters?.['created-date-from'] || null,
+        'created-date-to': pageFilters?.['created-date-to'] || null,
     })
 
     const handleFilterChange = (key: keyof InvoiceFilters, value: string | Date | null): void => {
@@ -102,10 +102,10 @@ export default function Invoices() {
     const clearFilters = (): void => {
         setFilters({
             search: '',
-            client_id: 'all',
+            client: 'all',
             status: 'all',
-            created_date_from: null,
-            created_date_to: null,
+            'created-date-from': null,
+            'created-date-to': null,
         })
     }
 
@@ -119,8 +119,8 @@ export default function Invoices() {
 
             // Convert "all" values to empty strings for API
             if (apiFilters) {
-                if (apiFilters.client_id === 'all') {
-                    apiFilters.client_id = ''
+                if (apiFilters.client === 'all') {
+                    apiFilters.client = ''
                 }
 
                 if (apiFilters.status === 'all') {
@@ -156,26 +156,26 @@ export default function Invoices() {
         const formattedFilters = { ...filters }
 
         // Convert "all" values to empty strings for API
-        if (formattedFilters.client_id === 'all') {
-            formattedFilters.client_id = ''
+        if (formattedFilters.client === 'all') {
+            formattedFilters.client = ''
         }
 
         if (formattedFilters.status === 'all') {
             formattedFilters.status = ''
         }
 
-        if (formattedFilters.created_date_from instanceof Date) {
-            const year = formattedFilters.created_date_from.getFullYear()
-            const month = String(formattedFilters.created_date_from.getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters.created_date_from.getDate()).padStart(2, '0')
-            formattedFilters.created_date_from = `${year}-${month}-${day}`
+        if (formattedFilters['created-date-from'] instanceof Date) {
+            const year = formattedFilters['created-date-from'].getFullYear()
+            const month = String(formattedFilters['created-date-from'].getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters['created-date-from'].getDate()).padStart(2, '0')
+            formattedFilters['created-date-from'] = `${year}-${month}-${day}`
         }
 
-        if (formattedFilters.created_date_to instanceof Date) {
-            const year = formattedFilters.created_date_to.getFullYear()
-            const month = String(formattedFilters.created_date_to.getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters.created_date_to.getDate()).padStart(2, '0')
-            formattedFilters.created_date_to = `${year}-${month}-${day}`
+        if (formattedFilters['created-date-to'] instanceof Date) {
+            const year = formattedFilters['created-date-to'].getFullYear()
+            const month = String(formattedFilters['created-date-to'].getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters['created-date-to'].getDate()).padStart(2, '0')
+            formattedFilters['created-date-to'] = `${year}-${month}-${day}`
         }
 
         const filtersString = objectToQueryString(formattedFilters)
@@ -190,10 +190,10 @@ export default function Invoices() {
 
         const initialFilters: InvoiceFilters = {
             search: queryParams.search || '',
-            client_id: queryParams.client_id || 'all',
+            client: queryParams.client || 'all',
             status: queryParams.status || 'all',
-            created_date_from: queryParams.created_date_from || null,
-            created_date_to: queryParams.created_date_to || null,
+            'created-date-from': queryParams['created-date-from'] || null,
+            'created-date-to': queryParams['created-date-to'] || null,
         }
 
         setFilters(initialFilters)
@@ -325,177 +325,8 @@ export default function Invoices() {
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your invoices</p>
                 </section>
 
-                {/* Filters card */}
+                {/* Filters and Invoices card */}
                 <Card className="transition-all hover:shadow-md">
-                    <CardContent className="pt-6">
-                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
-                            <div className="grid gap-1">
-                                <Label htmlFor="search" className="text-xs font-medium">
-                                    Search
-                                </Label>
-                                <div className="relative">
-                                    <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                        id="search"
-                                        placeholder="Search invoice #"
-                                        className="pl-10"
-                                        value={filters.search}
-                                        onChange={(e) => handleFilterChange('search', e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <div className="grid gap-1">
-                                <Label htmlFor="client_id" className="text-xs font-medium">
-                                    Client
-                                </Label>
-                                <Select value={filters.client_id} onValueChange={(value) => handleFilterChange('client_id', value)}>
-                                    <SelectTrigger id="client_id">
-                                        <SelectValue placeholder="All Clients" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Clients</SelectItem>
-                                        {clients?.map((client) => (
-                                            <SelectItem key={client.id} value={client.id.toString()}>
-                                                {client.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="grid gap-1">
-                                <Label htmlFor="status" className="text-xs font-medium">
-                                    Status
-                                </Label>
-                                <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
-                                    <SelectTrigger id="status">
-                                        <SelectValue placeholder="All Statuses" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Statuses</SelectItem>
-                                        <SelectItem value="draft">Draft</SelectItem>
-                                        <SelectItem value="sent">Sent</SelectItem>
-                                        <SelectItem value="paid">Paid</SelectItem>
-                                        <SelectItem value="partially_paid">Partially Paid</SelectItem>
-                                        <SelectItem value="overdue">Overdue</SelectItem>
-                                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="grid gap-1">
-                                <Label htmlFor="created-date-from" className="text-xs font-medium">
-                                    Date From
-                                </Label>
-                                <DatePicker
-                                    selected={parseDate(filters.created_date_from)}
-                                    onChange={(date) => handleFilterChange('created_date_from', date)}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="created-date-from"
-                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select start date"
-                                        />
-                                    }
-                                />
-                            </div>
-                            <div className="grid gap-1">
-                                <Label htmlFor="created-date-to" className="text-xs font-medium">
-                                    Date To
-                                </Label>
-                                <DatePicker
-                                    selected={parseDate(filters.created_date_to)}
-                                    onChange={(date) => handleFilterChange('created_date_to', date)}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="created-date-to"
-                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select end date"
-                                        />
-                                    }
-                                />
-                            </div>
-                            <div className="grid gap-1">
-                                <Label className="text-xs font-medium opacity-0">Actions</Label>
-                                <div className="flex items-end gap-2">
-                                    <Button type="submit" className="flex h-9 items-center gap-1 px-3">
-                                        <Search className="h-3 w-3" />
-                                        <span>Filter</span>
-                                    </Button>
-
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        disabled={
-                                            !filters.search &&
-                                            !filters.client_id &&
-                                            !filters.status &&
-                                            !filters.created_date_from &&
-                                            !filters.created_date_to
-                                        }
-                                        onClick={clearFilters}
-                                        className="flex h-9 items-center gap-1 px-3"
-                                    >
-                                        <X className="h-3 w-3" />
-                                        <span>Clear</span>
-                                    </Button>
-                                </div>
-                            </div>
-                        </form>
-
-                        <div className={'mt-4 text-sm text-muted-foreground'}>
-                            {(filters.search || filters.client_id || filters.status || filters.created_date_from || filters.created_date_to) && (
-                                <CardDescription>
-                                    {(() => {
-                                        let description = ''
-
-                                        if (filters.created_date_from && filters.created_date_to) {
-                                            description = `Showing invoices from ${formatDateValue(filters.created_date_from)} to ${formatDateValue(filters.created_date_to)}`
-                                        } else if (filters.created_date_from) {
-                                            description = `Showing invoices from ${formatDateValue(filters.created_date_from)}`
-                                        } else if (filters.created_date_to) {
-                                            description = `Showing invoices until ${formatDateValue(filters.created_date_to)}`
-                                        }
-
-                                        if (filters.status) {
-                                            if (description) {
-                                                description += ` with status "${formatStatusLabel(filters.status)}"`
-                                            } else {
-                                                description = `Showing invoices with status "${formatStatusLabel(filters.status)}"`
-                                            }
-                                        }
-
-                                        if (filters.client_id) {
-                                            if (description) {
-                                                description += ` for selected client`
-                                            } else {
-                                                description = `Showing invoices for selected client`
-                                            }
-                                        }
-
-                                        if (filters.search) {
-                                            if (description) {
-                                                description += ` matching "${filters.search}"`
-                                            } else {
-                                                description = `Showing invoices matching "${filters.search}"`
-                                            }
-                                        }
-
-                                        return description
-                                    })()}
-                                </CardDescription>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                             <div>
@@ -508,10 +339,10 @@ export default function Invoices() {
                                 <ExportButton
                                     href={`${route('invoice.export')}?${objectToQueryString({
                                         search: filters.search || '',
-                                        client_id: filters.client_id || '',
+                                        client: filters.client || '',
                                         status: filters.status || '',
-                                        created_date_from: formatDateValue(filters.created_date_from),
-                                        created_date_to: formatDateValue(filters.created_date_to),
+                                        'created-date-from': formatDateValue(filters['created-date-from']),
+                                        'created-date-to': formatDateValue(filters['created-date-to']),
                                     })}`}
                                     label="Export"
                                 />
@@ -521,6 +352,190 @@ export default function Invoices() {
                                         <span>Create Invoice</span>
                                     </Button>
                                 </Link>
+                            </div>
+                        </div>
+
+                        {/* Filters form */}
+                        <div className="mt-4 border-t pt-4">
+                            <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
+                                {/* Search */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="search" className="text-xs font-medium">
+                                        Search
+                                    </Label>
+                                    <div className="relative">
+                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            id="search"
+                                            placeholder="Search invoice #"
+                                            className="pl-10"
+                                            value={filters.search}
+                                            onChange={(e) => handleFilterChange('search', e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Client Filter */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="client_id" className="text-xs font-medium">
+                                        Client
+                                    </Label>
+                                    <Select value={filters.client} onValueChange={(value) => handleFilterChange('client', value)}>
+                                        <SelectTrigger id="client_id">
+                                            <SelectValue placeholder="All Clients" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All Clients</SelectItem>
+                                            {clients?.map((client) => (
+                                                <SelectItem key={client.id} value={client.id.toString()}>
+                                                    {client.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                {/* Status Filter */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="status" className="text-xs font-medium">
+                                        Status
+                                    </Label>
+                                    <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
+                                        <SelectTrigger id="status">
+                                            <SelectValue placeholder="All Statuses" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All Statuses</SelectItem>
+                                            <SelectItem value="draft">Draft</SelectItem>
+                                            <SelectItem value="sent">Sent</SelectItem>
+                                            <SelectItem value="paid">Paid</SelectItem>
+                                            <SelectItem value="partially_paid">Partially Paid</SelectItem>
+                                            <SelectItem value="overdue">Overdue</SelectItem>
+                                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                {/* Date From */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="created-date-from" className="text-xs font-medium">
+                                        Date From
+                                    </Label>
+                                    <DatePicker
+                                        selected={parseDate(filters['created-date-from'])}
+                                        onChange={(date) => handleFilterChange('created-date-from', date)}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="created-date-from"
+                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select start date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                {/* Date To */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="created-date-to" className="text-xs font-medium">
+                                        Date To
+                                    </Label>
+                                    <DatePicker
+                                        selected={parseDate(filters['created-date-to'])}
+                                        onChange={(date) => handleFilterChange('created-date-to', date)}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="created-date-to"
+                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select end date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                {/* Filter Buttons */}
+                                <div className="flex items-end gap-2">
+                                    <Button type="submit" size="icon" className="h-9 w-9" title="Filter">
+                                        <Search className="h-4 w-4" />
+                                        <span className="sr-only">Filter</span>
+                                    </Button>
+
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="icon"
+                                        disabled={
+                                            !filters.search &&
+                                            filters.client === 'all' &&
+                                            filters.status === 'all' &&
+                                            !filters['created-date-from'] &&
+                                            !filters['created-date-to']
+                                        }
+                                        onClick={clearFilters}
+                                        className="h-9 w-9"
+                                        title="Clear Filters"
+                                    >
+                                        <TimerReset className="h-4 w-4" />
+                                        <span className="sr-only">Clear</span>
+                                    </Button>
+                                </div>
+                            </form>
+
+                            <div className={'mt-4 text-sm text-muted-foreground'}>
+                                {(filters.search ||
+                                    filters.client !== 'all' ||
+                                    filters.status !== 'all' ||
+                                    filters['created-date-from'] ||
+                                    filters['created-date-to']) && (
+                                    <CardDescription>
+                                        {(() => {
+                                            let description = ''
+
+                                            if (filters['created-date-from'] && filters['created-date-to']) {
+                                                description = `Showing invoices from ${formatDateValue(filters['created-date-from'])} to ${formatDateValue(
+                                                    filters['created-date-to'],
+                                                )}`
+                                            } else if (filters['created-date-from']) {
+                                                description = `Showing invoices from ${formatDateValue(filters['created-date-from'])}`
+                                            } else if (filters['created-date-to']) {
+                                                description = `Showing invoices until ${formatDateValue(filters['created-date-to'])}`
+                                            }
+
+                                            if (filters.status) {
+                                                if (description) {
+                                                    description += ` with status "${formatStatusLabel(filters.status)}"`
+                                                } else {
+                                                    description = `Showing invoices with status "${formatStatusLabel(filters.status)}"`
+                                                }
+                                            }
+
+                                            if (filters.client) {
+                                                if (description) {
+                                                    description += ` for selected client`
+                                                } else {
+                                                    description = `Showing invoices for selected client`
+                                                }
+                                            }
+
+                                            if (filters.search) {
+                                                if (description) {
+                                                    description += ` matching "${filters.search}"`
+                                                } else {
+                                                    description = `Showing invoices matching "${filters.search}"`
+                                                }
+                                            }
+
+                                            return description
+                                        })()}
+                                    </CardDescription>
+                                )}
                             </div>
                         </div>
                     </CardHeader>

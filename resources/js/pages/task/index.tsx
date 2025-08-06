@@ -34,7 +34,7 @@ import {
     Play,
     Plus,
     Search,
-    X,
+    TimerReset,
 } from 'lucide-react'
 import { JSX, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -48,7 +48,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function Tasks() {
-    const { auth, projects } = usePage<SharedData & { projects: { id: number; name: string }[] }>().props
+    const { auth, projects, tags } = usePage<
+        SharedData & {
+            projects: { id: number; name: string }[]
+            tags: { id: number; name: string; color: string }[]
+        }
+    >().props
     const [tasks, setTasks] = useState<Task[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
@@ -65,9 +70,10 @@ export default function Tasks() {
     const [filters, setFilters] = useState<TaskFilters>({
         status: 'all',
         priority: 'all',
-        project_id: 'all',
-        due_date_from: '',
-        due_date_to: '',
+        project: 'all',
+        tag: 'all',
+        'due-date-from': '',
+        'due-date-to': '',
         search: '',
     })
     const [processing, setProcessing] = useState(false)
@@ -164,11 +170,12 @@ export default function Tasks() {
 
     const clearFilters = (): void => {
         setFilters({
-            status: 'all',
+            status: 'incomplete',
             priority: 'all',
-            project_id: 'all',
-            due_date_from: '',
-            due_date_to: '',
+            project: 'all',
+            tag: 'all',
+            'due-date-from': '',
+            'due-date-to': '',
             search: '',
         })
     }
@@ -249,18 +256,18 @@ export default function Tasks() {
         e.preventDefault()
         const formattedFilters = { ...filters }
 
-        if (formattedFilters.due_date_from instanceof Date) {
-            const year = formattedFilters.due_date_from.getFullYear()
-            const month = String(formattedFilters.due_date_from.getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters.due_date_from.getDate()).padStart(2, '0')
-            formattedFilters.due_date_from = `${year}-${month}-${day}`
+        if (formattedFilters['due-date-from'] instanceof Date) {
+            const year = formattedFilters['due-date-from'].getFullYear()
+            const month = String(formattedFilters['due-date-from'].getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters['due-date-from'].getDate()).padStart(2, '0')
+            formattedFilters['due-date-from'] = `${year}-${month}-${day}`
         }
 
-        if (formattedFilters.due_date_to instanceof Date) {
-            const year = formattedFilters.due_date_to.getFullYear()
-            const month = String(formattedFilters.due_date_to.getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters.due_date_to.getDate()).padStart(2, '0')
-            formattedFilters.due_date_to = `${year}-${month}-${day}`
+        if (formattedFilters['due-date-to'] instanceof Date) {
+            const year = formattedFilters['due-date-to'].getFullYear()
+            const month = String(formattedFilters['due-date-to'].getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters['due-date-to'].getDate()).padStart(2, '0')
+            formattedFilters['due-date-to'] = `${year}-${month}-${day}`
         }
 
         const filtersString = objectToQueryString(formattedFilters)
@@ -278,11 +285,12 @@ export default function Tasks() {
         const queryParams = queryStringToObject()
 
         const initialFilters: TaskFilters = {
-            status: queryParams.status || 'all',
+            status: (queryParams.status as TaskFilters['status']) || 'incomplete',
             priority: queryParams.priority || 'all',
-            project_id: queryParams.project_id || 'all',
-            due_date_from: queryParams.due_date_from || '',
-            due_date_to: queryParams.due_date_to || '',
+            project: queryParams.project || 'all',
+            tag: queryParams.tag || 'all',
+            'due-date-from': queryParams['due-date-from'] || '',
+            'due-date-to': queryParams['due-date-to'] || '',
             search: queryParams.search || '',
         }
 
@@ -304,226 +312,9 @@ export default function Tasks() {
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your tasks</p>
                 </section>
 
-                {/* Filters card */}
+                {/* Time Logs Card with filters in header */}
                 <Card className="transition-all hover:shadow-md">
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-7">
-                            {/* Search */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="search" className="text-xs font-medium">
-                                    Search
-                                </Label>
-                                <div className="relative">
-                                    <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                        id="search"
-                                        placeholder="Search"
-                                        className="pl-10"
-                                        value={filters.search}
-                                        onChange={(e) => handleFilterChange('search', e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Status Filter */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="status" className="text-xs font-medium">
-                                    Status
-                                </Label>
-                                <SearchableSelect
-                                    id="status"
-                                    value={filters.status}
-                                    onChange={(value) => handleFilterChange('status', value)}
-                                    options={[
-                                        { id: 'all', name: 'All Statuses' },
-                                        { id: 'pending', name: 'Pending' },
-                                        { id: 'in_progress', name: 'In Progress' },
-                                        { id: 'completed', name: 'Completed' },
-                                    ]}
-                                    placeholder="All Statuses"
-                                    disabled={processing}
-                                    icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-
-                            {/* Priority Filter */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="priority" className="text-xs font-medium">
-                                    Priority
-                                </Label>
-                                <SearchableSelect
-                                    id="priority"
-                                    value={filters.priority}
-                                    onChange={(value) => handleFilterChange('priority', value)}
-                                    options={[
-                                        { id: 'all', name: 'All Priorities' },
-                                        { id: 'low', name: 'Low' },
-                                        { id: 'medium', name: 'Medium' },
-                                        { id: 'high', name: 'High' },
-                                    ]}
-                                    placeholder="All Priorities"
-                                    disabled={processing}
-                                    icon={<Flag className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-
-                            {/* Project Filter */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="project" className="text-xs font-medium">
-                                    Project
-                                </Label>
-                                <SearchableSelect
-                                    id="project"
-                                    value={filters.project_id}
-                                    onChange={(value) => handleFilterChange('project_id', value)}
-                                    options={[
-                                        { id: 'all', name: 'All Projects' },
-                                        ...projects.map((project) => ({
-                                            id: project.id.toString(),
-                                            name: project.name,
-                                        })),
-                                    ]}
-                                    placeholder="All Projects"
-                                    disabled={processing}
-                                    icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-
-                            {/* Due Date From */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="due-date-from" className="text-xs font-medium">
-                                    Due Date From
-                                </Label>
-                                <DatePicker
-                                    selected={parseDate(filters.due_date_from)}
-                                    onChange={(date) => handleFilterChange('due_date_from', date)}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="due-date-from"
-                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select start date"
-                                        />
-                                    }
-                                />
-                            </div>
-
-                            {/* Due Date To */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="due-date-to" className="text-xs font-medium">
-                                    Due Date To
-                                </Label>
-                                <DatePicker
-                                    selected={parseDate(filters.due_date_to)}
-                                    onChange={(date) => handleFilterChange('due_date_to', date)}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="due-date-to"
-                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select end date"
-                                        />
-                                    }
-                                />
-                            </div>
-
-                            <div className="flex items-end gap-2">
-                                <Button type="submit" className="flex h-9 items-center gap-1 px-3">
-                                    <Search className="h-3.5 w-3.5" />
-                                    <span>Filter</span>
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    disabled={
-                                        filters.status === 'all' &&
-                                        filters.priority === 'all' &&
-                                        filters.project_id === 'all' &&
-                                        !filters.due_date_from &&
-                                        !filters.due_date_to &&
-                                        !filters.search
-                                    }
-                                    onClick={clearFilters}
-                                    className="flex h-9 items-center gap-1 px-3"
-                                >
-                                    <X className="h-3.5 w-3.5" />
-                                    <span>Clear</span>
-                                </Button>
-                            </div>
-                        </form>
-
-                        <div className={'mt-4 text-sm text-muted-foreground'}>
-                            {(filters.status !== 'all' ||
-                                filters.priority !== 'all' ||
-                                filters.project_id !== 'all' ||
-                                filters.due_date_from ||
-                                filters.due_date_to ||
-                                filters.search) && (
-                                <CardDescription>
-                                    {(() => {
-                                        let description = ''
-
-                                        if (filters.due_date_from && filters.due_date_to) {
-                                            description = `Showing tasks from ${formatDateValue(filters.due_date_from)} to ${formatDateValue(filters.due_date_to)}`
-                                        } else if (filters.due_date_from) {
-                                            description = `Showing tasks from ${formatDateValue(filters.due_date_from)}`
-                                        } else if (filters.due_date_to) {
-                                            description = `Showing tasks until ${formatDateValue(filters.due_date_to)}`
-                                        }
-
-                                        if (filters.status !== 'all') {
-                                            if (description) {
-                                                description += ` with status "${filters.status.replace('_', ' ')}"`
-                                            } else {
-                                                description = `Showing tasks with status "${filters.status.replace('_', ' ')}"`
-                                            }
-                                        }
-
-                                        if (filters.priority !== 'all') {
-                                            if (description) {
-                                                description += ` and priority "${filters.priority}"`
-                                            } else {
-                                                description = `Showing tasks with priority "${filters.priority}"`
-                                            }
-                                        }
-
-                                        if (filters.project_id !== 'all') {
-                                            const project = projects.find((p) => p.id.toString() === filters.project_id)
-                                            if (project) {
-                                                if (description) {
-                                                    description += ` in project "${project.name}"`
-                                                } else {
-                                                    description = `Showing tasks in project "${project.name}"`
-                                                }
-                                            }
-                                        }
-
-                                        if (filters.search) {
-                                            if (description) {
-                                                description += ` matching "${filters.search}"`
-                                            } else {
-                                                description = `Showing tasks matching "${filters.search}"`
-                                            }
-                                        }
-
-                                        return description
-                                    })()}
-                                </CardDescription>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Tasks card */}
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Tasks</CardTitle>
@@ -539,6 +330,258 @@ export default function Tasks() {
                                         <span>Add Task</span>
                                     </Button>
                                 </Link>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 border-t pt-4">
+                            <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
+                                {/* Search */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="search" className="text-xs font-medium">
+                                        Search
+                                    </Label>
+                                    <div className="relative">
+                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            id="search"
+                                            placeholder="Search"
+                                            className="pl-10"
+                                            value={filters.search}
+                                            onChange={(e) => handleFilterChange('search', e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Status Filter */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="status" className="text-xs font-medium">
+                                        Status
+                                    </Label>
+                                    <SearchableSelect
+                                        id="status"
+                                        value={filters.status}
+                                        onChange={(value) => handleFilterChange('status', value)}
+                                        options={[
+                                            { id: 'all', name: 'Statuses' },
+                                            { id: 'incomplete', name: 'Incomplete' },
+                                            { id: 'pending', name: 'Pending' },
+                                            { id: 'in_progress', name: 'In Progress' },
+                                            { id: 'completed', name: 'Completed' },
+                                        ]}
+                                        placeholder="Statuses"
+                                        disabled={processing}
+                                        icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+
+                                {/* Priority Filter */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="priority" className="text-xs font-medium">
+                                        Priority
+                                    </Label>
+                                    <SearchableSelect
+                                        id="priority"
+                                        value={filters.priority}
+                                        onChange={(value) => handleFilterChange('priority', value)}
+                                        options={[
+                                            { id: 'all', name: 'Priorities' },
+                                            { id: 'low', name: 'Low' },
+                                            { id: 'medium', name: 'Medium' },
+                                            { id: 'high', name: 'High' },
+                                        ]}
+                                        placeholder="Priorities"
+                                        disabled={processing}
+                                        icon={<Flag className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+
+                                {/* Project Filter */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="project" className="text-xs font-medium">
+                                        Project
+                                    </Label>
+                                    <SearchableSelect
+                                        id="project"
+                                        value={filters.project}
+                                        onChange={(value) => handleFilterChange('project', value)}
+                                        options={[
+                                            { id: 'all', name: 'Projects' },
+                                            ...projects.map((project) => ({
+                                                id: project.id.toString(),
+                                                name: project.name,
+                                            })),
+                                        ]}
+                                        placeholder="Projects"
+                                        disabled={processing}
+                                        icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+
+                                {/* Tag Filter */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="tag" className="text-xs font-medium">
+                                        Tag
+                                    </Label>
+                                    <SearchableSelect
+                                        id="tag"
+                                        value={filters.tag}
+                                        onChange={(value) => handleFilterChange('tag', value)}
+                                        options={[
+                                            { id: 'all', name: 'Tags' },
+                                            ...tags.map((tag) => ({
+                                                id: tag.id.toString(),
+                                                name: tag.name,
+                                            })),
+                                        ]}
+                                        placeholder="Tags"
+                                        disabled={processing}
+                                        icon={<Flag className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+
+                                {/* Due Date From */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="due-date-from" className="text-xs font-medium">
+                                        Due Date From
+                                    </Label>
+                                    <DatePicker
+                                        selected={parseDate(filters['due-date-from'])}
+                                        onChange={(date) => handleFilterChange('due-date-from', date)}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="due-date-from"
+                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select start date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                {/* Due Date To */}
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="due-date-to" className="text-xs font-medium">
+                                        Due Date To
+                                    </Label>
+                                    <DatePicker
+                                        selected={parseDate(filters['due-date-to'])}
+                                        onChange={(date) => handleFilterChange('due-date-to', date)}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="due-date-to"
+                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select end date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                <div className="flex items-end gap-2">
+                                    <Button type="submit" size="icon" className="h-9 w-9" title="Filter">
+                                        <Search className="h-4 w-4" />
+                                        <span className="sr-only">Filter</span>
+                                    </Button>
+
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="icon"
+                                        disabled={
+                                            filters.status === 'all' &&
+                                            filters.priority === 'all' &&
+                                            filters.project === 'all' &&
+                                            filters.tag === 'all' &&
+                                            !filters['due-date-from'] &&
+                                            !filters['due-date-to'] &&
+                                            !filters.search
+                                        }
+                                        onClick={clearFilters}
+                                        className="h-9 w-9"
+                                        title="Clear Filters"
+                                    >
+                                        <TimerReset className="h-4 w-4" />
+                                        <span className="sr-only">Clear</span>
+                                    </Button>
+                                </div>
+                            </form>
+
+                            <div className={'mt-4 text-sm text-muted-foreground'}>
+                                {(filters.status !== 'all' ||
+                                    filters.priority !== 'all' ||
+                                    filters.project !== 'all' ||
+                                    filters.tag !== 'all' ||
+                                    filters['due-date-from'] ||
+                                    filters['due-date-to'] ||
+                                    filters.search) && (
+                                    <CardDescription>
+                                        {(() => {
+                                            let description = ''
+
+                                            if (filters['due-date-from'] && filters['due-date-to']) {
+                                                description = `Showing tasks from ${formatDateValue(filters['due-date-from'])} to ${formatDateValue(filters['due-date-to'])}`
+                                            } else if (filters['due-date-from']) {
+                                                description = `Showing tasks from ${formatDateValue(filters['due-date-from'])}`
+                                            } else if (filters['due-date-to']) {
+                                                description = `Showing tasks until ${formatDateValue(filters['due-date-to'])}`
+                                            }
+
+                                            if (filters.status !== 'all') {
+                                                if (description) {
+                                                    description += ` with status "${filters.status.replace('_', ' ')}"`
+                                                } else {
+                                                    description = `Showing tasks with status "${filters.status.replace('_', ' ')}"`
+                                                }
+                                            }
+
+                                            if (filters.priority !== 'all') {
+                                                if (description) {
+                                                    description += ` and priority "${filters.priority}"`
+                                                } else {
+                                                    description = `Showing tasks with priority "${filters.priority}"`
+                                                }
+                                            }
+
+                                            if (filters.project !== 'all') {
+                                                const project = projects.find((p) => p.id.toString() === filters.project)
+                                                if (project) {
+                                                    if (description) {
+                                                        description += ` in project "${project.name}"`
+                                                    } else {
+                                                        description = `Showing tasks in project "${project.name}"`
+                                                    }
+                                                }
+                                            }
+
+                                            if (filters.tag !== 'all') {
+                                                const tag = tags.find((t) => t.id.toString() === filters.tag)
+                                                if (tag) {
+                                                    if (description) {
+                                                        description += ` with tag "${tag.name}"`
+                                                    } else {
+                                                        description = `Showing tasks with tag "${tag.name}"`
+                                                    }
+                                                }
+                                            }
+
+                                            if (filters.search) {
+                                                if (description) {
+                                                    description += ` matching "${filters.search}"`
+                                                } else {
+                                                    description = `Showing tasks matching "${filters.search}"`
+                                                }
+                                            }
+
+                                            return description
+                                        })()}
+                                    </CardDescription>
+                                )}
                             </div>
                         </div>
                     </CardHeader>
@@ -581,7 +624,22 @@ export default function Tasks() {
                                                     <span>{task.title}</span>
                                                     {task.is_imported && <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />}
                                                 </div>
-                                                <small>{task.project.name}</small>
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <small>{task.project.name}</small>
+                                                    {task.tags && task.tags.length > 0 && (
+                                                        <div className="mt-1 flex flex-wrap gap-1">
+                                                            {task.tags.map((tag) => (
+                                                                <Badge
+                                                                    key={tag.id}
+                                                                    className="text-xs"
+                                                                    style={{ backgroundColor: tag.color, color: '#fff' }}
+                                                                >
+                                                                    {tag.name}
+                                                                </Badge>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </TableCell>
                                             <TableCell>{getStatusBadge(task, task.status)}</TableCell>
                                             <TableCell>{getPriorityBadge(task.priority)}</TableCell>

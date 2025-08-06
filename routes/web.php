@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ApprovalController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IntegrationController;
@@ -73,8 +74,13 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('client/{client}/invoices', [InvoiceController::class, 'clientInvoices'])->name('client.invoices');
 
     Route::get('approvals', [ApprovalController::class, 'index'])->name('approvals.index');
+
+    // Calendar routes
+    Route::get('calendar', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::get('calendar/detail/{id}', [CalendarController::class, 'detail'])->name('calendar.detail');
 });
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/github.php';
+require __DIR__ . '/tags.php';

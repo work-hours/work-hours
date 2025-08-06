@@ -35,8 +35,8 @@ type TeamMember = {
 }
 
 type Filters = {
-    start_date: string
-    end_date: string
+    'start-date': string
+    'end-date': string
     search: string
 }
 
@@ -47,27 +47,27 @@ type Props = {
 
 export default function Team({ teamMembers, filters }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
-        start_date: filters.start_date || '',
-        end_date: filters.end_date || '',
+        'start-date': filters['start-date'] || '',
+        'end-date': filters['end-date'] || '',
         search: filters.search || '',
     })
 
-    const startDate = data.start_date ? new Date(data.start_date) : null
-    const endDate = data.end_date ? new Date(data.end_date) : null
+    const startDate = data['start-date'] ? new Date(data['start-date']) : null
+    const endDate = data['end-date'] ? new Date(data['end-date']) : null
 
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
-            setData('start_date', date.toISOString().split('T')[0])
+            setData('start-date', date.toISOString().split('T')[0])
         } else {
-            setData('start_date', '')
+            setData('start-date', '')
         }
     }
 
     const handleEndDateChange = (date: Date | null) => {
         if (date) {
-            setData('end_date', date.toISOString().split('T')[0])
+            setData('end-date', date.toISOString().split('T')[0])
         } else {
-            setData('end_date', '')
+            setData('end-date', '')
         }
     }
 
@@ -99,133 +99,40 @@ export default function Team({ teamMembers, filters }: Props) {
                 </section>
 
                 <Card className="transition-all hover:shadow-md">
-                    <CardContent>
-                        <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4">
-                            <div className="grid gap-1">
-                                <Label htmlFor="search" className="text-xs font-medium">
-                                    Search
-                                </Label>
-                                <div className="relative">
-                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                        <Search className="h-4 w-4 text-muted-foreground" />
-                                    </div>
-                                    <Input
-                                        id="search"
-                                        type="text"
-                                        value={data.search}
-                                        onChange={(e) => setData('search', e.target.value)}
-                                        placeholder="Search by name or email"
-                                        className="pl-10"
-                                    />
-                                </div>
-                            </div>
-                            <div className="grid gap-1">
-                                <Label htmlFor="start_date" className="text-xs font-medium">
-                                    Start Date
-                                </Label>
-                                <DatePicker
-                                    selected={startDate}
-                                    onChange={handleStartDateChange}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="start_date"
-                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select start date"
-                                        />
-                                    }
-                                />
-                            </div>
-                            <div className="grid gap-1">
-                                <Label htmlFor="end_date" className="text-xs font-medium">
-                                    End Date
-                                </Label>
-                                <DatePicker
-                                    selected={endDate}
-                                    onChange={handleEndDateChange}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="end_date"
-                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select end date"
-                                        />
-                                    }
-                                />
-                            </div>
-                            <div className="flex items-end gap-2">
-                                <Button type="submit" disabled={processing} className="flex h-9 items-center gap-1 px-3">
-                                    <Search className="h-3.5 w-3.5" />
-                                    <span>Filter</span>
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    disabled={processing || (!data.start_date && !data.end_date && !data.search)}
-                                    onClick={() => {
-                                        setData({
-                                            start_date: '',
-                                            end_date: '',
-                                            search: '',
-                                        })
-                                        get(route('team.index'), {
-                                            preserveState: true,
-                                        })
-                                    }}
-                                    className="flex h-9 items-center gap-1 px-3"
-                                >
-                                    <TimerReset className="h-3.5 w-3.5" />
-                                    <span>Clear</span>
-                                </Button>
-                            </div>
-                        </form>
-
-                        <div className={'mt-4 text-sm text-muted-foreground'}>
-                            {(data.start_date || data.end_date || data.search) && (
-                                <CardDescription>
-                                    {(() => {
-                                        let description = ''
-
-                                        if (data.start_date && data.end_date) {
-                                            description = `Showing team data from ${data.start_date} to ${data.end_date}`
-                                        } else if (data.start_date) {
-                                            description = `Showing team data from ${data.start_date}`
-                                        } else if (data.end_date) {
-                                            description = `Showing team data until ${data.end_date}`
-                                        }
-
-                                        if (data.search) {
-                                            if (description) {
-                                                description += ` matching "${data.search}"`
-                                            } else {
-                                                description = `Showing team members matching "${data.search}"`
-                                            }
-                                        }
-
-                                        return description
-                                    })()}
-                                </CardDescription>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Team Members</CardTitle>
                                 <CardDescription>You have {teamMembers.length} team members</CardDescription>
+
+                                {(data['start-date'] || data['end-date'] || data.search) && (
+                                    <CardDescription className="mt-1">
+                                        {(() => {
+                                            let description = ''
+
+                                            if (data['start-date'] && data['end-date']) {
+                                                description = `Showing team data from ${data['start-date']} to ${data['end-date']}`
+                                            } else if (data['start-date']) {
+                                                description = `Showing team data from ${data['start-date']}`
+                                            } else if (data['end-date']) {
+                                                description = `Showing team data until ${data['end-date']}`
+                                            }
+
+                                            if (data.search) {
+                                                if (description) {
+                                                    description += ` matching "${data.search}"`
+                                                } else {
+                                                    description = `Showing team members matching "${data.search}"`
+                                                }
+                                            }
+
+                                            return description
+                                        })()}
+                                    </CardDescription>
+                                )}
                             </div>
                             <div className="flex items-center gap-2">
-                                <ExportButton href={route('team.export') + window.location.search} />
+                                <ExportButton href={route('team.export') + window.location.search} label="Export" />
                                 <Link href={route('team.create')}>
                                     <Button className="flex items-center gap-2">
                                         <UserPlus className="h-4 w-4" />
@@ -233,6 +140,99 @@ export default function Team({ teamMembers, filters }: Props) {
                                     </Button>
                                 </Link>
                             </div>
+                        </div>
+
+                        <div className="mt-4 border-t pt-4">
+                            <form onSubmit={submit} className="flex w-full flex-row gap-4">
+                                <div className="flex w-full flex-col gap-1">
+                                    <Label htmlFor="search" className="text-xs font-medium">
+                                        Search
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="search"
+                                            type="text"
+                                            value={data.search}
+                                            onChange={(e) => setData('search', e.target.value)}
+                                            placeholder="Search by name or email"
+                                            className="pl-9"
+                                        />
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <Search className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex w-full flex-col gap-1">
+                                    <Label htmlFor="start-date" className="text-xs font-medium">
+                                        Start Date
+                                    </Label>
+                                    <DatePicker
+                                        selected={startDate}
+                                        onChange={handleStartDateChange}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="start-date"
+                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select start date"
+                                            />
+                                        }
+                                    />
+                                </div>
+                                <div className="flex w-full flex-col gap-1">
+                                    <Label htmlFor="end-date" className="text-xs font-medium">
+                                        End Date
+                                    </Label>
+                                    <DatePicker
+                                        selected={endDate}
+                                        onChange={handleEndDateChange}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="end-date"
+                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select end date"
+                                            />
+                                        }
+                                    />
+                                </div>
+                                <div className="flex items-end gap-2">
+                                    <Button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        title="Apply filters"
+                                    >
+                                        <Search className="h-4 w-4" />
+                                    </Button>
+
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        disabled={processing || (!data['start-date'] && !data['end-date'] && !data.search)}
+                                        onClick={() => {
+                                            setData({
+                                                'start-date': '',
+                                                'end-date': '',
+                                                search: '',
+                                            })
+                                            get(route('team.index'), {
+                                                preserveState: true,
+                                            })
+                                        }}
+                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        title="Clear filters"
+                                    >
+                                        <TimerReset className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </form>
                         </div>
                     </CardHeader>
                     <CardContent>

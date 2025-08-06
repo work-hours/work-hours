@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Stores;
 
 use App\Enums\InvoiceStatus;
-use App\Http\QueryFilters\Invoice\ClientIdFilter;
+use App\Http\QueryFilters\Invoice\ClientFilter;
 use App\Http\QueryFilters\Invoice\CreatedDateFromFilter;
 use App\Http\QueryFilters\Invoice\CreatedDateToFilter;
 use App\Http\QueryFilters\Invoice\SearchFilter;
@@ -182,7 +182,7 @@ final class InvoiceStore
             ->send($query)
             ->through([
                 SearchFilter::class,
-                ClientIdFilter::class,
+                ClientFilter::class,
                 StatusFilter::class,
                 CreatedDateFromFilter::class,
                 CreatedDateToFilter::class,
@@ -230,7 +230,7 @@ final class InvoiceStore
     }
 
     /**
-     * Update invoice total amount with discount
+     * Update invoice total amount with discount and tax
      */
     private static function updateInvoiceTotal(Invoice $invoice): void
     {
@@ -254,13 +254,34 @@ final class InvoiceStore
             }
         }
 
-        // Calculate final total after discount
-        $total = $subtotal - $discountAmount;
+        // Calculate subtotal after discount
+        $afterDiscountAmount = $subtotal - $discountAmount;
 
-        // Update invoice with new total and discount amount
+        // Calculate tax amount based on tax type and rate
+        $taxAmount = 0;
+        if ($invoice->tax_type && $invoice->tax_rate > 0) {
+            if ($invoice->tax_type === 'percentage') {
+                // Calculate percentage tax on amount after discount
+                $taxAmount = ($afterDiscountAmount * $invoice->tax_rate) / 100;
+            } elseif ($invoice->tax_type === 'fixed') {
+                // Apply fixed tax
+                $taxAmount = $invoice->tax_rate;
+
+                // Ensure tax doesn't exceed the amount after discount
+                if ($taxAmount > $afterDiscountAmount) {
+                    $taxAmount = $afterDiscountAmount;
+                }
+            }
+        }
+
+        // Calculate final total after discount and tax
+        $total = $afterDiscountAmount + $taxAmount;
+
+        // Update invoice with new total, discount amount, and tax amount
         $invoice->update([
             'total_amount' => $total,
             'discount_amount' => $discountAmount,
+            'tax_amount' => $taxAmount,
         ]);
     }
 

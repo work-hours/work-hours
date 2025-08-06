@@ -1,16 +1,18 @@
 import { type SharedData } from '@/types'
 import { Head, useForm, usePage } from '@inertiajs/react'
-import { ArrowLeft, Calendar, FileText, LoaderCircle, Plus, Save, Trash2, User } from 'lucide-react'
+import { ArrowLeft, Calendar, FileText, Hash, LoaderCircle, Plus, Save, Trash2, User } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
 import MasterLayout from '@/layouts/master-layout'
@@ -27,6 +29,8 @@ type InvoiceForm = {
     notes: string
     discount_type: string | null
     discount_value: string
+    tax_type: string | null
+    tax_rate: string
     currency: string
     items: InvoiceItemForm[]
 }
@@ -80,6 +84,7 @@ export default function CreateInvoice() {
     const [clients, setClients] = useState<Client[]>([])
     const [timeLogs, setTimeLogs] = useState<ProjectTimeLogGroup[]>([])
     const [loadingClients, setLoadingClients] = useState(true)
+    const [activeSection, setActiveSection] = useState('details')
 
     const generateInvoiceNumber = (): string => {
         return `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`
@@ -94,6 +99,8 @@ export default function CreateInvoice() {
         notes: '',
         discount_type: null,
         discount_value: '0',
+        tax_type: null,
+        tax_rate: '0',
         currency: auth.user.currency ? auth.user.currency.toString() : 'USD',
         items: [
             {
@@ -187,12 +194,38 @@ export default function CreateInvoice() {
         return 0
     }
 
-    // Calculate total amount after discount
-    const calculateTotal = (): number => {
+    // Calculate tax amount based on type and rate
+    const calculateTax = (): number => {
         const subtotal = calculateSubtotal()
         const discount = calculateDiscount()
 
-        return subtotal - discount
+        const taxableAmount = subtotal - discount
+
+        if (!data.tax_type || parseFloat(data.tax_rate) <= 0) {
+            return 0
+        }
+
+        if (data.tax_type === 'percentage') {
+            // Calculate percentage tax
+            return (taxableAmount * parseFloat(data.tax_rate)) / 100
+        } else if (data.tax_type === 'fixed') {
+            // Apply fixed tax
+            const taxAmount = parseFloat(data.tax_rate)
+
+            // Ensure tax doesn't exceed subtotal
+            return taxAmount > taxableAmount ? taxableAmount : taxAmount
+        }
+
+        return 0
+    }
+
+    // Calculate total amount after discount and tax
+    const calculateTotal = (): number => {
+        const subtotal = calculateSubtotal()
+        const discount = calculateDiscount()
+        const tax = calculateTax()
+
+        return subtotal - discount + tax
     }
 
     // Add new item
@@ -331,150 +364,175 @@ export default function CreateInvoice() {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Invoice" />
             <div className="mx-auto flex flex-col gap-6 p-3">
-                {/* Header section */}
-                <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Create Invoice</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new invoice for a client</p>
+                {/* Header section with improved styling */}
+                <section className="mb-2 flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Create Invoice</h1>
+                        <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new invoice for a client</p>
+                    </div>
+                    <div className="flex gap-3">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => window.history.back()}
+                            disabled={processing}
+                            className="flex items-center gap-2"
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                            Back
+                        </Button>
+                    </div>
                 </section>
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Invoice Details</CardTitle>
-                        <CardDescription>Enter the information for the new invoice</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form className="flex flex-col gap-6" onSubmit={submit}>
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="client_id" className="text-sm font-medium">
-                                        Client
-                                    </Label>
-                                    <div className="relative">
-                                        <Select
-                                            value={data.client_id}
-                                            onValueChange={(value) => setData('client_id', value)}
-                                            disabled={processing || loadingClients}
-                                        >
-                                            <SelectTrigger id="client_id" className="w-full">
-                                                <div className="flex items-center gap-2">
-                                                    <User className="h-4 w-4 text-muted-foreground" />
-                                                    <SelectValue placeholder={loadingClients ? 'Loading clients...' : 'Select a client'} />
-                                                </div>
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {clients.map((client) => (
-                                                    <SelectItem key={client.id} value={client.id.toString()}>
-                                                        {client.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <InputError message={errors.client_id} className="mt-1" />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="invoice_number" className="text-sm font-medium">
-                                        Invoice Number
-                                    </Label>
-                                    <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <FileText className="h-4 w-4 text-muted-foreground" />
+                <form className="flex flex-col gap-6" onSubmit={submit}>
+                    {/* Invoice Details Section */}
+                    <h2 className="mt-2 flex items-center gap-2 border-b pb-2 text-xl font-semibold">
+                        <FileText className="h-5 w-5" />
+                        Invoice Details
+                    </h2>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        {/* Basic Info Card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-lg">Basic Information</CardTitle>
+                                <CardDescription>Enter the core details for your invoice</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <div>
+                                            <Label htmlFor="client_id" className="flex items-center gap-1 text-sm font-medium">
+                                                Client <span className="text-destructive">*</span>
+                                            </Label>
+                                            <div className="relative">
+                                                <Select
+                                                    value={data.client_id}
+                                                    onValueChange={(value) => setData('client_id', value)}
+                                                    disabled={processing || loadingClients}
+                                                >
+                                                    <SelectTrigger id="client_id" className="w-full">
+                                                        <div className="flex items-center gap-2">
+                                                            <User className="h-4 w-4 text-muted-foreground" />
+                                                            <SelectValue placeholder={loadingClients ? 'Loading clients...' : 'Select a client'} />
+                                                        </div>
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {clients.map((client) => (
+                                                            <SelectItem key={client.id} value={client.id.toString()}>
+                                                                {client.name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <InputError message={errors.client_id} className="mt-1" />
                                         </div>
-                                        <Input
-                                            id="invoice_number"
-                                            type="text"
-                                            required
-                                            value={data.invoice_number}
-                                            onChange={(e) => setData('invoice_number', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="Invoice number"
-                                            className="pl-10"
-                                        />
-                                    </div>
-                                    <InputError message={errors.invoice_number} className="mt-1" />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="issue_date" className="text-sm font-medium">
-                                        Issue Date
-                                    </Label>
-                                    <div className="relative">
-                                        <DatePicker
-                                            selected={data.issue_date}
-                                            onChange={(date) => setData('issue_date', date)}
-                                            dateFormat="yyyy-MM-dd"
-                                            disabled={processing}
-                                            customInput={
-                                                <div className="relative">
-                                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                                                    </div>
-                                                    <Input
-                                                        id="issue_date"
-                                                        placeholder="Select issue date"
-                                                        className="pl-10"
-                                                        value={data.issue_date ? data.issue_date.toISOString().split('T')[0] : ''}
-                                                        readOnly
-                                                    />
+                                        <div>
+                                            <Label htmlFor="invoice_number" className="flex items-center gap-1 text-sm font-medium">
+                                                Invoice Number <span className="text-destructive">*</span>
+                                            </Label>
+                                            <div className="relative">
+                                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                    <Hash className="h-4 w-4 text-muted-foreground" />
                                                 </div>
-                                            }
-                                        />
+                                                <Input
+                                                    id="invoice_number"
+                                                    type="text"
+                                                    required
+                                                    value={data.invoice_number}
+                                                    onChange={(e) => setData('invoice_number', e.target.value)}
+                                                    disabled={processing}
+                                                    placeholder="Invoice number"
+                                                    className="pl-10"
+                                                />
+                                            </div>
+                                            <InputError message={errors.invoice_number} className="mt-1" />
+                                        </div>
                                     </div>
-                                    <InputError message={errors.issue_date as string} className="mt-1" />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="due_date" className="text-sm font-medium">
-                                        Due Date
-                                    </Label>
-                                    <div className="relative">
-                                        <DatePicker
-                                            selected={data.due_date}
-                                            onChange={(date) => setData('due_date', date)}
-                                            dateFormat="yyyy-MM-dd"
-                                            disabled={processing}
-                                            customInput={
-                                                <div className="relative">
-                                                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                                                    </div>
-                                                    <Input
-                                                        id="due_date"
-                                                        placeholder="Select due date"
-                                                        className="pl-10"
-                                                        value={data.due_date ? data.due_date.toISOString().split('T')[0] : ''}
-                                                        readOnly
-                                                    />
-                                                </div>
-                                            }
-                                        />
+
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <div>
+                                            <Label htmlFor="issue_date" className="flex items-center gap-1 text-sm font-medium">
+                                                Issue Date <span className="text-destructive">*</span>
+                                            </Label>
+                                            <div className="relative">
+                                                <DatePicker
+                                                    selected={data.issue_date}
+                                                    onChange={(date) => setData('issue_date', date)}
+                                                    dateFormat="yyyy-MM-dd"
+                                                    disabled={processing}
+                                                    customInput={
+                                                        <CustomInput
+                                                            id="issue_date"
+                                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                            placeholder="Select issue date"
+                                                            value={data.issue_date ? data.issue_date.toISOString().split('T')[0] : ''}
+                                                            disabled={processing}
+                                                        />
+                                                    }
+                                                />
+                                            </div>
+                                            <InputError message={errors.issue_date as string} className="mt-1" />
+                                        </div>
+
+                                        <div>
+                                            <Label htmlFor="due_date" className="flex items-center gap-1 text-sm font-medium">
+                                                Due Date <span className="text-destructive">*</span>
+                                            </Label>
+                                            <div className="relative">
+                                                <DatePicker
+                                                    selected={data.due_date}
+                                                    onChange={(date) => setData('due_date', date)}
+                                                    dateFormat="yyyy-MM-dd"
+                                                    disabled={processing}
+                                                    customInput={
+                                                        <CustomInput
+                                                            id="due_date"
+                                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                            placeholder="Select due date"
+                                                            value={data.due_date ? data.due_date.toISOString().split('T')[0] : ''}
+                                                            disabled={processing}
+                                                        />
+                                                    }
+                                                />
+                                            </div>
+                                            <InputError message={errors.due_date as string} className="mt-1" />
+                                        </div>
                                     </div>
-                                    <InputError message={errors.due_date as string} className="mt-1" />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="status" className="text-sm font-medium">
-                                        Status
-                                    </Label>
-                                    <div className="relative">
-                                        <Select value={data.status} onValueChange={(value) => setData('status', value)} disabled={true}>
-                                            <SelectTrigger id="status" className="w-full">
-                                                <SelectValue placeholder="Select status" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="draft">Draft</SelectItem>
-                                                <SelectItem value="sent">Sent</SelectItem>
-                                                <SelectItem value="paid">Paid</SelectItem>
-                                                <SelectItem value="partially_paid">Partially Paid</SelectItem>
-                                                <SelectItem value="overdue">Overdue</SelectItem>
-                                                <SelectItem value="cancelled">Cancelled</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+
+                                    <div>
+                                        <Label htmlFor="status" className="text-sm font-medium">
+                                            Status
+                                        </Label>
+                                        <div className="relative">
+                                            <Select value={data.status} onValueChange={(value) => setData('status', value)} disabled={true}>
+                                                <SelectTrigger id="status" className="w-full">
+                                                    <SelectValue placeholder="Select status" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="draft">Draft</SelectItem>
+                                                    <SelectItem value="sent">Sent</SelectItem>
+                                                    <SelectItem value="paid">Paid</SelectItem>
+                                                    <SelectItem value="partially_paid">Partially Paid</SelectItem>
+                                                    <SelectItem value="overdue">Overdue</SelectItem>
+                                                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <InputError message={errors.status} className="mt-1" />
                                     </div>
-                                    <InputError message={errors.status} className="mt-1" />
                                 </div>
-                            </div>
-                            {/* Notes in a separate row */}
-                            <div className="grid grid-cols-1 gap-6">
-                                {/* Notes */}
-                                <div className="grid gap-2">
+                            </CardContent>
+                        </Card>
+
+                        {/* Additional Info Card */}
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-lg">Additional Information</CardTitle>
+                                <CardDescription>Add notes for this invoice</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div>
                                     <Label htmlFor="notes" className="text-sm font-medium">
                                         Notes <span className="text-xs text-muted-foreground">(optional)</span>
                                     </Label>
@@ -484,33 +542,33 @@ export default function CreateInvoice() {
                                         onChange={(e) => setData('notes', e.target.value)}
                                         disabled={processing}
                                         placeholder="Additional notes for the client"
-                                        className="min-h-[80px]"
+                                        className="min-h-[120px] resize-y"
                                     />
-                                    <InputError message={errors.notes} />
+                                    <InputError message={errors.notes} className="mt-1" />
                                 </div>
-                            </div>
-                            {/* Invoice Items */}
-                            <div className="grid grid-cols-1 gap-6">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="text-lg font-medium">Invoice Items</h3>
-                                    <Button
-                                        type="button"
-                                        onClick={addItem}
-                                        disabled={processing}
-                                        variant="outline"
-                                        className="flex items-center gap-2"
-                                    >
-                                        <Plus className="h-4 w-4" />
-                                        Add Item
-                                    </Button>
-                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
 
+                    <Card className="overflow-hidden transition-all hover:shadow-md">
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <div>
+                                <CardTitle className="text-lg">Invoice Items</CardTitle>
+                                <CardDescription>Add the products or services you're invoicing for</CardDescription>
+                            </div>
+                            <Button type="button" onClick={addItem} disabled={processing} className="flex items-center gap-2">
+                                <Plus className="h-4 w-4" />
+                                Add Item
+                            </Button>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="overflow-hidden rounded-md border">
                                 <Table>
-                                    <TableHeader>
+                                    <TableHeader className="bg-muted/50">
                                         <TableHeaderRow>
                                             <TableHead>Time Log</TableHead>
                                             <TableHead>Description</TableHead>
-                                            <TableHead>Quantity (hours)</TableHead>
+                                            <TableHead>Quantity (hrs)</TableHead>
                                             <TableHead>Unit Price</TableHead>
                                             <TableHead>Amount</TableHead>
                                             <TableHead className="w-[50px]" children={undefined}></TableHead>
@@ -518,7 +576,7 @@ export default function CreateInvoice() {
                                     </TableHeader>
                                     <TableBody>
                                         {data.items.map((item, index) => (
-                                            <TableRow key={index}>
+                                            <TableRow key={index} className="hover:bg-muted/30">
                                                 <TableCell>
                                                     <Select
                                                         value={item.time_log_id || 'none'}
@@ -623,8 +681,9 @@ export default function CreateInvoice() {
                                                         step="0.01"
                                                         value={item.amount}
                                                         onChange={(e) => updateItem(index, 'amount', e.target.value)}
-                                                        disabled={processing}
+                                                        disabled={true}
                                                         required
+                                                        className="bg-muted/40"
                                                     />
                                                     <InputError message={(errors as never)[`items.${index}.amount`]} className="mt-1" />
                                                 </TableCell>
@@ -635,7 +694,7 @@ export default function CreateInvoice() {
                                                         size="sm"
                                                         disabled={processing || data.items.length <= 1}
                                                         onClick={() => removeItem(index)}
-                                                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                                                        className="h-8 w-8 p-0 text-red-500 hover:bg-red-100/50 hover:text-red-700"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                         <span className="sr-only">Remove</span>
@@ -645,10 +704,20 @@ export default function CreateInvoice() {
                                         ))}
                                     </TableBody>
                                 </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                                {/* Discount */}
-                                <div className="flex justify-end">
-                                    <div className="grid w-1/3 grid-cols-2 gap-4">
+                    {/* Tax, Discount and Summary Section */}
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-lg">Discount & Taxes</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-6">
+                                    {/* Discount */}
+                                    <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <Label htmlFor="discount_type" className="text-sm font-medium">
                                                 Discount Type
@@ -686,48 +755,90 @@ export default function CreateInvoice() {
                                             <InputError message={errors.discount_value} className="mt-1" />
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Total */}
-                                <div className="flex justify-end">
-                                    <div className="w-1/3 rounded-md border p-4">
-                                        <div className="flex items-center justify-between text-sm">
-                                            <span>Subtotal:</span>
-                                            <span>{formatCurrency(calculateSubtotal())}</span>
+                                    <Separator />
+
+                                    {/* Tax */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <Label htmlFor="tax_type" className="text-sm font-medium">
+                                                Tax Type
+                                            </Label>
+                                            <Select
+                                                value={data.tax_type || 'none'}
+                                                onValueChange={(value) => setData('tax_type', value === 'none' ? null : value)}
+                                                disabled={processing}
+                                            >
+                                                <SelectTrigger id="tax_type" className="w-full">
+                                                    <SelectValue placeholder="No Tax" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="none">No Tax</SelectItem>
+                                                    <SelectItem value="percentage">Percentage (%)</SelectItem>
+                                                    <SelectItem value="fixed">Fixed Amount</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <InputError message={errors.tax_type} className="mt-1" />
                                         </div>
-                                        {data.discount_type && parseFloat(data.discount_value) > 0 && (
-                                            <div className="mt-2 flex items-center justify-between text-sm text-red-600 dark:text-red-400">
-                                                <span>Discount {data.discount_type === 'percentage' ? `(${data.discount_value}%)` : ''}:</span>
-                                                <span>-{formatCurrency(calculateDiscount())}</span>
-                                            </div>
-                                        )}
-                                        <div className="mt-2 flex items-center justify-between font-medium">
-                                            <span>Total:</span>
-                                            <span>{formatCurrency(calculateTotal())}</span>
+                                        <div>
+                                            <Label htmlFor="tax_rate" className="text-sm font-medium">
+                                                {data.tax_type === 'percentage' ? 'Tax (%)' : 'Tax Amount'}
+                                            </Label>
+                                            <Input
+                                                id="tax_rate"
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                value={data.tax_rate}
+                                                onChange={(e) => setData('tax_rate', e.target.value)}
+                                                disabled={processing || !data.tax_type}
+                                                placeholder={data.tax_type === 'percentage' ? 'Enter percentage' : 'Enter amount'}
+                                            />
+                                            <InputError message={errors.tax_rate} className="mt-1" />
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </CardContent>
+                        </Card>
 
-                            <div className="flex justify-end gap-3">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => window.history.back()}
-                                    disabled={processing}
-                                    className="flex items-center gap-2"
-                                >
-                                    <ArrowLeft className="h-4 w-4" />
-                                    Back
-                                </Button>
+                        <Card className="overflow-hidden transition-all hover:shadow-md">
+                            <CardHeader>
+                                <CardTitle className="text-lg">Invoice Summary</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="rounded-md border bg-muted/20 p-4">
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span>Subtotal:</span>
+                                        <span className="font-medium">{formatCurrency(calculateSubtotal())}</span>
+                                    </div>
+                                    {data.discount_type && parseFloat(data.discount_value) > 0 && (
+                                        <div className="mt-2 flex items-center justify-between text-sm text-red-600 dark:text-red-400">
+                                            <span>Discount {data.discount_type === 'percentage' ? `(${data.discount_value}%)` : ''}:</span>
+                                            <span>-{formatCurrency(calculateDiscount())}</span>
+                                        </div>
+                                    )}
+                                    {data.tax_type && parseFloat(data.tax_rate) > 0 && (
+                                        <div className="mt-2 flex items-center justify-between text-sm text-green-600 dark:text-green-400">
+                                            <span>Tax {data.tax_type === 'percentage' ? `(${data.tax_rate}%)` : ''}:</span>
+                                            <span>+{formatCurrency(calculateTax())}</span>
+                                        </div>
+                                    )}
+                                    <Separator className="my-3" />
+                                    <div className="flex items-center justify-between font-medium">
+                                        <span className="text-base">Total:</span>
+                                        <span className="text-base">{formatCurrency(calculateTotal())}</span>
+                                    </div>
+                                </div>
+                            </CardContent>
+                            <CardFooter className="flex justify-end border-t p-4">
                                 <Button type="submit" disabled={processing} className="flex items-center gap-2">
                                     {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                                     {processing ? 'Creating...' : 'Create Invoice'}
                                 </Button>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card>
+                            </CardFooter>
+                        </Card>
+                    </div>
+                </form>
             </div>
         </MasterLayout>
     )

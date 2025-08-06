@@ -14,7 +14,7 @@ import { type BreadcrumbItem } from '@/types'
 import { syncRepository } from '@actions/GitHubRepositoryController'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, User, X } from 'lucide-react'
+import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, TimerReset, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -53,10 +53,10 @@ type Client = {
 }
 
 type ProjectFilters = {
-    client_id: string
-    team_member_id: string
-    created_date_from: string | Date | null
-    created_date_to: string | Date | null
+    client: string
+    'team-member': string
+    'created-date-from': string | Date | null
+    'created-date-to': string | Date | null
     search: string
 }
 
@@ -81,10 +81,10 @@ export default function Projects() {
 
     // Filter states
     const [filters, setFilters] = useState<ProjectFilters>({
-        client_id: pageFilters?.client_id || '',
-        team_member_id: pageFilters?.team_member_id || '',
-        created_date_from: pageFilters?.created_date_from || null,
-        created_date_to: pageFilters?.created_date_to || null,
+        client: pageFilters?.client || '',
+        'team-member': pageFilters?.['team-member'] || '',
+        'created-date-from': pageFilters?.['created-date-from'] || null,
+        'created-date-to': pageFilters?.['created-date-to'] || null,
         search: pageFilters?.search || '',
     })
 
@@ -94,10 +94,10 @@ export default function Projects() {
 
     const clearFilters = (): void => {
         setFilters({
-            client_id: '',
-            team_member_id: '',
-            created_date_from: null,
-            created_date_to: null,
+            client: '',
+            'team-member': '',
+            'created-date-from': null,
+            'created-date-to': null,
             search: '',
         })
     }
@@ -134,18 +134,18 @@ export default function Projects() {
         e.preventDefault()
         const formattedFilters = { ...filters }
 
-        if (formattedFilters.created_date_from instanceof Date) {
-            const year = formattedFilters.created_date_from.getFullYear()
-            const month = String(formattedFilters.created_date_from.getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters.created_date_from.getDate()).padStart(2, '0')
-            formattedFilters.created_date_from = `${year}-${month}-${day}`
+        if (formattedFilters['created-date-from'] instanceof Date) {
+            const year = formattedFilters['created-date-from'].getFullYear()
+            const month = String(formattedFilters['created-date-from'].getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters['created-date-from'].getDate()).padStart(2, '0')
+            formattedFilters['created-date-from'] = `${year}-${month}-${day}`
         }
 
-        if (formattedFilters.created_date_to instanceof Date) {
-            const year = formattedFilters.created_date_to.getFullYear()
-            const month = String(formattedFilters.created_date_to.getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters.created_date_to.getDate()).padStart(2, '0')
-            formattedFilters.created_date_to = `${year}-${month}-${day}`
+        if (formattedFilters['created-date-to'] instanceof Date) {
+            const year = formattedFilters['created-date-to'].getFullYear()
+            const month = String(formattedFilters['created-date-to'].getMonth() + 1).padStart(2, '0')
+            const day = String(formattedFilters['created-date-to'].getDate()).padStart(2, '0')
+            formattedFilters['created-date-to'] = `${year}-${month}-${day}`
         }
 
         const filtersString = objectToQueryString(formattedFilters)
@@ -159,10 +159,10 @@ export default function Projects() {
         const queryParams = queryStringToObject()
 
         const initialFilters: ProjectFilters = {
-            client_id: queryParams.client_id || '',
-            team_member_id: queryParams.team_member_id || '',
-            created_date_from: queryParams.created_date_from || null,
-            created_date_to: queryParams.created_date_to || null,
+            client: queryParams.client || '',
+            'team-member': queryParams['team-member'] || '',
+            'created-date-from': queryParams['created-date-from'] || null,
+            'created-date-to': queryParams['created-date-to'] || null,
             search: queryParams.search || '',
         }
 
@@ -180,209 +180,70 @@ export default function Projects() {
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your projects</p>
                 </section>
 
-                {/* Filters card */}
-                <Card className="transition-all hover:shadow-md">
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
-                            {/* Search */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="search" className="text-xs font-medium">
-                                    Search
-                                </Label>
-                                <div className="relative">
-                                    <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                        id="search"
-                                        placeholder="Search"
-                                        className="pl-10"
-                                        value={filters.search}
-                                        onChange={(e) => handleFilterChange('search', e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Client Filter */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="client" className="text-xs font-medium">
-                                    Client
-                                </Label>
-                                <SearchableSelect
-                                    id="client"
-                                    value={filters.client_id}
-                                    onChange={(value) => handleFilterChange('client_id', value)}
-                                    options={[
-                                        { id: '', name: 'All Clients' },
-                                        ...clients.map((client) => ({
-                                            id: client.id.toString(),
-                                            name: client.name,
-                                        })),
-                                    ]}
-                                    placeholder="All Clients"
-                                    disabled={processing}
-                                    icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-
-                            {/* Team Member Filter */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="team-member" className="text-xs font-medium">
-                                    Team Member
-                                </Label>
-                                <SearchableSelect
-                                    id="team-member"
-                                    value={filters.team_member_id}
-                                    onChange={(value) => handleFilterChange('team_member_id', value)}
-                                    options={[
-                                        { id: '', name: 'All Team Members' },
-                                        ...teamMembers.map((member) => ({
-                                            id: member.id.toString(),
-                                            name: member.name,
-                                        })),
-                                    ]}
-                                    placeholder="All Team Members"
-                                    disabled={processing}
-                                    icon={<User className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-
-                            {/* Created Date From */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="created-date-from" className="text-xs font-medium">
-                                    Created Date From
-                                </Label>
-                                <DatePicker
-                                    selected={parseDate(filters.created_date_from)}
-                                    onChange={(date) => handleFilterChange('created_date_from', date)}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="created-date-from"
-                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select start date"
-                                        />
-                                    }
-                                />
-                            </div>
-
-                            {/* Created Date To */}
-                            <div className="grid gap-1">
-                                <Label htmlFor="created-date-to" className="text-xs font-medium">
-                                    Created Date To
-                                </Label>
-                                <DatePicker
-                                    selected={parseDate(filters.created_date_to)}
-                                    onChange={(date) => handleFilterChange('created_date_to', date)}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="created-date-to"
-                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select end date"
-                                        />
-                                    }
-                                />
-                            </div>
-
-                            <div className="flex items-end gap-2">
-                                <Button type="submit" className="flex h-9 items-center gap-1 px-3">
-                                    <Search className="h-3.5 w-3.5" />
-                                    <span>Filter</span>
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    disabled={
-                                        !filters.client_id &&
-                                        !filters.team_member_id &&
-                                        !filters.created_date_from &&
-                                        !filters.created_date_to &&
-                                        !filters.search
-                                    }
-                                    onClick={clearFilters}
-                                    className="flex h-9 items-center gap-1 px-3"
-                                >
-                                    <X className="h-3.5 w-3.5" />
-                                    <span>Clear</span>
-                                </Button>
-                            </div>
-                        </form>
-
-                        <div className={'mt-4 text-sm text-muted-foreground'}>
-                            {(filters.client_id ||
-                                filters.team_member_id ||
-                                filters.created_date_from ||
-                                filters.created_date_to ||
-                                filters.search) && (
-                                <CardDescription>
-                                    {(() => {
-                                        let description = ''
-
-                                        if (filters.created_date_from && filters.created_date_to) {
-                                            description = `Showing projects from ${formatDateValue(filters.created_date_from)} to ${formatDateValue(filters.created_date_to)}`
-                                        } else if (filters.created_date_from) {
-                                            description = `Showing projects from ${formatDateValue(filters.created_date_from)}`
-                                        } else if (filters.created_date_to) {
-                                            description = `Showing projects until ${formatDateValue(filters.created_date_to)}`
-                                        }
-
-                                        if (filters.client_id) {
-                                            const client = clients.find((c) => c.id.toString() === filters.client_id)
-                                            if (client) {
-                                                if (description) {
-                                                    description += ` for client "${client.name}"`
-                                                } else {
-                                                    description = `Showing projects for client "${client.name}"`
-                                                }
-                                            }
-                                        }
-
-                                        if (filters.team_member_id) {
-                                            const member = teamMembers.find((m) => m.id.toString() === filters.team_member_id)
-                                            if (member) {
-                                                if (description) {
-                                                    description += ` with team member "${member.name}"`
-                                                } else {
-                                                    description = `Showing projects with team member "${member.name}"`
-                                                }
-                                            }
-                                        }
-
-                                        if (filters.search) {
-                                            if (description) {
-                                                description += ` matching "${filters.search}"`
-                                            } else {
-                                                description = `Showing projects matching "${filters.search}"`
-                                            }
-                                        }
-
-                                        return description
-                                    })()}
-                                </CardDescription>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Projects card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Projects</CardTitle>
                                 <CardDescription>
                                     {loading ? 'Loading projects...' : error ? 'Failed to load projects' : `You have ${projects.length} projects`}
                                 </CardDescription>
+
+                                {(filters.client ||
+                                    filters['team-member'] ||
+                                    filters['created-date-from'] ||
+                                    filters['created-date-to'] ||
+                                    filters.search) && (
+                                    <CardDescription className="mt-1">
+                                        {(() => {
+                                            let description = ''
+
+                                            if (filters['created-date-from'] && filters['created-date-to']) {
+                                                description = `Showing projects from ${formatDateValue(filters['created-date-from'])} to ${formatDateValue(filters['created-date-to'])}`
+                                            } else if (filters['created-date-from']) {
+                                                description = `Showing projects from ${formatDateValue(filters['created-date-from'])}`
+                                            } else if (filters['created-date-to']) {
+                                                description = `Showing projects until ${formatDateValue(filters['created-date-to'])}`
+                                            }
+
+                                            if (filters.client) {
+                                                const client = clients.find((c) => c.id.toString() === filters.client)
+                                                if (client) {
+                                                    if (description) {
+                                                        description += ` for client "${client.name}"`
+                                                    } else {
+                                                        description = `Showing projects for client "${client.name}"`
+                                                    }
+                                                }
+                                            }
+
+                                            if (filters['team-member']) {
+                                                const member = teamMembers.find((m) => m.id.toString() === filters['team-member'])
+                                                if (member) {
+                                                    if (description) {
+                                                        description += ` with team member "${member.name}"`
+                                                    } else {
+                                                        description = `Showing projects with team member "${member.name}"`
+                                                    }
+                                                }
+                                            }
+
+                                            if (filters.search) {
+                                                if (description) {
+                                                    description += ` matching "${filters.search}"`
+                                                } else {
+                                                    description = `Showing projects matching "${filters.search}"`
+                                                }
+                                            }
+
+                                            return description
+                                        })()}
+                                    </CardDescription>
+                                )}
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton
-                                    href={`$${route('project.export')}?team_member_id=${filters.team_member_id || ''}&created_date_from=${formatDateValue(filters.created_date_from)}&created_date_to=${formatDateValue(filters.created_date_to)}&search=${filters.search || ''}`}
+                                    href={`${route('project.export')}?team-member=${filters['team-member'] || ''}&client=${filters.client || ''}&created-date-from=${formatDateValue(filters['created-date-from'])}&created-date-to=${formatDateValue(filters['created-date-to'])}&search=${filters.search || ''}`}
                                     label="Export"
                                 />
                                 <Link href={route('project.create')}>
@@ -392,6 +253,141 @@ export default function Projects() {
                                     </Button>
                                 </Link>
                             </div>
+                        </div>
+
+                        <div className="mt-4 border-t pt-4">
+                            <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="search" className="text-xs font-medium">
+                                        Search
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="search"
+                                            placeholder="Search"
+                                            className="pl-9"
+                                            value={filters.search}
+                                            onChange={(e) => handleFilterChange('search', e.target.value)}
+                                        />
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <Search className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="client" className="text-xs font-medium">
+                                        Client
+                                    </Label>
+                                    <SearchableSelect
+                                        id="client"
+                                        value={filters.client}
+                                        onChange={(value) => handleFilterChange('client', value)}
+                                        options={[
+                                            { id: '', name: 'All Clients' },
+                                            ...clients.map((client) => ({
+                                                id: client.id.toString(),
+                                                name: client.name,
+                                            })),
+                                        ]}
+                                        placeholder="All Clients"
+                                        disabled={processing}
+                                        icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="team-member" className="text-xs font-medium">
+                                        Team Member
+                                    </Label>
+                                    <SearchableSelect
+                                        id="team-member"
+                                        value={filters['team-member']}
+                                        onChange={(value) => handleFilterChange('team-member', value)}
+                                        options={[
+                                            { id: '', name: 'All Team Members' },
+                                            ...teamMembers.map((member) => ({
+                                                id: member.id.toString(),
+                                                name: member.name,
+                                            })),
+                                        ]}
+                                        placeholder="All Team Members"
+                                        disabled={processing}
+                                        icon={<User className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="created-date-from" className="text-xs font-medium">
+                                        Created Date From
+                                    </Label>
+                                    <DatePicker
+                                        selected={parseDate(filters['created-date-from'])}
+                                        onChange={(date) => handleFilterChange('created-date-from', date)}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="created-date-from"
+                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select start date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="created-date-to" className="text-xs font-medium">
+                                        Created Date To
+                                    </Label>
+                                    <DatePicker
+                                        selected={parseDate(filters['created-date-to'])}
+                                        onChange={(date) => handleFilterChange('created-date-to', date)}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="created-date-to"
+                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select end date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                <div className="flex items-end gap-2">
+                                    <Button
+                                        type="submit"
+                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        title="Apply filters"
+                                        disabled={processing}
+                                    >
+                                        <Search className="h-4 w-4" />
+                                    </Button>
+
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        disabled={
+                                            processing ||
+                                            (!filters.client &&
+                                                !filters['team-member'] &&
+                                                !filters['created-date-from'] &&
+                                                !filters['created-date-to'] &&
+                                                !filters.search)
+                                        }
+                                        onClick={clearFilters}
+                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        title="Clear filters"
+                                    >
+                                        <TimerReset className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </form>
                         </div>
                     </CardHeader>
                     <CardContent>

@@ -1,3 +1,4 @@
+import { ExportButton } from '@/components/action-buttons'
 import StatsCards from '@/components/dashboard/StatsCards'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Button } from '@/components/ui/button'
@@ -9,7 +10,7 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
-import { AlertCircle, ArrowLeft, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Download, Search, TimerReset } from 'lucide-react'
+import { AlertCircle, ArrowLeft, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Search, TimerReset } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
 
 type TimeLog = {
@@ -25,10 +26,10 @@ type TimeLog = {
 }
 
 type Filters = {
-    start_date: string
-    end_date: string
-    project_id: string
-    is_paid: string
+    'start-date': string
+    'end-date': string
+    project: string
+    'is-paid': string
     status: string
 }
 
@@ -112,31 +113,31 @@ export default function TeamMemberTimeLogs({
     }
 
     const { data, setData, get, processing } = useForm<Filters>({
-        start_date: filters.start_date || '',
-        end_date: filters.end_date || '',
-        project_id: filters.project_id || '',
-        is_paid: filters.is_paid || '',
+        'start-date': filters['start-date'] || '',
+        'end-date': filters['end-date'] || '',
+        project: filters.project || '',
+        'is-paid': filters['is-paid'] || '',
         status: filters.status || '',
     })
 
     // Convert string dates to Date objects for DatePicker
-    const startDate = data.start_date ? new Date(data.start_date) : null
-    const endDate = data.end_date ? new Date(data.end_date) : null
+    const startDate = data['start-date'] ? new Date(data['start-date']) : null
+    const endDate = data['end-date'] ? new Date(data['end-date']) : null
 
     // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
-            setData('start_date', date.toISOString().split('T')[0])
+            setData('start-date', date.toISOString().split('T')[0])
         } else {
-            setData('start_date', '')
+            setData('start-date', '')
         }
     }
 
     const handleEndDateChange = (date: Date | null) => {
         if (date) {
-            setData('end_date', date.toISOString().split('T')[0])
+            setData('end-date', date.toISOString().split('T')[0])
         } else {
-            setData('end_date', '')
+            setData('end-date', '')
         }
     }
 
@@ -188,195 +189,9 @@ export default function TeamMemberTimeLogs({
                     </section>
                 )}
 
-                {/* Filter Card */}
+                {/* Time Logs Card with filters in header */}
                 <Card className="transition-all hover:shadow-md">
-                    <CardContent>
-                        <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
-                            <div className="grid gap-1">
-                                <Label htmlFor="start_date" className="text-xs font-medium">
-                                    Start Date
-                                </Label>
-                                <DatePicker
-                                    selected={startDate}
-                                    onChange={handleStartDateChange}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="start_date"
-                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select start date"
-                                        />
-                                    }
-                                />
-                            </div>
-
-                            <div className="grid gap-1">
-                                <Label htmlFor="end_date" className="text-xs font-medium">
-                                    End Date
-                                </Label>
-                                <DatePicker
-                                    selected={endDate}
-                                    onChange={handleEndDateChange}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="end_date"
-                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select end date"
-                                        />
-                                    }
-                                />
-                            </div>
-
-                            <div className="grid gap-1">
-                                <Label htmlFor="project_id" className="text-xs font-medium">
-                                    Project
-                                </Label>
-                                <SearchableSelect
-                                    id="project_id"
-                                    value={data.project_id}
-                                    onChange={(value) => setData('project_id', value)}
-                                    options={[{ id: '', name: 'All Projects' }, ...projects]}
-                                    placeholder="Select project"
-                                    disabled={processing}
-                                    icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-
-                            <div className="grid gap-1">
-                                <Label htmlFor="is_paid" className="text-xs font-medium">
-                                    Payment Status
-                                </Label>
-                                <SearchableSelect
-                                    id="is_paid"
-                                    value={data.is_paid}
-                                    onChange={(value) => setData('is_paid', value)}
-                                    options={[
-                                        { id: '', name: 'All Statuses' },
-                                        { id: 'true', name: 'Paid' },
-                                        { id: 'false', name: 'Unpaid' },
-                                    ]}
-                                    placeholder="Select status"
-                                    disabled={processing}
-                                    icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-                            <div className="grid gap-1">
-                                <Label htmlFor="status" className="text-xs font-medium">
-                                    Approval Status
-                                </Label>
-                                <SearchableSelect
-                                    id="status"
-                                    value={data.status}
-                                    onChange={(value) => setData('status', value)}
-                                    options={[
-                                        { id: '', name: 'All Statuses' },
-                                        { id: 'pending', name: 'Pending' },
-                                        { id: 'approved', name: 'Approved' },
-                                        { id: 'rejected', name: 'Rejected' },
-                                    ]}
-                                    placeholder="Select approval status"
-                                    disabled={processing}
-                                    icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-                            <div className="flex items-end gap-2">
-                                <Button type="submit" disabled={processing} className="flex h-9 items-center gap-1 px-3">
-                                    <Search className="h-3.5 w-3.5" />
-                                    <span>Filter</span>
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    disabled={processing || (!data.start_date && !data.end_date && !data.project_id && !data.is_paid && !data.status)}
-                                    onClick={() => {
-                                        setData({
-                                            start_date: '',
-                                            end_date: '',
-                                            project_id: '',
-                                            is_paid: '',
-                                            status: '',
-                                        })
-                                        get(route('team.time-logs', user.id), {
-                                            preserveState: true,
-                                        })
-                                    }}
-                                    className="flex h-9 items-center gap-1 px-3"
-                                >
-                                    <TimerReset className="h-3.5 w-3.5" />
-                                    <span>Clear</span>
-                                </Button>
-                            </div>
-                        </form>
-
-                        <div className={'mt-4 text-sm text-muted-foreground'}>
-                            {(data.start_date || data.end_date || data.project_id || data.status) && (
-                                <CardDescription>
-                                    {(() => {
-                                        let description = ''
-
-                                        // Date range description
-                                        if (data.start_date && data.end_date) {
-                                            description = `Showing logs from ${data.start_date} to ${data.end_date}`
-                                        } else if (data.start_date) {
-                                            description = `Showing logs from ${data.start_date}`
-                                        } else if (data.end_date) {
-                                            description = `Showing logs until ${data.end_date}`
-                                        }
-
-                                        // Project description
-                                        if (data.project_id) {
-                                            const selectedProject = projects.find((project) => project.id.toString() === data.project_id)
-                                            const projectName = selectedProject ? selectedProject.name : ''
-
-                                            if (description) {
-                                                description += ` for ${projectName}`
-                                            } else {
-                                                description = `Showing logs for ${projectName}`
-                                            }
-                                        }
-
-                                        // Payment status description
-                                        if (data.is_paid) {
-                                            const paymentStatus = data.is_paid === 'true' ? 'paid' : 'unpaid'
-
-                                            if (description) {
-                                                description += ` (${paymentStatus})`
-                                            } else {
-                                                description = `Showing ${paymentStatus} logs`
-                                            }
-                                        }
-
-                                        // Approval status description
-                                        if (data.status) {
-                                            const statusText =
-                                                data.status === 'pending' ? 'pending' : data.status === 'approved' ? 'approved' : 'rejected'
-
-                                            if (description) {
-                                                description += ` with ${statusText} status`
-                                            } else {
-                                                description = `Showing logs with ${statusText} status`
-                                            }
-                                        }
-
-                                        return description
-                                    })()}
-                                </CardDescription>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Time Logs Card */}
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">{user.name}'s Time Logs</CardTitle>
@@ -385,24 +200,204 @@ export default function TeamMemberTimeLogs({
                                         ? `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`
                                         : 'No time logs found for the selected period'}
                                 </CardDescription>
+
+                                {(data['start-date'] || data['end-date'] || data.project || data['is-paid'] || data.status) && (
+                                    <CardDescription className="mt-1">
+                                        {(() => {
+                                            let description = ''
+
+                                            // Date range description
+                                            if (data['start-date'] && data['end-date']) {
+                                                description = `Showing logs from ${data['start-date']} to ${data['end-date']}`
+                                            } else if (data['start-date']) {
+                                                description = `Showing logs from ${data['start-date']}`
+                                            } else if (data['end-date']) {
+                                                description = `Showing logs until ${data['end-date']}`
+                                            }
+
+                                            // Project description
+                                            if (data.project) {
+                                                const selectedProject = projects.find((project) => project.id.toString() === data.project)
+                                                const projectName = selectedProject ? selectedProject.name : ''
+
+                                                if (description) {
+                                                    description += ` for ${projectName}`
+                                                } else {
+                                                    description = `Showing logs for ${projectName}`
+                                                }
+                                            }
+
+                                            // Payment status description
+                                            if (data['is-paid']) {
+                                                const paymentStatus = data['is-paid'] === 'true' ? 'paid' : 'unpaid'
+
+                                                if (description) {
+                                                    description += ` (${paymentStatus})`
+                                                } else {
+                                                    description = `Showing ${paymentStatus} logs`
+                                                }
+                                            }
+
+                                            // Approval status description
+                                            if (data.status) {
+                                                const statusText =
+                                                    data.status === 'pending' ? 'pending' : data.status === 'approved' ? 'approved' : 'rejected'
+
+                                                if (description) {
+                                                    description += ` with ${statusText} status`
+                                                } else {
+                                                    description = `Showing logs with ${statusText} status`
+                                                }
+                                            }
+
+                                            return description
+                                        })()}
+                                    </CardDescription>
+                                )}
                             </div>
                             <div className="flex items-center gap-2">
-                                <a
-                                    href={`${route('team.export-time-logs')}?user_id=${user.id}${window.location.search.replace('?', '&')}`}
-                                    className="inline-block"
-                                >
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Download className="h-4 w-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </a>
+                                <ExportButton
+                                    href={`${route('team.export-time-logs')}?user=${user.id}${window.location.search.replace('?', '&')}`}
+                                    label="Export"
+                                />
                                 {selectedLogs.length > 0 && (
                                     <Button onClick={markAsPaid} variant="secondary" className="flex items-center gap-2">
-                                        <CheckCircle className="h-4 w-4" />
+                                        <CheckCircle className="h-3 w-3" />
                                         <span>Mark as Paid ({selectedLogs.length})</span>
                                     </Button>
                                 )}
                             </div>
+                        </div>
+
+                        <div className="mt-4 border-t pt-4">
+                            <form onSubmit={submit} className="flex w-full flex-row flex-wrap gap-4">
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="start-date" className="text-xs font-medium">
+                                        Start Date
+                                    </Label>
+                                    <DatePicker
+                                        selected={startDate}
+                                        onChange={handleStartDateChange}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="start-date"
+                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select start date"
+                                            />
+                                        }
+                                    />
+                                </div>
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="end-date" className="text-xs font-medium">
+                                        End Date
+                                    </Label>
+                                    <DatePicker
+                                        selected={endDate}
+                                        onChange={handleEndDateChange}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="end-date"
+                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select end date"
+                                            />
+                                        }
+                                    />
+                                </div>
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="project" className="text-xs font-medium">
+                                        Project
+                                    </Label>
+                                    <SearchableSelect
+                                        id="project"
+                                        value={data.project}
+                                        onChange={(value) => setData('project', value)}
+                                        options={[{ id: '', name: 'All Projects' }, ...projects]}
+                                        placeholder="Select project"
+                                        disabled={processing}
+                                        icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="is-paid" className="text-xs font-medium">
+                                        Payment Status
+                                    </Label>
+                                    <SearchableSelect
+                                        id="is-paid"
+                                        value={data['is-paid']}
+                                        onChange={(value) => setData('is-paid', value)}
+                                        options={[
+                                            { id: '', name: 'All Statuses' },
+                                            { id: 'true', name: 'Paid' },
+                                            { id: 'false', name: 'Unpaid' },
+                                        ]}
+                                        placeholder="Select status"
+                                        disabled={processing}
+                                        icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="status" className="text-xs font-medium">
+                                        Approval Status
+                                    </Label>
+                                    <SearchableSelect
+                                        id="status"
+                                        value={data.status}
+                                        onChange={(value) => setData('status', value)}
+                                        options={[
+                                            { id: '', name: 'All Statuses' },
+                                            { id: 'pending', name: 'Pending' },
+                                            { id: 'approved', name: 'Approved' },
+                                            { id: 'rejected', name: 'Rejected' },
+                                        ]}
+                                        placeholder="Select approval status"
+                                        disabled={processing}
+                                        icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+                                <div className="flex items-end gap-2">
+                                    <Button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        title="Apply filters"
+                                    >
+                                        <Search className="h-4 w-4" />
+                                    </Button>
+
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        disabled={
+                                            processing ||
+                                            (!data['start-date'] && !data['end-date'] && !data.project && !data['is-paid'] && !data.status)
+                                        }
+                                        onClick={() => {
+                                            setData({
+                                                'start-date': '',
+                                                'end-date': '',
+                                                project: '',
+                                                'is-paid': '',
+                                                status: '',
+                                            })
+                                            get(route('team.time-logs', user.id), {
+                                                preserveState: true,
+                                            })
+                                        }}
+                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        title="Clear filters"
+                                    >
+                                        <TimerReset className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </form>
                         </div>
                     </CardHeader>
                     <CardContent>

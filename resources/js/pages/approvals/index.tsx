@@ -37,10 +37,10 @@ type TimeLog = {
 }
 
 type Filters = {
-    start_date: string
-    end_date: string
-    project_id: string
-    user_id: string
+    'start-date': string
+    'end-date': string
+    project: string
+    user: string
 }
 
 type Project = {
@@ -64,10 +64,10 @@ type Props = {
 
 export default function Approvals({ timeLogs, filters, projects, teamMembers, totalDuration }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
-        start_date: filters.start_date || '',
-        end_date: filters.end_date || '',
-        project_id: filters.project_id || '',
-        user_id: filters.user_id || '',
+        'start-date': filters['start-date'] || '',
+        'end-date': filters['end-date'] || '',
+        project: filters.project || '',
+        user: filters.user || '',
     })
 
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
@@ -229,22 +229,22 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
         }
     }
 
-    const startDate = data.start_date ? new Date(data.start_date) : null
-    const endDate = data.end_date ? new Date(data.end_date) : null
+    const startDate = data['start-date'] ? new Date(data['start-date']) : null
+    const endDate = data['end-date'] ? new Date(data['end-date']) : null
 
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
-            setData('start_date', date.toISOString().split('T')[0])
+            setData('start-date', date.toISOString().split('T')[0])
         } else {
-            setData('start_date', '')
+            setData('start-date', '')
         }
     }
 
     const handleEndDateChange = (date: Date | null) => {
         if (date) {
-            setData('end_date', date.toISOString().split('T')[0])
+            setData('end-date', date.toISOString().split('T')[0])
         } else {
-            setData('end_date', '')
+            setData('end-date', '')
         }
     }
 
@@ -277,151 +277,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                     </section>
                 )}
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardContent>
-                        <form onSubmit={submit} className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-6">
-                            <div className="grid gap-1">
-                                <Label htmlFor="start_date" className="text-xs font-medium">
-                                    Start Date
-                                </Label>
-                                <DatePicker
-                                    selected={startDate}
-                                    onChange={handleStartDateChange}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="start_date"
-                                            icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select start date"
-                                        />
-                                    }
-                                />
-                            </div>
-                            <div className="grid gap-1">
-                                <Label htmlFor="end_date" className="text-xs font-medium">
-                                    End Date
-                                </Label>
-                                <DatePicker
-                                    selected={endDate}
-                                    onChange={handleEndDateChange}
-                                    dateFormat="yyyy-MM-dd"
-                                    isClearable
-                                    disabled={processing}
-                                    customInput={
-                                        <CustomInput
-                                            id="end_date"
-                                            icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
-                                            disabled={processing}
-                                            placeholder="Select end date"
-                                        />
-                                    }
-                                />
-                            </div>
-                            <div className="grid gap-1">
-                                <Label htmlFor="project_id" className="text-xs font-medium">
-                                    Project
-                                </Label>
-                                <SearchableSelect
-                                    id="project_id"
-                                    value={data.project_id}
-                                    onChange={(value) => setData('project_id', value)}
-                                    options={[{ id: '', name: 'All Projects' }, ...projects]}
-                                    placeholder="Select project"
-                                    disabled={processing}
-                                    icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-                            <div className="grid gap-1">
-                                <Label htmlFor="user_id" className="text-xs font-medium">
-                                    Team Member
-                                </Label>
-                                <SearchableSelect
-                                    id="user_id"
-                                    value={data.user_id}
-                                    onChange={(value) => setData('user_id', value)}
-                                    options={[{ id: '', name: 'All Members' }, ...teamMembers]}
-                                    placeholder="Select member"
-                                    disabled={processing}
-                                    icon={<User className="h-4 w-4 text-muted-foreground" />}
-                                />
-                            </div>
-                            <div className="flex items-end gap-2">
-                                <Button type="submit" disabled={processing} className="flex h-9 items-center gap-1 px-3">
-                                    <Search className="h-3.5 w-3.5" />
-                                    <span>Filter</span>
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    disabled={processing || (!data.start_date && !data.end_date && !data.project_id && !data.user_id)}
-                                    onClick={() => {
-                                        setData({
-                                            start_date: '',
-                                            end_date: '',
-                                            project_id: '',
-                                            user_id: '',
-                                        })
-                                        get(route('approvals.index'), {
-                                            preserveState: true,
-                                        })
-                                    }}
-                                    className="flex h-9 items-center gap-1 px-3"
-                                >
-                                    <TimerReset className="h-3.5 w-3.5" />
-                                    <span>Clear</span>
-                                </Button>
-                            </div>
-                        </form>
-
-                        <p className={'mt-4 text-sm text-muted-foreground'}>
-                            {(data.start_date || data.end_date || data.project_id || data.user_id) && (
-                                <CardDescription>
-                                    {(() => {
-                                        let description = ''
-
-                                        if (data.start_date && data.end_date) {
-                                            description = `Showing logs from ${data.start_date} to ${data.end_date}`
-                                        } else if (data.start_date) {
-                                            description = `Showing logs from ${data.start_date}`
-                                        } else if (data.end_date) {
-                                            description = `Showing logs until ${data.end_date}`
-                                        }
-
-                                        if (data.project_id) {
-                                            const selectedProject = projects.find((project) => project.id.toString() === data.project_id)
-                                            const projectName = selectedProject ? selectedProject.name : ''
-
-                                            if (description) {
-                                                description += ` for ${projectName}`
-                                            } else {
-                                                description = `Showing logs for ${projectName}`
-                                            }
-                                        }
-
-                                        if (data.user_id) {
-                                            const selectedMember = teamMembers.find((member) => member.id.toString() === data.user_id)
-                                            const memberName = selectedMember ? selectedMember.name : ''
-
-                                            if (description) {
-                                                description += ` by ${memberName}`
-                                            } else {
-                                                description = `Showing logs by ${memberName}`
-                                            }
-                                        }
-
-                                        return description
-                                    })()}
-                                </CardDescription>
-                            )}
-                        </p>
-                    </CardContent>
-                </Card>
-
-                <Card className="overflow-hidden transition-all hover:shadow-md">
+                <Card className="transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                             <div>
@@ -444,6 +300,155 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                                             <span>Reject Selected ({selectedLogs.length})</span>
                                         </Button>
                                     </>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Filter form */}
+                        <div className="mt-4 border-t pt-4">
+                            <form onSubmit={submit} className="flex w-full flex-row flex-wrap gap-4">
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="start-date" className="text-xs font-medium">
+                                        Start Date
+                                    </Label>
+                                    <DatePicker
+                                        selected={startDate}
+                                        onChange={handleStartDateChange}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="start-date"
+                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select start date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="end-date" className="text-xs font-medium">
+                                        End Date
+                                    </Label>
+                                    <DatePicker
+                                        selected={endDate}
+                                        onChange={handleEndDateChange}
+                                        dateFormat="yyyy-MM-dd"
+                                        isClearable
+                                        disabled={processing}
+                                        customInput={
+                                            <CustomInput
+                                                id="end-date"
+                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                disabled={processing}
+                                                placeholder="Select end date"
+                                            />
+                                        }
+                                    />
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="project" className="text-xs font-medium">
+                                        Project
+                                    </Label>
+                                    <SearchableSelect
+                                        id="project"
+                                        value={data.project}
+                                        onChange={(value) => setData('project', value)}
+                                        options={[{ id: '', name: 'All Projects' }, ...projects]}
+                                        placeholder="Select project"
+                                        disabled={processing}
+                                        icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+
+                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
+                                    <Label htmlFor="user" className="text-xs font-medium">
+                                        Team Member
+                                    </Label>
+                                    <SearchableSelect
+                                        id="user"
+                                        value={data.user}
+                                        onChange={(value) => setData('user', value)}
+                                        options={[{ id: '', name: 'All Members' }, ...teamMembers]}
+                                        placeholder="Select member"
+                                        disabled={processing}
+                                        icon={<User className="h-4 w-4 text-muted-foreground" />}
+                                    />
+                                </div>
+
+                                <div className="flex items-end gap-2">
+                                    <Button type="submit" size="icon" className="h-9 w-9" title="Filter" disabled={processing}>
+                                        <Search className="h-4 w-4" />
+                                        <span className="sr-only">Filter</span>
+                                    </Button>
+
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="icon"
+                                        disabled={processing || (!data['start-date'] && !data['end-date'] && !data.project && !data.user)}
+                                        onClick={() => {
+                                            setData({
+                                                'start-date': '',
+                                                'end-date': '',
+                                                project: '',
+                                                user: '',
+                                            })
+                                            get(route('approvals.index'), {
+                                                preserveState: true,
+                                            })
+                                        }}
+                                        className="h-9 w-9"
+                                        title="Clear Filters"
+                                    >
+                                        <TimerReset className="h-4 w-4" />
+                                        <span className="sr-only">Clear</span>
+                                    </Button>
+                                </div>
+                            </form>
+
+                            <div className="mt-4 text-sm text-muted-foreground">
+                                {(data['start-date'] || data['end-date'] || data.project || data.user) && (
+                                    <CardDescription>
+                                        {(() => {
+                                            let description = ''
+
+                                            if (data['start-date'] && data['end-date']) {
+                                                description = `Showing logs from ${data['start-date']} to ${data['end-date']}`
+                                            } else if (data['start-date']) {
+                                                description = `Showing logs from ${data['start-date']}`
+                                            } else if (data['end-date']) {
+                                                description = `Showing logs until ${data['end-date']}`
+                                            }
+
+                                            if (data.project) {
+                                                const selectedProject = projects.find((project) => project.id.toString() === data.project)
+                                                const projectName = selectedProject ? selectedProject.name : ''
+
+                                                if (description) {
+                                                    description += ` for ${projectName}`
+                                                } else {
+                                                    description = `Showing logs for ${projectName}`
+                                                }
+                                            }
+
+                                            if (data.user) {
+                                                const selectedMember = teamMembers.find((member) => member.id.toString() === data.user)
+                                                const memberName = selectedMember ? selectedMember.name : ''
+
+                                                if (description) {
+                                                    description += ` by ${memberName}`
+                                                } else {
+                                                    description = `Showing logs by ${memberName}`
+                                                }
+                                            }
+
+                                            return description
+                                        })()}
+                                    </CardDescription>
                                 )}
                             </div>
                         </div>
