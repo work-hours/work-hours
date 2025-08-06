@@ -130,17 +130,17 @@ final class TaskController extends Controller
                 }
             }
 
-            // Check if we need to create a GitHub issue for this task
-            if ($request->boolean('create_github_issue')) {
-                $this->gitHubAdapter->createGitHubIssue($task);
-            }
-
             // Attach tags if provided
             if ($request->has('tags')) {
                 $this->attachTags($request->input('tags'), $task);
             }
 
             DB::commit();
+
+            // Check if we need to create a GitHub issue for this task
+            if ($request->boolean('create_github_issue')) {
+                $this->gitHubAdapter->createGitHubIssue($task);
+            }
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -274,17 +274,17 @@ final class TaskController extends Controller
                 $projectOwner->notify(new TaskCompleted($task, auth()->user()));
             }
 
-            // Update GitHub issue if requested
-            if ($task->is_imported && $task->meta && $task->meta->source === 'github' && $request->boolean('github_update')) {
-                $this->gitHubAdapter->updateGitHubIssue($task);
-            }
-
             // Attach tags if provided
             if ($request->has('tags')) {
                 $this->attachTags($request->input('tags'), $task);
             }
 
             DB::commit();
+
+            // Update GitHub issue if requested
+            if ($task->is_imported && $task->meta && $task->meta->source === 'github' && $request->boolean('github_update')) {
+                $this->gitHubAdapter->updateGitHubIssue($task);
+            }
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
