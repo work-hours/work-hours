@@ -145,7 +145,8 @@ function SidebarGroup({
     approvalCount: number,
     pendingTaskCount: number
 }) {
-    const [isExpanded, setIsExpanded] = useState(true);
+    // Initialize as collapsed by default
+    const [isExpanded, setIsExpanded] = useState(false);
     const anyItemActive = items.some(item =>
         typeof window !== 'undefined' &&
         (window.location.pathname === item.href ||
