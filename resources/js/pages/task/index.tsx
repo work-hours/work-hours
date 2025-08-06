@@ -170,7 +170,7 @@ export default function Tasks() {
 
     const clearFilters = (): void => {
         setFilters({
-            status: 'all',
+            status: 'incomplete',
             priority: 'all',
             project: 'all',
             tag: 'all',
@@ -285,7 +285,7 @@ export default function Tasks() {
         const queryParams = queryStringToObject()
 
         const initialFilters: TaskFilters = {
-            status: queryParams.status || 'all',
+            status: (queryParams.status as TaskFilters['status']) || 'incomplete',
             priority: queryParams.priority || 'all',
             project: queryParams.project || 'all',
             tag: queryParams.tag || 'all',
@@ -363,6 +363,7 @@ export default function Tasks() {
                                         onChange={(value) => handleFilterChange('status', value)}
                                         options={[
                                             { id: 'all', name: 'Statuses' },
+                                            { id: 'incomplete', name: 'Incomplete' },
                                             { id: 'pending', name: 'Pending' },
                                             { id: 'in_progress', name: 'In Progress' },
                                             { id: 'completed', name: 'Completed' },
