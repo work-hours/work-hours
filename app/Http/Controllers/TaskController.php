@@ -358,6 +358,23 @@ final class TaskController extends Controller
     }
 
     /**
+     * Get the count of pending tasks for the current user
+     */
+    #[Action(method: 'get', name: 'tasks.count', middleware: ['auth', 'verified'])]
+    public function count()
+    {
+        $pendingTasksCount = Task::query()->where('status', 'pending')
+            ->whereHas('assignees', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->count();
+
+        return response()->json([
+            'count' => $pendingTasksCount,
+        ]);
+    }
+
+    /**
      * Attach tags to a task
      */
     private function attachTags(array $tags, Task $task): void
