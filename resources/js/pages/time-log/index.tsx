@@ -465,7 +465,12 @@ export default function TimeLog({
                                         variant="outline"
                                         disabled={
                                             processing ||
-                                            (!data['start-date'] && !data['end-date'] && !data.project && !data['is-paid'] && !data.status && !data.tag)
+                                            (!data['start-date'] &&
+                                                !data['end-date'] &&
+                                                !data.project &&
+                                                !data['is-paid'] &&
+                                                !data.status &&
+                                                !data.tag)
                                         }
                                         onClick={() => {
                                             setData({

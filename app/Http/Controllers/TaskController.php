@@ -364,7 +364,7 @@ final class TaskController extends Controller
     public function count()
     {
         $pendingTasksCount = Task::query()->where('status', 'pending')
-            ->whereHas('assignees', function ($query) {
+            ->whereHas('assignees', function ($query): void {
                 $query->where('user_id', auth()->id());
             })
             ->count();

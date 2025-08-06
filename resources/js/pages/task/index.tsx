@@ -559,7 +559,7 @@ export default function Tasks() {
                                             }
 
                                             if (filters.tag !== 'all') {
-                                                const tag = projects.find((t) => t.id.toString() === filters.tag)
+                                                const tag = tags.find((t) => t.id.toString() === filters.tag)
                                                 if (tag) {
                                                     if (description) {
                                                         description += ` with tag "${tag.name}"`

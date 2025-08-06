@@ -26,10 +26,10 @@ type TimeLog = {
 }
 
 type Filters = {
-    "start-date": string
-    "end-date": string
+    'start-date': string
+    'end-date': string
     project: string
-    "is-paid": string
+    'is-paid': string
     status: string
 }
 
@@ -376,7 +376,8 @@ export default function TeamMemberTimeLogs({
                                         type="button"
                                         variant="outline"
                                         disabled={
-                                            processing || (!data['start-date'] && !data['end-date'] && !data.project && !data['is-paid'] && !data.status)
+                                            processing ||
+                                            (!data['start-date'] && !data['end-date'] && !data.project && !data['is-paid'] && !data.status)
                                         }
                                         onClick={() => {
                                             setData({
