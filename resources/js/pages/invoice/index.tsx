@@ -190,10 +190,10 @@ export default function Invoices() {
 
         const initialFilters: InvoiceFilters = {
             search: queryParams.search || '',
-            client: queryParams.client_id || 'all',
+            client: queryParams.client || 'all',
             status: queryParams.status || 'all',
-            'created-date-from': queryParams.created_date_from || null,
-            'created-date-to': queryParams.created_date_to || null,
+            'created-date-from': queryParams['created-date-from'] || null,
+            'created-date-to': queryParams['created-date-to'] || null,
         }
 
         setFilters(initialFilters)
@@ -339,10 +339,10 @@ export default function Invoices() {
                                 <ExportButton
                                     href={`${route('invoice.export')}?${objectToQueryString({
                                         search: filters.search || '',
-                                        client_id: filters.client || '',
+                                        client: filters.client || '',
                                         status: filters.status || '',
-                                        created_date_from: formatDateValue(filters['created-date-from']),
-                                        created_date_to: formatDateValue(filters['created-date-to']),
+                                        'created-date-from': formatDateValue(filters['created-date-from']),
+                                        'created-date-to': formatDateValue(filters['created-date-to']),
                                     })}`}
                                     label="Export"
                                 />
