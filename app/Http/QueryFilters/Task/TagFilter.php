@@ -16,9 +16,9 @@ final class TagFilter
      */
     public function handle($builder, Closure $next)
     {
-        if (request()->has('tag_id') && request('tag_id') !== 'all') {
+        if (request()->has('tag') && request('tag') !== 'all') {
             $builder->whereHas('tags', function ($query): void {
-                $query->where('tags.id', request('tag_id'));
+                $query->where('tags.id', request('tag'));
             });
         }
 

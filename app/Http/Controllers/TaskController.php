@@ -58,9 +58,10 @@ final class TaskController extends Controller
         $filters = request()->only([
             'status',
             'priority',
-            'project_id',
-            'due_date_from',
-            'due_date_to',
+            'project',
+            'tag',
+            'due-date-from',
+            'due-date-to',
             'search',
         ]);
 
