@@ -202,7 +202,7 @@ final class AddData extends Command
 
     private function createTimeLogsForUser(User $user, Collection $projects, array $allStatuses): void
     {
-        $logCount = rand(5, 10);
+        $logCount = random_int(5, 10);
         $usedStatuses = [];
 
         for ($i = 1; $i <= $logCount; $i++) {
@@ -227,17 +227,17 @@ final class AddData extends Command
                 }
             } else {
                 // We've used all statuses at least once, so pick randomly
-                $statusIndex = rand(0, count($allStatuses) - 1);
+                $statusIndex = random_int(0, count($allStatuses) - 1);
             }
 
-            TimeLog::create([
+            TimeLog::query()->create([
                 'user_id' => $user->id,
                 'project_id' => $project->id,
                 'task_id' => $tasks->isNotEmpty() ? $tasks->random()->id : null,
                 'start_timestamp' => $startDate,
                 'end_timestamp' => $endDate,
                 'duration' => $duration,
-                'is_paid' => rand(0, 1),
+                'is_paid' => random_int(0, 1),
                 'hourly_rate' => $user->hourly_rate,
                 'currency' => $user->currency,
                 'note' => "Time log entry {$i} for {$user->name}",

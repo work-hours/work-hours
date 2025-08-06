@@ -20,8 +20,6 @@ import {
     LucideServerCog,
     Settings,
     TimerIcon,
-    User,
-    BarChart2,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import AppLogo from './app-logo'
@@ -54,7 +52,7 @@ const navGroups: NavItemGroup[] = [
                 href: '/team',
                 icon: LucideServerCog,
             },
-        ]
+        ],
     },
     {
         title: 'Work Management',
@@ -75,7 +73,7 @@ const navGroups: NavItemGroup[] = [
                 href: '/task',
                 icon: ClipboardList,
             },
-        ]
+        ],
     },
     {
         title: 'Time & Billing',
@@ -96,7 +94,7 @@ const navGroups: NavItemGroup[] = [
                 href: '/invoice',
                 icon: FileText,
             },
-        ]
+        ],
     },
     {
         title: 'Administration',
@@ -112,7 +110,7 @@ const navGroups: NavItemGroup[] = [
                 href: '/integration',
                 icon: Settings,
             },
-        ]
+        ],
     },
 ]
 
@@ -139,43 +137,48 @@ function SidebarGroup({
     items,
     collapsed,
     approvalCount,
-    pendingTaskCount
+    pendingTaskCount,
 }: NavItemGroup & {
-    collapsed: boolean,
-    approvalCount: number,
+    collapsed: boolean
+    approvalCount: number
     pendingTaskCount: number
 }) {
     // Initialize as collapsed by default
-    const [isExpanded, setIsExpanded] = useState(false);
-    const anyItemActive = items.some(item =>
-        typeof window !== 'undefined' &&
-        (window.location.pathname === item.href ||
-         window.location.pathname.startsWith(`${item.href}/`))
-    );
+    const [isExpanded, setIsExpanded] = useState(false)
+    const anyItemActive = items.some(
+        (item) => typeof window !== 'undefined' && (window.location.pathname === item.href || window.location.pathname.startsWith(`${item.href}/`)),
+    )
+
+    // Calculate total counts for this group
+    const hasApprovals = items.some((item) => item.href === '/approvals')
+    const hasTasks = items.some((item) => item.href === '/task')
+    const groupApprovalCount = hasApprovals ? approvalCount : 0
+    const groupTaskCount = hasTasks ? pendingTaskCount : 0
+    const totalBadgeCount = groupApprovalCount + groupTaskCount
 
     // Auto-expand group if any item is active
     useEffect(() => {
         if (anyItemActive) {
-            setIsExpanded(true);
+            setIsExpanded(true)
         }
-    }, [anyItemActive]);
+    }, [anyItemActive])
 
     useEffect(() => {
         if (collapsed) {
-            setIsExpanded(true);
+            setIsExpanded(true)
         }
-    }, [collapsed]);
+    }, [collapsed])
 
     const toggleExpand = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        console.log('Toggle button clicked, collapsed state:', collapsed);
+        e.stopPropagation()
+        console.log('Toggle button clicked, collapsed state:', collapsed)
 
         if (!collapsed) {
-            const newState = !isExpanded;
-            console.log('Toggle clicked, changing state from', isExpanded, 'to', newState);
-            setIsExpanded(newState);
+            const newState = !isExpanded
+            console.log('Toggle clicked, changing state from', isExpanded, 'to', newState)
+            setIsExpanded(newState)
         }
-    };
+    }
 
     return (
         <div className="mb-2">
@@ -183,17 +186,26 @@ function SidebarGroup({
             <button
                 type="button"
                 onClick={toggleExpand}
-                className={`group flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 relative z-30
-                    text-gray-700 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800
-                    dark:hover:text-gray-100 ${anyItemActive ? 'font-semibold' : ''}`}
+                className={`group relative z-30 flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100 ${anyItemActive ? 'font-semibold' : ''}`}
             >
-                {Icon && (
-                    <Icon
-                        className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110
-                            ${!collapsed ? 'mr-3' : ''} text-gray-500 dark:text-gray-400`}
-                        aria-hidden="true"
-                    />
-                )}
+                <div className="relative">
+                    {Icon && (
+                        <Icon
+                            className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${!collapsed ? 'mr-3' : ''} text-gray-500 dark:text-gray-400`}
+                            aria-hidden="true"
+                        />
+                    )}
+
+                    {/* Show badge on parent menu if any child items have counts */}
+                    {totalBadgeCount > 0 && (
+                        <Badge
+                            variant="destructive"
+                            className="absolute -top-0 -right-36 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
+                        >
+                            {totalBadgeCount > 99 ? '99+' : totalBadgeCount}
+                        </Badge>
+                    )}
+                </div>
 
                 {!collapsed && (
                     <>
@@ -209,15 +221,12 @@ function SidebarGroup({
 
             {/* Group items */}
             {(collapsed || isExpanded) && (
-                <div
-                    className={`mt-1 space-y-1 ${collapsed ? '' : 'ml-4'} overflow-hidden transition-all duration-300`}
-                >
+                <div className={`mt-1 space-y-1 ${collapsed ? '' : 'ml-4'} overflow-hidden transition-all duration-300`}>
                     <TooltipProvider>
                         {items.map((item) => {
                             const isActive =
                                 typeof window !== 'undefined' &&
-                                (window.location.pathname === item.href ||
-                                window.location.pathname.startsWith(`${item.href}/`));
+                                (window.location.pathname === item.href || window.location.pathname.startsWith(`${item.href}/`))
 
                             return (
                                 <div key={item.href} className="relative">
@@ -256,9 +265,7 @@ function SidebarGroup({
                                             )}
                                         </div>
                                         {!collapsed && <span>{item.title}</span>}
-                                        {isActive && (
-                                            <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-gray-700 dark:bg-gray-400"></div>
-                                        )}
+                                        {isActive && <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-gray-700 dark:bg-gray-400"></div>}
                                     </Link>
                                     {collapsed && (
                                         <Tooltip>
@@ -273,13 +280,13 @@ function SidebarGroup({
                                         </Tooltip>
                                     )}
                                 </div>
-                            );
+                            )
                         })}
                     </TooltipProvider>
                 </div>
             )}
         </div>
-    );
+    )
 }
 
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
