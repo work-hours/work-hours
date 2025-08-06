@@ -8,6 +8,8 @@ import { Link, usePage } from '@inertiajs/react'
 import {
     Building,
     CheckSquare,
+    ChevronDown,
+    ChevronRight,
     ClipboardList,
     FileText,
     Folder,
@@ -18,6 +20,8 @@ import {
     LucideServerCog,
     Settings,
     TimerIcon,
+    User,
+    BarChart2,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import AppLogo from './app-logo'
@@ -27,56 +31,88 @@ interface MasterSidebarProps {
     collapsed: boolean
 }
 
-const mainNavItems: NavItem[] = [
+// Added NavItemGroup type for grouped navigation items
+interface NavItemGroup {
+    title: string
+    icon?: React.ElementType
+    items: NavItem[]
+}
+
+// Reorganize navigation items into logical groups
+const navGroups: NavItemGroup[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
         icon: LayoutGrid,
+        items: [
+            {
+                title: 'Dashboard',
+                href: '/dashboard',
+                icon: LayoutGrid,
+            },
+            {
+                title: 'Team',
+                href: '/team',
+                icon: LucideServerCog,
+            },
+        ]
     },
     {
-        title: 'Team',
-        href: '/team',
-        icon: LucideServerCog,
-    },
-    {
-        title: 'Clients',
-        href: '/client',
+        title: 'Work Management',
         icon: Building,
+        items: [
+            {
+                title: 'Clients',
+                href: '/client',
+                icon: Building,
+            },
+            {
+                title: 'Projects',
+                href: '/project',
+                icon: LucideProjector,
+            },
+            {
+                title: 'Tasks',
+                href: '/task',
+                icon: ClipboardList,
+            },
+        ]
     },
     {
-        title: 'Projects',
-        href: '/project',
-        icon: LucideProjector,
-    },
-    {
-        title: 'Tasks',
-        href: '/task',
-        icon: ClipboardList,
-    },
-    {
-        title: 'Time Log',
-        href: '/time-log',
+        title: 'Time & Billing',
         icon: TimerIcon,
+        items: [
+            {
+                title: 'Time Log',
+                href: '/time-log',
+                icon: TimerIcon,
+            },
+            {
+                title: 'Tags',
+                href: '/tags',
+                icon: FileText,
+            },
+            {
+                title: 'Invoices',
+                href: '/invoice',
+                icon: FileText,
+            },
+        ]
     },
     {
-        title: 'Tags',
-        href: '/tags',
-        icon: FileText,
-    },
-    {
-        title: 'Invoices',
-        href: '/invoice',
-        icon: FileText,
-    },
-    {
-        title: 'Approvals',
-        href: '/approvals',
-        icon: CheckSquare,
-    },
-    {
-        title: 'Integration',
-        href: '/integration',
+        title: 'Administration',
         icon: Settings,
+        items: [
+            {
+                title: 'Approvals',
+                href: '/approvals',
+                icon: CheckSquare,
+            },
+            {
+                title: 'Integration',
+                href: '/integration',
+                icon: Settings,
+            },
+        ]
     },
 ]
 
@@ -95,6 +131,145 @@ const footerNavItems: NavItem[] = [
         icon: Folder,
     },
 ]
+
+// Collapsible sidebar group component
+function SidebarGroup({
+    title,
+    icon: Icon,
+    items,
+    collapsed,
+    approvalCount,
+    pendingTaskCount
+}: NavItemGroup & {
+    collapsed: boolean,
+    approvalCount: number,
+    pendingTaskCount: number
+}) {
+    const [isExpanded, setIsExpanded] = useState(true);
+    const anyItemActive = items.some(item =>
+        typeof window !== 'undefined' &&
+        (window.location.pathname === item.href ||
+         window.location.pathname.startsWith(`${item.href}/`))
+    );
+
+    // Auto-expand group if any item is active
+    useEffect(() => {
+        if (anyItemActive) {
+            setIsExpanded(true);
+        }
+    }, [anyItemActive]);
+
+    // Toggle group expansion
+    const toggleExpand = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (!collapsed) {
+            setIsExpanded(!isExpanded);
+        }
+    };
+
+    return (
+        <div className="mb-2">
+            {/* Group header */}
+            <div
+                onClick={toggleExpand}
+                className={`group flex cursor-pointer items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200
+                    text-gray-700 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800
+                    dark:hover:text-gray-100 ${anyItemActive ? 'font-semibold' : ''}`}
+            >
+                {Icon && (
+                    <Icon
+                        className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110
+                            ${!collapsed ? 'mr-3' : ''} text-gray-500 dark:text-gray-400`}
+                        aria-hidden="true"
+                    />
+                )}
+
+                {!collapsed && (
+                    <>
+                        <span className="flex-1">{title}</span>
+                        {!collapsed && (
+                            isExpanded ? (
+                                <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200" />
+                            ) : (
+                                <ChevronRight className="h-4 w-4 text-gray-500 transition-transform duration-200" />
+                            )
+                        )}
+                    </>
+                )}
+            </div>
+
+            {/* Group items */}
+            {(isExpanded || collapsed) && (
+                <div className={`mt-1 space-y-1 ${collapsed ? '' : 'ml-4'} overflow-hidden transition-all duration-300`}>
+                    <TooltipProvider>
+                        {items.map((item) => {
+                            const isActive =
+                                typeof window !== 'undefined' &&
+                                (window.location.pathname === item.href ||
+                                window.location.pathname.startsWith(`${item.href}/`));
+
+                            return (
+                                <div key={item.href} className="relative">
+                                    <Link
+                                        href={item.href}
+                                        className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 ${
+                                            isActive
+                                                ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-800 dark:text-gray-100'
+                                                : 'text-gray-700 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100'
+                                        }`}
+                                    >
+                                        <div className="relative">
+                                            {item.icon && (
+                                                <item.icon
+                                                    className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
+                                                        !collapsed ? 'mr-3' : ''
+                                                    } ${isActive ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}
+                                                    aria-hidden="true"
+                                                />
+                                            )}
+                                            {item.href === '/approvals' && approvalCount > 0 && (
+                                                <Badge
+                                                    variant="destructive"
+                                                    className="absolute top-0 -right-24 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
+                                                >
+                                                    {approvalCount > 99 ? '99+' : approvalCount}
+                                                </Badge>
+                                            )}
+                                            {item.href === '/task' && pendingTaskCount > 0 && (
+                                                <Badge
+                                                    variant="destructive"
+                                                    className="absolute top-0 -right-16 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
+                                                >
+                                                    {pendingTaskCount > 99 ? '99+' : pendingTaskCount}
+                                                </Badge>
+                                            )}
+                                        </div>
+                                        {!collapsed && <span>{item.title}</span>}
+                                        {isActive && (
+                                            <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-gray-700 dark:bg-gray-400"></div>
+                                        )}
+                                    </Link>
+                                    {collapsed && (
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="right" className="shadow-lg">
+                                                {item.title}
+                                                {item.href === '/approvals' && approvalCount > 0 && ` (${approvalCount})`}
+                                                {item.href === '/task' && pendingTaskCount > 0 && ` (${pendingTaskCount})`}
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </TooltipProvider>
+                </div>
+            )}
+        </div>
+    );
+}
 
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     const { isGitHubIntegrated, auth } = usePage<SharedData>().props
@@ -164,7 +339,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
             {/* Navigation - scrollable content */}
             <div className={`flex flex-1 flex-col overflow-y-auto pt-3 ${collapsed ? 'px-2' : 'px-4'}`}>
-                {/* Platform Navigation */}
+                {/* Platform Navigation with grouped items */}
                 <div className="mb-6">
                     <div className="mb-3 border-b border-gray-300 pb-2 dark:border-gray-600">
                         <h3
@@ -175,70 +350,19 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                             {collapsed ? 'Menu' : 'Platform'}
                         </h3>
                     </div>
-                    <TooltipProvider>
-                        <nav className="relative z-10 space-y-1">
-                            {mainNavItems.map((item) => {
-                                const isActive =
-                                    typeof window !== 'undefined' &&
-                                    (window.location.pathname === item.href || window.location.pathname.startsWith(`${item.href}/`))
-                                return (
-                                    <div key={item.href} className="relative">
-                                        <Link
-                                            href={item.href}
-                                            className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 ${
-                                                isActive
-                                                    ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-800 dark:text-gray-100'
-                                                    : 'text-gray-700 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100'
-                                            }`}
-                                        >
-                                            <div className="relative">
-                                                {item.icon && (
-                                                    <item.icon
-                                                        className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-                                                            !collapsed ? 'mr-3' : ''
-                                                        } ${isActive ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}
-                                                        aria-hidden="true"
-                                                    />
-                                                )}
-                                                {item.href === '/approvals' && approvalCount > 0 && (
-                                                    <Badge
-                                                        variant="destructive"
-                                                        className="absolute top-0 -right-24 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
-                                                    >
-                                                        {approvalCount > 99 ? '99+' : approvalCount}
-                                                    </Badge>
-                                                )}
-                                                {item.href === '/task' && pendingTaskCount > 0 && (
-                                                    <Badge
-                                                        variant="destructive"
-                                                        className="absolute top-0 -right-16 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
-                                                    >
-                                                        {pendingTaskCount > 99 ? '99+' : pendingTaskCount}
-                                                    </Badge>
-                                                )}
-                                            </div>
-                                            {!collapsed && <span>{item.title}</span>}
-                                            {isActive && (
-                                                <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-gray-700 dark:bg-gray-400"></div>
-                                            )}
-                                        </Link>
-                                        {collapsed && (
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
-                                                </TooltipTrigger>
-                                                <TooltipContent side="right" className="shadow-lg">
-                                                    {item.title}
-                                                    {item.href === '/approvals' && approvalCount > 0 && ` (${approvalCount})`}
-                                                    {item.href === '/task' && pendingTaskCount > 0 && ` (${pendingTaskCount})`}
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        )}
-                                    </div>
-                                )
-                            })}
-                        </nav>
-                    </TooltipProvider>
+                    <div className="space-y-2">
+                        {navGroups.map((group) => (
+                            <SidebarGroup
+                                key={group.title}
+                                title={group.title}
+                                icon={group.icon}
+                                items={group.items}
+                                collapsed={collapsed}
+                                approvalCount={approvalCount}
+                                pendingTaskCount={pendingTaskCount}
+                            />
+                        ))}
+                    </div>
                 </div>
 
                 {/* Integration Navigation */}
