@@ -160,20 +160,30 @@ function SidebarGroup({
         }
     }, [anyItemActive]);
 
-    // Toggle group expansion
+    useEffect(() => {
+        if (collapsed) {
+            setIsExpanded(true);
+        }
+    }, [collapsed]);
+
     const toggleExpand = (e: React.MouseEvent) => {
-        e.preventDefault();
+        e.stopPropagation();
+        console.log('Toggle button clicked, collapsed state:', collapsed);
+
         if (!collapsed) {
-            setIsExpanded(!isExpanded);
+            const newState = !isExpanded;
+            console.log('Toggle clicked, changing state from', isExpanded, 'to', newState);
+            setIsExpanded(newState);
         }
     };
 
     return (
         <div className="mb-2">
-            {/* Group header */}
-            <div
+            {/* Group header - Move onClick to only the button element */}
+            <button
+                type="button"
                 onClick={toggleExpand}
-                className={`group flex cursor-pointer items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200
+                className={`group flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 relative z-30
                     text-gray-700 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800
                     dark:hover:text-gray-100 ${anyItemActive ? 'font-semibold' : ''}`}
             >
@@ -187,21 +197,21 @@ function SidebarGroup({
 
                 {!collapsed && (
                     <>
-                        <span className="flex-1">{title}</span>
-                        {!collapsed && (
-                            isExpanded ? (
-                                <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200" />
-                            ) : (
-                                <ChevronRight className="h-4 w-4 text-gray-500 transition-transform duration-200" />
-                            )
+                        <span className="flex-1 text-left">{title}</span>
+                        {isExpanded ? (
+                            <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200" />
+                        ) : (
+                            <ChevronRight className="h-4 w-4 text-gray-500 transition-transform duration-200" />
                         )}
                     </>
                 )}
-            </div>
+            </button>
 
             {/* Group items */}
-            {(isExpanded || collapsed) && (
-                <div className={`mt-1 space-y-1 ${collapsed ? '' : 'ml-4'} overflow-hidden transition-all duration-300`}>
+            {(collapsed || isExpanded) && (
+                <div
+                    className={`mt-1 space-y-1 ${collapsed ? '' : 'ml-4'} overflow-hidden transition-all duration-300`}
+                >
                     <TooltipProvider>
                         {items.map((item) => {
                             const isActive =
