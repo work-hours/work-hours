@@ -53,6 +53,7 @@ final class TaskController extends Controller
         $tags = Tag::all()->map(fn ($tag): array => [
             'id' => $tag->id,
             'name' => $tag->name,
+            'color' => $tag->color,
         ]);
 
         $filters = request()->only([

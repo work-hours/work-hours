@@ -14,6 +14,7 @@ import MasterLayout from '@/layouts/master-layout'
 type Tag = {
     id: number
     name: string
+    color: string
     created_at: string
 }
 
@@ -52,6 +53,7 @@ export default function Tags({ tags }: TagsPageProps) {
         errors: editErrors,
     } = useForm({
         name: '',
+        color: '',
     })
 
     // Open the create tag dialog
@@ -63,7 +65,7 @@ export default function Tags({ tags }: TagsPageProps) {
     // Open the edit tag dialog
     const openEditDialog = (tag: Tag) => {
         setEditingTag(tag)
-        setEditData({ name: tag.name })
+        setEditData({ name: tag.name, color: tag.color })
         setIsEditDialogOpen(true)
     }
 
@@ -105,7 +107,9 @@ export default function Tags({ tags }: TagsPageProps) {
             const response = await axios.put(`/tags/${editingTag.id}`, editData)
 
             // Update the tag in the list
-            setTagsList(tagsList.map((tag) => (tag.id === editingTag.id ? { ...tag, name: response.data.name } : tag)))
+            setTagsList(
+                tagsList.map((tag) => (tag.id === editingTag.id ? { ...tag, name: response.data.name, color: response.data.color } : tag))
+            )
 
             // Close the dialog
             setIsEditDialogOpen(false)
@@ -192,7 +196,15 @@ export default function Tags({ tags }: TagsPageProps) {
                                     <tbody>
                                         {tagsList.map((tag) => (
                                             <tr key={tag.id} className="border-b bg-white dark:border-gray-700 dark:bg-gray-900">
-                                                <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{tag.name}</td>
+                                                <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                                    <div className="flex items-center gap-2">
+                                                        <div
+                                                            className="h-4 w-4 rounded-full"
+                                                            style={{ backgroundColor: tag.color || '#6366f1' }}
+                                                        />
+                                                        {tag.name}
+                                                    </div>
+                                                </td>
                                                 <td className="space-x-2 px-6 py-4 text-right">
                                                     <Button onClick={() => openEditDialog(tag)} variant="ghost" size="icon" className="h-8 w-8">
                                                         <Edit className="h-4 w-4" />
@@ -318,6 +330,16 @@ export default function Tags({ tags }: TagsPageProps) {
                                     disabled={isLoading}
                                 />
                                 {editErrors.name && <p className="text-sm text-red-500">{editErrors.name}</p>}
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="edit-color">Tag Color</Label>
+                                <Input
+                                    id="edit-color"
+                                    type="color"
+                                    value={editData.color}
+                                    onChange={(e) => setEditData('color', e.target.value)}
+                                    disabled={isLoading}
+                                />
                             </div>
                         </div>
                         <DialogFooter>
