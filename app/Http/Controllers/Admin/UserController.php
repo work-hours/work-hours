@@ -19,6 +19,7 @@ final class UserController extends Controller
     {
         $users = User::query()
             ->orderBy('name')
+            ->select(['id', 'name', 'email', 'email_verified_at', 'currency', 'created_at'])
             ->paginate(15)
             ->withQueryString();
 

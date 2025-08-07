@@ -1,11 +1,14 @@
 import { Pagination } from '@/components/ui/pagination'
 import AdminLayout from '@/layouts/admin-layout'
+import { formatDateTime } from '@/lib/utils'
 import { Head } from '@inertiajs/react'
 
 interface User {
     id: number
     name: string
     email: string
+    email_verified_at: string | null
+    currency: string
     created_at: string
 }
 
@@ -58,6 +61,18 @@ export default function Index({ users }: Props) {
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300"
                                     >
+                                        Verified
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300"
+                                    >
+                                        Currency
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300"
+                                    >
                                         Created At
                                     </th>
                                 </tr>
@@ -71,7 +86,11 @@ export default function Index({ users }: Props) {
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{user.name}</td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{user.email}</td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {new Date(user.created_at).toLocaleDateString()}
+                                            {formatDateTime(user.email_verified_at)}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{user.currency}</td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                            {formatDateTime(user.created_at)}
                                         </td>
                                     </tr>
                                 ))}
