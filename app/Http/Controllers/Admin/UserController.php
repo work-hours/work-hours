@@ -18,7 +18,6 @@ final class UserController extends Controller
     public function index(Request $request): Response
     {
         $users = User::query()
-            ->orderBy('name')
             ->select(['id', 'name', 'email', 'email_verified_at', 'currency', 'created_at'])
             ->orderBy('created_at', 'desc')
             ->paginate(15)
