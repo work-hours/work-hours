@@ -1,9 +1,6 @@
+import { Pagination } from '@/components/ui/pagination'
 import AdminLayout from '@/layouts/admin-layout'
 import { Head } from '@inertiajs/react'
-import React from 'react'
-
-// Import directly without using the @ alias to avoid path resolution issues
-import { Pagination } from '@/components/ui/pagination'
 
 interface User {
     id: number
@@ -27,7 +24,7 @@ interface Props {
 
 export default function Index({ users }: Props) {
     return (
-        <>
+        <AdminLayout>
             <Head title="Admin - User Management" />
             <div className="container mx-auto py-6">
                 <div className="mb-6 flex items-center justify-between">
@@ -87,8 +84,6 @@ export default function Index({ users }: Props) {
                     </div>
                 </div>
             </div>
-        </>
+        </AdminLayout>
     )
 }
-
-Index.layout = (page: React.ReactNode) => <AdminLayout children={page} />

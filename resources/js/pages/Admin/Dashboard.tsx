@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/react'
 
 export default function Dashboard() {
     return (
-        <>
+        <AdminLayout>
             <Head title="Admin Dashboard" />
             <div className="container mx-auto py-6">
                 <h1 className="mb-6 text-2xl font-semibold">Admin Dashboard</h1>
@@ -12,14 +12,12 @@ export default function Dashboard() {
                     <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
                         <h2 className="mb-4 text-lg font-medium">Users</h2>
                         <p className="mb-4 text-gray-600 dark:text-gray-300">Manage user accounts and permissions</p>
-                        <Link href="/administration/users" className="text-blue-600 hover:underline dark:text-blue-400">
+                        <Link href={route('admin.users.index')} className="text-blue-600 hover:underline dark:text-blue-400">
                             View all users →
                         </Link>
                     </div>
                 </div>
             </div>
-        </>
+        </AdminLayout>
     )
 }
-
-Dashboard.layout = (page) => <AdminLayout children={page} />
