@@ -411,16 +411,16 @@ final class GitHubRepositoryController extends Controller
     /**
      * Sync tags for a task based on GitHub issue labels.
      *
-     * @param array $labels GitHub issue labels
-     * @param int $userId User ID for tag ownership
-     * @param string $status Task status (to skip status labels)
-     * @param string $priority Task priority (to skip priority labels)
-     * @param Task $task The task to sync tags with
-     * @param bool $sync Whether to sync (true) or just attach (false)
+     * @param  array  $labels  GitHub issue labels
+     * @param  int  $userId  User ID for tag ownership
+     * @param  string  $status  Task status (to skip status labels)
+     * @param  string  $priority  Task priority (to skip priority labels)
+     * @param  Task  $task  The task to sync tags with
+     * @param  bool  $sync  Whether to sync (true) or just attach (false)
      */
     private function syncTagsFromGitHubLabels(array $labels, int $userId, string $status, string $priority, Task $task, bool $sync = true): void
     {
-        if (is_array($labels) && $labels !== []) {
+        if ($labels !== []) {
             $tagIds = [];
 
             foreach ($labels as $label) {
