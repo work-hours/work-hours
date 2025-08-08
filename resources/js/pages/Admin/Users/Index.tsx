@@ -10,6 +10,10 @@ interface User {
     email_verified_at: string | null
     currency: string
     created_at: string
+    clients_count: number
+    projects_count: number
+    time_logs_count: number
+    team_leader: string[]
 }
 
 interface PaginatedData {
@@ -26,6 +30,8 @@ interface Props {
 }
 
 export default function Index({ users }: Props) {
+    console.log(users)
+
     return (
         <AdminLayout>
             <Head title="Admin - User Management" />
@@ -73,6 +79,30 @@ export default function Index({ users }: Props) {
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300"
                                     >
+                                        Clients
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300"
+                                    >
+                                        Projects
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300"
+                                    >
+                                        TimeLogs
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300"
+                                    >
+                                        Team Leader
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300"
+                                    >
                                         Created At
                                     </th>
                                 </tr>
@@ -89,6 +119,16 @@ export default function Index({ users }: Props) {
                                             {formatDateTime(user.email_verified_at)}
                                         </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{user.currency}</td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{user.clients_count}</td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                            {user.projects_count}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                            {user.time_logs_count}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                            {user.team_leader && user.team_leader.length > 0 ? user.team_leader.join(', ') : '-'}
+                                        </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
                                             {formatDateTime(user.created_at)}
                                         </td>
