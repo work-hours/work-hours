@@ -223,7 +223,10 @@ export default function JiraProjects() {
                                                         </div>
                                                         <div className="flex items-center gap-2">
                                                             {isProjectImported(project.key) ? (
-                                                                <Badge className="text-xs" variant="outline">
+                                                                <Badge
+                                                                    variant="secondary"
+                                                                    className="mr-2 border-green-200 bg-green-100 p-2 text-green-700 dark:border-green-800 dark:bg-green-900 dark:text-green-300"
+                                                                >
                                                                     Imported
                                                                 </Badge>
                                                             ) : (
