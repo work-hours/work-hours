@@ -12,7 +12,6 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use RuntimeException;
 
 final class JiraAdapter
 {
@@ -158,6 +157,38 @@ final class JiraAdapter
     }
 
     /**
+     * Get Jira credentials from the database.
+     *
+     * @param  int|null  $userId  The user ID (defaults to current authenticated user)
+     * @return array|null The Jira credentials or null if not found
+     */
+    public function getJiraCredentials(?int $userId = null): ?array
+    {
+        $userId ??= auth()->id();
+
+        if (! $userId) {
+            return null;
+        }
+
+        $credential = Credential::query()->where('user_id', $userId)
+            ->where('source', 'jira')
+            ->first();
+
+        return $credential?->keys;
+    }
+
+    /**
+     * Close a Jira issue.
+     *
+     * @param  Task  $task  The task containing Jira issue information
+     * @return bool Whether the issue was successfully closed
+     */
+    public function closeJiraIssue(Task $task): bool
+    {
+        return $this->updateJiraIssueStatus($task, 'Done');
+    }
+
+    /**
      * Update a Jira issue status.
      *
      * @param  Task  $task  The task containing Jira issue information
@@ -236,17 +267,6 @@ final class JiraAdapter
     }
 
     /**
-     * Close a Jira issue.
-     *
-     * @param  Task  $task  The task containing Jira issue information
-     * @return bool Whether the issue was successfully closed
-     */
-    public function closeJiraIssue(Task $task): bool
-    {
-        return $this->updateJiraIssueStatus($task, 'Done');
-    }
-
-    /**
      * Save Jira credentials to the database.
      *
      * @param  string  $domain  The Jira domain
@@ -256,11 +276,6 @@ final class JiraAdapter
      */
     public function saveJiraCredentials(string $domain, string $email, string $token, ?int $userId = null): void
     {
-        $userId ??= auth()->id();
-
-        throw_unless($userId, new RuntimeException('User ID is required to save credentials'));
-
-        // Store credentials as JSON in the database
         Credential::query()->updateOrCreate([
             'user_id' => $userId,
             'source' => 'jira',
@@ -271,27 +286,6 @@ final class JiraAdapter
                 'token' => $token,
             ],
         ]);
-    }
-
-    /**
-     * Get Jira credentials from the database.
-     *
-     * @param  int|null  $userId  The user ID (defaults to current authenticated user)
-     * @return array|null The Jira credentials or null if not found
-     */
-    public function getJiraCredentials(?int $userId = null): ?array
-    {
-        $userId ??= auth()->id();
-
-        if (! $userId) {
-            return null;
-        }
-
-        $credential = Credential::query()->where('user_id', $userId)
-            ->where('source', 'jira')
-            ->first();
-
-        return $credential?->keys;
     }
 
     /**
