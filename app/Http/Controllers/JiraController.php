@@ -136,7 +136,7 @@ final class JiraController extends Controller
             $project->save();
 
             // Import issues as tasks
-            // $this->importIssuesAsTasks($credentials, $validatedData['key'], $project);
+            $this->importIssuesAsTasks($credentials, $validatedData['key'], $project);
 
             return response()->json([
                 'success' => true,

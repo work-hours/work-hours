@@ -89,8 +89,7 @@ export default function JiraProjects() {
             showMessage(`Successfully imported ${project.name} and its issues.`)
 
             // Add the project key to the imported projects list
-            setImportedProjectKeys(prev => [...prev, project.key])
-
+            setImportedProjectKeys((prev) => [...prev, project.key])
         } catch (error: any) {
             console.error('Error importing project:', error)
             showMessage(error.response?.data?.message || `Failed to import ${project.name}.`, true)
