@@ -24,6 +24,7 @@ import {
 import { useEffect, useState } from 'react'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
+import JiraIcon from './icons/jira-icon'
 
 interface MasterSidebarProps {
     collapsed: boolean
@@ -119,6 +120,11 @@ const integrationNavItems: NavItem[] = [
         title: 'GitHub',
         href: '/github/repositories',
         icon: Github,
+    },
+    {
+        title: 'Jira',
+        href: '/jira/projects',
+        icon: JiraIcon,
     },
 ]
 
@@ -290,7 +296,7 @@ function SidebarGroup({
 }
 
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
-    const { isGitHubIntegrated, auth } = usePage<SharedData>().props
+    const { isGitHubIntegrated, isJiraIntegrated, auth } = usePage<SharedData>().props
     const [approvalCount, setApprovalCount] = useState(0)
     const [pendingTaskCount, setPendingTaskCount] = useState(0)
 
