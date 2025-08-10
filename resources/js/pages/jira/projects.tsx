@@ -33,6 +33,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function JiraProjects() {
     const [projects, setProjects] = useState<Project[]>([])
+    const [importedProjectKeys, setImportedProjectKeys] = useState<string[]>([])
     const [loadingProjects, setLoadingProjects] = useState(true)
     const [importingProject, setImportingProject] = useState<string | null>(null)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -58,6 +59,7 @@ export default function JiraProjects() {
         try {
             const response = await axios.get('/jira/projects/list')
             setProjects(response.data.projects)
+            setImportedProjectKeys(response.data.importedProjectKeys || [])
             setHasCredentials(true)
         } catch (error: any) {
             console.error('Error fetching projects:', error)
@@ -86,14 +88,19 @@ export default function JiraProjects() {
 
             showMessage(`Successfully imported ${project.name} and its issues.`)
 
-            // Remove the imported project from the list
-            setProjects((prev) => prev.filter((p) => p.key !== project.key))
+            // Add the project key to the imported projects list
+            setImportedProjectKeys(prev => [...prev, project.key])
+
         } catch (error: any) {
             console.error('Error importing project:', error)
             showMessage(error.response?.data?.message || `Failed to import ${project.name}.`, true)
         } finally {
             setImportingProject(null)
         }
+    }
+
+    const isProjectImported = (projectKey: string): boolean => {
+        return importedProjectKeys.includes(projectKey)
     }
 
     if (!hasCredentials) {
@@ -215,25 +222,31 @@ export default function JiraProjects() {
                                                             )}
                                                         </div>
                                                         <div className="flex items-center gap-2">
-                                                            <Button
-                                                                variant="outline"
-                                                                size="sm"
-                                                                className="border-primary/30 p-4 text-primary transition-all hover:bg-primary/10 hover:text-primary-foreground"
-                                                                onClick={() => importProject(project)}
-                                                                disabled={importingProject === project.key}
-                                                            >
-                                                                {importingProject === project.key ? (
-                                                                    <>
-                                                                        <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-                                                                        Importing...
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <ExternalLink className="mr-1 h-4 w-4" />
-                                                                        Import
-                                                                    </>
-                                                                )}
-                                                            </Button>
+                                                            {isProjectImported(project.key) ? (
+                                                                <Badge className="text-xs" variant="outline">
+                                                                    Imported
+                                                                </Badge>
+                                                            ) : (
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className="border-primary/30 p-4 text-primary transition-all hover:bg-primary/10 hover:text-primary-foreground"
+                                                                    onClick={() => importProject(project)}
+                                                                    disabled={importingProject === project.key}
+                                                                >
+                                                                    {importingProject === project.key ? (
+                                                                        <>
+                                                                            <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                                                                            Importing...
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <ExternalLink className="mr-1 h-4 w-4" />
+                                                                            Import
+                                                                        </>
+                                                                    )}
+                                                                </Button>
+                                                            )}
                                                         </div>
                                                     </div>
                                                     <Separator className="my-3" />

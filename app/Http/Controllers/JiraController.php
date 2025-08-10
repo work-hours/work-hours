@@ -88,9 +88,16 @@ final class JiraController extends Controller
                 $credentials['token']
             );
 
+            // Get all imported Jira project keys
+            $importedProjectKeys = Project::query()
+                ->where('source', 'jira')
+                ->pluck('repo_id')
+                ->toArray();
+
             return response()->json([
                 'success' => true,
                 'projects' => array_values($projects),
+                'importedProjectKeys' => $importedProjectKeys,
             ]);
         } catch (Exception $e) {
             Log::error('Error fetching Jira projects: ' . $e->getMessage());
