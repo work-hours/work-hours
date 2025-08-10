@@ -56,7 +56,7 @@ final class JiraController extends Controller
                 return $this->errorResponse('Invalid Jira credentials. Please check your domain, email, and API token.', 400);
             }
 
-            // Save credentials to session
+            // Save credentials to database
             $this->jiraAdapter->saveJiraCredentials($domain, $email, $token);
 
             return response()->json([
@@ -76,7 +76,7 @@ final class JiraController extends Controller
     public function getProjects(): JsonResponse
     {
         try {
-            $credentials = $this->jiraAdapter->getSessionJiraCredentials();
+            $credentials = $this->jiraAdapter->getJiraCredentials();
 
             if (! $credentials) {
                 return $this->errorResponse('Jira credentials not found. Please set up your Jira credentials first.', 400);
@@ -118,7 +118,7 @@ final class JiraController extends Controller
     {
         try {
             $validatedData = $request->validated();
-            $credentials = $this->jiraAdapter->getSessionJiraCredentials();
+            $credentials = $this->jiraAdapter->getJiraCredentials();
 
             if (! $credentials) {
                 return $this->errorResponse('Jira credentials not found. Please set up your Jira credentials first.', 400);

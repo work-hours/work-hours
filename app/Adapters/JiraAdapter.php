@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Adapters;
 
+use App\Models\Credential;
 use App\Models\Project;
 use App\Models\Task;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
+use RuntimeException;
 
 final class JiraAdapter
 {
@@ -247,29 +247,70 @@ final class JiraAdapter
     }
 
     /**
-     * Save Jira credentials to session.
+     * Save Jira credentials to the database.
      *
      * @param  string  $domain  The Jira domain
      * @param  string  $email  The Jira user email
      * @param  string  $token  The Jira API token
+     * @param  int|null  $userId  The user ID (defaults to current authenticated user)
      */
-    public function saveJiraCredentials(string $domain, string $email, string $token): void
+    public function saveJiraCredentials(string $domain, string $email, string $token, ?int $userId = null): void
     {
-        Session::put('jira_credentials', [
-            'domain' => $domain,
-            'email' => $email,
-            'token' => $token,
+        $userId ??= auth()->id();
+
+        throw_unless($userId, new RuntimeException('User ID is required to save credentials'));
+
+        // Store credentials as JSON in the database
+        Credential::query()->updateOrCreate([
+            'user_id' => $userId,
+            'source' => 'jira',
+        ], [
+            'keys' => [
+                'domain' => $domain,
+                'email' => $email,
+                'token' => $token,
+            ],
         ]);
     }
 
     /**
-     * Get Jira credentials from session.
+     * Get Jira credentials from the database.
      *
+     * @param  int|null  $userId  The user ID (defaults to current authenticated user)
      * @return array|null The Jira credentials or null if not found
      */
-    public function getSessionJiraCredentials(): ?array
+    public function getJiraCredentials(?int $userId = null): ?array
     {
-        return Session::get('jira_credentials');
+        $userId ??= auth()->id();
+
+        if (! $userId) {
+            return null;
+        }
+
+        $credential = Credential::query()->where('user_id', $userId)
+            ->where('source', 'jira')
+            ->first();
+
+        return $credential?->keys;
+    }
+
+    /**
+     * Delete Jira credentials from the database.
+     *
+     * @param  int|null  $userId  The user ID (defaults to current authenticated user)
+     * @return bool Whether the credentials were deleted
+     */
+    public function deleteJiraCredentials(?int $userId = null): bool
+    {
+        $userId ??= auth()->id();
+
+        if (! $userId) {
+            return false;
+        }
+
+        return (bool) Credential::query()->where('user_id', $userId)
+            ->where('source', 'jira')
+            ->delete();
     }
 
     /**
@@ -377,23 +418,6 @@ final class JiraAdapter
         }
 
         return [];
-    }
-
-    /**
-     * Get Jira credentials for a task.
-     *
-     * @param  Task  $task  The task
-     * @return array|null The Jira credentials or null if not found
-     */
-    private function getJiraCredentials(Task $task): ?array
-    {
-        // First try to get credentials from the project
-        if ($task->project && $task->project->jira_credentials) {
-            return json_decode((string) $task->project->jira_credentials, true);
-        }
-
-        // Fall back to session credentials
-        return $this->getSessionJiraCredentials();
     }
 
     /**
