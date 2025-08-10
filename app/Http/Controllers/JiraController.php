@@ -88,21 +88,9 @@ final class JiraController extends Controller
                 $credentials['token']
             );
 
-            if ($projects instanceof JsonResponse) {
-                return $projects; // Error response
-            }
-
-            // Filter out projects that are already imported
-            $existingProjectKeys = Project::query()->where('source', 'jira')
-                ->whereNotNull('jira_project_key')
-                ->pluck('jira_project_key')
-                ->toArray();
-
-            $filteredProjects = array_filter($projects, fn ($project): bool => ! in_array($project['key'], $existingProjectKeys));
-
             return response()->json([
                 'success' => true,
-                'projects' => array_values($filteredProjects),
+                'projects' => array_values($projects),
             ]);
         } catch (Exception $e) {
             Log::error('Error fetching Jira projects: ' . $e->getMessage());
