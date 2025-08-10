@@ -277,7 +277,7 @@ final class JiraAdapter
     public function saveJiraCredentials(string $domain, string $email, string $token, ?int $userId = null): void
     {
         Credential::query()->updateOrCreate([
-            'user_id' => $userId,
+            'user_id' => $userId ?? auth()->id(),
             'source' => 'jira',
         ], [
             'keys' => [
