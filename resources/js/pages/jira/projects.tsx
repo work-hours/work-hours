@@ -1,12 +1,17 @@
 import { Head, Link } from '@inertiajs/react'
 import axios from 'axios'
-import { ArrowLeft, Loader2, Shield } from 'lucide-react'
+import { ArrowLeft, ExternalLink, Loader2, Search, Shield } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
+import { toast } from 'sonner'
 
 type Project = {
     id: string
@@ -33,25 +38,15 @@ export default function JiraProjects() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
     const [hasCredentials, setHasCredentials] = useState(true)
+    const [searchTerm, setSearchTerm] = useState('')
 
-    // Helper function to show messages
+    // Helper function to show messages using toast
     const showMessage = (message: string, isError = false) => {
         if (isError) {
-            setErrorMessage(message)
-            setSuccessMessage(null)
+            toast.error(message)
         } else {
-            setSuccessMessage(message)
-            setErrorMessage(null)
+            toast.success(message)
         }
-
-        // Clear message after 5 seconds
-        setTimeout(() => {
-            if (isError) {
-                setErrorMessage(null)
-            } else {
-                setSuccessMessage(null)
-            }
-        }, 5000)
     }
 
     useEffect(() => {
@@ -130,6 +125,13 @@ export default function JiraProjects() {
         )
     }
 
+    const filteredProjects = projects.filter(
+        (project) =>
+            project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            project.key.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
+
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Jira Projects" />
@@ -139,14 +141,6 @@ export default function JiraProjects() {
                     <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Jira Projects</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Browse and import your Jira projects</p>
                 </section>
-
-                {/* Messages */}
-                {errorMessage && (
-                    <div className="rounded-md bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/50 dark:text-red-200">{errorMessage}</div>
-                )}
-                {successMessage && (
-                    <div className="rounded-md bg-green-50 p-4 text-sm text-green-700 dark:bg-green-900/50 dark:text-green-200">{successMessage}</div>
-                )}
 
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
@@ -161,51 +155,124 @@ export default function JiraProjects() {
                     </Button>
                 </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Import Jira Projects</CardTitle>
-                        <CardDescription>Select projects to import into the system</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {loadingProjects ? (
-                            <div className="flex h-32 items-center justify-center">
-                                <Loader2 className="h-6 w-6 animate-spin" />
-                                <span className="ml-2">Loading projects...</span>
-                            </div>
-                        ) : projects.length > 0 ? (
-                            <div className="space-y-4">
-                                {projects.map((project) => (
-                                    <div
-                                        key={project.id}
-                                        className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted/50"
-                                    >
-                                        <div>
-                                            <h3 className="text-lg font-semibold">{project.name}</h3>
-                                            <p className="text-sm text-muted-foreground">
-                                                {project.key} • {project.description || 'No description'}
-                                            </p>
-                                        </div>
-                                        <Button onClick={() => importProject(project)} disabled={importingProject === project.key}>
-                                            {importingProject === project.key ? (
-                                                <>
-                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                    Importing...
-                                                </>
-                                            ) : (
-                                                'Import Project'
-                                            )}
-                                        </Button>
+                <div className="flex flex-col space-y-8">
+                    <div className="flex-1 md:max-w-5xl">
+                        <Card className="overflow-hidden transition-all hover:shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-xl">
+                                    <Shield className="h-5 w-5" />
+                                    Import Jira Projects
+                                </CardTitle>
+                                <CardDescription>Browse and select Jira projects to import into the system</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                {/* Search input */}
+                                <div className="mb-4">
+                                    <div className="relative">
+                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            type="search"
+                                            placeholder="Search projects..."
+                                            className="pl-8"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
                                     </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="flex h-32 flex-col items-center justify-center text-center">
-                                <p className="text-muted-foreground">No projects available to import</p>
-                                <p className="text-sm text-muted-foreground">All your Jira projects may already be imported</p>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                                </div>
+
+                                {loadingProjects ? (
+                                    <div className="flex flex-col items-center justify-center py-12">
+                                        <div className="mb-6 rounded-full bg-primary/10 p-4">
+                                            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                                        </div>
+                                        <h3 className="mb-2 text-lg font-medium">Loading Projects</h3>
+                                        <p className="text-sm text-muted-foreground">Fetching projects from Jira...</p>
+                                    </div>
+                                ) : filteredProjects.length > 0 ? (
+                                    <ScrollArea className="h-[450px] pr-2">
+                                        <div className="space-y-4">
+                                            {filteredProjects.map((project) => (
+                                                <div
+                                                    key={project.id}
+                                                    className="flex flex-col rounded-lg border bg-card p-4 shadow-sm transition-all hover:bg-accent/10 hover:shadow-md"
+                                                >
+                                                    <div className="flex items-start justify-between">
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center gap-2 text-lg font-medium">
+                                                                <Shield className="h-4 w-4 text-primary" />
+                                                                {project.name}
+                                                                <Badge
+                                                                    variant="outline"
+                                                                    className="ml-1 border-blue-200 bg-blue-100 text-xs font-normal text-blue-700 dark:border-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                                                                >
+                                                                    {project.key}
+                                                                </Badge>
+                                                            </div>
+                                                            {project.description && (
+                                                                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                                                                    {project.description}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="border-primary/30 p-4 text-primary transition-all hover:bg-primary/10 hover:text-primary-foreground"
+                                                                onClick={() => importProject(project)}
+                                                                disabled={importingProject === project.key}
+                                                            >
+                                                                {importingProject === project.key ? (
+                                                                    <>
+                                                                        <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                                                                        Importing...
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <ExternalLink className="mr-1 h-4 w-4" />
+                                                                        Import
+                                                                    </>
+                                                                )}
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                    <Separator className="my-3" />
+                                                    <div className="flex items-center justify-between text-xs">
+                                                        <span className="text-muted-foreground">Project Key: {project.key}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </ScrollArea>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center py-12">
+                                        <div className="mb-6 rounded-full bg-muted p-4">
+                                            <Shield className="h-12 w-12 text-muted-foreground opacity-80" />
+                                        </div>
+                                        <h3 className="mb-2 text-lg font-medium">
+                                            {searchTerm ? 'No projects match your search' : 'No projects available to import'}
+                                        </h3>
+                                        <p className="max-w-md text-center text-sm text-muted-foreground">
+                                            {searchTerm
+                                                ? 'Try a different search term or clear your search to see all projects.'
+                                                : 'All your Jira projects may already be imported or no projects were found.'}
+                                        </p>
+                                        {searchTerm && (
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setSearchTerm('')}
+                                                className="mt-4 border-primary/30 text-primary hover:bg-primary/10"
+                                            >
+                                                Clear Search
+                                            </Button>
+                                        )}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
             </div>
         </MasterLayout>
     )

@@ -114,7 +114,7 @@ final class JiraController extends Controller
 
             // Check if project is already imported
             if (Project::query()->where('source', 'jira')
-                ->where('jira_project_key', $validatedData['key'])
+                ->where('repo_id', $validatedData['key'])
                 ->exists()) {
                 return $this->errorResponse('This Jira project has already been imported.', 400);
             }
@@ -124,9 +124,7 @@ final class JiraController extends Controller
             $project->name = $validatedData['name'];
             $project->description = $validatedData['description'] ?? null;
             $project->source = 'jira';
-            $project->jira_project_key = $validatedData['key'];
-            $project->source_url = "https://{$credentials['domain']}.atlassian.net/browse/{$validatedData['key']}";
-            $project->jira_credentials = json_encode($credentials);
+            $project->repo_id = $validatedData['key'];
             $project->user_id = Auth::id();
             $project->save();
 
@@ -202,7 +200,6 @@ final class JiraController extends Controller
         $issues = $this->jiraAdapter->getProjectIssues($domain, $email, $token, $projectKey);
 
         if ($issues instanceof JsonResponse) {
-            // Handle error
             $error = $issues->getContent();
             Log::error('Failed to fetch Jira issues', ['error' => $error]);
             throw new Exception('Failed to fetch Jira issues: ' . $error);
@@ -308,7 +305,7 @@ final class JiraController extends Controller
     {
         return match (mb_strtolower($jiraStatus)) {
             'to do', 'open', 'backlog' => 'pending',
-            'in progress' => 'in-progress',
+            'in progress' => 'in_progress',
             'done', 'closed', 'resolved' => 'completed',
             default => 'pending',
         };
