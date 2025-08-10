@@ -10,6 +10,7 @@ use App\Http\Requests\JiraProjectImportRequest;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\Task;
+use App\Models\TaskMeta;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -219,11 +220,13 @@ final class JiraController extends Controller
 
         foreach ($issues as $issue) {
             // Check if task already exists
-            $existingTask = Task::query()->where('external_id', $issue['key'])
+            $existingTask = TaskMeta::query()
                 ->where('source', 'jira')
+                ->where('source_id', $issue['key'])
                 ->first();
 
             $fields = $issue['fields'];
+            $issueUrl = "{$domain}/browse/{$issue['key']}";
 
             if ($existingTask) {
                 // Update existing task
@@ -235,6 +238,24 @@ final class JiraController extends Controller
                     'due_date' => isset($fields['duedate']) ? Carbon::parse($fields['duedate'])->format('Y-m-d') : null,
                 ]);
 
+                // Update or create task meta
+                $existingTask->meta()->updateOrCreate(
+                    ['task_id' => $existingTask->id, 'source' => 'jira'],
+                    [
+                        'source_id' => $issue['key'],
+                        'source_number' => $issue['id'] ?? null,
+                        'source_url' => $issueUrl,
+                        'source_state' => $fields['status']['name'] ?? null,
+                        'extra_data' => [
+                            'updated_at' => $fields['updated'] ?? null,
+                            'created_at' => $fields['created'] ?? null,
+                            'reporter' => $fields['reporter']['displayName'] ?? null,
+                            'assignee' => $fields['assignee']['displayName'] ?? null,
+                            'issue_type' => $fields['issuetype']['name'] ?? null,
+                        ],
+                    ]
+                );
+
                 $stats['updated_tasks']++;
             } else {
                 // Create new task
@@ -244,11 +265,25 @@ final class JiraController extends Controller
                 $task->status = $this->mapJiraStatusToLocal($fields['status']['name'] ?? '');
                 $task->priority = $this->mapJiraPriorityToLocal($fields['priority']['name'] ?? '');
                 $task->due_date = isset($fields['duedate']) ? Carbon::parse($fields['duedate'])->format('Y-m-d') : null;
-                $task->external_id = $issue['key'];
-                $task->source = 'jira';
                 $task->project_id = $project->id;
-                $task->user_id = Auth::id();
+                $task->is_imported = true;
                 $task->save();
+
+                // Create task meta
+                $task->meta()->create([
+                    'source' => 'jira',
+                    'source_id' => $issue['key'],
+                    'source_number' => $issue['id'] ?? null,
+                    'source_url' => $issueUrl,
+                    'source_state' => $fields['status']['name'] ?? null,
+                    'extra_data' => [
+                        'updated_at' => $fields['updated'] ?? null,
+                        'created_at' => $fields['created'] ?? null,
+                        'reporter' => $fields['reporter']['displayName'] ?? null,
+                        'assignee' => $fields['assignee']['displayName'] ?? null,
+                        'issue_type' => $fields['issuetype']['name'] ?? null,
+                    ],
+                ]);
 
                 // Add labels as tags
                 if (isset($fields['labels']) && is_array($fields['labels'])) {
