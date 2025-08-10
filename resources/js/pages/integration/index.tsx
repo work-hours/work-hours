@@ -80,7 +80,7 @@ export default function Integration({ isGitHubIntegrated, isJiraIntegrated }: Pr
                             <div className="flex flex-row items-center justify-between">
                                 <p className="text-muted-foreground">Connect your Jira account to access and manage your projects.</p>
                                 <Button asChild>
-                                    <Link href="/jira/projects">
+                                    <Link href="/jira/connect">
                                         <Trello className="mr-2 h-4 w-4" />
                                         Connect with Jira
                                     </Link>

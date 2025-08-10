@@ -1,7 +1,7 @@
-import { useState } from 'react'
 import { Head } from '@inertiajs/react'
 import axios from 'axios'
 import { Loader2, ShieldAlert } from 'lucide-react'
+import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -79,27 +79,19 @@ export default function JiraConnect() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Connect to Jira" />
-            <div className="mx-auto flex w-full flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-xl flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-                        Connect to Jira
-                    </h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">
-                        Enter your Jira credentials to access your projects
-                    </p>
+                    <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Connect to Jira</h1>
+                    <p className="mt-1 text-gray-500 dark:text-gray-400">Enter your Jira credentials to access your projects</p>
                 </section>
 
                 {/* Messages */}
                 {errorMessage && (
-                    <div className="rounded-md bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/50 dark:text-red-200">
-                        {errorMessage}
-                    </div>
+                    <div className="rounded-md bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/50 dark:text-red-200">{errorMessage}</div>
                 )}
                 {successMessage && (
-                    <div className="rounded-md bg-green-50 p-4 text-sm text-green-700 dark:bg-green-900/50 dark:text-green-200">
-                        {successMessage}
-                    </div>
+                    <div className="rounded-md bg-green-50 p-4 text-sm text-green-700 dark:bg-green-900/50 dark:text-green-200">{successMessage}</div>
                 )}
 
                 <Card>
@@ -108,16 +100,17 @@ export default function JiraConnect() {
                         <CardDescription>Enter your Jira credentials to connect to your account</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleConnect(); }}>
+                        <form
+                            className="space-y-4"
+                            onSubmit={(e) => {
+                                e.preventDefault()
+                                handleConnect()
+                            }}
+                        >
                             <div className="grid w-full items-center gap-1.5">
                                 <Label htmlFor="domain">Jira Domain</Label>
                                 <div className="flex items-center">
-                                    <Input
-                                        id="domain"
-                                        placeholder="mycompany"
-                                        value={domain}
-                                        onChange={(e) => setDomain(e.target.value)}
-                                    />
+                                    <Input id="domain" placeholder="mycompany" value={domain} onChange={(e) => setDomain(e.target.value)} />
                                     <span className="ml-2 text-muted-foreground">.atlassian.net</span>
                                 </div>
                                 <p className="text-sm text-muted-foreground">Enter only the subdomain part</p>
@@ -146,7 +139,15 @@ export default function JiraConnect() {
                                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                     <ShieldAlert className="h-4 w-4" />
                                     <span>
-                                        Generate an API token in your <a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Atlassian account settings</a>
+                                        Generate an API token in your{' '}
+                                        <a
+                                            href="https://id.atlassian.com/manage-profile/security/api-tokens"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="underline hover:text-primary"
+                                        >
+                                            Atlassian account settings
+                                        </a>
                                     </span>
                                 </div>
                             </div>

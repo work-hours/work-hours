@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
 import { Head, Link } from '@inertiajs/react'
 import axios from 'axios'
-import { Loader2, Shield, ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Loader2, Shield } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -68,8 +68,7 @@ export default function JiraProjects() {
             console.error('Error fetching projects:', error)
 
             // Check if the error is due to missing credentials
-            if (error.response?.status === 400 &&
-                error.response?.data?.message?.includes('credentials')) {
+            if (error.response?.status === 400 && error.response?.data?.message?.includes('credentials')) {
                 setHasCredentials(false)
             } else {
                 showMessage(error.response?.data?.message || 'Could not fetch projects from Jira.', true)
@@ -108,9 +107,7 @@ export default function JiraProjects() {
                 <Head title="Jira Projects" />
                 <div className="mx-auto flex w-full flex-col gap-6 p-6">
                     <section className="mb-2">
-                        <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-                            Jira Projects
-                        </h1>
+                        <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Jira Projects</h1>
                         <p className="mt-1 text-gray-500 dark:text-gray-400">Connect and manage your Jira projects</p>
                     </section>
 
@@ -139,22 +136,16 @@ export default function JiraProjects() {
             <div className="mx-auto flex w-full flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-                        Jira Projects
-                    </h1>
+                    <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Jira Projects</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Browse and import your Jira projects</p>
                 </section>
 
                 {/* Messages */}
                 {errorMessage && (
-                    <div className="rounded-md bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/50 dark:text-red-200">
-                        {errorMessage}
-                    </div>
+                    <div className="rounded-md bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/50 dark:text-red-200">{errorMessage}</div>
                 )}
                 {successMessage && (
-                    <div className="rounded-md bg-green-50 p-4 text-sm text-green-700 dark:bg-green-900/50 dark:text-green-200">
-                        {successMessage}
-                    </div>
+                    <div className="rounded-md bg-green-50 p-4 text-sm text-green-700 dark:bg-green-900/50 dark:text-green-200">{successMessage}</div>
                 )}
 
                 <div className="flex items-center justify-between">
@@ -194,10 +185,7 @@ export default function JiraProjects() {
                                                 {project.key} • {project.description || 'No description'}
                                             </p>
                                         </div>
-                                        <Button
-                                            onClick={() => importProject(project)}
-                                            disabled={importingProject === project.key}
-                                        >
+                                        <Button onClick={() => importProject(project)} disabled={importingProject === project.key}>
                                             {importingProject === project.key ? (
                                                 <>
                                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

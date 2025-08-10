@@ -24,6 +24,14 @@ final class JiraController extends Controller
     public function __construct(private readonly JiraAdapter $jiraAdapter) {}
 
     /**
+     * Display the Jira connection page.
+     */
+    public function connect(): Response
+    {
+        return Inertia::render('jira/connect');
+    }
+
+    /**
      * Display the Jira projects page.
      */
     public function index(): Response
