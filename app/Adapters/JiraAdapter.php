@@ -127,7 +127,6 @@ final class JiraAdapter
             if ($response->successful()) {
                 $issueKey = $response->json('key');
 
-                // Update task with Jira issue key
                 $task->update([
                     'external_id' => $issueKey,
                     'source' => 'jira',
@@ -208,7 +207,6 @@ final class JiraAdapter
             $token = $jiraCredentials['token'];
             $issueKey = $task->external_id;
 
-            // First, get available transitions for this issue
             $transitionsUrl = self::API_BASE_URL . "/issue/{$issueKey}/transitions";
             $transitionsResponse = Http::withBasicAuth($email, $token)
                 ->get("https://{$domain}.atlassian.net" . $transitionsUrl);
@@ -226,7 +224,6 @@ final class JiraAdapter
             $transitions = $transitionsResponse->json('transitions');
             $targetTransition = null;
 
-            // Find the transition ID that matches our target status
             foreach ($transitions as $transition) {
                 if (mb_strtolower((string) $transition['to']['name']) === mb_strtolower($status)) {
                     $targetTransition = $transition['id'];
@@ -245,7 +242,6 @@ final class JiraAdapter
                 return false;
             }
 
-            // Execute the transition
             $response = Http::withBasicAuth($email, $token)
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->post("https://{$domain}.atlassian.net" . $transitionsUrl, [
@@ -391,7 +387,7 @@ final class JiraAdapter
             $data = $response->json();
 
             if ($resourceKey === 'issues') {
-                // Jira search endpoint returns issues in a nested structure
+
                 return $data['issues'] ?? [];
             }
 
@@ -422,12 +418,11 @@ final class JiraAdapter
      */
     private function getProjectKey(Project $project): string
     {
-        // Extract Jira project key from project metadata
+
         if ($project->jira_project_key) {
             return $project->jira_project_key;
         }
 
-        // Fall back to using the project key from the URL if it exists
         if ($project->source_url && str_contains($project->source_url, 'atlassian.net/browse/')) {
             $parts = explode('/browse/', $project->source_url);
             if (count($parts) > 1) {
@@ -438,7 +433,6 @@ final class JiraAdapter
             }
         }
 
-        // Last resort: use a sanitized version of the project name
         return mb_strtoupper(mb_substr((string) preg_replace('/[^A-Za-z0-9]/', '', $project->name), 0, 10));
     }
 

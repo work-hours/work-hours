@@ -52,12 +52,10 @@ final class JiraController extends Controller
             $email = $validatedData['email'];
             $token = $validatedData['token'];
 
-            // Test the credentials
             if (! $this->jiraAdapter->testCredentials($domain, $email, $token)) {
                 return $this->errorResponse('Invalid Jira credentials. Please check your domain, email, and API token.', 400);
             }
 
-            // Save credentials to database
             $this->jiraAdapter->saveJiraCredentials($domain, $email, $token);
 
             return response()->json([
@@ -89,7 +87,6 @@ final class JiraController extends Controller
                 $credentials['token']
             );
 
-            // Get all imported Jira project keys
             $importedProjectKeys = Project::query()
                 ->where('source', 'jira')
                 ->pluck('repo_id')
@@ -120,14 +117,12 @@ final class JiraController extends Controller
                 return $this->errorResponse('Jira credentials not found. Please set up your Jira credentials first.', 400);
             }
 
-            // Check if project is already imported
             if (Project::query()->where('source', 'jira')
                 ->where('repo_id', $validatedData['key'])
                 ->exists()) {
                 return $this->errorResponse('This Jira project has already been imported.', 400);
             }
 
-            // Create project
             $project = new Project();
             $project->name = $validatedData['name'];
             $project->description = $validatedData['description'] ?? null;
@@ -136,7 +131,6 @@ final class JiraController extends Controller
             $project->user_id = Auth::id();
             $project->save();
 
-            // Import issues as tasks
             $this->importIssuesAsTasks($credentials, $validatedData['key'], $project);
 
             return response()->json([
@@ -270,7 +264,7 @@ final class JiraController extends Controller
         ];
 
         foreach ($issues as $issue) {
-            // Check if task already exists
+
             $existingTaskMeta = TaskMeta::query()
                 ->where('source', 'jira')
                 ->where('source_id', $issue['key'])
@@ -282,29 +276,26 @@ final class JiraController extends Controller
             $metaData = $this->prepareTaskMetaFromJiraIssue($issue, $fields, $issueUrl);
 
             if ($existingTaskMeta) {
-                // Update existing task
+
                 $task = Task::query()->find($existingTaskMeta->task_id);
                 if ($task) {
                     $task->update($taskData);
 
-                    // Update task meta
                     $existingTaskMeta->update($metaData);
 
                     $stats['updated_tasks']++;
                 }
             } else {
-                // Create new task
+
                 $task = new Task();
                 $task->fill($taskData);
                 $task->project_id = $project->id;
                 $task->is_imported = true;
                 $task->save();
 
-                // Create task meta
                 $metaData['source'] = 'jira';
                 $task->meta()->create($metaData);
 
-                // Add labels as tags
                 if (isset($fields['labels']) && is_array($fields['labels'])) {
                     foreach ($fields['labels'] as $label) {
                         $tag = Tag::query()->firstOrCreate(['name' => $label]);
@@ -331,12 +322,10 @@ final class JiraController extends Controller
             return null;
         }
 
-        // Handle string description (old Jira format)
         if (is_string($description)) {
             return $description;
         }
 
-        // Handle Atlassian Document Format
         if (isset($description['content'])) {
             $text = '';
 

@@ -35,7 +35,6 @@ final class Team extends Model
             return 0;
         }
 
-        // Return 0 if the team member is non-monetary
         if ($entry->non_monetary) {
             return 0;
         }

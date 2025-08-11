@@ -172,10 +172,8 @@ final class GitHubAdapter
                 return false;
             }
 
-            // Start with default labels
             $labels = [$task->priority, $task->status];
 
-            // Add tags if they exist
             if ($task->tags->isNotEmpty()) {
                 foreach ($task->tags as $tag) {
                     $labels[] = $tag->name;
@@ -247,10 +245,8 @@ final class GitHubAdapter
                 return false;
             }
 
-            // Start with default labels
             $labels = [$task->priority, $task->status];
 
-            // Add tags if they exist
             if ($task->tags->isNotEmpty()) {
                 foreach ($task->tags as $tag) {
                     $labels[] = $tag->name;
@@ -263,7 +259,6 @@ final class GitHubAdapter
                 'labels' => $labels,
             ];
 
-            // Set issue state based on task status
             $payload['state'] = $task->status === 'completed' ? 'closed' : 'open';
 
             $response = $this->makeGitHubIssueRequest(
@@ -312,8 +307,6 @@ final class GitHubAdapter
                 return false;
             }
 
-            // GitHub API doesn't allow deleting issues, so we close it instead
-            // with a comment indicating it was deleted from the application
             $response = $this->makeGitHubIssueRequest(
                 $token,
                 $repoInfo['owner'],
@@ -324,7 +317,7 @@ final class GitHubAdapter
             );
 
             if ($response instanceof Response && $response->successful()) {
-                // Add a comment indicating the issue was deleted from the application
+
                 $this->makeGitHubIssueRequest(
                     $token,
                     $repoInfo['owner'],

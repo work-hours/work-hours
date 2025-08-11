@@ -198,7 +198,7 @@ final class InvoiceController extends Controller
     #[Action(method: 'get', name: 'invoice.downloadPdf', params: ['invoice'], middleware: ['auth', 'verified'])]
     public function downloadPdf(Invoice $invoice): SymfonyResponse
     {
-        // Load necessary relationships if not already loaded
+
         if (! $invoice->relationLoaded('client')) {
             $invoice->load('client');
         }
@@ -212,17 +212,16 @@ final class InvoiceController extends Controller
         }
 
         try {
-            // Generate PDF using the invoice data
+
             $pdf = Pdf::loadView('pdf.invoice', [
                 'invoice' => $invoice,
                 'client' => $invoice->client,
                 'items' => $invoice->items,
             ]);
 
-            // Return the PDF as a downloadable response
             return $pdf->download("Invoice_{$invoice->invoice_number}.pdf");
         } catch (Exception $e) {
-            // Log the error and return a response
+
             Log::error('Failed to generate invoice PDF: ' . $e->getMessage());
 
             return response()->json(['error' => 'Failed to generate PDF'], 500);
@@ -239,7 +238,7 @@ final class InvoiceController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Send invoice email and update status
+
             InvoiceStore::sendInvoiceEmail($invoice);
 
             DB::commit();
@@ -257,7 +256,7 @@ final class InvoiceController extends Controller
     #[Action(method: 'post', name: 'invoice.updateStatus', params: ['invoice'], middleware: ['auth', 'verified'])]
     public function updateStatus(Invoice $invoice): void
     {
-        // Validate request data
+
         request()->validate([
             'status' => 'required|string|in:draft,sent,paid,partially_paid,overdue,cancelled',
             'paid_amount' => 'required_if:status,paid,partially_paid|numeric|min:0',
@@ -267,19 +266,17 @@ final class InvoiceController extends Controller
 
         DB::beginTransaction();
         try {
-            // Update invoice status and paid amount
+
             $invoice->status = $newStatus;
 
-            // Update paid amount if provided
             if (request()->has('paid_amount')) {
                 $invoice->paid_amount = request('paid_amount');
             }
 
             $invoice->save();
 
-            // Notify client if status is sent or overdue
             if ($newStatus === 'sent') {
-                // For sent status, use the existing method which also updates the status
+
                 InvoiceStore::sendInvoiceEmail($invoice);
             } elseif ($newStatus === 'overdue') {
                 if (! $invoice->relationLoaded('client')) {

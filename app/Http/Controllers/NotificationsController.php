@@ -30,7 +30,6 @@ final class NotificationsController extends Controller
     {
         $user = auth()->user();
 
-        // Check if the user is an admin using the model method
         $isAdmin = $user->isAdmin();
 
         return [

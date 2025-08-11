@@ -60,7 +60,6 @@ final class TimeLogImport implements ToCollection, WithHeadingRow, WithValidatio
                     $duration = round(abs($startTimestamp->diffInMinutes($endTimestamp)) / 60, 2);
                 }
 
-                // Check for duplicate entries
                 $existingEntry = TimeLog::query()
                     ->where('user_id', Auth::id())
                     ->where('project_id', $projectId)
