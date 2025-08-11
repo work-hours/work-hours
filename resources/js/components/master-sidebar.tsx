@@ -328,6 +328,10 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
         return () => clearInterval(intervalId)
     }, [])
 
+    const showIntegrationNav = () => {
+        return isGitHubIntegrated || isJiraIntegrated
+    }
+
     return (
         <div
             className={`sticky top-0 flex h-screen flex-col border-r border-gray-200 bg-[#f8f6e9] shadow-md transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${
@@ -378,7 +382,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                 </div>
 
                 {/* Integration Navigation */}
-                {isGitHubIntegrated && (
+                {showIntegrationNav() && (
                     <div className="mb-6">
                         <div className="mb-3 border-b border-gray-300 pb-2 dark:border-gray-600">
                             <h3
@@ -391,7 +395,12 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                         </div>
                         <TooltipProvider>
                             <nav className="relative z-10 space-y-1">
-                                {integrationNavItems.map((item) => {
+                                {integrationNavItems
+                                    .filter(item =>
+                                        (item.title === 'GitHub' && isGitHubIntegrated) ||
+                                        (item.title === 'Jira' && isJiraIntegrated)
+                                    )
+                                    .map((item) => {
                                     const isActive =
                                         typeof window !== 'undefined' &&
                                         (window.location.pathname === item.href || window.location.pathname.startsWith(`${item.href}/`))
