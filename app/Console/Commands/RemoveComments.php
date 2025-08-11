@@ -35,11 +35,31 @@ final class RemoveComments extends Command
         $this->info("Removing comments from PHP files in {$appPath}");
 
         $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($appPath));
-        $phpFiles = new RegexIterator($files, '/\.php$/');
+        $filteredPhpFiles = new RegexIterator($files, '/\.php$/');
+
+        ['totalFiles' => $totalFiles, 'modifiedFiles' => $modifiedFiles] = $this->removals($filteredPhpFiles);
+
+        $tsxFilePath = base_path('resources/js');
+        $this->info("Removing comments from TSX files in {$tsxFilePath}");
+        $tsxFiles = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tsxFilePath));
+        $filteredTsxFiles = new RegexIterator($tsxFiles, '/\.tsx$/');
+
+        ['totalFiles' => $tsxTotalFiles, 'modifiedFiles' => $tsxModifiedFiles] = $this->removals($filteredTsxFiles);
+
+        $totalFiles += $tsxTotalFiles;
+        $modifiedFiles += $tsxModifiedFiles;
+
+        $this->info("Processed {$totalFiles} files. Modified {$modifiedFiles} files.");
+
+        return CommandAlias::SUCCESS;
+    }
+
+    private function removals($filteredFiles): array
+    {
         $totalFiles = 0;
         $modifiedFiles = 0;
 
-        foreach ($phpFiles as $file) {
+        foreach ($filteredFiles as $file) {
             $totalFiles++;
             $filePath = $file->getRealPath();
             $code = file_get_contents($filePath);
@@ -53,8 +73,9 @@ final class RemoveComments extends Command
             }
         }
 
-        $this->info("Processed {$totalFiles} files. Modified {$modifiedFiles} files.");
-
-        return CommandAlias::SUCCESS;
+        return [
+            'totalFiles' => $totalFiles,
+            'modifiedFiles' => $modifiedFiles,
+        ];
     }
 }
