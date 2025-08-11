@@ -338,6 +338,11 @@ final class JiraAdapter
         }
     }
 
+    public function getJiraBrowserUrl(string $domain, string $path): string
+    {
+        return $this->getJiraUrl($domain, "browse/{$path}");
+    }
+
     /**
      * Construct a full Jira URL.
      *
@@ -350,11 +355,6 @@ final class JiraAdapter
         $path = mb_ltrim($path, '/');
 
         return "https://{$domain}.atlassian.net/{$path}";
-    }
-
-    public function getJiraBrowserUrl(string $domain, string $path): string
-    {
-        return $this->getJiraUrl($domain, "browse/{$path}");
     }
 
     /**
