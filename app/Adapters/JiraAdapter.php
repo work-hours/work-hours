@@ -409,10 +409,7 @@ final class JiraAdapter
             $jiraStatus = $this->mapStatusToJira($task->status);
             if ($task->meta->source_state !== $jiraStatus) {
                 $this->updateJiraIssueStatus($task, $jiraStatus);
-
-                $task->meta->update([
-                    'source_state' => $jiraStatus,
-                ]);
+                $task->meta->update(['source_state' => $jiraStatus]);
             }
 
             if ($response->successful()) {
