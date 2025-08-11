@@ -76,7 +76,7 @@ final class JiraAdapter
     public function createJiraIssue(Task $task): bool|array
     {
         try {
-            $jiraCredentials = $this->getJiraCredentials($task);
+            $jiraCredentials = $this->getJiraCredentials($task->project->user_id);
             if (! $jiraCredentials) {
                 return false;
             }
@@ -84,7 +84,7 @@ final class JiraAdapter
             $domain = $jiraCredentials['domain'];
             $email = $jiraCredentials['email'];
             $token = $jiraCredentials['token'];
-            $projectKey = $this->getProjectKey($task->project);
+            $projectKey = $task->project->repo_id;
 
             $payload = [
                 'fields' => [
@@ -387,7 +387,6 @@ final class JiraAdapter
             $data = $response->json();
 
             if ($resourceKey === 'issues') {
-
                 return $data['issues'] ?? [];
             }
 
