@@ -6,8 +6,8 @@ import JiraIcon from '../icons/jira-icon'
 
 interface IntegrationNavigationProps {
     collapsed: boolean
-    isGitHubIntegrated: boolean
-    isJiraIntegrated: boolean
+    isGitHubIntegrated: boolean | null | undefined | unknown
+    isJiraIntegrated: boolean | null | undefined | unknown
 }
 
 const integrationNavItems: NavItem[] = [
