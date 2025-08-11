@@ -1,6 +1,6 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import DeleteTask from '@/components/delete-task'
-import JiraIcon from '@/components/icons/jira-icon'
+import SourceLinkIcon from '@/components/source-link-icon'
 import TaskDetailsSheet from '@/components/task-details-sheet'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -29,7 +29,6 @@ import {
     Edit,
     FileText,
     Flag,
-    GithubIcon,
     Glasses,
     Loader2,
     Play,
@@ -619,33 +618,8 @@ export default function Tasks() {
                                             <TableCell className="max-w-xl font-medium">
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <span>{task.title}</span>
-                                                    {task.is_imported && task.meta?.source === 'github' && (
-                                                        task.meta?.source_url ? (
-                                                            <a
-                                                                href={task.meta.source_url}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                title="View in GitHub"
-                                                            >
-                                                                <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300" />
-                                                            </a>
-                                                        ) : (
-                                                            <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />
-                                                        )
-                                                    )}
-                                                    {task.is_imported && task.meta?.source === 'jira' && (
-                                                        task.meta?.source_url ? (
-                                                            <a
-                                                                href={task.meta.source_url}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                title="View in Jira"
-                                                            >
-                                                                <JiraIcon className="h-3 w-3 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300" />
-                                                            </a>
-                                                        ) : (
-                                                            <JiraIcon className="h-3 w-3 text-blue-600 dark:text-blue-400" />
-                                                        )
+                                                    {task.is_imported && task.meta?.source && (
+                                                        <SourceLinkIcon source={task.meta.source} sourceUrl={task.meta?.source_url} />
                                                     )}
                                                 </div>
                                                 <div className="flex flex-wrap items-center gap-2">
