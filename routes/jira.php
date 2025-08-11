@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\JiraController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])->group(function (): void {
+Route::middleware('auth')->middleware('verified')->group(function (): void {
     Route::get('jira/connect', [JiraController::class, 'connect'])->name('jira.connect');
     Route::get('jira/projects', [JiraController::class, 'index'])->name('jira.projects');
     Route::post('jira/credentials', [JiraController::class, 'storeCredentials'])->name('jira.credentials.store');

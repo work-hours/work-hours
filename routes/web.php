@@ -36,7 +36,7 @@ Route::get('/cookie-policy', fn () => Inertia::render('legal/CookiePolicy'))->na
 Route::get('/gdpr-compliance', fn () => Inertia::render('legal/GDPRCompliance'))->name('gdpr-compliance');
 Route::get('/security', fn () => Inertia::render('legal/Security'))->name('security');
 
-Route::middleware(['auth', 'verified'])->group(function (): void {
+Route::middleware('auth')->middleware('verified')->group(function (): void {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('notifications', [NotificationsController::class, 'index'])->name('notifications.index');
