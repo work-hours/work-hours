@@ -186,6 +186,48 @@ final class JiraController extends Controller
     }
 
     /**
+     * Prepare task data from Jira issue fields
+     *
+     * @param  array  $fields  The Jira issue fields
+     * @return array The prepared task data
+     */
+    private function prepareTaskDataFromJiraIssue(array $fields): array
+    {
+        return [
+            'title' => $fields['summary'],
+            'description' => $this->extractJiraDescription($fields['description'] ?? []),
+            'status' => $this->mapJiraStatusToLocal($fields['status']['name'] ?? ''),
+            'priority' => $this->mapJiraPriorityToLocal($fields['priority']['name'] ?? ''),
+            'due_date' => isset($fields['duedate']) ? Carbon::parse($fields['duedate'])->format('Y-m-d') : null,
+        ];
+    }
+
+    /**
+     * Prepare task meta data from Jira issue
+     *
+     * @param  array  $issue  The Jira issue
+     * @param  array  $fields  The Jira issue fields
+     * @param  string  $issueUrl  The issue URL
+     * @return array The prepared task meta data
+     */
+    private function prepareTaskMetaFromJiraIssue(array $issue, array $fields, string $issueUrl): array
+    {
+        return [
+            'source_id' => $issue['key'],
+            'source_number' => $issue['id'] ?? null,
+            'source_url' => $issueUrl,
+            'source_state' => $fields['status']['name'] ?? null,
+            'extra_data' => [
+                'updated_at' => $fields['updated'] ?? null,
+                'created_at' => $fields['created'] ?? null,
+                'reporter' => $fields['reporter']['displayName'] ?? null,
+                'assignee' => $fields['assignee']['displayName'] ?? null,
+                'issue_type' => $fields['issuetype']['name'] ?? null,
+            ],
+        ];
+    }
+
+    /**
      * Helper method for error responses.
      *
      * @param  string  $message  The error message
@@ -229,70 +271,38 @@ final class JiraController extends Controller
 
         foreach ($issues as $issue) {
             // Check if task already exists
-            $existingTask = TaskMeta::query()
+            $existingTaskMeta = TaskMeta::query()
                 ->where('source', 'jira')
                 ->where('source_id', $issue['key'])
                 ->first();
 
             $fields = $issue['fields'];
             $issueUrl = "{$domain}/browse/{$issue['key']}";
+            $taskData = $this->prepareTaskDataFromJiraIssue($fields);
+            $metaData = $this->prepareTaskMetaFromJiraIssue($issue, $fields, $issueUrl);
 
-            if ($existingTask) {
+            if ($existingTaskMeta) {
                 // Update existing task
-                $existingTask->update([
-                    'title' => $fields['summary'],
-                    'description' => $this->extractJiraDescription($fields['description'] ?? []),
-                    'status' => $this->mapJiraStatusToLocal($fields['status']['name'] ?? ''),
-                    'priority' => $this->mapJiraPriorityToLocal($fields['priority']['name'] ?? ''),
-                    'due_date' => isset($fields['duedate']) ? Carbon::parse($fields['duedate'])->format('Y-m-d') : null,
-                ]);
+                $task = Task::query()->find($existingTaskMeta->task_id);
+                if ($task) {
+                    $task->update($taskData);
 
-                // Update or create task meta
-                $existingTask->meta()->updateOrCreate(
-                    ['task_id' => $existingTask->id, 'source' => 'jira'],
-                    [
-                        'source_id' => $issue['key'],
-                        'source_number' => $issue['id'] ?? null,
-                        'source_url' => $issueUrl,
-                        'source_state' => $fields['status']['name'] ?? null,
-                        'extra_data' => [
-                            'updated_at' => $fields['updated'] ?? null,
-                            'created_at' => $fields['created'] ?? null,
-                            'reporter' => $fields['reporter']['displayName'] ?? null,
-                            'assignee' => $fields['assignee']['displayName'] ?? null,
-                            'issue_type' => $fields['issuetype']['name'] ?? null,
-                        ],
-                    ]
-                );
+                    // Update task meta
+                    $existingTaskMeta->update($metaData);
 
-                $stats['updated_tasks']++;
+                    $stats['updated_tasks']++;
+                }
             } else {
                 // Create new task
                 $task = new Task();
-                $task->title = $fields['summary'];
-                $task->description = $this->extractJiraDescription($fields['description'] ?? []);
-                $task->status = $this->mapJiraStatusToLocal($fields['status']['name'] ?? '');
-                $task->priority = $this->mapJiraPriorityToLocal($fields['priority']['name'] ?? '');
-                $task->due_date = isset($fields['duedate']) ? Carbon::parse($fields['duedate'])->format('Y-m-d') : null;
+                $task->fill($taskData);
                 $task->project_id = $project->id;
                 $task->is_imported = true;
                 $task->save();
 
                 // Create task meta
-                $task->meta()->create([
-                    'source' => 'jira',
-                    'source_id' => $issue['key'],
-                    'source_number' => $issue['id'] ?? null,
-                    'source_url' => $issueUrl,
-                    'source_state' => $fields['status']['name'] ?? null,
-                    'extra_data' => [
-                        'updated_at' => $fields['updated'] ?? null,
-                        'created_at' => $fields['created'] ?? null,
-                        'reporter' => $fields['reporter']['displayName'] ?? null,
-                        'assignee' => $fields['assignee']['displayName'] ?? null,
-                        'issue_type' => $fields['issuetype']['name'] ?? null,
-                    ],
-                ]);
+                $metaData['source'] = 'jira';
+                $task->meta()->create($metaData);
 
                 // Add labels as tags
                 if (isset($fields['labels']) && is_array($fields['labels'])) {
@@ -317,7 +327,7 @@ final class JiraController extends Controller
      */
     private function extractJiraDescription(array|string|null $description): ?string
     {
-        if (empty($description)) {
+        if ($description === '' || $description === '0' || $description === [] || $description === null) {
             return null;
         }
 
@@ -327,7 +337,7 @@ final class JiraController extends Controller
         }
 
         // Handle Atlassian Document Format
-        if (is_array($description) && isset($description['content'])) {
+        if (isset($description['content'])) {
             $text = '';
 
             foreach ($description['content'] as $block) {
