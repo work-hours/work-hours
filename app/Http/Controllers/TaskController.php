@@ -299,6 +299,10 @@ final class TaskController extends Controller
                 $this->gitHubAdapter->deleteGitHubIssue($task);
             }
 
+            if (request()->boolean('delete_from_jira') && $task->is_imported && $task->meta && $task->meta->source === 'jira') {
+                $this->jiraAdapter->deleteJiraIssue($task);
+            }
+
             $task->assignees()->detach();
 
             $task->delete();

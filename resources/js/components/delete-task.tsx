@@ -11,10 +11,11 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 interface DeleteTaskProps {
     taskId: number
     isGithub?: boolean
+    isJira?: boolean
     onDelete?: () => void
 }
 
-export default function DeleteTask({ taskId, isGithub = false, onDelete }: DeleteTaskProps) {
+export default function DeleteTask({ taskId, isGithub = false, isJira = false, onDelete }: DeleteTaskProps) {
     const {
         delete: destroy,
         processing,
@@ -23,15 +24,21 @@ export default function DeleteTask({ taskId, isGithub = false, onDelete }: Delet
         setData,
     } = useForm({
         delete_from_github: true,
+        delete_from_jira: true,
     })
 
     const [deleteFromGithub, setDeleteFromGithub] = useState<boolean>(true)
+    const [deleteFromJira, setDeleteFromJira] = useState<boolean>(true)
 
     const deleteTask: FormEventHandler = (e) => {
         e.preventDefault()
 
         if (isGithub) {
             setData('delete_from_github', deleteFromGithub as never)
+        }
+
+        if (isJira) {
+            setData('delete_from_jira', deleteFromJira as never)
         }
 
         destroy(route('task.destroy', taskId), {
@@ -78,6 +85,18 @@ export default function DeleteTask({ taskId, isGithub = false, onDelete }: Delet
                             />
                             <Label htmlFor="delete_from_github" className="text-sm">
                                 Delete from GitHub?
+                            </Label>
+                        </div>
+                    )}
+                    {isJira && (
+                        <div className="flex items-center space-x-2 pt-2">
+                            <Checkbox
+                                id="delete_from_jira"
+                                checked={deleteFromJira}
+                                onCheckedChange={(checked) => setDeleteFromJira(checked === true)}
+                            />
+                            <Label htmlFor="delete_from_jira" className="text-sm">
+                                Delete from Jira?
                             </Label>
                         </div>
                     )}

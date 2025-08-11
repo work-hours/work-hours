@@ -194,17 +194,6 @@ final class JiraAdapter
     }
 
     /**
-     * Close a Jira issue.
-     *
-     * @param  Task  $task  The task containing Jira issue information
-     * @return bool Whether the issue was successfully closed
-     */
-    public function closeJiraIssue(Task $task): bool
-    {
-        return $this->updateJiraIssueStatus($task, 'Done');
-    }
-
-    /**
      * Update a Jira issue status.
      *
      * @param  Task  $task  The task containing Jira issue information
@@ -426,6 +415,54 @@ final class JiraAdapter
             return false;
         } catch (Exception $e) {
             $this->logError('Error updating Jira issue: ' . $e->getMessage(), [
+                'task_id' => $task->id,
+                'exception' => $e,
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Delete a Jira issue linked to a task.
+     *
+     * @param  Task  $task  The task containing Jira issue information
+     * @return bool Whether the issue was successfully deleted
+     */
+    public function deleteJiraIssue(Task $task): bool
+    {
+        try {
+            if (! $task->meta || $task->meta->source !== 'jira' || ! $task->meta->source_id) {
+                return false;
+            }
+
+            $credentials = $this->getJiraCredentials($task->project->user_id);
+            if (! $credentials) {
+                return false;
+            }
+
+            $issueKey = $task->meta->source_id;
+
+            $response = $this->makeAuthenticatedRequest(
+                $credentials,
+                'delete',
+                self::API_BASE_URL . '/issue/' . $issueKey
+            );
+
+            if ($response->successful()) {
+                return true;
+            }
+
+            $this->logError('Failed to delete Jira issue', [
+                'task_id' => $task->id,
+                'issue_key' => $issueKey,
+                'error' => $response->json(),
+                'status' => $response->status(),
+            ]);
+
+            return false;
+        } catch (Exception $e) {
+            $this->logError('Error deleting Jira issue: ' . $e->getMessage(), [
                 'task_id' => $task->id,
                 'exception' => $e,
             ]);
