@@ -118,6 +118,10 @@ final class JiraAdapter
                 ],
             ];
 
+            if ($task->tags && $task->tags->isNotEmpty()) {
+                $payload['fields']['labels'] = $task->tags->pluck('name')->toArray();
+            }
+
             if ($task->due_date) {
                 $payload['fields']['duedate'] = $task->due_date->format('Y-m-d');
             }
