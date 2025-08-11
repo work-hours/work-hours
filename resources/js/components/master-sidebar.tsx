@@ -1,30 +1,16 @@
 import Background from '@/components/ui/background'
-import { Badge } from '@/components/ui/badge'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem, type SharedData } from '@/types'
 import { count } from '@actions/ApprovalController'
 import { count as taskCount } from '@actions/TaskController'
 import { Link, usePage } from '@inertiajs/react'
-import {
-    Building,
-    CheckSquare,
-    ChevronDown,
-    ChevronRight,
-    ClipboardList,
-    FileText,
-    Folder,
-    Github,
-    LayoutGrid,
-    LogOut,
-    LucideProjector,
-    LucideServerCog,
-    Settings,
-    TimerIcon,
-} from 'lucide-react'
+import { Building, CheckSquare, ClipboardList, FileText, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
-import JiraIcon from './icons/jira-icon'
+import { FooterNavigation } from './sidebar/footer-navigation'
+import { IntegrationNavigation } from './sidebar/integration-navigation'
+import { SidebarGroup } from './sidebar/sidebar-group'
+import { UserSection } from './sidebar/user-section'
 
 interface MasterSidebarProps {
     collapsed: boolean
@@ -113,182 +99,6 @@ const navGroups: NavItemGroup[] = [
     },
 ]
 
-const integrationNavItems: NavItem[] = [
-    {
-        title: 'GitHub',
-        href: '/github/repositories',
-        icon: Github,
-    },
-    {
-        title: 'Jira',
-        href: '/jira/projects',
-        icon: JiraIcon,
-    },
-]
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Feedback & Issues',
-        href: 'https://github.com/msamgan/work-hours/issues',
-        icon: Folder,
-    },
-]
-
-function SidebarGroup({
-    title,
-    icon: Icon,
-    items,
-    collapsed,
-    approvalCount,
-    pendingTaskCount,
-}: NavItemGroup & {
-    collapsed: boolean
-    approvalCount: number
-    pendingTaskCount: number
-}) {
-    const [isExpanded, setIsExpanded] = useState(false)
-    const anyItemActive = items.some(
-        (item) => typeof window !== 'undefined' && (window.location.pathname === item.href || window.location.pathname.startsWith(`${item.href}/`)),
-    )
-
-    const hasApprovals = items.some((item) => item.href === '/approvals')
-    const hasTasks = items.some((item) => item.href === '/task')
-    const groupApprovalCount = hasApprovals ? approvalCount : 0
-    const groupTaskCount = hasTasks ? pendingTaskCount : 0
-    const totalBadgeCount = groupApprovalCount + groupTaskCount
-
-    useEffect(() => {
-        if (anyItemActive) {
-            setIsExpanded(true)
-        }
-    }, [anyItemActive])
-
-    useEffect(() => {
-        if (collapsed) {
-            setIsExpanded(true)
-        }
-    }, [collapsed])
-
-    const toggleExpand = (e: React.MouseEvent) => {
-        e.stopPropagation()
-        console.log('Toggle button clicked, collapsed state:', collapsed)
-
-        if (!collapsed) {
-            const newState = !isExpanded
-            console.log('Toggle clicked, changing state from', isExpanded, 'to', newState)
-            setIsExpanded(newState)
-        }
-    }
-
-    return (
-        <div className="mb-2">
-            {/* Group header - Move onClick to only the button element */}
-            <button
-                type="button"
-                onClick={toggleExpand}
-                className={`group relative z-30 flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100 ${anyItemActive ? 'font-semibold' : ''}`}
-            >
-                <div className="relative">
-                    {Icon && (
-                        <Icon
-                            className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${!collapsed ? 'mr-3' : ''} text-gray-500 dark:text-gray-400`}
-                            aria-hidden="true"
-                        />
-                    )}
-
-                    {/* Show badge on parent menu if any child items have counts */}
-                    {totalBadgeCount > 0 && (
-                        <Badge
-                            variant="destructive"
-                            className="absolute -top-0 -right-36 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
-                        >
-                            {totalBadgeCount > 99 ? '99+' : totalBadgeCount}
-                        </Badge>
-                    )}
-                </div>
-
-                {!collapsed && (
-                    <>
-                        <span className="flex-1 text-left">{title}</span>
-                        {isExpanded ? (
-                            <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200" />
-                        ) : (
-                            <ChevronRight className="h-4 w-4 text-gray-500 transition-transform duration-200" />
-                        )}
-                    </>
-                )}
-            </button>
-
-            {/* Group items */}
-            {(collapsed || isExpanded) && (
-                <div className={`mt-1 space-y-1 ${collapsed ? '' : 'ml-4'} overflow-hidden transition-all duration-300`}>
-                    <TooltipProvider>
-                        {items.map((item) => {
-                            const isActive =
-                                typeof window !== 'undefined' &&
-                                (window.location.pathname === item.href || window.location.pathname.startsWith(`${item.href}/`))
-
-                            return (
-                                <div key={item.href} className="relative">
-                                    <Link
-                                        href={item.href}
-                                        className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 ${
-                                            isActive
-                                                ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-800 dark:text-gray-100'
-                                                : 'text-gray-700 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100'
-                                        }`}
-                                    >
-                                        <div className="relative">
-                                            {item.icon && (
-                                                <item.icon
-                                                    className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-                                                        !collapsed ? 'mr-3' : ''
-                                                    } ${isActive ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}
-                                                    aria-hidden="true"
-                                                />
-                                            )}
-                                            {item.href === '/approvals' && approvalCount > 0 && (
-                                                <Badge
-                                                    variant="destructive"
-                                                    className="absolute top-0 -right-24 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
-                                                >
-                                                    {approvalCount > 99 ? '99+' : approvalCount}
-                                                </Badge>
-                                            )}
-                                            {item.href === '/task' && pendingTaskCount > 0 && (
-                                                <Badge
-                                                    variant="destructive"
-                                                    className="absolute top-0 -right-16 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
-                                                >
-                                                    {pendingTaskCount > 99 ? '99+' : pendingTaskCount}
-                                                </Badge>
-                                            )}
-                                        </div>
-                                        {!collapsed && <span>{item.title}</span>}
-                                        {isActive && <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-gray-700 dark:bg-gray-400"></div>}
-                                    </Link>
-                                    {collapsed && (
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="right" className="shadow-lg">
-                                                {item.title}
-                                                {item.href === '/approvals' && approvalCount > 0 && ` (${approvalCount})`}
-                                                {item.href === '/task' && pendingTaskCount > 0 && ` (${pendingTaskCount})`}
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    )}
-                                </div>
-                            )
-                        })}
-                    </TooltipProvider>
-                </div>
-            )}
-        </div>
-    )
-}
-
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     const { isGitHubIntegrated, isJiraIntegrated, auth } = usePage<SharedData>().props
     const [approvalCount, setApprovalCount] = useState(0)
@@ -327,10 +137,6 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
         return () => clearInterval(intervalId)
     }, [])
-
-    const showIntegrationNav = () => {
-        return isGitHubIntegrated || isJiraIntegrated
-    }
 
     return (
         <div
@@ -382,170 +188,13 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                 </div>
 
                 {/* Integration Navigation */}
-                {showIntegrationNav() && (
-                    <div className="mb-6">
-                        <div className="mb-3 border-b border-gray-300 pb-2 dark:border-gray-600">
-                            <h3
-                                className={`text-xs font-bold tracking-wider text-gray-700 uppercase dark:text-gray-300 ${
-                                    collapsed ? 'text-center' : 'px-2'
-                                }`}
-                            >
-                                {collapsed ? 'Int.' : 'Integration'}
-                            </h3>
-                        </div>
-                        <TooltipProvider>
-                            <nav className="relative z-10 space-y-1">
-                                {integrationNavItems
-                                    .filter(item =>
-                                        (item.title === 'GitHub' && isGitHubIntegrated) ||
-                                        (item.title === 'Jira' && isJiraIntegrated)
-                                    )
-                                    .map((item) => {
-                                    const isActive =
-                                        typeof window !== 'undefined' &&
-                                        (window.location.pathname === item.href || window.location.pathname.startsWith(`${item.href}/`))
-                                    return (
-                                        <div key={item.href} className="relative">
-                                            <Link
-                                                href={item.href}
-                                                className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 ${
-                                                    isActive
-                                                        ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-800 dark:text-gray-100'
-                                                        : 'text-gray-700 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100'
-                                                }`}
-                                            >
-                                                {item.icon && (
-                                                    <item.icon
-                                                        className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-                                                            !collapsed ? 'mr-3' : ''
-                                                        } ${isActive ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}
-                                                        aria-hidden="true"
-                                                    />
-                                                )}
-                                                {!collapsed && <span>{item.title}</span>}
-                                                {isActive && (
-                                                    <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-gray-700 dark:bg-gray-400"></div>
-                                                )}
-                                            </Link>
-                                            {collapsed && (
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent side="right" className="shadow-lg">
-                                                        {item.title}
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            )}
-                                        </div>
-                                    )
-                                })}
-                            </nav>
-                        </TooltipProvider>
-                    </div>
-                )}
+                <IntegrationNavigation collapsed={collapsed} isGitHubIntegrated={isGitHubIntegrated} isJiraIntegrated={isJiraIntegrated} />
             </div>
 
             {/* Footer with enhanced styling */}
             <div className={`border-t border-gray-200 pt-3 pb-4 dark:border-gray-700 ${collapsed ? 'px-2' : 'px-4'}`}>
-                <div className="mb-4">
-                    <h3
-                        className={`mb-2 text-xs font-bold tracking-wider text-gray-700 uppercase dark:text-gray-300 ${
-                            collapsed ? 'text-center' : 'px-2'
-                        }`}
-                    >
-                        Links
-                    </h3>
-                    <TooltipProvider>
-                        <nav className="relative z-10 space-y-1">
-                            {footerNavItems.map((item) => (
-                                <div key={item.href} className="relative">
-                                    <a
-                                        href={item.href}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100"
-                                    >
-                                        {item.icon && (
-                                            <item.icon
-                                                className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-                                                    !collapsed ? 'mr-3' : ''
-                                                } text-gray-500 dark:text-gray-400`}
-                                                aria-hidden="true"
-                                            />
-                                        )}
-                                        {!collapsed && <span>{item.title}</span>}
-                                    </a>
-                                    {collapsed && (
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="right" className="shadow-lg">
-                                                {item.title}
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    )}
-                                </div>
-                            ))}
-                        </nav>
-                    </TooltipProvider>
-                </div>
-
-                {/* User section with enhanced styling */}
-                <div className="mb-3 px-2">
-                    <div className={`flex items-center ${collapsed ? 'justify-center' : ''} relative z-10`}>
-                        <div className="flex-shrink-0">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 font-bold text-gray-700 shadow-sm ring-2 ring-white dark:bg-gray-700 dark:text-gray-200 dark:ring-gray-800">
-                                {auth.user && auth.user.name ? auth.user.name.charAt(0) : ''}
-                            </div>
-                        </div>
-                        {!collapsed && (
-                            <div className="ml-3">
-                                <p className="truncate text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    {auth.user && auth.user.name ? auth.user.name : ''}
-                                </p>
-                                <Link
-                                    href="/settings/profile"
-                                    className="relative z-10 text-xs text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                                >
-                                    View profile
-                                </Link>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Bottom link with enhanced styling */}
-                <div className="mt-auto border-t border-gray-200 px-2 pt-3 dark:border-gray-700">
-                    <TooltipProvider>
-                        <div className="relative">
-                            <Link
-                                href={route('logout')}
-                                method="post"
-                                className="group flex items-center rounded-md px-2 py-2 text-sm font-medium text-red-600 transition-all duration-200 hover:bg-white hover:text-red-700 hover:shadow-sm dark:text-red-400 dark:hover:bg-gray-800 dark:hover:text-red-300"
-                            >
-                                <LogOut
-                                    className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-                                        !collapsed ? 'mr-3' : ''
-                                    } text-red-500 dark:text-red-400`}
-                                    aria-hidden="true"
-                                />
-                                {!collapsed && <span>Logout</span>}
-                            </Link>
-                            {collapsed && (
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="right" className="shadow-lg">
-                                        Logout
-                                    </TooltipContent>
-                                </Tooltip>
-                            )}
-                        </div>
-                    </TooltipProvider>
-                </div>
+                <FooterNavigation collapsed={collapsed} />
+                <UserSection collapsed={collapsed} user={auth.user} />
             </div>
         </div>
     )
