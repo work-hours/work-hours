@@ -161,22 +161,16 @@ final class JiraController extends Controller
     public function syncProject(Project $project): JsonResponse
     {
         try {
-            // Check if the project is a Jira project
             if ($project->source !== 'jira' || ! $project->repo_id) {
                 return $this->errorResponse('This project is not a Jira project.', 400);
             }
 
-            // Get credentials from the project
-            $credentials = json_decode($project->jira_credentials, true);
+            $credentials = $this->jiraAdapter->getJiraCredentials();
             if (! $credentials) {
-                $credentials = $this->jiraAdapter->getSessionJiraCredentials();
-                if (! $credentials) {
-                    return $this->errorResponse('Jira credentials not found for this project.', 400);
-                }
+                return $this->errorResponse('Jira credentials not found for this project.', 400);
             }
 
-            // Import issues as tasks
-            $result = $this->importIssuesAsTasks($credentials, $project->jira_project_key, $project);
+            $result = $this->importIssuesAsTasks($credentials, $project->repo_id, $project);
 
             return response()->json([
                 'success' => true,
@@ -189,6 +183,21 @@ final class JiraController extends Controller
 
             return $this->errorResponse('Failed to sync Jira project: ' . $e->getMessage(), 500);
         }
+    }
+
+    /**
+     * Helper method for error responses.
+     *
+     * @param  string  $message  The error message
+     * @param  int  $status  The HTTP status code
+     * @return JsonResponse The error response
+     */
+    private function errorResponse(string $message, int $status): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message,
+        ], $status);
     }
 
     /**
@@ -306,7 +315,7 @@ final class JiraController extends Controller
      * @param  array|string|null  $description  The Jira description field
      * @return string|null The extracted plain text
      */
-    private function extractJiraDescription($description): ?string
+    private function extractJiraDescription(array|string|null $description): ?string
     {
         if (empty($description)) {
             return null;
@@ -346,7 +355,6 @@ final class JiraController extends Controller
     private function mapJiraStatusToLocal(string $jiraStatus): string
     {
         return match (mb_strtolower($jiraStatus)) {
-            'to do', 'open', 'backlog' => 'pending',
             'in progress' => 'in_progress',
             'done', 'closed', 'resolved' => 'completed',
             default => 'pending',
@@ -363,24 +371,8 @@ final class JiraController extends Controller
     {
         return match (mb_strtolower($jiraPriority)) {
             'highest', 'high' => 'high',
-            'medium' => 'medium',
             'low', 'lowest' => 'low',
             default => 'medium',
         };
-    }
-
-    /**
-     * Helper method for error responses.
-     *
-     * @param  string  $message  The error message
-     * @param  int  $status  The HTTP status code
-     * @return JsonResponse The error response
-     */
-    private function errorResponse(string $message, int $status): JsonResponse
-    {
-        return response()->json([
-            'success' => false,
-            'message' => $message,
-        ], $status);
     }
 }
