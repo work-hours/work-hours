@@ -219,7 +219,7 @@ final class JiraAdapter
                 return false;
             }
 
-            $issueKey = $task->external_id;
+            $issueKey = $task->meta->source_id;
             $transitionsUrl = self::API_BASE_URL . "/issue/{$issueKey}/transitions";
 
             $transitionsResponse = $this->makeAuthenticatedRequest(
@@ -348,6 +348,96 @@ final class JiraAdapter
     }
 
     /**
+     * Update a Jira issue for a task.
+     *
+     * @param  Task  $task  The task containing updated information
+     * @return bool Whether the issue was successfully updated
+     */
+    public function updateJiraIssue(Task $task): bool
+    {
+        try {
+            if (! $task->meta || $task->meta->source !== 'jira' || ! $task->meta->source_id) {
+                return false;
+            }
+
+            $credentials = $this->getJiraCredentials($task->project->user_id);
+            if (! $credentials) {
+                return false;
+            }
+
+            $issueKey = $task->meta->source_id;
+
+            $payload = [
+                'fields' => [
+                    'summary' => $task->title,
+                    'description' => [
+                        'type' => 'doc',
+                        'version' => 1,
+                        'content' => [
+                            [
+                                'type' => 'paragraph',
+                                'content' => [
+                                    [
+                                        'type' => 'text',
+                                        'text' => $task->description ?? '',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'priority' => [
+                        'name' => $this->mapPriorityToJira($task->priority),
+                    ],
+                ],
+            ];
+
+            if ($task->tags && $task->tags->isNotEmpty()) {
+                $payload['fields']['labels'] = $task->tags->pluck('name')->toArray();
+            }
+
+            if ($task->due_date) {
+                $payload['fields']['duedate'] = $task->due_date->format('Y-m-d');
+            }
+
+            $response = $this->makeAuthenticatedRequest(
+                $credentials,
+                'put',
+                self::API_BASE_URL . '/issue/' . $issueKey,
+                $payload
+            );
+
+            $jiraStatus = $this->mapStatusToJira($task->status);
+            if ($task->meta->source_state !== $jiraStatus) {
+                $this->updateJiraIssueStatus($task, $jiraStatus);
+
+                $task->meta->update([
+                    'source_state' => $jiraStatus,
+                ]);
+            }
+
+            if ($response->successful()) {
+                return true;
+            }
+
+            $this->logError('Failed to update Jira issue', [
+                'task_id' => $task->id,
+                'issue_key' => $issueKey,
+                'error' => $response->json(),
+                'status' => $response->status(),
+            ]);
+
+            return false;
+        } catch (Exception $e) {
+            $this->logError('Error updating Jira issue: ' . $e->getMessage(), [
+                'task_id' => $task->id,
+                'exception' => $e,
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
      * Construct a full Jira URL.
      *
      * @param  string  $domain  The Jira domain (without .atlassian.net)
@@ -459,6 +549,22 @@ final class JiraAdapter
             'high' => 'High',
             'low' => 'Low',
             default => 'Medium',
+        };
+    }
+
+    /**
+     * Map Work Hours task status to Jira status.
+     *
+     * @param  string  $status  The Work Hours task status
+     * @return string The corresponding Jira status
+     */
+    private function mapStatusToJira(string $status): string
+    {
+        return match ($status) {
+            'pending' => 'To Do',
+            'in_progress' => 'In Progress',
+            'completed' => 'Done',
+            default => 'To Do',
         };
     }
 

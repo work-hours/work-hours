@@ -39,6 +39,7 @@ type TaskForm = {
     due_date: string
     assignees: number[]
     github_update: boolean
+    jira_update: boolean
     tags: string[]
 }
 
@@ -57,6 +58,7 @@ type Props = {
     assignedUsers: number[]
     taskTags: string[]
     isGithub: boolean
+    isJira: boolean
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -70,7 +72,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-export default function EditTask({ task, projects, potentialAssignees: initialAssignees, assignedUsers, taskTags, isGithub }: Props) {
+export default function EditTask({ task, projects, potentialAssignees: initialAssignees, assignedUsers, taskTags, isGithub, isJira }: Props) {
     const { data, setData, put, processing, errors } = useForm<TaskForm>({
         project_id: task.project_id.toString(),
         title: task.title,
@@ -80,6 +82,7 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
         due_date: task.due_date || '',
         assignees: assignedUsers || [],
         github_update: true,
+        jira_update: true,
         tags: taskTags || [],
     })
 
@@ -388,6 +391,21 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                             <span className="text-sm font-medium">Update GitHub issue when task is updated</span>
                                         </Label>
                                         <InputError message={errors.github_update} />
+                                    </div>
+                                )}
+
+                                {isJira && (
+                                    <div className="ml-1 grid gap-2">
+                                        <Label className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id="jira_update"
+                                                checked={data.jira_update}
+                                                onCheckedChange={(checked) => setData('jira_update', checked === true)}
+                                                disabled={processing}
+                                            />
+                                            <span className="text-sm font-medium">Update Jira issue when task is updated</span>
+                                        </Label>
+                                        <InputError message={errors.jira_update} />
                                     </div>
                                 )}
 

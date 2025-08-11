@@ -194,6 +194,7 @@ final class TaskController extends Controller
         $taskTags = $task->tags->pluck('name')->toArray();
 
         $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
+        $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
 
         return Inertia::render('task/edit', [
             'task' => $task,
@@ -202,6 +203,7 @@ final class TaskController extends Controller
             'assignedUsers' => $assignedUsers,
             'taskTags' => $taskTags,
             'isGithub' => $isGithub,
+            'isJira' => $isJira,
         ]);
     }
 
@@ -248,18 +250,15 @@ final class TaskController extends Controller
                     $task->assignees()->detach();
                 }
             } else {
-
                 $task->update($request->only(['status']));
             }
 
             if ($oldStatus !== 'completed' && $request->input('status') === 'completed' && ! $isProjectOwner) {
-
                 if (! $task->relationLoaded('project')) {
                     $task->load('project');
                 }
 
                 $projectOwner = User::query()->find($task->project->user_id);
-
                 $projectOwner->notify(new TaskCompleted($task, auth()->user()));
             }
 
@@ -271,6 +270,10 @@ final class TaskController extends Controller
 
             if ($task->is_imported && $task->meta && $task->meta->source === 'github' && $request->boolean('github_update')) {
                 $this->gitHubAdapter->updateGitHubIssue($task);
+            }
+
+            if ($task->is_imported && $task->meta && $task->meta->source === 'jira' && $request->boolean('jira_update')) {
+                $this->jiraAdapter->updateJiraIssue($task);
             }
         } catch (Exception $e) {
             DB::rollBack();
