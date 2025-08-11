@@ -161,12 +161,8 @@ final class JiraAdapter
      * @param  int|null  $userId  The user ID (defaults to current authenticated user)
      * @return array|null The Jira credentials or null if not found
      */
-    public function getJiraCredentials($userId = null): ?array
+    public function getJiraCredentials(?int $userId = null): ?array
     {
-        if ($userId instanceof Task) {
-            $userId = $userId->project->user_id;
-        }
-
         $userId ??= auth()->id();
 
         if (! $userId) {
@@ -201,7 +197,7 @@ final class JiraAdapter
     public function updateJiraIssueStatus(Task $task, string $status): bool
     {
         try {
-            $credentials = $this->getJiraCredentials($task);
+            $credentials = $this->getJiraCredentials($task->project->user_id);
             if (! $credentials) {
                 return false;
             }

@@ -22,7 +22,10 @@ use Msamgan\Lact\Attributes\Action;
 
 final class JiraController extends Controller
 {
-    public function __construct(private readonly JiraAdapter $jiraAdapter) {}
+    public function __construct(private readonly JiraAdapter $jiraAdapter)
+    {
+        //
+    }
 
     /**
      * Display the Jira connection page.
@@ -180,48 +183,6 @@ final class JiraController extends Controller
     }
 
     /**
-     * Prepare task data from Jira issue fields
-     *
-     * @param  array  $fields  The Jira issue fields
-     * @return array The prepared task data
-     */
-    private function prepareTaskDataFromJiraIssue(array $fields): array
-    {
-        return [
-            'title' => $fields['summary'],
-            'description' => $this->extractJiraDescription($fields['description'] ?? []),
-            'status' => $this->mapJiraStatusToLocal($fields['status']['name'] ?? ''),
-            'priority' => $this->mapJiraPriorityToLocal($fields['priority']['name'] ?? ''),
-            'due_date' => isset($fields['duedate']) ? Carbon::parse($fields['duedate'])->format('Y-m-d') : null,
-        ];
-    }
-
-    /**
-     * Prepare task meta data from Jira issue
-     *
-     * @param  array  $issue  The Jira issue
-     * @param  array  $fields  The Jira issue fields
-     * @param  string  $issueUrl  The issue URL
-     * @return array The prepared task meta data
-     */
-    private function prepareTaskMetaFromJiraIssue(array $issue, array $fields, string $issueUrl): array
-    {
-        return [
-            'source_id' => $issue['key'],
-            'source_number' => $issue['id'] ?? null,
-            'source_url' => $issueUrl,
-            'source_state' => $fields['status']['name'] ?? null,
-            'extra_data' => [
-                'updated_at' => $fields['updated'] ?? null,
-                'created_at' => $fields['created'] ?? null,
-                'reporter' => $fields['reporter']['displayName'] ?? null,
-                'assignee' => $fields['assignee']['displayName'] ?? null,
-                'issue_type' => $fields['issuetype']['name'] ?? null,
-            ],
-        ];
-    }
-
-    /**
      * Helper method for error responses.
      *
      * @param  string  $message  The error message
@@ -311,6 +272,23 @@ final class JiraController extends Controller
     }
 
     /**
+     * Prepare task data from Jira issue fields
+     *
+     * @param  array  $fields  The Jira issue fields
+     * @return array The prepared task data
+     */
+    private function prepareTaskDataFromJiraIssue(array $fields): array
+    {
+        return [
+            'title' => $fields['summary'],
+            'description' => $this->extractJiraDescription($fields['description'] ?? []),
+            'status' => $this->mapJiraStatusToLocal($fields['status']['name'] ?? ''),
+            'priority' => $this->mapJiraPriorityToLocal($fields['priority']['name'] ?? ''),
+            'due_date' => isset($fields['duedate']) ? Carbon::parse($fields['duedate'])->format('Y-m-d') : null,
+        ];
+    }
+
+    /**
      * Helper method to extract text from Jira's Atlassian Document Format.
      *
      * @param  array|string|null  $description  The Jira description field
@@ -373,5 +351,30 @@ final class JiraController extends Controller
             'low', 'lowest' => 'low',
             default => 'medium',
         };
+    }
+
+    /**
+     * Prepare task meta data from Jira issue
+     *
+     * @param  array  $issue  The Jira issue
+     * @param  array  $fields  The Jira issue fields
+     * @param  string  $issueUrl  The issue URL
+     * @return array The prepared task meta data
+     */
+    private function prepareTaskMetaFromJiraIssue(array $issue, array $fields, string $issueUrl): array
+    {
+        return [
+            'source_id' => $issue['key'],
+            'source_number' => $issue['id'] ?? null,
+            'source_url' => $issueUrl,
+            'source_state' => $fields['status']['name'] ?? null,
+            'extra_data' => [
+                'updated_at' => $fields['updated'] ?? null,
+                'created_at' => $fields['created'] ?? null,
+                'reporter' => $fields['reporter']['displayName'] ?? null,
+                'assignee' => $fields['assignee']['displayName'] ?? null,
+                'issue_type' => $fields['issuetype']['name'] ?? null,
+            ],
+        ];
     }
 }
