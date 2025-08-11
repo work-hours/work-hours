@@ -97,7 +97,7 @@ final class JiraController extends Controller
 
             return response()->json([
                 'success' => true,
-                'projects' => array_values($projects),
+                'projects' => $projects,
                 'importedProjectKeys' => $importedProjectKeys,
             ]);
         } catch (Exception $e) {
@@ -204,6 +204,8 @@ final class JiraController extends Controller
      * @param  string  $projectKey  The Jira project key
      * @param  Project  $project  The local project
      * @return array Import statistics
+     *
+     * @throws Exception
      */
     private function importIssuesAsTasks(array $credentials, string $projectKey, Project $project): array
     {
@@ -215,7 +217,6 @@ final class JiraController extends Controller
 
         if ($issues instanceof JsonResponse) {
             $error = $issues->getContent();
-            Log::error('Failed to fetch Jira issues', ['error' => $error]);
             throw new Exception('Failed to fetch Jira issues: ' . $error);
         }
 
@@ -232,7 +233,7 @@ final class JiraController extends Controller
                 ->first();
 
             $fields = $issue['fields'];
-            $issueUrl = "{$domain}/browse/{$issue['key']}";
+            $issueUrl = $this->jiraAdapter->getJiraUrl($domain, $issue['key']);
             $taskData = $this->prepareTaskDataFromJiraIssue($fields);
             $metaData = $this->prepareTaskMetaFromJiraIssue($issue, $fields, $issueUrl);
 

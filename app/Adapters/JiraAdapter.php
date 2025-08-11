@@ -27,7 +27,7 @@ final class JiraAdapter
      */
     public function getProjects(string $domain, string $email, string $token): array|JsonResponse
     {
-        return $this->makeJiraRequest(
+        $projects = $this->makeJiraRequest(
             $domain,
             $email,
             $token,
@@ -36,6 +36,11 @@ final class JiraAdapter
             'Failed to fetch projects from Jira.',
             'projects'
         );
+
+        Log::debug('Fetching projects from Jira.');
+        Log::debug($projects);
+
+        return $projects;
     }
 
     /**
@@ -127,10 +132,18 @@ final class JiraAdapter
             if ($response->successful()) {
                 $issueKey = $response->json('key');
 
-                $task->update([
-                    'external_id' => $issueKey,
-                    'source' => 'jira',
-                ]);
+                $task->update(['is_imported' => true]);
+                $task->meta()->updateOrCreate(
+                    ['task_id' => $task->id],
+                    [
+                        'source' => 'jira',
+                        'source_number' => $issueKey,
+                        'source_state' => 'open',
+                        'source_url' => $this->getJiraUrl($credentials['domain'], "browse/{$issueKey}"),
+                        'source_id' => $issueKey,
+                        'extra_data' => $response->json(),
+                    ]
+                );
 
                 return [
                     'issue_key' => $issueKey,
@@ -326,6 +339,20 @@ final class JiraAdapter
     }
 
     /**
+     * Construct a full Jira URL.
+     *
+     * @param  string  $domain  The Jira domain (without .atlassian.net)
+     * @param  string  $path  The path (with or without leading slash)
+     * @return string The full URL
+     */
+    public function getJiraUrl(string $domain, string $path): string
+    {
+        $path = mb_ltrim($path, '/');
+
+        return "https://{$domain}.atlassian.net/browse/{$path}";
+    }
+
+    /**
      * Make a request to the Jira API.
      *
      * @param  string  $domain  The Jira domain
@@ -457,20 +484,6 @@ final class JiraAdapter
             'delete' => $request->delete($url, $data ?? []),
             default => throw new Exception("Unsupported HTTP method: {$method}"),
         };
-    }
-
-    /**
-     * Construct a full Jira URL.
-     *
-     * @param  string  $domain  The Jira domain (without .atlassian.net)
-     * @param  string  $path  The path (with or without leading slash)
-     * @return string The full URL
-     */
-    private function getJiraUrl(string $domain, string $path): string
-    {
-        $path = mb_ltrim($path, '/');
-
-        return "https://{$domain}.atlassian.net/{$path}";
     }
 
     /**
