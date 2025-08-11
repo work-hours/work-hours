@@ -27,9 +27,7 @@ type GitHubRepositorySelectorProps = {
 
 export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHubRepositorySelectorProps) {
     const [personalRepos, setPersonalRepos] = useState<Repository[]>([])
-    // orgRepos is kept for backward compatibility with existing code
-    // but we now primarily use orgReposByOrg for organization repositories
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const [orgRepos, setOrgRepos] = useState<Repository[]>([])
     const [orgReposByOrg, setOrgReposByOrg] = useState<Record<string, Repository[]>>({})
     const [organizations, setOrganizations] = useState<string[]>([])
@@ -42,7 +40,6 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 
     useEffect(() => {
-        // Check if user is authenticated with GitHub
         const checkGitHubAuth = async () => {
             try {
                 await axios.get(route('github.repositories.personal'))
@@ -52,7 +49,6 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
                 if (axios.isAxiosError(error) && error.response?.status === 401) {
                     setIsAuthenticated(false)
                 } else {
-                    // Display the specific error message from the backend if available
                     if (axios.isAxiosError(error) && error.response?.data?.error) {
                         setError(error.response.data.error)
                     } else {
@@ -70,16 +66,13 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
         setError(null)
 
         try {
-            // Fetch personal repositories
             const personalResponse = await axios.get(route('github.repositories.personal'))
             setPersonalRepos(personalResponse.data)
 
-            // Fetch organization repositories
             const orgResponse = await axios.get(route('github.repositories.organization'))
             const orgReposData = orgResponse.data
             setOrgRepos(orgReposData)
 
-            // Group organization repositories by organization
             const reposByOrg: Record<string, Repository[]> = {}
             const orgs: string[] = []
 
@@ -96,10 +89,8 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
             setOrgReposByOrg(reposByOrg)
             setOrganizations(orgs)
 
-            // No need to fetch saved repositories anymore
             setOrgReposByOrg(reposByOrg)
         } catch (error) {
-            // Display the specific error message from the backend if available
             if (axios.isAxiosError(error) && error.response?.data?.error) {
                 setError(error.response.data.error)
             } else {
@@ -112,11 +103,9 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
     }
 
     const handleRepositoryToggle = (repo: Repository) => {
-        // Update the selected state in the appropriate list
         if (activeTab === 'personal') {
             setPersonalRepos((prev) => prev.map((r) => (r.id === repo.id ? { ...r, selected: !r.selected } : r)))
         } else if (repo.organization) {
-            // Update in the organization-specific list
             setOrgReposByOrg((prev) => {
                 const org = repo.organization as string
                 return {
@@ -125,11 +114,9 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
                 }
             })
 
-            // Also update in the combined list for backward compatibility
             setOrgRepos((prev) => prev.map((r) => (r.id === repo.id ? { ...r, selected: !r.selected } : r)))
         }
 
-        // Update the selectedRepos list
         const isAlreadySelected = selectedRepos.some((r) => r.id === repo.id)
 
         if (isAlreadySelected) {
@@ -149,8 +136,6 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
         setError(null)
 
         try {
-            // The repositories are no longer saved to the database
-            // Just call the callback to indicate that repositories were "saved"
             onRepositoriesSaved()
         } catch (error) {
             console.error('Error handling repositories:', error)

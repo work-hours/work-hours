@@ -39,7 +39,6 @@ export function ActionButton({ href, title, icon: Icon, label, variant = 'blue',
     )
 }
 
-// Generic export button that can be used in headers
 interface ExportButtonProps {
     href: string
     label?: string
@@ -68,7 +67,6 @@ export function ExportButton({ href, label = 'Export', className = '' }: ExportB
     )
 }
 
-// Action button container for consistent spacing
 export function ActionButtonGroup({ children, className = '' }: { children: ReactNode; className?: string }) {
     return <div className={`flex justify-end gap-1 ${className}`}>{children}</div>
 }

@@ -81,10 +81,8 @@ export default function TeamMemberTimeLogs({
         },
     ]
 
-    // State for selected time logs
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
 
-    // Handle checkbox selection
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
             setSelectedLogs([...selectedLogs, id])
@@ -93,7 +91,6 @@ export default function TeamMemberTimeLogs({
         }
     }
 
-    // Mark selected logs as paid
     const markAsPaid = () => {
         if (selectedLogs.length === 0) {
             return
@@ -120,11 +117,9 @@ export default function TeamMemberTimeLogs({
         status: filters.status || '',
     })
 
-    // Convert string dates to Date objects for DatePicker
     const startDate = data['start-date'] ? new Date(data['start-date']) : null
     const endDate = data['end-date'] ? new Date(data['end-date']) : null
 
-    // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
             setData('start-date', date.toISOString().split('T')[0])
@@ -206,7 +201,6 @@ export default function TeamMemberTimeLogs({
                                         {(() => {
                                             let description = ''
 
-                                            // Date range description
                                             if (data['start-date'] && data['end-date']) {
                                                 description = `Showing logs from ${data['start-date']} to ${data['end-date']}`
                                             } else if (data['start-date']) {
@@ -215,7 +209,6 @@ export default function TeamMemberTimeLogs({
                                                 description = `Showing logs until ${data['end-date']}`
                                             }
 
-                                            // Project description
                                             if (data.project) {
                                                 const selectedProject = projects.find((project) => project.id.toString() === data.project)
                                                 const projectName = selectedProject ? selectedProject.name : ''
@@ -227,7 +220,6 @@ export default function TeamMemberTimeLogs({
                                                 }
                                             }
 
-                                            // Payment status description
                                             if (data['is-paid']) {
                                                 const paymentStatus = data['is-paid'] === 'true' ? 'paid' : 'unpaid'
 
@@ -238,7 +230,6 @@ export default function TeamMemberTimeLogs({
                                                 }
                                             }
 
-                                            // Approval status description
                                             if (data.status) {
                                                 const statusText =
                                                     data.status === 'pending' ? 'pending' : data.status === 'approved' ? 'approved' : 'rejected'

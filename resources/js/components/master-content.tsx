@@ -19,14 +19,12 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
     const [unreadCount, setUnreadCount] = useState(0)
     const [isAdmin, setIsAdmin] = useState(false)
 
-    // Fetch unread notification count when the component mounts
     useEffect(() => {
         const fetchUnreadCount = async () => {
             try {
                 const response = await all.data({ page: 1 })
                 setUnreadCount(response.unread_count)
 
-                // Check if user is admin (this data will be passed from the backend)
                 if (response.user && response.user.is_admin) {
                     setIsAdmin(true)
                 }
@@ -37,10 +35,8 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
 
         fetchUnreadCount().then()
 
-        // Set up an interval to refresh the count every minute
         const intervalId = setInterval(fetchUnreadCount, 60000)
 
-        // Cleanup interval on component unmount
         return () => clearInterval(intervalId)
     }, [])
 

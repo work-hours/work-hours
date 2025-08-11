@@ -34,6 +34,7 @@ final class UpdateTaskRequest extends FormRequest
             'tags' => ['sometimes', 'nullable', 'array'],
             'tags.*' => ['string', 'max:255'],
             'github_update' => ['sometimes', 'boolean'],
+            'jira_update' => ['sometimes', 'boolean'],
         ];
     }
 }

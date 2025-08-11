@@ -47,7 +47,6 @@ export default function ClientInvoices({ client, invoices }: Props) {
         },
     ]
 
-    // Format currency
     const formatCurrency = (amount: number): string => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -55,7 +54,6 @@ export default function ClientInvoices({ client, invoices }: Props) {
         }).format(amount)
     }
 
-    // Get status badge class
     const getStatusBadgeClass = (status: string): string => {
         switch (status) {
             case 'draft':
@@ -75,18 +73,14 @@ export default function ClientInvoices({ client, invoices }: Props) {
         }
     }
 
-    // Format status label
     const formatStatusLabel = (status: string): string => {
         return status.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
-    // Calculate total invoiced amount
     const totalInvoiced = invoices.reduce((sum, invoice) => sum + invoice.total_amount, 0)
 
-    // Calculate total paid amount
     const totalPaid = invoices.reduce((sum, invoice) => sum + invoice.paid_amount, 0)
 
-    // Calculate total outstanding amount
     const totalOutstanding = totalInvoiced - totalPaid
 
     return (

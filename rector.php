@@ -35,4 +35,5 @@ return RectorConfig::configure()
         LaravelSetList::LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME,
         LaravelSetList::LARAVEL_ARRAYACCESS_TO_METHOD_CALL,
         LaravelSetList::LARAVEL_COLLECTION,
-    ])->withImportNames(importDocBlockNames: false);
+    ])
+    ->withImportNames(importDocBlockNames: false);

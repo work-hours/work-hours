@@ -1,4 +1,3 @@
-// Components
 import { Head, useForm } from '@inertiajs/react'
 import { LoaderCircle, LogOut, Mail } from 'lucide-react'
 import { FormEventHandler } from 'react'

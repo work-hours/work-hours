@@ -106,7 +106,6 @@ export default function EditInvoice({ invoice }: Props) {
     const [timeLogs, setTimeLogs] = useState<ProjectTimeLogGroup[]>([])
     const [loadingClients, setLoadingClients] = useState(true)
 
-    // Create breadcrumbs with invoice number
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Invoices',
@@ -118,12 +117,10 @@ export default function EditInvoice({ invoice }: Props) {
         },
     ]
 
-    // Format dates from string to Date objects
     const formatStringToDate = (dateString: string): Date => {
         return new Date(dateString)
     }
 
-    // Format invoice items for the form
     const formatInvoiceItems = (items: Invoice['items']): InvoiceItemForm[] => {
         return items.map((item) => ({
             id: item.id,
@@ -151,7 +148,6 @@ export default function EditInvoice({ invoice }: Props) {
         items: formatInvoiceItems(invoice.items),
     })
 
-    // Load clients
     useEffect(() => {
         const fetchClients = async () => {
             try {
@@ -169,7 +165,6 @@ export default function EditInvoice({ invoice }: Props) {
         fetchClients()
     }, [])
 
-    // Load time logs when client is selected
     useEffect(() => {
         const fetchTimeLogs = async () => {
             if (!data.client_id) return
@@ -181,7 +176,6 @@ export default function EditInvoice({ invoice }: Props) {
                 })
                 setTimeLogs(timeLogsData)
 
-                // Update currency based on client currency or user currency
                 if (timeLogsData.length > 0) {
                     const clientCurrency = timeLogsData[0]?.currency
                     if (clientCurrency) {
@@ -201,14 +195,12 @@ export default function EditInvoice({ invoice }: Props) {
         fetchTimeLogs()
     }, [data.client_id])
 
-    // Calculate subtotal (sum of all item amounts)
     const calculateSubtotal = (): number => {
         return data.items.reduce((total, item) => {
             return total + parseFloat(item.amount || '0')
         }, 0)
     }
 
-    // Calculate discount amount based on type and value
     const calculateDiscount = (): number => {
         const subtotal = calculateSubtotal()
 
@@ -217,20 +209,16 @@ export default function EditInvoice({ invoice }: Props) {
         }
 
         if (data.discount_type === 'percentage') {
-            // Calculate percentage discount
             return (subtotal * parseFloat(data.discount_value)) / 100
         } else if (data.discount_type === 'fixed') {
-            // Apply fixed discount
             const discountAmount = parseFloat(data.discount_value)
 
-            // Ensure discount doesn't exceed subtotal
             return discountAmount > subtotal ? subtotal : discountAmount
         }
 
         return 0
     }
 
-    // Calculate tax amount based on type and rate
     const calculateTax = (): number => {
         const subtotal = calculateSubtotal()
 
@@ -239,20 +227,16 @@ export default function EditInvoice({ invoice }: Props) {
         }
 
         if (data.tax_type === 'percentage') {
-            // Calculate percentage tax
             return (subtotal * parseFloat(data.tax_rate)) / 100
         } else if (data.tax_type === 'fixed') {
-            // Apply fixed tax amount
             const taxAmount = parseFloat(data.tax_rate)
 
-            // Ensure tax doesn't exceed subtotal
             return taxAmount > subtotal ? subtotal : taxAmount
         }
 
         return 0
     }
 
-    // Calculate total amount after discount and tax
     const calculateTotal = (): number => {
         const subtotal = calculateSubtotal()
         const discount = calculateDiscount()
@@ -261,7 +245,6 @@ export default function EditInvoice({ invoice }: Props) {
         return subtotal - discount + tax
     }
 
-    // Add new item
     const addItem = (): void => {
         setData('items', [
             ...data.items,
@@ -275,14 +258,12 @@ export default function EditInvoice({ invoice }: Props) {
         ])
     }
 
-    // Remove item
     const removeItem = (index: number): void => {
         const updatedItems = [...data.items]
         updatedItems.splice(index, 1)
         setData('items', updatedItems)
     }
 
-    // Update item
     const updateItem = (index: number, field: keyof InvoiceItemForm, value: string): void => {
         const updatedItems = [...data.items]
         updatedItems[index] = {
@@ -290,7 +271,6 @@ export default function EditInvoice({ invoice }: Props) {
             [field]: value,
         }
 
-        // Calculate amount if quantity or unit_price changes
         if (field === 'quantity' || field === 'unit_price') {
             const quantity = parseFloat(field === 'quantity' ? value : updatedItems[index].quantity || '0')
             const unitPrice = parseFloat(field === 'unit_price' ? value : updatedItems[index].unit_price || '0')
@@ -300,12 +280,10 @@ export default function EditInvoice({ invoice }: Props) {
         setData('items', updatedItems)
     }
 
-    // Handle time log selection
     const handleTimeLogSelection = (index: number, value: string): void => {
         const updatedItems = [...data.items]
 
         if (value === 'none') {
-            // Update all fields at once for 'none' selection
             updatedItems[index] = {
                 ...updatedItems[index],
                 time_log_id: null as unknown as string,
@@ -319,13 +297,11 @@ export default function EditInvoice({ invoice }: Props) {
             return
         }
 
-        // Check if it's a project selection (format: "project-{projectId}")
         if (value.startsWith('project-')) {
             const projectId = parseInt(value.replace('project-', ''))
             const projectGroup = timeLogs.find((group) => group.project_id === projectId)
 
             if (projectGroup) {
-                // Update all fields at once for project selection
                 const amount = ((projectGroup.total_hours || 0) * (projectGroup.hourly_rate || 0)).toFixed(2)
 
                 updatedItems[index] = {
@@ -342,14 +318,11 @@ export default function EditInvoice({ invoice }: Props) {
             return
         }
 
-        // It's an individual time log selection
         const timeLogId = value
 
-        // Find the project group that contains this time log
         for (const projectGroup of timeLogs) {
             const timeLog = projectGroup.time_logs.find((log) => log.id.toString() === timeLogId)
             if (timeLog) {
-                // Update all fields at once for individual time log selection
                 const amount = ((timeLog.duration || 0) * (projectGroup.hourly_rate || 0)).toFixed(2)
 
                 updatedItems[index] = {
@@ -379,7 +352,6 @@ export default function EditInvoice({ invoice }: Props) {
         })
     }
 
-    // Format currency
     const formatCurrency = (amount: number): string => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -537,7 +509,7 @@ export default function EditInvoice({ invoice }: Props) {
                                                     value={data.status}
                                                     onValueChange={(value) => {
                                                         setData('status', value)
-                                                        // If status is changed to 'paid', set paid_amount to full invoice amount
+
                                                         if (value === 'paid') {
                                                             setData('paid_amount', calculateTotal().toFixed(2))
                                                         }

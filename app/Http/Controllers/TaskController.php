@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Adapters\GitHubAdapter;
+use App\Adapters\JiraAdapter;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Stores\ProjectStore;
@@ -33,10 +34,8 @@ final class TaskController extends Controller
      * Constructor for TaskController
      */
     public function __construct(
-        /**
-         * GitHub adapter for handling GitHub-related operations
-         */
-        private GitHubAdapter $gitHubAdapter
+        private readonly GitHubAdapter $gitHubAdapter,
+        private readonly JiraAdapter $jiraAdapter
     ) {}
 
     /**
@@ -119,10 +118,8 @@ final class TaskController extends Controller
             if ($request->has('assignees')) {
                 $task->assignees()->sync($request->input('assignees'));
 
-                // Load the project relationship for the notification
                 $task->load('project');
 
-                // Send notification to all assignees
                 $assigneeIds = $request->input('assignees');
                 $users = User::query()->whereIn('id', $assigneeIds)->get();
                 foreach ($users as $user) {
@@ -130,16 +127,18 @@ final class TaskController extends Controller
                 }
             }
 
-            // Attach tags if provided
             if ($request->has('tags')) {
                 $this->attachTags($request->input('tags'), $task);
             }
 
             DB::commit();
 
-            // Check if we need to create a GitHub issue for this task
             if ($request->boolean('create_github_issue')) {
                 $this->gitHubAdapter->createGitHubIssue($task);
+            }
+
+            if ($request->boolean('create_jira_issue')) {
+                $this->jiraAdapter->createJiraIssue($task);
             }
         } catch (Exception $e) {
             DB::rollBack();
@@ -153,10 +152,9 @@ final class TaskController extends Controller
     #[Action(method: 'get', name: 'task.show', params: ['task'], middleware: ['auth', 'verified'])]
     public function show(Task $task): Task
     {
-        // Load relationships
+
         $task->load(['project', 'assignees']);
 
-        // Check if user has access to this task
         $isProjectOwner = $task->project->user_id === auth()->id();
         $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
         $isAssignee = $task->assignees->contains('id', auth()->id());
@@ -171,10 +169,9 @@ final class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        // Load relationships
+
         $task->load(['project', 'assignees', 'meta', 'tags']);
 
-        // Check if a user has access to edit this task
         $isProjectOwner = $task->project->user_id === auth()->id();
 
         abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
@@ -185,7 +182,6 @@ final class TaskController extends Controller
                 'name' => $project->name,
             ]);
 
-        // Get potential assignees (project team members and owner)
         $potentialAssignees = collect([$task->project->user])
             ->concat($task->project->teamMembers)
             ->unique('id')
@@ -198,6 +194,7 @@ final class TaskController extends Controller
         $taskTags = $task->tags->pluck('name')->toArray();
 
         $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
+        $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
 
         return Inertia::render('task/edit', [
             'task' => $task,
@@ -206,6 +203,7 @@ final class TaskController extends Controller
             'assignedUsers' => $assignedUsers,
             'taskTags' => $taskTags,
             'isGithub' => $isGithub,
+            'isJira' => $isJira,
         ]);
     }
 
@@ -217,7 +215,7 @@ final class TaskController extends Controller
     #[Action(method: 'put', name: 'task.update', params: ['task'], middleware: ['auth', 'verified'])]
     public function update(UpdateTaskRequest $request, Task $task): void
     {
-        // Check if user has access to update this task
+
         $isProjectOwner = $task->project->user_id === auth()->id();
         $isAssignee = $task->assignees->contains('id', auth()->id());
 
@@ -225,13 +223,11 @@ final class TaskController extends Controller
 
         DB::beginTransaction();
         try {
-            // Store the old status to check if it's being changed to completed
+
             $oldStatus = $task->status;
 
-            // Get current assignees before update
             $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
 
-            // If the project owner, allow full update
             if ($isProjectOwner) {
                 $task->update($request->only(['title', 'description', 'status', 'priority', 'due_date']));
 
@@ -239,14 +235,12 @@ final class TaskController extends Controller
                     $newAssigneeIds = $request->input('assignees');
                     $task->assignees()->sync($newAssigneeIds);
 
-                    // Find newly added assignees
                     $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
 
                     if ($addedAssigneeIds !== []) {
-                        // Load the project relationship for the notification
+
                         $task->load('project');
 
-                        // Send notification only to newly assigned users
                         $newUsers = User::query()->whereIn('id', $addedAssigneeIds)->get();
                         foreach ($newUsers as $user) {
                             $user->notify(new TaskAssigned($task, auth()->user()));
@@ -256,34 +250,30 @@ final class TaskController extends Controller
                     $task->assignees()->detach();
                 }
             } else {
-                // If assignee, only allow status update
                 $task->update($request->only(['status']));
             }
 
-            // Check if the status was changed to complete by someone other than the project owner
             if ($oldStatus !== 'completed' && $request->input('status') === 'completed' && ! $isProjectOwner) {
-                // Load the project relationship for the notification if not already loaded
                 if (! $task->relationLoaded('project')) {
                     $task->load('project');
                 }
 
-                // Get the project owner (task creator)
                 $projectOwner = User::query()->find($task->project->user_id);
-
-                // Send a notification to the project owner
                 $projectOwner->notify(new TaskCompleted($task, auth()->user()));
             }
 
-            // Attach tags if provided
             if ($request->has('tags')) {
                 $this->attachTags($request->input('tags'), $task);
             }
 
             DB::commit();
 
-            // Update GitHub issue if requested
             if ($task->is_imported && $task->meta && $task->meta->source === 'github' && $request->boolean('github_update')) {
                 $this->gitHubAdapter->updateGitHubIssue($task);
+            }
+
+            if ($task->is_imported && $task->meta && $task->meta->source === 'jira' && $request->boolean('jira_update')) {
+                $this->jiraAdapter->updateJiraIssue($task);
             }
         } catch (Exception $e) {
             DB::rollBack();
@@ -309,10 +299,12 @@ final class TaskController extends Controller
                 $this->gitHubAdapter->deleteGitHubIssue($task);
             }
 
-            // Detach all assignees first
+            if (request()->boolean('delete_from_jira') && $task->is_imported && $task->meta && $task->meta->source === 'jira') {
+                $this->jiraAdapter->deleteJiraIssue($task);
+            }
+
             $task->assignees()->detach();
 
-            // Delete the task
             $task->delete();
 
             DB::commit();
@@ -347,7 +339,6 @@ final class TaskController extends Controller
 
         abort_if(! $isProjectOwner && ! $isTeamMember, 403, 'Unauthorized action.');
 
-        // Get potential assignees (project team members and owner)
         return collect([$project->user])
             ->concat($project->teamMembers)
             ->unique('id')
@@ -391,7 +382,6 @@ final class TaskController extends Controller
             $tagIds[] = $tag->id;
         }
 
-        // Sync the tags with the task
         $task->tags()->sync($tagIds);
     }
 }

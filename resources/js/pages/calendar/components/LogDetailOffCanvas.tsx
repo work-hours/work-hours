@@ -53,12 +53,10 @@ export default function LogDetailOffCanvas({ timeLogId, isOpen, onClose }: LogDe
                     setLoading(false)
                 })
         } else {
-            // Reset when closing
             setTimeLogDetail(null)
         }
     }, [timeLogId, isOpen])
 
-    // Function to format currency
     const formatCurrency = (amount: number, currency: string) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -66,7 +64,6 @@ export default function LogDetailOffCanvas({ timeLogId, isOpen, onClose }: LogDe
         }).format(amount)
     }
 
-    // Calculate amount for this time log
     const calculateAmount = () => {
         if (!timeLogDetail) return '0'
         return formatCurrency(timeLogDetail.hourly_rate * timeLogDetail.duration, timeLogDetail.currency)

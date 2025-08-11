@@ -23,8 +23,6 @@ interface StatsCardsProps {
 export default function StatsCards({ teamStats }: StatsCardsProps) {
     const renderUnpaidAmountCards = () => {
         if (!teamStats.unpaidAmountsByCurrency || Object.keys(teamStats.unpaidAmountsByCurrency).length === 0) {
-            // Fallback to the default card if no currency-specific amounts are available
-            // Doesn't show the card if the unpaid amount is negative
             if (teamStats.unpaidAmount < 0) {
                 return null
             }
@@ -44,7 +42,6 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
             )
         }
 
-        // Create a card for each currency, filtering out negative amounts
         return Object.entries(teamStats.unpaidAmountsByCurrency)
             .filter(([, amount]) => amount >= 0) // Filter out negative amounts
             .map(([currencyCode, amount]) => (
@@ -65,8 +62,6 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
 
     const renderPaidAmountCards = () => {
         if (!teamStats.paidAmountsByCurrency || Object.keys(teamStats.paidAmountsByCurrency).length === 0) {
-            // Fallback to the default card if no currency-specific amounts are available
-            // Doesn't show the card if the paid amount is negative
             if (teamStats.paidAmount < 0) {
                 return null
             }
@@ -86,7 +81,6 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
             )
         }
 
-        // Create a card for each currency, filtering out negative amounts
         return Object.entries(teamStats.paidAmountsByCurrency)
             .filter(([, amount]) => amount >= 0) // Filter out negative amounts
             .map(([currencyCode, amount]) => (
@@ -105,7 +99,6 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
             ))
     }
 
-    // Get current date for form header
     const currentDate = new Date().toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',

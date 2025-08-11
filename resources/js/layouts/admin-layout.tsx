@@ -11,7 +11,6 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutProps) {
     const [collapsed, setCollapsed] = useState(() => {
-        // Initialize from localStorage if available
         if (typeof window !== 'undefined') {
             const savedState = localStorage.getItem('admin_sidebar_collapsed')
             return savedState === 'true'
@@ -21,12 +20,10 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
 
     const [pageLoaded, setPageLoaded] = useState(false)
 
-    // Save collapsed state to localStorage when it changes
     useEffect(() => {
         localStorage.setItem('admin_sidebar_collapsed', String(collapsed))
     }, [collapsed])
 
-    // Add page transition effect
     useEffect(() => {
         setPageLoaded(true)
         return () => setPageLoaded(false)

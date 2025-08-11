@@ -24,19 +24,18 @@ import {
 import { useEffect, useState } from 'react'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
+import JiraIcon from './icons/jira-icon'
 
 interface MasterSidebarProps {
     collapsed: boolean
 }
 
-// Added NavItemGroup type for grouped navigation items
 interface NavItemGroup {
     title: string
     icon?: React.ElementType
     items: NavItem[]
 }
 
-// Reorganize navigation items into logical groups
 const navGroups: NavItemGroup[] = [
     {
         title: 'Dashboard',
@@ -120,6 +119,11 @@ const integrationNavItems: NavItem[] = [
         href: '/github/repositories',
         icon: Github,
     },
+    {
+        title: 'Jira',
+        href: '/jira/projects',
+        icon: JiraIcon,
+    },
 ]
 
 const footerNavItems: NavItem[] = [
@@ -130,7 +134,6 @@ const footerNavItems: NavItem[] = [
     },
 ]
 
-// Collapsible sidebar group component
 function SidebarGroup({
     title,
     icon: Icon,
@@ -143,20 +146,17 @@ function SidebarGroup({
     approvalCount: number
     pendingTaskCount: number
 }) {
-    // Initialize as collapsed by default
     const [isExpanded, setIsExpanded] = useState(false)
     const anyItemActive = items.some(
         (item) => typeof window !== 'undefined' && (window.location.pathname === item.href || window.location.pathname.startsWith(`${item.href}/`)),
     )
 
-    // Calculate total counts for this group
     const hasApprovals = items.some((item) => item.href === '/approvals')
     const hasTasks = items.some((item) => item.href === '/task')
     const groupApprovalCount = hasApprovals ? approvalCount : 0
     const groupTaskCount = hasTasks ? pendingTaskCount : 0
     const totalBadgeCount = groupApprovalCount + groupTaskCount
 
-    // Auto-expand group if any item is active
     useEffect(() => {
         if (anyItemActive) {
             setIsExpanded(true)
@@ -290,11 +290,10 @@ function SidebarGroup({
 }
 
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
-    const { isGitHubIntegrated, auth } = usePage<SharedData>().props
+    const { isGitHubIntegrated, isJiraIntegrated, auth } = usePage<SharedData>().props
     const [approvalCount, setApprovalCount] = useState(0)
     const [pendingTaskCount, setPendingTaskCount] = useState(0)
 
-    // Fetch approval count when component mounts
     useEffect(() => {
         const fetchApprovalCount = async () => {
             try {
@@ -307,14 +306,11 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
         fetchApprovalCount().then()
 
-        // Set up an interval to refresh the count every minute
         const intervalId = setInterval(fetchApprovalCount, 60000)
 
-        // Cleanup interval on component unmount
         return () => clearInterval(intervalId)
     }, [])
 
-    // Fetch pending task count when component mounts
     useEffect(() => {
         const fetchPendingTaskCount = async () => {
             try {
@@ -327,10 +323,8 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
         fetchPendingTaskCount().then()
 
-        // Set up an interval to refresh the count every minute
         const intervalId = setInterval(fetchPendingTaskCount, 60000)
 
-        // Cleanup interval on component unmount
         return () => clearInterval(intervalId)
     }, [])
 

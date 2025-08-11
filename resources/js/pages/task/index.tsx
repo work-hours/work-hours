@@ -1,5 +1,6 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import DeleteTask from '@/components/delete-task'
+import SourceLinkIcon from '@/components/source-link-icon'
 import TaskDetailsSheet from '@/components/task-details-sheet'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -28,7 +29,6 @@ import {
     Edit,
     FileText,
     Flag,
-    GithubIcon,
     Glasses,
     Loader2,
     Play,
@@ -64,9 +64,9 @@ export default function Tasks() {
     const [isUpdating, setIsUpdating] = useState(false)
     const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null)
     const [updateGithub, setUpdateGithub] = useState<boolean>(true)
+    const [updateJira, setUpdateJira] = useState<boolean>(true)
     const [isThereRunningTracker, setIsThereRunningTracker] = useState(localStorage.getItem('activeTimeLog') !== null)
 
-    // Filter states
     const [filters, setFilters] = useState<TaskFilters>({
         status: 'all',
         priority: 'all',
@@ -86,7 +86,8 @@ export default function Tasks() {
     const handleStatusClick = (task: Task, status: Task['status']): void => {
         setTaskToUpdate(task)
         setSelectedStatus(status)
-        setUpdateGithub(true) // Default to checked
+        setUpdateGithub(true)
+        setUpdateJira(true)
         setStatusDialogOpen(true)
     }
 
@@ -107,9 +108,9 @@ export default function Tasks() {
                 due_date: string | null
                 assignees: number[]
                 github_update?: boolean
+                jira_update?: boolean
             } = {
                 status: selectedStatus,
-                // Include other required fields to avoid validation errors
                 title: taskToUpdate.title,
                 project_id: taskToUpdate.project_id,
                 priority: taskToUpdate.priority,
@@ -118,14 +119,16 @@ export default function Tasks() {
                 assignees: taskToUpdate.assignees.map((a) => a.id),
             }
 
-            // Add github_update parameter for GitHub tasks
             if (taskToUpdate.is_imported && taskToUpdate.meta?.source === 'github') {
                 payload.github_update = updateGithub
             }
 
+            if (taskToUpdate.is_imported && taskToUpdate.meta?.source === 'jira') {
+                payload.jira_update = updateJira
+            }
+
             await axios.put(route('task.update', taskToUpdate.id), payload)
 
-            // Update the task status locally
             const updatedTasks = tasks.map((task) => {
                 if (task.id === taskToUpdate.id) {
                     return { ...task, status: selectedStatus }
@@ -144,7 +147,6 @@ export default function Tasks() {
         }
     }
 
-    // Update URL with filters
     const getTasks = async (filters?: TaskFilters): Promise<void> => {
         setLoading(true)
         setError(false)
@@ -622,7 +624,9 @@ export default function Tasks() {
                                             <TableCell className="max-w-xl font-medium">
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <span>{task.title}</span>
-                                                    {task.is_imported && <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />}
+                                                    {task.is_imported && task.meta?.source && (
+                                                        <SourceLinkIcon source={task.meta.source} sourceUrl={task.meta?.source_url} />
+                                                    )}
                                                 </div>
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <small>{task.project.name}</small>
@@ -717,6 +721,7 @@ export default function Tasks() {
                                                             <DeleteTask
                                                                 taskId={task.id}
                                                                 isGithub={task.is_imported && task.meta?.source === 'github'}
+                                                                isJira={task.is_imported && task.meta?.source === 'jira'}
                                                                 onDelete={() => setTasks(tasks.filter((t) => t.id !== task.id))}
                                                             />
                                                         </ActionButtonGroup>
@@ -790,6 +795,15 @@ export default function Tasks() {
                                     />
                                     <Label htmlFor="update_github" className="text-sm">
                                         Update in GitHub?
+                                    </Label>
+                                </div>
+                            )}
+
+                            {taskToUpdate?.is_imported && taskToUpdate?.meta?.source === 'jira' && (
+                                <div className="flex items-center space-x-2 pt-2">
+                                    <Checkbox id="update_jira" checked={updateJira} onCheckedChange={(checked) => setUpdateJira(checked === true)} />
+                                    <Label htmlFor="update_jira" className="text-sm">
+                                        Update in Jira?
                                     </Label>
                                 </div>
                             )}

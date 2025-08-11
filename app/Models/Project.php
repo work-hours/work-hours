@@ -29,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @property Collection|User[] $teamMembers
  * @property Collection|User[] $approvers
  * @property Collection|Task[] $tasks
+ * @property mixed $repo_id
  */
 #[UsePolicy(ProjectPolicy::class)]
 final class Project extends Model

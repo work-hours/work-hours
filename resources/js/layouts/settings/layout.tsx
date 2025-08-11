@@ -32,7 +32,6 @@ const sidebarNavItems: NavItem[] = [
 ]
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
-    // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
         return null
     }

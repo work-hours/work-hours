@@ -72,7 +72,6 @@ final class TimeLogController extends Controller
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
 
-                // Ensure the end date is the same as the start date
                 if ($start->format('Y-m-d') !== $end->format('Y-m-d')) {
                     $end = Carbon::parse($end->format('H:i:s'))->setDateFrom($start);
                     $data['end_timestamp'] = $end->toDateTimeString();
@@ -101,12 +100,11 @@ final class TimeLogController extends Controller
                 $task = Task::query()->find($data['task_id']);
 
                 if ($task) {
-                    // Mark task as complete if requested
+
                     if ($markAsComplete) {
                         $task->update(['status' => 'completed']);
                     }
 
-                    // Close GitHub issue if requested and a task is imported from GitHub
                     if ($closeGitHubIssue && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
                         $this->gitHubAdapter->closeGitHubIssue($task);
                     }
@@ -131,7 +129,6 @@ final class TimeLogController extends Controller
     {
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
-        // Get all tasks assigned to the user
         $tasks = Task::query()
             ->whereHas('assignees', function ($query): void {
                 $query->where('users.id', auth()->id());
@@ -177,7 +174,6 @@ final class TimeLogController extends Controller
                 $start = Carbon::parse($data['start_timestamp']);
                 $end = Carbon::parse($data['end_timestamp']);
 
-                // Ensure the end date is the same as the start date
                 if ($start->format('Y-m-d') !== $end->format('Y-m-d')) {
                     $end = Carbon::parse($end->format('H:i:s'))->setDateFrom($start);
                     $data['end_timestamp'] = $end->toDateTimeString();
@@ -209,7 +205,6 @@ final class TimeLogController extends Controller
                     $task->update(['status' => 'completed']);
                 }
 
-                // Close GitHub issue if requested and a task is imported from GitHub
                 if ($closeGitHubIssue && $task && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
                     $this->gitHubAdapter->closeGitHubIssue($task);
                 }
@@ -236,7 +231,6 @@ final class TimeLogController extends Controller
 
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
-        // Get all tasks assigned to the user
         $tasks = Task::query()
             ->whereHas('assignees', function ($query): void {
                 $query->where('users.id', auth()->id());
@@ -320,7 +314,6 @@ final class TimeLogController extends Controller
                     continue;
                 }
 
-                // Check if the time log is approved
                 if ($timeLog->status !== TimeLogStatus::APPROVED) {
                     $invalidLogs[] = $timeLog->id;
 
@@ -341,16 +334,13 @@ final class TimeLogController extends Controller
 
                 $projectAmounts[$timeLog->project_id] += $amount;
 
-                // Send notifications
                 $teamLeader = User::teamLeader(project: $timeLog->project);
                 $timeLogOwner = User::query()->find($timeLog->user_id);
 
-                // If current user is team leader, notify the team member
                 if ($currentUser->id === $teamLeader->id && $currentUser->id !== $timeLogOwner->id) {
                     $timeLogOwner->notify(new TimeLogPaid($timeLog, $currentUser));
                 }
 
-                // If current user is team member, notify the team leader
                 if ($currentUser->id !== $teamLeader->id && $currentUser->id === $timeLogOwner->id) {
                     $teamLeader->notify(new TimeLogPaid($timeLog, $currentUser));
                 }
@@ -366,7 +356,6 @@ final class TimeLogController extends Controller
 
             DB::commit();
 
-            // If there were any invalid logs, flash a message to the user
             if ($invalidLogs !== []) {
                 $count = count($invalidLogs);
                 $message = $count === 1
@@ -501,7 +490,6 @@ final class TimeLogController extends Controller
             $tagIds[] = $tag->id;
         }
 
-        // Sync the tags with the time log
         $timeLog->tags()->sync($tagIds);
 
         return response()->json([

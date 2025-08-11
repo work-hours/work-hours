@@ -17,13 +17,11 @@ final class CalendarController extends Controller
         $view = $request->query('view', 'month');
         $date = $request->query('date', now()->format('Y-m-d'));
 
-        // Get the start and end dates based on the view
         $period = $this->getPeriod($date, $view);
 
         $teamIds = TeamStore::teamMembersIds(userId: auth()->id());
         $teamIds = $teamIds->merge([auth()->id()]);
 
-        // Get time logs for the given period
         $timeLogs = TimeLog::with(['project', 'task'])
             ->whereIn('user_id', $teamIds)
             ->whereBetween('start_timestamp', [$period['start'], $period['end']])
@@ -59,7 +57,6 @@ final class CalendarController extends Controller
         $timeLog = TimeLog::with(['project', 'task', 'user'])
             ->findOrFail($id);
 
-        // We don't need to modify the response as we'll handle the approver details on the frontend
         return response()->json($timeLog);
     }
 

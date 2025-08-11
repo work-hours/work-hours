@@ -11,21 +11,15 @@ import { Head } from '@inertiajs/react'
 import { useEffect } from 'react'
 
 export default function Welcome() {
-    // Handle scrolling to section based on URL hash after navigation
     useEffect(() => {
-        // Get the hash from the URL (e.g., #features, #how-it-works)
         const hash = window.location.hash
 
         if (hash) {
-            // Remove the # character
             const sectionId = hash.substring(1)
 
-            // Find the element with the corresponding ID
             const element = document.getElementById(sectionId)
 
-            // If the element exists, scroll to it
             if (element) {
-                // Use a small timeout to ensure the page is fully loaded
                 setTimeout(() => {
                     element.scrollIntoView({ behavior: 'smooth' })
                 }, 100)

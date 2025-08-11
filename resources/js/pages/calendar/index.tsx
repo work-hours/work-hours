@@ -12,7 +12,6 @@ import DayView from './components/DayView'
 import MonthView from './components/MonthView'
 import WeekView from './components/WeekView'
 
-// Define a basic PageProps interface since it's not available in @/types
 interface PageProps {
     auth?: {
         user: {
@@ -55,7 +54,6 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
     const [timeLogDetails, setTimeLogDetails] = useState<TimeLogEntry | null>(null)
     const [activeView, setActiveView] = useState(view)
 
-    // Update activeView whenever the view prop changes (from URL)
     useEffect(() => {
         setActiveView(view)
     }, [view])
@@ -86,13 +84,11 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
     const handleTimeLogClick = (timeLogId: number) => {
         setSelectedTimeLog(timeLogId)
 
-        // Fetch time log details for the sheet
         axios
             .get(route('calendar.detail', timeLogId))
             .then((response) => {
                 const data = response.data
 
-                // Format the data to match TimeLogEntry expected by TimeLogDetailsSheet
                 const formattedData: TimeLogEntry = {
                     id: data.id,
                     project_name: data.project ? data.project.name : null,
@@ -259,7 +255,6 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                             date={date}
                             onTimeLogClick={handleTimeLogClick}
                             onSwitchToDay={(selectedDate) => {
-                                // Switch to day view and update the date
                                 router.get(route('calendar.index'), { view: 'day', date: selectedDate }, { preserveState: true })
                             }}
                         />

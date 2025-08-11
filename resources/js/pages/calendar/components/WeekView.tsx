@@ -29,20 +29,16 @@ export default function WeekView({ timeLogs, date, onTimeLogClick }: WeekViewPro
     const weekEnd = endOfWeek(currentDate)
     const days = eachDayOfInterval({ start: weekStart, end: weekEnd })
 
-    // Create hours array (from 0 to 23)
     const hours = Array.from({ length: 24 }, (_, i) => i)
 
-    // Position time logs on the grid - only get logs that start in the current hour
     const getTimeLogsForCell = (day: Date, hour: number) => {
         return timeLogs.filter((log) => {
             const startTime = parseISO(log.start)
 
-            // Check if the log is on this day and starts in this hour
             return isSameDay(startTime, day) && startTime.getHours() === hour
         })
     }
 
-    // Calculate position for a time log within an hour cell
     const getTimeLogStyle = (timeLog: any) => {
         const startTime = parseISO(timeLog.start)
         const startMinutes = startTime.getMinutes()
@@ -103,7 +99,7 @@ export default function WeekView({ timeLogs, date, onTimeLogClick }: WeekViewPro
                                                     backgroundColor: timeLog.project.color + '15',
                                                     borderColor: timeLog.project.color,
                                                     borderLeftWidth: '4px',
-                                                    // Add a slight offset based on index to avoid complete overlap
+
                                                     left: `${Math.min(5 * logIndex, 40)}%`,
                                                     width: `${Math.max(60 - 5 * logIndex, 40)}%`,
                                                 }}

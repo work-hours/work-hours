@@ -1,6 +1,7 @@
+import JiraIcon from '@/components/icons/jira-icon'
 import { type SharedData } from '@/types'
 import { usePage } from '@inertiajs/react'
-import { BarChart2, Briefcase, CheckSquare, Clock, DollarSign, Github, Upload, Users } from 'lucide-react'
+import { BarChart2, Briefcase, CheckSquare, Clock, DollarSign, ExternalLink, Github, Upload, Users } from 'lucide-react'
 
 export default function Features() {
     const { auth } = usePage<SharedData>().props
@@ -384,6 +385,95 @@ export default function Features() {
                                     <div className="mb-1 text-blue-600 dark:text-blue-400">e4f5g6h Fix login bug</div>
                                     <div className="mb-1 text-blue-600 dark:text-blue-400">i7j8k9l Initial commit</div>
                                     <div className="mb-2">$ _</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Featured Integration - Jira */}
+            <section id="featured-integration-jira" className="container mx-auto mb-24 px-6 lg:px-8" aria-label="Jira integration">
+                <div className="relative border-2 border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800">
+                    {/* Decorative elements */}
+                    <div className="absolute -top-3 -right-3 h-6 w-6 border-2 border-blue-900/60 bg-blue-100/30 dark:border-blue-400/60 dark:bg-blue-900/30"></div>
+                    <div className="absolute -bottom-3 -left-3 h-6 w-6 border-2 border-blue-900/60 bg-blue-100/30 dark:border-blue-400/60 dark:bg-blue-900/30"></div>
+
+                    {/* Header with typewriter styling */}
+                    <div className="border-b-2 border-gray-400 bg-gray-100 px-6 py-4 dark:border-gray-600 dark:bg-gray-700">
+                        <div className="flex flex-wrap items-center justify-between gap-4">
+                            <div className="flex items-center">
+                                <div className="mr-4 flex h-14 w-14 items-center justify-center border-2 border-gray-500 bg-gray-200 dark:border-gray-500 dark:bg-gray-600">
+                                    <JiraIcon className="h-8 w-8 text-gray-700 dark:text-gray-300" aria-label="Jira logo" />
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl font-bold tracking-wide text-gray-800 uppercase dark:text-gray-200">Jira Integration</h2>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Connect your Jira issues and track your project time</p>
+                                </div>
+                            </div>
+                            <div className="rotate-3 border-2 border-blue-800/40 px-3 py-1 dark:border-blue-400/40">
+                                <span className="text-sm font-bold tracking-wider text-blue-800/70 uppercase dark:text-blue-400/90">
+                                    New Integration
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid gap-6 p-6 md:grid-cols-2">
+                        {/* Left column - Feature description */}
+                        <div>
+                            <div className="mb-6 border-l-2 border-gray-400 pl-4 dark:border-gray-600">
+                                <p className="text-gray-700 dark:text-gray-300">
+                                    Connect your Jira workspace to seamlessly import issues as tasks and track time spent on each issue. Synchronize
+                                    your work logs, manage sprints, and improve team productivity with accurate time tracking.
+                                </p>
+                            </div>
+
+                            <div className="mb-6">
+                                <h3 className="mb-3 text-lg font-bold text-gray-800 uppercase dark:text-gray-200">Key Features</h3>
+                                <div className="grid gap-1 sm:grid-cols-3">
+                                    <div className="flex items-center border border-gray-400 bg-gray-50 px-3 py-2 dark:border-gray-600 dark:bg-gray-700">
+                                        <span className="mr-2 font-bold text-gray-700 dark:text-gray-300">✓</span>
+                                        <span className="text-sm text-gray-700 uppercase dark:text-gray-300">Issue Import</span>
+                                    </div>
+                                    <div className="flex items-center border border-gray-400 bg-gray-50 px-3 py-2 dark:border-gray-600 dark:bg-gray-700">
+                                        <span className="mr-2 font-bold text-gray-700 dark:text-gray-300">✓</span>
+                                        <span className="text-sm text-gray-700 uppercase dark:text-gray-300">Time Logging</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <a
+                                    href="/jira/connect"
+                                    className="inline-flex items-center border-2 border-blue-900 bg-blue-900 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                                    aria-label={isLoggedIn ? 'Connect your account with Jira' : 'Get started with Work Hours'}
+                                >
+                                    <ExternalLink className="mr-2 h-4 w-4" />
+                                    {isLoggedIn ? 'Connect with Jira' : 'Get Started'}
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Right column - Visual representation */}
+                        <div className="flex items-center justify-center">
+                            <div className="w-full max-w-md border-2 border-gray-400 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700">
+                                <div className="mb-4 border-b border-gray-400 pb-2 dark:border-gray-600">
+                                    <div className="flex items-center">
+                                        <div className="mr-2 h-3 w-3 rounded-full bg-red-500"></div>
+                                        <div className="mr-2 h-3 w-3 rounded-full bg-yellow-500"></div>
+                                        <div className="h-3 w-3 rounded-full bg-green-500"></div>
+                                        <div className="ml-4 text-xs text-gray-600 dark:text-gray-400">jira-board.txt</div>
+                                    </div>
+                                </div>
+                                <div className="text-sm text-gray-700 dark:text-gray-300">
+                                    <div className="mb-2 font-bold">Current Sprint: Sprint 24</div>
+                                    <div className="mb-2 text-blue-600 dark:text-blue-400">PROJ-123: Implement user authentication</div>
+                                    <div className="mb-2 text-orange-600 dark:text-orange-400">PROJ-124: Fix dashboard layout issues</div>
+                                    <div className="mb-2 text-green-600 dark:text-green-400">PROJ-125: Add export functionality</div>
+                                    <div className="mb-2 text-gray-600 dark:text-gray-400">Time logged today: 6h 30m</div>
+                                    <div className="mb-2 text-gray-600 dark:text-gray-400">Sprint progress: 65%</div>
+                                    <div className="mb-2">_</div>
                                 </div>
                             </div>
                         </div>

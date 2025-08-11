@@ -44,7 +44,6 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     const [note, setNote] = useState('')
     const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null)
 
-    // Listen for custom event to open the time tracker
     useEffect(() => {
         const handleOpenTimeTracker = () => {
             setIsOpen(true)
@@ -59,19 +58,16 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
         }
 
         window.addEventListener('open-time-tracker', handleOpenTimeTracker)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
         window.addEventListener('task-time-tracker-start', handleTaskTimeTrackerStart)
 
         return () => {
             window.removeEventListener('open-time-tracker', handleOpenTimeTracker)
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
+
             window.addEventListener('task-time-tracker-start', handleTaskTimeTrackerStart)
         }
     }, [])
 
-    // Load active time log from localStorage on the component mount
     useEffect(() => {
         const savedTimeLog = localStorage.getItem('activeTimeLog')
         if (savedTimeLog) {
@@ -85,17 +81,14 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
             }
         }
 
-        // Check if the tracker was previously hidden
         const trackerVisible = localStorage.getItem('timeTrackerVisible')
         if (trackerVisible === 'false') {
             setIsVisible(false)
         }
     }, [])
 
-    // Update localStorage and handle timer when activeTimeLog changes
     useEffect(() => {
         if (activeTimeLog) {
-            // Save to localStorage
             localStorage.setItem('activeTimeLog', JSON.stringify(activeTimeLog))
 
             const interval = setInterval(() => {
@@ -119,7 +112,6 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
         }
     }, [activeTimeLog])
 
-    // Save visibility state to localStorage
     useEffect(() => {
         localStorage.setItem('timeTrackerVisible', isVisible.toString())
     }, [isVisible])
@@ -198,12 +190,10 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
         setIsVisible(!isVisible)
     }
 
-    // Function to handle opening the sheet
     const handleOpenSheet = () => {
         setIsOpen(true)
     }
 
-    // Function to handle toggling the expanded view for active time log
     const toggleExpand = () => {
         if (activeTimeLog) {
             setView('note')
@@ -211,7 +201,6 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
         }
     }
 
-    // Minimized button when not visible
     if (!isVisible) {
         return (
             <div className="fixed right-4 bottom-4 z-50 duration-300 animate-in fade-in slide-in-from-right-5">
@@ -242,7 +231,6 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                     )}
 
                     {activeTimeLog ? (
-                        // Tracking active button
                         <SheetTrigger asChild>
                             <Button
                                 onClick={toggleExpand}
@@ -259,7 +247,6 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                             </Button>
                         </SheetTrigger>
                     ) : (
-                        // Normal time tracker button
                         <SheetTrigger asChild>
                             <Button
                                 onClick={handleOpenSheet}
@@ -300,7 +287,6 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                 {/* Conditional content based on state */}
                 <div className="p-4">
                     {activeTimeLog && view === 'note' ? (
-                        // Note input view
                         <div className="flex flex-col gap-3">
                             <div>
                                 <CardTitle className="flex items-center gap-2 text-left text-lg font-bold">
@@ -341,7 +327,6 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                             </div>
                         </div>
                     ) : (
-                        // Project selection view
                         <div className="flex flex-col gap-3">
                             <CardDescription className="">Select a project and start tracking your time</CardDescription>
                             <div>

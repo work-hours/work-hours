@@ -56,7 +56,6 @@ final class TeamController extends Controller
                 $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', $team->member->getkey()));
                 $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
 
-                // Only include approved logs in calculations
                 $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
                 $totalDuration = round($approvedLogs->sum('duration'), 2);
                 $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);
@@ -280,7 +279,7 @@ final class TeamController extends Controller
             ->map(function ($team): array {
                 $timeLogs = TimeLogStore::timeLogs(baseQuery: TimeLog::query()->where('user_id', $team->member->id));
                 $mappedTimeLogs = TimeLogStore::timeLogMapper($timeLogs);
-                // Only include approved logs in calculations
+
                 $approvedLogs = $mappedTimeLogs->where('status', TimeLogStatus::APPROVED);
                 $totalDuration = round($approvedLogs->sum('duration'), 2);
                 $unpaidHours = round($approvedLogs->where('is_paid', false)->sum('duration'), 2);

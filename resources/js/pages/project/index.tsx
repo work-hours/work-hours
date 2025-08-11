@@ -1,5 +1,6 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import DeleteProject from '@/components/delete-project'
+import JiraIcon from '@/components/icons/jira-icon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
@@ -12,6 +13,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { syncRepository } from '@actions/GitHubRepositoryController'
+import { syncProject } from '@actions/JiraController'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, TimerReset, User } from 'lucide-react'
@@ -79,7 +81,6 @@ export default function Projects() {
     const [error, setError] = useState<boolean>(false)
     const [processing, setProcessing] = useState(false)
 
-    // Filter states
     const [filters, setFilters] = useState<ProjectFilters>({
         client: pageFilters?.client || '',
         'team-member': pageFilters?.['team-member'] || '',
@@ -428,6 +429,8 @@ export default function Projects() {
                                                 <div className="flex items-center gap-2">
                                                     {project.source === 'github' && project.repo_id ? (
                                                         <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                                                    ) : project.source === 'jira' ? (
+                                                        <JiraIcon className="h-3 w-3 text-blue-600 dark:text-blue-400" />
                                                     ) : null}
                                                     {project.name}
                                                 </div>
@@ -511,6 +514,40 @@ export default function Projects() {
                                                                     className="h-7 border-purple-200 bg-purple-50 text-xs text-purple-700 shadow-sm transition-all hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
                                                                 >
                                                                     <GithubIcon className="mr-1 h-3 w-3" />
+                                                                </Button>
+                                                            )}
+                                                            {project.source === 'jira' && (
+                                                                <Button
+                                                                    onClick={(e) => {
+                                                                        e.preventDefault()
+                                                                        setLoading(true)
+
+                                                                        syncProject
+                                                                            .call({
+                                                                                params: { project: project.id },
+                                                                            })
+                                                                            .then((response) => response.json())
+                                                                            .then((data) => {
+                                                                                if (data.success) {
+                                                                                    toast.success('Project synced successfully with Jira!')
+                                                                                    getProjects(filters).then()
+                                                                                } else {
+                                                                                    console.error('Error syncing project with Jira:', data.error)
+                                                                                    setLoading(false)
+                                                                                }
+                                                                            })
+                                                                            .catch((error) => {
+                                                                                console.error('Failed to sync with Jira:', error)
+                                                                                toast.error('Failed to sync with Jira')
+                                                                                setLoading(false)
+                                                                            })
+                                                                    }}
+                                                                    title="Sync with Jira"
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className="h-7 border-blue-200 bg-blue-50 text-xs text-blue-700 shadow-sm transition-all hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/30"
+                                                                >
+                                                                    <JiraIcon className="mr-1 h-3 w-3" />
                                                                 </Button>
                                                             )}
                                                             <ActionButton

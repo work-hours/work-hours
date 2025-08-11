@@ -9,7 +9,7 @@
 
 @theme {
     --font-sans:
-        'Roboto Mono', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto', 'Courier New', monospace, ui-monospace, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Crimson Pro', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto', 'Courier New', monospace, ui-monospace, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 
     --radius-lg: var(--radius);
@@ -196,7 +196,7 @@
 }
 
 body {
-    font-family: 'Roboto Mono', system-ui;
+    font-family: 'IBM Plex Mono', monospace;
     font-weight: 400;
     font-style: normal;
 }

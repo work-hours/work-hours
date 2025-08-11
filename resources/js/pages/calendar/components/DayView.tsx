@@ -26,16 +26,13 @@ interface DayViewProps {
 export default function DayView({ timeLogs, date, onTimeLogClick }: DayViewProps) {
     const currentDate = parseISO(date)
 
-    // Filter logs for the current day
     const dayLogs = timeLogs.filter((log) => {
         const startDate = parseISO(log.start)
         return isSameDay(startDate, currentDate)
     })
 
-    // Create hours array (from 0 to 23)
     const hours = Array.from({ length: 24 }, (_, i) => i)
 
-    // Position time logs on the grid
     const getTimeLogsForHour = (hour: number) => {
         return dayLogs.filter((log) => {
             const startTime = parseISO(log.start)
@@ -60,10 +57,8 @@ export default function DayView({ timeLogs, date, onTimeLogClick }: DayViewProps
         }
     }
 
-    // Calculate total hours for the day
     const totalHours = dayLogs.reduce((sum, log) => sum + log.duration, 0)
 
-    // Group logs by project for the summary
     const projectSummary = dayLogs.reduce((acc: Record<string, { duration: number; color: string; name: string }>, log) => {
         const projectId = log.project.id.toString()
         if (!acc[projectId]) {

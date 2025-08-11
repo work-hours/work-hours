@@ -76,23 +76,19 @@ export default function CreateProject({ teamMembers, clients }: Props) {
         const index = currentMembers.indexOf(memberId)
 
         if (index === -1) {
-            // Add member if not already selected
             currentMembers.push(memberId)
         } else {
-            // Remove member if already selected
             currentMembers.splice(index, 1)
         }
 
         setData('team_members', currentMembers)
 
-        // If a team member is removed, also remove them from approvers
         if (index !== -1 && data.approvers.includes(memberId)) {
             handleApproverToggle(memberId)
         }
     }
 
     const handleApproverToggle = (memberId: number) => {
-        // Only allow approvers who are also team members
         if (!data.team_members.includes(memberId)) {
             return
         }
@@ -101,10 +97,8 @@ export default function CreateProject({ teamMembers, clients }: Props) {
         const index = currentApprovers.indexOf(memberId)
 
         if (index === -1) {
-            // Add approver if not already selected
             currentApprovers.push(memberId)
         } else {
-            // Remove approver if already selected
             currentApprovers.splice(index, 1)
         }
 

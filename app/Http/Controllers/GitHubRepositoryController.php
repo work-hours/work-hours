@@ -59,13 +59,11 @@ final class GitHubRepositoryController extends Controller
 
             $project = $this->createProjectFromRepository($validatedData);
 
-            // After creating the project, import the repository issues as tasks
             $token = $this->getGitHubToken();
             if (! ($token instanceof JsonResponse)) {
-                // Extract owner and repo name from the full name (format: "owner/repo")
+
                 [$repoOwner, $repoName] = explode('/', (string) $validatedData['full_name']);
 
-                // Import issues as tasks
                 $this->importIssuesAsTasks($token, $repoOwner, $repoName, $project);
             }
 
@@ -91,21 +89,18 @@ final class GitHubRepositoryController extends Controller
     public function syncRepository(Project $project): JsonResponse
     {
         try {
-            // Check if the project is a GitHub repository
+
             if ($project->source !== 'github') {
                 return $this->errorResponse('This project is not a GitHub repository.', 400);
             }
 
-            // Get the GitHub token
             $token = $this->getGitHubToken();
             if ($token instanceof JsonResponse) {
                 return $token;
             }
 
-            // Extract owner and repo name from the project name (format: "owner/repo")
             [$repoOwner, $repoName] = explode('/', $project->name);
 
-            // Get existing task source IDs to avoid duplicates
             $existingTaskSourceIds = $project->tasks()
                 ->with('meta')
                 ->whereHas('meta', function ($query): void {
@@ -116,7 +111,6 @@ final class GitHubRepositoryController extends Controller
                 ->filter()
                 ->toArray();
 
-            // Fetch issues from GitHub repository
             $issues = $this->githubAdapter->getRepositoryIssues($token, $repoOwner, $repoName);
 
             if ($issues instanceof JsonResponse || ! is_array($issues)) {
@@ -126,15 +120,13 @@ final class GitHubRepositoryController extends Controller
             $newCount = 0;
             $updatedCount = 0;
 
-            // Process each issue
             foreach ($issues as $issue) {
                 try {
-                    // Skip pull requests (which are also returned by the issues API)
+
                     if (isset($issue['pull_request'])) {
                         continue;
                     }
 
-                    // Check if the issue already exists as a task
                     $existingTask = $project->tasks()
                         ->whereHas('meta', function ($query) use ($issue): void {
                             $query->where('source', 'github')
@@ -143,7 +135,7 @@ final class GitHubRepositoryController extends Controller
                         ->first();
 
                     if ($existingTask) {
-                        // Update the existing task
+
                         $status = $this->mapGitHubIssueStatus($issue['state']);
                         $priority = $this->determineIssuePriority($issue);
 
@@ -154,7 +146,6 @@ final class GitHubRepositoryController extends Controller
                             'priority' => $priority,
                         ]);
 
-                        // Update the metadata
                         $existingTask->meta->update([
                             'source_state' => $issue['state'],
                             'source_url' => $issue['html_url'],
@@ -170,12 +161,11 @@ final class GitHubRepositoryController extends Controller
                             ],
                         ]);
 
-                        // Update tags based on GitHub issue labels
                         $this->syncTagsFromGitHubLabels($issue['labels'] ?? [], $project->user_id, $status, $priority, $existingTask, true);
 
                         $updatedCount++;
                     } else {
-                        // Create a new task for this issue
+
                         $status = $this->mapGitHubIssueStatus($issue['state']);
                         $priority = $this->determineIssuePriority($issue);
 
@@ -187,7 +177,6 @@ final class GitHubRepositoryController extends Controller
                             'is_imported' => true,
                         ]);
 
-                        // Store GitHub-specific metadata
                         $task->meta()->create([
                             'source' => 'github',
                             'source_id' => (string) $issue['id'],
@@ -206,7 +195,6 @@ final class GitHubRepositoryController extends Controller
                             ],
                         ]);
 
-                        // Create and attach tags based on GitHub issue labels
                         $this->syncTagsFromGitHubLabels($issue['labels'] ?? [], $project->user_id, $status, $priority, $task, false);
 
                         $newCount++;
@@ -345,7 +333,7 @@ final class GitHubRepositoryController extends Controller
      */
     private function importIssuesAsTasks(string $token, string $repoOwner, string $repoName, Project $project): void
     {
-        // Fetch issues from GitHub repository
+
         $issues = $this->githubAdapter->getRepositoryIssues($token, $repoOwner, $repoName);
 
         if ($issues instanceof JsonResponse || ! is_array($issues)) {
@@ -354,21 +342,17 @@ final class GitHubRepositoryController extends Controller
             return;
         }
 
-        // Import each issue as a task
         foreach ($issues as $issue) {
             try {
-                // Skip pull requests (which are also returned by the issues API)
+
                 if (isset($issue['pull_request'])) {
                     continue;
                 }
 
-                // Map GitHub issue status to your task status
                 $status = $this->mapGitHubIssueStatus($issue['state']);
 
-                // Map priority (you might want to customize this based on labels or other criteria)
                 $priority = $this->determineIssuePriority($issue);
 
-                // Create the task with is_imported flag set to true
                 $task = $project->tasks()->create([
                     'title' => $issue['title'],
                     'description' => $issue['body'] ?? '',
@@ -377,7 +361,6 @@ final class GitHubRepositoryController extends Controller
                     'is_imported' => true,
                 ]);
 
-                // Store GitHub-specific metadata in the tasks_meta table
                 $task->meta()->create([
                     'source' => 'github',
                     'source_id' => (string) $issue['id'],
@@ -396,7 +379,6 @@ final class GitHubRepositoryController extends Controller
                     ],
                 ]);
 
-                // Create and attach tags based on GitHub issue labels
                 $this->syncTagsFromGitHubLabels($issue['labels'] ?? [], $project->user_id, $status, $priority, $task, false);
 
                 Log::info("Created task from GitHub issue #{$issue['number']} for project {$project->name}");
@@ -424,7 +406,7 @@ final class GitHubRepositoryController extends Controller
             $tagIds = [];
 
             foreach ($labels as $label) {
-                // Skip status and priority labels as they're already mapped
+
                 if ($label['name'] === $status) {
                     continue;
                 }
@@ -489,7 +471,6 @@ final class GitHubRepositoryController extends Controller
             }
         }
 
-        // Default priority if no matching labels are found
         return 'Medium';
     }
 }

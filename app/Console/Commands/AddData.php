@@ -53,27 +53,21 @@ final class AddData extends Command
 
         $this->info('Starting to add sample data...');
 
-        // Create team members
         $teamMembers = $this->createTeamMembers($user);
         $this->info('✓ Created 5 team members');
 
-        // Create clients
         $clients = $this->createClients($user);
         $this->info('✓ Created 3 clients');
 
-        // Create projects
         $projects = $this->createProjects($user, $clients);
         $this->info('✓ Created 5 projects');
 
-        // Create tasks for projects
         $this->createTasks($projects);
         $this->info('✓ Created tasks for all projects');
 
-        // Create tags
         $this->createTags($user);
         $this->info('✓ Created sample tags');
 
-        // Create time logs for all team members
         $this->createTimeLogs($user, $teamMembers, $projects);
         $this->info('✓ Created time logs for all team members');
 
@@ -86,7 +80,6 @@ final class AddData extends Command
     {
         $teamMembers = collect();
 
-        // Create 5 team members
         for ($i = 1; $i <= 5; $i++) {
             $member = User::query()->create([
                 'name' => "Team Member {$i}",
@@ -97,7 +90,6 @@ final class AddData extends Command
                 'email_verified_at' => now(),
             ]);
 
-            // Create team relationship
             Team::query()->create([
                 'user_id' => $user->id,
                 'member_id' => $member->id,
@@ -191,10 +183,8 @@ final class AddData extends Command
     {
         $allStatuses = TimeLogStatus::cases();
 
-        // Create time logs for the authenticated user
         $this->createTimeLogsForUser($user, $projects, $allStatuses);
 
-        // For each team member
         foreach ($teamMembers as $member) {
             $this->createTimeLogsForUser($member, $projects, $allStatuses);
         }
@@ -209,15 +199,13 @@ final class AddData extends Command
             $project = $projects->random();
             $tasks = Task::query()->where('project_id', $project->id)->get();
 
-            // Ensure we create proper time spans with positive durations
             $startDate = now()->subDays(random_int(1, 30));
             $endDate = (clone $startDate)->addHours(random_int(1, 8));
             $duration = $endDate->diffInMinutes($startDate) / 60;
 
-            // Ensure we use each status at least once
             $statusIndex = 0;
             if (count($usedStatuses) < count($allStatuses)) {
-                // Find an unused status
+
                 foreach ($allStatuses as $index => $status) {
                     if (! in_array($status->value, $usedStatuses)) {
                         $statusIndex = $index;
@@ -226,7 +214,7 @@ final class AddData extends Command
                     }
                 }
             } else {
-                // We've used all statuses at least once, so pick randomly
+
                 $statusIndex = random_int(0, count($allStatuses) - 1);
             }
 

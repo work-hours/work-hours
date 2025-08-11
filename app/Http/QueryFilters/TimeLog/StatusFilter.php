@@ -22,7 +22,6 @@ final class StatusFilter
         if (request()->get('status') && request('status') !== '') {
             $status = request('status');
 
-            // Validate that the status is a valid enum value
             if (in_array($status, TimeLogStatus::values(), true)) {
                 $timeLogStatus = TimeLogStatus::fromValue($status);
                 $builder->where('status', $timeLogStatus);

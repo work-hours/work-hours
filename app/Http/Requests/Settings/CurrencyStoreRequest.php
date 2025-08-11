@@ -29,7 +29,7 @@ final class CurrencyStoreRequest extends FormRequest
                 'required',
                 'string',
                 'max:10',
-                // Make uniqueness check per user
+
                 'unique:currencies,code,NULL,id,user_id,' . $this->user()->id,
             ],
         ];

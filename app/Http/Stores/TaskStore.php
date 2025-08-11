@@ -29,7 +29,6 @@ final class TaskStore
             ->with(['project', 'assignees', 'meta', 'tags'])
             ->orderByDesc('created_at');
 
-        // Get tasks assigned to the user
         $assignedTasksQuery = Task::query()
             ->whereHas('assignees', function ($query) use ($userId): void {
                 $query->where('users.id', $userId);
@@ -40,7 +39,6 @@ final class TaskStore
         $ownedProjectTasks = self::applyFilterPipeline($ownedProjectTasksQuery)->get();
         $assignedTasks = self::applyFilterPipeline($assignedTasksQuery)->get();
 
-        // Combine and remove duplicates
         return $ownedProjectTasks->concat($assignedTasks)->unique('id');
     }
 

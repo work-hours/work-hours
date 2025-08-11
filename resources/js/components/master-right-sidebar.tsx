@@ -10,7 +10,6 @@ interface MasterRightSidebarProps {
     collapsed?: boolean
 }
 
-// Quick links for the right sidebar
 const quickLinks: NavItem[] = [
     {
         title: 'Log Time',
@@ -35,15 +34,11 @@ const quickLinks: NavItem[] = [
 ]
 
 export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps) {
-    // Function to handle Track Time button click
     const handleTrackTimeClick = () => {
-        // Dispatch custom event to open time tracker
         window.dispatchEvent(new Event('open-time-tracker'))
     }
 
-    // Function to handle Ask AI button click
     const handleAskAiClick = () => {
-        // Dispatch custom event to open AI chat
         window.dispatchEvent(new Event('open-ai-chat'))
     }
 
@@ -51,7 +46,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
 
     return (
         <div
-            className={`sticky top-0 flex h-screen flex-col border-l border-gray-300 bg-[#f8f6e9] shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-58'}`}
+            className={`sticky top-0 flex h-screen flex-col border-l border-gray-300 bg-[#f8f6e9] shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-56'}`}
         >
             <Background showPunches={false} showMarginLine={false} />
 

@@ -70,7 +70,6 @@ final class ClientController extends Controller
             $data = $request->validated();
             $data['user_id'] = Auth::id();
 
-            // Set USD as default currency if not provided
             if (! isset($data['currency']) || empty($data['currency'])) {
                 $data['currency'] = 'USD';
             }
@@ -107,7 +106,6 @@ final class ClientController extends Controller
         try {
             $data = $request->validated();
 
-            // Set USD as default currency if not provided
             if (! isset($data['currency']) || empty($data['currency'])) {
                 $data['currency'] = 'USD';
             }
