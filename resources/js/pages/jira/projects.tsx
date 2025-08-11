@@ -36,8 +36,6 @@ export default function JiraProjects() {
     const [importedProjectKeys, setImportedProjectKeys] = useState<string[]>([])
     const [loadingProjects, setLoadingProjects] = useState(true)
     const [importingProject, setImportingProject] = useState<string | null>(null)
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
-    const [successMessage, setSuccessMessage] = useState<string | null>(null)
     const [hasCredentials, setHasCredentials] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
 
@@ -50,13 +48,13 @@ export default function JiraProjects() {
     }
 
     useEffect(() => {
-        fetchProjects()
+        fetchProjects().then()
     }, [])
 
     const fetchProjects = async () => {
         setLoadingProjects(true)
         try {
-            const response = await axios.get('/jira/projects/list')
+            const response = await axios.get(route('jira.projects.list'))
             setProjects(response.data.projects)
             setImportedProjectKeys(response.data.importedProjectKeys || [])
             setHasCredentials(true)
@@ -78,7 +76,7 @@ export default function JiraProjects() {
     const importProject = async (project: Project) => {
         setImportingProject(project.key)
         try {
-            await axios.post('/jira/projects/import', {
+            await axios.post(route('jira.projects.import'), {
                 key: project.key,
                 name: project.name,
                 description: project.description,
@@ -103,7 +101,7 @@ export default function JiraProjects() {
         return (
             <MasterLayout breadcrumbs={breadcrumbs}>
                 <Head title="Jira Projects" />
-                <div className="mx-auto flex w-full flex-col gap-6 p-6">
+                <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
                     <section className="mb-2">
                         <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Jira Projects</h1>
                         <p className="mt-1 text-gray-500 dark:text-gray-400">Connect and manage your Jira projects</p>
@@ -119,7 +117,7 @@ export default function JiraProjects() {
                                 You need to connect your Jira account before you can view and import projects.
                             </p>
                             <Button asChild>
-                                <Link href="/jira/connect">Connect to Jira</Link>
+                                <Link href={route('jira.connect')}>Connect to Jira</Link>
                             </Button>
                         </CardContent>
                     </Card>
@@ -138,7 +136,7 @@ export default function JiraProjects() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Jira Projects" />
-            <div className="mx-auto flex w-full flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Jira Projects</h1>
@@ -146,12 +144,8 @@ export default function JiraProjects() {
                 </section>
 
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                        <Shield className="h-5 w-5" />
-                        <span>Connected to Jira</span>
-                    </div>
                     <Button variant="outline" asChild>
-                        <Link href="/jira/connect">
+                        <Link href={route('jira.connect')}>
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Change Credentials
                         </Link>

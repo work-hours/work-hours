@@ -801,11 +801,7 @@ export default function Tasks() {
 
                             {taskToUpdate?.is_imported && taskToUpdate?.meta?.source === 'jira' && (
                                 <div className="flex items-center space-x-2 pt-2">
-                                    <Checkbox
-                                        id="update_jira"
-                                        checked={updateJira}
-                                        onCheckedChange={(checked) => setUpdateJira(checked === true)}
-                                    />
+                                    <Checkbox id="update_jira" checked={updateJira} onCheckedChange={(checked) => setUpdateJira(checked === true)} />
                                     <Label htmlFor="update_jira" className="text-sm">
                                         Update in Jira?
                                     </Label>
