@@ -6,7 +6,7 @@
         "build:ssr": "vite build && vite build --ssr",
         "dev": "vite",
         "format": "prettier --write resources/ && ./vendor/bin/rector process && ./vendor/bin/pint",
-        "rector": "vendor/bin/rector process",
+        "rector": "./vendor/bin/rector process",
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
         "types": "tsc --noEmit"

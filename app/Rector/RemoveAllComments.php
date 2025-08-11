@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Rector;
 
 use PhpParser\Node;
+use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -38,13 +39,37 @@ final class RemoveAllComments extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [Node::class]; // Apply to all node types
+        return [Node::class];
     }
 
     public function refactor(Node $node): ?Node
     {
-        $node->setAttribute('comments', []); // Remove comments attribute
+        dump($node->getType());
 
-        return $node;
+        // Skip if node has no comments
+        if ($node->getComments() === []) {
+            return null;
+        }
+
+        // Only process if we're inside a class method
+        if ($node instanceof ClassMethod) {
+            $newComments = [];
+
+            foreach ($node->getComments() as $comment) {
+                // Keep comments that don't start with "//"
+                if (! str_starts_with($comment->getText(), '// ')) {
+                    $newComments[] = $comment;
+                }
+            }
+
+            // Only update if we actually filtered out comments
+            if (count($newComments) !== count($node->getComments())) {
+                $node->setAttribute('comments', $newComments);
+
+                return $node;
+            }
+        }
+
+        return null;
     }
 }
