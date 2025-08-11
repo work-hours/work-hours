@@ -27,7 +27,6 @@ export function SearchableSelect({
     const [open, setOpen] = React.useState(false);
     const [searchTerm, setSearchTerm] = React.useState('');
 
-    // Filter options based on search term
     const filteredOptions = React.useMemo(() => {
         if (!searchTerm) return options;
         return options.filter((option) =>
@@ -35,20 +34,17 @@ export function SearchableSelect({
         );
     }, [options, searchTerm]);
 
-    // Handle search input change
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
     };
 
-    // Handle option selection
     const handleSelectChange = (selectedValue: string) => {
-        // Convert "all" back to empty string
+
         onChange(selectedValue === "all" ? "" : selectedValue);
         setOpen(false);
         setSearchTerm('');
     };
 
-    // Find the selected option name
     const selectedOption = options.find(
         (option) => option.id.toString() === value || (option.id.toString() === "" && value === "")
     );

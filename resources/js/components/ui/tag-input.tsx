@@ -24,7 +24,6 @@ export function TagInput({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Load existing tags for this time log if timeLogId is provided
   useEffect(() => {
     if (timeLogId) {
       axios.get(`/time-log/${timeLogId}/tags`)
@@ -36,7 +35,6 @@ export function TagInput({
     }
   }, [timeLogId]);
 
-  // Fetch tag suggestions
   const fetchSuggestions = async (query: string) => {
     if (!query) {
       setSuggestions([]);
@@ -54,7 +52,6 @@ export function TagInput({
     }
   };
 
-  // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setInputValue(query);
@@ -68,7 +65,6 @@ export function TagInput({
     }
   };
 
-  // Add a tag
   const addTag = (tag: string) => {
     tag = tag.trim();
 
@@ -76,7 +72,6 @@ export function TagInput({
       const newTags = [...value, tag];
       onChange(newTags);
 
-      // Save to server if timeLogId is provided
       if (timeLogId) {
         axios.post(`/time-log/${timeLogId}/tags`, { tags: newTags })
           .catch(error => console.error('Error saving tags:', error));
@@ -89,19 +84,16 @@ export function TagInput({
     inputRef.current?.focus();
   };
 
-  // Remove a tag
   const removeTag = (tagToRemove: string) => {
     const newTags = value.filter(tag => tag !== tagToRemove);
     onChange(newTags);
 
-    // Save to server if timeLogId is provided
     if (timeLogId) {
       axios.post(`/time-log/${timeLogId}/tags`, { tags: newTags })
         .catch(error => console.error('Error saving tags:', error));
     }
   };
 
-  // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputValue) {
       e.preventDefault();

@@ -71,7 +71,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
-    // Initialize tags in the form data
     const { data, setData, put, processing, errors } = useForm<TimeLogForm>({
         project_id: timeLog.project_id,
         task_id: timeLog.task_id,
@@ -83,11 +82,9 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
         tags: timeLog.tags || [],
     })
 
-    // Convert string timestamps to Date objects for DatePicker
     const startDate = data.start_timestamp ? new Date(data.start_timestamp) : new Date()
     const endDate = data.end_timestamp ? new Date(data.end_timestamp) : null
 
-    // Calculate hours between start and end time when both are filled
     const calculatedHours = useMemo(() => {
         if (!data.start_timestamp || !data.end_timestamp) return null
 
@@ -99,15 +96,12 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
         return Math.round(diffHours * 100) / 100 // Round to 2 decimal places
     }, [data.start_timestamp, data.end_timestamp])
 
-    // Handle date and time changes
     const handleDateChange = (date: Date | null) => {
         if (date) {
-            // Preserve the time from the existing start_timestamp
             const currentStart = new Date(data.start_timestamp)
             const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), currentStart.getHours(), currentStart.getMinutes())
             setData('start_timestamp', localDate.toISOString())
 
-            // If end_timestamp exists, update it to use the same date
             if (data.end_timestamp) {
                 const currentEnd = new Date(data.end_timestamp)
                 const newEndDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), currentEnd.getHours(), currentEnd.getMinutes())
@@ -118,7 +112,6 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
 
     const handleStartTimeChange = (date: Date | null) => {
         if (date) {
-            // Preserve the date from the existing start_timestamp
             const currentStart = new Date(data.start_timestamp)
             const localDate = new Date(
                 currentStart.getFullYear(),
@@ -133,7 +126,6 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
 
     const handleEndTimeChange = (date: Date | null) => {
         if (date) {
-            // Use the date from start_timestamp but time from the selected end time
             const startDate = new Date(data.start_timestamp)
             const localDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), date.getHours(), date.getMinutes())
             setData('end_timestamp', localDate.toISOString())
@@ -182,7 +174,7 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                             value={data.project_id ? data.project_id.toString() : ''}
                                             onChange={(value) => {
                                                 setData('project_id', parseInt(value))
-                                                // Reset task_id when project changes
+
                                                 setData('task_id', null)
                                             }}
                                             options={projects}
@@ -317,7 +309,6 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                                 isClearable
                                                 placeholderText="Select end time (optional)"
                                                 filterDate={(date) => {
-                                                    // Only allow the same date as the start date
                                                     const start = new Date(data.start_timestamp)
                                                     return (
                                                         date.getDate() === start.getDate() &&

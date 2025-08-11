@@ -41,7 +41,6 @@ export default function JiraProjects() {
     const [hasCredentials, setHasCredentials] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
 
-    // Helper function to show messages using toast
     const showMessage = (message: string, isError = false) => {
         if (isError) {
             toast.error(message)
@@ -64,7 +63,6 @@ export default function JiraProjects() {
         } catch (error: any) {
             console.error('Error fetching projects:', error)
 
-            // Check if the error is due to missing credentials
             if (error.response?.status === 400 && error.response?.data?.message?.includes('credentials')) {
                 setHasCredentials(false)
             } else {
@@ -88,7 +86,6 @@ export default function JiraProjects() {
 
             showMessage(`Successfully imported ${project.name} and its issues.`)
 
-            // Add the project key to the imported projects list
             setImportedProjectKeys((prev) => [...prev, project.key])
         } catch (error: any) {
             console.error('Error importing project:', error)

@@ -29,7 +29,6 @@ export default function JiraConnect() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
-    // Helper function to show messages
     const showMessage = (message: string, isError = false) => {
         if (isError) {
             setErrorMessage(message)
@@ -39,7 +38,6 @@ export default function JiraConnect() {
             setErrorMessage(null)
         }
 
-        // Clear message after 5 seconds
         setTimeout(() => {
             if (isError) {
                 setErrorMessage(null)
@@ -66,7 +64,6 @@ export default function JiraConnect() {
 
             showMessage('Your Jira credentials have been validated and saved.')
 
-            // Redirect to projects page after successful connection
             window.location.href = '/jira/projects'
         } catch (error: any) {
             console.error('Error connecting to Jira:', error)

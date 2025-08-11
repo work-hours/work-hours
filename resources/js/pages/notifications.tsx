@@ -167,7 +167,6 @@ export default function Notifications() {
                         ) : (
                             <div className="space-y-4">
                                 {notificationsData.notifications.data?.map((notification) => {
-                                    // Determine icon based on notification type
                                     let NotificationIcon = Info
                                     if (notification.type.toLowerCase().includes('timelog')) {
                                         NotificationIcon = Clock
@@ -247,27 +246,21 @@ export default function Notifications() {
 
                                 <div className="flex items-center">
                                     {Array.from({ length: Math.min(notificationsData.notifications.meta?.last_page || 1, 5) }, (_, i) => {
-                                        // Show first, last, current and adjacent pages
                                         const totalPages = notificationsData.notifications.meta?.last_page || 1
                                         let pageNumbers: number[] = []
 
                                         if (totalPages <= 5) {
-                                            // If 5 or fewer pages, show all
                                             pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
                                         } else if (currentPage <= 3) {
-                                            // Near start
                                             pageNumbers = [1, 2, 3, 4, totalPages]
                                         } else if (currentPage >= totalPages - 2) {
-                                            // Near end
                                             pageNumbers = [1, totalPages - 3, totalPages - 2, totalPages - 1, totalPages]
                                         } else {
-                                            // Middle
                                             pageNumbers = [1, currentPage - 1, currentPage, currentPage + 1, totalPages]
                                         }
 
                                         const pageNum = pageNumbers[i] || 1
 
-                                        // Add ellipsis
                                         if (i > 0 && pageNumbers[i] && pageNumbers[i - 1] && pageNumbers[i] - pageNumbers[i - 1] > 1) {
                                             return (
                                                 <div key={`ellipsis-${i}`} className="flex items-center">

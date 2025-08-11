@@ -1,7 +1,6 @@
 import { type LucideProps } from 'lucide-react'
 import { forwardRef } from 'react'
 
-// Create JiraIcon as a forwarded ref component to match Lucide icons structure
 const JiraIcon = forwardRef<SVGSVGElement, LucideProps>(({ color = 'currentColor', size = 24, strokeWidth = 2, ...props }, ref) => {
     return (
         <svg

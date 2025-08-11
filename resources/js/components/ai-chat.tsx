@@ -44,12 +44,10 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLTextAreaElement>(null)
 
-    // Scroll to the bottom of messages when messages change
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages])
 
-    // Define a type for the stored message format
     type StoredMessage = {
         id: string
         content: string
@@ -57,7 +55,6 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
         timestamp: string
     }
 
-    // Load chat history when chatHistoryId changes
     useEffect(() => {
         const loadChatHistory = async () => {
             if (chatHistoryId) {
@@ -70,7 +67,6 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                     if (response && response.ok) {
                         const data = await response.json()
                         if (data.success && data.history) {
-                            // Convert stored messages to the format expected by the component
                             const historyMessages = data.history.messages.map((msg: StoredMessage) => ({
                                 id: msg.id,
                                 content: msg.content,
@@ -88,7 +84,6 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                     setIsLoading(false)
                 }
             } else {
-                // Reset to initial state for a new chat
                 setMessages([
                     {
                         id: '1',
@@ -120,13 +115,11 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
         setIsLoading(true)
 
         try {
-            // Prepare context data
             const context = {
                 projects,
                 messages,
             }
 
-            // Send message to backend
             const response = await sendMessage.call({
                 data: {
                     message: userMessage.content,
@@ -154,12 +147,10 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
 
             setMessages((prev) => [...prev, aiMessage])
 
-            // Update the current chat ID if this is a new chat
             if (!currentChatId && responseData.chat_history_id) {
                 setCurrentChatId(responseData.chat_history_id)
             }
 
-            // Notify parent component that a chat was saved or updated
             if (onChatSaved) {
                 onChatSaved()
             }
@@ -167,7 +158,6 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
             console.error('Error sending message:', error)
             setError('Sorry, I encountered an error. Please try again.')
 
-            // Add error message
             const errorMessage: Message = {
                 id: (Date.now() + 1).toString(),
                 content: 'Sorry, I encountered an error. Please try again later.',
@@ -178,7 +168,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
             setMessages((prev) => [...prev, errorMessage])
         } finally {
             setIsLoading(false)
-            // Focus the input field after response is received
+
             setTimeout(() => {
                 inputRef.current?.focus()
             }, 100)
@@ -187,7 +177,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value)
-        // Auto-resize logic: adjust textarea height based on content
+
         if (inputRef.current) {
             inputRef.current.style.height = 'auto'
             inputRef.current.style.height = `${inputRef.current.scrollHeight}px`

@@ -1,7 +1,6 @@
 import { Link } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
 
-// Define the cookie categories based on the cookie policy
 type CookieCategory = 'essential' | 'preferences' | 'analytics' | 'advertising'
 
 interface CookieConsent {
@@ -25,7 +24,6 @@ export default function CookieConsent() {
     const [showBanner, setShowBanner] = useState(false)
     const [showCustomize, setShowCustomize] = useState(false)
 
-    // Load consent from localStorage on component mount
     useEffect(() => {
         const storedConsent = localStorage.getItem('cookie_consent')
         if (storedConsent) {
@@ -43,14 +41,12 @@ export default function CookieConsent() {
         }
     }, [])
 
-    // Save consent to localStorage whenever it changes
     useEffect(() => {
         if (consent && consent.timestamp > 0) {
             localStorage.setItem('cookie_consent', JSON.stringify(consent))
         }
     }, [consent])
 
-    // Handle accepting all cookies
     const handleAcceptAll = () => {
         setConsent({
             essential: true,
@@ -62,7 +58,6 @@ export default function CookieConsent() {
         setShowBanner(false)
     }
 
-    // Handle accepting only essential cookies
     const handleAcceptEssential = () => {
         setConsent({
             ...defaultConsent,
@@ -71,7 +66,6 @@ export default function CookieConsent() {
         setShowBanner(false)
     }
 
-    // Handle saving custom preferences
     const handleSavePreferences = () => {
         if (consent) {
             setConsent({
@@ -83,10 +77,8 @@ export default function CookieConsent() {
         }
     }
 
-    // Handle toggling a specific cookie category
     const handleToggleCategory = (category: CookieCategory) => {
         if (consent && category !== 'essential') {
-            // Don't allow toggling essential cookies
             setConsent({
                 ...consent,
                 [category]: !consent[category],
@@ -94,7 +86,6 @@ export default function CookieConsent() {
         }
     }
 
-    // If consent is null (still loading) or banner shouldn't be shown, don't render anything
     if (!consent || !showBanner) {
         return null
     }

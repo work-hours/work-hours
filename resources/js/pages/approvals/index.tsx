@@ -141,13 +141,11 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
         try {
             let response
             if (singleApprovalId) {
-                // Approve single time log
                 response = await axios.post(route('approvals.approve'), {
                     time_log_id: singleApprovalId,
                     comment: comment,
                 })
             } else {
-                // Approve multiple time logs
                 response = await axios.post(route('approvals.approve-multiple'), {
                     time_log_ids: selectedLogs,
                     comment: comment,
@@ -156,7 +154,6 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
 
             setApprovalSuccess(response.data.message)
 
-            // Refresh the page after a short delay
             setTimeout(() => {
                 get(route('approvals.index'), { preserveState: true })
                 closeApproveDialog()
@@ -189,13 +186,11 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
         try {
             let response
             if (singleApprovalId) {
-                // Reject single time log
                 response = await axios.post(route('approvals.reject'), {
                     time_log_id: singleApprovalId,
                     comment: comment,
                 })
             } else {
-                // Reject multiple time logs
                 response = await axios.post(route('approvals.reject-multiple'), {
                     time_log_ids: selectedLogs,
                     comment: comment,
@@ -204,7 +199,6 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
 
             setApprovalSuccess(response.data.message)
 
-            // Refresh the page after a short delay
             setTimeout(() => {
                 get(route('approvals.index'), { preserveState: true })
                 closeRejectDialog()

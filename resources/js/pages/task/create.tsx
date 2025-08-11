@@ -68,18 +68,14 @@ export default function CreateTask({ projects }: Props) {
         tags: [],
     })
 
-    // State to store potential assignees
     const [potentialAssignees, setPotentialAssignees] = useState<{ id: number; name: string; email: string }[]>([])
     const [loadingAssignees, setLoadingAssignees] = useState<boolean>(false)
 
-    // State to track if the selected project is from GitHub or Jira
     const [isGithubProject, setIsGithubProject] = useState<boolean>(false)
     const [isJiraProject, setIsJiraProject] = useState<boolean>(false)
 
-    // State for due date
     const [dueDate, setDueDate] = useState<Date | null>(data.due_date ? new Date(data.due_date) : null)
 
-    // Handle due date change
     const handleDueDateChange = (date: Date | null) => {
         setDueDate(date)
         if (date) {
@@ -89,7 +85,6 @@ export default function CreateTask({ projects }: Props) {
         }
     }
 
-    // Fetch potential assignees when project_id changes
     useEffect(() => {
         if (data.project_id) {
             setLoadingAssignees(true)
@@ -113,7 +108,6 @@ export default function CreateTask({ projects }: Props) {
         }
     }, [data.project_id])
 
-    // Check if the selected project is a GitHub or Jira project
     useEffect(() => {
         const selectedProject = projects.find((project) => project.id === Number(data.project_id))
         setIsGithubProject(!!selectedProject?.is_github)
@@ -138,10 +132,8 @@ export default function CreateTask({ projects }: Props) {
         const index = currentAssignees.indexOf(assigneeId)
 
         if (index === -1) {
-            // Add assignee if not already selected
             currentAssignees.push(assigneeId)
         } else {
-            // Remove assignee if already selected
             currentAssignees.splice(index, 1)
         }
 

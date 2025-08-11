@@ -208,7 +208,6 @@ export default function AllTeamTimeLogs({
                                         {(() => {
                                             let description = ''
 
-                                            // Date range description
                                             if (data['start-date'] && data['end-date']) {
                                                 description = `Showing logs from ${data['start-date']} to ${data['end-date']}`
                                             } else if (data['start-date']) {
@@ -217,7 +216,6 @@ export default function AllTeamTimeLogs({
                                                 description = `Showing logs until ${data['end-date']}`
                                             }
 
-                                            // Team member description
                                             if (data.user) {
                                                 const selectedMember = teamMembers.find((member) => member.id.toString() === data.user)
                                                 const memberName = selectedMember ? selectedMember.name : ''
@@ -229,7 +227,6 @@ export default function AllTeamTimeLogs({
                                                 }
                                             }
 
-                                            // Project description
                                             if (data.project) {
                                                 const selectedProject = projects.find((project) => project.id.toString() === data.project)
                                                 const projectName = selectedProject ? selectedProject.name : ''
@@ -241,7 +238,6 @@ export default function AllTeamTimeLogs({
                                                 }
                                             }
 
-                                            // Payment status description
                                             if (data['is-paid']) {
                                                 const paymentStatus = data['is-paid'] === 'true' ? 'paid' : 'unpaid'
 
@@ -252,7 +248,6 @@ export default function AllTeamTimeLogs({
                                                 }
                                             }
 
-                                            // Approval status description
                                             if (data.status) {
                                                 const statusText =
                                                     data.status === 'pending' ? 'pending' : data.status === 'approved' ? 'approved' : 'rejected'

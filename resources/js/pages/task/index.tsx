@@ -66,7 +66,6 @@ export default function Tasks() {
     const [updateGithub, setUpdateGithub] = useState<boolean>(true)
     const [isThereRunningTracker, setIsThereRunningTracker] = useState(localStorage.getItem('activeTimeLog') !== null)
 
-    // Filter states
     const [filters, setFilters] = useState<TaskFilters>({
         status: 'all',
         priority: 'all',
@@ -109,7 +108,7 @@ export default function Tasks() {
                 github_update?: boolean
             } = {
                 status: selectedStatus,
-                // Include other required fields to avoid validation errors
+
                 title: taskToUpdate.title,
                 project_id: taskToUpdate.project_id,
                 priority: taskToUpdate.priority,
@@ -118,14 +117,12 @@ export default function Tasks() {
                 assignees: taskToUpdate.assignees.map((a) => a.id),
             }
 
-            // Add github_update parameter for GitHub tasks
             if (taskToUpdate.is_imported && taskToUpdate.meta?.source === 'github') {
                 payload.github_update = updateGithub
             }
 
             await axios.put(route('task.update', taskToUpdate.id), payload)
 
-            // Update the task status locally
             const updatedTasks = tasks.map((task) => {
                 if (task.id === taskToUpdate.id) {
                     return { ...task, status: selectedStatus }
@@ -144,7 +141,6 @@ export default function Tasks() {
         }
     }
 
-    // Update URL with filters
     const getTasks = async (filters?: TaskFilters): Promise<void> => {
         setLoading(true)
         setError(false)

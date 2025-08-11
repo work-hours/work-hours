@@ -56,36 +56,30 @@ export default function Tags({ tags }: TagsPageProps) {
         color: '',
     })
 
-    // Open the create tag dialog
     const openCreateDialog = () => {
         reset()
         setIsCreateDialogOpen(true)
     }
 
-    // Open the edit tag dialog
     const openEditDialog = (tag: Tag) => {
         setEditingTag(tag)
         setEditData({ name: tag.name, color: tag.color })
         setIsEditDialogOpen(true)
     }
 
-    // Open the delete tag dialog
     const openDeleteDialog = (tag: Tag) => {
         setDeletingTag(tag)
         setIsDeleteDialogOpen(true)
     }
 
-    // Create a new tag
     const createTag = async () => {
         setIsLoading(true)
 
         try {
             const response = await axios.post('/tags', data)
 
-            // Add the new tag to the list
             setTagsList([...tagsList, response.data])
 
-            // Close the dialog and reset the form
             setIsCreateDialogOpen(false)
             reset()
             toast.success('Tag created successfully')
@@ -97,7 +91,6 @@ export default function Tags({ tags }: TagsPageProps) {
         }
     }
 
-    // Update a tag
     const updateTag = async () => {
         if (!editingTag) return
 
@@ -106,10 +99,8 @@ export default function Tags({ tags }: TagsPageProps) {
         try {
             const response = await axios.put(`/tags/${editingTag.id}`, editData)
 
-            // Update the tag in the list
             setTagsList(tagsList.map((tag) => (tag.id === editingTag.id ? { ...tag, name: response.data.name, color: response.data.color } : tag)))
 
-            // Close the dialog
             setIsEditDialogOpen(false)
             setEditingTag(null)
             toast.success('Tag updated successfully')
@@ -121,7 +112,6 @@ export default function Tags({ tags }: TagsPageProps) {
         }
     }
 
-    // Delete a tag
     const deleteTag = async () => {
         if (!deletingTag) return
 
@@ -130,10 +120,8 @@ export default function Tags({ tags }: TagsPageProps) {
         try {
             await axios.delete(`/tags/${deletingTag.id}`)
 
-            // Remove the tag from the list
             setTagsList(tagsList.filter((tag) => tag.id !== deletingTag.id))
 
-            // Close the dialog
             setIsDeleteDialogOpen(false)
             setDeletingTag(null)
             toast.success('Tag deleted successfully')
@@ -231,7 +219,6 @@ export default function Tags({ tags }: TagsPageProps) {
                                 </div>
                                 <div className="flex space-x-2">
                                     {tags.links?.map((link: TagsLinks, i: number) => {
-                                        // Skip the "prev" and "next" links
                                         if (link.label === '&laquo; Previous' || link.label === 'Next &raquo;') {
                                             return null
                                         }

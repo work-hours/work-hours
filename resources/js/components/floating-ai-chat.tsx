@@ -36,27 +36,22 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
     const [isLoading, setIsLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
 
-    // Load chat histories when the component mounts
     useEffect(() => {
         loadChatHistories().then()
     }, [])
 
-    // Listen for custom event to open the AI chat
     useEffect(() => {
         const handleOpenAiChat = () => {
             setIsOpen(true)
         }
 
-        // Add event listener
         window.addEventListener('open-ai-chat', handleOpenAiChat)
 
-        // Clean up
         return () => {
             window.removeEventListener('open-ai-chat', handleOpenAiChat)
         }
     }, [])
 
-    // Function to load chat histories
     const loadChatHistories = async () => {
         try {
             setIsLoading(true)
@@ -75,17 +70,14 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
         }
     }
 
-    // Function to handle chat deletion
     const handleChatDeleted = (id: number) => {
-        // If the deleted chat was selected, clear the selection
         if (selectedChatId === id) {
             setSelectedChatId(null)
         }
-        // Reload chat histories
+
         loadChatHistories()
     }
 
-    // Function to start a new chat
     const handleNewChat = () => {
         setSelectedChatId(null)
     }

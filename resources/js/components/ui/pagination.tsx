@@ -13,12 +13,11 @@ export interface PaginationProps {
 }
 
 export function Pagination({ links }: PaginationProps) {
-  // Don't render pagination if there are no links or only one page
+
   if (!links || links.length <= 3) {
     return null
   }
 
-  // Filter out the "Previous" and "Next" links from the beginning and end
   const pageLinks = links.slice(1, -1)
 
   return (
@@ -86,7 +85,7 @@ export function Pagination({ links }: PaginationProps) {
         {/* Page Links */}
         <div className="flex items-center space-x-1">
           {pageLinks.map((link, i) => {
-            // For page numbers
+
             if (!link.label.includes('...')) {
               return link.url ? (
                 <Link
@@ -111,7 +110,6 @@ export function Pagination({ links }: PaginationProps) {
               )
             }
 
-            // For ellipses
             return (
               <span
                 key={i}

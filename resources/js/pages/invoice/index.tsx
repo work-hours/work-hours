@@ -86,7 +86,6 @@ export default function Invoices() {
     const [newStatus, setNewStatus] = useState<string>('')
     const [newPaidAmount, setNewPaidAmount] = useState<string>('')
 
-    // Filter states
     const [filters, setFilters] = useState<InvoiceFilters>({
         search: pageFilters?.search || '',
         client: pageFilters?.client || 'all',
@@ -114,10 +113,8 @@ export default function Invoices() {
         setError(false)
         setProcessing(true)
         try {
-            // Create a copy of filters to avoid modifying the original
             const apiFilters = filters ? { ...filters } : undefined
 
-            // Convert "all" values to empty strings for API
             if (apiFilters) {
                 if (apiFilters.client === 'all') {
                     apiFilters.client = ''
@@ -155,7 +152,6 @@ export default function Invoices() {
         e.preventDefault()
         const formattedFilters = { ...filters }
 
-        // Convert "all" values to empty strings for API
         if (formattedFilters.client === 'all') {
             formattedFilters.client = ''
         }
@@ -200,7 +196,6 @@ export default function Invoices() {
         getInvoices(initialFilters).then()
     }, [])
 
-    // Format currency
     const formatCurrency = (amount: number, currency: string = 'USD'): string => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -209,7 +204,6 @@ export default function Invoices() {
         }).format(amount)
     }
 
-    // Get status badge class
     const getStatusBadgeClass = (status: string): string => {
         switch (status) {
             case 'draft':
@@ -229,18 +223,15 @@ export default function Invoices() {
         }
     }
 
-    // Format status label
     const formatStatusLabel = (status: string): string => {
         return status.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
-    // Handle opening the email confirmation dialog
     const handleEmailClick = (invoice: Invoice): void => {
         setSelectedInvoice(invoice)
         setEmailDialogOpen(true)
     }
 
-    // Handle opening the status update dialog
     const handleStatusClick = (invoice: Invoice): void => {
         setSelectedInvoice(invoice)
         setNewStatus(invoice.status)
@@ -248,7 +239,6 @@ export default function Invoices() {
         setStatusDialogOpen(true)
     }
 
-    // Handle sending the email
     const handleSendEmail = async () => {
         if (!selectedInvoice) return
 
@@ -256,7 +246,6 @@ export default function Invoices() {
         try {
             await router.post(route('invoice.sendEmail', selectedInvoice.id))
 
-            // Update the invoice status in the local state
             setInvoices(
                 invoices.map((invoice) => {
                     if (invoice.id === selectedInvoice.id) {
@@ -266,7 +255,6 @@ export default function Invoices() {
                 }),
             )
 
-            // Close the dialog
             setEmailDialogOpen(false)
             setSelectedInvoice(null)
         } catch (error) {
@@ -276,19 +264,16 @@ export default function Invoices() {
         }
     }
 
-    // Handle updating the invoice status
     const handleStatusUpdate = async () => {
         if (!selectedInvoice) return
 
         setUpdatingStatus(true)
         try {
-            // Make API call to update the invoice status
             await router.post(route('invoice.updateStatus', selectedInvoice.id), {
                 status: newStatus,
                 paid_amount: newPaidAmount,
             })
 
-            // Update the invoice status in the local state
             setInvoices(
                 invoices.map((invoice) => {
                     if (invoice.id === selectedInvoice.id) {
@@ -302,10 +287,8 @@ export default function Invoices() {
                 }),
             )
 
-            // Show success message
             toast.success(`Invoice status updated to ${formatStatusLabel(newStatus)}`)
 
-            // Close the dialog
             setStatusDialogOpen(false)
             setSelectedInvoice(null)
         } catch (error) {
@@ -697,12 +680,10 @@ export default function Invoices() {
                                     value={newStatus}
                                     onValueChange={(value) => {
                                         setNewStatus(value)
-                                        // If status is changed to paid, set paid_amount to total invoice amount
+
                                         if (value === 'paid' && selectedInvoice) {
                                             setNewPaidAmount(selectedInvoice.total_amount.toString())
-                                        }
-                                        // If status is changed to partially_paid, reset paid_amount to zero
-                                        else if (value === 'partially_paid') {
+                                        } else if (value === 'partially_paid') {
                                             setNewPaidAmount('0')
                                         }
                                     }}

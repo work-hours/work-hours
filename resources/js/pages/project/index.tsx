@@ -81,7 +81,6 @@ export default function Projects() {
     const [error, setError] = useState<boolean>(false)
     const [processing, setProcessing] = useState(false)
 
-    // Filter states
     const [filters, setFilters] = useState<ProjectFilters>({
         client: pageFilters?.client || '',
         'team-member': pageFilters?.['team-member'] || '',

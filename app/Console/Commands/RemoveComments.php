@@ -54,7 +54,7 @@ final class RemoveComments extends Command
         return CommandAlias::SUCCESS;
     }
 
-    private function removals($filteredFiles): array
+    private function removals(RegexIterator $filteredFiles): array
     {
         $totalFiles = 0;
         $modifiedFiles = 0;

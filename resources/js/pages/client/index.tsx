@@ -52,14 +52,12 @@ export default function Clients() {
     const [error, setError] = useState<boolean>(false)
     const [processing, setProcessing] = useState(false)
 
-    // Convert string date to Date object if needed
     const parseDate = (dateValue: Date | string | null): Date | null => {
         if (dateValue === null) return null
         if (typeof dateValue === 'string') return new Date(dateValue)
         return dateValue
     }
 
-    // Filter states
     const [filters, setFilters] = useState<ClientFilters>({
         search: pageFilters?.search || '',
         'created-date-from': pageFilters?.['created-date-from'] || null,

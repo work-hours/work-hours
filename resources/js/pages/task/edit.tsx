@@ -83,14 +83,11 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
         tags: taskTags || [],
     })
 
-    // State for potential assignees
     const [potentialAssignees, setPotentialAssignees] = useState<{ id: number; name: string; email: string }[]>(initialAssignees || [])
     const [loadingAssignees, setLoadingAssignees] = useState<boolean>(false)
 
-    // State for due date
     const [dueDate, setDueDate] = useState<Date | null>(data.due_date ? new Date(data.due_date) : null)
 
-    // Fetch potential assignees when project_id changes
     useEffect(() => {
         if (data.project_id) {
             setLoadingAssignees(true)
@@ -115,7 +112,6 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
         }
     }, [data.project_id])
 
-    // Handle due date change
     const handleDueDateChange = (date: Date | null) => {
         setDueDate(date)
         if (date) {
@@ -142,10 +138,8 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
         const index = currentAssignees.indexOf(assigneeId)
 
         if (index === -1) {
-            // Add assignee if not already selected
             currentAssignees.push(assigneeId)
         } else {
-            // Remove assignee if already selected
             currentAssignees.splice(index, 1)
         }
 

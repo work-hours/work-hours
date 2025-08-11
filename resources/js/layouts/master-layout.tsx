@@ -28,7 +28,6 @@ interface MasterLayoutProps {
 
 export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayoutProps) {
     const [collapsed, setCollapsed] = useState(() => {
-        // Initialize from localStorage if available
         if (typeof window !== 'undefined') {
             const savedState = localStorage.getItem('sidebar_collapsed')
             return savedState === 'true'
@@ -42,7 +41,6 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     const [dataLoaded, setDataLoaded] = useState(false)
     const [pageLoaded, setPageLoaded] = useState(false)
 
-    // Fetch projects and tasks for the time tracker
     const fetchData = async (): Promise<void> => {
         try {
             const [projectsResponse, tasksResponse] = await Promise.all([projects.data({}), tasks.data({})])
@@ -58,12 +56,10 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
         fetchData().then()
     }, [])
 
-    // Save collapsed state to localStorage when it changes
     useEffect(() => {
         localStorage.setItem('sidebar_collapsed', String(collapsed))
     }, [])
 
-    // Add page transition effect
     useEffect(() => {
         setPageLoaded(true)
         return () => setPageLoaded(false)
