@@ -162,7 +162,7 @@ final class JiraController extends Controller
     {
         try {
             // Check if the project is a Jira project
-            if ($project->source !== 'jira' || ! $project->jira_project_key) {
+            if ($project->source !== 'jira' || ! $project->repo_id) {
                 return $this->errorResponse('This project is not a Jira project.', 400);
             }
 
