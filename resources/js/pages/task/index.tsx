@@ -1,5 +1,6 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import DeleteTask from '@/components/delete-task'
+import JiraIcon from '@/components/icons/jira-icon'
 import TaskDetailsSheet from '@/components/task-details-sheet'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -618,7 +619,12 @@ export default function Tasks() {
                                             <TableCell className="max-w-xl font-medium">
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <span>{task.title}</span>
-                                                    {task.is_imported && <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />}
+                                                    {task.is_imported && task.meta?.source === 'github' && (
+                                                        <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                                                    )}
+                                                    {task.is_imported && task.meta?.source === 'jira' && (
+                                                        <JiraIcon className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                                                    )}
                                                 </div>
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <small>{task.project.name}</small>
