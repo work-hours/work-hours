@@ -15,6 +15,7 @@ import { syncRepository } from '@actions/GitHubRepositoryController'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, TimerReset, User } from 'lucide-react'
+import JiraIcon from '@/components/icons/jira-icon'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -428,6 +429,8 @@ export default function Projects() {
                                                 <div className="flex items-center gap-2">
                                                     {project.source === 'github' && project.repo_id ? (
                                                         <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                                                    ) : project.source === 'jira' ? (
+                                                        <JiraIcon className="h-3 w-3 text-blue-600 dark:text-blue-400" />
                                                     ) : null}
                                                     {project.name}
                                                 </div>
