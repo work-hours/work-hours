@@ -620,10 +620,32 @@ export default function Tasks() {
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <span>{task.title}</span>
                                                     {task.is_imported && task.meta?.source === 'github' && (
-                                                        <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                                                        task.meta?.source_url ? (
+                                                            <a
+                                                                href={task.meta.source_url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                title="View in GitHub"
+                                                            >
+                                                                <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300" />
+                                                            </a>
+                                                        ) : (
+                                                            <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                                                        )
                                                     )}
                                                     {task.is_imported && task.meta?.source === 'jira' && (
-                                                        <JiraIcon className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                                                        task.meta?.source_url ? (
+                                                            <a
+                                                                href={task.meta.source_url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                title="View in Jira"
+                                                            >
+                                                                <JiraIcon className="h-3 w-3 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300" />
+                                                            </a>
+                                                        ) : (
+                                                            <JiraIcon className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                                                        )
                                                     )}
                                                 </div>
                                                 <div className="flex flex-wrap items-center gap-2">
