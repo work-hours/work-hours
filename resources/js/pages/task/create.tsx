@@ -35,6 +35,7 @@ type TaskForm = {
     due_date: string
     assignees: number[]
     create_github_issue: boolean
+    create_jira_issue: boolean
     tags: string[]
 }
 
@@ -63,6 +64,7 @@ export default function CreateTask({ projects }: Props) {
         due_date: '',
         assignees: [],
         create_github_issue: false,
+        create_jira_issue: false,
         tags: [],
     })
 
@@ -70,8 +72,9 @@ export default function CreateTask({ projects }: Props) {
     const [potentialAssignees, setPotentialAssignees] = useState<{ id: number; name: string; email: string }[]>([])
     const [loadingAssignees, setLoadingAssignees] = useState<boolean>(false)
 
-    // State to track if the selected project is from GitHub
+    // State to track if the selected project is from GitHub or Jira
     const [isGithubProject, setIsGithubProject] = useState<boolean>(false)
+    const [isJiraProject, setIsJiraProject] = useState<boolean>(false)
 
     // State for due date
     const [dueDate, setDueDate] = useState<Date | null>(data.due_date ? new Date(data.due_date) : null)
@@ -110,10 +113,11 @@ export default function CreateTask({ projects }: Props) {
         }
     }, [data.project_id])
 
-    // Check if the selected project is a GitHub project
+    // Check if the selected project is a GitHub or Jira project
     useEffect(() => {
         const selectedProject = projects.find((project) => project.id === Number(data.project_id))
         setIsGithubProject(!!selectedProject?.is_github)
+        setIsJiraProject(!!selectedProject?.source && selectedProject.source.toLowerCase() === 'jira')
     }, [data.project_id, projects])
 
     const submit: FormEventHandler = (e) => {
@@ -380,6 +384,20 @@ export default function CreateTask({ projects }: Props) {
                                         />
                                         <Label htmlFor="create_github_issue" className="cursor-pointer text-sm">
                                             Create issue on GitHub
+                                        </Label>
+                                    </div>
+                                )}
+
+                                {isJiraProject && (
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                            id="create_jira_issue"
+                                            checked={data.create_jira_issue}
+                                            onCheckedChange={(checked) => setData('create_jira_issue', !!checked)}
+                                            disabled={processing}
+                                        />
+                                        <Label htmlFor="create_jira_issue" className="cursor-pointer text-sm">
+                                            Create issue on Jira
                                         </Label>
                                     </div>
                                 )}

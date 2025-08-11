@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Adapters\GitHubAdapter;
+use App\Adapters\JiraAdapter;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Stores\ProjectStore;
@@ -33,10 +34,8 @@ final class TaskController extends Controller
      * Constructor for TaskController
      */
     public function __construct(
-        /**
-         * GitHub adapter for handling GitHub-related operations
-         */
-        private GitHubAdapter $gitHubAdapter
+        private readonly GitHubAdapter $gitHubAdapter,
+        private readonly JiraAdapter $jiraAdapter
     ) {}
 
     /**
@@ -136,6 +135,10 @@ final class TaskController extends Controller
 
             if ($request->boolean('create_github_issue')) {
                 $this->gitHubAdapter->createGitHubIssue($task);
+            }
+
+            if ($request->boolean('create_jira_issue')) {
+                $this->jiraAdapter->createJiraIssue($task);
             }
         } catch (Exception $e) {
             DB::rollBack();
