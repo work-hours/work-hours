@@ -64,6 +64,7 @@ export default function Tasks() {
     const [isUpdating, setIsUpdating] = useState(false)
     const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null)
     const [updateGithub, setUpdateGithub] = useState<boolean>(true)
+    const [updateJira, setUpdateJira] = useState<boolean>(true)
     const [isThereRunningTracker, setIsThereRunningTracker] = useState(localStorage.getItem('activeTimeLog') !== null)
 
     const [filters, setFilters] = useState<TaskFilters>({
@@ -85,7 +86,8 @@ export default function Tasks() {
     const handleStatusClick = (task: Task, status: Task['status']): void => {
         setTaskToUpdate(task)
         setSelectedStatus(status)
-        setUpdateGithub(true) // Default to checked
+        setUpdateGithub(true)
+        setUpdateJira(true)
         setStatusDialogOpen(true)
     }
 
@@ -106,9 +108,9 @@ export default function Tasks() {
                 due_date: string | null
                 assignees: number[]
                 github_update?: boolean
+                jira_update?: boolean
             } = {
                 status: selectedStatus,
-
                 title: taskToUpdate.title,
                 project_id: taskToUpdate.project_id,
                 priority: taskToUpdate.priority,
@@ -119,6 +121,10 @@ export default function Tasks() {
 
             if (taskToUpdate.is_imported && taskToUpdate.meta?.source === 'github') {
                 payload.github_update = updateGithub
+            }
+
+            if (taskToUpdate.is_imported && taskToUpdate.meta?.source === 'jira') {
+                payload.jira_update = updateJira
             }
 
             await axios.put(route('task.update', taskToUpdate.id), payload)
@@ -789,6 +795,19 @@ export default function Tasks() {
                                     />
                                     <Label htmlFor="update_github" className="text-sm">
                                         Update in GitHub?
+                                    </Label>
+                                </div>
+                            )}
+
+                            {taskToUpdate?.is_imported && taskToUpdate?.meta?.source === 'jira' && (
+                                <div className="flex items-center space-x-2 pt-2">
+                                    <Checkbox
+                                        id="update_jira"
+                                        checked={updateJira}
+                                        onCheckedChange={(checked) => setUpdateJira(checked === true)}
+                                    />
+                                    <Label htmlFor="update_jira" className="text-sm">
+                                        Update in Jira?
                                     </Label>
                                 </div>
                             )}
