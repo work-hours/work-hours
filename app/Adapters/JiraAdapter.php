@@ -138,7 +138,7 @@ final class JiraAdapter
                     [
                         'source' => 'jira',
                         'source_number' => $issueKey,
-                        'source_state' => 'open',
+                        'source_state' => 'To Do',
                         'source_url' => $this->getJiraUrl($credentials['domain'], "browse/{$issueKey}"),
                         'source_id' => $issueKey,
                         'extra_data' => $response->json(),
@@ -345,11 +345,16 @@ final class JiraAdapter
      * @param  string  $path  The path (with or without leading slash)
      * @return string The full URL
      */
-    public function getJiraUrl(string $domain, string $path): string
+    private function getJiraUrl(string $domain, string $path): string
     {
         $path = mb_ltrim($path, '/');
 
-        return "https://{$domain}.atlassian.net/browse/{$path}";
+        return "https://{$domain}.atlassian.net/{$path}";
+    }
+
+    public function getJiraBrowserUrl(string $domain, string $path): string
+    {
+        return $this->getJiraUrl($domain, "browse/{$path}");
     }
 
     /**

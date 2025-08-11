@@ -233,7 +233,7 @@ final class JiraController extends Controller
                 ->first();
 
             $fields = $issue['fields'];
-            $issueUrl = $this->jiraAdapter->getJiraUrl($domain, $issue['key']);
+            $issueUrl = $this->jiraAdapter->getJiraBrowserUrl($domain, $issue['key']);
             $taskData = $this->prepareTaskDataFromJiraIssue($fields);
             $metaData = $this->prepareTaskMetaFromJiraIssue($issue, $fields, $issueUrl);
 
