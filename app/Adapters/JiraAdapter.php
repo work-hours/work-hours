@@ -76,14 +76,11 @@ final class JiraAdapter
     public function createJiraIssue(Task $task): bool|array
     {
         try {
-            $jiraCredentials = $this->getJiraCredentials($task->project->user_id);
-            if (! $jiraCredentials) {
+            $credentials = $this->getJiraCredentials($task->project->user_id);
+            if (! $credentials) {
                 return false;
             }
 
-            $domain = $jiraCredentials['domain'];
-            $email = $jiraCredentials['email'];
-            $token = $jiraCredentials['token'];
             $projectKey = $task->project->repo_id;
 
             $payload = [
@@ -120,9 +117,12 @@ final class JiraAdapter
                 $payload['fields']['duedate'] = $task->due_date->format('Y-m-d');
             }
 
-            $response = Http::withBasicAuth($email, $token)
-                ->withHeaders(['Content-Type' => 'application/json'])
-                ->post("https://{$domain}.atlassian.net" . self::API_BASE_URL . '/issue', $payload);
+            $response = $this->makeAuthenticatedRequest(
+                $credentials,
+                'post',
+                self::API_BASE_URL . '/issue',
+                $payload
+            );
 
             if ($response->successful()) {
                 $issueKey = $response->json('key');
@@ -134,11 +134,11 @@ final class JiraAdapter
 
                 return [
                     'issue_key' => $issueKey,
-                    'issue_url' => "https://{$domain}.atlassian.net/browse/{$issueKey}",
+                    'issue_url' => $this->getJiraUrl($credentials['domain'], "browse/{$issueKey}"),
                 ];
             }
 
-            Log::error('Failed to create Jira issue', [
+            $this->logError('Failed to create Jira issue', [
                 'task_id' => $task->id,
                 'error' => $response->json(),
                 'status' => $response->status(),
@@ -146,7 +146,7 @@ final class JiraAdapter
 
             return false;
         } catch (Exception $e) {
-            Log::error('Error creating Jira issue: ' . $e->getMessage(), [
+            $this->logError('Error creating Jira issue: ' . $e->getMessage(), [
                 'task_id' => $task->id,
                 'exception' => $e,
             ]);
@@ -161,8 +161,12 @@ final class JiraAdapter
      * @param  int|null  $userId  The user ID (defaults to current authenticated user)
      * @return array|null The Jira credentials or null if not found
      */
-    public function getJiraCredentials(?int $userId = null): ?array
+    public function getJiraCredentials($userId = null): ?array
     {
+        if ($userId instanceof Task) {
+            $userId = $userId->project->user_id;
+        }
+
         $userId ??= auth()->id();
 
         if (! $userId) {
@@ -197,22 +201,22 @@ final class JiraAdapter
     public function updateJiraIssueStatus(Task $task, string $status): bool
     {
         try {
-            $jiraCredentials = $this->getJiraCredentials($task);
-            if (! $jiraCredentials) {
+            $credentials = $this->getJiraCredentials($task);
+            if (! $credentials) {
                 return false;
             }
 
-            $domain = $jiraCredentials['domain'];
-            $email = $jiraCredentials['email'];
-            $token = $jiraCredentials['token'];
             $issueKey = $task->external_id;
-
             $transitionsUrl = self::API_BASE_URL . "/issue/{$issueKey}/transitions";
-            $transitionsResponse = Http::withBasicAuth($email, $token)
-                ->get("https://{$domain}.atlassian.net" . $transitionsUrl);
+
+            $transitionsResponse = $this->makeAuthenticatedRequest(
+                $credentials,
+                'get',
+                $transitionsUrl
+            );
 
             if (! $transitionsResponse->successful()) {
-                Log::error('Failed to get Jira transitions', [
+                $this->logError('Failed to get Jira transitions', [
                     'task_id' => $task->id,
                     'issue_key' => $issueKey,
                     'error' => $transitionsResponse->json(),
@@ -232,7 +236,7 @@ final class JiraAdapter
             }
 
             if (! $targetTransition) {
-                Log::error('No matching Jira transition found', [
+                $this->logError('No matching Jira transition found', [
                     'task_id' => $task->id,
                     'issue_key' => $issueKey,
                     'target_status' => $status,
@@ -242,18 +246,20 @@ final class JiraAdapter
                 return false;
             }
 
-            $response = Http::withBasicAuth($email, $token)
-                ->withHeaders(['Content-Type' => 'application/json'])
-                ->post("https://{$domain}.atlassian.net" . $transitionsUrl, [
+            $response = $this->makeAuthenticatedRequest(
+                $credentials,
+                'post',
+                $transitionsUrl,
+                [
                     'transition' => [
                         'id' => $targetTransition,
                     ],
-                ]);
+                ]
+            );
 
             return $response->successful();
-
         } catch (Exception $e) {
-            Log::error('Error updating Jira issue status: ' . $e->getMessage(), [
+            $this->logError('Error updating Jira issue status: ' . $e->getMessage(), [
                 'task_id' => $task->id,
                 'exception' => $e,
             ]);
@@ -314,8 +320,8 @@ final class JiraAdapter
     public function testCredentials(string $domain, string $email, string $token): bool
     {
         try {
-            $response = Http::withBasicAuth($email, $token)
-                ->get("https://{$domain}.atlassian.net" . self::API_BASE_URL . '/myself');
+            $credentials = ['domain' => $domain, 'email' => $email, 'token' => $token];
+            $response = $this->makeAuthenticatedRequest($credentials, 'get', self::API_BASE_URL . '/myself');
 
             return $response->successful();
         } catch (Exception) {
@@ -347,12 +353,12 @@ final class JiraAdapter
         bool $returnErrors = true
     ): array|JsonResponse {
         try {
-            $response = Http::withBasicAuth($email, $token)
-                ->get("https://{$domain}.atlassian.net" . $url, $params);
+            $credentials = ['domain' => $domain, 'email' => $email, 'token' => $token];
+            $response = $this->makeAuthenticatedRequest($credentials, 'get', $url, null, $params);
 
             return $this->handleApiResponse($response, $errorMsg, $resourceKey, $returnErrors);
         } catch (Exception $e) {
-            Log::error($errorMsg ?? 'Jira API request failed', [
+            $this->logError($errorMsg ?? 'Jira API request failed', [
                 'error' => $e->getMessage(),
                 'url' => $url,
             ]);
@@ -393,7 +399,7 @@ final class JiraAdapter
             return $data;
         }
 
-        Log::error($errorMsg ?? 'Jira API request failed', [
+        $this->logError($errorMsg ?? 'Jira API request failed', [
             'status' => $response->status(),
             'response' => $response->json() ?? $response->body(),
         ]);
@@ -410,32 +416,6 @@ final class JiraAdapter
     }
 
     /**
-     * Get the project key from a project.
-     *
-     * @param  Project  $project  The project
-     * @return string The project key
-     */
-    private function getProjectKey(Project $project): string
-    {
-
-        if ($project->jira_project_key) {
-            return $project->jira_project_key;
-        }
-
-        if ($project->source_url && str_contains($project->source_url, 'atlassian.net/browse/')) {
-            $parts = explode('/browse/', $project->source_url);
-            if (count($parts) > 1) {
-                $keyParts = explode('-', $parts[1]);
-                if (isset($keyParts[0]) && ($keyParts[0] !== '' && $keyParts[0] !== '0')) {
-                    return $keyParts[0];
-                }
-            }
-        }
-
-        return mb_strtoupper(mb_substr((string) preg_replace('/[^A-Za-z0-9]/', '', $project->name), 0, 10));
-    }
-
-    /**
      * Map priority from our system to Jira priority.
      *
      * @param  string  $priority  The priority in our system
@@ -445,9 +425,66 @@ final class JiraAdapter
     {
         return match (mb_strtolower($priority)) {
             'high' => 'High',
-            'medium' => 'Medium',
             'low' => 'Low',
             default => 'Medium',
         };
+    }
+
+    /**
+     * Make an authenticated request to the Jira API.
+     *
+     * @param  array  $credentials  Associative array with domain, email and token keys
+     * @param  string  $method  HTTP method (get, post, put, delete)
+     * @param  string  $endpoint  The API endpoint (without domain)
+     * @param  array|null  $data  Request body for POST/PUT requests
+     * @param  array  $queryParams  Query parameters
+     * @return Response The HTTP response
+     *
+     * @throws Exception
+     */
+    private function makeAuthenticatedRequest(
+        array $credentials,
+        string $method,
+        string $endpoint,
+        ?array $data = null,
+        array $queryParams = []
+    ): Response {
+        $url = $this->getJiraUrl($credentials['domain'], $endpoint);
+
+        $request = Http::withBasicAuth($credentials['email'], $credentials['token'])
+            ->withHeaders(['Content-Type' => 'application/json']);
+
+        return match ($method) {
+            'get' => $request->get($url, $queryParams),
+            'post' => $request->post($url, $data ?? []),
+            'put' => $request->put($url, $data ?? []),
+            'delete' => $request->delete($url, $data ?? []),
+            default => throw new Exception("Unsupported HTTP method: {$method}"),
+        };
+    }
+
+    /**
+     * Construct a full Jira URL.
+     *
+     * @param  string  $domain  The Jira domain (without .atlassian.net)
+     * @param  string  $path  The path (with or without leading slash)
+     * @return string The full URL
+     */
+    private function getJiraUrl(string $domain, string $path): string
+    {
+        $path = mb_ltrim($path, '/');
+
+        return "https://{$domain}.atlassian.net/{$path}";
+    }
+
+    /**
+     * Log an error with consistent formatting.
+     *
+     * @param  string  $message  Error message
+     * @param  array  $context  Additional context data
+     */
+    private function logError(string $message, array $context = []): void
+    {
+        Log::error($message, $context);
     }
 }
