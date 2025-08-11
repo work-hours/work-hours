@@ -29,7 +29,7 @@ final class RemoveComments extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
         $appPath = base_path('app');
         $this->info("Removing comments from PHP files in {$appPath}");
