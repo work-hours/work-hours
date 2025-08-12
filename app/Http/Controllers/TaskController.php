@@ -165,6 +165,24 @@ final class TaskController extends Controller
     }
 
     /**
+     * Show task details page.
+     */
+    public function detail(Task $task)
+    {
+        $task->load(['project', 'assignees', 'tags']);
+
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
+        $isAssignee = $task->assignees->contains('id', auth()->id());
+
+        abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
+
+        return Inertia::render('task/detail', [
+            'task' => $task,
+        ]);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Task $task)
