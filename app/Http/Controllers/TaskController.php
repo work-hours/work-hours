@@ -13,6 +13,7 @@ use App\Http\Stores\TaskStore;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\Task;
+use App\Models\TaskComment;
 use App\Models\User;
 use App\Notifications\TaskAssigned;
 use App\Notifications\TaskCompleted;
@@ -37,6 +38,33 @@ final class TaskController extends Controller
         private readonly GitHubAdapter $gitHubAdapter,
         private readonly JiraAdapter $jiraAdapter
     ) {}
+
+    /**
+     * Store a new comment on a task.
+     */
+    public function storeComment(Task $task): void
+    {
+
+        $task->load(['project', 'assignees']);
+
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
+        $isAssignee = $task->assignees->contains('id', auth()->id());
+
+        abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
+
+        request()->validate([
+            'body' => ['required', 'string', 'max:5000'],
+        ]);
+
+        TaskComment::query()->create([
+            'task_id' => $task->id,
+            'user_id' => auth()->id(),
+            'body' => request('body'),
+        ]);
+
+        back()->throwResponse();
+    }
 
     /**
      * Display a listing of the resource.
@@ -169,7 +197,7 @@ final class TaskController extends Controller
      */
     public function detail(Task $task)
     {
-        $task->load(['project', 'assignees', 'tags']);
+        $task->load(['project', 'assignees', 'tags', 'comments.user']);
 
         $isProjectOwner = $task->project->user_id === auth()->id();
         $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());

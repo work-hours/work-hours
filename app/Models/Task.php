@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
@@ -28,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @property Collection|User[] $assignees
  * @property TaskMeta|null $meta
  * @property Collection|Tag[] $tags
+ * @property Collection|TaskComment[] $comments
  */
 final class Task extends Model
 {
@@ -66,6 +68,14 @@ final class Task extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    /**
+     * Comments on this task.
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(TaskComment::class);
     }
 
     protected function casts(): array

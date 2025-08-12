@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head, Link } from '@inertiajs/react'
-import { Calendar, ChevronLeft, ExternalLink, Info } from 'lucide-react'
+import { Head, Link, useForm } from '@inertiajs/react'
+import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare } from 'lucide-react'
 import type { Task } from './types'
 
 type Props = {
@@ -15,6 +15,19 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Tasks', href: '/task' }]
 
 export default function TaskDetail({ task }: Props) {
     const pageTitle = `${task.title} · Task Details`
+
+    const { data, setData, post, reset } = useForm<{ body: string }>({ body: '' })
+
+    const onSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        if (!data.body.trim()) return
+        post(route('task.comments.store', { task: task.id }), {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset('body')
+            },
+        })
+    }
 
     const getPriorityBadge = (priority: Task['priority']) => {
         switch (priority) {
@@ -176,6 +189,47 @@ export default function TaskDetail({ task }: Props) {
                                     </div>
                                 </div>
                             )}
+                        </div>
+
+                        {/* Comments */}
+                        <div className="mt-6 space-y-2">
+                            <h3 className="ml-4 flex items-center gap-2 text-lg font-semibold text-primary">
+                                <MessageSquare className="h-5 w-5 text-primary" /> Comments
+                            </h3>
+                            <div className="grid grid-cols-1 gap-4 rounded-lg border bg-muted/40 p-4">
+                                <div className="space-y-4">
+                                    {task.comments && task.comments.length > 0 ? (
+                                        task.comments.map((comment) => (
+                                            <div key={comment.id} className="rounded-md bg-background p-3 shadow-sm">
+                                                <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                                                    <span className="font-medium text-foreground">{comment.user?.name ?? 'User'}</span>
+                                                    <span>{new Date(comment.created_at).toLocaleString()}</span>
+                                                </div>
+                                                <p className="text-sm whitespace-pre-wrap">{comment.body}</p>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="rounded-md border border-dashed bg-background/50 p-3 text-sm text-muted-foreground">
+                                            No comments yet
+                                        </div>
+                                    )}
+                                </div>
+                                <form onSubmit={onSubmit} className="mt-2">
+                                    <div className="flex flex-col gap-2">
+                                        <textarea
+                                            value={data.body}
+                                            onChange={(e) => setData('body', e.target.value)}
+                                            placeholder="Add a comment..."
+                                            className="min-h-[80px] w-full rounded-md border bg-background p-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                        />
+                                        <div className="flex justify-end">
+                                            <Button type="submit" size="sm" disabled={!data.body.trim()}>
+                                                Post Comment
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
