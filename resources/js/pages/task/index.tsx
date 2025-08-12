@@ -56,7 +56,7 @@ export default function Tasks() {
     const [tasks, setTasks] = useState<Task[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
-    // Details are now shown on a separate page
+
     const [statusDialogOpen, setStatusDialogOpen] = useState(false)
     const [selectedStatus, setSelectedStatus] = useState<Task['status'] | null>(null)
     const [isUpdating, setIsUpdating] = useState(false)
@@ -75,7 +75,6 @@ export default function Tasks() {
         search: '',
     })
     const [processing, setProcessing] = useState(false)
-
 
     const handleStatusClick = (task: Task, status: Task['status']): void => {
         setTaskToUpdate(task)
@@ -743,7 +742,6 @@ export default function Tasks() {
                         )}
                     </CardContent>
                 </Card>
-
 
                 {/* Status Change Dialog */}
                 <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
