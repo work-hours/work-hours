@@ -140,7 +140,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     return (
         <div
             className={`sticky top-0 flex h-screen flex-col border-r border-neutral-200 bg-white shadow-sm transition-all duration-300 ease-in-out dark:border-neutral-800 dark:bg-neutral-900 ${
-                collapsed ? 'w-20' : 'w-68'
+                collapsed ? 'w-20' : 'w-62'
             }`}
         >
             {/* Header with improved styling */}

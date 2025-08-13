@@ -1,7 +1,7 @@
 import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
-import FilterButton from '@/components/filter-button'
 import StatsCards from '@/components/dashboard/StatsCards'
+import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'

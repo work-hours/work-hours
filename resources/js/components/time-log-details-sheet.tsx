@@ -17,33 +17,35 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent side="right" className="overflow-y-auto sm:max-w-md md:max-w-lg">
                 <SheetHeader>
-                    <SheetTitle className="flex items-center gap-2">
+                    <SheetTitle className="flex items-center gap-2 text-gray-800 dark:text-gray-100">
                         <Info className="h-5 w-5 text-primary" />
                         Time Log Details
                     </SheetTitle>
-                    <SheetDescription>Viewing complete information for this time log entry</SheetDescription>
+                    <SheetDescription className="text-sm text-gray-500 dark:text-gray-400">
+                        Viewing complete information for this time log entry
+                    </SheetDescription>
                 </SheetHeader>
 
-                <div className="space-y-6">
+                <div className="space-y-6 py-4">
                     {/* Basic Information */}
                     <div className="space-y-2">
-                        <h3 className="ml-4 text-lg font-semibold text-primary">Basic Information</h3>
-                        <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                        <h3 className="ml-4 text-lg font-medium text-gray-800 dark:text-gray-100">Basic Information</h3>
+                        <div className="grid grid-cols-1 gap-4 rounded-lg border border-gray-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                             <div>
-                                <p className="text-sm font-bold text-muted-foreground">Project</p>
-                                <p className="text-base">{timeLog.project_name || 'No Project'}</p>
+                                <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Project</p>
+                                <p className="text-sm text-gray-800 dark:text-gray-200">{timeLog.project_name || 'No Project'}</p>
                             </div>
 
                             {timeLog.user_name && (
                                 <div>
-                                    <p className="text-sm font-bold text-muted-foreground">Team Member</p>
-                                    <p className="text-base">{timeLog.user_name}</p>
+                                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Team Member</p>
+                                    <p className="text-sm text-gray-800 dark:text-gray-200">{timeLog.user_name}</p>
                                 </div>
                             )}
 
                             <div>
-                                <p className="text-sm font-bold text-muted-foreground">Duration</p>
-                                <p className="text-base">{timeLog.duration} hours</p>
+                                <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Duration</p>
+                                <p className="text-sm text-gray-800 dark:text-gray-200">{timeLog.duration} hours</p>
                             </div>
                         </div>
                     </div>
@@ -51,10 +53,10 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                     {/* Tags Information - Only shown if tags exist */}
                     {timeLog.tags && timeLog.tags.length > 0 && (
                         <div className="space-y-2">
-                            <h3 className="ml-4 flex items-center gap-2 text-lg font-semibold text-primary">
+                            <h3 className="ml-4 flex items-center gap-2 text-lg font-medium text-gray-800 dark:text-gray-100">
                                 <Info className="h-5 w-5 text-primary" /> Tags
                             </h3>
-                            <div className="grid grid-cols-1 gap-4 rounded-lg border bg-muted/40 p-4">
+                            <div className="grid grid-cols-1 gap-4 rounded-lg border border-gray-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                                 <div className="flex flex-wrap gap-2">
                                     {timeLog.tags.map((tag) => (
                                         <Badge key={tag.id} style={{ backgroundColor: tag.color, color: '#fff' }}>
@@ -69,38 +71,38 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                     {/* Task Information */}
                     {timeLog.task_title && (
                         <div className="space-y-2">
-                            <h3 className="ml-4 text-lg font-semibold text-primary">Task Information</h3>
-                            <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                            <h3 className="ml-4 text-lg font-medium text-gray-800 dark:text-gray-100">Task Information</h3>
+                            <div className="grid grid-cols-1 gap-4 rounded-lg border border-gray-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                                 <div>
-                                    <p className="text-sm font-bold text-muted-foreground">Task Title</p>
-                                    <p className="text-base">{timeLog.task_title}</p>
+                                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Task Title</p>
+                                    <p className="text-sm text-gray-800 dark:text-gray-200">{timeLog.task_title}</p>
                                 </div>
 
                                 {timeLog.task_status && (
                                     <div>
-                                        <p className="text-sm font-bold text-muted-foreground">Task Status</p>
-                                        <p className="text-base">{timeLog.task_status}</p>
+                                        <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Task Status</p>
+                                        <p className="text-sm text-gray-800 dark:text-gray-200">{timeLog.task_status}</p>
                                     </div>
                                 )}
 
                                 {timeLog.task_priority && (
                                     <div>
-                                        <p className="text-sm font-bold text-muted-foreground">Task Priority</p>
-                                        <p className="text-base">{timeLog.task_priority}</p>
+                                        <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Task Priority</p>
+                                        <p className="text-sm text-gray-800 dark:text-gray-200">{timeLog.task_priority}</p>
                                     </div>
                                 )}
 
                                 {timeLog.task_due_date && (
                                     <div>
-                                        <p className="text-sm font-bold text-muted-foreground">Task Due Date</p>
-                                        <p className="text-base">{timeLog.task_due_date}</p>
+                                        <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Task Due Date</p>
+                                        <p className="text-sm text-gray-800 dark:text-gray-200">{timeLog.task_due_date}</p>
                                     </div>
                                 )}
 
                                 {timeLog.task_description && (
                                     <div>
-                                        <p className="text-sm font-bold text-muted-foreground">Task Description</p>
-                                        <p className="text-base whitespace-pre-wrap">{timeLog.task_description}</p>
+                                        <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Task Description</p>
+                                        <p className="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">{timeLog.task_description}</p>
                                     </div>
                                 )}
                             </div>
@@ -109,11 +111,13 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
                     {/* Time Information */}
                     <div className="space-y-2">
-                        <h3 className="ml-4 text-lg font-semibold text-primary">Time Information</h3>
-                        <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                        <h3 className="ml-4 text-lg font-medium text-gray-800 dark:text-gray-100">Time Information</h3>
+                        <div className="grid grid-cols-1 gap-4 rounded-lg border border-gray-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                             <div>
-                                <p className="text-sm font-bold text-muted-foreground">Entry</p>
-                                <p className="text-base">{formatTimeEntry(timeLog.start_timestamp, timeLog.end_timestamp)}</p>
+                                <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Entry</p>
+                                <p className="text-sm text-gray-800 dark:text-gray-200">
+                                    {formatTimeEntry(timeLog.start_timestamp, timeLog.end_timestamp)}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -124,18 +128,20 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                         typeof timeLog.hourly_rate === 'number' &&
                         timeLog.hourly_rate > 0 && (
                             <div className="space-y-2">
-                                <h3 className="ml-4 text-lg font-semibold text-primary">Payment Information</h3>
-                                <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                                <h3 className="ml-4 text-lg font-medium text-gray-800 dark:text-gray-100">Payment Information</h3>
+                                <div className="grid grid-cols-1 gap-4 rounded-lg border border-gray-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                                     <div>
-                                        <p className="text-sm font-bold text-muted-foreground">Hourly Rate</p>
-                                        <p className="text-base">{`${timeLog.currency || 'USD'} ${timeLog.hourly_rate.toFixed(2)}`}</p>
+                                        <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Hourly Rate</p>
+                                        <p className="text-sm text-gray-800 dark:text-gray-200">{`${timeLog.currency || 'USD'} ${timeLog.hourly_rate.toFixed(2)}`}</p>
                                     </div>
 
                                     <div>
-                                        <p className="text-sm font-bold text-muted-foreground">{timeLog.is_paid ? 'Paid Amount' : 'To Pay Amount'}</p>
-                                        <p className="text-base">
+                                        <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                            {timeLog.is_paid ? 'Paid Amount' : 'To Pay Amount'}
+                                        </p>
+                                        <p className="text-sm text-gray-800 dark:text-gray-200">
                                             <span
-                                                className={`inline-flex items-center rounded-full ${timeLog.is_paid ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} px-2 py-0.5 text-xs font-bold`}
+                                                className={`inline-flex items-center rounded-full ${timeLog.is_paid ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} px-2 py-0.5 text-xs font-medium`}
                                             >
                                                 {timeLog.currency || 'USD'}{' '}
                                                 {timeLog.paid_amount !== undefined &&
@@ -155,14 +161,14 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                     </div>
 
                                     <div>
-                                        <p className="text-sm font-bold text-muted-foreground">Payment Status</p>
-                                        <p className="text-base">
+                                        <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Payment Status</p>
+                                        <p className="text-sm text-gray-800 dark:text-gray-200">
                                             {timeLog.is_paid ? (
-                                                <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-800 dark:bg-green-900 dark:text-green-100">
+                                                <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                                                     Paid
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-bold text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
+                                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
                                                     Unpaid
                                                 </span>
                                             )}
@@ -174,21 +180,21 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
                     {/* Approval Information */}
                     <div className="space-y-2">
-                        <h3 className="ml-4 text-lg font-semibold text-primary">Approval Information</h3>
-                        <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                        <h3 className="ml-4 text-lg font-medium text-gray-800 dark:text-gray-100">Approval Information</h3>
+                        <div className="grid grid-cols-1 gap-4 rounded-lg border border-gray-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                             <div>
-                                <p className="text-sm font-bold text-muted-foreground">Status</p>
-                                <p className="text-base">
+                                <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Status</p>
+                                <p className="text-sm text-gray-800 dark:text-gray-200">
                                     {timeLog.status === 'approved' ? (
-                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-800 dark:bg-green-900 dark:text-green-100">
+                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                                             Approved
                                         </span>
                                     ) : timeLog.status === 'rejected' ? (
-                                        <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-800 dark:bg-red-900 dark:text-red-100">
+                                        <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-100">
                                             Rejected
                                         </span>
                                     ) : (
-                                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
                                             Pending
                                         </span>
                                     )}
@@ -197,8 +203,8 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
                             {timeLog.approver_name && (
                                 <div>
-                                    <p className="text-sm font-bold text-muted-foreground">Approved By</p>
-                                    <p className="text-base">{timeLog.approver_name}</p>
+                                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Approved By</p>
+                                    <p className="text-sm text-gray-800 dark:text-gray-200">{timeLog.approver_name}</p>
                                 </div>
                             )}
                         </div>
@@ -206,19 +212,19 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
                     {/* Additional Information */}
                     <div className="space-y-2">
-                        <h3 className="ml-4 text-lg font-semibold text-primary">Additional Information</h3>
-                        <div className="grid grid-cols-1 gap-4 rounded-lg border p-4">
+                        <h3 className="ml-4 text-lg font-medium text-gray-800 dark:text-gray-100">Additional Information</h3>
+                        <div className="grid grid-cols-1 gap-4 rounded-lg border border-gray-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                             {timeLog.note && (
                                 <div>
-                                    <p className="text-sm font-bold text-muted-foreground">Note</p>
-                                    <p className="text-base whitespace-pre-wrap">{timeLog.note}</p>
+                                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Note</p>
+                                    <p className="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">{timeLog.note}</p>
                                 </div>
                             )}
 
                             {timeLog.comment && (
                                 <div>
-                                    <p className="text-sm font-bold text-muted-foreground">Comment</p>
-                                    <p className="text-base whitespace-pre-wrap">{timeLog.comment}</p>
+                                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Comment</p>
+                                    <p className="text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">{timeLog.comment}</p>
                                 </div>
                             )}
                         </div>

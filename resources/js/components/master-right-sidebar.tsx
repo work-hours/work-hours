@@ -16,17 +16,17 @@ const quickLinks: NavItem[] = [
         icon: ClockIcon,
     },
     {
-        title: 'Add Team Member',
+        title: 'Add Member',
         href: route('team.create'),
         icon: UsersIcon,
     },
     {
-        title: 'Create Project',
+        title: 'New Project',
         href: route('project.create'),
         icon: PlusCircle,
     },
     {
-        title: 'All Team Log',
+        title: 'All Logs',
         href: route('team.all-time-logs'),
         icon: BarChart3,
     },
@@ -45,7 +45,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
 
     return (
         <div
-            className={`sticky top-0 flex h-screen flex-col border-l border-neutral-200 bg-white shadow-sm transition-all duration-300 ease-in-out dark:border-neutral-800 dark:bg-neutral-900 ${collapsed ? 'w-20' : 'w-56'}`}
+            className={`sticky top-0 flex h-screen flex-col border-l border-neutral-200 bg-white shadow-sm transition-all duration-300 ease-in-out dark:border-neutral-800 dark:bg-neutral-900 ${collapsed ? 'w-20' : 'w-52'}`}
         >
             {/* Quick Actions section */}
             <div className={`mt-2 flex flex-col overflow-y-auto ${collapsed ? '' : 'mr-8'}`}>

@@ -52,7 +52,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                             >
                                 <Home className="h-5 w-5" />
                             </Link>
-                            <button
+                            {/*<button
                                 onClick={() => setCollapsed(!collapsed)}
                                 className="ml-2 rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                 aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -90,7 +90,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                                         <polyline points="18 17 13 12 18 7"></polyline>
                                     </svg>
                                 )}
-                            </button>
+                            </button>*/}
                         </div>
                         {breadcrumbs.length > 0 && (
                             <div className="ml-2 flex items-center overflow-x-auto">
