@@ -5,7 +5,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
-import { ArrowLeft, Clock, Edit, FileText, FolderPlus, Mail, Phone, User, Users } from 'lucide-react'
+import { ArrowLeft, Clock, Edit, FileText, FolderPlus, Mail, Phone, Plus, User, Users } from 'lucide-react'
+import AddNewButton from '@/components/add-new-button'
 
 type Project = {
     id: number
@@ -58,7 +59,11 @@ export default function ClientProjects({ client, projects }: Props) {
             <div className="mx-auto flex flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <div className="flex items-center gap-4">
+                    <div className="flex justify-between items-center gap-4">
+                        <div>
+                            <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">{client.name}</h1>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage projects for this client</p>
+                        </div>
                         <Link href={route('client.index')}>
                             <Button
                                 variant="outline"
@@ -69,10 +74,6 @@ export default function ClientProjects({ client, projects }: Props) {
                                 <span className="sr-only">Back to Clients</span>
                             </Button>
                         </Link>
-                        <div>
-                            <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">{client.name}</h1>
-                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage projects for this client</p>
-                        </div>
                     </div>
                 </section>
 
@@ -145,12 +146,10 @@ export default function ClientProjects({ client, projects }: Props) {
                                 </CardDescription>
                             </div>
                             <div>
-                                <Link href={route('project.create')}>
-                                    <Button className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
-                                        <FolderPlus className="h-4 w-4" />
-                                        <span>Add Project</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('project.create')}>
+                                    <FolderPlus className="h-4 w-4" />
+                                    <span>Add Project</span>
+                                </AddNewButton>
                             </div>
                         </div>
                     </CardHeader>
