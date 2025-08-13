@@ -40,7 +40,7 @@ export default function DeleteProject({ projectId, onDelete }: DeleteProjectProp
                 <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 w-7 border-red-200 bg-red-50 p-0 text-red-700 shadow-sm transition-all hover:bg-red-100 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
+                    className="h-7 w-7 border-red-200 bg-red-100 p-0 text-red-600 shadow-sm transition-all hover:bg-red-200 dark:border-red-700 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/40"
                 >
                     <Trash2 className="h-3 w-3" />
                     <span className="sr-only">Delete</span>

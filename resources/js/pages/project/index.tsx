@@ -1,5 +1,7 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import AddNewButton from '@/components/add-new-button'
 import DeleteProject from '@/components/delete-project'
+import FilterButton from '@/components/filter-button'
 import JiraIcon from '@/components/icons/jira-icon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -247,12 +249,10 @@ export default function Projects() {
                                     href={`${route('project.export')}?team-member=${filters['team-member'] || ''}&client=${filters.client || ''}&created-date-from=${formatDateValue(filters['created-date-from'])}&created-date-to=${formatDateValue(filters['created-date-to'])}&search=${filters.search || ''}`}
                                     label="Export"
                                 />
-                                <Link href={route('project.create')}>
-                                    <Button className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
-                                        <FolderPlus className="h-4 w-4" />
-                                        <span>Add Project</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('project.create')}>
+                                    <FolderPlus className="h-4 w-4" />
+                                    <span>Add Project</span>
+                                </AddNewButton>
                             </div>
                         </div>
 
@@ -361,18 +361,12 @@ export default function Projects() {
                                 </div>
 
                                 <div className="flex items-end gap-2">
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-                                        title="Apply filters"
-                                    >
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={
                                             processing ||
                                             (!filters.client &&
@@ -382,11 +376,10 @@ export default function Projects() {
                                                 !filters.search)
                                         }
                                         onClick={clearFilters}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 p-0 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
                         </div>

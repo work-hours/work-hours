@@ -1,3 +1,5 @@
+import BackButton from '@/components/back-button'
+import SubmitButton from '@/components/submit-button'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Head, Link, useForm } from '@inertiajs/react'
 import { ArrowLeft, Building, FileText, FolderPlus, LoaderCircle, Text, Users } from 'lucide-react'
@@ -264,26 +266,16 @@ export default function CreateProject({ teamMembers, clients }: Props) {
                                 </div>
 
                                 <div className="mt-4 flex justify-end gap-3">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => window.history.back()}
-                                        tabIndex={4}
-                                        disabled={processing}
-                                        className="flex items-center gap-2 text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
-                                    >
-                                        <ArrowLeft className="h-4 w-4" />
-                                        Back
-                                    </Button>
-                                    <Button
-                                        type="submit"
+                                    <BackButton tabIndex={4} disabled={processing} />
+                                    <SubmitButton
                                         tabIndex={3}
-                                        disabled={processing}
-                                        className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                    >
-                                        {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <FolderPlus className="h-4 w-4" />}
-                                        {processing ? 'Creating...' : 'Create Project'}
-                                    </Button>
+                                        loading={processing}
+                                        idleLabel="Create Project"
+                                        loadingLabel="Creating..."
+                                        idleIcon={<FolderPlus className="h-4 w-4" />}
+                                        loadingIcon={<LoaderCircle className="h-4 w-4 animate-spin" />}
+                                        className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    />
                                 </div>
                             </div>
                         </form>

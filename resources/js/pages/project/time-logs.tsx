@@ -1,5 +1,8 @@
+import AddNewButton from '@/components/add-new-button'
+import BackButton from '@/components/back-button'
 import { ExportButton } from '@/components/action-buttons'
 import StatsCards from '@/components/dashboard/StatsCards'
+import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -14,7 +17,6 @@ import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
 import {
     AlertCircle,
-    ArrowLeft,
     Calendar,
     CalendarRange,
     CheckCircle,
@@ -190,17 +192,12 @@ export default function ProjectTimeLogs({
             <Head title={`${project.name} - Time Logs`} />
             <div className="mx-auto flex flex-col gap-4 p-4">
                 <section className="mb-2">
-                    <div className="flex items-center gap-4">
-                        <Link href={route('project.index')}>
-                            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                <ArrowLeft className="h-4 w-4" />
-                                <span className="sr-only">Back to Projects</span>
-                            </Button>
-                        </Link>
+                    <div className="flex justify-between items-center gap-4">
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">{project.name} - Time Logs</h1>
                             <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage work hours for this project</p>
                         </div>
+                        <BackButton />
                     </div>
                 </section>
 
@@ -399,18 +396,12 @@ export default function ProjectTimeLogs({
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-                                        title="Apply filters"
-                                    >
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={
                                             processing || (!data['start-date'] && !data['end-date'] && !data.user && !data['is-paid'] && !data.status)
                                         }
@@ -426,11 +417,10 @@ export default function ProjectTimeLogs({
                                                 preserveState: true,
                                             })
                                         }}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 p-0 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
                         </div>
@@ -472,12 +462,10 @@ export default function ProjectTimeLogs({
                                 </CardDescription>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Link href={`/task/create?project_id=${project.id}`}>
-                                    <Button className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
-                                        <Plus className="h-4 w-4" />
-                                        <span>Add Task</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={`/task/create?project_id=${project.id}`}>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add Task</span>
+                                </AddNewButton>
                             </div>
                         </div>
                     </CardHeader>
@@ -576,12 +564,10 @@ export default function ProjectTimeLogs({
                                     <ClipboardList className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Tasks</h3>
                                     <p className="mb-4 text-muted-foreground">No tasks have been added to this project yet.</p>
-                                    <Link href={`/task/create?project_id=${project.id}`}>
-                                        <Button className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
-                                            <Plus className="h-4 w-4" />
-                                            <span>Add Task</span>
-                                        </Button>
-                                    </Link>
+                                    <AddNewButton href={`/task/create?project_id=${project.id}`}>
+                                        <Plus className="h-4 w-4" />
+                                        <span>Add Task</span>
+                                    </AddNewButton>
                                 </div>
                             </div>
                         )}
