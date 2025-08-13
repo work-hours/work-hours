@@ -1,9 +1,10 @@
 import { Head, Link, useForm } from '@inertiajs/react'
-import { ArrowLeft, LoaderCircle, Lock, Mail, Save, User } from 'lucide-react'
+import { LoaderCircle, Lock, Mail, Save, User } from 'lucide-react'
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
+import BackButton from '@/components/back-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -237,17 +238,7 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                 )}
 
                                 <div className="mt-4 flex justify-end gap-3">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => window.history.back()}
-                                        tabIndex={7}
-                                        disabled={processing}
-                                        className="flex items-center gap-2 border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-                                    >
-                                        <ArrowLeft className="h-4 w-4" />
-                                        Back
-                                    </Button>
+                                    <BackButton tabIndex={7} disabled={processing} />
                                     <Button
                                         type="submit"
                                         tabIndex={6}
