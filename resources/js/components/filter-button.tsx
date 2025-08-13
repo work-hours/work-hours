@@ -18,7 +18,7 @@ export default function FilterButton({
   const applyStyles =
     'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600'
   const clearStyles =
-    'border border-gray-300 dark:border-gray-600 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 cursor-pointer'
+    'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-transparent hover:bg-transparent dark:hover:bg-transparent cursor-pointer'
 
   const variantClass = variant === 'apply' ? applyStyles : clearStyles
 
