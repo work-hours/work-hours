@@ -260,7 +260,6 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
 
                 {timeLogs.length > 0 && (
                     <section className="mb-4 w-3/12">
-                        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
                         <StatsCard
                             title="Total Hours"
                             icon={<ClockIcon className="h-4 w-4 text-muted-foreground" />}

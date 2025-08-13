@@ -77,29 +77,29 @@ export default function EditTeamMember({ user, currencies }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Team Member" />
-            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Edit Team Member</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Update information for {user.name}</p>
+                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Edit Team Member</h1>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Update information for {user.name}</p>
                 </section>
 
-                <Card className="max-w-2xl overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Member Information</CardTitle>
-                        <CardDescription>Update the team member's details</CardDescription>
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                        <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Member Information</CardTitle>
+                        <CardDescription className="text-sm text-gray-500 dark:text-gray-400">Update the team member's details</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-4">
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name" className="text-sm font-medium">
+                                        <Label htmlFor="name" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                             Full Name
                                         </Label>
                                         <div className="relative">
                                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                <User className="h-4 w-4 text-muted-foreground" />
+                                                <User className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                                             </div>
                                             <Input
                                                 id="name"
@@ -112,18 +112,18 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                                 onChange={(e) => setData('name', e.target.value)}
                                                 disabled={processing}
                                                 placeholder="Full name"
-                                                className="pl-10"
+                                                className="border-gray-200 bg-white pl-10 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
                                             />
                                         </div>
                                         <InputError message={errors.name} className="mt-1" />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="email" className="text-sm font-medium">
+                                        <Label htmlFor="email" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                             Email Address
                                         </Label>
                                         <div className="relative">
                                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                                <Mail className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                                             </div>
                                             <Input
                                                 id="email"
@@ -135,7 +135,7 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                                 onChange={(e) => setData('email', e.target.value)}
                                                 disabled={processing}
                                                 placeholder="email@example.com"
-                                                className="pl-10"
+                                                className="border-gray-200 bg-white pl-10 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
                                             />
                                         </div>
                                         <InputError message={errors.email} />
@@ -143,12 +143,12 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="password" className="text-sm font-medium">
-                                        Password <span className="text-xs text-muted-foreground">(leave empty to keep current password)</span>
+                                    <Label htmlFor="password" className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                        Password <span className="text-xs text-gray-500 dark:text-gray-400">(leave empty to keep current password)</span>
                                     </Label>
                                     <div className="relative">
                                         <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Lock className="h-4 w-4 text-muted-foreground" />
+                                            <Lock className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                                         </div>
                                         <Input
                                             id="password"
@@ -159,7 +159,7 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                             onChange={(e) => setData('password', e.target.value)}
                                             disabled={processing}
                                             placeholder="••••••••"
-                                            className="pl-10"
+                                            className="border-gray-200 bg-white pl-10 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
                                         />
                                     </div>
                                     <InputError message={errors.password} />
@@ -171,22 +171,22 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                         id="non_monetary"
                                         checked={data.non_monetary}
                                         onChange={(e) => setData('non_monetary', e.target.checked)}
-                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                        className="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:focus:ring-gray-400"
                                     />
-                                    <Label htmlFor="non_monetary" className="text-sm font-medium">
+                                    <Label htmlFor="non_monetary" className="text-sm text-gray-700 dark:text-gray-300">
                                         Non-monetary (no hourly rate)
                                     </Label>
                                 </div>
 
                                 {!data.non_monetary && (
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                         <div className="grid gap-2">
-                                            <Label htmlFor="hourly_rate" className="text-sm font-medium">
+                                            <Label htmlFor="hourly_rate" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                                 Hourly Rate
                                             </Label>
                                             <div className="relative">
                                                 <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                    <span className="h-4 w-4 text-muted-foreground">$</span>
+                                                    <span className="text-gray-400 dark:text-gray-500">$</span>
                                                 </div>
                                                 <Input
                                                     id="hourly_rate"
@@ -198,15 +198,15 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                                     onChange={(e) => setData('hourly_rate', e.target.value)}
                                                     disabled={processing}
                                                     placeholder="0.00"
-                                                    className="pl-10"
+                                                    className="border-gray-200 bg-white pl-10 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
                                                 />
                                             </div>
                                             <InputError message={errors.hourly_rate} />
                                         </div>
                                         <div className="grid gap-2">
-                                            <Label htmlFor="currency" className="text-sm font-medium">
+                                            <Label htmlFor="currency" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                                 Currency{' '}
-                                                <Link href={route('currency.edit')} className="text-xs text-blue-500 hover:underline">
+                                                <Link href={route('currency.edit')} className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
                                                     (create new currency)
                                                 </Link>
                                             </Label>
@@ -215,10 +215,10 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                                 onValueChange={(value) => setData('currency', value)}
                                                 disabled={processing || currencies.length === 0}
                                             >
-                                                <SelectTrigger id="currency" className="w-full">
+                                                <SelectTrigger id="currency" className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
                                                     <SelectValue placeholder="Select a currency" />
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
                                                     {currencies.map((currency) => (
                                                         <SelectItem key={currency.id} value={currency.code}>
                                                             {currency.code}
@@ -227,7 +227,7 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                                 </SelectContent>
                                             </Select>
                                             {currencies.length === 0 && (
-                                                <p className="text-xs text-muted-foreground">
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">
                                                     No currencies available. Please add currencies in the settings.
                                                 </p>
                                             )}
@@ -243,12 +243,17 @@ export default function EditTeamMember({ user, currencies }: Props) {
                                         onClick={() => window.history.back()}
                                         tabIndex={7}
                                         disabled={processing}
-                                        className="flex items-center gap-2"
+                                        className="flex items-center gap-2 border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                                     >
                                         <ArrowLeft className="h-4 w-4" />
                                         Back
                                     </Button>
-                                    <Button type="submit" tabIndex={6} disabled={processing} className="flex items-center gap-2">
+                                    <Button
+                                        type="submit"
+                                        tabIndex={6}
+                                        disabled={processing}
+                                        className="flex items-center gap-2 bg-gray-800 text-white hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    >
                                         {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                                         {processing ? 'Updating...' : 'Update Member'}
                                     </Button>

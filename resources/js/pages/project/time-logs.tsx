@@ -206,7 +206,6 @@ export default function ProjectTimeLogs({
 
                 {timeLogs.length > 0 && (
                     <section className="mb-4">
-                        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
                         <StatsCards
                             teamStats={{
                                 count: -1,
