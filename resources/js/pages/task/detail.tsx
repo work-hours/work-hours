@@ -1,10 +1,21 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
 import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Trash } from 'lucide-react'
+import { useState } from 'react'
 import type { Task } from './types'
 
 type Props = {
@@ -16,6 +27,20 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Tasks', href: '/task' }]
 export default function TaskDetail({ task }: Props) {
     const { auth } = usePage<SharedData>().props
     const currentUserId = auth.user.id
+
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [commentToDelete, setCommentToDelete] = useState<number | null>(null)
+
+    const handleConfirmDelete = () => {
+        if (commentToDelete == null) return
+        router.delete(route('task.comments.destroy', { task: task.id, comment: commentToDelete }), {
+            preserveScroll: true,
+            onFinish: () => {
+                setDeleteDialogOpen(false)
+                setCommentToDelete(null)
+            },
+        })
+    }
 
     const pageTitle = `${task.title} · Task Details`
 
@@ -214,11 +239,8 @@ export default function TaskDetail({ task }: Props) {
                                                                 title="Delete comment"
                                                                 className="text-red-500 hover:text-red-600"
                                                                 onClick={() => {
-                                                                    if (confirm('Are you sure you want to delete this comment?')) {
-                                                                        router.delete(route('task.comments.destroy', { task: task.id, comment: comment.id }), {
-                                                                            preserveScroll: true,
-                                                                        })
-                                                                    }
+                                                                    setCommentToDelete(comment.id)
+                                                                    setDeleteDialogOpen(true)
                                                                 }}
                                                             >
                                                                 <Trash className="h-4 w-4" />
@@ -255,6 +277,28 @@ export default function TaskDetail({ task }: Props) {
                     </CardContent>
                 </Card>
             </div>
+
+            <AlertDialog
+                open={deleteDialogOpen}
+                onOpenChange={(open) => {
+                    setDeleteDialogOpen(open)
+                    if (!open) setCommentToDelete(null)
+                }}
+            >
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete comment</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the comment.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setDeleteDialogOpen(false)}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleConfirmDelete}>Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
         </MasterLayout>
     )
 }
