@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
 import BackButton from '@/components/back-button'
-import { Button } from '@/components/ui/button'
+import SubmitButton from '@/components/submit-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -239,15 +239,15 @@ export default function EditTeamMember({ user, currencies }: Props) {
 
                                 <div className="mt-4 flex justify-end gap-3">
                                     <BackButton tabIndex={7} disabled={processing} />
-                                    <Button
-                                        type="submit"
+                                    <SubmitButton
                                         tabIndex={6}
-                                        disabled={processing}
+                                        loading={processing}
+                                        idleLabel="Update Member"
+                                        loadingLabel="Updating..."
+                                        idleIcon={<Save className="h-4 w-4" />}
+                                        loadingIcon={<LoaderCircle className="h-4 w-4 animate-spin" />}
                                         className="flex items-center gap-2 bg-gray-800 text-white hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                    >
-                                        {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                        {processing ? 'Updating...' : 'Update Member'}
-                                    </Button>
+                                    />
                                 </div>
                             </div>
                         </form>
