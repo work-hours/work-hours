@@ -250,7 +250,7 @@ export default function TaskDetail({ task }: Props) {
                                                                         <button
                                                                             type="button"
                                                                             title="Save comment"
-                                                                            className="text-green-600 hover:text-green-700"
+                                                                            className="text-green-600 hover:text-green-700 cursor-pointer"
                                                                             onClick={() => {
                                                                                 if (!editingBody.trim()) return
                                                                                 router.put(
@@ -271,7 +271,7 @@ export default function TaskDetail({ task }: Props) {
                                                                         <button
                                                                             type="button"
                                                                             title="Cancel edit"
-                                                                            className="text-muted-foreground hover:text-foreground"
+                                                                            className="text-muted-foreground hover:text-foreground cursor-pointer"
                                                                             onClick={() => {
                                                                                 setEditingCommentId(null)
                                                                                 setEditingBody('')
@@ -285,7 +285,7 @@ export default function TaskDetail({ task }: Props) {
                                                                         <button
                                                                             type="button"
                                                                             title="Edit comment"
-                                                                            className="text-blue-600 hover:text-blue-700"
+                                                                            className="text-blue-600 hover:text-blue-700 cursor-pointer"
                                                                             onClick={() => {
                                                                                 setEditingCommentId(comment.id)
                                                                                 setEditingBody(comment.body)
@@ -296,7 +296,7 @@ export default function TaskDetail({ task }: Props) {
                                                                         <button
                                                                             type="button"
                                                                             title="Delete comment"
-                                                                            className="text-red-500 hover:text-red-600"
+                                                                            className="text-red-500 hover:text-red-600 cursor-pointer"
                                                                             onClick={() => {
                                                                                 setCommentToDelete(comment.id)
                                                                                 setDeleteDialogOpen(true)
