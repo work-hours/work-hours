@@ -30,6 +30,8 @@ export default function TaskDetail({ task }: Props) {
 
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [commentToDelete, setCommentToDelete] = useState<number | null>(null)
+    const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
+    const [editingBody, setEditingBody] = useState<string>('')
 
     const handleConfirmDelete = () => {
         if (commentToDelete == null) return
@@ -234,21 +236,81 @@ export default function TaskDetail({ task }: Props) {
                                                     <div className="flex items-center gap-2">
                                                         <span>{new Date(comment.created_at).toLocaleString()}</span>
                                                         {(currentUserId === task.project.user_id || currentUserId === (comment.user?.id ?? -1)) && (
-                                                            <button
-                                                                type="button"
-                                                                title="Delete comment"
-                                                                className="text-red-500 hover:text-red-600"
-                                                                onClick={() => {
-                                                                    setCommentToDelete(comment.id)
-                                                                    setDeleteDialogOpen(true)
-                                                                }}
-                                                            >
-                                                                <Trash className="h-4 w-4" />
-                                                            </button>
+                                                            <>
+                                                                {editingCommentId === comment.id ? (
+                                                                    <>
+                                                                        <button
+                                                                            type="button"
+                                                                            title="Save comment"
+                                                                            className="text-green-600 hover:text-green-700"
+                                                                            onClick={() => {
+                                                                                if (!editingBody.trim()) return
+                                                                                router.put(
+                                                                                    route('task.comments.update', { task: task.id, comment: comment.id }),
+                                                                                    { body: editingBody },
+                                                                                    {
+                                                                                        preserveScroll: true,
+                                                                                        onFinish: () => {
+                                                                                            setEditingCommentId(null)
+                                                                                            setEditingBody('')
+                                                                                        },
+                                                                                    }
+                                                                                )
+                                                                            }}
+                                                                        >
+                                                                            Save
+                                                                        </button>
+                                                                        <button
+                                                                            type="button"
+                                                                            title="Cancel edit"
+                                                                            className="text-muted-foreground hover:text-foreground"
+                                                                            onClick={() => {
+                                                                                setEditingCommentId(null)
+                                                                                setEditingBody('')
+                                                                            }}
+                                                                        >
+                                                                            Cancel
+                                                                        </button>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <button
+                                                                            type="button"
+                                                                            title="Edit comment"
+                                                                            className="text-blue-600 hover:text-blue-700"
+                                                                            onClick={() => {
+                                                                                setEditingCommentId(comment.id)
+                                                                                setEditingBody(comment.body)
+                                                                            }}
+                                                                        >
+                                                                            Edit
+                                                                        </button>
+                                                                        <button
+                                                                            type="button"
+                                                                            title="Delete comment"
+                                                                            className="text-red-500 hover:text-red-600"
+                                                                            onClick={() => {
+                                                                                setCommentToDelete(comment.id)
+                                                                                setDeleteDialogOpen(true)
+                                                                            }}
+                                                                        >
+                                                                            <Trash className="h-4 w-4" />
+                                                                        </button>
+                                                                    </>
+                                                                )}
+                                                            </>
                                                         )}
                                                     </div>
                                                 </div>
-                                                <p className="text-sm whitespace-pre-wrap">{comment.body}</p>
+                                                {editingCommentId === comment.id ? (
+                                                    <textarea
+                                                        value={editingBody}
+                                                        onChange={(e) => setEditingBody(e.target.value)}
+                                                        className="w-full min-h-[80px] rounded-md border bg-background p-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                                    />
+                                                ) : (
+                                                    <p className="text-sm whitespace-pre-wrap">{comment.body}</p>
+                                                )}
                                             </div>
                                         ))
                                     ) : (

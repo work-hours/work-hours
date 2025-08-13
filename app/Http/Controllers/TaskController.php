@@ -88,6 +88,33 @@ final class TaskController extends Controller
     }
 
     /**
+     * Update a comment on a task.
+     */
+    public function updateComment(Task $task, TaskComment $comment): void
+    {
+        // Ensure the comment belongs to the provided task
+        abort_if($comment->task_id !== $task->id, 404, 'Comment not found for this task.');
+
+        // Load project for authorization
+        $task->load(['project']);
+
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isCommentOwner = $comment->user_id === auth()->id();
+
+        abort_if(! $isProjectOwner && ! $isCommentOwner, 403, 'Unauthorized action.');
+
+        request()->validate([
+            'body' => ['required', 'string', 'max:5000'],
+        ]);
+
+        $comment->update([
+            'body' => request('body'),
+        ]);
+
+        back()->throwResponse();
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()

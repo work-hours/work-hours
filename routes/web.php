@@ -65,6 +65,7 @@ Route::middleware('auth')->middleware('verified')->group(function (): void {
     Route::get('task/{task}/edit', [TaskController::class, 'edit'])->name('task.edit');
     Route::get('task/{task}', [TaskController::class, 'detail'])->name('task.detail');
     Route::post('task/{task}/comments', [TaskController::class, 'storeComment'])->name('task.comments.store');
+    Route::put('task/{task}/comments/{comment}', [TaskController::class, 'updateComment'])->name('task.comments.update');
     Route::delete('task/{task}/comments/{comment}', [TaskController::class, 'destroyComment'])->name('task.comments.destroy');
 
     Route::get('time-log', [TimeLogController::class, 'index'])->name('time-log.index');
