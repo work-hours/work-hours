@@ -80,37 +80,37 @@
 
 :root {
     /* Primary blue color (#1E3A8A) and variations */
-    --primary: oklch(0.35 0.18 260); /* Primary blue */
-    --primary-foreground: oklch(1 0 0); /* White text on primary */
+    --primary: #2563EB; /* Primary blue */
+    --primary-foreground: #FFFFFF;
 
     /* Background blues */
-    --background: oklch(1 0 0); /* White */
-    --foreground: oklch(0.15 0.05 260); /* Darker blue text for better readability */
+    --background: #F9FAFB; /* Base background */
+    --foreground: #111827; /* Primary text */
 
     /* Card and UI element colors */
-    --card: oklch(1 0 0); /* White */
-    --card-foreground: oklch(0.15 0.05 260); /* Darker blue text for better readability */
-    --popover: oklch(1 0 0); /* White */
-    --popover-foreground: oklch(0.15 0.05 260); /* Darker blue text for better readability */
+    --card: #FFFFFF; /* Panels */
+    --card-foreground: #111827; /* Primary text on cards */
+    --popover: #FFFFFF; /* Popover */
+    --popover-foreground: #111827;
 
     /* Secondary and accent colors */
-    --secondary: oklch(0.95 0.03 260); /* Light blue */
-    --secondary-foreground: oklch(0.3 0.1 260); /* Darker blue text */
-    --accent: oklch(0.9 0.05 260); /* Soft blue accent */
-    --accent-foreground: oklch(0.3 0.1 260); /* Darker blue text */
+    --secondary: #F59E0B; /* Secondary amber accent */
+    --secondary-foreground: #111827;
+    --accent: #2563EB; /* Primary blue accent */
+    --accent-foreground: #FFFFFF; /* White on blue accent */
 
     /* Muted colors */
-    --muted: oklch(0.97 0.02 260); /* Very light blue */
-    --muted-foreground: oklch(0.4 0.05 260); /* Darker medium blue text for better readability */
+    --muted: #F3F4F6; /* Light gray */
+    --muted-foreground: #6B7280; /* Secondary text */
 
     /* Destructive colors */
-    --destructive: oklch(0.577 0.245 27.325); /* Keep existing red */
-    --destructive-foreground: oklch(1 0 0); /* White text on destructive */
+    --destructive: #EF4444; /* Error red */
+    --destructive-foreground: #FFFFFF;
 
     /* Border and input colors */
-    --border: oklch(0.9 0.03 260); /* Light blue border */
-    --input: oklch(0.9 0.03 260); /* Light blue input */
-    --ring: oklch(0.7 0.1 260); /* Medium blue ring */
+    --border: #E5E7EB; /* Borders */
+    --input: #E5E7EB; /* Input border */
+    --ring: #2563EB; /* Focus ring blue */
 
     /* Chart colors - blue-based palette */
     --chart-1: oklch(0.5 0.2 260); /* Blue */
@@ -196,7 +196,7 @@
 }
 
 body {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: Inter, system-ui, sans-serif;
     font-weight: 400;
     font-style: normal;
 }
