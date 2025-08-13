@@ -209,7 +209,7 @@ export default function Clients() {
                                         <Input
                                             id="search"
                                             placeholder="Search clients..."
-                                            className="border-gray-200 bg-white pl-9 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
+                                            className="h-10 border-gray-200 bg-white pl-9 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
                                             value={filters.search}
                                             onChange={(e) => handleFilterChange('search', e.target.value)}
                                         />
@@ -235,7 +235,7 @@ export default function Clients() {
                                                 icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select start date"
-                                                className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
@@ -257,7 +257,7 @@ export default function Clients() {
                                                 icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select end date"
-                                                className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
@@ -267,7 +267,7 @@ export default function Clients() {
                                     <Button
                                         type="submit"
                                         disabled={processing}
-                                        className="flex h-9 w-9 items-center justify-center rounded-md bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                                        className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                                         title="Apply filters"
                                     >
                                         <Search className="h-4 w-4" />
@@ -278,7 +278,7 @@ export default function Clients() {
                                         variant="outline"
                                         disabled={processing || (!filters.search && !filters['created-date-from'] && !filters['created-date-to'])}
                                         onClick={clearFilters}
-                                        className="flex h-9 w-9 items-center justify-center rounded-md border-gray-200 p-0 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-200 p-0 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
