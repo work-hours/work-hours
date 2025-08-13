@@ -79,11 +79,11 @@ export default function Welcome() {
             </div>
 
             <main className="flex w-full flex-col">
-                <section className="w-full pt-10 pb-2">
+                <section className="w-full py-20 bg-slate-100 dark:bg-slate-800/80">
                     <Hero />
                 </section>
 
-                <section className="w-full bg-white dark:bg-gray-950">
+                <section className="w-full py-20 bg-white dark:bg-gray-950">
                     <div className="container mx-auto px-4 md:px-6 lg:px-8">
                         <div className="mx-auto max-w-5xl">
                             <div id="features" className="py-10">
@@ -93,7 +93,7 @@ export default function Welcome() {
                     </div>
                 </section>
 
-                <section className="w-full bg-gray-50 dark:bg-gray-900">
+                <section className="w-full py-20 bg-slate-100 dark:bg-slate-800/80">
                     <div className="container mx-auto px-4 md:px-6 lg:px-8">
                         <div className="mx-auto max-w-5xl">
                             <div id="ai-section" className="py-10">
@@ -103,7 +103,7 @@ export default function Welcome() {
                     </div>
                 </section>
 
-                <section className="w-full bg-white dark:bg-gray-950">
+                <section className="w-full py-20 bg-white dark:bg-gray-950">
                     <div className="container mx-auto px-4 md:px-6 lg:px-8">
                         <div className="mx-auto max-w-5xl">
                             <div id="how-it-works" className="py-10">
@@ -113,7 +113,7 @@ export default function Welcome() {
                     </div>
                 </section>
 
-                <section id="cta" className="w-full bg-gray-50 dark:bg-gray-900">
+                <section id="cta" className="w-full py-20 bg-slate-100 dark:bg-slate-800/80">
                     <div className="container mx-auto px-4 md:px-6 lg:px-8">
                         <div className="mx-auto">
                             <CTA />
@@ -121,7 +121,7 @@ export default function Welcome() {
                     </div>
                 </section>
 
-                <section className="relative mt-12 w-full bg-gray-100 dark:bg-gray-950">
+                <section className="relative w-full py-12 bg-white dark:bg-gray-950">
                     <Footer />
                 </section>
             </main>
