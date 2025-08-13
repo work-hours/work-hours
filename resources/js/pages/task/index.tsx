@@ -120,7 +120,7 @@ export default function Tasks() {
                 payload.jira_update = updateJira
             }
 
-            await axios.put(route('task.update', taskToUpdate.id), payload)
+            await axios.put(route('task.updateStatus', taskToUpdate.id), payload)
 
             const updatedTasks = tasks.map((task) => {
                 if (task.id === taskToUpdate.id) {

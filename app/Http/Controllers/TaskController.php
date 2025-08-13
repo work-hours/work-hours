@@ -399,6 +399,58 @@ final class TaskController extends Controller
     }
 
     /**
+     * @throws Throwable
+     */
+    #[Action(method: 'put', name: 'task.updateStatus', params: ['task'], middleware: ['auth', 'verified'])]
+    public function updateStatus(Task $task): void
+    {
+        $task->loadMissing(['project', 'assignees', 'meta']);
+
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isAssignee = $task->assignees->contains('id', auth()->id());
+
+        abort_if(! $isProjectOwner && ! $isAssignee, 403, 'Unauthorized action.');
+
+        request()->validate([
+            'status' => ['required', 'string', 'in:pending,in_progress,completed'],
+            'github_update' => ['sometimes', 'boolean'],
+            'jira_update' => ['sometimes', 'boolean'],
+        ]);
+
+        DB::beginTransaction();
+        try {
+
+            $oldStatus = $task->status;
+
+            $task->update([
+                'status' => request('status'),
+            ]);
+
+            if ($oldStatus !== 'completed' && request('status') === 'completed' && ! $isProjectOwner) {
+                if (! $task->relationLoaded('project')) {
+                    $task->load('project');
+                }
+
+                $projectOwner = User::query()->find($task->project->user_id);
+                $projectOwner?->notify(new TaskCompleted($task, auth()->user()));
+            }
+
+            DB::commit();
+
+            if ($task->is_imported && $task->meta && $task->meta->source === 'github' && request()->boolean('github_update')) {
+                $this->gitHubAdapter->updateGitHubIssue($task);
+            }
+
+            if ($task->is_imported && $task->meta && $task->meta->source === 'jira' && request()->boolean('jira_update')) {
+                $this->jiraAdapter->updateJiraIssue($task);
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @throws Throwable
