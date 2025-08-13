@@ -1,3 +1,5 @@
+import AddNewButton from '@/components/add-new-button'
+import BackButton from '@/components/back-button'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -14,9 +16,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import RichTextEditor from '@/components/ui/rich-text-editor'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
-import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
+import { Head, router, useForm, usePage } from '@inertiajs/react'
 import DOMPurify from 'dompurify'
-import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Pencil, Save, Trash, Trash2, X } from 'lucide-react'
+import { Calendar, ExternalLink, Info, MessageSquare, Pencil, Save, Trash, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import type { Task } from './types'
 
@@ -138,17 +140,11 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
 
             <div className="mx-auto max-w-4xl space-y-4">
                 <div className="flex items-center justify-between">
-                    <Link href={route('task.index')}>
-                        <Button variant="ghost" className="gap-2">
-                            <ChevronLeft className="h-4 w-4" /> Back to Tasks
-                        </Button>
-                    </Link>
+                    <BackButton />
                     {currentUserId === task.project.user_id && (
-                        <Link href={route('task.edit', task.id)}>
-                            <Button variant="outline" className="gap-2">
-                                <Pencil className="h-4 w-4" /> Edit Task
-                            </Button>
-                        </Link>
+                        <AddNewButton href={route('task.edit', task.id)}>
+                            <Pencil className="h-4 w-4" /> Edit Task
+                        </AddNewButton>
                     )}
                 </div>
 
@@ -400,7 +396,11 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                             minRows={4}
                                         />
                                         <div className="flex justify-end">
-                                            <Button type="submit" disabled={!stripHtml(data.body)}>
+                                            <Button
+                                                type="submit"
+                                                disabled={!stripHtml(data.body)}
+                                                className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                            >
                                                 Post Comment
                                             </Button>
                                         </div>

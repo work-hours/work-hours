@@ -1,6 +1,6 @@
+import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
 import BackButton from '@/components/back-button'
-import { ExportButton } from '@/components/action-buttons'
 import StatsCards from '@/components/dashboard/StatsCards'
 import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
@@ -15,19 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
-import {
-    AlertCircle,
-    Calendar,
-    CalendarRange,
-    CheckCircle,
-    ClipboardList,
-    ClockIcon,
-    Edit,
-    Plus,
-    Search,
-    TimerReset,
-    User,
-} from 'lucide-react'
+import { AlertCircle, Calendar, CalendarRange, CheckCircle, ClipboardList, ClockIcon, Edit, Plus, Search, TimerReset, User } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
 
 type TimeLog = {
@@ -192,7 +180,7 @@ export default function ProjectTimeLogs({
             <Head title={`${project.name} - Time Logs`} />
             <div className="mx-auto flex flex-col gap-4 p-4">
                 <section className="mb-2">
-                    <div className="flex justify-between items-center gap-4">
+                    <div className="flex items-center justify-between gap-4">
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">{project.name} - Time Logs</h1>
                             <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage work hours for this project</p>
