@@ -15,10 +15,15 @@ interface TeamProductivityProps {
 
 export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
     return (
-        <Card className="overflow-hidden transition-colors">
+        <Card className="overflow-hidden transition-colors hover:shadow-md">
             <CardHeader className="pb-2">
-                <CardTitle className="text-xs font-bold uppercase">Team Productivity</CardTitle>
-                <CardDescription className="text-[10px]">Hours logged by team members</CardDescription>
+                <div className="flex items-center justify-between">
+                    <CardTitle className="text-xs font-extrabold tracking-wider text-foreground/80 uppercase">Team Productivity</CardTitle>
+                    <div className="flex h-5 w-5 items-center justify-center rounded-sm bg-[rgba(var(--color-primary),0.08)] dark:bg-[rgba(var(--color-primary),0.12)]">
+                        <UsersIcon className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                </div>
+                <CardDescription className="text-[10px] text-muted-foreground">Hours logged by team members</CardDescription>
             </CardHeader>
             <CardContent className="h-48 py-1">
                 {teamStats.count > 0 ? (
@@ -31,20 +36,36 @@ export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
                             ]}
                             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                         >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip formatter={(value) => [`${value} hours`, 'Hours']} />
-                            <Bar dataKey="hours" fill="#8884d8" />
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.3} />
+                            <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={11} />
+                            <YAxis axisLine={false} tickLine={false} fontSize={11} />
+                            <Tooltip
+                                formatter={(value) => [`${value} hours`, 'Hours']}
+                                contentStyle={{
+                                    borderRadius: '4px',
+                                    border: '1px solid var(--color-border)',
+                                    backgroundColor: 'var(--color-card)',
+                                    color: 'var(--color-card-foreground)',
+                                    fontSize: '12px',
+                                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                                }}
+                            />
+                            <Bar
+                                dataKey="hours"
+                                fill="var(--color-chart-2)"
+                                radius={[4, 4, 0, 0]}
+                                barSize={40}
+                                animationDuration={750}
+                            />
                         </BarChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="flex h-full flex-col items-center justify-center text-gray-700 dark:text-gray-300">
+                    <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
                         <UsersIcon className="mb-2 h-12 w-12 opacity-50" />
-                        <p className="">Add team members to see productivity insights</p>
+                        <p className="text-sm">Add team members to see productivity insights</p>
                         <Link
                             href="/team/create"
-                            className="mt-2 border-b border-gray-400 pb-0.5 font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
+                            className="mt-2 border-b border-muted-foreground/40 pb-0.5 text-xs font-semibold text-foreground/80 transition-colors hover:border-foreground hover:text-foreground"
                         >
                             Add team members
                         </Link>

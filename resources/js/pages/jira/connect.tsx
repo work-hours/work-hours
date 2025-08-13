@@ -149,7 +149,7 @@ export default function JiraConnect() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="mt-12 flex items-center justify-end gap-2">
                                 <Button type="submit" disabled={isLoading}>
                                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     Connect to Jira
