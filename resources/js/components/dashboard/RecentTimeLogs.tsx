@@ -64,7 +64,7 @@ export default function RecentTimeLogs() {
                     ) : recentLogs.entries.length > 0 ? (
                         <ul className="divide-y divide-gray-100 dark:divide-gray-700">
                             {recentLogs.entries.map((log: TimeLogEntry, index: number) => (
-                                <li key={index} className="p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-750">
+                                <li key={index} className="p-1 transition-colors hover:bg-gray-50 dark:hover:bg-gray-750">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
                                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">

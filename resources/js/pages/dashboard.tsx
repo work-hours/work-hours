@@ -92,7 +92,7 @@ export default function Dashboard() {
                     <>
                         <StatsCards teamStats={teamStats} />
 
-                        <section className="relative mb-4 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+                        <section className="relative mb-4 rounded-lg bg-white p-6 dark:bg-gray-800">
                             <div className="mb-4">
                                 <div className="flex items-center">
                                     <BarChart2 className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" aria-hidden="true" />
@@ -106,7 +106,7 @@ export default function Dashboard() {
                             </div>
                         </section>
 
-                        <section className="relative mb-4 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+                        <section className="relative mb-4 rounded-lg bg-white p-6 dark:bg-gray-800">
                             <div className="mb-4">
                                 <div className="flex items-center">
                                     <Clock className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" aria-hidden="true" />
