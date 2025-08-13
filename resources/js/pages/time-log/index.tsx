@@ -231,9 +231,9 @@ export default function TimeLog({
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Time Log" />
-            <div className="mx-auto flex flex-col gap-6 p-3">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 <section className="">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Time Logs</h1>
+                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Time Logs</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage your work hours</p>
                 </section>
 
@@ -256,8 +256,8 @@ export default function TimeLog({
                     </section>
                 )}
 
-                <Card className="transition-all hover:shadow-md">
-                    <CardHeader className="">
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Your Time Logs</CardTitle>
@@ -334,7 +334,7 @@ export default function TimeLog({
                                     <span>Import</span>
                                 </Button>
                                 {selectedLogs.length > 0 && (
-                                    <Button onClick={markAsPaid} variant="secondary" className="flex items-center gap-2">
+                                    <Button onClick={markAsPaid} className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm">
                                         <CheckCircle className="h-3 w-3" />
                                         <span>Mark as Paid ({selectedLogs.length})</span>
                                     </Button>
@@ -348,10 +348,10 @@ export default function TimeLog({
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t pt-4">
+                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
                             <form onSubmit={submit} className="flex w-full flex-row gap-4">
                                 <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="start-date" className="text-xs font-medium">
+                                    <Label htmlFor="start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Start Date
                                     </Label>
                                     <DatePicker
@@ -363,7 +363,7 @@ export default function TimeLog({
                                         customInput={
                                             <CustomInput
                                                 id="start-date"
-                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select start date"
                                             />
@@ -371,7 +371,7 @@ export default function TimeLog({
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="end-date" className="text-xs font-medium">
+                                    <Label htmlFor="end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         End Date
                                     </Label>
                                     <DatePicker
@@ -383,7 +383,7 @@ export default function TimeLog({
                                         customInput={
                                             <CustomInput
                                                 id="end-date"
-                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select end date"
                                             />
@@ -391,7 +391,7 @@ export default function TimeLog({
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="project" className="text-xs font-medium">
+                                    <Label htmlFor="project" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Project
                                     </Label>
                                     <SearchableSelect
@@ -401,11 +401,11 @@ export default function TimeLog({
                                         options={[{ id: '', name: 'All Projects' }, ...projects]}
                                         placeholder="Select project"
                                         disabled={processing}
-                                        icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="is-paid" className="text-xs font-medium">
+                                    <Label htmlFor="is-paid" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Payment Status
                                     </Label>
                                     <SearchableSelect
@@ -419,11 +419,11 @@ export default function TimeLog({
                                         ]}
                                         placeholder="Select status"
                                         disabled={processing}
-                                        icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<CheckCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="status" className="text-xs font-medium">
+                                    <Label htmlFor="status" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Approval Status
                                     </Label>
                                     <SearchableSelect
@@ -433,11 +433,11 @@ export default function TimeLog({
                                         options={[{ id: '', name: 'All Statuses' }, ...timeLogStatusOptions]}
                                         placeholder="Approval status"
                                         disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="tag" className="text-xs font-medium">
+                                    <Label htmlFor="tag" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Tag
                                     </Label>
                                     <SearchableSelect
@@ -447,14 +447,14 @@ export default function TimeLog({
                                         options={[{ id: '', name: 'All Tags' }, ...tags]}
                                         placeholder="Select tag"
                                         disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
                                     <Button
                                         type="submit"
                                         disabled={processing}
-                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
                                         title="Apply filters"
                                     >
                                         <Search className="h-4 w-4" />
@@ -485,7 +485,7 @@ export default function TimeLog({
                                                 preserveState: true,
                                             })
                                         }}
-                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 dark:border-gray-600 p-0 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
@@ -494,7 +494,7 @@ export default function TimeLog({
                             </form>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {timeLogs.length > 0 ? (
                             <TimeLogTable
                                 timeLogs={timeLogs as TimeLogEntry[]}
