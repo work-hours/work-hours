@@ -14,9 +14,13 @@ export default function GithubIntegration() {
                     </p>
                     <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
                         <p className="flex items-center text-blue-700 dark:text-blue-300">
-                            <span className="mr-2"><Github className="h-5 w-5" /></span>
-                            <span><span className="font-medium">Pro Tip:</span> Link your time entries to specific GitHub issues or pull requests to
-                            provide detailed context for your work and improve project transparency.</span>
+                            <span className="mr-2">
+                                <Github className="h-5 w-5" />
+                            </span>
+                            <span>
+                                <span className="font-medium">Pro Tip:</span> Link your time entries to specific GitHub issues or pull requests to
+                                provide detailed context for your work and improve project transparency.
+                            </span>
                         </p>
                     </div>
                 </section>
@@ -128,7 +132,8 @@ export default function GithubIntegration() {
                             <div>
                                 <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Connect Your GitHub Account</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Link your GitHub account through our secure OAuth integration. We only request the permissions needed to access your repositories.
+                                    Link your GitHub account through our secure OAuth integration. We only request the permissions needed to access
+                                    your repositories.
                                 </p>
                             </div>
                         </li>
@@ -161,7 +166,8 @@ export default function GithubIntegration() {
                             <div>
                                 <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">View Insights</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Generate reports showing time spent on different repositories, issues, and pull requests to gain insights into your development workflow.
+                                    Generate reports showing time spent on different repositories, issues, and pull requests to gain insights into
+                                    your development workflow.
                                 </p>
                             </div>
                         </li>

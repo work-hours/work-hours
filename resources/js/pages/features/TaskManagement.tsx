@@ -1,12 +1,12 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { Calendar, CheckCircle, CheckSquare, Clock, List, Users } from 'lucide-react'
+import { Calendar, CheckCircle, CheckSquare, List, Users } from 'lucide-react'
 
 export default function TaskManagement() {
     return (
         <FeatureLayout title="Task Management" icon={<CheckSquare className="h-7 w-7 text-blue-600 dark:text-blue-400" />}>
             <div className="space-y-10">
                 {/* New Feature Badge */}
-                <div className="inline-flex items-center rounded-md border border-rose-600/30 bg-rose-50 px-3 py-1 text-sm font-medium uppercase text-rose-700 dark:border-rose-500/30 dark:bg-rose-900/20 dark:text-rose-400">
+                <div className="inline-flex items-center rounded-md border border-rose-600/30 bg-rose-50 px-3 py-1 text-sm font-medium text-rose-700 uppercase dark:border-rose-500/30 dark:bg-rose-900/20 dark:text-rose-400">
                     New Feature
                 </div>
 
@@ -18,9 +18,13 @@ export default function TaskManagement() {
                     </p>
                     <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
                         <p className="flex items-center text-blue-700 dark:text-blue-300">
-                            <span className="mr-2"><CheckSquare className="h-5 w-5" /></span>
-                            <span><span className="font-medium">Pro Tip:</span> Use task templates for recurring work to save time and ensure consistency
-                            in your task creation process.</span>
+                            <span className="mr-2">
+                                <CheckSquare className="h-5 w-5" />
+                            </span>
+                            <span>
+                                <span className="font-medium">Pro Tip:</span> Use task templates for recurring work to save time and ensure
+                                consistency in your task creation process.
+                            </span>
                         </p>
                     </div>
                 </section>

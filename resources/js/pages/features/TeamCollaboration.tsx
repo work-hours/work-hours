@@ -13,9 +13,13 @@ export default function TeamCollaboration() {
                     </p>
                     <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
                         <p className="flex items-center text-blue-700 dark:text-blue-300">
-                            <span className="mr-2"><Users className="h-5 w-5" /></span>
-                            <span><span className="font-medium">Pro Tip:</span> Set up team dashboards to get a quick overview of everyone's current tasks
-                            and progress at a glance.</span>
+                            <span className="mr-2">
+                                <Users className="h-5 w-5" />
+                            </span>
+                            <span>
+                                <span className="font-medium">Pro Tip:</span> Set up team dashboards to get a quick overview of everyone's current
+                                tasks and progress at a glance.
+                            </span>
                         </p>
                     </div>
                 </section>

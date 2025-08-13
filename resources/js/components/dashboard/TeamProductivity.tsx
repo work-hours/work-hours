@@ -36,17 +36,8 @@ export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
                             margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
                         >
                             <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.2} />
-                            <XAxis
-                                dataKey="name"
-                                axisLine={false}
-                                tickLine={false}
-                                tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }}
-                            />
-                            <YAxis
-                                axisLine={false}
-                                tickLine={false}
-                                tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }}
-                            />
+                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }} />
+                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }} />
                             <Tooltip
                                 formatter={(value) => [`${value} hours`, 'Hours']}
                                 contentStyle={{

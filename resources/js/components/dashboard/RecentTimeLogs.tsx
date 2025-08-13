@@ -64,16 +64,14 @@ export default function RecentTimeLogs() {
                     ) : recentLogs.entries.length > 0 ? (
                         <ul className="divide-y divide-gray-100 dark:divide-gray-700">
                             {recentLogs.entries.map((log: TimeLogEntry, index: number) => (
-                                <li key={index} className="p-1 transition-colors hover:bg-gray-50 dark:hover:bg-gray-750">
+                                <li key={index} className="dark:hover:bg-gray-750 p-1 transition-colors hover:bg-gray-50">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
                                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
                                                 <ClockIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                                                    {log.user}
-                                                </p>
+                                                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{log.user}</p>
                                                 <p className="text-xs text-gray-500 dark:text-gray-400">
                                                     {new Date(log.date).toLocaleDateString('en-US', {
                                                         weekday: 'short',

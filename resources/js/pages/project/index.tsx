@@ -248,9 +248,7 @@ export default function Projects() {
                                     label="Export"
                                 />
                                 <Link href={route('project.create')}>
-                                    <Button
-                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white"
-                                    >
+                                    <Button className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
                                         <FolderPlus className="h-4 w-4" />
                                         <span>Add Project</span>
                                     </Button>
@@ -366,7 +364,7 @@ export default function Projects() {
                                     <Button
                                         type="submit"
                                         disabled={processing}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
+                                        className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                                         title="Apply filters"
                                     >
                                         <Search className="h-4 w-4" />
@@ -384,7 +382,7 @@ export default function Projects() {
                                                 !filters.search)
                                         }
                                         onClick={clearFilters}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 dark:border-gray-600 p-0 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 p-0 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
@@ -417,17 +415,32 @@ export default function Projects() {
                                 <Table className="w-full">
                                     <TableHeader>
                                         <TableHeaderRow>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Name</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Client</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Owner</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Team Members</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Approvers</TableHead>
-                                            <TableHead className="bg-gray-50 text-right text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Actions</TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Name
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Client
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Owner
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Team Members
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Approvers
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Actions
+                                            </TableHead>
                                         </TableHeaderRow>
                                     </TableHeader>
                                     <TableBody>
                                         {projects.map((project) => (
-                                            <TableRow key={project.id} className="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-750">
+                                            <TableRow
+                                                key={project.id}
+                                                className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
+                                            >
                                                 <TableCell className="py-3">
                                                     <div className="flex items-center gap-2">
                                                         {project.source === 'github' && project.repo_id ? (
@@ -439,7 +452,11 @@ export default function Projects() {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="text-sm text-gray-700 dark:text-gray-300">
-                                                    {project.client ? project.client.name : <span className="text-gray-400 dark:text-gray-500">No client</span>}
+                                                    {project.client ? (
+                                                        project.client.name
+                                                    ) : (
+                                                        <span className="text-gray-400 dark:text-gray-500">No client</span>
+                                                    )}
                                                 </TableCell>
                                                 <TableCell className="text-sm text-gray-700 dark:text-gray-300">{project.user.name}</TableCell>
                                                 <TableCell className="text-sm text-gray-700 dark:text-gray-300">
@@ -576,9 +593,7 @@ export default function Projects() {
                                     <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Projects</h3>
                                     <p className="mb-4 text-gray-500 dark:text-gray-400">You haven't added any projects yet.</p>
                                     <Link href={route('project.create')}>
-                                        <Button
-                                            className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm"
-                                        >
+                                        <Button className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
                                             <FolderPlus className="h-4 w-4" />
                                             <span>Add Project</span>
                                         </Button>

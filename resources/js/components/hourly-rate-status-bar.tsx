@@ -13,7 +13,10 @@ export function HourlyRateStatusBar() {
     }
 
     return (
-        <Alert variant="destructive" className="mt-4 ml-3 w-10/12 mx-auto border-red-100 bg-red-50 text-red-800 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-300">
+        <Alert
+            variant="destructive"
+            className="mx-auto mt-4 ml-3 w-10/12 border-red-100 bg-red-50 text-red-800 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-300"
+        >
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Hourly Rate Required</AlertTitle>
             <AlertDescription className={'flex flex-row items-center justify-between'}>
@@ -22,7 +25,11 @@ export function HourlyRateStatusBar() {
                     <br /> When assigned to a team, the team rate will be used instead.
                 </span>
 
-                <Button variant="link" className="h-auto p-0 font-medium text-red-700 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" asChild>
+                <Button
+                    variant="link"
+                    className="h-auto p-0 font-medium text-red-700 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                    asChild
+                >
                     <Link href={route('profile.edit')}>Update Profile</Link>
                 </Button>
             </AlertDescription>

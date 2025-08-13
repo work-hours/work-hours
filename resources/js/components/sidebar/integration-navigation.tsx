@@ -33,7 +33,9 @@ export function IntegrationNavigation({ collapsed, isGitHubIntegrated, isJiraInt
     return (
         <div className="mb-6">
             <div className="mb-3 border-b border-neutral-300 pb-2 dark:border-neutral-600">
-                <h3 className={`text-xs font-medium uppercase tracking-wider text-neutral-700 dark:text-neutral-300 ${collapsed ? 'text-center' : 'px-2'}`}>
+                <h3
+                    className={`text-xs font-medium tracking-wider text-neutral-700 uppercase dark:text-neutral-300 ${collapsed ? 'text-center' : 'px-2'}`}
+                >
                     {collapsed ? 'Int.' : 'Integration'}
                 </h3>
             </div>
@@ -64,14 +66,19 @@ export function IntegrationNavigation({ collapsed, isGitHubIntegrated, isJiraInt
                                             />
                                         )}
                                         {!collapsed && <span>{item.title}</span>}
-                                        {isActive && <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-neutral-600 dark:bg-neutral-400"></div>}
+                                        {isActive && (
+                                            <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-neutral-600 dark:bg-neutral-400"></div>
+                                        )}
                                     </Link>
                                     {collapsed && (
                                         <Tooltip>
                                             <TooltipTrigger asChild>
                                                 <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
                                             </TooltipTrigger>
-                                            <TooltipContent side="right" className="border-neutral-200 bg-white text-neutral-800 shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
+                                            <TooltipContent
+                                                side="right"
+                                                className="border-neutral-200 bg-white text-neutral-800 shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                                            >
                                                 {item.title}
                                             </TooltipContent>
                                         </Tooltip>

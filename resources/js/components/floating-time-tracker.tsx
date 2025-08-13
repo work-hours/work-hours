@@ -206,7 +206,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
 
     if (!isVisible) {
         return (
-            <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
+            <div className="fixed right-4 bottom-4 z-50 duration-300 animate-in fade-in slide-in-from-right-5">
                 <Button
                     onClick={toggleVisibility}
                     variant="outline"
@@ -225,7 +225,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             {/* Floating button or compact tracking view */}
-            <div className="fixed right-4 bottom-4 z-50 animate-in fade-in slide-in-from-right-5 duration-300">
+            <div className="fixed right-4 bottom-4 z-50 duration-300 animate-in fade-in slide-in-from-right-5">
                 <div className="flex flex-col items-end gap-2">
                     {activeTimeLog && activeTimeLog.task_id && (
                         <div className="hidden rounded-md bg-white px-3 py-1 text-xs font-medium text-neutral-700 shadow-sm dark:bg-neutral-800 dark:text-neutral-300">
@@ -275,7 +275,9 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                             {activeTimeLog ? (
                                 <>
                                     <ClockIcon className="h-5 w-5 animate-pulse text-neutral-700 dark:text-neutral-300" />
-                                    <SheetTitle className="font-medium text-neutral-900 dark:text-neutral-100">{formatElapsedTime(activeTimeLog.elapsed)}</SheetTitle>
+                                    <SheetTitle className="font-medium text-neutral-900 dark:text-neutral-100">
+                                        {formatElapsedTime(activeTimeLog.elapsed)}
+                                    </SheetTitle>
                                 </>
                             ) : (
                                 <>
@@ -296,7 +298,9 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                                     <span>{activeTimeLog.project_name}</span>
                                 </CardTitle>
                                 {activeTimeLog.task_id && (
-                                    <div className="mt-1 text-sm font-medium text-neutral-700 dark:text-neutral-300">Task: {activeTimeLog.task_title}</div>
+                                    <div className="mt-1 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                        Task: {activeTimeLog.task_title}
+                                    </div>
                                 )}
                                 <CardDescription className="mt-1 text-neutral-600 dark:text-neutral-400">
                                     Started at {new Date(activeTimeLog.start_timestamp || '').toLocaleTimeString()}
@@ -331,7 +335,9 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
                         </div>
                     ) : (
                         <div className="flex flex-col gap-3">
-                            <CardDescription className="text-neutral-600 dark:text-neutral-400">Select a project and start tracking your time</CardDescription>
+                            <CardDescription className="text-neutral-600 dark:text-neutral-400">
+                                Select a project and start tracking your time
+                            </CardDescription>
                             <div>
                                 <Label htmlFor="tracking_project" className="mb-1 block text-sm font-medium text-neutral-800 dark:text-neutral-200">
                                     Project

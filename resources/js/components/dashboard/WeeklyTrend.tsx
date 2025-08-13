@@ -21,12 +21,7 @@ export default function WeeklyTrend({ weeklyData }: WeeklyTrendProps) {
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.2} />
-                        <XAxis
-                            dataKey="name"
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }}
-                        />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }} />
                         <YAxis
                             axisLine={false}
                             tickLine={false}
@@ -39,7 +34,7 @@ export default function WeeklyTrend({ weeklyData }: WeeklyTrendProps) {
                                 borderRadius: '4px',
                                 backgroundColor: 'var(--background)',
                                 borderColor: 'var(--border)',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                             }}
                             itemStyle={{ color: 'var(--foreground)' }}
                         />

@@ -160,7 +160,11 @@ export default function AllTeamTimeLogs({
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
                         <Link href={route('team.index')}>
-                            <Button variant="outline" size="sm" className="h-8 w-8 rounded-full border-gray-200 p-0 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 w-8 rounded-full border-gray-200 p-0 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                            >
                                 <ArrowLeft className="h-4 w-4" />
                                 <span className="sr-only">Back to Team</span>
                             </Button>
@@ -204,7 +208,13 @@ export default function AllTeamTimeLogs({
                                         : 'No time logs found for the selected period'}
                                 </CardDescription>
 
-                                {(data['start-date'] || data['end-date'] || data.user || data.project || data['is-paid'] || data.status || data.tag) && (
+                                {(data['start-date'] ||
+                                    data['end-date'] ||
+                                    data.user ||
+                                    data.project ||
+                                    data['is-paid'] ||
+                                    data.status ||
+                                    data.tag) && (
                                     <CardDescription className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                         {(() => {
                                             let description = ''
@@ -277,10 +287,7 @@ export default function AllTeamTimeLogs({
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
-                                <ExportButton
-                                    href={`${route('team.export-time-logs')}${window.location.search}`}
-                                    label="Export"
-                                />
+                                <ExportButton href={`${route('team.export-time-logs')}${window.location.search}`} label="Export" />
                                 {selectedLogs.length > 0 && (
                                     <Button
                                         onClick={markAsPaid}

@@ -3,8 +3,8 @@ import { LoaderCircle, Lock, Mail, User, UserPlus } from 'lucide-react'
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
-import InputError from '@/components/input-error'
 import BackButton from '@/components/back-button'
+import InputError from '@/components/input-error'
 import SubmitButton from '@/components/submit-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -81,7 +81,9 @@ export default function CreateTeamMember({ currencies }: Props) {
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                     <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Team Member Details</CardTitle>
-                        <CardDescription className="text-sm text-gray-500 dark:text-gray-400">Enter the information for the new team member</CardDescription>
+                        <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+                            Enter the information for the new team member
+                        </CardDescription>
                     </CardHeader>
                     <CardContent className="p-4">
                         <form className="flex flex-col gap-6" onSubmit={submit}>
@@ -199,7 +201,10 @@ export default function CreateTeamMember({ currencies }: Props) {
                                         <div className="grid gap-2">
                                             <Label htmlFor="currency" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                                 Currency{' '}
-                                                <Link href={route('currency.edit')} className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
+                                                <Link
+                                                    href={route('currency.edit')}
+                                                    className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                                                >
                                                     (create new currency)
                                                 </Link>
                                             </Label>
@@ -208,7 +213,10 @@ export default function CreateTeamMember({ currencies }: Props) {
                                                 onValueChange={(value) => setData('currency', value)}
                                                 disabled={processing || currencies.length === 0}
                                             >
-                                                <SelectTrigger id="currency" className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                                                <SelectTrigger
+                                                    id="currency"
+                                                    className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                                >
                                                     <SelectValue placeholder="Select a currency" />
                                                 </SelectTrigger>
                                                 <SelectContent className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">

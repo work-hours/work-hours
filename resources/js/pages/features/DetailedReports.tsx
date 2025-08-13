@@ -13,9 +13,13 @@ export default function DetailedReports() {
                     </p>
                     <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
                         <p className="flex items-center text-blue-700 dark:text-blue-300">
-                            <span className="mr-2"><FileText className="h-5 w-5" /></span>
-                            <span><span className="font-medium">Pro Tip:</span> Schedule automated reports to be sent to your email weekly or monthly to
-                            stay on top of your productivity metrics.</span>
+                            <span className="mr-2">
+                                <FileText className="h-5 w-5" />
+                            </span>
+                            <span>
+                                <span className="font-medium">Pro Tip:</span> Schedule automated reports to be sent to your email weekly or monthly to
+                                stay on top of your productivity metrics.
+                            </span>
                         </p>
                     </div>
                 </section>
@@ -89,9 +93,7 @@ export default function DetailedReports() {
                                 </div>
                             </div>
                             <h3 className="mb-2 text-lg font-medium text-gray-800 dark:text-gray-200">Time Summary</h3>
-                            <p className="text-gray-600 dark:text-gray-400">
-                                Overview of total hours worked, broken down by day, week, or month.
-                            </p>
+                            <p className="text-gray-600 dark:text-gray-400">Overview of total hours worked, broken down by day, week, or month.</p>
                         </div>
 
                         <div className="group rounded-xl border border-gray-200 bg-white p-6 text-center transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">

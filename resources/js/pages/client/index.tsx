@@ -1,5 +1,7 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import AddNewButton from '@/components/add-new-button'
 import DeleteClient from '@/components/delete-client'
+import FilterButton from '@/components/filter-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
@@ -11,7 +13,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { formatDateValue, objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
-import { Head, Link, usePage } from '@inertiajs/react'
+import { Head, usePage } from '@inertiajs/react'
 import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, Plus, Search, TimerReset, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -188,14 +190,10 @@ export default function Clients() {
                                     })}`}
                                     label="Export"
                                 />
-                                <Link href={route('client.create')}>
-                                    <Button
-                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm"
-                                    >
-                                        <Plus className="h-4 w-4" />
-                                        <span>Add Client</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('client.create')}>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add Client</span>
+                                </AddNewButton>
                             </div>
                         </div>
 
@@ -264,25 +262,18 @@ export default function Clients() {
                                 </div>
 
                                 <div className="flex items-end gap-2">
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
-                                        title="Apply filters"
-                                    >
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={processing || (!filters.search && !filters['created-date-from'] && !filters['created-date-to'])}
                                         onClick={clearFilters}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 dark:border-gray-600 p-0 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
                         </div>
@@ -298,10 +289,12 @@ export default function Clients() {
                             <div className="flex flex-col items-center justify-center py-12 text-center">
                                 <Users className="mb-4 h-10 w-10 text-gray-400 dark:text-gray-500" />
                                 <h3 className="mb-1 text-base font-medium text-gray-700 dark:text-gray-300">Failed to Load Clients</h3>
-                                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">There was an error loading your clients. Please try again.</p>
+                                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                                    There was an error loading your clients. Please try again.
+                                </p>
                                 <Button
                                     onClick={() => getClients()}
-                                    className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm"
+                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                                 >
                                     <Loader2 className="h-4 w-4" />
                                     <span>Retry</span>
@@ -312,22 +305,39 @@ export default function Clients() {
                                 <Table className="w-full">
                                     <TableHeader>
                                         <TableHeaderRow>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Name</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Contact Person</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Email</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Phone</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Currency</TableHead>
-                                            <TableHead className="bg-gray-50 text-right text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Actions</TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Name
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Contact Person
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Email
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Phone
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Currency
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Actions
+                                            </TableHead>
                                         </TableHeaderRow>
                                     </TableHeader>
                                     <TableBody>
                                         {clients.map((client) => (
-                                            <TableRow key={client.id} className="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-750">
+                                            <TableRow
+                                                key={client.id}
+                                                className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
+                                            >
                                                 <TableCell className="py-3">
                                                     <div className="font-medium text-gray-800 dark:text-gray-200">{client.name}</div>
                                                 </TableCell>
                                                 <TableCell className="text-sm text-gray-700 dark:text-gray-300">
-                                                    {client.contact_person || <span className="text-xs text-gray-400 dark:text-gray-500">Not specified</span>}
+                                                    {client.contact_person || (
+                                                        <span className="text-xs text-gray-400 dark:text-gray-500">Not specified</span>
+                                                    )}
                                                 </TableCell>
                                                 <TableCell className="text-sm text-gray-700 dark:text-gray-300">
                                                     {client.email || <span className="text-xs text-gray-400 dark:text-gray-500">Not specified</span>}
@@ -372,12 +382,10 @@ export default function Clients() {
                                 <Users className="mb-4 h-12 w-12 text-gray-300 dark:text-gray-600" />
                                 <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Clients</h3>
                                 <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You haven't added any clients yet.</p>
-                                <Link href={route('client.create')}>
-                                    <Button className="flex items-center gap-2">
-                                        <Plus className="h-4 w-4" />
-                                        <span>Add Client</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('client.create')}>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add Client</span>
+                                </AddNewButton>
                             </div>
                         )}
                     </CardContent>

@@ -6,7 +6,7 @@ export default function MultiCurrencyInvoice() {
         <FeatureLayout title="Multi Currency Invoice" icon={<DollarSign className="h-7 w-7 text-blue-600 dark:text-blue-400" />}>
             <div className="space-y-10">
                 {/* New Feature Badge */}
-                <div className="inline-flex items-center rounded-md border border-rose-600/30 bg-rose-50 px-3 py-1 text-sm font-medium uppercase text-rose-700 dark:border-rose-500/30 dark:bg-rose-900/20 dark:text-rose-400">
+                <div className="inline-flex items-center rounded-md border border-rose-600/30 bg-rose-50 px-3 py-1 text-sm font-medium text-rose-700 uppercase dark:border-rose-500/30 dark:bg-rose-900/20 dark:text-rose-400">
                     New Feature
                 </div>
 
@@ -18,9 +18,13 @@ export default function MultiCurrencyInvoice() {
                     </p>
                     <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
                         <p className="flex items-center text-blue-700 dark:text-blue-300">
-                            <span className="mr-2"><Globe className="h-5 w-5" /></span>
-                            <span><span className="font-medium">Pro Tip:</span> Save invoice templates for each currency to streamline your billing
-                            process and ensure consistent formatting for all your international clients.</span>
+                            <span className="mr-2">
+                                <Globe className="h-5 w-5" />
+                            </span>
+                            <span>
+                                <span className="font-medium">Pro Tip:</span> Save invoice templates for each currency to streamline your billing
+                                process and ensure consistent formatting for all your international clients.
+                            </span>
                         </p>
                     </div>
                 </section>
@@ -132,7 +136,8 @@ export default function MultiCurrencyInvoice() {
                             <div>
                                 <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Set Your Base Currency</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Configure your base currency in your account settings. This is the currency in which your financial records will be maintained.
+                                    Configure your base currency in your account settings. This is the currency in which your financial records will
+                                    be maintained.
                                 </p>
                             </div>
                         </li>

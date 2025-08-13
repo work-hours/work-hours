@@ -13,9 +13,13 @@ export default function TimeTracking() {
                     </p>
                     <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
                         <p className="flex items-center text-blue-700 dark:text-blue-300">
-                            <span className="mr-2"><AlertCircle className="h-5 w-5" /></span>
-                            <span><span className="font-medium">Pro Tip:</span> Use keyboard shortcuts (Ctrl+Shift+T) to quickly start or stop the timer
-                            without interrupting your workflow.</span>
+                            <span className="mr-2">
+                                <AlertCircle className="h-5 w-5" />
+                            </span>
+                            <span>
+                                <span className="font-medium">Pro Tip:</span> Use keyboard shortcuts (Ctrl+Shift+T) to quickly start or stop the timer
+                                without interrupting your workflow.
+                            </span>
                         </p>
                     </div>
                 </section>
@@ -45,9 +49,7 @@ export default function TimeTracking() {
                                 </div>
                                 <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Detailed Notes</h3>
                             </div>
-                            <p className="text-gray-600 dark:text-gray-400">
-                                Add notes to your time entries to keep track of what you worked on.
-                            </p>
+                            <p className="text-gray-600 dark:text-gray-400">Add notes to your time entries to keep track of what you worked on.</p>
                         </div>
 
                         <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">

@@ -1,10 +1,11 @@
-import { Head, Link, useForm } from '@inertiajs/react'
-import { ArrowLeft, Building, LoaderCircle, Mail, Phone, Save, Text, User } from 'lucide-react'
+import { Head, useForm } from '@inertiajs/react'
+import { Building, LoaderCircle, Mail, Phone, Save, User } from 'lucide-react'
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
+import BackButton from '@/components/back-button'
 import InputError from '@/components/input-error'
-import { Button } from '@/components/ui/button'
+import SubmitButton from '@/components/submit-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -89,12 +90,6 @@ export default function EditClient({ client, currencies }: Props) {
                 {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
-                        <Link href={route('client.index')}>
-                            <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                                <ArrowLeft className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                                <span className="sr-only">Back to Clients</span>
-                            </Button>
-                        </Link>
                         <div>
                             <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Edit Client</h1>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Update information for {client.name}</p>
@@ -243,11 +238,7 @@ export default function EditClient({ client, currencies }: Props) {
                                         <Label htmlFor="currency" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                             Currency
                                         </Label>
-                                        <Select
-                                            value={data.currency}
-                                            onValueChange={(value) => setData('currency', value)}
-                                            disabled={processing}
-                                        >
+                                        <Select value={data.currency} onValueChange={(value) => setData('currency', value)} disabled={processing}>
                                             <SelectTrigger
                                                 id="currency"
                                                 tabIndex={7}
@@ -284,35 +275,16 @@ export default function EditClient({ client, currencies }: Props) {
                             </div>
 
                             <div className="mt-2 flex items-center justify-end gap-4">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => window.history.back()}
-                                    tabIndex={7}
-                                    disabled={processing}
-                                    className="flex items-center gap-2 border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-                                >
-                                    <ArrowLeft className="h-4 w-4" />
-                                    Back
-                                </Button>
-                                <Button
-                                    type="submit"
+                                <BackButton tabIndex={7} disabled={processing} />
+                                <SubmitButton
                                     tabIndex={10}
-                                    disabled={processing}
+                                    loading={processing}
+                                    idleLabel="Update Client"
+                                    loadingLabel="Saving..."
+                                    idleIcon={<Save className="h-4 w-4" />}
+                                    loadingIcon={<LoaderCircle className="h-4 w-4 animate-spin" />}
                                     className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                >
-                                    {processing ? (
-                                        <>
-                                            <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                                            Saving...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Save className="mr-2 h-4 w-4" />
-                                            Update Client
-                                        </>
-                                    )}
-                                </Button>
+                                />
                             </div>
                         </form>
                     </CardContent>

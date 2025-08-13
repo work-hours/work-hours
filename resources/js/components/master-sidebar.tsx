@@ -145,7 +145,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
         >
             {/* Header with improved styling */}
             <div
-                className={`border-b border-neutral-200 p-4 pb-3 pt-3 transition-all duration-300 ease-in-out dark:border-neutral-700 ${
+                className={`border-b border-neutral-200 p-4 pt-3 pb-3 transition-all duration-300 ease-in-out dark:border-neutral-700 ${
                     collapsed ? 'flex flex-col items-center' : 'px-6'
                 }`}
             >
@@ -162,7 +162,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                 <div className="mb-6">
                     <div className="mb-3 pb-2">
                         <h3
-                            className={`text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400 ${
+                            className={`text-xs font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400 ${
                                 collapsed ? 'text-center' : 'px-2'
                             }`}
                         >
@@ -189,7 +189,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
             </div>
 
             {/* Footer with enhanced styling */}
-            <div className={`border-t border-neutral-200 pb-4 pt-3 dark:border-neutral-700 ${collapsed ? 'px-2' : 'px-4'}`}>
+            <div className={`border-t border-neutral-200 pt-3 pb-4 dark:border-neutral-700 ${collapsed ? 'px-2' : 'px-4'}`}>
                 <FooterNavigation collapsed={collapsed} />
                 <UserSection collapsed={collapsed} user={auth.user} />
             </div>

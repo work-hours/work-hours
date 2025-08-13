@@ -5,7 +5,6 @@ interface HoursDistributionProps {
     hoursData: Array<{ name: string; value: number }>
 }
 
-// Soft, muted colors that work well with both light and dark modes
 const COLORS = ['#94A3B8', '#64748B', '#475569', '#334155']
 
 export default function HoursDistribution({ hoursData }: HoursDistributionProps) {
@@ -30,11 +29,7 @@ export default function HoursDistribution({ hoursData }: HoursDistributionProps)
                             animationEasing="ease-out"
                         >
                             {hoursData.map((entry, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={COLORS[index % COLORS.length]}
-                                    className="transition-opacity hover:opacity-80"
-                                />
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} className="transition-opacity hover:opacity-80" />
                             ))}
                         </Pie>
                         <Tooltip

@@ -72,22 +72,26 @@ export default function TimeLogTable({
                 <TableHeader>
                     <TableHeaderRow>
                         {showCheckboxes && (
-                            <TableHead className="w-[50px] bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">
+                            <TableHead className="dark:bg-gray-750 w-[50px] bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
                                 Select
                             </TableHead>
                         )}
                         {showTeamMemberFinal && (
-                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">
+                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
                                 Team Member
                             </TableHead>
                         )}
-                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Entry</TableHead>
-                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Hours</TableHead>
-                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Hourly Rate</TableHead>
-                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Paid Amount</TableHead>
-                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Status</TableHead>
+                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Entry</TableHead>
+                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Hours</TableHead>
+                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                            Hourly Rate
+                        </TableHead>
+                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                            Paid Amount
+                        </TableHead>
+                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Status</TableHead>
                         {showActions && (
-                            <TableHead className="bg-gray-50 text-right text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">
+                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
                                 Actions
                             </TableHead>
                         )}
@@ -95,7 +99,7 @@ export default function TimeLogTable({
                 </TableHeader>
                 <TableBody>
                     {timeLogs.map((log) => (
-                        <TableRow key={log.id} className="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-750">
+                        <TableRow key={log.id} className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700">
                             {showCheckboxes && (
                                 <TableCell>
                                     <input
@@ -120,9 +124,7 @@ export default function TimeLogTable({
                                     />
                                 </TableCell>
                             )}
-                            {showTeamMemberFinal && (
-                                                        <TableCell className="font-medium text-gray-800 dark:text-gray-200">{log.user_name}</TableCell>
-                                                    )}
+                            {showTeamMemberFinal && <TableCell className="font-medium text-gray-800 dark:text-gray-200">{log.user_name}</TableCell>}
                             <TableCell className="font-medium text-gray-800 dark:text-gray-200">
                                 {formatTimeEntry(log.start_timestamp, log.end_timestamp)}
                                 <br />

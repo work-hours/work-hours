@@ -159,12 +159,16 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
                         <Github className="h-5 w-5" />
                         GitHub Repositories
                     </CardTitle>
-                    <CardDescription className="text-neutral-600 dark:text-neutral-400">Connect your GitHub account to add repositories to this project</CardDescription>
+                    <CardDescription className="text-neutral-600 dark:text-neutral-400">
+                        Connect your GitHub account to add repositories to this project
+                    </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col items-center justify-center py-6">
                         <Github className="mb-4 h-12 w-12 text-neutral-500 dark:text-neutral-400" />
-                        <p className="mb-4 text-center text-neutral-600 dark:text-neutral-400">You need to authenticate with GitHub to access your repositories.</p>
+                        <p className="mb-4 text-center text-neutral-600 dark:text-neutral-400">
+                            You need to authenticate with GitHub to access your repositories.
+                        </p>
                         <Button
                             asChild
                             className="bg-neutral-900 text-white transition-colors duration-200 hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600"
@@ -190,11 +194,7 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
                 <CardDescription className="text-neutral-600 dark:text-neutral-400">Select repositories to add to this project</CardDescription>
             </CardHeader>
             <CardContent>
-                {error && (
-                    <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600 dark:bg-red-900/10 dark:text-red-400">
-                        {error}
-                    </div>
-                )}
+                {error && <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600 dark:bg-red-900/10 dark:text-red-400">{error}</div>}
 
                 <div className="mb-4">
                     <div className="relative">
@@ -202,7 +202,7 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
                         <Input
                             type="search"
                             placeholder="Search repositories..."
-                            className="pl-8 border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-neutral-500 dark:focus:ring-neutral-500"
+                            className="border-neutral-200 pl-8 focus:border-neutral-400 focus:ring-neutral-400 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-neutral-500 dark:focus:ring-neutral-500"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -211,7 +211,9 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
 
                 {selectedRepos.length > 0 && (
                     <div className="mb-4">
-                        <h3 className="mb-2 text-sm font-medium text-neutral-800 dark:text-neutral-200">Selected Repositories ({selectedRepos.length})</h3>
+                        <h3 className="mb-2 text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                            Selected Repositories ({selectedRepos.length})
+                        </h3>
                         <div className="flex flex-wrap gap-2">
                             {selectedRepos.map((repo) => (
                                 <Badge
@@ -272,15 +274,23 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
                                                 className="border-neutral-300 text-neutral-700 focus:ring-neutral-500 dark:border-neutral-600 dark:text-neutral-300"
                                             />
                                             <div className="flex-1">
-                                                <Label htmlFor={`repo-${repo.id}`} className="cursor-pointer font-medium text-neutral-800 dark:text-neutral-200">
+                                                <Label
+                                                    htmlFor={`repo-${repo.id}`}
+                                                    className="cursor-pointer font-medium text-neutral-800 dark:text-neutral-200"
+                                                >
                                                     {repo.name}
                                                     {repo.private && (
-                                                        <Badge variant="outline" className="ml-2 text-xs border-neutral-200 text-neutral-600 dark:border-neutral-700 dark:text-neutral-400">
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="ml-2 border-neutral-200 text-xs text-neutral-600 dark:border-neutral-700 dark:text-neutral-400"
+                                                        >
                                                             Private
                                                         </Badge>
                                                     )}
                                                 </Label>
-                                                {repo.description && <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{repo.description}</p>}
+                                                {repo.description && (
+                                                    <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{repo.description}</p>
+                                                )}
                                             </div>
                                         </div>
                                     ))}
@@ -323,15 +333,23 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
                                                         className="border-neutral-300 text-neutral-700 focus:ring-neutral-500 dark:border-neutral-600 dark:text-neutral-300"
                                                     />
                                                     <div className="flex-1">
-                                                        <Label htmlFor={`repo-${repo.id}`} className="cursor-pointer font-medium text-neutral-800 dark:text-neutral-200">
+                                                        <Label
+                                                            htmlFor={`repo-${repo.id}`}
+                                                            className="cursor-pointer font-medium text-neutral-800 dark:text-neutral-200"
+                                                        >
                                                             {repo.name}
                                                             {repo.private && (
-                                                                <Badge variant="outline" className="ml-2 text-xs border-neutral-200 text-neutral-600 dark:border-neutral-700 dark:text-neutral-400">
+                                                                <Badge
+                                                                    variant="outline"
+                                                                    className="ml-2 border-neutral-200 text-xs text-neutral-600 dark:border-neutral-700 dark:text-neutral-400"
+                                                                >
                                                                     Private
                                                                 </Badge>
                                                             )}
                                                         </Label>
-                                                        {repo.description && <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{repo.description}</p>}
+                                                        {repo.description && (
+                                                            <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{repo.description}</p>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))}

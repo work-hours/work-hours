@@ -71,7 +71,9 @@ export default function DeleteTask({ taskId, isGithub = false, isJira = false, o
                 </Button>
             </DialogTrigger>
             <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
-                <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">Are you sure you want to delete this task?</DialogTitle>
+                <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
+                    Are you sure you want to delete this task?
+                </DialogTitle>
                 <DialogDescription className="text-neutral-600 dark:text-neutral-400">
                     Once the task is deleted, all of its data will be permanently removed. This action cannot be undone.
                 </DialogDescription>

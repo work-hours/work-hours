@@ -100,7 +100,10 @@ export default function CookieConsent() {
                             <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
                                 We use cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic. By
                                 clicking "Accept All", you consent to our use of cookies. Read our{' '}
-                                <Link href={route('cookie-policy')} className="font-medium text-neutral-700 transition-colors duration-200 hover:text-neutral-900 hover:underline dark:text-neutral-300 dark:hover:text-neutral-100">
+                                <Link
+                                    href={route('cookie-policy')}
+                                    className="font-medium text-neutral-700 transition-colors duration-200 hover:text-neutral-900 hover:underline dark:text-neutral-300 dark:hover:text-neutral-100"
+                                >
                                     Cookie Policy
                                 </Link>{' '}
                                 to learn more.

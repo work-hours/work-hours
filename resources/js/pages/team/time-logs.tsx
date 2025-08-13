@@ -1,8 +1,8 @@
 import { ExportButton } from '@/components/action-buttons'
 import StatsCards from '@/components/dashboard/StatsCards'
+import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Button } from '@/components/ui/button'
-import FilterButton from '@/components/filter-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
@@ -152,7 +152,11 @@ export default function TeamMemberTimeLogs({
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
                         <Link href={route('team.index')}>
-                            <Button variant="outline" size="sm" className="h-8 w-8 rounded-full border-gray-200 p-0 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 w-8 rounded-full border-gray-200 p-0 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                            >
                                 <ArrowLeft className="h-4 w-4" />
                                 <span className="sr-only">Back to Team</span>
                             </Button>
@@ -362,10 +366,7 @@ export default function TeamMemberTimeLogs({
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
-                                    <FilterButton
-                                        title="Apply filters"
-                                        disabled={processing}
-                                    >
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
                                     </FilterButton>
 

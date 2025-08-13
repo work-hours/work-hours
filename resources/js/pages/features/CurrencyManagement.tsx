@@ -13,9 +13,13 @@ export default function CurrencyManagement() {
                     </p>
                     <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
                         <p className="flex items-center text-blue-700 dark:text-blue-300">
-                            <span className="mr-2"><Globe className="h-5 w-5" /></span>
-                            <span><span className="font-medium">Pro Tip:</span> Set your preferred display currency for reports to see all financial data
-                            converted to a single currency for easier analysis, while still maintaining the original currency information.</span>
+                            <span className="mr-2">
+                                <Globe className="h-5 w-5" />
+                            </span>
+                            <span>
+                                <span className="font-medium">Pro Tip:</span> Set your preferred display currency for reports to see all financial
+                                data converted to a single currency for easier analysis, while still maintaining the original currency information.
+                            </span>
                         </p>
                     </div>
                 </section>

@@ -1,5 +1,5 @@
 import FeatureLayout from '@/components/features/FeatureLayout'
-import { BarChart2, Briefcase, CheckCircle, DollarSign, FileText, Users } from 'lucide-react'
+import { BarChart2, Briefcase, CheckCircle, FileText, Users } from 'lucide-react'
 
 export default function ClientManagement() {
     return (
@@ -13,9 +13,13 @@ export default function ClientManagement() {
                     </p>
                     <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
                         <p className="flex items-center text-blue-700 dark:text-blue-300">
-                            <span className="mr-2"><Briefcase className="h-5 w-5" /></span>
-                            <span><span className="font-medium">Pro Tip:</span> Use client tags to categorize your clients by industry, size, or priority
-                            for easier filtering and reporting.</span>
+                            <span className="mr-2">
+                                <Briefcase className="h-5 w-5" />
+                            </span>
+                            <span>
+                                <span className="font-medium">Pro Tip:</span> Use client tags to categorize your clients by industry, size, or
+                                priority for easier filtering and reporting.
+                            </span>
                         </p>
                     </div>
                 </section>
@@ -83,13 +87,13 @@ export default function ClientManagement() {
                     </h2>
                     <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                         <div className="grid gap-6 md:grid-cols-3">
-                            <div className="space-y-2 border-b border-gray-200 pb-4 md:border-b-0 md:border-r md:pb-0 md:pr-6 dark:border-gray-700">
+                            <div className="space-y-2 border-b border-gray-200 pb-4 md:border-r md:border-b-0 md:pr-6 md:pb-0 dark:border-gray-700">
                                 <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Client Overview</h3>
                                 <p className="text-gray-600 dark:text-gray-400">
                                     Get a quick snapshot of your client's activity, active projects, and outstanding invoices from a single dashboard.
                                 </p>
                             </div>
-                            <div className="space-y-2 border-b border-gray-200 pb-4 md:border-b-0 md:border-r md:pb-0 md:px-6 dark:border-gray-700">
+                            <div className="space-y-2 border-b border-gray-200 pb-4 md:border-r md:border-b-0 md:px-6 md:pb-0 dark:border-gray-700">
                                 <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Financial Summary</h3>
                                 <p className="text-gray-600 dark:text-gray-400">
                                     View total billable hours, invoiced amounts, and payment status for each client at a glance.
@@ -118,7 +122,8 @@ export default function ClientManagement() {
                             <div>
                                 <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Add a New Client</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Create a detailed client profile with contact information, billing preferences, and custom fields for your specific needs.
+                                    Create a detailed client profile with contact information, billing preferences, and custom fields for your
+                                    specific needs.
                                 </p>
                             </div>
                         </li>

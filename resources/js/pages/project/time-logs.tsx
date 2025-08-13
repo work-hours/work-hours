@@ -293,7 +293,7 @@ export default function ProjectTimeLogs({
                                 {isCreator && selectedLogs.length > 0 && (
                                     <Button
                                         onClick={markAsPaid}
-                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white"
+                                        className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                                     >
                                         <CheckCircle className="h-3 w-3" />
                                         <span>Mark as Paid ({selectedLogs.length})</span>
@@ -402,7 +402,7 @@ export default function ProjectTimeLogs({
                                     <Button
                                         type="submit"
                                         disabled={processing}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
+                                        className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                                         title="Apply filters"
                                     >
                                         <Search className="h-4 w-4" />
@@ -426,7 +426,7 @@ export default function ProjectTimeLogs({
                                                 preserveState: true,
                                             })
                                         }}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 dark:border-gray-600 p-0 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 p-0 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
@@ -473,7 +473,7 @@ export default function ProjectTimeLogs({
                             </div>
                             <div className="flex items-center gap-2">
                                 <Link href={`/task/create?project_id=${project.id}`}>
-                                    <Button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white">
+                                    <Button className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
                                         <Plus className="h-4 w-4" />
                                         <span>Add Task</span>
                                     </Button>
@@ -577,7 +577,7 @@ export default function ProjectTimeLogs({
                                     <h3 className="mb-1 text-lg font-medium">No Tasks</h3>
                                     <p className="mb-4 text-muted-foreground">No tasks have been added to this project yet.</p>
                                     <Link href={`/task/create?project_id=${project.id}`}>
-                                        <Button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white">
+                                        <Button className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
                                             <Plus className="h-4 w-4" />
                                             <span>Add Task</span>
                                         </Button>

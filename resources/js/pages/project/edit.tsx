@@ -122,7 +122,11 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
                         <Link href={route('project.index')}>
-                            <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 w-8 border-gray-200 bg-white p-0 dark:border-gray-700 dark:bg-gray-800"
+                            >
                                 <ArrowLeft className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                 <span className="sr-only">Back to Projects</span>
                             </Button>
@@ -284,7 +288,7 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                         type="submit"
                                         tabIndex={3}
                                         disabled={processing}
-                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white"
+                                        className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                                     >
                                         {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                                         {processing ? 'Updating...' : 'Update Project'}

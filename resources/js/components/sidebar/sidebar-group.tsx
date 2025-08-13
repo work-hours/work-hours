@@ -135,14 +135,19 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
                                             )}
                                         </div>
                                         {!collapsed && <span>{item.title}</span>}
-                                        {isActive && <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-neutral-600 dark:bg-neutral-400"></div>}
+                                        {isActive && (
+                                            <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-neutral-600 dark:bg-neutral-400"></div>
+                                        )}
                                     </Link>
                                     {collapsed && (
                                         <Tooltip>
                                             <TooltipTrigger asChild>
                                                 <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
                                             </TooltipTrigger>
-                                            <TooltipContent side="right" className="border-neutral-200 bg-white text-neutral-800 shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
+                                            <TooltipContent
+                                                side="right"
+                                                className="border-neutral-200 bg-white text-neutral-800 shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                                            >
                                                 {item.title}
                                                 {item.href === '/approvals' && approvalCount > 0 && ` (${approvalCount})`}
                                                 {item.href === '/task' && pendingTaskCount > 0 && ` (${pendingTaskCount})`}

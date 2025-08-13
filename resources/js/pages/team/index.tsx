@@ -1,8 +1,8 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
-import DeleteTeamMember from '@/components/delete-team-member'
-import { Button } from '@/components/ui/button'
-import FilterButton from '@/components/filter-button'
 import AddNewButton from '@/components/add-new-button'
+import DeleteTeamMember from '@/components/delete-team-member'
+import FilterButton from '@/components/filter-button'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
@@ -207,10 +207,7 @@ export default function Team({ teamMembers, filters }: Props) {
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
-                                    <FilterButton
-                                        title="Apply filters"
-                                        disabled={processing}
-                                    >
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
                                     </FilterButton>
 
@@ -241,31 +238,60 @@ export default function Team({ teamMembers, filters }: Props) {
                                 <Table className="w-full">
                                     <TableHeader>
                                         <TableHeaderRow>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Name / Email</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Hourly Rate</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Currency</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Total Hours</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Unpaid Hours</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Unpaid Amount</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Weekly Average</TableHead>
-                                            <TableHead className="bg-gray-50 text-right text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Actions</TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Name / Email
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Hourly Rate
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Currency
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Total Hours
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Unpaid Hours
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Unpaid Amount
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Weekly Average
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Actions
+                                            </TableHead>
                                         </TableHeaderRow>
                                     </TableHeader>
                                     <TableBody>
                                         {teamMembers.map((member) => (
-                                            <TableRow key={member.id} className="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-750">
+                                            <TableRow
+                                                key={member.id}
+                                                className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
+                                            >
                                                 <TableCell className="py-3">
                                                     <div className="font-medium text-gray-800 dark:text-gray-200">{member.name}</div>
                                                     <div className="text-xs text-gray-500 dark:text-gray-400">{member.email}</div>
                                                 </TableCell>
-                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">{member.non_monetary ? '-' : member.hourly_rate}</TableCell>
-                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">{member.non_monetary ? '-' : member.currency}</TableCell>
-                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">{roundToTwoDecimals(member.totalHours)}</TableCell>
-                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">{roundToTwoDecimals(member.unpaidHours)}</TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {member.non_monetary ? '-' : member.hourly_rate}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {member.non_monetary ? '-' : member.currency}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {roundToTwoDecimals(member.totalHours)}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {roundToTwoDecimals(member.unpaidHours)}
+                                                </TableCell>
                                                 <TableCell className="text-sm text-gray-700 dark:text-gray-300">
                                                     {member.non_monetary ? '-' : `${member.currency} ${roundToTwoDecimals(member.unpaidAmount)}`}
                                                 </TableCell>
-                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">{roundToTwoDecimals(member.weeklyAverage)}</TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {roundToTwoDecimals(member.weeklyAverage)}
+                                                </TableCell>
                                                 <TableCell className="text-right">
                                                     <ActionButtonGroup>
                                                         <ActionButton

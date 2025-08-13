@@ -52,7 +52,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                 <div className="mb-6 px-4">
                     <div className="mb-3 pb-2">
                         <h3
-                            className={`text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400 ${collapsed ? 'text-center' : ''}`}
+                            className={`text-xs font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400 ${collapsed ? 'text-center' : ''}`}
                         >
                             {collapsed ? 'Quick' : 'Quick Actions'}
                         </h3>
@@ -86,7 +86,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                 <div className="mb-6 px-4">
                     <div className="mb-3 pb-2">
                         <h3
-                            className={`text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400 ${collapsed ? 'text-center' : ''}`}
+                            className={`text-xs font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400 ${collapsed ? 'text-center' : ''}`}
                         >
                             {collapsed ? 'Tools' : 'Tools'}
                         </h3>
@@ -137,7 +137,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                     <div className="px-4">
                         <div className="mb-3 pb-2">
                             <h3
-                                className={`text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400 ${
+                                className={`text-xs font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400 ${
                                     collapsed ? 'text-center' : ''
                                 }`}
                             >

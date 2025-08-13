@@ -10,9 +10,13 @@ export default function SourceLinkIcon({ source, sourceUrl }: SourceLinkIconProp
     const renderIcon = () => {
         switch (source) {
             case 'github':
-                return <GithubIcon className="h-3.5 w-3.5 text-neutral-600 transition-colors duration-200 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200" />
+                return (
+                    <GithubIcon className="h-3.5 w-3.5 text-neutral-600 transition-colors duration-200 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200" />
+                )
             case 'jira':
-                return <JiraIcon className="h-3.5 w-3.5 text-neutral-600 transition-colors duration-200 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200" />
+                return (
+                    <JiraIcon className="h-3.5 w-3.5 text-neutral-600 transition-colors duration-200 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200" />
+                )
             default:
                 return null
         }

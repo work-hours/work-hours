@@ -251,7 +251,9 @@ export default function Features() {
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-medium text-neutral-900 dark:text-neutral-100">GitHub Integration</h2>
-                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">Connect your repositories and track development time</p>
+                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                        Connect your repositories and track development time
+                                    </p>
                                 </div>
                             </div>
                             <div className="rounded-full bg-neutral-100 px-3 py-1 dark:bg-neutral-700">
@@ -340,7 +342,9 @@ export default function Features() {
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-medium text-neutral-900 dark:text-neutral-100">Jira Integration</h2>
-                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">Connect your Jira issues and track your project time</p>
+                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                                        Connect your Jira issues and track your project time
+                                    </p>
                                 </div>
                             </div>
                             <div className="rounded-full bg-sky-50 px-3 py-1 dark:bg-sky-900/20">

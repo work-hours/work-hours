@@ -22,12 +22,19 @@ export default function AppearanceToggleDropdown({ className = '', ...props }: H
         <div className={className} {...props}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="xs" className="rounded-md text-neutral-600 hover:bg-neutral-100 hover:text-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100">
+                    <Button
+                        variant="ghost"
+                        size="xs"
+                        className="rounded-md text-neutral-600 hover:bg-neutral-100 hover:text-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+                    >
                         {getCurrentIcon()}
                         <span className="sr-only">Toggle theme</span>
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-36 rounded-md border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+                <DropdownMenuContent
+                    align="end"
+                    className="w-36 rounded-md border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900"
+                >
                     <DropdownMenuItem
                         onClick={() => updateAppearance('light')}
                         className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"

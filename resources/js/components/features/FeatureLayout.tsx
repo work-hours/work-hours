@@ -22,7 +22,7 @@ export default function FeatureLayout({ title, icon, children }: FeatureLayoutPr
                     <div className="overflow-hidden rounded-xl bg-white p-8 shadow-sm dark:bg-gray-800">
                         <div className="mb-8 flex items-center">
                             {icon && <div className="mr-4 rounded-full bg-slate-100 p-3 dark:bg-slate-700">{icon}</div>}
-                            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl">{title}</h1>
+                            <h1 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl dark:text-white">{title}</h1>
                         </div>
 
                         {/* Beta Release Note */}
@@ -33,7 +33,7 @@ export default function FeatureLayout({ title, icon, children }: FeatureLayoutPr
                             </p>
                         </div>
 
-                        <div className="prose prose-slate max-w-none text-gray-600 dark:prose-invert dark:text-gray-300">
+                        <div className="prose prose-slate dark:prose-invert max-w-none text-gray-600 dark:text-gray-300">
                             <div className="mt-6">{children}</div>
                         </div>
                     </div>

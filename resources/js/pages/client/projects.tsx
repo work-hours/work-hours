@@ -60,7 +60,11 @@ export default function ClientProjects({ client, projects }: Props) {
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
                         <Link href={route('client.index')}>
-                            <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 w-8 border-gray-200 bg-white p-0 dark:border-gray-700 dark:bg-gray-800"
+                            >
                                 <ArrowLeft className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                 <span className="sr-only">Back to Clients</span>
                             </Button>
@@ -89,9 +93,7 @@ export default function ClientProjects({ client, projects }: Props) {
                                     <User className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                 </span>
                                 <div>
-                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                                        Contact Person
-                                    </h3>
+                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Contact Person</h3>
                                     <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{client.contact_person || 'Not specified'}</p>
                                 </div>
                             </div>
@@ -100,9 +102,7 @@ export default function ClientProjects({ client, projects }: Props) {
                                     <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                 </span>
                                 <div>
-                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                                        Email
-                                    </h3>
+                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Email</h3>
                                     <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{client.email || 'Not specified'}</p>
                                 </div>
                             </div>
@@ -111,9 +111,7 @@ export default function ClientProjects({ client, projects }: Props) {
                                     <Phone className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                 </span>
                                 <div>
-                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                                        Phone
-                                    </h3>
+                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Phone</h3>
                                     <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{client.phone || 'Not specified'}</p>
                                 </div>
                             </div>
@@ -123,9 +121,7 @@ export default function ClientProjects({ client, projects }: Props) {
                                         <span className="text-sm font-medium text-gray-500 dark:text-gray-400">$</span>
                                     </span>
                                     <div>
-                                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                                            Hourly Rate
-                                        </h3>
+                                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Hourly Rate</h3>
                                         <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                                             {client.hourly_rate} {client.currency || 'USD'}
                                         </p>
@@ -150,7 +146,7 @@ export default function ClientProjects({ client, projects }: Props) {
                             </div>
                             <div>
                                 <Link href={route('project.create')}>
-                                    <Button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm">
+                                    <Button className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
                                         <FolderPlus className="h-4 w-4" />
                                         <span>Add Project</span>
                                     </Button>
@@ -164,16 +160,29 @@ export default function ClientProjects({ client, projects }: Props) {
                                 <Table className="w-full">
                                     <TableHeader>
                                         <TableHeaderRow>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Name</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Description</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Owner</TableHead>
-                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Team Members</TableHead>
-                                            <TableHead className="bg-gray-50 text-right text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Actions</TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Name
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Description
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Owner
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Team Members
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Actions
+                                            </TableHead>
                                         </TableHeaderRow>
                                     </TableHeader>
                                     <TableBody>
                                         {projects.map((project) => (
-                                            <TableRow key={project.id} className="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-750">
+                                            <TableRow
+                                                key={project.id}
+                                                className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
+                                            >
                                                 <TableCell className="py-3">
                                                     <div className="font-medium text-gray-800 dark:text-gray-200">{project.name}</div>
                                                 </TableCell>

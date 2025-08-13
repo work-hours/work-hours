@@ -34,7 +34,7 @@ export default function DeleteTeamMember({ userId }: DeleteTeamMemberProps) {
                 <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 w-7 border-neutral-200 p-0 shadow-sm transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-red-800/50 dark:hover:bg-red-900/20 dark:hover:text-red-400 bg-red-100 text-red-600"
+                    className="h-7 w-7 border-neutral-200 bg-red-100 p-0 text-red-600 shadow-sm transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-red-800/50 dark:hover:bg-red-900/20 dark:hover:text-red-400"
                     title="Delete Member"
                 >
                     <Trash2 className="h-3 w-3" />
@@ -42,7 +42,9 @@ export default function DeleteTeamMember({ userId }: DeleteTeamMemberProps) {
                 </Button>
             </DialogTrigger>
             <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
-                <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">Are you sure you want to delete this team member?</DialogTitle>
+                <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
+                    Are you sure you want to delete this team member?
+                </DialogTitle>
                 <DialogDescription className="text-neutral-600 dark:text-neutral-400">
                     Once the team member is deleted, all of their data will be permanently removed. This action cannot be undone.
                 </DialogDescription>

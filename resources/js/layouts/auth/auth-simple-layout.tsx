@@ -22,9 +22,7 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                                 <Link href={route('home')} className="flex items-center gap-1">
                                     <AppLogoIcon className="h-16 w-16 text-blue-600 dark:text-blue-400" />
                                     <div>
-                                        <span className="-ml-4 text-xl font-bold tracking-wide text-gray-900 dark:text-white">
-                                            Work Hours
-                                        </span>
+                                        <span className="-ml-4 text-xl font-bold tracking-wide text-gray-900 dark:text-white">Work Hours</span>
                                         <div className="mt-1 -ml-4 h-0.5 w-full bg-gray-200 dark:bg-gray-700"></div>
                                     </div>
                                 </Link>
@@ -52,9 +50,7 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                         Sponsor this project
                     </a>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                    &copy; {new Date().getFullYear()} Work Hours. All rights reserved.
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">&copy; {new Date().getFullYear()} Work Hours. All rights reserved.</p>
             </div>
 
             {/* Cookie Consent Banner */}
