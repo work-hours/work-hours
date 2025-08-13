@@ -12,10 +12,7 @@ export type RichTextEditorProps = {
 
 export default function RichTextEditor({ value, onChange, placeholder, disabled, className, minRows = 5 }: RichTextEditorProps) {
   const [Quill, setQuill] = useState<React.ComponentType<ReactQuillProps> | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const quillRef = useRef<any>(null)
-
-  // Approximate line height 24px => 5 rows ~ 120px by default
   const minHeightPx = Math.max(0, Math.round((minRows || 5) * 24))
 
   useEffect(() => {
@@ -34,7 +31,6 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
     }
   }, [])
 
-  // Enforce minimum height on the underlying contentEditable element (.ql-editor)
   useEffect(() => {
     if (!quillRef.current || !Quill) return
     try {
@@ -42,9 +38,11 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
       const root: HTMLElement | undefined = editor?.root
       if (root) {
         root.style.minHeight = `${minHeightPx}px`
+        root.style.fontFamily = 'inherit'
+        root.style.fontSize = '120%'
       }
     } catch {
-      // noop: attempting to set min-height on editor root may fail before mount
+        //
     }
   }, [Quill, minHeightPx])
 
@@ -83,7 +81,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
     return (
       <div
         className={`rounded-md border bg-background p-3 text-sm text-muted-foreground ${className ?? ''}`}
-        style={{ minHeight: minHeightPx }}
+        style={{ minHeight: minHeightPx, fontSize: '120%' }}
       >
         {placeholder ?? 'Loading editor...'}
       </div>

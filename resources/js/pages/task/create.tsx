@@ -2,7 +2,7 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import TagInput from '@/components/ui/tag-input'
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 import { Head, useForm } from '@inertiajs/react'
-import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus, Text } from 'lucide-react'
+import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus } from 'lucide-react'
 import { FormEventHandler, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
