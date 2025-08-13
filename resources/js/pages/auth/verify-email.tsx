@@ -32,7 +32,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                 <form onSubmit={submit} className="flex w-full flex-col gap-4">
                     <Button
                         disabled={processing}
-                        className="flex items-center justify-center gap-2 bg-blue-600 py-2.5 font-medium hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
+                        className="flex items-center justify-center gap-2 rounded-md bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900"
                     >
                         {processing ? (
                             <span className="flex items-center justify-center gap-2">

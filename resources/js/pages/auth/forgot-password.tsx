@@ -57,7 +57,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     <div className="flex flex-col gap-4">
                         <Button
                             type="submit"
-                            className="w-full bg-blue-600 py-2.5 font-medium hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
+                            className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900"
                             disabled={processing}
                         >
                             {processing ? (
