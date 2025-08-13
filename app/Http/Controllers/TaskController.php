@@ -324,51 +324,32 @@ final class TaskController extends Controller
     #[Action(method: 'put', name: 'task.update', params: ['task'], middleware: ['auth', 'verified'])]
     public function update(UpdateTaskRequest $request, Task $task): void
     {
-
         $isProjectOwner = $task->project->user_id === auth()->id();
-        $isAssignee = $task->assignees->contains('id', auth()->id());
 
-        abort_if(! $isProjectOwner && ! $isAssignee, 403, 'Unauthorized action.');
+        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
 
         DB::beginTransaction();
         try {
 
-            $oldStatus = $task->status;
-
             $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
+            $oldStatus = $task->status;
+            $task->update($request->only(['title', 'description', 'status', 'priority', 'due_date']));
 
-            if ($isProjectOwner) {
-                $task->update($request->only(['title', 'description', 'status', 'priority', 'due_date']));
+            if ($request->has('assignees')) {
+                $newAssigneeIds = $request->input('assignees');
+                $task->assignees()->sync($newAssigneeIds);
 
-                if ($request->has('assignees')) {
-                    $newAssigneeIds = $request->input('assignees');
-                    $task->assignees()->sync($newAssigneeIds);
+                $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
 
-                    $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
-
-                    if ($addedAssigneeIds !== []) {
-
-                        $task->load('project');
-
-                        $newUsers = User::query()->whereIn('id', $addedAssigneeIds)->get();
-                        foreach ($newUsers as $user) {
-                            $user->notify(new TaskAssigned($task, auth()->user()));
-                        }
+                if ($addedAssigneeIds !== []) {
+                    $task->load('project');
+                    $newUsers = User::query()->whereIn('id', $addedAssigneeIds)->get();
+                    foreach ($newUsers as $user) {
+                        $user->notify(new TaskAssigned($task, auth()->user()));
                     }
-                } else {
-                    $task->assignees()->detach();
                 }
             } else {
-                $task->update($request->only(['status']));
-            }
-
-            if ($oldStatus !== 'completed' && $request->input('status') === 'completed' && ! $isProjectOwner) {
-                if (! $task->relationLoaded('project')) {
-                    $task->load('project');
-                }
-
-                $projectOwner = User::query()->find($task->project->user_id);
-                $projectOwner->notify(new TaskCompleted($task, auth()->user()));
+                $task->assignees()->detach();
             }
 
             if ($request->has('tags')) {
@@ -384,6 +365,15 @@ final class TaskController extends Controller
             }
 
             DB::commit();
+
+            if ($oldStatus !== 'completed' && request('status') === 'completed' && ! $isProjectOwner) {
+                if (! $task->relationLoaded('project')) {
+                    $task->load('project');
+                }
+
+                $projectOwner = User::query()->find($task->project->user_id);
+                $projectOwner?->notify(new TaskCompleted($task, auth()->user()));
+            }
 
             if ($task->is_imported && $task->meta && $task->meta->source === 'github' && $request->boolean('github_update')) {
                 $this->gitHubAdapter->updateGitHubIssue($task);
@@ -426,6 +416,8 @@ final class TaskController extends Controller
                 'status' => request('status'),
             ]);
 
+            DB::commit();
+
             if ($oldStatus !== 'completed' && request('status') === 'completed' && ! $isProjectOwner) {
                 if (! $task->relationLoaded('project')) {
                     $task->load('project');
@@ -434,8 +426,6 @@ final class TaskController extends Controller
                 $projectOwner = User::query()->find($task->project->user_id);
                 $projectOwner?->notify(new TaskCompleted($task, auth()->user()));
             }
-
-            DB::commit();
 
             if ($task->is_imported && $task->meta && $task->meta->source === 'github' && request()->boolean('github_update')) {
                 $this->gitHubAdapter->updateGitHubIssue($task);
