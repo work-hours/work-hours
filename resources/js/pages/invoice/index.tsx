@@ -584,9 +584,9 @@ export default function Invoices() {
                                                     <ActionButtonGroup>
                                                         <ActionButton
                                                             href={route('invoice.edit', invoice.id)}
-                                                            title="Edit Task"
+                                                            title="Edit Invoice"
                                                             icon={Edit}
-                                                            variant="amber"
+                                                            variant="warning"
                                                             size="icon"
                                                         />
                                                     </ActionButtonGroup>

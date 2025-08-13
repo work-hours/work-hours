@@ -136,23 +136,23 @@ export default function Clients() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Clients" />
-            <div className="mx-auto flex flex-col gap-6 p-3">
-                <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Client Management</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your clients</p>
+            <div className="mx-auto flex flex-col gap-6 p-4 max-w-7xl">
+                <section className="mb-4">
+                    <h1 className="text-3xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">Clients</h1>
+                    <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your client relationships</p>
                 </section>
 
-                <Card className="transition-all hover:shadow-md">
-                    <CardHeader className="">
+                <Card className="border-none shadow-sm bg-white dark:bg-gray-800/50 overflow-hidden">
+                    <CardHeader className="border-b border-gray-100 dark:border-gray-700/40 pb-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle className="text-xl">Clients</CardTitle>
+                                <CardTitle className="text-lg font-medium">Client List</CardTitle>
                                 <CardDescription>
                                     {loading ? 'Loading clients...' : error ? 'Failed to load clients' : `You have ${clients.length} clients`}
                                 </CardDescription>
 
                                 {(filters.search || filters['created-date-from'] || filters['created-date-to']) && (
-                                    <CardDescription className="mt-1">
+                                    <CardDescription className="mt-1 text-xs opacity-80">
                                         {(() => {
                                             let description = ''
 
@@ -177,7 +177,7 @@ export default function Clients() {
                                     </CardDescription>
                                 )}
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-3">
                                 <ExportButton
                                     href={`${route('client.export')}?${objectToQueryString({
                                         search: filters.search || '',
@@ -185,9 +185,10 @@ export default function Clients() {
                                         'created-date-to': formatDateValue(filters['created-date-to']),
                                     })}`}
                                     label="Export"
+                                    className="text-sm"
                                 />
                                 <Link href={route('client.create')}>
-                                    <Button className="flex items-center gap-2">
+                                    <Button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm">
                                         <Plus className="h-4 w-4" />
                                         <span>Add Client</span>
                                     </Button>
@@ -195,7 +196,7 @@ export default function Clients() {
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t pt-4">
+                        <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-700/40">
                             <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="search" className="text-xs font-medium">
@@ -204,20 +205,20 @@ export default function Clients() {
                                     <div className="relative">
                                         <Input
                                             id="search"
-                                            placeholder="Search"
-                                            className="pl-9"
+                                            placeholder="Search clients..."
+                                            className="pl-9 h-9 text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                                             value={filters.search}
                                             onChange={(e) => handleFilterChange('search', e.target.value)}
                                         />
                                         <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Search className="h-4 w-4 text-muted-foreground" />
+                                            <Search className="h-4 w-4 text-gray-400" />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="created-date-from" className="text-xs font-medium">
-                                        Created Date From
+                                        Created From
                                     </Label>
                                     <DatePicker
                                         selected={parseDate(filters['created-date-from'])}
@@ -228,9 +229,10 @@ export default function Clients() {
                                         customInput={
                                             <CustomInput
                                                 id="created-date-from"
-                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<Calendar className="h-4 w-4 text-gray-400" />}
                                                 disabled={processing}
                                                 placeholder="Select start date"
+                                                className="h-9 text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                                             />
                                         }
                                     />
@@ -238,7 +240,7 @@ export default function Clients() {
 
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="created-date-to" className="text-xs font-medium">
-                                        Created Date To
+                                        Created To
                                     </Label>
                                     <DatePicker
                                         selected={parseDate(filters['created-date-to'])}
@@ -249,16 +251,22 @@ export default function Clients() {
                                         customInput={
                                             <CustomInput
                                                 id="created-date-to"
-                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<CalendarRange className="h-4 w-4 text-gray-400" />}
                                                 disabled={processing}
                                                 placeholder="Select end date"
+                                                className="h-9 text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                                             />
                                         }
                                     />
                                 </div>
 
                                 <div className="flex items-end gap-2">
-                                    <Button type="submit" className="flex h-9 w-9 items-center justify-center p-0" title="Apply filters">
+                                    <Button
+                                        type="submit"
+                                        className="flex h-9 w-9 items-center justify-center p-0 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+                                        title="Apply filters"
+                                        variant="outline"
+                                    >
                                         <Search className="h-4 w-4" />
                                     </Button>
 
@@ -267,7 +275,7 @@ export default function Clients() {
                                         variant="outline"
                                         disabled={!filters.search && !filters['created-date-from'] && !filters['created-date-to']}
                                         onClick={clearFilters}
-                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        className="flex h-9 w-9 items-center justify-center p-0 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
@@ -276,85 +284,93 @@ export default function Clients() {
                             </form>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {loading ? (
-                            <div className="flex flex-col items-center justify-center py-12 text-center">
-                                <Loader2 className="mb-4 h-12 w-12 animate-spin text-muted-foreground/50" />
-                                <h3 className="mb-1 text-lg font-medium">Loading Clients</h3>
-                                <p className="mb-4 text-muted-foreground">Please wait while we fetch your clients...</p>
+                            <div className="flex flex-col items-center justify-center py-16 text-center">
+                                <Loader2 className="mb-4 h-10 w-10 animate-spin text-gray-300 dark:text-gray-600" />
+                                <h3 className="mb-1 text-base font-medium text-gray-700 dark:text-gray-300">Loading Clients</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Please wait while we fetch your clients...</p>
                             </div>
                         ) : error ? (
-                            <div className="rounded-md border border-red-200 bg-red-50 p-6 dark:border-red-800 dark:bg-red-900/20">
+                            <div className="rounded-md bg-gray-50 p-6 dark:bg-gray-800/50 m-4 border border-gray-200 dark:border-gray-700">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                                    <Users className="mb-4 h-12 w-12 text-red-500" />
-                                    <h3 className="mb-1 text-lg font-medium text-red-700 dark:text-red-400">Failed to Load Clients</h3>
-                                    <p className="mb-4 text-red-600 dark:text-red-300">There was an error loading your clients. Please try again.</p>
-                                    <Button onClick={() => getClients()} className="flex items-center gap-2">
+                                    <Users className="mb-4 h-10 w-10 text-gray-400 dark:text-gray-500" />
+                                    <h3 className="mb-1 text-base font-medium text-gray-700 dark:text-gray-300">Failed to Load Clients</h3>
+                                    <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">There was an error loading your clients. Please try again.</p>
+                                    <Button
+                                        onClick={() => getClients()}
+                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm"
+                                    >
                                         <Loader2 className="h-4 w-4" />
                                         <span>Retry</span>
                                     </Button>
                                 </div>
                             </div>
                         ) : clients.length > 0 ? (
-                            <Table>
-                                <TableHeader>
-                                    <TableHeaderRow>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>Contact Person</TableHead>
-                                        <TableHead>Email</TableHead>
-                                        <TableHead>Phone</TableHead>
-                                        <TableHead>Currency</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableHeaderRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {clients.map((client) => (
-                                        <TableRow key={client.id}>
-                                            <TableCell className="font-medium">{client.name}</TableCell>
-                                            <TableCell>
-                                                {client.contact_person || <span className="text-muted-foreground/50">Not specified</span>}
-                                            </TableCell>
-                                            <TableCell>{client.email || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
-                                            <TableCell>{client.phone || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
-                                            <TableCell>{client.currency || 'USD'}</TableCell>
-                                            <TableCell className="text-right">
-                                                <ActionButtonGroup>
-                                                    <ActionButton
-                                                        href={route('client.projects', client.id)}
-                                                        title="View Projects"
-                                                        icon={Folder}
-                                                        label="Projects"
-                                                        variant="indigo"
-                                                    />
-                                                    <ActionButton
-                                                        href={route('client.invoices', client.id)}
-                                                        title="View Invoices"
-                                                        icon={FileText}
-                                                        label="Invoices"
-                                                        variant="violet"
-                                                    />
-                                                    <ActionButton
-                                                        href={route('client.edit', client.id)}
-                                                        title="Edit Client"
-                                                        icon={Edit}
-                                                        variant="amber"
-                                                        size="icon"
-                                                    />
-                                                    <DeleteClient clientId={client.id} getClients={getClients} />
-                                                </ActionButtonGroup>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            <div className="overflow-x-auto">
+                                <Table>
+                                    <TableHeader>
+                                        <TableHeaderRow className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
+                                            <TableHead className="py-3 text-xs font-medium text-gray-500 dark:text-gray-400">Name</TableHead>
+                                            <TableHead className="py-3 text-xs font-medium text-gray-500 dark:text-gray-400">Contact Person</TableHead>
+                                            <TableHead className="py-3 text-xs font-medium text-gray-500 dark:text-gray-400">Email</TableHead>
+                                            <TableHead className="py-3 text-xs font-medium text-gray-500 dark:text-gray-400">Phone</TableHead>
+                                            <TableHead className="py-3 text-xs font-medium text-gray-500 dark:text-gray-400">Currency</TableHead>
+                                            <TableHead className="py-3 text-xs font-medium text-gray-500 dark:text-gray-400 text-right">Actions</TableHead>
+                                        </TableHeaderRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {clients.map((client) => (
+                                            <TableRow key={client.id} className="border-b border-gray-100 dark:border-gray-800/60 hover:bg-gray-50/50 dark:hover:bg-gray-800/20">
+                                                <TableCell className="py-3 text-sm font-medium text-gray-900 dark:text-gray-100">{client.name}</TableCell>
+                                                <TableCell className="py-3 text-sm text-gray-700 dark:text-gray-300">
+                                                    {client.contact_person || <span className="text-gray-400 dark:text-gray-500 text-xs">Not specified</span>}
+                                                </TableCell>
+                                                <TableCell className="py-3 text-sm text-gray-700 dark:text-gray-300">{client.email || <span className="text-gray-400 dark:text-gray-500 text-xs">Not specified</span>}</TableCell>
+                                                <TableCell className="py-3 text-sm text-gray-700 dark:text-gray-300">{client.phone || <span className="text-gray-400 dark:text-gray-500 text-xs">Not specified</span>}</TableCell>
+                                                <TableCell className="py-3 text-sm text-gray-700 dark:text-gray-300">{client.currency || 'USD'}</TableCell>
+                                                <TableCell className="py-3 text-right">
+                                                    <ActionButtonGroup>
+                                                        <ActionButton
+                                                            href={route('client.projects', client.id)}
+                                                            title="View Projects"
+                                                            icon={Folder}
+                                                            label="Projects"
+                                                            variant="info"
+                                                            className="text-xs bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/20 dark:text-indigo-400 dark:hover:bg-indigo-900/30"
+                                                        />
+                                                        <ActionButton
+                                                            href={route('client.invoices', client.id)}
+                                                            title="View Invoices"
+                                                            icon={FileText}
+                                                            label="Invoices"
+                                                            variant="secondary"
+                                                            className="text-xs bg-violet-50 text-violet-600 hover:bg-violet-100 dark:bg-violet-900/20 dark:text-violet-400 dark:hover:bg-violet-900/30"
+                                                        />
+                                                        <ActionButton
+                                                            href={route('client.edit', client.id)}
+                                                            title="Edit Client"
+                                                            icon={Edit}
+                                                            variant="warning"
+                                                            size="icon"
+                                                            className="bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30"
+                                                        />
+                                                        <DeleteClient clientId={client.id} getClients={getClients} />
+                                                    </ActionButtonGroup>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
                         ) : (
-                            <div className="rounded-md border bg-muted/5 p-6">
+                            <div className="rounded-md bg-gray-50 dark:bg-gray-800/20 p-6 m-4 border border-gray-200 dark:border-gray-700">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                                    <Users className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                                    <h3 className="mb-1 text-lg font-medium">No Clients</h3>
-                                    <p className="mb-4 text-muted-foreground">You haven't added any clients yet.</p>
+                                    <Users className="mb-4 h-10 w-10 text-gray-300 dark:text-gray-600" />
+                                    <h3 className="mb-1 text-base font-medium text-gray-700 dark:text-gray-300">No Clients</h3>
+                                    <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You haven't added any clients yet.</p>
                                     <Link href={route('client.create')}>
-                                        <Button className="flex items-center gap-2">
+                                        <Button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm">
                                             <Plus className="h-4 w-4" />
                                             <span>Add Client</span>
                                         </Button>

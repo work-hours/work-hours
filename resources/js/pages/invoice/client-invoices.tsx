@@ -294,7 +294,7 @@ export default function ClientInvoices({ client, invoices }: Props) {
                                                             href={route('invoice.edit', invoice.id)}
                                                             title="Edit Invoice"
                                                             icon={Edit}
-                                                            variant="amber"
+                                                            variant="warning"
                                                             size="icon"
                                                         />
                                                     </ActionButtonGroup>

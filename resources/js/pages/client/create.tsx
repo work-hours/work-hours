@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react'
+import { Head, Link, useForm } from '@inertiajs/react'
 import { ArrowLeft, Building, LoaderCircle, Mail, Phone, Plus, Text, User } from 'lucide-react'
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
@@ -75,29 +75,39 @@ export default function CreateClient({ currencies }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Client" />
-            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Add Client</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new client</p>
+                    <div className="flex items-center gap-4">
+                        <Link href={route('client.index')}>
+                            <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                <ArrowLeft className="h-4 w-4 text-gray-500" />
+                                <span className="sr-only">Back to Clients</span>
+                            </Button>
+                        </Link>
+                        <div>
+                            <h1 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">Add Client</h1>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Create a new client in your system</p>
+                        </div>
+                    </div>
                 </section>
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Client Details</CardTitle>
-                        <CardDescription>Enter the information for the new client</CardDescription>
+                <Card className="border-none shadow-sm bg-white dark:bg-gray-800/50 overflow-hidden">
+                    <CardHeader className="border-b border-gray-100 dark:border-gray-700/40 pb-4">
+                        <CardTitle className="text-lg font-medium">Client Details</CardTitle>
+                        <CardDescription className="text-sm">Fill out the information for the new client</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="pt-6">
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name" className="text-sm font-medium">
+                                        <Label htmlFor="name" className="text-xs font-medium text-gray-700 dark:text-gray-300">
                                             Client Name
                                         </Label>
                                         <div className="relative">
                                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                <Building className="h-4 w-4 text-muted-foreground" />
+                                                <Building className="h-4 w-4 text-gray-400" />
                                             </div>
                                             <Input
                                                 id="name"
@@ -109,18 +119,18 @@ export default function CreateClient({ currencies }: Props) {
                                                 onChange={(e) => setData('name', e.target.value)}
                                                 disabled={processing}
                                                 placeholder="Client name"
-                                                className="pl-10"
+                                                className="pl-10 h-9 text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                                             />
                                         </div>
                                         <InputError message={errors.name} className="mt-1" />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="contact_person" className="text-sm font-medium">
-                                            Contact Person <span className="text-xs text-muted-foreground">(optional)</span>
+                                        <Label htmlFor="contact_person" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                            Contact Person <span className="text-xs text-gray-400">(optional)</span>
                                         </Label>
                                         <div className="relative">
                                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                <User className="h-4 w-4 text-muted-foreground" />
+                                                <User className="h-4 w-4 text-gray-400" />
                                             </div>
                                             <Input
                                                 id="contact_person"
@@ -130,21 +140,21 @@ export default function CreateClient({ currencies }: Props) {
                                                 onChange={(e) => setData('contact_person', e.target.value)}
                                                 disabled={processing}
                                                 placeholder="Contact person name"
-                                                className="pl-10"
+                                                className="pl-10 h-9 text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                                             />
                                         </div>
                                         <InputError message={errors.contact_person} className="mt-1" />
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="email" className="text-sm font-medium">
-                                            Email <span className="text-xs text-muted-foreground">(optional)</span>
+                                        <Label htmlFor="email" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                            Email <span className="text-xs text-gray-400">(optional)</span>
                                         </Label>
                                         <div className="relative">
                                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                                <Mail className="h-4 w-4 text-gray-400" />
                                             </div>
                                             <Input
                                                 id="email"
@@ -154,18 +164,18 @@ export default function CreateClient({ currencies }: Props) {
                                                 onChange={(e) => setData('email', e.target.value)}
                                                 disabled={processing}
                                                 placeholder="Email address"
-                                                className="pl-10"
+                                                className="pl-10 h-9 text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                                             />
                                         </div>
                                         <InputError message={errors.email} className="mt-1" />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="phone" className="text-sm font-medium">
-                                            Phone <span className="text-xs text-muted-foreground">(optional)</span>
+                                        <Label htmlFor="phone" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                            Phone <span className="text-xs text-gray-400">(optional)</span>
                                         </Label>
                                         <div className="relative">
                                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                <Phone className="h-4 w-4 text-muted-foreground" />
+                                                <Phone className="h-4 w-4 text-gray-400" />
                                             </div>
                                             <Input
                                                 id="phone"
@@ -175,7 +185,7 @@ export default function CreateClient({ currencies }: Props) {
                                                 onChange={(e) => setData('phone', e.target.value)}
                                                 disabled={processing}
                                                 placeholder="Phone number"
-                                                className="pl-10"
+                                                className="pl-10 h-9 text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                                             />
                                         </div>
                                         <InputError message={errors.phone} className="mt-1" />
@@ -183,12 +193,12 @@ export default function CreateClient({ currencies }: Props) {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="address" className="text-sm font-medium">
-                                        Address <span className="text-xs text-muted-foreground">(optional)</span>
+                                    <Label htmlFor="address" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                        Address <span className="text-xs text-gray-400">(optional)</span>
                                     </Label>
                                     <div className="relative">
                                         <div className="pointer-events-none absolute inset-y-0 top-0 left-3 flex items-center pt-2">
-                                            <Text className="h-4 w-4 text-muted-foreground" />
+                                            <Text className="h-4 w-4 text-gray-400" />
                                         </div>
                                         <Textarea
                                             id="address"
@@ -197,20 +207,20 @@ export default function CreateClient({ currencies }: Props) {
                                             onChange={(e) => setData('address', e.target.value)}
                                             disabled={processing}
                                             placeholder="Client address"
-                                            className="min-h-[80px] pl-10"
+                                            className="min-h-[80px] pl-10 text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                                         />
                                     </div>
                                     <InputError message={errors.address} />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="hourly_rate" className="text-sm font-medium">
-                                            Hourly Rate <span className="text-xs text-muted-foreground">(optional)</span>
+                                        <Label htmlFor="hourly_rate" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                            Hourly Rate <span className="text-xs text-gray-400">(optional)</span>
                                         </Label>
                                         <div className="relative">
                                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                <span className="text-muted-foreground">$</span>
+                                                <span className="text-gray-400">$</span>
                                             </div>
                                             <Input
                                                 id="hourly_rate"
@@ -222,22 +232,22 @@ export default function CreateClient({ currencies }: Props) {
                                                 onChange={(e) => setData('hourly_rate', e.target.value)}
                                                 disabled={processing}
                                                 placeholder="0.00"
-                                                className="pl-10"
+                                                className="pl-10 h-9 text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                                             />
                                         </div>
                                         <InputError message={errors.hourly_rate} className="mt-1" />
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="currency" className="text-sm font-medium">
-                                            Currency <span className="text-xs text-muted-foreground">(optional)</span>
+                                        <Label htmlFor="currency" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                            Currency <span className="text-xs text-gray-400">(optional)</span>
                                         </Label>
                                         <Select
                                             value={data.currency}
                                             onValueChange={(value) => setData('currency', value)}
                                             disabled={processing || currencies.length === 0}
                                         >
-                                            <SelectTrigger id="currency" className="w-full" tabIndex={7}>
+                                            <SelectTrigger id="currency" className="h-9 text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700" tabIndex={7}>
                                                 <SelectValue placeholder="Select a currency" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -249,19 +259,19 @@ export default function CreateClient({ currencies }: Props) {
                                             </SelectContent>
                                         </Select>
                                         {currencies.length === 0 && (
-                                            <p className="text-xs text-muted-foreground">No currencies available. Default USD will be used.</p>
+                                            <p className="text-xs text-gray-400">No currencies available. Default USD will be used.</p>
                                         )}
                                         <InputError message={errors.currency} className="mt-1" />
                                     </div>
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="notes" className="text-sm font-medium">
-                                        Notes <span className="text-xs text-muted-foreground">(optional)</span>
+                                    <Label htmlFor="notes" className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                        Notes <span className="text-xs text-gray-400">(optional)</span>
                                     </Label>
                                     <div className="relative">
                                         <div className="pointer-events-none absolute inset-y-0 top-0 left-3 flex items-center pt-2">
-                                            <Text className="h-4 w-4 text-muted-foreground" />
+                                            <Text className="h-4 w-4 text-gray-400" />
                                         </div>
                                         <Textarea
                                             id="notes"
@@ -270,7 +280,7 @@ export default function CreateClient({ currencies }: Props) {
                                             onChange={(e) => setData('notes', e.target.value)}
                                             disabled={processing}
                                             placeholder="Additional notes"
-                                            className="min-h-[80px] pl-10"
+                                            className="min-h-[80px] pl-10 text-sm bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                                         />
                                     </div>
                                     <InputError message={errors.notes} />
@@ -283,12 +293,17 @@ export default function CreateClient({ currencies }: Props) {
                                         onClick={() => window.history.back()}
                                         tabIndex={10}
                                         disabled={processing}
-                                        className="flex items-center gap-2"
+                                        className="flex items-center gap-2 text-sm border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
                                     >
                                         <ArrowLeft className="h-4 w-4" />
-                                        Back
+                                        Cancel
                                     </Button>
-                                    <Button type="submit" tabIndex={9} disabled={processing} className="flex items-center gap-2">
+                                    <Button
+                                        type="submit"
+                                        tabIndex={9}
+                                        disabled={processing}
+                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm"
+                                    >
                                         {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                                         {processing ? 'Creating...' : 'Create Client'}
                                     </Button>

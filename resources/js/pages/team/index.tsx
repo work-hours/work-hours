@@ -277,13 +277,13 @@ export default function Team({ teamMembers, filters }: Props) {
                                                             title="View Time Logs"
                                                             icon={Clock}
                                                             label="Logs"
-                                                            variant="blue"
+                                                            variant="info"
                                                         />
                                                         <ActionButton
                                                             href={route('team.edit', member.id)}
                                                             title="Edit Member"
                                                             icon={Edit}
-                                                            variant="amber"
+                                                            variant="warning"
                                                             size="icon"
                                                         />
                                                         <DeleteTeamMember userId={member.id} />

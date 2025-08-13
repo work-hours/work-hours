@@ -219,7 +219,7 @@ export default function TimeLogTable({
                                                             href={route('time-log.edit', log.id)}
                                                             title="Edit Log"
                                                             icon={Edit}
-                                                            variant="amber"
+                                                            variant="warning"
                                                             size="icon"
                                                         />
                                                     ) : (

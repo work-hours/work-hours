@@ -708,7 +708,7 @@ export default function Tasks() {
                                                                 href={route('task.edit', task.id)}
                                                                 title="Edit Task"
                                                                 icon={Edit}
-                                                                variant="amber"
+                                                                variant="warning"
                                                                 size="icon"
                                                             />
                                                             <DeleteTask

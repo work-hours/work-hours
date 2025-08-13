@@ -482,7 +482,7 @@ export default function Projects() {
                                                                 title="View Time Logs"
                                                                 icon={Clock}
                                                                 label="Logs"
-                                                                variant="blue"
+                                                                variant="info"
                                                             />
                                                             {project.source === 'github' && project.repo_id && (
                                                                 <Button
@@ -554,7 +554,7 @@ export default function Projects() {
                                                                 href={route('project.edit', project.id)}
                                                                 title="Edit Project"
                                                                 icon={Edit}
-                                                                variant="amber"
+                                                                variant="warning"
                                                             />
                                                             <DeleteProject projectId={project.id} onDelete={() => getProjects(filters)} />
                                                         </ActionButtonGroup>
