@@ -80,7 +80,7 @@ export default function Dashboard() {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="relative mx-auto flex flex-col gap-4 p-4">
-                <div className="relative rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+                <div className="relative rounded-lg bg-white p-6 dark:bg-gray-800">
                     <WelcomeSection />
                 </div>
 

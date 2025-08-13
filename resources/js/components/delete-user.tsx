@@ -33,19 +33,26 @@ export default function DeleteUser() {
     return (
         <div className="space-y-6">
             <HeadingSmall title="Delete account" description="Delete your account and all of its resources" />
-            <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
-                <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
+            <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-900/20 dark:bg-red-900/10">
+                <div className="relative space-y-0.5 text-red-600 dark:text-red-300">
                     <p className="font-medium">Warning</p>
                     <p className="text-sm">Please proceed with caution, this cannot be undone.</p>
                 </div>
 
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button variant="destructive">Delete account</Button>
+                        <Button
+                            variant="destructive"
+                            className="bg-red-600 text-white transition-colors duration-200 hover:bg-red-700 dark:bg-red-700/80 dark:hover:bg-red-700"
+                        >
+                            Delete account
+                        </Button>
                     </DialogTrigger>
-                    <DialogContent>
-                        <DialogTitle>Are you sure you want to delete your account?</DialogTitle>
-                        <DialogDescription>
+                    <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
+                        <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
+                            Are you sure you want to delete your account?
+                        </DialogTitle>
+                        <DialogDescription className="text-neutral-600 dark:text-neutral-400">
                             Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password
                             to confirm you would like to permanently delete your account.
                         </DialogDescription>
@@ -64,6 +71,7 @@ export default function DeleteUser() {
                                     onChange={(e) => setData('password', e.target.value)}
                                     placeholder="Password"
                                     autoComplete="current-password"
+                                    className="border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-neutral-500 dark:focus:ring-neutral-500"
                                 />
 
                                 <InputError message={errors.password} />
@@ -71,12 +79,21 @@ export default function DeleteUser() {
 
                             <DialogFooter className="gap-2">
                                 <DialogClose asChild>
-                                    <Button variant="secondary" onClick={closeModal}>
+                                    <Button
+                                        variant="secondary"
+                                        onClick={closeModal}
+                                        className="border-neutral-200 bg-white text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                    >
                                         Cancel
                                     </Button>
                                 </DialogClose>
 
-                                <Button variant="destructive" disabled={processing} asChild>
+                                <Button
+                                    variant="destructive"
+                                    disabled={processing}
+                                    className="bg-red-600 text-white transition-colors duration-200 hover:bg-red-700 dark:bg-red-700/80 dark:hover:bg-red-700"
+                                    asChild
+                                >
                                     <button type="submit">Delete account</button>
                                 </Button>
                             </DialogFooter>

@@ -45,14 +45,14 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
 
     return (
         <div
-            className={`sticky top-0 flex h-screen flex-col border-l border-gray-200 bg-white shadow-sm transition-all duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-800 ${collapsed ? 'w-20' : 'w-56'}`}
+            className={`sticky top-0 flex h-screen flex-col border-l border-neutral-200 bg-white shadow-sm transition-all duration-300 ease-in-out dark:border-neutral-800 dark:bg-neutral-900 ${collapsed ? 'w-20' : 'w-56'}`}
         >
             {/* Quick Actions section */}
             <div className={`mt-2 flex flex-col overflow-y-auto ${collapsed ? '' : 'mr-8'}`}>
                 <div className="mb-6 px-4">
                     <div className="mb-3 pb-2">
                         <h3
-                            className={`text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400 ${collapsed ? 'text-center' : ''}`}
+                            className={`text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400 ${collapsed ? 'text-center' : ''}`}
                         >
                             {collapsed ? 'Quick' : 'Quick Actions'}
                         </h3>
@@ -63,7 +63,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                                 <div key={item.href} className="relative">
                                     <Link
                                         href={item.href}
-                                        className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100"
                                     >
                                         {item.icon && <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />}
                                         {!collapsed && <span>{item.title}</span>}
@@ -86,7 +86,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                 <div className="mb-6 px-4">
                     <div className="mb-3 pb-2">
                         <h3
-                            className={`text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400 ${collapsed ? 'text-center' : ''}`}
+                            className={`text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400 ${collapsed ? 'text-center' : ''}`}
                         >
                             {collapsed ? 'Tools' : 'Tools'}
                         </h3>
@@ -96,7 +96,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                             <div className="relative">
                                 <button
                                     onClick={handleTrackTimeClick}
-                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100"
                                 >
                                     <ClockIcon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
                                     {!collapsed && <span>Track Time</span>}
@@ -114,7 +114,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                             <div className="relative">
                                 <button
                                     onClick={handleAskAiClick}
-                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100"
                                 >
                                     <BrainCircuit className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
                                     {!collapsed && <span>Ask AI</span>}
@@ -137,7 +137,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                     <div className="px-4">
                         <div className="mb-3 pb-2">
                             <h3
-                                className={`text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400 ${
+                                className={`text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400 ${
                                     collapsed ? 'text-center' : ''
                                 }`}
                             >
