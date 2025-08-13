@@ -37,6 +37,7 @@ export type TimeLogEntry = {
 type TimeLogTableProps = {
     timeLogs: TimeLogEntry[]
     showTeamMember?: boolean
+    showMember?: boolean
     showActions?: boolean
     showCheckboxes?: boolean
     showProject?: boolean
@@ -48,6 +49,7 @@ type TimeLogTableProps = {
 export default function TimeLogTable({
     timeLogs,
     showTeamMember = false,
+    showMember = false,
     showActions = false,
     showCheckboxes = false,
     showProject = true,
@@ -57,6 +59,7 @@ export default function TimeLogTable({
 }: TimeLogTableProps) {
     const [selectedTimeLog, setSelectedTimeLog] = useState<TimeLogEntry | null>(null)
     const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+    const showTeamMemberFinal = showTeamMember || showMember
 
     const handleViewDetails = (log: TimeLogEntry) => {
         setSelectedTimeLog(log)
@@ -69,7 +72,7 @@ export default function TimeLogTable({
                 <TableHeader>
                     <TableHeaderRow>
                         {showCheckboxes && <TableHead className="w-[50px]">Select</TableHead>}
-                        {showTeamMember && <TableHead>Team Member</TableHead>}
+                        {showTeamMemberFinal && <TableHead>Team Member</TableHead>}
                         <TableHead>Entry</TableHead>
                         <TableHead>Hours</TableHead>
                         <TableHead>Hourly Rate</TableHead>
@@ -105,7 +108,7 @@ export default function TimeLogTable({
                                     />
                                 </TableCell>
                             )}
-                            {showTeamMember && <TableCell className="font-medium">{log.user_name}</TableCell>}
+                            {showTeamMemberFinal && <TableCell className="font-medium">{log.user_name}</TableCell>}
                             <TableCell className="font-medium">
                                 {formatTimeEntry(log.start_timestamp, log.end_timestamp)}
                                 <br />

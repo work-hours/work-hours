@@ -12,10 +12,11 @@ interface CustomInputProps {
     autoFocus?: boolean
     tabIndex?: number
     id: string
+    className?: string
 }
 
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id }, ref) => (
+    ({ value, onClick, onChange, icon, placeholder, disabled, required, autoFocus, tabIndex, id, className }, ref) => (
         <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">{icon}</div>
             <Input
@@ -29,7 +30,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
                 required={required}
                 autoFocus={autoFocus}
                 tabIndex={tabIndex}
-                className="pl-10"
+                className={`pl-10 ${className ?? ''}`}
                 readOnly={!onChange}
             />
         </div>
