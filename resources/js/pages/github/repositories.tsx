@@ -202,10 +202,8 @@ export default function GitHubRepositories() {
                     </p>
                     {searchTerm && (
                         <Button
-                            variant="outline"
-                            size="sm"
                             onClick={() => setSearchTerm('')}
-                            className="mt-4 border-primary/30 text-primary hover:bg-primary/10"
+                            className="mt-4 flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                         >
                             Clear Search
                         </Button>
@@ -241,9 +239,7 @@ export default function GitHubRepositories() {
                                 <div className="flex items-center gap-2">
                                     {!repo.is_imported ? (
                                         <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="border-primary/30 p-4 text-primary transition-all hover:bg-primary/10 hover:text-primary-foreground"
+                                            className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                                             onClick={() => handleImportRepository(repo)}
                                             disabled={importingRepo === repo.id}
                                         >
@@ -299,17 +295,17 @@ export default function GitHubRepositories() {
         return (
             <MasterLayout breadcrumbs={breadcrumbs}>
                 <Head title="GitHub Repositories" />
-                <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
+                <div className="mx-auto flex flex-col gap-4 p-4">
                     {/* Header section */}
                     <section className="mb-2">
-                        <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+                        <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">
                             <Github className="h-8 w-8 text-primary" />
                             GitHub Repositories
                         </h1>
                         <p className="mt-1 text-gray-500 dark:text-gray-400">Loading GitHub repositories</p>
                     </section>
 
-                    <Card className="border-primary/10">
+                    <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                         <CardContent className="pt-6">
                             <div className="flex flex-col items-center justify-center py-12">
                                 <div className="mb-6 rounded-full bg-primary/10 p-4">
@@ -329,20 +325,20 @@ export default function GitHubRepositories() {
         return (
             <MasterLayout breadcrumbs={breadcrumbs}>
                 <Head title="GitHub Repositories" />
-                <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6 md:w-10/12">
+                <div className="mx-auto flex flex-col gap-4 p-4 md:w-10/12">
                     {/* Header section */}
                     <section className="mb-2">
-                        <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+                        <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">
                             <Github className="h-8 w-8" />
                             GitHub Repositories
                         </h1>
                         <p className="mt-1 text-gray-500 dark:text-gray-400">Connect and manage GitHub repositories</p>
                     </section>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-xl">
-                                <Github className="h-5 w-5 text-primary" />
+                    <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                        <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                            <CardTitle className="flex items-center gap-2 text-xl text-gray-800 dark:text-gray-100">
+                                <Github className="h-5 w-5" />
                                 GitHub Repositories
                             </CardTitle>
                             <CardDescription>Connect your GitHub account to view your repositories</CardDescription>
@@ -356,13 +352,15 @@ export default function GitHubRepositories() {
                                 <p className="mb-6 max-w-md text-center text-muted-foreground">
                                     Link your GitHub account to access and manage your repositories directly from this application.
                                 </p>
-                                <a
-                                    href={route('auth.github')}
-                                    className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-all hover:bg-primary/90 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                                <Button
+                                    asChild
+                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                                 >
-                                    <Github className="mr-2 h-4 w-4" />
-                                    Connect GitHub Account
-                                </a>
+                                    <a href={route('auth.github')}>
+                                        <Github className="mr-2 h-4 w-4" />
+                                        Connect GitHub Account
+                                    </a>
+                                </Button>
                             </div>
                         </CardContent>
                     </Card>
@@ -385,9 +383,9 @@ export default function GitHubRepositories() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="GitHub Repositories" />
-            <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 <section className="mb-2">
-                    <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">
                         <Github className="h-8 w-8" />
                         GitHub Repositories
                     </h1>
@@ -396,7 +394,7 @@ export default function GitHubRepositories() {
 
                 <div className="mt-6 flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
                     <aside className="w-full max-w-xl lg:w-56">
-                        <Card className="overflow-hidden transition-all hover:shadow-sm">
+                        <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                             <nav className="flex flex-col p-2">
                                 {sidebarNavItems.map((item, index) => {
                                     const Icon = item.icon
@@ -433,9 +431,9 @@ export default function GitHubRepositories() {
                     <Separator className="my-6 md:hidden" />
 
                     <div className="flex-1 md:max-w-4xl">
-                        <Card className="overflow-hidden transition-all hover:shadow-sm">
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-xl">
+                        <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                            <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                                <CardTitle className="flex items-center gap-2 text-xl text-gray-800 dark:text-gray-100">
                                     <Github className="h-5 w-5" />
                                     {currentTab === 'personal' ? 'Personal Repositories' : `${currentTab} Repositories`}
                                 </CardTitle>
@@ -454,7 +452,7 @@ export default function GitHubRepositories() {
                                         <Input
                                             type="search"
                                             placeholder="Search repositories..."
-                                            className="pl-8"
+                                            className="h-10 border-gray-200 bg-white pl-8 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                         />
