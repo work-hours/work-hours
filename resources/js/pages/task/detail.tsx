@@ -17,6 +17,7 @@ import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
 import DOMPurify from 'dompurify'
 import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Pencil, Save, Trash, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
+import RichTextEditor from '@/components/ui/rich-text-editor'
 import type { Task } from './types'
 
 type Attachment = {
@@ -45,6 +46,8 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
     const [editingBody, setEditingBody] = useState<string>('')
 
+    const stripHtml = (s: string): string => s.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
+
     const handleConfirmDelete = () => {
         if (commentToDelete == null) return
         router.delete(route('task.comments.destroy', { task: task.id, comment: commentToDelete }), {
@@ -62,7 +65,7 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
 
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        if (!data.body.trim()) return
+        if (!stripHtml(data.body)) return
         post(route('task.comments.store', { task: task.id }), {
             preserveScroll: true,
             onSuccess: () => {
@@ -299,7 +302,7 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                                                             title="Save comment"
                                                                             className="cursor-pointer text-green-600 hover:text-green-700"
                                                                             onClick={() => {
-                                                                                if (!editingBody.trim()) return
+                                                                                if (!stripHtml(editingBody)) return
                                                                                 router.put(
                                                                                     route('task.comments.update', {
                                                                                         task: task.id,
@@ -361,13 +364,17 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                                     </div>
                                                 </div>
                                                 {editingCommentId === comment.id ? (
-                                                    <textarea
+                                                    <RichTextEditor
                                                         value={editingBody}
-                                                        onChange={(e) => setEditingBody(e.target.value)}
-                                                        className="min-h-[80px] w-full rounded-md border bg-background p-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                                        onChange={(val) => setEditingBody(val)}
+                                                        placeholder="Edit comment..."
+                                                        minRows={4}
                                                     />
                                                 ) : (
-                                                    <p className="text-sm whitespace-pre-wrap">{comment.body}</p>
+                                                    <div
+                                                        className="prose prose-sm max-w-none dark:prose-invert"
+                                                        dangerouslySetInnerHTML={{ __html: typeof window !== 'undefined' ? DOMPurify.sanitize(comment.body || '') : (comment.body || '') }}
+                                                    />
                                                 )}
                                             </div>
                                         ))
@@ -379,14 +386,14 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                 </div>
                                 <form onSubmit={onSubmit} className="mt-2">
                                     <div className="flex flex-col gap-2">
-                                        <textarea
+                                        <RichTextEditor
                                             value={data.body}
-                                            onChange={(e) => setData('body', e.target.value)}
+                                            onChange={(val) => setData('body', val)}
                                             placeholder="Add a comment..."
-                                            className="min-h-[80px] w-full rounded-md border bg-background p-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                            minRows={4}
                                         />
                                         <div className="flex justify-end">
-                                            <Button type="submit" disabled={!data.body.trim()}>
+                                            <Button type="submit" disabled={!stripHtml(data.body)}>
                                                 Post Comment
                                             </Button>
                                         </div>
