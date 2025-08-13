@@ -408,7 +408,7 @@ export default function CreateTask({ projects }: Props) {
                                         type="button"
                                         variant="outline"
                                         onClick={() => window.history.back()}
-                                        tabIndex={4}
+                                        tabIndex={7}
                                         disabled={processing}
                                         className="flex items-center gap-2 border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                                     >

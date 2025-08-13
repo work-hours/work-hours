@@ -340,7 +340,7 @@ export default function TimeLog({
                                     </Button>
                                 )}
                                 <Link href={route('time-log.create')}>
-                                    <Button className="flex items-center gap-2">
+                                    <Button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white">
                                         <ClockIcon className="h-3 w-3" />
                                         <span>Log Time</span>
                                     </Button>
@@ -366,6 +366,7 @@ export default function TimeLog({
                                                 icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select start date"
+                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
@@ -386,6 +387,7 @@ export default function TimeLog({
                                                 icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select end date"
+                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
@@ -510,7 +512,7 @@ export default function TimeLog({
                                     <h3 className="mb-1 text-lg font-medium">No Time Logs</h3>
                                     <p className="mb-4 text-muted-foreground">You haven't added any time logs yet.</p>
                                     <Link href={route('time-log.create')}>
-                                        <Button className="flex items-center gap-2">
+                                        <Button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white">
                                             <PlusCircle className="h-3 w-3" />
                                             <span>Add Time Log</span>
                                         </Button>

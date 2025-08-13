@@ -385,7 +385,7 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                         <ArrowLeft className="h-4 w-4" />
                                         Back
                                     </Button>
-                                    <Button type="submit" tabIndex={5} disabled={processing} className="flex items-center gap-2">
+                                    <Button type="submit" tabIndex={5} disabled={processing} className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white">
                                         {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                                         {processing ? 'Updating...' : 'Update Time Log'}
                                     </Button>
