@@ -64,7 +64,7 @@ export default function DeleteTask({ taskId, isGithub = false, isJira = false, o
                 <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 w-7 border-neutral-200 bg-white p-0 text-neutral-600 shadow-sm transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-red-800/50 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                    className="h-7 w-7 border-red-200 bg-red-100 p-0 text-red-600 shadow-sm transition-all duration-200 hover:bg-red-200 dark:border-red-800/50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
                 >
                     <Trash2 className="h-3 w-3" />
                     <span className="sr-only">Delete</span>

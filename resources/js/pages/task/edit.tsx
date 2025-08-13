@@ -2,11 +2,13 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import TagInput from '@/components/ui/tag-input'
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 import { Head, useForm } from '@inertiajs/react'
-import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Save, Trash2 } from 'lucide-react'
+import { Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Save, Trash2 } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+import BackButton from '@/components/back-button'
 import InputError from '@/components/input-error'
+import SubmitButton from '@/components/submit-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -93,7 +95,7 @@ export default function EditTask({
     isJira,
     attachments = [],
 }: Props) {
-    const { data, setData, post, transform, processing, errors } = useForm<TaskForm>({
+    const { data, setData, post, processing, errors } = useForm<TaskForm>({
         project_id: task.project_id.toString(),
         title: task.title,
         description: task.description || '',
@@ -480,7 +482,7 @@ export default function EditTask({
                                                             type="button"
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-7 w-7 border-red-200 bg-red-50 p-0 text-red-700 hover:bg-red-100 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
+                                                            className="h-7 w-7 border-red-200 bg-red-100 p-0 text-red-600 hover:bg-red-200 dark:border-red-800/50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
                                                             onClick={() => openDeleteAttachment(att)}
                                                             aria-label={`Delete ${att.name}`}
                                                             title="Delete"
@@ -516,26 +518,14 @@ export default function EditTask({
                                 </Dialog>
 
                                 <div className="mt-4 flex justify-end gap-3">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => window.history.back()}
-                                        tabIndex={4}
-                                        disabled={processing}
-                                        className="flex items-center gap-2 border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-                                    >
-                                        <ArrowLeft className="h-4 w-4" />
-                                        Back
-                                    </Button>
-                                    <Button
-                                        type="submit"
-                                        tabIndex={3}
-                                        disabled={processing}
-                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                    >
-                                        {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                        {processing ? 'Updating...' : 'Update Task'}
-                                    </Button>
+                                    <BackButton disabled={processing} />
+                                    <SubmitButton
+                                        loading={processing}
+                                        idleLabel="Update Task"
+                                        loadingLabel="Updating..."
+                                        idleIcon={<Save className="h-4 w-4" />}
+                                        loadingIcon={<LoaderCircle className="h-4 w-4 animate-spin" />}
+                                    />
                                 </div>
                             </div>
                         </form>

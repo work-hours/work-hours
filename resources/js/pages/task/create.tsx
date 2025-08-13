@@ -2,12 +2,13 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import TagInput from '@/components/ui/tag-input'
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 import { Head, useForm } from '@inertiajs/react'
-import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus } from 'lucide-react'
+import { Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus } from 'lucide-react'
 import { FormEventHandler, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+import BackButton from '@/components/back-button'
 import InputError from '@/components/input-error'
-import { Button } from '@/components/ui/button'
+import SubmitButton from '@/components/submit-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import CustomInput from '@/components/ui/custom-input'
@@ -404,26 +405,14 @@ export default function CreateTask({ projects }: Props) {
                                 />
 
                                 <div className="mt-4 flex justify-end gap-3">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => window.history.back()}
-                                        tabIndex={7}
-                                        disabled={processing}
-                                        className="flex items-center gap-2 border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-                                    >
-                                        <ArrowLeft className="h-4 w-4" />
-                                        Back
-                                    </Button>
-                                    <Button
-                                        type="submit"
-                                        tabIndex={3}
-                                        disabled={processing}
-                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                    >
-                                        {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                                        {processing ? 'Creating...' : 'Create Task'}
-                                    </Button>
+                                    <BackButton disabled={processing} />
+                                    <SubmitButton
+                                        loading={processing}
+                                        idleLabel="Create Task"
+                                        loadingLabel="Creating..."
+                                        idleIcon={<Plus className="h-4 w-4" />}
+                                        loadingIcon={<LoaderCircle className="h-4 w-4 animate-spin" />}
+                                    />
                                 </div>
                             </div>
                         </form>

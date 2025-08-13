@@ -1,5 +1,7 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import AddNewButton from '@/components/add-new-button'
 import DeleteTask from '@/components/delete-task'
+import FilterButton from '@/components/filter-button'
 import SourceLinkIcon from '@/components/source-link-icon'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -319,12 +321,10 @@ export default function Tasks() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton href={route('task.export')} label="Export" />
-                                <Link href={route('task.create')}>
-                                    <Button className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
-                                        <Plus className="h-4 w-4" />
-                                        <span>Add Task</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('task.create')}>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add Task</span>
+                                </AddNewButton>
                             </div>
                         </div>
 
@@ -481,18 +481,12 @@ export default function Tasks() {
                                 </div>
 
                                 <div className="flex items-end gap-2">
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-                                        title="Apply filters"
-                                    >
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={
                                             processing ||
                                             (filters.status === 'all' &&
@@ -504,11 +498,10 @@ export default function Tasks() {
                                                 !filters.search)
                                         }
                                         onClick={clearFilters}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 p-0 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
 
