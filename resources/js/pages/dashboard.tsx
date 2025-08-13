@@ -94,7 +94,7 @@ export default function Dashboard() {
 
                         <section className="relative mb-4 rounded-lg border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             {/* Form-like header */}
-                            <div className="mb-2 border-b border-gray-400 pb-2 dark:border-gray-600">
+                            <div className="mb-2 pb-2">
                                 <div className="flex items-center">
                                     <div className="mr-3 flex h-8 w-8 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                         <BarChart2 className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
@@ -111,7 +111,7 @@ export default function Dashboard() {
 
                         <section className="relative mb-4 rounded-lg border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             {/* Form-like header */}
-                            <div className="mb-2 border-b border-gray-400 pb-2 dark:border-gray-600">
+                            <div className="mb-2 pb-2">
                                 <div className="flex items-center">
                                     <div className="mr-3 flex h-8 w-8 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                         <Clock className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />

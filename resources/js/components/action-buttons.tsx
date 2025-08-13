@@ -25,12 +25,12 @@ const variantStyles = {
 }
 
 export function ActionButton({ href, title, icon: Icon, label, variant = 'blue', size = 'default', className = '' }: ActionButtonProps) {
-    const baseClasses = `h-7 transition-all shadow-sm ${variantStyles[variant]}`
+    const baseClasses = `transition-all shadow-sm ${variantStyles[variant]}`
     const sizeClasses = size === 'icon' ? 'w-7 p-0' : 'px-2 text-xs'
 
     return (
         <Link href={href}>
-            <Button variant="outline" size="sm" className={`${baseClasses} ${sizeClasses} ${className}`} title={title}>
+            <Button variant="outline" size="xs" className={`${baseClasses} ${sizeClasses} ${className}`} title={title}>
                 <Icon className={`h-3 w-3 ${size === 'default' && label ? 'mr-1' : ''}`} />
                 {size === 'default' && label && <span className="hidden sm:inline">{label}</span>}
                 {size === 'icon' && <span className="sr-only">{title}</span>}
@@ -51,7 +51,7 @@ export function ExportButton({ href, label = 'Export', className = '' }: ExportB
             <Button
                 variant="outline"
                 size="sm"
-                className={`flex h-8 items-center gap-2 ${variantStyles.emerald} shadow-sm transition-all ${className}`}
+                className={`flex items-center gap-2 ${variantStyles.emerald} shadow-sm transition-all ${className}`}
             >
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
