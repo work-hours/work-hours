@@ -60,7 +60,7 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                         Sponsor this project
                     </a>
                 </div>
-                <div className="inline-block border border-gray-300/40 bg-[#f8f6e9]/90 px-4 py-1 dark:border-gray-700/40 dark:bg-gray-800/90">
+                <div className="inline-block border border-gray-300/40 bg-white px-4 py-1 dark:border-gray-700/40 dark:bg-gray-800/90">
                     <p className="text-sm text-gray-700 dark:text-gray-300">&copy; {new Date().getFullYear()} Work Hours. All rights reserved.</p>
                 </div>
             </div>

@@ -6,7 +6,7 @@ export default function CTA() {
         <section className="relative w-full py-16 md:py-24">
             {/* Typewriter-style form */}
             <div className="mx-auto w-9/12 max-w-3xl">
-                <div className="relative border border-gray-300/60 bg-[#f8f6e9]/80 p-8 text-center dark:border-gray-700/60 dark:bg-gray-800/80">
+                <div className="relative border border-gray-300/60 bg-white p-8 text-center dark:border-gray-700/60 dark:bg-gray-800/80">
                     {/* Corner fold effect - more subtle */}
                     <div className="absolute top-0 right-0 h-0 w-0 border-t-[20px] border-r-[20px] border-t-gray-300/70 border-r-transparent dark:border-t-gray-600/70"></div>
 

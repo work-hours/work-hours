@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/react'
 
 export default function Footer() {
     return (
-        <footer className="border-t border-gray-300/20 bg-[#f8f6e9] py-12 dark:border-gray-700/20 dark:bg-gray-900">
+        <footer className="border-t border-gray-300/20 bg-background py-12 dark:border-gray-700/20 dark:bg-gray-900">
             {/* Typewriter footer with form-like elements */}
             <div className="container mx-auto px-6 lg:px-8">
                 <div className="grid gap-8 md:grid-cols-3">
@@ -102,7 +102,7 @@ export default function Footer() {
 
                 <div className="mt-12 border-t border-gray-300/30 pt-8 text-center dark:border-gray-700/30">
                     {/* Typewriter-style copyright with form line - more subtle */}
-                    <div className="inline-block border border-gray-300/40 bg-[#f8f6e9]/90 px-6 py-2 dark:border-gray-700/40 dark:bg-gray-800/90">
+                    <div className="inline-block border border-gray-300/40 bg-white px-6 py-2 dark:border-gray-700/40 dark:bg-gray-800/90">
                         <p className="text-sm text-gray-700 dark:text-gray-300">&copy; {new Date().getFullYear()} Work Hours. All rights reserved.</p>
                     </div>
                 </div>

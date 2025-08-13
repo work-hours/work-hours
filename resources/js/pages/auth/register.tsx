@@ -56,7 +56,7 @@ export default function Register() {
                                 onChange={(e) => setData('name', e.target.value)}
                                 disabled={processing}
                                 placeholder="Full name"
-                                className="border-2 border-gray-400 bg-[#f8f6e9]/50 pl-10 text-gray-800 focus:border-gray-700 focus:ring-0 dark:border-gray-600 dark:bg-gray-800/50 dark:text-gray-200 dark:focus:border-gray-500"
+                                className="pl-10"
                             />
                         </div>
                         <InputError message={errors.name} className="mt-1" />
@@ -81,7 +81,7 @@ export default function Register() {
                                 onChange={(e) => setData('email', e.target.value)}
                                 disabled={processing}
                                 placeholder="email@example.com"
-                                className="border-2 border-gray-400 bg-[#f8f6e9]/50 pl-10 text-gray-800 focus:border-gray-700 focus:ring-0 dark:border-gray-600 dark:bg-gray-800/50 dark:text-gray-200 dark:focus:border-gray-500"
+                                className="pl-10"
                             />
                         </div>
                         <InputError message={errors.email} />
@@ -106,7 +106,7 @@ export default function Register() {
                                 onChange={(e) => setData('password', e.target.value)}
                                 disabled={processing}
                                 placeholder="••••••••"
-                                className="border-2 border-gray-400 bg-[#f8f6e9]/50 pl-10 text-gray-800 focus:border-gray-700 focus:ring-0 dark:border-gray-600 dark:bg-gray-800/50 dark:text-gray-200 dark:focus:border-gray-500"
+                                className="pl-10"
                             />
                         </div>
                         <InputError message={errors.password} />
@@ -131,7 +131,7 @@ export default function Register() {
                                 onChange={(e) => setData('password_confirmation', e.target.value)}
                                 disabled={processing}
                                 placeholder="••••••••"
-                                className="border-2 border-gray-400 bg-[#f8f6e9]/50 pl-10 text-gray-800 focus:border-gray-700 focus:ring-0 dark:border-gray-600 dark:bg-gray-800/50 dark:text-gray-200 dark:focus:border-gray-500"
+                                className="pl-10"
                             />
                         </div>
                         <InputError message={errors.password_confirmation} />

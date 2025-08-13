@@ -12,7 +12,7 @@ interface FeatureLayoutProps {
 
 export default function FeatureLayout({ title, icon, children }: FeatureLayoutProps) {
     return (
-        <div className="relative min-h-screen overflow-hidden bg-[#f8f6e9] dark:bg-gray-900" style={{ scrollBehavior: 'smooth' }}>
+        <div className="relative min-h-screen overflow-hidden bg-background dark:bg-gray-900" style={{ scrollBehavior: 'smooth' }}>
             <Background />
             <Head title={`${title} - Work Hours`} />
             <Navbar />

@@ -66,7 +66,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                                 placeholder="email@example.com"
-                                className="border-2 border-gray-400 bg-[#f8f6e9]/50 pl-10 text-gray-800 focus:border-gray-700 focus:ring-0 dark:border-gray-600 dark:bg-gray-800/50 dark:text-gray-200 dark:focus:border-gray-500"
+                                className="pl-10"
                             />
                         </div>
                         <InputError message={errors.email} />
@@ -101,7 +101,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
                                 placeholder="••••••••"
-                                className="border-2 border-gray-400 bg-[#f8f6e9]/50 pl-10 text-gray-800 focus:border-gray-700 focus:ring-0 dark:border-gray-600 dark:bg-gray-800/50 dark:text-gray-200 dark:focus:border-gray-500"
+                                className="pl-10"
                             />
                         </div>
                         <InputError message={errors.password} />

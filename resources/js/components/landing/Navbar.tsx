@@ -38,7 +38,7 @@ export default function Navbar() {
     }, [])
 
     return (
-        <nav className="fixed top-0 right-0 left-0 z-50 bg-[#f8f6e9] shadow-md dark:bg-gray-900">
+        <nav className="fixed top-0 right-0 left-0 z-50 bg-white shadow-sm dark:bg-gray-800">
             <div className="container mx-auto flex items-center justify-between px-6 lg:px-8">
                 {/* Logo with timesheet-style container */}
                 <Link href="/" className="flex items-center gap-3">
