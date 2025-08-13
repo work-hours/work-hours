@@ -2,6 +2,7 @@ import { ExportButton } from '@/components/action-buttons'
 import StatsCards from '@/components/dashboard/StatsCards'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Button } from '@/components/ui/button'
+import FilterButton from '@/components/filter-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
@@ -314,7 +315,7 @@ export default function TeamMemberTimeLogs({
                                         id="project"
                                         value={data.project}
                                         onChange={(value) => setData('project', value)}
-                                        options={[{ id: '', name: 'All Projects' }, ...projects]}
+                                        options={[{ id: '', name: 'Projects' }, ...projects]}
                                         placeholder="Select project"
                                         disabled={processing}
                                         icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
@@ -330,7 +331,7 @@ export default function TeamMemberTimeLogs({
                                         value={data['is-paid']}
                                         onChange={(value) => setData('is-paid', value)}
                                         options={[
-                                            { id: '', name: 'All Statuses' },
+                                            { id: '', name: 'Statuses' },
                                             { id: 'true', name: 'Paid' },
                                             { id: 'false', name: 'Unpaid' },
                                         ]}
@@ -349,7 +350,7 @@ export default function TeamMemberTimeLogs({
                                         value={data.status}
                                         onChange={(value) => setData('status', value)}
                                         options={[
-                                            { id: '', name: 'All Statuses' },
+                                            { id: '', name: 'Statuses' },
                                             { id: 'pending', name: 'Pending' },
                                             { id: 'approved', name: 'Approved' },
                                             { id: 'rejected', name: 'Rejected' },
@@ -361,18 +362,15 @@ export default function TeamMemberTimeLogs({
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="flex h-9 w-9 items-center justify-center rounded-md bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                                    <FilterButton
                                         title="Apply filters"
+                                        disabled={processing}
                                     >
                                         <Search className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={
                                             processing ||
                                             (!data['start-date'] && !data['end-date'] && !data.project && !data['is-paid'] && !data.status)
@@ -389,11 +387,10 @@ export default function TeamMemberTimeLogs({
                                                 preserveState: true,
                                             })
                                         }}
-                                        className="flex h-9 w-9 items-center justify-center rounded-md border-gray-200 p-0 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
                         </div>
