@@ -79,48 +79,42 @@ export default function Dashboard() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="relative mx-auto flex flex-col gap-6 p-3">
-                <div className="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <div className="relative mx-auto flex flex-col gap-4 p-4">
+                <div className="relative rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
                     <WelcomeSection />
                 </div>
 
                 {loading ? (
-                    <div className="relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                    <div className="relative rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
                         <Loader message="Loading dashboard data..." className="h-40" />
                     </div>
                 ) : (
                     <>
                         <StatsCards teamStats={teamStats} />
 
-                        <section className="relative mb-4 rounded-lg border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            {/* Form-like header */}
-                            <div className="mb-2 pb-2">
+                        <section className="relative mb-4 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+                            <div className="mb-4">
                                 <div className="flex items-center">
-                                    <div className="mr-3 flex h-8 w-8 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
-                                        <BarChart2 className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
-                                    </div>
-                                    <h3 className="text-sm font-extrabold tracking-wider text-gray-800 uppercase dark:text-gray-200">Analytics</h3>
+                                    <BarChart2 className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" aria-hidden="true" />
+                                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Analytics</h3>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <HoursDistribution hoursData={hoursData} />
                                 <WeeklyTrend weeklyData={weeklyData} />
                             </div>
                         </section>
 
-                        <section className="relative mb-4 rounded-lg border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            {/* Form-like header */}
-                            <div className="mb-2 pb-2">
+                        <section className="relative mb-4 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+                            <div className="mb-4">
                                 <div className="flex items-center">
-                                    <div className="mr-3 flex h-8 w-8 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
-                                        <Clock className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
-                                    </div>
-                                    <h3 className="text-sm font-extrabold tracking-wider text-gray-800 uppercase dark:text-gray-200">Activity</h3>
+                                    <Clock className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" aria-hidden="true" />
+                                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Activity</h3>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <RecentTimeLogs />
                                 <TeamProductivity teamStats={teamStats} />
                             </div>

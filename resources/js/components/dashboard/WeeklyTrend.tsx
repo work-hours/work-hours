@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface WeeklyTrendProps {
@@ -7,19 +7,51 @@ interface WeeklyTrendProps {
 
 export default function WeeklyTrend({ weeklyData }: WeeklyTrendProps) {
     return (
-        <Card className="overflow-hidden transition-colors">
-            <CardHeader className="pb-2">
-                <CardTitle className="text-xs font-bold uppercase">Weekly Trend</CardTitle>
-                <CardDescription className="text-[10px]">Hours logged over the past weeks</CardDescription>
+        <Card className="overflow-hidden bg-white shadow-sm transition-colors dark:bg-gray-800">
+            <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Weekly Trend</CardTitle>
             </CardHeader>
-            <CardContent className="h-48 py-1">
+            <CardContent className="h-56 p-4">
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={weeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip formatter={(value) => [`${value} hours`, 'Hours']} />
-                        <Area type="monotone" dataKey="hours" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
+                    <AreaChart data={weeklyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                        <defs>
+                            <linearGradient id="colorHours" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#94A3B8" stopOpacity={0.3} />
+                                <stop offset="95%" stopColor="#94A3B8" stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.2} />
+                        <XAxis
+                            dataKey="name"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }}
+                        />
+                        <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }}
+                            tickFormatter={(value) => `${value}`}
+                        />
+                        <Tooltip
+                            formatter={(value) => [`${value} hours`, 'Hours']}
+                            contentStyle={{
+                                borderRadius: '4px',
+                                backgroundColor: 'var(--background)',
+                                borderColor: 'var(--border)',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                            }}
+                            itemStyle={{ color: 'var(--foreground)' }}
+                        />
+                        <Area
+                            type="monotone"
+                            dataKey="hours"
+                            stroke="#64748B"
+                            strokeWidth={2}
+                            fill="url(#colorHours)"
+                            activeDot={{ r: 6, strokeWidth: 0 }}
+                            animationDuration={750}
+                        />
                     </AreaChart>
                 </ResponsiveContainer>
             </CardContent>

@@ -44,21 +44,24 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
     }
 
     return (
-        <div className="p-2">
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <section className="relative mb-4 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+            <div className="mb-4">
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Key Metrics</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                 {teamStats.count >= 0 && <StatsCard title="Team Members" value={teamStats.count} />}
                 {teamStats.clientCount >= 0 && <StatsCard title="Active Clients" value={teamStats.clientCount} />}
 
-                {teamStats.totalHours >= 0 && <StatsCard title="Total Hours" value={`${roundToTwoDecimals(teamStats.totalHours)} HRS`} />}
-                {teamStats.unpaidHours >= 0 && <StatsCard title="Unpaid Hours" value={`${roundToTwoDecimals(teamStats.unpaidHours)} HRS`} />}
+                {teamStats.totalHours >= 0 && <StatsCard title="Total Hours" value={`${roundToTwoDecimals(teamStats.totalHours)} hrs`} />}
+                {teamStats.unpaidHours >= 0 && <StatsCard title="Unpaid Hours" value={`${roundToTwoDecimals(teamStats.unpaidHours)} hrs`} />}
                 {teamStats.totalHours - teamStats.unpaidHours >= 0 && (
-                    <StatsCard title="Paid Hours" value={`${roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours)} HRS`} />
+                    <StatsCard title="Paid Hours" value={`${roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours)} hrs`} />
                 )}
-                {teamStats.weeklyAverage >= 0 && <StatsCard title="Weekly Average" value={`${roundToTwoDecimals(teamStats.weeklyAverage)} HRS`} />}
+                {teamStats.weeklyAverage >= 0 && <StatsCard title="Weekly Average" value={`${roundToTwoDecimals(teamStats.weeklyAverage)} hrs`} />}
 
                 {renderPaidAmountCards()}
                 {renderUnpaidAmountCards()}
             </div>
-        </div>
+        </section>
     )
 }
