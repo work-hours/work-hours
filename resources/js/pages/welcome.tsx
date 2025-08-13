@@ -78,7 +78,7 @@ export default function Welcome() {
                 <Navbar />
             </div>
 
-            <main className="flex flex-col w-full">
+            <main className="flex flex-col w-full gap-5">
                 <section className="w-full pb-8 pt-24 md:pt-28">
                     <Hero />
                 </section>
@@ -113,7 +113,7 @@ export default function Welcome() {
                     </div>
                 </section>
 
-                <section id="cta" className="w-full bg-gray-50 dark:bg-gray-900 mb-12">
+                <section id="cta" className="w-full bg-gray-50 dark:bg-gray-900">
                     <div className="container mx-auto px-4 md:px-6 lg:px-8">
                         <div className="mx-auto">
                             <CTA />
