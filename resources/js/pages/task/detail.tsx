@@ -223,7 +223,7 @@ export default function TaskDetail({ task }: Props) {
                                             className="min-h-[80px] w-full rounded-md border bg-background p-2 text-sm outline-none focus:ring-2 focus:ring-primary"
                                         />
                                         <div className="flex justify-end">
-                                            <Button type="submit" size="sm" disabled={!data.body.trim()}>
+                                            <Button type="submit" disabled={!data.body.trim()}>
                                                 Post Comment
                                             </Button>
                                         </div>
