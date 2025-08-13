@@ -256,12 +256,17 @@ export default function CreateProject({ teamMembers, clients }: Props) {
                                         onClick={() => window.history.back()}
                                         tabIndex={4}
                                         disabled={processing}
-                                        className="flex items-center gap-2"
+                                        className="flex items-center gap-2 text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
                                     >
                                         <ArrowLeft className="h-4 w-4" />
                                         Back
                                     </Button>
-                                    <Button type="submit" tabIndex={3} disabled={processing} className="flex items-center gap-2">
+                                    <Button
+                                        type="submit"
+                                        tabIndex={3}
+                                        disabled={processing}
+                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white"
+                                    >
                                         {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <FolderPlus className="h-4 w-4" />}
                                         {processing ? 'Creating...' : 'Create Project'}
                                     </Button>

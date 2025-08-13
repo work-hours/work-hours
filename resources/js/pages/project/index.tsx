@@ -248,7 +248,9 @@ export default function Projects() {
                                     label="Export"
                                 />
                                 <Link href={route('project.create')}>
-                                    <Button className="flex items-center gap-2">
+                                    <Button
+                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white"
+                                    >
                                         <FolderPlus className="h-4 w-4" />
                                         <span>Add Project</span>
                                     </Button>
@@ -259,25 +261,25 @@ export default function Projects() {
                         <div className="mt-4 border-t pt-4">
                             <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="search" className="text-xs font-medium">
+                                    <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Search
                                     </Label>
                                     <div className="relative">
                                         <Input
                                             id="search"
-                                            placeholder="Search"
-                                            className="pl-9"
+                                            placeholder="Search project"
+                                            className="border-gray-200 bg-white pl-9 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
                                             value={filters.search}
                                             onChange={(e) => handleFilterChange('search', e.target.value)}
                                         />
                                         <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Search className="h-4 w-4 text-muted-foreground" />
+                                            <Search className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="client" className="text-xs font-medium">
+                                    <Label htmlFor="client" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Client
                                     </Label>
                                     <SearchableSelect
@@ -293,12 +295,12 @@ export default function Projects() {
                                         ]}
                                         placeholder="All Clients"
                                         disabled={processing}
-                                        icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
 
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="team-member" className="text-xs font-medium">
+                                    <Label htmlFor="team-member" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Team Member
                                     </Label>
                                     <SearchableSelect
@@ -314,7 +316,7 @@ export default function Projects() {
                                         ]}
                                         placeholder="All Team Members"
                                         disabled={processing}
-                                        icon={<User className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<User className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
 
@@ -411,168 +413,172 @@ export default function Projects() {
                                 </div>
                             </div>
                         ) : projects.length > 0 ? (
-                            <Table>
-                                <TableHeader>
-                                    <TableHeaderRow>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>Client</TableHead>
-                                        <TableHead>Owner</TableHead>
-                                        <TableHead>Team Members</TableHead>
-                                        <TableHead>Approvers</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableHeaderRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {projects.map((project) => (
-                                        <TableRow key={project.id}>
-                                            <TableCell className="font-medium">
-                                                <div className="flex items-center gap-2">
-                                                    {project.source === 'github' && project.repo_id ? (
-                                                        <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />
-                                                    ) : project.source === 'jira' ? (
-                                                        <JiraIcon className="h-3 w-3 text-blue-600 dark:text-blue-400" />
-                                                    ) : null}
-                                                    {project.name}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {project.client ? project.client.name : <span className="text-muted-foreground/50">No client</span>}
-                                            </TableCell>
-                                            <TableCell className="font-medium">{project.user.name}</TableCell>
-                                            <TableCell>
-                                                {project.team_members && project.team_members.length > 0 ? (
-                                                    <div className="flex flex-wrap gap-1">
-                                                        {project.team_members.map((member) => (
-                                                            <span
-                                                                key={member.id}
-                                                                className="inline-flex items-center bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
-                                                                title={member.email}
-                                                            >
-                                                                {member.name}
-                                                            </span>
-                                                        ))}
+                            <div className="overflow-x-auto">
+                                <Table className="w-full">
+                                    <TableHeader>
+                                        <TableHeaderRow>
+                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Name</TableHead>
+                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Client</TableHead>
+                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Owner</TableHead>
+                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Team Members</TableHead>
+                                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Approvers</TableHead>
+                                            <TableHead className="bg-gray-50 text-right text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Actions</TableHead>
+                                        </TableHeaderRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {projects.map((project) => (
+                                            <TableRow key={project.id} className="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-750">
+                                                <TableCell className="py-3">
+                                                    <div className="flex items-center gap-2">
+                                                        {project.source === 'github' && project.repo_id ? (
+                                                            <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                                                        ) : project.source === 'jira' ? (
+                                                            <JiraIcon className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                                                        ) : null}
+                                                        <span className="font-medium text-gray-800 dark:text-gray-200">{project.name}</span>
                                                     </div>
-                                                ) : (
-                                                    <span className="text-muted-foreground/50">No team members</span>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {project.approvers && project.approvers.length > 0 ? (
-                                                    <div className="flex flex-wrap gap-1">
-                                                        {project.approvers.map((approver) => (
-                                                            <span
-                                                                key={approver.id}
-                                                                className="inline-flex items-center bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-700/10 ring-inset dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30"
-                                                                title={approver.email}
-                                                            >
-                                                                {approver.name}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-muted-foreground/50">No approvers</span>
-                                                )}
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    {project.user.id === auth.user.id && (
-                                                        <ActionButtonGroup>
-                                                            <ActionButton
-                                                                href={route('project.time-logs', project.id)}
-                                                                title="View Time Logs"
-                                                                icon={Clock}
-                                                                label="Logs"
-                                                                variant="info"
-                                                            />
-                                                            {project.source === 'github' && project.repo_id && (
-                                                                <Button
-                                                                    onClick={(e) => {
-                                                                        e.preventDefault()
-                                                                        setLoading(true)
-
-                                                                        syncRepository
-                                                                            .call({
-                                                                                params: { project: project.id },
-                                                                            })
-                                                                            .then((response) => response.json())
-                                                                            .then((data) => {
-                                                                                if (data.success) {
-                                                                                    toast.success('Project synced successfully!')
-                                                                                    getProjects(filters).then()
-                                                                                } else {
-                                                                                    console.error('Error syncing project:', data.error)
-                                                                                    setLoading(false)
-                                                                                }
-                                                                            })
-                                                                            .catch(() => {
-                                                                                setLoading(false)
-                                                                            })
-                                                                    }}
-                                                                    title="Sync with GitHub"
-                                                                    variant="outline"
-                                                                    size="sm"
-                                                                    className="h-7 border-purple-200 bg-purple-50 text-xs text-purple-700 shadow-sm transition-all hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {project.client ? project.client.name : <span className="text-gray-400 dark:text-gray-500">No client</span>}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">{project.user.name}</TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {project.team_members && project.team_members.length > 0 ? (
+                                                        <div className="flex flex-wrap gap-1">
+                                                            {project.team_members.map((member) => (
+                                                                <span
+                                                                    key={member.id}
+                                                                    className="inline-flex items-center bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
+                                                                    title={member.email}
                                                                 >
-                                                                    <GithubIcon className="mr-1 h-3 w-3" />
-                                                                </Button>
-                                                            )}
-                                                            {project.source === 'jira' && (
-                                                                <Button
-                                                                    onClick={(e) => {
-                                                                        e.preventDefault()
-                                                                        setLoading(true)
-
-                                                                        syncProject
-                                                                            .call({
-                                                                                params: { project: project.id },
-                                                                            })
-                                                                            .then((response) => response.json())
-                                                                            .then((data) => {
-                                                                                if (data.success) {
-                                                                                    toast.success('Project synced successfully with Jira!')
-                                                                                    getProjects(filters).then()
-                                                                                } else {
-                                                                                    console.error('Error syncing project with Jira:', data.error)
-                                                                                    setLoading(false)
-                                                                                }
-                                                                            })
-                                                                            .catch((error) => {
-                                                                                console.error('Failed to sync with Jira:', error)
-                                                                                toast.error('Failed to sync with Jira')
-                                                                                setLoading(false)
-                                                                            })
-                                                                    }}
-                                                                    title="Sync with Jira"
-                                                                    variant="outline"
-                                                                    size="sm"
-                                                                    className="h-7 border-blue-200 bg-blue-50 text-xs text-blue-700 shadow-sm transition-all hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/30"
-                                                                >
-                                                                    <JiraIcon className="mr-1 h-3 w-3" />
-                                                                </Button>
-                                                            )}
-                                                            <ActionButton
-                                                                href={route('project.edit', project.id)}
-                                                                title="Edit Project"
-                                                                icon={Edit}
-                                                                variant="warning"
-                                                            />
-                                                            <DeleteProject projectId={project.id} onDelete={() => getProjects(filters)} />
-                                                        </ActionButtonGroup>
+                                                                    {member.name}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-gray-400 dark:text-gray-500">No team members</span>
                                                     )}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {project.approvers && project.approvers.length > 0 ? (
+                                                        <div className="flex flex-wrap gap-1">
+                                                            {project.approvers.map((approver) => (
+                                                                <span
+                                                                    key={approver.id}
+                                                                    className="inline-flex items-center bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-700/10 ring-inset dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30"
+                                                                    title={approver.email}
+                                                                >
+                                                                    {approver.name}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-gray-400 dark:text-gray-500">No approvers</span>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <div className="flex justify-end gap-2">
+                                                        {project.user.id === auth.user.id && (
+                                                            <ActionButtonGroup>
+                                                                <ActionButton
+                                                                    href={route('project.time-logs', project.id)}
+                                                                    title="View Time Logs"
+                                                                    icon={Clock}
+                                                                    label="Logs"
+                                                                    variant="info"
+                                                                />
+                                                                {project.source === 'github' && project.repo_id && (
+                                                                    <Button
+                                                                        onClick={(e) => {
+                                                                            e.preventDefault()
+                                                                            setLoading(true)
+
+                                                                            syncRepository
+                                                                                .call({
+                                                                                    params: { project: project.id },
+                                                                                })
+                                                                                .then((response) => response.json())
+                                                                                .then((data) => {
+                                                                                    if (data.success) {
+                                                                                        toast.success('Project synced successfully!')
+                                                                                        getProjects(filters).then()
+                                                                                    } else {
+                                                                                        console.error('Error syncing project:', data.error)
+                                                                                        setLoading(false)
+                                                                                    }
+                                                                                })
+                                                                                .catch(() => {
+                                                                                    setLoading(false)
+                                                                                })
+                                                                        }}
+                                                                        title="Sync with GitHub"
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        className="h-7 border-purple-200 bg-purple-50 text-xs text-purple-700 shadow-sm transition-all hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
+                                                                    >
+                                                                        <GithubIcon className="mr-1 h-3 w-3" />
+                                                                    </Button>
+                                                                )}
+                                                                {project.source === 'jira' && (
+                                                                    <Button
+                                                                        onClick={(e) => {
+                                                                            e.preventDefault()
+                                                                            setLoading(true)
+
+                                                                            syncProject
+                                                                                .call({
+                                                                                    params: { project: project.id },
+                                                                                })
+                                                                                .then((response) => response.json())
+                                                                                .then((data) => {
+                                                                                    if (data.success) {
+                                                                                        toast.success('Project synced successfully with Jira!')
+                                                                                        getProjects(filters).then()
+                                                                                    } else {
+                                                                                        console.error('Error syncing project with Jira:', data.error)
+                                                                                        setLoading(false)
+                                                                                    }
+                                                                                })
+                                                                                .catch((error) => {
+                                                                                    console.error('Failed to sync with Jira:', error)
+                                                                                    toast.error('Failed to sync with Jira')
+                                                                                    setLoading(false)
+                                                                                })
+                                                                        }}
+                                                                        title="Sync with Jira"
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        className="h-7 border-blue-200 bg-blue-50 text-xs text-blue-700 shadow-sm transition-all hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/30"
+                                                                    >
+                                                                        <JiraIcon className="mr-1 h-3 w-3" />
+                                                                    </Button>
+                                                                )}
+                                                                <ActionButton
+                                                                    href={route('project.edit', project.id)}
+                                                                    title="Edit Project"
+                                                                    icon={Edit}
+                                                                    variant="warning"
+                                                                />
+                                                                <DeleteProject projectId={project.id} onDelete={() => getProjects(filters)} />
+                                                            </ActionButtonGroup>
+                                                        )}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
                         ) : (
-                            <div className="rounded-md border bg-muted/5 p-6">
+                            <div className="rounded-md border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                                    <Folders className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                                    <h3 className="mb-1 text-lg font-medium">No Projects</h3>
-                                    <p className="mb-4 text-muted-foreground">You haven't added any projects yet.</p>
+                                    <Folders className="mb-4 h-12 w-12 text-gray-300 dark:text-gray-600" />
+                                    <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Projects</h3>
+                                    <p className="mb-4 text-gray-500 dark:text-gray-400">You haven't added any projects yet.</p>
                                     <Link href={route('project.create')}>
-                                        <Button className="flex items-center gap-2">
+                                        <Button
+                                            className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm"
+                                        >
                                             <FolderPlus className="h-4 w-4" />
                                             <span>Add Project</span>
                                         </Button>

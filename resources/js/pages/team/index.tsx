@@ -136,7 +136,9 @@ export default function Team({ teamMembers, filters }: Props) {
                             <div className="flex items-center gap-2">
                                 <ExportButton href={route('team.export') + window.location.search} label="Export" />
                                 <Link href={route('team.create')}>
-                                    <Button className="flex items-center gap-2">
+                                    <Button
+                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm"
+                                    >
                                         <UserPlus className="h-4 w-4" />
                                         <span>Add Member</span>
                                     </Button>

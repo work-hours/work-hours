@@ -291,7 +291,10 @@ export default function ProjectTimeLogs({
                                     label="Export"
                                 />
                                 {isCreator && selectedLogs.length > 0 && (
-                                    <Button onClick={markAsPaid} variant="secondary" className="flex items-center gap-2">
+                                    <Button
+                                        onClick={markAsPaid}
+                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white"
+                                    >
                                         <CheckCircle className="h-3 w-3" />
                                         <span>Mark as Paid ({selectedLogs.length})</span>
                                     </Button>
@@ -470,7 +473,7 @@ export default function ProjectTimeLogs({
                             </div>
                             <div className="flex items-center gap-2">
                                 <Link href={`/task/create?project_id=${project.id}`}>
-                                    <Button className="flex items-center gap-2">
+                                    <Button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white">
                                         <Plus className="h-4 w-4" />
                                         <span>Add Task</span>
                                     </Button>
@@ -574,7 +577,7 @@ export default function ProjectTimeLogs({
                                     <h3 className="mb-1 text-lg font-medium">No Tasks</h3>
                                     <p className="mb-4 text-muted-foreground">No tasks have been added to this project yet.</p>
                                     <Link href={`/task/create?project_id=${project.id}`}>
-                                        <Button className="flex items-center gap-2">
+                                        <Button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm text-white">
                                             <Plus className="h-4 w-4" />
                                             <span>Add Task</span>
                                         </Button>
