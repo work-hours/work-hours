@@ -80,19 +80,19 @@ export default function Dashboard() {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="relative mx-auto flex flex-col gap-6 p-3">
-                <div className="relative border-2 border-gray-300 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
+                <div className="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                     <WelcomeSection />
                 </div>
 
                 {loading ? (
-                    <div className="relative border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                    <div className="relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                         <Loader message="Loading dashboard data..." className="h-40" />
                     </div>
                 ) : (
                     <>
                         <StatsCards teamStats={teamStats} />
 
-                        <section className="relative mb-6 border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                        <section className="relative mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             {/* Form-like header */}
                             <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
                                 <div className="flex items-center">
@@ -109,7 +109,7 @@ export default function Dashboard() {
                             </div>
                         </section>
 
-                        <section className="relative mb-6 border-2 border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                        <section className="relative mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             {/* Form-like header */}
                             <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
                                 <div className="flex items-center">

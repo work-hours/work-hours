@@ -12,6 +12,7 @@ export default function Navbar() {
     const isFeaturePage = currentPath.startsWith('/features/')
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [featuresDropdownOpen, setFeaturesDropdownOpen] = useState(false)
+    const [activeHash, setActiveHash] = useState<string>(typeof window !== 'undefined' ? window.location.hash : '')
     const dropdownRef = useRef<HTMLDivElement>(null)
 
     const isLoggedIn = auth && auth.user
@@ -31,9 +32,15 @@ export default function Navbar() {
             }
         }
 
+        function handleHashChange() {
+            setActiveHash(window.location.hash)
+        }
+
         document.addEventListener('mousedown', handleClickOutside)
+        window.addEventListener('hashchange', handleHashChange)
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
+            window.removeEventListener('hashchange', handleHashChange)
         }
     }, [])
 
@@ -151,19 +158,19 @@ export default function Navbar() {
 
                     <a
                         href={isFeaturePage ? '/#ai-section' : '#ai-section'}
-                        className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                        className={`pb-1 text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400 ${activeHash === '#ai-section' ? 'border-b-2 border-primary' : ''}`}
                     >
                         AI Assistant
                     </a>
                     <a
                         href={isFeaturePage ? '/#how-it-works' : '#how-it-works'}
-                        className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                        className={`pb-1 text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400 ${activeHash === '#how-it-works' ? 'border-b-2 border-primary' : ''}`}
                     >
                         How It Works
                     </a>
                     <a
                         href={isFeaturePage ? '/#cta' : '#cta'}
-                        className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                        className={`pb-1 text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400 ${activeHash === '#cta' ? 'border-b-2 border-primary' : ''}`}
                     >
                         Get Started
                     </a>
@@ -288,21 +295,21 @@ export default function Navbar() {
 
                             <a
                                 href={isFeaturePage ? '/#ai-section' : '#ai-section'}
-                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                className={`block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400 ${activeHash === '#ai-section' ? 'border-b-2 border-primary' : ''}`}
                                 onClick={toggleMobileMenu}
                             >
                                 AI Assistant
                             </a>
                             <a
                                 href={isFeaturePage ? '/#how-it-works' : '#how-it-works'}
-                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                className={`block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400 ${activeHash === '#how-it-works' ? 'border-b-2 border-primary' : ''}`}
                                 onClick={toggleMobileMenu}
                             >
                                 How It Works
                             </a>
                             <a
                                 href={isFeaturePage ? '/#cta' : '#cta'}
-                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                className={`block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400 ${activeHash === '#cta' ? 'border-b-2 border-primary' : ''}`}
                                 onClick={toggleMobileMenu}
                             >
                                 Get Started
