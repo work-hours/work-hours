@@ -170,7 +170,6 @@ export default function EditTask({
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
         put(route('task.update', task.id), {
-            forceFormData: true,
             onSuccess: () => {
                 toast.success('Task updated successfully')
             },

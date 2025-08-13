@@ -321,7 +321,7 @@ final class TaskController extends Controller
 
             $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
             $oldStatus = $task->status;
-            $task->update($request->only(['title', 'description', 'status', 'priority', 'due_date']));
+            $task->update($request->only(['project_id', 'title', 'description', 'status', 'priority', 'due_date']));
 
             if ($request->has('assignees')) {
                 $newAssigneeIds = $request->input('assignees');
