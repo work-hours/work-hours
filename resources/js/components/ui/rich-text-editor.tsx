@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import type { ReactQuillProps } from 'react-quill'
+import React, { useEffect, useRef, useState } from 'react'
 
 export type RichTextEditorProps = {
   value: string
@@ -11,17 +10,19 @@ export type RichTextEditorProps = {
 }
 
 export default function RichTextEditor({ value, onChange, placeholder, disabled, className, minRows = 5 }: RichTextEditorProps) {
-  const [Quill, setQuill] = useState<React.ComponentType<ReactQuillProps> | null>(null)
-  const quillRef = useRef<any>(null)
+  const [QuillCtor, setQuillCtor] = useState<unknown>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const editorRef = useRef<unknown>(null)
   const minHeightPx = Math.max(0, Math.round((minRows || 5) * 24))
 
+  // Load Quill (not react-quill) lazily to avoid SSR/Vite issues and reduce bundle
   useEffect(() => {
     let mounted = true
     ;(async () => {
       try {
-        const mod = await import('react-quill')
+        const mod = await import('quill')
         await import('react-quill/dist/quill.snow.css')
-        if (mounted) setQuill(() => mod.default)
+        if (mounted) setQuillCtor(() => mod.default ?? mod)
       } catch (e) {
         console.error('Failed to load editor', e)
       }
@@ -31,75 +32,105 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
     }
   }, [])
 
+  // Initialize Quill when ready
   useEffect(() => {
-    if (!quillRef.current || !Quill) return
-    try {
-      const editor = quillRef.current.getEditor?.()
-      const root: HTMLElement | undefined = editor?.root
-      if (root) {
-        root.style.minHeight = `${minHeightPx}px`
-        root.style.fontFamily = 'inherit'
-        root.style.fontSize = '120%'
-      }
-    } catch {
-        //
-    }
-  }, [Quill, minHeightPx])
+    if (!QuillCtor || !containerRef.current || editorRef.current) return
 
-  const modules = useMemo(
-    () => ({
-      toolbar: [
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        [{ color: [] }, { background: [] }],
-        [{ align: [] }],
-        ['link', 'clean'],
+    const el = document.createElement('div')
+    containerRef.current.appendChild(el)
+
+    const quill = new (QuillCtor as any)(el, {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ color: [] }, { background: [] }],
+          [{ align: [] }],
+          ['link', 'clean'],
+        ],
+        clipboard: { matchVisual: false },
+      },
+      formats: [
+        'header',
+        'bold',
+        'italic',
+        'underline',
+        'strike',
+        'list',
+        'bullet',
+        'color',
+        'background',
+        'align',
+        'link',
       ],
-      clipboard: { matchVisual: false },
-    }),
-    []
-  )
+      placeholder,
+      readOnly: !!disabled,
+    })
 
-  const formats = useMemo(
-    () => [
-      'header',
-      'bold',
-      'italic',
-      'underline',
-      'strike',
-      'list',
-      'bullet',
-      'color',
-      'background',
-      'align',
-      'link',
-    ],
-    []
-  )
+    // Set initial content
+    if (value) {
+      quill.clipboard.dangerouslyPasteHTML(value)
+    }
 
-  if (Quill == null) {
-    return (
-      <div
-        className={`rounded-md border bg-background p-3 text-sm text-muted-foreground ${className ?? ''}`}
-        style={{ minHeight: minHeightPx, fontSize: '120%' }}
-      >
-        {placeholder ?? 'Loading editor...'}
-      </div>
-    )
-  }
+    const handleChange = () => {
+      const html = (quill.root as HTMLElement).innerHTML
+      onChange(html)
+    }
 
-  const QuillComponent = Quill as unknown as any
+    quill.on('text-change', handleChange)
+    editorRef.current = quill
+
+    // Apply styles
+    const root: HTMLElement = quill.root as HTMLElement
+    root.style.minHeight = `${minHeightPx}px`
+    root.style.fontFamily = 'inherit'
+    root.style.fontSize = '120%'
+
+    return () => {
+      quill.off('text-change', handleChange)
+      editorRef.current = null
+      if (containerRef.current) containerRef.current.innerHTML = ''
+    }
+  }, [QuillCtor, containerRef])
+
+  // Keep readOnly, placeholder, and min height in sync
+  useEffect(() => {
+    const quill = editorRef.current as any
+    if (!quill) return
+    quill.enable(!disabled)
+    ;(quill.root as HTMLElement).setAttribute('data-placeholder', placeholder || '')
+    const root: HTMLElement = quill.root as HTMLElement
+    root.style.minHeight = `${minHeightPx}px`
+  }, [disabled, placeholder, minHeightPx])
+
+  // Keep external value in sync if it changes programmatically
+  useEffect(() => {
+    const quill = editorRef.current as any
+    if (!quill) return
+    const currentHtml = (quill.root as HTMLElement).innerHTML
+    if (value !== currentHtml) {
+      const sel = quill.getSelection()
+      quill.clipboard.dangerouslyPasteHTML(value || '')
+      if (sel) quill.setSelection(sel)
+    }
+  }, [value])
+
   return (
-    <QuillComponent
-      ref={quillRef}
-      theme="snow"
-      value={value}
-      onChange={onChange}
-      readOnly={!!disabled}
-      modules={modules}
-      formats={formats}
-      placeholder={placeholder}
-      className={className}
-    />
+    <div
+      className={`rounded-md border bg-background text-sm ${className ?? ''}`}
+      style={{ fontSize: '120%' }}
+    >
+      {/* Container where Quill will mount */}
+      <div ref={containerRef} />
+      {!QuillCtor && (
+        <div
+          className="p-3 text-muted-foreground"
+          style={{ minHeight: minHeightPx }}
+        >
+          {placeholder ?? 'Loading editor...'}
+        </div>
+      )}
+    </div>
   )
 }
