@@ -66,7 +66,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     }, [])
 
     return (
-        <div className="flex min-h-screen bg-[#f8f6e9] dark:bg-gray-900">
+        <div className="flex min-h-screen bg-background dark:bg-gray-900">
             <Background />
 
             {/* Left Sidebar */}

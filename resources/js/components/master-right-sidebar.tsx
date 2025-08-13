@@ -46,7 +46,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
 
     return (
         <div
-            className={`sticky top-0 flex h-screen flex-col border-l border-gray-300 bg-[#f8f6e9] shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-56'}`}
+            className={`sticky top-0 flex h-screen flex-col border-l border-gray-300 bg-background shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-56'}`}
         >
             <Background showPunches={false} showMarginLine={false} />
 

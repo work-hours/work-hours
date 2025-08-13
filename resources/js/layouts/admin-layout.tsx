@@ -30,7 +30,7 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
     }, [])
 
     return (
-        <div className="flex min-h-screen bg-[#f8f6e9] dark:bg-gray-900">
+        <div className="flex min-h-screen bg-background dark:bg-gray-900">
             <Head title={`${title} - Administration`} />
             <Background />
 

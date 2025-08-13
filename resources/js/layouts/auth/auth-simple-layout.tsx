@@ -12,7 +12,7 @@ interface AuthLayoutProps {
 
 export default function AuthSimpleLayout({ children, title, description }: PropsWithChildren<AuthLayoutProps>) {
     return (
-        <div className="relative flex min-h-svh flex-col items-center justify-center bg-[#f8f6e9] p-6 md:p-10 dark:bg-gray-900">
+        <div className="relative flex min-h-svh flex-col items-center justify-center bg-background p-6 md:p-10 dark:bg-gray-900">
             <Background />
 
             <div className="relative z-10 w-full max-w-md">
