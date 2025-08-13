@@ -67,6 +67,11 @@ Route::middleware('auth')->middleware('verified')->group(function (): void {
     Route::put('task/{task}/comments/{comment}', [TaskController::class, 'updateComment'])->name('task.comments.update');
     Route::delete('task/{task}/comments/{comment}', [TaskController::class, 'destroyComment'])->name('task.comments.destroy');
 
+    // Task attachments
+    Route::delete('task/{task}/attachments/{filename}', [TaskController::class, 'destroyAttachment'])
+        ->where('filename', '[^/]+')
+        ->name('task.attachments.destroy');
+
     Route::get('time-log', [TimeLogController::class, 'index'])->name('time-log.index');
     Route::get('time-log/create', [TimeLogController::class, 'create'])->name('time-log.create');
     Route::get('time-log/{timeLog}/edit', [TimeLogController::class, 'edit'])->name('time-log.edit');

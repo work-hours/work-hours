@@ -297,6 +297,15 @@ final class TaskController extends Controller
         $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
         $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
 
+        $files = collect(Storage::disk('public')->files('tasks/' . $task->id))
+            ->map(function (string $path): array {
+                return [
+                    'name' => basename($path),
+                    'url' => Storage::disk('public')->url($path),
+                    'size' => Storage::disk('public')->size($path),
+                ];
+            });
+
         return Inertia::render('task/edit', [
             'task' => $task,
             'projects' => $projects,
@@ -305,6 +314,7 @@ final class TaskController extends Controller
             'taskTags' => $taskTags,
             'isGithub' => $isGithub,
             'isJira' => $isJira,
+            'attachments' => $files,
         ]);
     }
 
@@ -492,5 +502,24 @@ final class TaskController extends Controller
         }
 
         $task->tags()->sync($tagIds);
+    }
+
+    /**
+     * Delete a specific attachment from the task
+     */
+    public function destroyAttachment(Task $task, string $filename): void
+    {
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
+
+        // Ensure we only operate on a filename, not a path
+        $basename = basename($filename);
+        $path = 'tasks/' . $task->id . '/' . $basename;
+
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
+
+        back()->throwResponse();
     }
 }

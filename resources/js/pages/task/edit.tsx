@@ -2,7 +2,7 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import TagInput from '@/components/ui/tag-input'
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 import { Head, useForm } from '@inertiajs/react'
-import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Save } from 'lucide-react'
+import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Save, Trash2 } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -15,6 +15,7 @@ import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 import FileDropzone from '@/components/ui/file-dropzone'
 import RichTextEditor from '@/components/ui/rich-text-editor'
@@ -46,6 +47,12 @@ type TaskForm = {
     attachments?: File[]
 }
 
+type Attachment = {
+    name: string
+    url: string
+    size: number
+}
+
 type Props = {
     task: {
         id: number
@@ -62,6 +69,7 @@ type Props = {
     taskTags: string[]
     isGithub: boolean
     isJira: boolean
+    attachments?: Attachment[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -75,7 +83,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-export default function EditTask({ task, projects, potentialAssignees: initialAssignees, assignedUsers, taskTags, isGithub, isJira }: Props) {
+export default function EditTask({ task, projects, potentialAssignees: initialAssignees, assignedUsers, taskTags, isGithub, isJira, attachments = [] }: Props) {
     const { data, setData, put, processing, errors } = useForm<TaskForm>({
         project_id: task.project_id.toString(),
         title: task.title,
@@ -93,6 +101,29 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
     const [loadingAssignees, setLoadingAssignees] = useState<boolean>(false)
 
     const [dueDate, setDueDate] = useState<Date | null>(data.due_date ? new Date(data.due_date) : null)
+
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [selectedAttachment, setSelectedAttachment] = useState<Attachment | null>(null)
+
+    const { delete: destroyAttachment } = useForm({})
+
+    const openDeleteAttachment = (att: Attachment) => {
+        setSelectedAttachment(att)
+        setDeleteDialogOpen(true)
+    }
+
+    const confirmDeleteAttachment: FormEventHandler = (e) => {
+        e.preventDefault()
+        if (!selectedAttachment) return
+        destroyAttachment(route('task.attachments.destroy', [task.id, selectedAttachment.name]), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setDeleteDialogOpen(false)
+                toast.success('Attachment deleted')
+            },
+            onError: () => toast.error('Failed to delete attachment'),
+        })
+    }
 
     useEffect(() => {
         if (data.project_id) {
@@ -416,6 +447,58 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                     description="Drag & drop files here, or click to select"
                                     disabled={processing}
                                 />
+
+                                {attachments && attachments.length > 0 && (
+                                    <div className="mt-4">
+                                        <Label className="text-sm font-medium">Existing Attachments</Label>
+                                        <ul className="mt-2 divide-y rounded-md border">
+                                            {attachments.map((att) => (
+                                                <li key={att.name} className="flex items-center justify-between gap-3 p-3 text-sm">
+                                                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                                                        <a href={att.url} target="_blank" rel="noopener noreferrer" className="truncate text-blue-600 hover:underline dark:text-blue-400">
+                                                            {att.name}
+                                                        </a>
+                                                        <span className="shrink-0 text-xs text-muted-foreground">{(att.size / 1024).toFixed(1)} KB</span>
+                                                    </div>
+                                                    <div className="shrink-0">
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 w-7 border-red-200 bg-red-50 p-0 text-red-700 hover:bg-red-100 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
+                                                            onClick={() => openDeleteAttachment(att)}
+                                                            aria-label={`Delete ${att.name}`}
+                                                            title="Delete"
+                                                        >
+                                                            <Trash2 className="h-3 w-3" />
+                                                            <span className="sr-only">Delete</span>
+                                                        </Button>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                                    <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>Delete Attachment</DialogTitle>
+                                            <DialogDescription>
+                                                Are you sure you want to delete
+                                                {selectedAttachment ? ` "${selectedAttachment.name}"` : ''}? This action cannot be undone.
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <DialogFooter>
+                                            <Button type="button" variant="secondary" onClick={() => setDeleteDialogOpen(false)}>
+                                                Cancel
+                                            </Button>
+                                            <Button type="button" variant="destructive" onClick={confirmDeleteAttachment}>
+                                                Delete
+                                            </Button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
 
                                 <div className="mt-4 flex justify-end gap-3">
                                     <Button
