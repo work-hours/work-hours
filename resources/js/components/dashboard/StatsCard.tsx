@@ -20,7 +20,6 @@ export default function StatsCard({ title, icon, value, description, trend }: St
     return (
         <Card
             className={
-                // Theme-aligned accent using primary color; subtle hover polish
                 'overflow-hidden w-full transition-colors border-l-4 [border-left-color:rgba(var(--color-primary),0.65)] dark:[border-left-color:rgba(var(--color-primary),0.55)] hover:shadow-sm'
             }
         >

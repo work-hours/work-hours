@@ -106,46 +106,40 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
     })
 
     return (
-        <div className="p-2">
+        <div className="relative p-2">
             <Background showPunches={false} showMarginLine={false} />
-            {/* Timesheet Form Header */}
-            <div className="mb-6 border-b-2 border-gray-400 pb-4 dark:border-gray-600">
+            {/* Header */}
+            <div className="mb-6 pb-3">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-lg font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">TIMESHEET SUMMARY</h2>
-                        <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">FORM TS-001 | REV. 07/2025</div>
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">Timesheet summary</h2>
+                        <div className="mt-0.5 text-xs text-muted-foreground">FORM TS-001 · Rev. 07/2025</div>
                     </div>
                     <div className="text-right">
-                        <div className="border-2 border-gray-400 bg-white p-2 dark:border-gray-600 dark:bg-gray-800">
-                            <div className="text-xs text-gray-500 uppercase dark:text-gray-400">DATE PREPARED</div>
-                            <div className="text-sm font-bold text-gray-800 dark:text-gray-200">{currentDate}</div>
+                        <div className="rounded-md border border-border/60 bg-card px-3 py-2 shadow-sm">
+                            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Date prepared</div>
+                            <div className="text-sm font-semibold text-foreground">{currentDate}</div>
                         </div>
                     </div>
                 </div>
+                <div className="mt-3 h-px w-full bg-[rgba(var(--color-primary),0.25)]" />
             </div>
 
             {/* Team Information Section */}
             {(teamStats.count >= 0 || teamStats.clientCount >= 0) && (
-                <div className="mb-6 border-2 border-gray-400 bg-white dark:border-gray-600 dark:bg-gray-800">
-                    {/* Section header with form styling */}
-                    <div className="border-b-2 border-gray-400 bg-gray-200 px-4 py-3 dark:border-gray-600 dark:bg-gray-700">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-6 w-6 items-center justify-center border-2 border-gray-500 bg-white dark:border-gray-400 dark:bg-gray-600">
-                                    <span className="text-xs font-bold text-gray-700 dark:text-gray-300">A</span>
-                                </div>
-                                <h3 className="text-sm font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">
-                                    PERSONNEL & CLIENT DATA
-                                </h3>
-                            </div>
-                            <div className="flex gap-2">
-                                <div className="text-xs text-gray-500 dark:text-gray-400">STATUS:</div>
-                                <div className="h-4 w-4 border border-gray-400 bg-green-200 dark:border-gray-500 dark:bg-green-700"></div>
-                                <div className="text-xs text-gray-600 dark:text-gray-300">ACTIVE</div>
-                            </div>
+                <div className="mb-6 rounded-lg border border-border/60 bg-card shadow-sm">
+                    <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
+                        <div className="flex items-center gap-2">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-[rgba(var(--color-primary),0.08)] text-[11px] font-semibold text-foreground">A</div>
+                            <h3 className="text-sm font-semibold text-foreground">Personnel & Clients</h3>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <div>Status:</div>
+                            <div className="h-3 w-3 rounded-sm bg-[rgba(34,197,94,0.45)]" />
+                            <div className="text-foreground/80">Active</div>
                         </div>
                     </div>
-                    <div className="bg-amber-25 dark:bg-gray-850 p-4">
+                    <div className="p-4">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {teamStats.count >= 0 && (
                                 <StatsCard
@@ -176,24 +170,18 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 teamStats.unpaidHours >= 0 ||
                 teamStats.totalHours - teamStats.unpaidHours >= 0 ||
                 teamStats.weeklyAverage >= 0) && (
-                <div className="mb-6 border-2 border-gray-400 bg-white dark:border-gray-600 dark:bg-gray-800">
-                    <div className="border-b-2 border-gray-400 bg-gray-200 px-4 py-3 dark:border-gray-600 dark:bg-gray-700">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-6 w-6 items-center justify-center border-2 border-gray-500 bg-white dark:border-gray-400 dark:bg-gray-600">
-                                    <span className="text-xs font-bold text-gray-700 dark:text-gray-300">B</span>
-                                </div>
-                                <h3 className="text-sm font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">
-                                    HOURS WORKED & ATTENDANCE
-                                </h3>
-                            </div>
-                            <div className="flex gap-2">
-                                <div className="text-xs text-gray-500 dark:text-gray-400">PERIOD:</div>
-                                <div className="border-b border-dotted border-gray-400 text-xs text-gray-600 dark:text-gray-300">CURRENT</div>
-                            </div>
+                <div className="mb-6 rounded-lg border border-border/60 bg-card shadow-sm">
+                    <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
+                        <div className="flex items-center gap-2">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-[rgba(var(--color-primary),0.08)] text-[11px] font-semibold text-foreground">B</div>
+                            <h3 className="text-sm font-semibold text-foreground">Hours & Attendance</h3>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <div>Period:</div>
+                            <div className="rounded-sm bg-[rgba(var(--color-primary),0.08)] px-1.5 py-0.5 text-foreground/80">Current</div>
                         </div>
                     </div>
-                    <div className="bg-amber-25 dark:bg-gray-850 p-4">
+                    <div className="p-4">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {teamStats.totalHours >= 0 && (
                                 <StatsCard
@@ -248,20 +236,14 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 (teamStats.paidAmountsByCurrency && Object.values(teamStats.paidAmountsByCurrency).some((amount) => amount >= 0)) ||
                 teamStats.unpaidAmount >= 0 ||
                 (teamStats.unpaidAmountsByCurrency && Object.values(teamStats.unpaidAmountsByCurrency).some((amount) => amount >= 0))) && (
-                <div className="mb-6 border-2 border-gray-400 bg-white dark:border-gray-600 dark:bg-gray-800">
-                    <div className="border-b-2 border-gray-400 bg-gray-200 px-4 py-3 dark:border-gray-600 dark:bg-gray-700">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-6 w-6 items-center justify-center border-2 border-gray-500 bg-white dark:border-gray-400 dark:bg-gray-600">
-                                    <span className="text-xs font-bold text-gray-700 dark:text-gray-300">C</span>
-                                </div>
-                                <h3 className="text-sm font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">
-                                    COMPENSATION & BILLING
-                                </h3>
-                            </div>
+                <div className="mb-6 rounded-lg border border-border/60 bg-card shadow-sm">
+                    <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
+                        <div className="flex items-center gap-2">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-[rgba(var(--color-primary),0.08)] text-[11px] font-semibold text-foreground">C</div>
+                            <h3 className="text-sm font-semibold text-foreground">Compensation & Billing</h3>
                         </div>
                     </div>
-                    <div className="bg-amber-25 dark:bg-gray-850 p-4">
+                    <div className="p-4">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {renderPaidAmountCards()}
                             {renderUnpaidAmountCards()}
