@@ -1,4 +1,5 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { ReactNode } from 'react'
 
 interface TrendInfo {
@@ -9,33 +10,45 @@ interface TrendInfo {
 
 interface StatsCardProps {
     title: string
-    icon: ReactNode
+    icon?: ReactNode
     value: string | number
     description?: string
     trend?: TrendInfo
     borderColor?: string
 }
 
-export default function StatsCard({ title, icon, value, description, trend }: StatsCardProps) {
+export default function StatsCard({ title, icon, value, description, trend, borderColor = 'primary' }: StatsCardProps) {
     return (
         <Card
-            className={
-                'overflow-hidden w-full transition-colors border-l-4 [border-left-color:rgba(var(--color-primary),0.65)] dark:[border-left-color:rgba(var(--color-primary),0.55)] hover:shadow-sm'
-            }
+            className={cn(
+                'overflow-hidden w-full transition-all border-l-4 hover:shadow-md',
+                {
+                    'border-l-primary': borderColor === 'primary',
+                    'border-l-green-500': borderColor === 'green-500',
+                    'border-l-blue-500': borderColor === 'blue-500',
+                    'border-l-amber-500': borderColor === 'amber-500',
+                    'border-l-purple-500': borderColor === 'purple-500',
+                    'border-l-red-500': borderColor === 'red-500',
+                }
+            )}
         >
-            <CardContent>
-                <div className="flex items-start justify-between">
+            <CardContent className="p-3">
+                <div className="flex items-center justify-between">
                     <CardTitle className="text-[10px] tracking-wider font-extrabold uppercase text-foreground/80">
                         {title}
                     </CardTitle>
-                    <div className="flex h-6 w-6 items-center justify-center bg-[rgba(var(--color-primary),0.08)] dark:bg-[rgba(var(--color-primary),0.12)]">
-                        <div className="h-4 w-4 text-muted-foreground">{icon}</div>
-                    </div>
+                    {icon && (
+                        <div className="flex h-5 w-5 items-center justify-center rounded-sm bg-[rgba(var(--color-primary),0.08)] dark:bg-[rgba(var(--color-primary),0.12)]">
+                            <div className="h-3 w-3 text-muted-foreground">{icon}</div>
+                        </div>
+                    )}
                 </div>
-                <div className="mt-1 text-xl font-bold tracking-tight text-foreground">{value}</div>
-                {description && <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">{description}</p>}
+                <div className="flex items-baseline gap-x-2 mt-1">
+                    <span className="text-lg font-bold tracking-tight text-foreground">{value}</span>
+                    {description && <span className="text-[10px] text-muted-foreground">{description}</span>}
+                </div>
                 {trend && (
-                    <div className={`mt-1.5 flex items-center gap-1 text-[11px] ${trend.color}`}>
+                    <div className={`mt-1 flex items-center gap-1 text-[10px] ${trend.color}`}>
                         {trend.icon}
                         <span>{trend.text}</span>
                     </div>
