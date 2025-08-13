@@ -224,8 +224,8 @@ export default function ProjectTimeLogs({
                 )}
 
                 {/* Time Logs Card with Filters */}
-                <Card className="transition-all hover:shadow-md">
-                    <CardHeader className="">
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">{project.name} - Time Logs</CardTitle>
@@ -302,10 +302,10 @@ export default function ProjectTimeLogs({
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t pt-4">
+                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
                             <form onSubmit={submit} className="flex w-full flex-row flex-wrap gap-4">
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="start-date" className="text-xs font-medium">
+                                    <Label htmlFor="start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Start Date
                                     </Label>
                                     <DatePicker
@@ -317,7 +317,7 @@ export default function ProjectTimeLogs({
                                         customInput={
                                             <CustomInput
                                                 id="start-date"
-                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select start date"
                                             />
@@ -326,7 +326,7 @@ export default function ProjectTimeLogs({
                                 </div>
 
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="end-date" className="text-xs font-medium">
+                                    <Label htmlFor="end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         End Date
                                     </Label>
                                     <DatePicker
@@ -338,7 +338,7 @@ export default function ProjectTimeLogs({
                                         customInput={
                                             <CustomInput
                                                 id="end-date"
-                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select end date"
                                             />
@@ -347,22 +347,22 @@ export default function ProjectTimeLogs({
                                 </div>
 
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="user" className="text-xs font-medium">
+                                    <Label htmlFor="user" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Team Member
                                     </Label>
                                     <SearchableSelect
                                         id="user"
                                         value={data.user}
                                         onChange={(value) => setData('user', value)}
-                                        options={[{ id: '', name: 'Team' }, ...teamMembers]}
+                                        options={[{ id: '', name: 'Team Members' }, ...teamMembers]}
                                         placeholder="Select team member"
                                         disabled={processing}
-                                        icon={<User className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<User className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
 
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="is-paid" className="text-xs font-medium">
+                                    <Label htmlFor="is-paid" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Payment Status
                                     </Label>
                                     <SearchableSelect
@@ -370,17 +370,17 @@ export default function ProjectTimeLogs({
                                         value={data['is-paid']}
                                         onChange={(value) => setData('is-paid', value)}
                                         options={[
-                                            { id: '', name: 'All Statuses' },
+                                            { id: '', name: 'Statuses' },
                                             { id: 'true', name: 'Paid' },
                                             { id: 'false', name: 'Unpaid' },
                                         ]}
                                         placeholder="Select status"
                                         disabled={processing}
-                                        icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<CheckCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="status" className="text-xs font-medium">
+                                    <Label htmlFor="status" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Approval Status
                                     </Label>
                                     <SearchableSelect
@@ -388,22 +388,22 @@ export default function ProjectTimeLogs({
                                         value={data.status}
                                         onChange={(value) => setData('status', value)}
                                         options={[
-                                            { id: '', name: 'All Statuses' },
+                                            { id: '', name: 'Statuses' },
                                             { id: 'pending', name: 'Pending' },
                                             { id: 'approved', name: 'Approved' },
                                             { id: 'rejected', name: 'Rejected' },
                                         ]}
                                         placeholder="Select approval status"
                                         disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
                                     <Button
                                         type="submit"
-                                        className="flex h-9 w-9 items-center justify-center p-0"
-                                        title="Apply filters"
                                         disabled={processing}
+                                        className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
+                                        title="Apply filters"
                                     >
                                         <Search className="h-4 w-4" />
                                     </Button>
@@ -426,7 +426,7 @@ export default function ProjectTimeLogs({
                                                 preserveState: true,
                                             })
                                         }}
-                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 dark:border-gray-600 p-0 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
@@ -435,7 +435,7 @@ export default function ProjectTimeLogs({
                             </form>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {timeLogs.length > 0 ? (
                             <TimeLogTable
                                 timeLogs={timeLogs as TimeLogEntry[]}
