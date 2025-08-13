@@ -577,7 +577,7 @@ export default function EditInvoice({ invoice }: Props) {
                                 <CardTitle className="text-lg">Invoice Items</CardTitle>
                                 <CardDescription>Add or update the products or services you're invoicing for</CardDescription>
                             </div>
-                            <Button type="button" onClick={addItem} disabled={processing} className="flex items-center gap-2">
+                            <Button type="button" onClick={addItem} disabled={processing} className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
                                 <Plus className="h-4 w-4" />
                                 Add Item
                             </Button>
