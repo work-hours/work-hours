@@ -16,20 +16,27 @@ interface StatsCardProps {
     borderColor?: string
 }
 
-export default function StatsCard({ title, icon, value, description, trend, borderColor = 'blue-500' }: StatsCardProps) {
+export default function StatsCard({ title, icon, value, description, trend }: StatsCardProps) {
     return (
         <Card
-            className={`overflow-hidden border-l-4 border-l-${borderColor} dark:border-l-${borderColor.replace('-500', '-400')} w-full transition-colors`}
+            className={
+                // Theme-aligned accent using primary color; subtle hover polish
+                'overflow-hidden w-full transition-colors border-l-4 [border-left-color:rgba(var(--color-primary),0.65)] dark:[border-left-color:rgba(var(--color-primary),0.55)] hover:shadow-sm'
+            }
         >
-            <CardContent className="">
-                <div className="flex flex-row items-center justify-between">
-                    <CardTitle className="text-xs font-bold uppercase">{title}</CardTitle>
-                    <div className="h-3 w-3 text-gray-700">{icon}</div>
+            <CardContent>
+                <div className="flex items-start justify-between">
+                    <CardTitle className="text-[10px] tracking-wider font-extrabold uppercase text-foreground/80">
+                        {title}
+                    </CardTitle>
+                    <div className="flex h-6 w-6 items-center justify-center bg-[rgba(var(--color-primary),0.08)] dark:bg-[rgba(var(--color-primary),0.12)]">
+                        <div className="h-4 w-4 text-muted-foreground">{icon}</div>
+                    </div>
                 </div>
-                <div className="text-lg font-bold">{value}</div>
-                {description && <p className="text-[10px] text-gray-700">{description}</p>}
+                <div className="mt-1 text-xl font-bold tracking-tight text-foreground">{value}</div>
+                {description && <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">{description}</p>}
                 {trend && (
-                    <div className={`flex items-center text-[10px] ${trend.color} `}>
+                    <div className={`mt-1.5 flex items-center gap-1 text-[11px] ${trend.color}`}>
                         {trend.icon}
                         <span>{trend.text}</span>
                     </div>
