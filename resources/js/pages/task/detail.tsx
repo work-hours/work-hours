@@ -226,26 +226,25 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                             {/* Source Link if available */}
                             {task.meta?.source_url && (
                                 <div className="space-y-2">
-                                    <h3 className="ml-4 flex items-center gap-2 text-lg font-semibold text-primary">
-                                        <Info className="h-5 w-5 text-primary" /> Source
-                                    </h3>
-                                    <div className="grid grid-cols-1 gap-4 rounded-lg border bg-muted/40 p-4">
+                                    <div className="grid grid-cols-1 gap-4 bg-muted/40 p-4">
                                         <div className="space-y-2">
                                             {(task.meta?.source || task.meta?.source_number) && (
                                                 <div className="text-sm text-muted-foreground">
                                                     {task.meta?.source && <span className="font-medium text-foreground">{task.meta.source}</span>}
                                                     {task.meta?.source && task.meta?.source_number && <span className="mx-1">•</span>}
                                                     {task.meta?.source_number && <span>#{task.meta.source_number}</span>}
+                                                    <span className="mx-1">•</span>
+                                                    <a
+                                                        href={task.meta.source_url}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                        className="inline-flex items-center text-primary hover:underline"
+                                                    >
+                                                        <ExternalLink className="h-4 w-4" />
+                                                    </a>
                                                 </div>
                                             )}
-                                            <a
-                                                href={task.meta.source_url}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="inline-flex items-center gap-2 text-primary hover:underline"
-                                            >
-                                                <ExternalLink className="h-4 w-4" /> Open Source Item
-                                            </a>
+
                                         </div>
                                     </div>
                                 </div>
