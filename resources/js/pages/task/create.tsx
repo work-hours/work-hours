@@ -148,17 +148,17 @@ export default function CreateTask({ projects }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Task" />
-            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Add Task</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new task</p>
+                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Add Task</h1>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Create a new task</p>
                 </section>
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Task Details</CardTitle>
-                        <CardDescription>Enter the information for the new task</CardDescription>
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                        <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Task Details</CardTitle>
+                        <CardDescription className="text-sm text-gray-500 dark:text-gray-400">Enter the information for the new task</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>

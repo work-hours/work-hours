@@ -300,16 +300,16 @@ export default function Tasks() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Tasks" />
-            <div className="mx-auto flex flex-col gap-6 p-3">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Task Management</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your tasks</p>
+                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Task Management</h1>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your tasks</p>
                 </section>
 
-                {/* Time Logs Card with filters in header */}
-                <Card className="transition-all hover:shadow-md">
-                    <CardHeader className="">
+                {/* Tasks Card with filters in header */}
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Tasks</CardTitle>
@@ -320,7 +320,7 @@ export default function Tasks() {
                             <div className="flex items-center gap-2">
                                 <ExportButton href={route('task.export')} label="Export" />
                                 <Link href={route('task.create')}>
-                                    <Button className="flex items-center gap-2">
+                                    <Button className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm">
                                         <Plus className="h-4 w-4" />
                                         <span>Add Task</span>
                                     </Button>
@@ -328,7 +328,7 @@ export default function Tasks() {
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t pt-4">
+                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
                             <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
                                 {/* Search */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
@@ -603,12 +603,12 @@ export default function Tasks() {
                             <Table>
                                 <TableHeader>
                                     <TableHeaderRow>
-                                        <TableHead>Title</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Priority</TableHead>
-                                        <TableHead>Due Date</TableHead>
-                                        <TableHead>Assignees</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
+                                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Title</TableHead>
+                                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Status</TableHead>
+                                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Priority</TableHead>
+                                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Due Date</TableHead>
+                                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Assignees</TableHead>
+                                        <TableHead className="bg-gray-50 text-right text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Actions</TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
                                 <TableBody>

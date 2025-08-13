@@ -195,17 +195,17 @@ export default function EditTask({
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Task" />
-            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Edit Task</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Update information for {task.title}</p>
+                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Edit Task</h1>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Update information for {task.title}</p>
                 </section>
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Task Information</CardTitle>
-                        <CardDescription>Update the task's details</CardDescription>
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                        <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Task Information</CardTitle>
+                        <CardDescription className="text-sm text-gray-500 dark:text-gray-400">Update the task's details</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
