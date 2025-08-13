@@ -1,4 +1,6 @@
 import { ExportButton } from '@/components/action-buttons'
+import AddNewButton from '@/components/add-new-button'
+import FilterButton from '@/components/filter-button'
 import StatsCards from '@/components/dashboard/StatsCards'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -324,30 +326,35 @@ export default function TimeLog({
                             <div className="flex gap-2">
                                 <ExportButton href={route('time-log.export') + window.location.search} label="Export" />
                                 <a href={route('time-log.template')} className="inline-block">
-                                    <Button variant="outline" className="flex items-center gap-2">
+                                    <Button
+                                        variant="outline"
+                                        className="flex items-center gap-2 border-gray-200 bg-white text-gray-700 transition-all duration-200 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                                    >
                                         <FileSpreadsheet className="h-3 w-3" />
                                         <span>Template</span>
                                     </Button>
                                 </a>
-                                <Button variant="outline" className="flex items-center gap-2" onClick={() => setImportDialogOpen(true)}>
+                                <Button
+                                    variant="outline"
+                                    className="flex items-center gap-2 border-gray-200 bg-white text-gray-700 transition-all duration-200 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                                    onClick={() => setImportDialogOpen(true)}
+                                >
                                     <Upload className="h-3 w-3" />
                                     <span>Import</span>
                                 </Button>
                                 {selectedLogs.length > 0 && (
                                     <Button
                                         onClick={markAsPaid}
-                                        className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                        className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                                     >
                                         <CheckCircle className="h-3 w-3" />
                                         <span>Mark as Paid ({selectedLogs.length})</span>
                                     </Button>
                                 )}
-                                <Link href={route('time-log.create')}>
-                                    <Button className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
-                                        <ClockIcon className="h-3 w-3" />
-                                        <span>Log Time</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('time-log.create')}>
+                                    <ClockIcon className="h-3 w-3" />
+                                    <span>Log Time</span>
+                                </AddNewButton>
                             </div>
                         </div>
 
@@ -456,18 +463,12 @@ export default function TimeLog({
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-                                        title="Apply filters"
-                                    >
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={
                                             processing ||
                                             (!data['start-date'] &&
@@ -490,11 +491,10 @@ export default function TimeLog({
                                                 preserveState: true,
                                             })
                                         }}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 p-0 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
                         </div>
