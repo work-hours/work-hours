@@ -2,6 +2,7 @@ import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/acti
 import DeleteTeamMember from '@/components/delete-team-member'
 import { Button } from '@/components/ui/button'
 import FilterButton from '@/components/filter-button'
+import AddNewButton from '@/components/add-new-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
@@ -137,12 +138,10 @@ export default function Team({ teamMembers, filters }: Props) {
                             <div className="flex items-center gap-2">
                                 <ExportButton href={route('team.export') + window.location.search} label="Export" />
                                 <Link href={route('team.create')}>
-                                    <Button
-                                        className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm"
-                                    >
+                                    <AddNewButton>
                                         <UserPlus className="h-4 w-4" />
                                         <span>Add Member</span>
-                                    </Button>
+                                    </AddNewButton>
                                 </Link>
                             </div>
                         </div>
@@ -300,10 +299,10 @@ export default function Team({ teamMembers, filters }: Props) {
                                     <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Team Members</h3>
                                     <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You haven't added any team members yet.</p>
                                     <Link href={route('team.create')}>
-                                        <Button className="flex items-center gap-2">
+                                        <AddNewButton>
                                             <UserPlus className="h-4 w-4" />
                                             <span>Add Team Member</span>
-                                        </Button>
+                                        </AddNewButton>
                                     </Link>
                                 </div>
                             </div>
