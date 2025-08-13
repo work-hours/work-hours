@@ -209,7 +209,7 @@ final class TaskController extends Controller
             if ($request->hasFile('attachments')) {
                 foreach ($request->file('attachments') as $file) {
                     if ($file) {
-                        $file->store('tasks/' . $task->id, 'public');
+                        $file->storeAs('tasks/' . $task->id, $file->getClientOriginalName(), 'public');
                     }
                 }
             }
@@ -298,13 +298,11 @@ final class TaskController extends Controller
         $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
 
         $files = collect(Storage::disk('public')->files('tasks/' . $task->id))
-            ->map(function (string $path): array {
-                return [
-                    'name' => basename($path),
-                    'url' => Storage::disk('public')->url($path),
-                    'size' => Storage::disk('public')->size($path),
-                ];
-            });
+            ->map(fn (string $path): array => [
+                'name' => basename($path),
+                'url' => Storage::disk('public')->url($path),
+                'size' => Storage::disk('public')->size($path),
+            ]);
 
         return Inertia::render('task/edit', [
             'task' => $task,
@@ -380,7 +378,7 @@ final class TaskController extends Controller
             if ($request->hasFile('attachments')) {
                 foreach ($request->file('attachments') as $file) {
                     if ($file) {
-                        $file->store('tasks/' . $task->id, 'public');
+                        $file->storeAs('tasks/' . $task->id, $file->getClientOriginalName(), 'public');
                     }
                 }
             }
@@ -486,6 +484,24 @@ final class TaskController extends Controller
     }
 
     /**
+     * Delete a specific attachment from the task
+     */
+    public function destroyAttachment(Task $task, string $filename): void
+    {
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
+
+        $basename = basename($filename);
+        $path = 'tasks/' . $task->id . '/' . $basename;
+
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
+
+        back()->throwResponse();
+    }
+
+    /**
      * Attach tags to a task
      */
     private function attachTags(array $tags, Task $task): void
@@ -502,24 +518,5 @@ final class TaskController extends Controller
         }
 
         $task->tags()->sync($tagIds);
-    }
-
-    /**
-     * Delete a specific attachment from the task
-     */
-    public function destroyAttachment(Task $task, string $filename): void
-    {
-        $isProjectOwner = $task->project->user_id === auth()->id();
-        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
-
-        // Ensure we only operate on a filename, not a path
-        $basename = basename($filename);
-        $path = 'tasks/' . $task->id . '/' . $basename;
-
-        if (Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
-        }
-
-        back()->throwResponse();
     }
 }

@@ -12,10 +12,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 import FileDropzone from '@/components/ui/file-dropzone'
 import RichTextEditor from '@/components/ui/rich-text-editor'
@@ -83,7 +83,16 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-export default function EditTask({ task, projects, potentialAssignees: initialAssignees, assignedUsers, taskTags, isGithub, isJira, attachments = [] }: Props) {
+export default function EditTask({
+    task,
+    projects,
+    potentialAssignees: initialAssignees,
+    assignedUsers,
+    taskTags,
+    isGithub,
+    isJira,
+    attachments = [],
+}: Props) {
     const { data, setData, put, processing, errors } = useForm<TaskForm>({
         project_id: task.project_id.toString(),
         title: task.title,
@@ -455,10 +464,17 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                             {attachments.map((att) => (
                                                 <li key={att.name} className="flex items-center justify-between gap-3 p-3 text-sm">
                                                     <div className="flex min-w-0 flex-1 items-center gap-3">
-                                                        <a href={att.url} target="_blank" rel="noopener noreferrer" className="truncate text-blue-600 hover:underline dark:text-blue-400">
+                                                        <a
+                                                            href={att.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="truncate text-blue-600 hover:underline dark:text-blue-400"
+                                                        >
                                                             {att.name}
                                                         </a>
-                                                        <span className="shrink-0 text-xs text-muted-foreground">{(att.size / 1024).toFixed(1)} KB</span>
+                                                        <span className="shrink-0 text-xs text-muted-foreground">
+                                                            {(att.size / 1024).toFixed(1)} KB
+                                                        </span>
                                                     </div>
                                                     <div className="shrink-0">
                                                         <Button
