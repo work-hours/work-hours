@@ -25,7 +25,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
             <Head title="Forgot password" />
 
             {status && (
-                <div className="mb-6 rounded-lg bg-green-50 p-3 text-center text-sm font-medium text-green-600 dark:bg-green-900/20 dark:text-green-400">
+                <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4 text-center text-sm font-medium text-green-700 dark:border-green-800/30 dark:bg-green-900/10 dark:text-green-400">
                     {status}
                 </div>
             )}
@@ -33,12 +33,12 @@ export default function ForgotPassword({ status }: { status?: string }) {
             <div className="space-y-6">
                 <form onSubmit={submit} className="flex flex-col gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="email" className="text-sm font-medium">
+                        <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Email Address
                         </Label>
                         <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                             </div>
                             <Input
                                 id="email"
@@ -56,7 +56,11 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <Button type="submit" className="w-full rounded-md py-2.5 font-medium transition-all hover:shadow-md" disabled={processing}>
+                        <Button
+                            type="submit"
+                            className="w-full bg-blue-600 py-2.5 font-medium hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
+                            disabled={processing}
+                        >
                             {processing ? (
                                 <span className="flex items-center justify-center gap-2">
                                     <LoaderCircle className="h-4 w-4 animate-spin" />
@@ -70,21 +74,14 @@ export default function ForgotPassword({ status }: { status?: string }) {
                         <Button
                             type="button"
                             variant="outline"
-                            className="flex items-center justify-center gap-2"
-                            onClick={() => (window.location.href = route('login'))}
+                            className="flex w-full items-center justify-center gap-2 border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                            onClick={() => window.history.back()}
                         >
                             <ArrowLeft className="h-4 w-4" />
                             <span>Back to login</span>
                         </Button>
                     </div>
                 </form>
-
-                <div className="text-center text-sm text-muted-foreground">
-                    <span>Remember your password?</span>{' '}
-                    <TextLink href={route('login')} className="font-medium text-primary hover:text-primary/80">
-                        Sign in
-                    </TextLink>
-                </div>
             </div>
         </AuthLayout>
     )

@@ -19,20 +19,20 @@ export default function VerifyEmail({ status }: { status?: string }) {
             <Head title="Email verification" />
 
             {status === 'verification-link-sent' && (
-                <div className="mb-6 rounded-lg bg-green-50 p-3 text-center text-sm font-medium text-green-600 dark:bg-green-900/20 dark:text-green-400">
+                <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4 text-center text-sm font-medium text-green-700 dark:border-green-800/30 dark:bg-green-900/10 dark:text-green-400">
                     A new verification link has been sent to the email address you provided during registration.
                 </div>
             )}
 
             <div className="flex flex-col items-center justify-center gap-6">
-                <div className="rounded-full bg-primary/10 p-4">
-                    <Mail className="h-8 w-8 text-primary" />
+                <div className="rounded-full bg-blue-50 p-4 dark:bg-blue-900/20">
+                    <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                 </div>
 
                 <form onSubmit={submit} className="flex w-full flex-col gap-4">
                     <Button
                         disabled={processing}
-                        className="flex items-center justify-center gap-2 rounded-md py-2.5 font-medium transition-all hover:shadow-md"
+                        className="flex items-center justify-center gap-2 bg-blue-600 py-2.5 font-medium hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
                     >
                         {processing ? (
                             <span className="flex items-center justify-center gap-2">
@@ -50,7 +50,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     <Button
                         type="button"
                         variant="outline"
-                        className="flex items-center justify-center gap-2"
+                        className="flex items-center justify-center gap-2 border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                         onClick={() => (window.location.href = route('logout'))}
                     >
                         <LogOut className="h-4 w-4" />

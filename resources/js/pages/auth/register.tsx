@@ -36,14 +36,14 @@ export default function Register() {
             <Head title="Register" />
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
-                    {/* Name field with typewriter styling */}
+                    {/* Name field */}
                     <div className="grid gap-2">
-                        <Label htmlFor="name" className="text-sm font-bold text-gray-800 uppercase dark:text-gray-200">
+                        <Label htmlFor="name" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Full Name
                         </Label>
                         <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                <User className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+                                <User className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                             </div>
                             <Input
                                 id="name"
@@ -62,14 +62,14 @@ export default function Register() {
                         <InputError message={errors.name} className="mt-1" />
                     </div>
 
-                    {/* Email field with typewriter styling */}
+                    {/* Email field */}
                     <div className="grid gap-2">
-                        <Label htmlFor="email" className="text-sm font-bold text-gray-800 uppercase dark:text-gray-200">
+                        <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Email Address
                         </Label>
                         <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                <Mail className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+                                <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                             </div>
                             <Input
                                 id="email"
@@ -84,24 +84,23 @@ export default function Register() {
                                 className="pl-10"
                             />
                         </div>
-                        <InputError message={errors.email} />
+                        <InputError message={errors.email} className="mt-1" />
                     </div>
 
-                    {/* Password field with typewriter styling */}
+                    {/* Password field */}
                     <div className="grid gap-2">
-                        <Label htmlFor="password" className="text-sm font-bold text-gray-800 uppercase dark:text-gray-200">
+                        <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Password
                         </Label>
                         <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                <Lock className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+                                <Lock className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                             </div>
                             <Input
                                 id="password"
                                 type="password"
                                 required
                                 tabIndex={3}
-                                autoComplete="new-password"
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
                                 disabled={processing}
@@ -109,24 +108,23 @@ export default function Register() {
                                 className="pl-10"
                             />
                         </div>
-                        <InputError message={errors.password} />
+                        <InputError message={errors.password} className="mt-1" />
                     </div>
 
-                    {/* Confirm Password field with typewriter styling */}
+                    {/* Confirm Password field */}
                     <div className="grid gap-2">
-                        <Label htmlFor="password_confirmation" className="text-sm font-bold text-gray-800 uppercase dark:text-gray-200">
+                        <Label htmlFor="password_confirmation" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Confirm Password
                         </Label>
                         <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                <KeyRound className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+                                <KeyRound className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                             </div>
                             <Input
                                 id="password_confirmation"
                                 type="password"
                                 required
                                 tabIndex={4}
-                                autoComplete="new-password"
                                 value={data.password_confirmation}
                                 onChange={(e) => setData('password_confirmation', e.target.value)}
                                 disabled={processing}
@@ -134,28 +132,33 @@ export default function Register() {
                                 className="pl-10"
                             />
                         </div>
-                        <InputError message={errors.password_confirmation} />
+                        <InputError message={errors.password_confirmation} className="mt-1" />
                     </div>
 
-                    {/* Submit button with timesheet styling */}
-                    <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
+                    {/* Register button */}
+                    <Button
+                        type="submit"
+                        className="mt-2 w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
+                        tabIndex={5}
+                        disabled={processing}
+                    >
                         {processing ? (
                             <span className="flex items-center justify-center gap-2">
                                 <LoaderCircle className="h-4 w-4 animate-spin" />
-                                <span>Creating account...</span>
+                                Creating account...
                             </span>
                         ) : (
-                            'Create account'
+                            'Create Account'
                         )}
                     </Button>
                 </div>
 
-                {/* Sign in link with timesheet styling */}
-                <div className="text-center text-sm text-gray-700 dark:text-gray-300">
+                {/* Sign in link */}
+                <div className="text-center text-sm text-gray-600 dark:text-gray-400">
                     Already have an account?{' '}
                     <TextLink
                         href={route('login')}
-                        className="border-b border-gray-400 pb-0.5 font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
+                        className="font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                         tabIndex={6}
                     >
                         Sign in
@@ -163,23 +166,23 @@ export default function Register() {
                 </div>
             </form>
 
-            {/* Divider with timesheet styling */}
-            <div className="relative my-4">
+            {/* Divider */}
+            <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-400/40 dark:border-gray-600/40"></div>
+                    <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                    <span className="border-x border-gray-400/40 bg-white px-2 text-gray-700 dark:border-gray-600/40 dark:bg-gray-800 dark:text-gray-300">
+                    <span className="bg-white px-2 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
                         Or continue with
                     </span>
                 </div>
             </div>
 
-            {/* Social login buttons with timesheet styling */}
-            <div className="flex flex-col gap-2">
+            {/* Social register buttons */}
+            <div className="flex flex-col gap-3">
                 <a
                     href={route('auth.google')}
-                    className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-[#eff6ff] dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-750"
                 >
                     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -204,7 +207,7 @@ export default function Register() {
 
                 <a
                     href={route('auth.github')}
-                    className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-[#eff6ff] dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-750"
                 >
                     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
