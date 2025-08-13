@@ -1,5 +1,5 @@
 import { SearchableSelect } from '@/components/ui/searchable-select'
-import { Head, useForm } from '@inertiajs/react'
+import { Head, Link, useForm } from '@inertiajs/react'
 import { ArrowLeft, Building, FileText, FolderPlus, LoaderCircle, Text, Users } from 'lucide-react'
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
@@ -108,19 +108,29 @@ export default function CreateProject({ teamMembers, clients }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Project" />
-            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Add Project</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new project</p>
+                    <div className="flex items-center gap-4">
+                        <Link href={route('project.index')}>
+                            <Button variant="outline" size="sm" className="h-8 w-8 p-0 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                <ArrowLeft className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                <span className="sr-only">Back to Projects</span>
+                            </Button>
+                        </Link>
+                        <div>
+                            <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Add Project</h1>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Create a new project</p>
+                        </div>
+                    </div>
                 </section>
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <CardTitle className="text-xl">Project Details</CardTitle>
                         <CardDescription>Enter the information for the new project</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-4">
                         <form className="flex flex-col gap-6" onSubmit={submit}>
                             <div className="grid gap-6">
                                 <div className="grid grid-cols-2 gap-4">

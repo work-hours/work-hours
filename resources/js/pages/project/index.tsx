@@ -174,15 +174,15 @@ export default function Projects() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Projects" />
-            <div className="mx-auto flex flex-col gap-6 p-3">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Project Management</h1>
+                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Project Management</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your projects</p>
                 </section>
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="">
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Projects</CardTitle>
@@ -258,7 +258,7 @@ export default function Projects() {
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t pt-4">
+                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
                             <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -287,13 +287,13 @@ export default function Projects() {
                                         value={filters.client}
                                         onChange={(value) => handleFilterChange('client', value)}
                                         options={[
-                                            { id: '', name: 'All Clients' },
+                                            { id: '', name: 'Clients' },
                                             ...clients.map((client) => ({
                                                 id: client.id.toString(),
                                                 name: client.name,
                                             })),
                                         ]}
-                                        placeholder="All Clients"
+                                        placeholder="Clients"
                                         disabled={processing}
                                         icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
@@ -308,13 +308,13 @@ export default function Projects() {
                                         value={filters['team-member']}
                                         onChange={(value) => handleFilterChange('team-member', value)}
                                         options={[
-                                            { id: '', name: 'All Team Members' },
+                                            { id: '', name: 'Team Members' },
                                             ...teamMembers.map((member) => ({
                                                 id: member.id.toString(),
                                                 name: member.name,
                                             })),
                                         ]}
-                                        placeholder="All Team Members"
+                                        placeholder="Team Members"
                                         disabled={processing}
                                         icon={<User className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
@@ -365,9 +365,9 @@ export default function Projects() {
                                 <div className="flex items-end gap-2">
                                     <Button
                                         type="submit"
-                                        className="flex h-9 w-9 items-center justify-center p-0"
-                                        title="Apply filters"
                                         disabled={processing}
+                                        className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
+                                        title="Apply filters"
                                     >
                                         <Search className="h-4 w-4" />
                                     </Button>
@@ -384,7 +384,7 @@ export default function Projects() {
                                                 !filters.search)
                                         }
                                         onClick={clearFilters}
-                                        className="flex h-9 w-9 items-center justify-center p-0"
+                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 dark:border-gray-600 p-0 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
@@ -393,7 +393,7 @@ export default function Projects() {
                             </form>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {loading ? (
                             <div className="flex flex-col items-center justify-center py-12 text-center">
                                 <Loader2 className="mb-4 h-12 w-12 animate-spin text-muted-foreground/50" />

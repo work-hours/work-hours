@@ -188,7 +188,7 @@ export default function ProjectTimeLogs({
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title={`${project.name} - Time Logs`} />
-            <div className="mx-auto flex flex-col gap-6 p-3">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
                         <Link href={route('project.index')}>
