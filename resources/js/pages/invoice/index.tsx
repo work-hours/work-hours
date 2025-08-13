@@ -557,11 +557,11 @@ export default function Invoices() {
                                             key={invoice.id}
                                             className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
                                         >
-                                            <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
-                                            <TableCell>{invoice.client.name}</TableCell>
-                                            <TableCell>{new Date(invoice.issue_date).toISOString().split('T')[0]}</TableCell>
-                                            <TableCell>{new Date(invoice.due_date).toISOString().split('T')[0]}</TableCell>
-                                            <TableCell>{formatCurrency(invoice.total_amount, invoice.currency)}</TableCell>
+                                            <TableCell className="font-medium text-gray-800 dark:text-gray-200">{invoice.invoice_number}</TableCell>
+                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">{invoice.client.name}</TableCell>
+                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">{new Date(invoice.issue_date).toISOString().split('T')[0]}</TableCell>
+                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">{new Date(invoice.due_date).toISOString().split('T')[0]}</TableCell>
+                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">{formatCurrency(invoice.total_amount, invoice.currency)}</TableCell>
                                             <TableCell>
                                                 <span
                                                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeClass(
