@@ -103,11 +103,16 @@ export default function JiraProjects() {
                 <Head title="Jira Projects" />
                 <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
                     <section className="mb-2">
-                        <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Jira Projects</h1>
-                        <p className="mt-1 text-gray-500 dark:text-gray-400">Connect and manage your Jira projects</p>
+                        <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
+                                <Shield className="h-5 w-5 text-muted-foreground" />
+                            </span>
+                            Jira Projects
+                        </h1>
+                        <p className="mt-1 text-muted-foreground">Connect and manage your Jira projects</p>
                     </section>
 
-                    <Card>
+                    <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                         <CardContent className="flex flex-col items-center justify-center p-6 text-center">
                             <div className="mb-4 rounded-full bg-yellow-100 p-3 text-yellow-600 dark:bg-yellow-900/50 dark:text-yellow-200">
                                 <Shield className="h-6 w-6" />
@@ -116,7 +121,7 @@ export default function JiraProjects() {
                             <p className="mb-4 max-w-md text-muted-foreground">
                                 You need to connect your Jira account before you can view and import projects.
                             </p>
-                            <Button asChild>
+                            <Button asChild variant="secondary" size="sm" className="rounded-full px-3">
                                 <Link href={route('jira.connect')}>Connect to Jira</Link>
                             </Button>
                         </CardContent>
@@ -139,8 +144,13 @@ export default function JiraProjects() {
             <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Jira Projects</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Browse and import your Jira projects</p>
+                    <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
+                        <Shield className="h-5 w-5 text-muted-foreground" />
+                    </span>
+                    Jira Projects
+                    </h1>
+                    <p className="mt-1 text-muted-foreground">Browse and import your Jira projects</p>
                 </section>
 
                 <div className="flex items-center justify-between">
@@ -154,8 +164,8 @@ export default function JiraProjects() {
 
                 <div className="flex flex-col space-y-8">
                     <div className="flex-1 md:max-w-5xl">
-                        <Card className="overflow-hidden transition-all hover:shadow-sm">
-                            <CardHeader>
+                        <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                            <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                                 <CardTitle className="flex items-center gap-2 text-xl">
                                     <Shield className="h-5 w-5" />
                                     Import Jira Projects
@@ -170,7 +180,7 @@ export default function JiraProjects() {
                                         <Input
                                             type="search"
                                             placeholder="Search projects..."
-                                            className="pl-8"
+                                            className="h-10 rounded-full border border-border bg-background pl-8 text-foreground placeholder:text-muted-foreground"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                         />
@@ -191,7 +201,7 @@ export default function JiraProjects() {
                                             {filteredProjects.map((project) => (
                                                 <div
                                                     key={project.id}
-                                                    className="flex flex-col rounded-lg border bg-card p-4 shadow-sm transition-all hover:bg-accent/10 hover:shadow-md"
+                                                    className="flex flex-col rounded-xl border bg-background p-4 transition-colors hover:bg-muted/50"
                                                 >
                                                     <div className="flex items-start justify-between">
                                                         <div className="flex-1">
@@ -214,16 +224,16 @@ export default function JiraProjects() {
                                                         <div className="flex items-center gap-2">
                                                             {isProjectImported(project.key) ? (
                                                                 <Badge
-                                                                    variant="secondary"
-                                                                    className="mr-2 border-green-200 bg-green-100 p-2 text-green-700 dark:border-green-800 dark:bg-green-900 dark:text-green-300"
+                                                                    variant="outline"
+                                                                    className="mr-2 border-green-300/50 bg-transparent p-2 text-green-700 dark:text-green-300"
                                                                 >
                                                                     Imported
                                                                 </Badge>
                                                             ) : (
                                                                 <Button
-                                                                    variant="outline"
+                                                                    variant="secondary"
                                                                     size="sm"
-                                                                    className="border-primary/30 p-4 text-primary transition-all hover:bg-primary/10 hover:text-primary-foreground"
+                                                                    className="rounded-full px-3"
                                                                     onClick={() => importProject(project)}
                                                                     disabled={importingProject === project.key}
                                                                 >
@@ -265,10 +275,8 @@ export default function JiraProjects() {
                                         </p>
                                         {searchTerm && (
                                             <Button
-                                                variant="outline"
-                                                size="sm"
                                                 onClick={() => setSearchTerm('')}
-                                                className="mt-4 border-primary/30 text-primary hover:bg-primary/10"
+                                                className="mt-4 rounded-full bg-muted px-3 py-1.5 text-sm text-foreground hover:bg-muted/80"
                                             >
                                                 Clear Search
                                             </Button>
