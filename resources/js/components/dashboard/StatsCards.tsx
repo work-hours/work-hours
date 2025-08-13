@@ -44,7 +44,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
     }
 
     return (
-        <section className="relative mb-4 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+        <section className="relative mb-4 rounded-lg bg-white p-6 dark:bg-gray-800">
             <div className="mb-4">
                 <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Key Metrics</h3>
             </div>

@@ -175,7 +175,6 @@ export default function AllTeamTimeLogs({
                 {/* Stats Cards */}
                 {timeLogs.length > 0 && (
                     <section className="mb-4">
-                        <h3 className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Metrics Dashboard</h3>
                         <StatsCards
                             teamStats={{
                                 count: teamMembers.length,
