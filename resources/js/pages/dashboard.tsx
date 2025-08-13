@@ -92,35 +92,35 @@ export default function Dashboard() {
                     <>
                         <StatsCards teamStats={teamStats} />
 
-                        <section className="relative mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                        <section className="relative mb-4 rounded-lg border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             {/* Form-like header */}
-                            <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
+                            <div className="mb-2 border-b border-gray-400 pb-2 dark:border-gray-600">
                                 <div className="flex items-center">
-                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
-                                        <BarChart2 className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
+                                    <div className="mr-3 flex h-8 w-8 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
+                                        <BarChart2 className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-800 uppercase dark:text-gray-200">Analytics</h3>
+                                    <h3 className="text-sm font-extrabold uppercase tracking-wider text-gray-800 dark:text-gray-200">Analytics</h3>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                                 <HoursDistribution hoursData={hoursData} />
                                 <WeeklyTrend weeklyData={weeklyData} />
                             </div>
                         </section>
 
-                        <section className="relative mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                        <section className="relative mb-4 rounded-lg border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                             {/* Form-like header */}
-                            <div className="mb-4 border-b border-gray-400 pb-4 dark:border-gray-600">
+                            <div className="mb-2 border-b border-gray-400 pb-2 dark:border-gray-600">
                                 <div className="flex items-center">
-                                    <div className="mr-3 flex h-10 w-10 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
-                                        <Clock className="h-6 w-6 text-gray-700 dark:text-gray-300" aria-hidden="true" />
+                                    <div className="mr-3 flex h-8 w-8 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
+                                        <Clock className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-800 uppercase dark:text-gray-200">Activity</h3>
+                                    <h3 className="text-sm font-extrabold uppercase tracking-wider text-gray-800 dark:text-gray-200">Activity</h3>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                                 <RecentTimeLogs />
                                 <TeamProductivity teamStats={teamStats} />
                             </div>

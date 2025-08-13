@@ -14,7 +14,7 @@ export default function HoursDistribution({ hoursData }: HoursDistributionProps)
                 <CardTitle className="text-xs font-bold uppercase">Hours Distribution</CardTitle>
                 <CardDescription className="text-[10px]">Breakdown of total vs. unpaid hours</CardDescription>
             </CardHeader>
-            <CardContent className="h-60 py-1">
+            <CardContent className="h-48 py-1">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie

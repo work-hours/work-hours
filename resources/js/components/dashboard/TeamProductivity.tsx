@@ -20,7 +20,7 @@ export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
                 <CardTitle className="text-xs font-bold uppercase">Team Productivity</CardTitle>
                 <CardDescription className="text-[10px]">Hours logged by team members</CardDescription>
             </CardHeader>
-            <CardContent className="h-60 py-1">
+            <CardContent className="h-48 py-1">
                 {teamStats.count > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
