@@ -14,7 +14,7 @@ import {
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
-import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Trash, Trash2 } from 'lucide-react'
+import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Trash, Trash2, Pencil, Save, X } from 'lucide-react'
 import { useState } from 'react'
 import type { Task } from './types'
 
@@ -105,6 +105,14 @@ export default function TaskDetail({ task }: Props) {
         }
     }
 
+    const formatDate = (value: string) => {
+        const d = new Date(value)
+        const y = d.getFullYear()
+        const m = String(d.getMonth() + 1).padStart(2, '0')
+        const day = String(d.getDate()).padStart(2, '0')
+        return `${y}-${m}-${day}`
+    }
+
     return (
         <MasterLayout breadcrumbs={[...breadcrumbs, { title: 'Details', href: `/task/${task.id}` }]}>
             <Head title={pageTitle} />
@@ -136,7 +144,7 @@ export default function TaskDetail({ task }: Props) {
                                             <span className="hidden text-muted-foreground md:inline">•</span>
                                             <span className="inline-flex items-center gap-2">
                                                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                                                Due {new Date(task.due_date).toLocaleDateString()}
+                                                Due {formatDate(task.due_date)}
                                             </span>
                                         </>
                                     )}
@@ -234,7 +242,7 @@ export default function TaskDetail({ task }: Props) {
                                                 <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
                                                     <span className="font-medium text-foreground">{comment.user?.name ?? 'User'}</span>
                                                     <div className="flex items-center gap-2">
-                                                        <span>{new Date(comment.created_at).toLocaleString()}</span>
+                                                        <span>{formatDate(comment.created_at)}</span>
                                                         {(currentUserId === task.project.user_id || currentUserId === (comment.user?.id ?? -1)) && (
                                                             <>
                                                                 {editingCommentId === comment.id ? (
@@ -258,7 +266,7 @@ export default function TaskDetail({ task }: Props) {
                                                                                 )
                                                                             }}
                                                                         >
-                                                                            Save
+                                                                            <Save className="h-4 w-4" />
                                                                         </button>
                                                                         <button
                                                                             type="button"
@@ -269,7 +277,7 @@ export default function TaskDetail({ task }: Props) {
                                                                                 setEditingBody('')
                                                                             }}
                                                                         >
-                                                                            Cancel
+                                                                            <X className="h-4 w-4" />
                                                                         </button>
                                                                     </>
                                                                 ) : (
@@ -283,7 +291,7 @@ export default function TaskDetail({ task }: Props) {
                                                                                 setEditingBody(comment.body)
                                                                             }}
                                                                         >
-                                                                            Edit
+                                                                            <Pencil className="h-4 w-4" />
                                                                         </button>
                                                                         <button
                                                                             type="button"
