@@ -93,7 +93,7 @@ export default function EditTask({
     isJira,
     attachments = [],
 }: Props) {
-    const { data, setData, put, processing, errors } = useForm<TaskForm>({
+    const { data, setData, post, transform, processing, errors } = useForm<TaskForm>({
         project_id: task.project_id.toString(),
         title: task.title,
         description: task.description || '',
@@ -169,7 +169,7 @@ export default function EditTask({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        put(route('task.update', task.id), {
+        post(route('task.update', task.id), {
             onSuccess: () => {
                 toast.success('Task updated successfully')
             },

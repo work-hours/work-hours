@@ -309,7 +309,7 @@ final class TaskController extends Controller
      *
      * @throws Throwable
      */
-    #[Action(method: 'put', name: 'task.update', params: ['task'], middleware: ['auth', 'verified'])]
+    #[Action(method: 'post', name: 'task.update', params: ['task'], middleware: ['auth', 'verified'])]
     public function update(UpdateTaskRequest $request, Task $task): void
     {
         $isProjectOwner = $task->project->user_id === auth()->id();
