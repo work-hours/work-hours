@@ -327,7 +327,7 @@ export default function Navbar() {
                     {isLoggedIn ? (
                         <Link
                             href="/dashboard"
-                            className="inline-flex items-center justify-center border-2 border-blue-900 bg-blue-900 px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                            className="inline-flex items-center justify-center bg-primary text-primary-foreground rounded-lg px-5 py-2 text-sm font-medium hover:bg-[#1d4ed8]"
                         >
                             Dashboard
                         </Link>
@@ -341,7 +341,7 @@ export default function Navbar() {
                             </Link>
                             <Link
                                 href={route('register')}
-                                className="relative z-10 inline-flex cursor-pointer items-center justify-center border-2 border-blue-900 bg-blue-900 px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                                className="relative z-10 inline-flex cursor-pointer items-center justify-center bg-primary text-primary-foreground rounded-lg px-5 py-2 text-sm font-medium hover:bg-[#1d4ed8]"
                             >
                                 Get Started
                             </Link>

@@ -247,7 +247,7 @@ export default function Features() {
                         {/* Feature content */}
                         <div className="p-5">
                             <div className="mb-3 flex">
-                                <span className="mr-2 inline-flex items-center rounded-none border border-red-800/40 px-2 py-0.5 text-xs font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
+                                <span className="mr-2 inline-flex items-center rounded-md border border-red-800/40 px-2 py-0.5 text-xs font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
                                     New
                                 </span>
                             </div>
@@ -278,7 +278,7 @@ export default function Features() {
                         {/* Feature content */}
                         <div className="p-5">
                             <div className="mb-3 flex">
-                                <span className="mr-2 inline-flex items-center rounded-none border border-red-800/40 px-2 py-0.5 text-xs font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
+                                <span className="mr-2 inline-flex items-center rounded-md border border-red-800/40 px-2 py-0.5 text-xs font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
                                     New
                                 </span>
                             </div>
@@ -298,7 +298,7 @@ export default function Features() {
 
             {/* Featured Integration - Typewriter-inspired design */}
             <section id="featured-integration" className="container mx-auto mb-24 px-6 lg:px-8" aria-label="Featured integration">
-                <div className="relative border-2 border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800">
+                <div className="relative rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
                     {/* Decorative elements */}
                     <div className="absolute -top-3 -right-3 h-6 w-6 border-2 border-blue-900/60 bg-blue-100/30 dark:border-blue-400/60 dark:bg-blue-900/30"></div>
                     <div className="absolute -bottom-3 -left-3 h-6 w-6 border-2 border-blue-900/60 bg-blue-100/30 dark:border-blue-400/60 dark:bg-blue-900/30"></div>
@@ -356,7 +356,7 @@ export default function Features() {
                             <div>
                                 <a
                                     href="/integration"
-                                    className="inline-flex items-center border-2 border-blue-900 bg-blue-900 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                                    className="inline-flex items-center justify-center bg-primary text-primary-foreground rounded-lg px-6 py-2 text-sm font-medium hover:bg-[#1d4ed8]"
                                     aria-label={isLoggedIn ? 'Connect your account with GitHub' : 'Get started with Work Hours'}
                                 >
                                     <Github className="mr-2 h-4 w-4" />
@@ -394,7 +394,7 @@ export default function Features() {
 
             {/* Featured Integration - Jira */}
             <section id="featured-integration-jira" className="container mx-auto mb-24 px-6 lg:px-8" aria-label="Jira integration">
-                <div className="relative border-2 border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800">
+                <div className="relative rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
                     {/* Decorative elements */}
                     <div className="absolute -top-3 -right-3 h-6 w-6 border-2 border-blue-900/60 bg-blue-100/30 dark:border-blue-400/60 dark:bg-blue-900/30"></div>
                     <div className="absolute -bottom-3 -left-3 h-6 w-6 border-2 border-blue-900/60 bg-blue-100/30 dark:border-blue-400/60 dark:bg-blue-900/30"></div>
@@ -446,7 +446,7 @@ export default function Features() {
                             <div>
                                 <a
                                     href="/jira/connect"
-                                    className="inline-flex items-center border-2 border-blue-900 bg-blue-900 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                                    className="inline-flex items-center justify-center bg-primary text-primary-foreground rounded-lg px-6 py-2 text-sm font-medium hover:bg-[#1d4ed8]"
                                     aria-label={isLoggedIn ? 'Connect your account with Jira' : 'Get started with Work Hours'}
                                 >
                                     <ExternalLink className="mr-2 h-4 w-4" />

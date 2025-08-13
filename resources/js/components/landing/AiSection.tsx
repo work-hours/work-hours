@@ -138,7 +138,7 @@ export default function AiSection() {
                     {/* Feature content */}
                     <div className="p-5">
                         <div className="mb-3 flex">
-                            <span className="mr-2 inline-flex items-center rounded-none border border-purple-800/40 px-2 py-0.5 text-xs font-bold text-purple-800/70 uppercase dark:border-purple-400/40 dark:text-purple-400/90">
+                            <span className="mr-2 inline-flex items-center rounded-md border border-purple-800/40 px-2 py-0.5 text-xs font-bold text-purple-800/70 uppercase dark:border-purple-400/40 dark:text-purple-400/90">
                                 Featured
                             </span>
                         </div>

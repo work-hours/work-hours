@@ -6,7 +6,7 @@ export default function TaskManagement() {
         <FeatureLayout title="Task Management" icon={<CheckSquare className="h-8 w-8 text-blue-900 dark:text-blue-400" />}>
             <div className="space-y-8">
                 {/* New Feature Badge */}
-                <div className="inline-flex items-center rounded-none border border-red-800/40 px-3 py-1 text-sm font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
+                <div className="inline-flex items-center rounded-md border border-red-800/40 px-3 py-1 text-sm font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
                     New Feature
                 </div>
 
@@ -228,7 +228,7 @@ export default function TaskManagement() {
                 </section>
 
                 {/* CTA Section */}
-                <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
+                <section className="mt-12 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
                         <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
                             <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Streamline Your Task Management?</h3>
@@ -239,7 +239,7 @@ export default function TaskManagement() {
                         <div className="md:w-1/3">
                             <a
                                 href={route('register')}
-                                className="inline-flex items-center justify-center border-2 border-blue-900 bg-blue-900 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                                className="inline-flex items-center justify-center bg-primary text-primary-foreground rounded-lg px-6 py-3 text-sm font-medium hover:bg-[#1d4ed8]"
                             >
                                 Get Started
                             </a>
