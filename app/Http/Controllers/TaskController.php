@@ -67,6 +67,27 @@ final class TaskController extends Controller
     }
 
     /**
+     * Delete a comment from a task.
+     */
+    public function destroyComment(Task $task, TaskComment $comment): void
+    {
+        // Ensure the comment belongs to the provided task
+        abort_if($comment->task_id !== $task->id, 404, 'Comment not found for this task.');
+
+        // Load required relations for authorization checks
+        $task->load(['project']);
+
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isCommentOwner = $comment->user_id === auth()->id();
+
+        abort_if(! $isProjectOwner && ! $isCommentOwner, 403, 'Unauthorized action.');
+
+        $comment->delete();
+
+        back()->throwResponse();
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()

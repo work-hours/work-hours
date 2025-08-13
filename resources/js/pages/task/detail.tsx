@@ -2,9 +2,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import MasterLayout from '@/layouts/master-layout'
-import { type BreadcrumbItem } from '@/types'
-import { Head, Link, useForm } from '@inertiajs/react'
-import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare } from 'lucide-react'
+import { type BreadcrumbItem, type SharedData } from '@/types'
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
+import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Trash } from 'lucide-react'
 import type { Task } from './types'
 
 type Props = {
@@ -14,6 +14,9 @@ type Props = {
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Tasks', href: '/task' }]
 
 export default function TaskDetail({ task }: Props) {
+    const { auth } = usePage<SharedData>().props
+    const currentUserId = auth.user.id
+
     const pageTitle = `${task.title} · Task Details`
 
     const { data, setData, post, reset } = useForm<{ body: string }>({ body: '' })
@@ -203,7 +206,25 @@ export default function TaskDetail({ task }: Props) {
                                             <div key={comment.id} className="rounded-md bg-background p-3 shadow-sm">
                                                 <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
                                                     <span className="font-medium text-foreground">{comment.user?.name ?? 'User'}</span>
-                                                    <span>{new Date(comment.created_at).toLocaleString()}</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span>{new Date(comment.created_at).toLocaleString()}</span>
+                                                        {(currentUserId === task.project.user_id || currentUserId === (comment.user?.id ?? -1)) && (
+                                                            <button
+                                                                type="button"
+                                                                title="Delete comment"
+                                                                className="text-red-500 hover:text-red-600"
+                                                                onClick={() => {
+                                                                    if (confirm('Are you sure you want to delete this comment?')) {
+                                                                        router.delete(route('task.comments.destroy', { task: task.id, comment: comment.id }), {
+                                                                            preserveScroll: true,
+                                                                        })
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <Trash className="h-4 w-4" />
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 </div>
                                                 <p className="text-sm whitespace-pre-wrap">{comment.body}</p>
                                             </div>
