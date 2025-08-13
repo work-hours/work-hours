@@ -1,12 +1,13 @@
 import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
+import AddNewButton from '@/components/add-new-button'
+import BackButton from '@/components/back-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
-import { ArrowLeft, Clock, Edit, FileText, FolderPlus, Mail, Phone, Plus, User, Users } from 'lucide-react'
-import AddNewButton from '@/components/add-new-button'
+import { Clock, Edit, FileText, FolderPlus, Mail, Phone, User, Users } from 'lucide-react'
 
 type Project = {
     id: number
@@ -59,21 +60,12 @@ export default function ClientProjects({ client, projects }: Props) {
             <div className="mx-auto flex flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <div className="flex justify-between items-center gap-4">
+                    <div className="flex items-center justify-between gap-4">
                         <div>
                             <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">{client.name}</h1>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage projects for this client</p>
                         </div>
-                        <Link href={route('client.index')}>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-8 w-8 border-gray-200 bg-white p-0 dark:border-gray-700 dark:bg-gray-800"
-                            >
-                                <ArrowLeft className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                                <span className="sr-only">Back to Clients</span>
-                            </Button>
-                        </Link>
+                        <BackButton />
                     </div>
                 </section>
 
