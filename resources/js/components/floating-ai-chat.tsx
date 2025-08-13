@@ -89,11 +89,11 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
                     <Button
                         variant="outline"
                         size="icon"
-                        className="h-16 w-16 rounded-xl border border-neutral-200 bg-white shadow-md transition-all duration-200 hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-neutral-600 dark:hover:bg-neutral-800/70"
+                        className="h-14 w-14 rounded-lg border border-slate-200 bg-white shadow-md transition-all duration-200 hover:border-slate-300 hover:bg-slate-50"
                     >
                         <div className="relative flex flex-col items-center justify-center gap-1">
-                            <BrainCircuit className="h-7 w-7 text-neutral-700 dark:text-neutral-300" />
-                            <span className="text-xs font-medium text-neutral-700 dark:text-neutral-300">Ask AI</span>
+                            <BrainCircuit className="h-6 w-6 text-primary" />
+                            <span className="text-xs font-medium text-slate-600">Ask AI</span>
                         </div>
                     </Button>
                 </SheetTrigger>
@@ -101,43 +101,43 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
             <SheetContent className="overflow-hidden p-0 sm:max-w-lg md:max-w-2xl lg:max-w-3xl">
                 <div className="flex h-full">
                     {/* Chat History Sidebar */}
-                    <div className="w-64 border-r border-neutral-200 bg-neutral-50/70 dark:border-neutral-700 dark:bg-neutral-900/30">
-                        <div className="border-b border-neutral-200 p-4 dark:border-neutral-700">
-                            <h3 className="text-lg font-medium text-neutral-800 dark:text-neutral-200">Chat History</h3>
+                    <div className="w-60 border-r border-slate-200 bg-slate-50">
+                        <div className="border-b border-slate-200 p-3">
+                            <h3 className="text-sm font-medium text-slate-700">Chat History</h3>
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="mt-2 w-full gap-2 border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                className="mt-2 w-full gap-1 border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
                                 onClick={handleNewChat}
                             >
-                                <Plus className="h-3.5 w-3.5" />
+                                <Plus className="h-3 w-3" />
                                 New Chat
                             </Button>
                         </div>
                         <ScrollArea className="h-[calc(100vh-120px)]">
                             {isLoading ? (
-                                <div className="flex h-20 items-center justify-center">
-                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">Loading...</p>
+                                <div className="flex h-16 items-center justify-center">
+                                    <p className="text-xs text-slate-500">Loading...</p>
                                 </div>
                             ) : chatHistories.length === 0 ? (
                                 <div className="p-4 text-center">
-                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">No chat history yet</p>
+                                    <p className="text-xs text-slate-500">No chat history yet</p>
                                 </div>
                             ) : (
-                                <div className="space-y-1 p-2">
+                                <div className="space-y-0.5 p-2">
                                     {chatHistories.map((chat) => (
                                         <div
                                             key={chat.id}
-                                            className={`group flex cursor-pointer items-start justify-between rounded-md p-2 transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-800/60 ${
-                                                selectedChatId === chat.id ? 'bg-neutral-100 dark:bg-neutral-800/60' : ''
+                                            className={`group flex cursor-pointer items-start justify-between rounded-md p-2 transition-colors duration-150 hover:bg-slate-100 ${
+                                                selectedChatId === chat.id ? 'bg-slate-100' : ''
                                             }`}
                                             onClick={() => setSelectedChatId(chat.id)}
                                         >
                                             <div className="flex items-start space-x-2">
-                                                <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-neutral-500 dark:text-neutral-400" />
+                                                <Clock className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-slate-400" />
                                                 <div className="overflow-hidden">
-                                                    <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{chat.title}</p>
-                                                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                                    <p className="text-xs font-medium text-slate-700">{chat.title}</p>
+                                                    <p className="text-xs text-slate-500">
                                                         {new Date(chat.updated_at).toLocaleDateString()}
                                                     </p>
                                                 </div>
