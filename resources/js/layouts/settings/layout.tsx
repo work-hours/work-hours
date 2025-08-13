@@ -54,9 +54,9 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                         size="sm"
                                         variant="ghost"
                                         asChild
-                                        className={cn('mb-1 w-full justify-start', {
-                                            'bg-primary/10 p-5 text-primary hover:bg-primary/15': currentPath === item.href,
-                                            'p-5 hover:bg-muted/80': currentPath !== item.href,
+                                        className={cn('mb-1 w-full justify-start text-sm', {
+                                            'bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600': currentPath === item.href,
+                                            'hover:bg-gray-100 dark:hover:bg-gray-800': currentPath !== item.href,
                                         })}
                                     >
                                         <Link href={item.href} prefetch className="flex items-center gap-2">
