@@ -343,7 +343,7 @@ export default function Navbar() {
                         <>
                             <Link
                                 href={route('login')}
-                                className="hidden text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 sm:block"
+                                className="hidden text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 sm:block dark:text-slate-400 dark:hover:text-slate-200"
                             >
                                 Sign in
                             </Link>

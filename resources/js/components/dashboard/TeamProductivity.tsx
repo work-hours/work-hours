@@ -47,16 +47,10 @@ export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
                                     backgroundColor: 'var(--color-card)',
                                     color: 'var(--color-card-foreground)',
                                     fontSize: '12px',
-                                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
                                 }}
                             />
-                            <Bar
-                                dataKey="hours"
-                                fill="var(--color-chart-2)"
-                                radius={[4, 4, 0, 0]}
-                                barSize={40}
-                                animationDuration={750}
-                            />
+                            <Bar dataKey="hours" fill="var(--color-chart-2)" radius={[4, 4, 0, 0]} barSize={40} animationDuration={750} />
                         </BarChart>
                     </ResponsiveContainer>
                 ) : (

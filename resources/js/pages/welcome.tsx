@@ -74,16 +74,16 @@ export default function Welcome() {
                 </script>
             </Head>
 
-            <div className="sticky top-0 z-50 w-full backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/80 dark:border-gray-800/80">
+            <div className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/80 backdrop-blur-sm dark:border-gray-800/80 dark:bg-gray-900/80">
                 <Navbar />
             </div>
 
-            <main className="flex flex-col w-full gap-5">
-                <section className="w-full pb-8 pt-24 md:pt-28">
+            <main className="flex w-full flex-col">
+                <section className="w-full pt-10 pb-2">
                     <Hero />
                 </section>
 
-                <section className="w-full py-16 md:py-24 bg-white dark:bg-gray-950">
+                <section className="w-full bg-white dark:bg-gray-950">
                     <div className="container mx-auto px-4 md:px-6 lg:px-8">
                         <div className="mx-auto max-w-5xl">
                             <div id="features" className="py-10">
@@ -93,7 +93,7 @@ export default function Welcome() {
                     </div>
                 </section>
 
-                <section className="w-full py-16 md:py-24 bg-gray-50 dark:bg-gray-900">
+                <section className="w-full bg-gray-50 dark:bg-gray-900">
                     <div className="container mx-auto px-4 md:px-6 lg:px-8">
                         <div className="mx-auto max-w-5xl">
                             <div id="ai-section" className="py-10">
@@ -121,7 +121,7 @@ export default function Welcome() {
                     </div>
                 </section>
 
-                <section className="relative w-full bg-gray-100 dark:bg-gray-950">
+                <section className="relative mt-12 w-full bg-gray-100 dark:bg-gray-950">
                     <Footer />
                 </section>
             </main>

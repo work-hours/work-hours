@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react'
-import { ArrowRight, Clock, ChevronRight } from 'lucide-react'
+import { ArrowRight, ChevronRight, Clock } from 'lucide-react'
 
 export default function Hero() {
     return (
@@ -8,9 +8,7 @@ export default function Hero() {
                 <div className="flex flex-col items-center">
                     {/* Subtle tag line */}
                     <div className="mb-6 rounded-full bg-slate-100 px-4 py-1.5 dark:bg-slate-800">
-                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                            Time Tracking & Insights
-                        </span>
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Time Tracking & Insights</span>
                     </div>
 
                     {/* Main heading with minimalist style */}

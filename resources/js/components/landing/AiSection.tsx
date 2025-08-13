@@ -4,7 +4,7 @@ export default function AiSection() {
     return (
         <section className="relative w-full" aria-label="AI Assistant features">
             <div className="mb-14 text-center">
-                <span className="inline-block mb-3 text-sm font-medium text-purple-600 dark:text-purple-400">AI ASSISTANT</span>
+                <span className="mb-3 inline-block text-sm font-medium text-purple-600 dark:text-purple-400">AI ASSISTANT</span>
 
                 <h2 className="mb-4 text-3xl font-medium text-gray-900 md:text-4xl dark:text-gray-100">
                     <span className="relative inline-block">
@@ -35,7 +35,8 @@ export default function AiSection() {
                         </div>
 
                         <p className="mb-4 text-gray-600 dark:text-gray-400">
-                            Ask questions about your projects, get summaries of your work, and receive personalized recommendations to boost your productivity.
+                            Ask questions about your projects, get summaries of your work, and receive personalized recommendations to boost your
+                            productivity.
                         </p>
 
                         <div className="flex flex-wrap gap-2">
@@ -68,7 +69,8 @@ export default function AiSection() {
                         <div>
                             <h3 className="mb-2 text-base font-medium text-gray-900 dark:text-gray-200">Time Analysis</h3>
                             <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">
-                                Get AI-powered insights about your time usage patterns, productivity peaks, and suggestions for optimizing your schedule.
+                                Get AI-powered insights about your time usage patterns, productivity peaks, and suggestions for optimizing your
+                                schedule.
                             </p>
 
                             <div className="flex flex-wrap gap-2">
@@ -115,7 +117,7 @@ export default function AiSection() {
 
             {/* Call-to-action button with minimal design */}
             <div className="mt-12 text-center">
-                <button className="inline-flex items-center justify-center rounded-md bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                <button className="inline-flex items-center justify-center rounded-md bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:outline-none dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-offset-gray-900">
                     <BrainCircuit className="mr-2 h-4 w-4" />
                     Try AI Assistant
                 </button>

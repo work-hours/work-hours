@@ -19,9 +19,7 @@ interface StatsCardProps {
 
 export default function StatsCard({ title, icon, value, description, trend, borderColor = 'primary' }: StatsCardProps) {
     return (
-        <Card
-            className={cn('w-full overflow-hidden border-l-4 transition-all hover:shadow-md')}
-        >
+        <Card className={cn('w-full overflow-hidden border-l-4 transition-all hover:shadow-md')}>
             <CardContent className="p-3">
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-[10px] font-extrabold tracking-wider text-foreground/80 uppercase">{title}</CardTitle>

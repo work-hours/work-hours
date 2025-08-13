@@ -8,7 +8,7 @@ export default function Features() {
     const isLoggedIn = auth && auth.user
     return (
         <>
-            <section id="features" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8 md:py-24" aria-label="Product features">
+            <section id="features" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8" aria-label="Product features">
                 <div className="mb-16 text-center">
                     {/* Minimal section header */}
                     <div className="mb-6 inline-flex rounded-full bg-slate-100 px-4 py-1.5 dark:bg-slate-800">
@@ -241,7 +241,7 @@ export default function Features() {
             </section>
 
             {/* GitHub Integration - Modern style */}
-            <section id="featured-integration" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 md:py-16" aria-label="Featured integration">
+            <section id="featured-integration" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8" aria-label="Featured integration">
                 <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
                     <div className="border-b border-slate-100 p-6 dark:border-slate-700">
                         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -250,16 +250,12 @@ export default function Features() {
                                     <Github className="h-6 w-6 text-slate-700 dark:text-slate-300" aria-label="GitHub logo" />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-medium text-slate-900 dark:text-slate-100">
-                                        GitHub Integration
-                                    </h2>
+                                    <h2 className="text-xl font-medium text-slate-900 dark:text-slate-100">GitHub Integration</h2>
                                     <p className="text-sm text-slate-500 dark:text-slate-400">Connect your repositories and track development time</p>
                                 </div>
                             </div>
                             <div className="rounded-full bg-slate-100 px-3 py-1 dark:bg-slate-700">
-                                <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                                    Featured Integration
-                                </span>
+                                <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Featured Integration</span>
                             </div>
                         </div>
                     </div>
@@ -318,7 +314,9 @@ export default function Features() {
                                 <div className="p-4 text-sm text-slate-600 dark:text-slate-400">
                                     <div className="mb-2 font-mono">$ git status</div>
                                     <div className="mb-2 font-mono text-emerald-600 dark:text-emerald-400">On branch main</div>
-                                    <div className="mb-2 font-mono text-emerald-600 dark:text-emerald-400">Your branch is up to date with 'origin/main'</div>
+                                    <div className="mb-2 font-mono text-emerald-600 dark:text-emerald-400">
+                                        Your branch is up to date with 'origin/main'
+                                    </div>
                                     <div className="mb-2 font-mono">$ git log --oneline</div>
                                     <div className="mb-1 font-mono text-sky-600 dark:text-sky-400">a1b2c3d Update README.md</div>
                                     <div className="mb-1 font-mono text-sky-600 dark:text-sky-400">e4f5g6h Fix login bug</div>
@@ -332,7 +330,7 @@ export default function Features() {
             </section>
 
             {/* Jira Integration - Modern style */}
-            <section id="featured-integration-jira" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 md:py-16" aria-label="Jira integration">
+            <section id="featured-integration-jira" className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8" aria-label="Jira integration">
                 <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
                     <div className="border-b border-slate-100 p-6 dark:border-slate-700">
                         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -346,9 +344,7 @@ export default function Features() {
                                 </div>
                             </div>
                             <div className="rounded-full bg-sky-50 px-3 py-1 dark:bg-sky-900/20">
-                                <span className="text-xs font-medium text-sky-700 dark:text-sky-400">
-                                    New Integration
-                                </span>
+                                <span className="text-xs font-medium text-sky-700 dark:text-sky-400">New Integration</span>
                             </div>
                         </div>
                     </div>
