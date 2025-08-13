@@ -1,6 +1,7 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import DeleteTeamMember from '@/components/delete-team-member'
 import { Button } from '@/components/ui/button'
+import FilterButton from '@/components/filter-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
@@ -209,18 +210,15 @@ export default function Team({ teamMembers, filters }: Props) {
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-100 p-0 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
+                                    <FilterButton
                                         title="Apply filters"
+                                        disabled={processing}
                                     >
                                         <Search className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={processing || (!data['start-date'] && !data['end-date'] && !data.search)}
                                         onClick={() => {
                                             setData({
@@ -232,11 +230,10 @@ export default function Team({ teamMembers, filters }: Props) {
                                                 preserveState: true,
                                             })
                                         }}
-                                        className="flex h-10 w-10 items-center justify-center rounded-md border-gray-300 dark:border-gray-600 p-0 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
                         </div>
