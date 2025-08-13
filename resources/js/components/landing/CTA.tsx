@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react'
 export default function CTA() {
     return (
         <section className="relative w-full bg-gray-50 dark:bg-gray-900/50">
-            <div className="mx-auto w-11/12 max-w-3xl">
+            <div className="mx-auto">
                 <div className="relative overflow-hidden rounded-lg border border-gray-200/70 bg-white p-10 shadow-sm dark:border-gray-800/70 dark:bg-gray-800/90">
                     <div className="mb-8 text-left">
                         <h2 className="text-2xl font-medium text-gray-900 md:text-3xl dark:text-gray-100">

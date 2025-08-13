@@ -3,70 +3,73 @@ import { AlertCircle, BarChart2, CheckCircle, Clock, FileText, Users } from 'luc
 
 export default function TimeTracking() {
     return (
-        <FeatureLayout title="Time Tracking" icon={<Clock className="h-8 w-8 text-blue-900 dark:text-blue-400" />}>
-            <div className="space-y-8">
+        <FeatureLayout title="Time Tracking" icon={<Clock className="h-7 w-7 text-blue-600 dark:text-blue-400" />}>
+            <div className="space-y-10">
                 {/* Introduction Section */}
-                <section className="space-y-4">
-                    <p className="text-lg leading-relaxed">
+                <section className="space-y-5">
+                    <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
                         Track your work hours effortlessly with our intuitive time tracking feature. Whether you're a freelancer, a team member, or a
                         manager, our time tracking tool helps you maintain accurate records of your work time.
                     </p>
-                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-900/20">
-                        <p className="text-blue-900 dark:text-blue-400">
-                            <span className="font-semibold">Pro Tip:</span> Use keyboard shortcuts (Ctrl+Shift+T) to quickly start or stop the timer
-                            without interrupting your workflow.
+                    <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
+                        <p className="flex items-center text-blue-700 dark:text-blue-300">
+                            <span className="mr-2"><AlertCircle className="h-5 w-5" /></span>
+                            <span><span className="font-medium">Pro Tip:</span> Use keyboard shortcuts (Ctrl+Shift+T) to quickly start or stop the timer
+                            without interrupting your workflow.</span>
                         </p>
                     </div>
                 </section>
 
                 {/* Key Features Section */}
-                <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
+                <section className="space-y-6">
+                    <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Key Features
                     </h2>
                     <div className="grid gap-6 md:grid-cols-2">
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <Clock className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <Clock className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">One-Click Tracking</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">One-Click Tracking</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-400">
                                 Start and stop your timer with a single click. No complicated setup required.
                             </p>
                         </div>
 
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <CheckCircle className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <CheckCircle className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Detailed Notes</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Detailed Notes</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">Add notes to your time entries to keep track of what you worked on.</p>
+                            <p className="text-gray-600 dark:text-gray-400">
+                                Add notes to your time entries to keep track of what you worked on.
+                            </p>
                         </div>
 
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <AlertCircle className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <AlertCircle className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Idle Detection</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Idle Detection</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-400">
                                 Our system detects when you're idle and asks if you want to keep or discard the idle time.
                             </p>
                         </div>
 
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <Clock className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <Clock className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Manual Time Entry</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Manual Time Entry</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-400">
                                 Forgot to start the timer? No problem. Add time entries manually with our easy-to-use form.
                             </p>
                         </div>
@@ -75,7 +78,7 @@ export default function TimeTracking() {
 
                 {/* How It Works Section */}
                 <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
+                    <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         How It Works
                     </h2>
                     <ol className="space-y-6">
@@ -129,7 +132,7 @@ export default function TimeTracking() {
 
                 {/* Benefits Section */}
                 <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
+                    <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Benefits
                     </h2>
                     <div className="grid gap-4 md:grid-cols-2">
@@ -162,7 +165,7 @@ export default function TimeTracking() {
 
                 {/* Integration Section */}
                 <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
+                    <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Integrations
                     </h2>
                     <p className="text-gray-700 dark:text-gray-300">Our time tracking system integrates seamlessly with other Work Hours features:</p>
