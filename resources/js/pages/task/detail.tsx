@@ -14,7 +14,7 @@ import {
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
-import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Trash } from 'lucide-react'
+import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Trash, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import type { Task } from './types'
 
@@ -287,14 +287,19 @@ export default function TaskDetail({ task }: Props) {
             >
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Delete comment</AlertDialogTitle>
+                        <AlertDialogTitle>Are you sure you want to delete this comment?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the comment.
+                            Once the comment is deleted, it will be permanently removed. This action cannot be undone.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel onClick={() => setDeleteDialogOpen(false)}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleConfirmDelete}>Delete</AlertDialogAction>
+                        <AlertDialogAction
+                            onClick={handleConfirmDelete}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete Comment
+                        </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
