@@ -88,8 +88,10 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
     )
   }
 
+  // Use a loosely-typed component to allow passing `ref` to dynamically imported ReactQuill
+  const QuillComponent = Quill as unknown as any
   return (
-    <Quill
+    <QuillComponent
       ref={quillRef}
       theme="snow"
       value={value}
