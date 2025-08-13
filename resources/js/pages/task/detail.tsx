@@ -19,13 +19,20 @@ import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Pencil, Save,
 import { useState } from 'react'
 import type { Task } from './types'
 
+type Attachment = {
+    name: string
+    url: string
+    size: number
+}
+
 type Props = {
     task: Task
+    attachments?: Attachment[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Tasks', href: '/task' }]
 
-export default function TaskDetail({ task }: Props) {
+export default function TaskDetail({ task, attachments = [] }: Props) {
     const TaskDescription = ({ html }: { html: string }) => {
         const safe = typeof window !== 'undefined' ? DOMPurify.sanitize(html) : html
         return <div dangerouslySetInnerHTML={{ __html: safe }} />
@@ -129,6 +136,13 @@ export default function TaskDetail({ task }: Props) {
                             <ChevronLeft className="h-4 w-4" /> Back to Tasks
                         </Button>
                     </Link>
+                    {currentUserId === task.project.user_id && (
+                        <Link href={route('task.edit', task.id)}>
+                            <Button variant="outline" className="gap-2">
+                                <Pencil className="h-4 w-4" /> Edit Task
+                            </Button>
+                        </Link>
+                    )}
                 </div>
 
                 <Card>
@@ -230,6 +244,33 @@ export default function TaskDetail({ task }: Props) {
                                                 <ExternalLink className="h-4 w-4" /> Open Source Item
                                             </a>
                                         </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Attachments */}
+                            {attachments && attachments.length > 0 && (
+                                <div className="space-y-2">
+                                    <div className="grid grid-cols-1 gap-4 bg-muted/40 p-4">
+                                        <ul className="divide-y">
+                                            {attachments.map((att) => (
+                                                <li key={att.name} className="flex items-center justify-between gap-3 p-3 text-sm">
+                                                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                                                        <a
+                                                            href={att.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="truncate text-blue-600 hover:underline dark:text-blue-400"
+                                                        >
+                                                            {att.name}
+                                                        </a>
+                                                        <span className="shrink-0 text-xs text-muted-foreground">
+                                                            {(att.size / 1024).toFixed(1)} KB
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
                                     </div>
                                 </div>
                             )}

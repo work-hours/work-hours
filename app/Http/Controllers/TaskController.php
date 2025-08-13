@@ -240,7 +240,7 @@ final class TaskController extends Controller
      */
     public function detail(Task $task)
     {
-        $task->load(['project', 'assignees', 'tags', 'comments.user']);
+        $task->load(['project', 'assignees', 'tags', 'comments.user', 'meta']);
 
         $isProjectOwner = $task->project->user_id === auth()->id();
         $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
@@ -248,8 +248,16 @@ final class TaskController extends Controller
 
         abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
 
+        $files = collect(Storage::disk('public')->files('tasks/' . $task->id))
+            ->map(fn (string $path): array => [
+                'name' => basename($path),
+                'url' => Storage::disk('public')->url($path),
+                'size' => Storage::disk('public')->size($path),
+            ]);
+
         return Inertia::render('task/detail', [
             'task' => $task,
+            'attachments' => $files,
         ]);
     }
 
