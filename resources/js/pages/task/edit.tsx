@@ -15,7 +15,8 @@ import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Textarea } from '@/components/ui/textarea'
+
+import RichTextEditor from '@/components/ui/rich-text-editor'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 
@@ -236,18 +237,14 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                         Description <span className="text-xs text-muted-foreground">(optional)</span>
                                     </Label>
                                     <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 top-0 left-3 flex items-center pt-2">
-                                            <Text className="h-4 w-4 text-muted-foreground" />
+                                        <div className="">
+                                            <RichTextEditor
+                                                value={data.description}
+                                                onChange={(val) => setData('description', val)}
+                                                disabled={processing}
+                                                placeholder="Task description"
+                                            />
                                         </div>
-                                        <Textarea
-                                            id="description"
-                                            tabIndex={2}
-                                            value={data.description}
-                                            onChange={(e) => setData('description', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="Task description"
-                                            className="min-h-[100px] pl-10"
-                                        />
                                     </div>
                                     <InputError message={errors.description} />
                                 </div>

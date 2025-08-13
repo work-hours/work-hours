@@ -71,10 +71,9 @@ final class TaskController extends Controller
      */
     public function destroyComment(Task $task, TaskComment $comment): void
     {
-        // Ensure the comment belongs to the provided task
+
         abort_if($comment->task_id !== $task->id, 404, 'Comment not found for this task.');
 
-        // Load required relations for authorization checks
         $task->load(['project']);
 
         $isProjectOwner = $task->project->user_id === auth()->id();
@@ -92,10 +91,9 @@ final class TaskController extends Controller
      */
     public function updateComment(Task $task, TaskComment $comment): void
     {
-        // Ensure the comment belongs to the provided task
+
         abort_if($comment->task_id !== $task->id, 404, 'Comment not found for this task.');
 
-        // Load project for authorization
         $task->load(['project']);
 
         $isProjectOwner = $task->project->user_id === auth()->id();

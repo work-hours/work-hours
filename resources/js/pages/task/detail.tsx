@@ -1,6 +1,3 @@
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,10 +8,14 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
-import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Trash, Trash2, Pencil, Save, X } from 'lucide-react'
+import DOMPurify from 'dompurify'
+import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Pencil, Save, Trash, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import type { Task } from './types'
 
@@ -25,6 +26,10 @@ type Props = {
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Tasks', href: '/task' }]
 
 export default function TaskDetail({ task }: Props) {
+    const TaskDescription = ({ html }: { html: string }) => {
+        const safe = typeof window !== 'undefined' ? DOMPurify.sanitize(html) : html
+        return <div dangerouslySetInnerHTML={{ __html: safe }} />
+    }
     const { auth } = usePage<SharedData>().props
     const currentUserId = auth.user.id
 
@@ -188,8 +193,9 @@ export default function TaskDetail({ task }: Props) {
                             <div className="space-y-2">
                                 <div className="grid grid-cols-1 gap-4 rounded-lg bg-muted/40 p-4">
                                     {task.description ? (
-                                        <div>
-                                            <p className="text-base whitespace-pre-wrap">{task.description}</p>
+                                        <div className="text-base">
+                                            {/* Render sanitized HTML description */}
+                                            <TaskDescription html={task.description} />
                                         </div>
                                     ) : (
                                         <div className="flex items-center justify-between rounded-md border border-dashed bg-background/50 p-3 text-sm text-muted-foreground">
@@ -250,11 +256,14 @@ export default function TaskDetail({ task }: Props) {
                                                                         <button
                                                                             type="button"
                                                                             title="Save comment"
-                                                                            className="text-green-600 hover:text-green-700 cursor-pointer"
+                                                                            className="cursor-pointer text-green-600 hover:text-green-700"
                                                                             onClick={() => {
                                                                                 if (!editingBody.trim()) return
                                                                                 router.put(
-                                                                                    route('task.comments.update', { task: task.id, comment: comment.id }),
+                                                                                    route('task.comments.update', {
+                                                                                        task: task.id,
+                                                                                        comment: comment.id,
+                                                                                    }),
                                                                                     { body: editingBody },
                                                                                     {
                                                                                         preserveScroll: true,
@@ -262,7 +271,7 @@ export default function TaskDetail({ task }: Props) {
                                                                                             setEditingCommentId(null)
                                                                                             setEditingBody('')
                                                                                         },
-                                                                                    }
+                                                                                    },
                                                                                 )
                                                                             }}
                                                                         >
@@ -271,7 +280,7 @@ export default function TaskDetail({ task }: Props) {
                                                                         <button
                                                                             type="button"
                                                                             title="Cancel edit"
-                                                                            className="text-muted-foreground hover:text-foreground cursor-pointer"
+                                                                            className="cursor-pointer text-muted-foreground hover:text-foreground"
                                                                             onClick={() => {
                                                                                 setEditingCommentId(null)
                                                                                 setEditingBody('')
@@ -285,7 +294,7 @@ export default function TaskDetail({ task }: Props) {
                                                                         <button
                                                                             type="button"
                                                                             title="Edit comment"
-                                                                            className="text-blue-600 hover:text-blue-700 cursor-pointer"
+                                                                            className="cursor-pointer text-blue-600 hover:text-blue-700"
                                                                             onClick={() => {
                                                                                 setEditingCommentId(comment.id)
                                                                                 setEditingBody(comment.body)
@@ -296,7 +305,7 @@ export default function TaskDetail({ task }: Props) {
                                                                         <button
                                                                             type="button"
                                                                             title="Delete comment"
-                                                                            className="text-red-500 hover:text-red-600 cursor-pointer"
+                                                                            className="cursor-pointer text-red-500 hover:text-red-600"
                                                                             onClick={() => {
                                                                                 setCommentToDelete(comment.id)
                                                                                 setDeleteDialogOpen(true)
@@ -314,7 +323,7 @@ export default function TaskDetail({ task }: Props) {
                                                     <textarea
                                                         value={editingBody}
                                                         onChange={(e) => setEditingBody(e.target.value)}
-                                                        className="w-full min-h-[80px] rounded-md border bg-background p-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                                        className="min-h-[80px] w-full rounded-md border bg-background p-2 text-sm outline-none focus:ring-2 focus:ring-primary"
                                                     />
                                                 ) : (
                                                     <p className="text-sm whitespace-pre-wrap">{comment.body}</p>
@@ -373,7 +382,6 @@ export default function TaskDetail({ task }: Props) {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-
         </MasterLayout>
     )
 }
