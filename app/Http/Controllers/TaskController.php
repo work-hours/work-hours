@@ -193,26 +193,14 @@ final class TaskController extends Controller
             if ($request->has('assignees')) {
                 $task->assignees()->sync($request->input('assignees'));
 
-                $task->load('project');
-
-                $assigneeIds = $request->input('assignees');
-                $users = User::query()->whereIn('id', $assigneeIds)->get();
-                foreach ($users as $user) {
-                    $user->notify(new TaskAssigned($task, auth()->user()));
-                }
+                $this->notifyAssignees($task, $request->input('assignees'));
             }
 
             if ($request->has('tags')) {
                 $this->attachTags($request->input('tags'), $task);
             }
 
-            if ($request->hasFile('attachments')) {
-                foreach ($request->file('attachments') as $file) {
-                    if ($file) {
-                        $file->storeAs('tasks/' . $task->id, $file->getClientOriginalName(), 'public');
-                    }
-                }
-            }
+            $this->storeAttachments($request, $task);
 
             DB::commit();
 
@@ -340,14 +328,7 @@ final class TaskController extends Controller
                 $task->assignees()->sync($newAssigneeIds);
 
                 $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
-
-                if ($addedAssigneeIds !== []) {
-                    $task->load('project');
-                    $newUsers = User::query()->whereIn('id', $addedAssigneeIds)->get();
-                    foreach ($newUsers as $user) {
-                        $user->notify(new TaskAssigned($task, auth()->user()));
-                    }
-                }
+                $this->notifyAssignees($task, $addedAssigneeIds);
             } else {
                 $task->assignees()->detach();
             }
@@ -356,32 +337,17 @@ final class TaskController extends Controller
                 $this->attachTags($request->input('tags'), $task);
             }
 
-            if ($request->hasFile('attachments')) {
-                foreach ($request->file('attachments') as $file) {
-                    if ($file) {
-                        $file->storeAs('tasks/' . $task->id, $file->getClientOriginalName(), 'public');
-                    }
-                }
-            }
+            $this->storeAttachments($request, $task);
 
             DB::commit();
 
-            if ($oldStatus !== 'completed' && request('status') === 'completed' && ! $isProjectOwner) {
-                if (! $task->relationLoaded('project')) {
-                    $task->load('project');
-                }
+            $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
 
-                $projectOwner = User::query()->find($task->project->user_id);
-                $projectOwner?->notify(new TaskCompleted($task, auth()->user()));
-            }
-
-            if ($task->is_imported && $task->meta && $task->meta->source === 'github' && $request->boolean('github_update')) {
-                $this->gitHubAdapter->updateGitHubIssue($task);
-            }
-
-            if ($task->is_imported && $task->meta && $task->meta->source === 'jira' && $request->boolean('jira_update')) {
-                $this->jiraAdapter->updateJiraIssue($task);
-            }
+            $this->updateExternalIntegrations(
+                $task,
+                $request->boolean('github_update'),
+                $request->boolean('jira_update')
+            );
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -418,22 +384,13 @@ final class TaskController extends Controller
 
             DB::commit();
 
-            if ($oldStatus !== 'completed' && request('status') === 'completed' && ! $isProjectOwner) {
-                if (! $task->relationLoaded('project')) {
-                    $task->load('project');
-                }
+            $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
 
-                $projectOwner = User::query()->find($task->project->user_id);
-                $projectOwner?->notify(new TaskCompleted($task, auth()->user()));
-            }
-
-            if ($task->is_imported && $task->meta && $task->meta->source === 'github' && request()->boolean('github_update')) {
-                $this->gitHubAdapter->updateGitHubIssue($task);
-            }
-
-            if ($task->is_imported && $task->meta && $task->meta->source === 'jira' && request()->boolean('jira_update')) {
-                $this->jiraAdapter->updateJiraIssue($task);
-            }
+            $this->updateExternalIntegrations(
+                $task,
+                request()->boolean('github_update'),
+                request()->boolean('jira_update')
+            );
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -560,5 +517,70 @@ final class TaskController extends Controller
         }
 
         $task->tags()->sync($tagIds);
+    }
+
+    /**
+     * Store uploaded attachments for the given task.
+     */
+    private function storeAttachments($request, Task $task): void
+    {
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                if ($file) {
+                    $file->storeAs('tasks/' . $task->id, $file->getClientOriginalName(), 'public');
+                }
+            }
+        }
+    }
+
+    /**
+     * Notify users that have been assigned to the task.
+     */
+    private function notifyAssignees(Task $task, array $userIds): void
+    {
+        if ($userIds === []) {
+            return;
+        }
+
+        if (! $task->relationLoaded('project')) {
+            $task->load('project');
+        }
+
+        $users = User::query()->whereIn('id', $userIds)->get();
+        foreach ($users as $user) {
+            $user->notify(new TaskAssigned($task, auth()->user()));
+        }
+    }
+
+    /**
+     * Notify project owner if task transitioned to completed by a non-owner.
+     */
+    private function notifyOnCompletion(Task $task, string $oldStatus, bool $isProjectOwner): void
+    {
+        if ($oldStatus !== 'completed' && request('status') === 'completed' && ! $isProjectOwner) {
+            if (! $task->relationLoaded('project')) {
+                $task->load('project');
+            }
+
+            $projectOwner = User::query()->find($task->project->user_id);
+            $projectOwner?->notify(new TaskCompleted($task, auth()->user()));
+        }
+    }
+
+    /**
+     * Update external integrations for imported tasks when requested.
+     */
+    private function updateExternalIntegrations(Task $task, bool $githubFlag, bool $jiraFlag): void
+    {
+        $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
+        $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
+
+        if ($isGithub && $githubFlag) {
+            $this->gitHubAdapter->updateGitHubIssue($task);
+        }
+
+        if ($isJira && $jiraFlag) {
+            $this->jiraAdapter->updateJiraIssue($task);
+        }
     }
 }
