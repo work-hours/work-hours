@@ -68,22 +68,34 @@ export default function TimeLogTable({
 
     return (
         <>
-            <Table>
+            <Table className="w-full">
                 <TableHeader>
                     <TableHeaderRow>
-                        {showCheckboxes && <TableHead className="w-[50px]">Select</TableHead>}
-                        {showTeamMemberFinal && <TableHead>Team Member</TableHead>}
-                        <TableHead>Entry</TableHead>
-                        <TableHead>Hours</TableHead>
-                        <TableHead>Hourly Rate</TableHead>
-                        <TableHead>Paid Amount</TableHead>
-                        <TableHead>Status</TableHead>
-                        {showActions && <TableHead className="text-right">Actions</TableHead>}
+                        {showCheckboxes && (
+                            <TableHead className="w-[50px] bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">
+                                Select
+                            </TableHead>
+                        )}
+                        {showTeamMemberFinal && (
+                            <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">
+                                Team Member
+                            </TableHead>
+                        )}
+                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Entry</TableHead>
+                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Hours</TableHead>
+                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Hourly Rate</TableHead>
+                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Paid Amount</TableHead>
+                        <TableHead className="bg-gray-50 text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">Status</TableHead>
+                        {showActions && (
+                            <TableHead className="bg-gray-50 text-right text-xs font-medium text-gray-500 dark:bg-gray-750 dark:text-gray-400">
+                                Actions
+                            </TableHead>
+                        )}
                     </TableHeaderRow>
                 </TableHeader>
                 <TableBody>
                     {timeLogs.map((log) => (
-                        <TableRow key={log.id}>
+                        <TableRow key={log.id} className="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-750">
                             {showCheckboxes && (
                                 <TableCell>
                                     <input
@@ -108,8 +120,10 @@ export default function TimeLogTable({
                                     />
                                 </TableCell>
                             )}
-                            {showTeamMemberFinal && <TableCell className="font-medium">{log.user_name}</TableCell>}
-                            <TableCell className="font-medium">
+                            {showTeamMemberFinal && (
+                                                        <TableCell className="font-medium text-gray-800 dark:text-gray-200">{log.user_name}</TableCell>
+                                                    )}
+                            <TableCell className="font-medium text-gray-800 dark:text-gray-200">
                                 {formatTimeEntry(log.start_timestamp, log.end_timestamp)}
                                 <br />
                                 <div className="flex flex-wrap items-center gap-1">
@@ -125,12 +139,12 @@ export default function TimeLogTable({
                                     )}
                                 </div>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">
                                 <span className="inline-flex items-center bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                                     {log.duration}
                                 </span>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">
                                 {log.hourly_rate !== undefined &&
                                 log.hourly_rate !== null &&
                                 typeof log.hourly_rate === 'number' &&
@@ -142,7 +156,7 @@ export default function TimeLogTable({
                                     <span className="text-gray-500">-</span>
                                 )}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">
                                 <div className="flex items-center gap-2">
                                     {/* Always show the amount, calculated if not paid */}
                                     <span
@@ -179,7 +193,7 @@ export default function TimeLogTable({
                                         ))}
                                 </div>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">
                                 {/* Approval Status Only */}
                                 {log.status === 'approved' ? (
                                     <span className="inline-flex items-center bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
