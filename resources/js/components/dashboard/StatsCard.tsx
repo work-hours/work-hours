@@ -20,14 +20,7 @@ interface StatsCardProps {
 export default function StatsCard({ title, icon, value, description, trend, borderColor = 'primary' }: StatsCardProps) {
     return (
         <Card
-            className={cn('w-full overflow-hidden border-l-4 transition-all hover:shadow-md', {
-                'border-l-primary': borderColor === 'primary',
-                'border-l-green-500': borderColor === 'green-500',
-                'border-l-blue-500': borderColor === 'blue-500',
-                'border-l-amber-500': borderColor === 'amber-500',
-                'border-l-purple-500': borderColor === 'purple-500',
-                'border-l-red-500': borderColor === 'red-500',
-            })}
+            className={cn('w-full overflow-hidden border-l-4 transition-all hover:shadow-md')}
         >
             <CardContent className="p-3">
                 <div className="flex items-center justify-between">

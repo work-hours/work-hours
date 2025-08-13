@@ -7,7 +7,7 @@ interface WeeklyTrendProps {
 
 export default function WeeklyTrend({ weeklyData }: WeeklyTrendProps) {
     return (
-        <Card className="overflow-hidden border-l-4 border-l-blue-500 transition-colors dark:border-l-blue-400">
+        <Card className="overflow-hidden transition-colors">
             <CardHeader className="pb-2">
                 <CardTitle className="text-xs font-bold uppercase">Weekly Trend</CardTitle>
                 <CardDescription className="text-[10px]">Hours logged over the past weeks</CardDescription>

@@ -15,7 +15,7 @@ interface TeamProductivityProps {
 
 export default function TeamProductivity({ teamStats }: TeamProductivityProps) {
     return (
-        <Card className="overflow-hidden border-l-4 border-l-purple-500 transition-colors dark:border-l-purple-400">
+        <Card className="overflow-hidden transition-colors">
             <CardHeader className="pb-2">
                 <CardTitle className="text-xs font-bold uppercase">Team Productivity</CardTitle>
                 <CardDescription className="text-[10px]">Hours logged by team members</CardDescription>

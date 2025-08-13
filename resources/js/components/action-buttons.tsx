@@ -50,7 +50,7 @@ export function ExportButton({ href, label = 'Export', className = '' }: ExportB
         <a href={href} className="inline-block">
             <Button
                 variant="outline"
-                size="sm"
+                size="default"
                 className={`flex items-center gap-2 ${variantStyles.emerald} shadow-sm transition-all ${className}`}
             >
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
