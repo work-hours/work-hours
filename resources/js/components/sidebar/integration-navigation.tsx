@@ -32,8 +32,8 @@ export function IntegrationNavigation({ collapsed, isGitHubIntegrated, isJiraInt
 
     return (
         <div className="mb-6">
-            <div className="mb-3 border-b border-gray-300 pb-2 dark:border-gray-600">
-                <h3 className={`text-xs font-bold tracking-wider text-gray-700 uppercase dark:text-gray-300 ${collapsed ? 'text-center' : 'px-2'}`}>
+            <div className="mb-3 border-b border-neutral-300 pb-2 dark:border-neutral-600">
+                <h3 className={`text-xs font-medium uppercase tracking-wider text-neutral-700 dark:text-neutral-300 ${collapsed ? 'text-center' : 'px-2'}`}>
                     {collapsed ? 'Int.' : 'Integration'}
                 </h3>
             </div>
@@ -51,27 +51,27 @@ export function IntegrationNavigation({ collapsed, isGitHubIntegrated, isJiraInt
                                         href={item.href}
                                         className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 ${
                                             isActive
-                                                ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-800 dark:text-gray-100'
-                                                : 'text-gray-700 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100'
+                                                ? 'bg-neutral-50 text-neutral-900 shadow-sm dark:bg-neutral-800 dark:text-neutral-100'
+                                                : 'text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100'
                                         }`}
                                     >
                                         {item.icon && (
                                             <item.icon
                                                 className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
                                                     !collapsed ? 'mr-3' : ''
-                                                } ${isActive ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}
+                                                } ${isActive ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-500 dark:text-neutral-400'}`}
                                                 aria-hidden="true"
                                             />
                                         )}
                                         {!collapsed && <span>{item.title}</span>}
-                                        {isActive && <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-gray-700 dark:bg-gray-400"></div>}
+                                        {isActive && <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-neutral-600 dark:bg-neutral-400"></div>}
                                     </Link>
                                     {collapsed && (
                                         <Tooltip>
                                             <TooltipTrigger asChild>
                                                 <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
                                             </TooltipTrigger>
-                                            <TooltipContent side="right" className="shadow-lg">
+                                            <TooltipContent side="right" className="border-neutral-200 bg-white text-neutral-800 shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200">
                                                 {item.title}
                                             </TooltipContent>
                                         </Tooltip>

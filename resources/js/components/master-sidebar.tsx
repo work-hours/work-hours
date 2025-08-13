@@ -139,19 +139,19 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
     return (
         <div
-            className={`sticky top-0 flex h-screen flex-col border-r border-gray-200 bg-white shadow-sm transition-all duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-800 ${
+            className={`sticky top-0 flex h-screen flex-col border-r border-neutral-200 bg-white shadow-sm transition-all duration-300 ease-in-out dark:border-neutral-800 dark:bg-neutral-900 ${
                 collapsed ? 'w-20' : 'w-68'
             }`}
         >
             {/* Header with improved styling */}
             <div
-                className={`border-b border-gray-200 p-4 pb-3 pt-3 transition-all duration-300 ease-in-out dark:border-gray-700 ${
+                className={`border-b border-neutral-200 p-4 pb-3 pt-3 transition-all duration-300 ease-in-out dark:border-neutral-700 ${
                     collapsed ? 'flex flex-col items-center' : 'px-6'
                 }`}
             >
                 <div className={`flex w-full items-center ${collapsed ? 'flex-col justify-center' : ''}`}>
                     <Link href={route('dashboard')} className={`${collapsed ? 'mb-2 flex items-center justify-center p-1' : 'flex items-center'}`}>
-                        {collapsed ? <AppLogoIcon className="h-12 w-24 text-blue-600 dark:text-blue-400" /> : <AppLogo />}
+                        {collapsed ? <AppLogoIcon className="h-12 w-24 text-neutral-700 dark:text-neutral-300" /> : <AppLogo />}
                     </Link>
                 </div>
             </div>
@@ -162,7 +162,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                 <div className="mb-6">
                     <div className="mb-3 pb-2">
                         <h3
-                            className={`text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400 ${
+                            className={`text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400 ${
                                 collapsed ? 'text-center' : 'px-2'
                             }`}
                         >
@@ -189,7 +189,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
             </div>
 
             {/* Footer with enhanced styling */}
-            <div className={`border-t border-gray-200 pb-4 pt-3 dark:border-gray-700 ${collapsed ? 'px-2' : 'px-4'}`}>
+            <div className={`border-t border-neutral-200 pb-4 pt-3 dark:border-neutral-700 ${collapsed ? 'px-2' : 'px-4'}`}>
                 <FooterNavigation collapsed={collapsed} />
                 <UserSection collapsed={collapsed} user={auth.user} />
             </div>

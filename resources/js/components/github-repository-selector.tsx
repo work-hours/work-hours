@@ -153,19 +153,22 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
 
     if (!isAuthenticated) {
         return (
-            <Card>
+            <Card className="border-neutral-200 dark:border-neutral-700">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-xl">
+                    <CardTitle className="flex items-center gap-2 text-xl text-neutral-900 dark:text-neutral-100">
                         <Github className="h-5 w-5" />
                         GitHub Repositories
                     </CardTitle>
-                    <CardDescription>Connect your GitHub account to add repositories to this project</CardDescription>
+                    <CardDescription className="text-neutral-600 dark:text-neutral-400">Connect your GitHub account to add repositories to this project</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col items-center justify-center py-6">
-                        <Github className="mb-4 h-12 w-12 text-muted-foreground" />
-                        <p className="mb-4 text-center">You need to authenticate with GitHub to access your repositories.</p>
-                        <Button asChild>
+                        <Github className="mb-4 h-12 w-12 text-neutral-500 dark:text-neutral-400" />
+                        <p className="mb-4 text-center text-neutral-600 dark:text-neutral-400">You need to authenticate with GitHub to access your repositories.</p>
+                        <Button
+                            asChild
+                            className="bg-neutral-900 text-white transition-colors duration-200 hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600"
+                        >
                             <a href={route('auth.github')}>
                                 <Github className="mr-2 h-4 w-4" />
                                 Connect GitHub Account
@@ -178,24 +181,28 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
     }
 
     return (
-        <Card>
+        <Card className="border-neutral-200 dark:border-neutral-700">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
+                <CardTitle className="flex items-center gap-2 text-xl text-neutral-900 dark:text-neutral-100">
                     <Github className="h-5 w-5" />
                     GitHub Repositories
                 </CardTitle>
-                <CardDescription>Select repositories to add to this project</CardDescription>
+                <CardDescription className="text-neutral-600 dark:text-neutral-400">Select repositories to add to this project</CardDescription>
             </CardHeader>
             <CardContent>
-                {error && <div className="mb-4 rounded-md bg-destructive/15 p-3 text-destructive">{error}</div>}
+                {error && (
+                    <div className="mb-4 rounded-md bg-red-50 p-3 text-red-600 dark:bg-red-900/10 dark:text-red-400">
+                        {error}
+                    </div>
+                )}
 
                 <div className="mb-4">
                     <div className="relative">
-                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                         <Input
                             type="search"
                             placeholder="Search repositories..."
-                            className="pl-8"
+                            className="pl-8 border-neutral-200 focus:border-neutral-400 focus:ring-neutral-400 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-neutral-500 dark:focus:ring-neutral-500"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -204,15 +211,19 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
 
                 {selectedRepos.length > 0 && (
                     <div className="mb-4">
-                        <h3 className="mb-2 text-sm font-medium">Selected Repositories ({selectedRepos.length})</h3>
+                        <h3 className="mb-2 text-sm font-medium text-neutral-800 dark:text-neutral-200">Selected Repositories ({selectedRepos.length})</h3>
                         <div className="flex flex-wrap gap-2">
                             {selectedRepos.map((repo) => (
-                                <Badge key={repo.id} variant="secondary" className="flex items-center gap-1">
+                                <Badge
+                                    key={repo.id}
+                                    variant="secondary"
+                                    className="flex items-center gap-1 bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
+                                >
                                     {repo.name}
                                     <button
                                         type="button"
                                         onClick={() => handleRepositoryToggle(repo)}
-                                        className="ml-1 rounded-full p-0.5 hover:bg-muted"
+                                        className="ml-1 rounded-full p-0.5 transition-colors duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-700"
                                     >
                                         <X className="h-3 w-3" />
                                     </button>
@@ -223,10 +234,19 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
                 )}
 
                 <Tabs defaultValue="personal" onValueChange={setActiveTab}>
-                    <TabsList className="mb-4 flex flex-wrap">
-                        <TabsTrigger value="personal">Personal</TabsTrigger>
+                    <TabsList className="mb-4 flex flex-wrap bg-neutral-100 dark:bg-neutral-800">
+                        <TabsTrigger
+                            value="personal"
+                            className="data-[state=active]:bg-white data-[state=active]:text-neutral-900 dark:data-[state=active]:bg-neutral-700 dark:data-[state=active]:text-neutral-100"
+                        >
+                            Personal
+                        </TabsTrigger>
                         {organizations.map((org) => (
-                            <TabsTrigger key={org} value={org}>
+                            <TabsTrigger
+                                key={org}
+                                value={org}
+                                className="data-[state=active]:bg-white data-[state=active]:text-neutral-900 dark:data-[state=active]:bg-neutral-700 dark:data-[state=active]:text-neutral-100"
+                            >
                                 {org}
                             </TabsTrigger>
                         ))}
@@ -235,35 +255,39 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
                     <TabsContent value="personal">
                         {isLoading ? (
                             <div className="flex justify-center py-8">
-                                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                                <Loader2 className="h-8 w-8 animate-spin text-neutral-500 dark:text-neutral-400" />
                             </div>
                         ) : filteredPersonalRepos.length > 0 ? (
                             <ScrollArea className="h-[400px] pr-2">
                                 <div className="space-y-3">
                                     {filteredPersonalRepos.map((repo) => (
-                                        <div key={repo.id} className="flex items-start space-x-3 rounded-md border p-3 hover:bg-muted/50">
+                                        <div
+                                            key={repo.id}
+                                            className="flex items-start space-x-3 rounded-md border border-neutral-200 p-3 transition-colors duration-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800/50"
+                                        >
                                             <Checkbox
                                                 id={`repo-${repo.id}`}
                                                 checked={repo.selected || false}
                                                 onCheckedChange={() => handleRepositoryToggle(repo)}
+                                                className="border-neutral-300 text-neutral-700 focus:ring-neutral-500 dark:border-neutral-600 dark:text-neutral-300"
                                             />
                                             <div className="flex-1">
-                                                <Label htmlFor={`repo-${repo.id}`} className="cursor-pointer font-medium">
+                                                <Label htmlFor={`repo-${repo.id}`} className="cursor-pointer font-medium text-neutral-800 dark:text-neutral-200">
                                                     {repo.name}
                                                     {repo.private && (
-                                                        <Badge variant="outline" className="ml-2 text-xs">
+                                                        <Badge variant="outline" className="ml-2 text-xs border-neutral-200 text-neutral-600 dark:border-neutral-700 dark:text-neutral-400">
                                                             Private
                                                         </Badge>
                                                     )}
                                                 </Label>
-                                                {repo.description && <p className="mt-1 text-sm text-muted-foreground">{repo.description}</p>}
+                                                {repo.description && <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{repo.description}</p>}
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                             </ScrollArea>
                         ) : (
-                            <div className="py-8 text-center text-muted-foreground">
+                            <div className="py-8 text-center text-neutral-500 dark:text-neutral-400">
                                 {searchTerm ? 'No repositories match your search' : 'No personal repositories found'}
                             </div>
                         )}
@@ -282,35 +306,39 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
                             <TabsContent key={org} value={org}>
                                 {isLoading ? (
                                     <div className="flex justify-center py-8">
-                                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                                        <Loader2 className="h-8 w-8 animate-spin text-neutral-500 dark:text-neutral-400" />
                                     </div>
                                 ) : filteredOrgRepos.length > 0 ? (
                                     <ScrollArea className="h-[400px] pr-2">
                                         <div className="space-y-3">
                                             {filteredOrgRepos.map((repo) => (
-                                                <div key={repo.id} className="flex items-start space-x-3 rounded-md border p-3 hover:bg-muted/50">
+                                                <div
+                                                    key={repo.id}
+                                                    className="flex items-start space-x-3 rounded-md border border-neutral-200 p-3 transition-colors duration-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800/50"
+                                                >
                                                     <Checkbox
                                                         id={`repo-${repo.id}`}
                                                         checked={repo.selected || false}
                                                         onCheckedChange={() => handleRepositoryToggle(repo)}
+                                                        className="border-neutral-300 text-neutral-700 focus:ring-neutral-500 dark:border-neutral-600 dark:text-neutral-300"
                                                     />
                                                     <div className="flex-1">
-                                                        <Label htmlFor={`repo-${repo.id}`} className="cursor-pointer font-medium">
+                                                        <Label htmlFor={`repo-${repo.id}`} className="cursor-pointer font-medium text-neutral-800 dark:text-neutral-200">
                                                             {repo.name}
                                                             {repo.private && (
-                                                                <Badge variant="outline" className="ml-2 text-xs">
+                                                                <Badge variant="outline" className="ml-2 text-xs border-neutral-200 text-neutral-600 dark:border-neutral-700 dark:text-neutral-400">
                                                                     Private
                                                                 </Badge>
                                                             )}
                                                         </Label>
-                                                        {repo.description && <p className="mt-1 text-sm text-muted-foreground">{repo.description}</p>}
+                                                        {repo.description && <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{repo.description}</p>}
                                                     </div>
                                                 </div>
                                             ))}
                                         </div>
                                     </ScrollArea>
                                 ) : (
-                                    <div className="py-8 text-center text-muted-foreground">
+                                    <div className="py-8 text-center text-neutral-500 dark:text-neutral-400">
                                         {searchTerm ? 'No repositories match your search' : `No repositories found for ${org}`}
                                     </div>
                                 )}
@@ -320,7 +348,11 @@ export default function GitHubRepositorySelector({ onRepositoriesSaved }: GitHub
                 </Tabs>
 
                 <div className="mt-4 flex justify-end">
-                    <Button onClick={saveRepositories} disabled={isSaving || selectedRepos.length === 0} className="flex items-center gap-2">
+                    <Button
+                        onClick={saveRepositories}
+                        disabled={isSaving || selectedRepos.length === 0}
+                        className="flex items-center gap-2 bg-neutral-900 text-white transition-colors duration-200 hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600"
+                    >
                         {isSaving ? (
                             <>
                                 <Loader2 className="h-4 w-4 animate-spin" />
