@@ -4,7 +4,6 @@ import FloatingTimeTracker from '@/components/floating-time-tracker'
 import { MasterContent } from '@/components/master-content'
 import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
-import Background from '@/components/ui/background'
 import { type BreadcrumbItem } from '@/types'
 import { projects, tasks } from '@actions/DashboardController'
 import { type ReactNode, useEffect, useState } from 'react'
@@ -66,9 +65,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     }, [])
 
     return (
-        <div className="flex min-h-screen bg-background dark:bg-gray-900">
-            <Background />
-
+        <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900">
             {/* Left Sidebar */}
             <MasterSidebar collapsed={collapsed} />
 
@@ -95,7 +92,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                 position="top-right"
                 closeButton={true}
                 toastOptions={{
-                    className: 'shadow-lg rounded-lg border border-gray-100 dark:border-gray-700',
+                    className: 'shadow-md rounded-lg border border-gray-200 dark:border-gray-800',
                     duration: 5000,
                 }}
             />

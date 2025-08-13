@@ -1,5 +1,4 @@
 import { SidebarTrackerDisplay } from '@/components/sidebar-tracker-display'
-import Background from '@/components/ui/background'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/react'
@@ -46,16 +45,14 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
 
     return (
         <div
-            className={`sticky top-0 flex h-screen flex-col border-l border-gray-300 bg-background shadow-sm transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${collapsed ? 'w-20' : 'w-56'}`}
+            className={`sticky top-0 flex h-screen flex-col border-l border-gray-200 bg-white shadow-sm transition-all duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-800 ${collapsed ? 'w-20' : 'w-56'}`}
         >
-            <Background showPunches={false} showMarginLine={false} />
-
             {/* Quick Actions section */}
             <div className={`mt-2 flex flex-col overflow-y-auto ${collapsed ? '' : 'mr-8'}`}>
                 <div className="mb-6 px-4">
-                    <div className="mb-3 border-b border-gray-400 pb-2 dark:border-gray-600">
+                    <div className="mb-3 pb-2">
                         <h3
-                            className={`text-sm font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
+                            className={`text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400 ${collapsed ? 'text-center' : ''}`}
                         >
                             {collapsed ? 'Quick' : 'Quick Actions'}
                         </h3>
@@ -66,7 +63,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                                 <div key={item.href} className="relative">
                                     <Link
                                         href={item.href}
-                                        className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+                                        className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                     >
                                         {item.icon && <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />}
                                         {!collapsed && <span>{item.title}</span>}
@@ -87,9 +84,9 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
 
                 {/* Tools section */}
                 <div className="mb-6 px-4">
-                    <div className="mb-3 border-b border-gray-400 pb-2 dark:border-gray-600">
+                    <div className="mb-3 pb-2">
                         <h3
-                            className={`text-sm font-bold tracking-wider text-gray-900 uppercase dark:text-gray-200 ${collapsed ? 'text-center' : ''}`}
+                            className={`text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400 ${collapsed ? 'text-center' : ''}`}
                         >
                             {collapsed ? 'Tools' : 'Tools'}
                         </h3>
@@ -99,10 +96,10 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                             <div className="relative">
                                 <button
                                     onClick={handleTrackTimeClick}
-                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                 >
                                     <ClockIcon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                    {!collapsed && <span className={'cursor-pointer'}>{isThereRunningTimeLog ? 'Stop Tracking' : 'Track Time'}</span>}
+                                    {!collapsed && <span>Track Time</span>}
                                 </button>
                                 {collapsed && (
                                     <Tooltip>
@@ -117,10 +114,10 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                             <div className="relative">
                                 <button
                                     onClick={handleAskAiClick}
-                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                 >
                                     <BrainCircuit className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                    {!collapsed && <span className={'cursor-pointer'}>Ask AI</span>}
+                                    {!collapsed && <span>Ask AI</span>}
                                 </button>
                                 {collapsed && (
                                     <Tooltip>
@@ -134,12 +131,23 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                         </nav>
                     </TooltipProvider>
                 </div>
+
+                {/* Active Time Log */}
+                {isThereRunningTimeLog && (
+                    <div className="px-4">
+                        <div className="mb-3 pb-2">
+                            <h3
+                                className={`text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400 ${
+                                    collapsed ? 'text-center' : ''
+                                }`}
+                            >
+                                {collapsed ? 'Active' : 'Active Time Log'}
+                            </h3>
+                        </div>
+                        <SidebarTrackerDisplay collapsed={collapsed} setIsThereRunningTimeLog={setIsThereRunningTimeLog} />
+                    </div>
+                )}
             </div>
-
-            {/* Spacer to push links to bottom */}
-            <div className="flex-1"></div>
-
-            <SidebarTrackerDisplay collapsed={collapsed} setIsThereRunningTimeLog={setIsThereRunningTimeLog} />
         </div>
     )
 }
