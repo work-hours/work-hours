@@ -41,7 +41,6 @@ Route::middleware('auth')->middleware('verified')->group(function (): void {
 
     Route::get('notifications', [NotificationsController::class, 'index'])->name('notifications.index');
 
-    // AI Chat routes
     Route::get('integration', [IntegrationController::class, 'index'])->name('integration.index');
 
     Route::get('team', [TeamController::class, 'index'])->name('team.index');
@@ -63,6 +62,15 @@ Route::middleware('auth')->middleware('verified')->group(function (): void {
     Route::get('task', [TaskController::class, 'index'])->name('task.index');
     Route::get('task/create', [TaskController::class, 'create'])->name('task.create');
     Route::get('task/{task}/edit', [TaskController::class, 'edit'])->name('task.edit');
+    Route::get('task/{task}', [TaskController::class, 'detail'])->name('task.detail');
+    Route::post('task/{task}/comments', [TaskController::class, 'storeComment'])->name('task.comments.store');
+    Route::put('task/{task}/comments/{comment}', [TaskController::class, 'updateComment'])->name('task.comments.update');
+    Route::delete('task/{task}/comments/{comment}', [TaskController::class, 'destroyComment'])->name('task.comments.destroy');
+
+    // Task attachments
+    Route::delete('task/{task}/attachments/{filename}', [TaskController::class, 'destroyAttachment'])
+        ->where('filename', '[^/]+')
+        ->name('task.attachments.destroy');
 
     Route::get('time-log', [TimeLogController::class, 'index'])->name('time-log.index');
     Route::get('time-log/create', [TimeLogController::class, 'create'])->name('time-log.create');

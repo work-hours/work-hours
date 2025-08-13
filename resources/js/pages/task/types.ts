@@ -20,6 +20,13 @@ export type Tag = {
     color: string
 }
 
+export type TaskComment = {
+    id: number
+    body: string
+    created_at: string
+    user: User
+}
+
 export type Task = {
     id: number
     project_id: number
@@ -32,6 +39,7 @@ export type Task = {
     project: Project
     assignees: User[]
     tags?: Tag[]
+    comments?: TaskComment[]
     meta?: {
         source?: string
         source_url?: string

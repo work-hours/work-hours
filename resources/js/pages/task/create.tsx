@@ -2,7 +2,7 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import TagInput from '@/components/ui/tag-input'
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 import { Head, useForm } from '@inertiajs/react'
-import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus, Text } from 'lucide-react'
+import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus } from 'lucide-react'
 import { FormEventHandler, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -15,7 +15,9 @@ import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Textarea } from '@/components/ui/textarea'
+
+import FileDropzone from '@/components/ui/file-dropzone'
+import RichTextEditor from '@/components/ui/rich-text-editor'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 
@@ -37,6 +39,7 @@ type TaskForm = {
     create_github_issue: boolean
     create_jira_issue: boolean
     tags: string[]
+    attachments?: File[]
 }
 
 type Props = {
@@ -66,6 +69,7 @@ export default function CreateTask({ projects }: Props) {
         create_github_issue: false,
         create_jira_issue: false,
         tags: [],
+        attachments: [],
     })
 
     const [potentialAssignees, setPotentialAssignees] = useState<{ id: number; name: string; email: string }[]>([])
@@ -117,6 +121,7 @@ export default function CreateTask({ projects }: Props) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
         post(route('task.store'), {
+            forceFormData: true,
             onSuccess: () => {
                 toast.success('Task created successfully')
                 reset()
@@ -227,18 +232,14 @@ export default function CreateTask({ projects }: Props) {
                                         Description <span className="text-xs text-muted-foreground">(optional)</span>
                                     </Label>
                                     <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 top-0 left-3 flex items-center pt-2">
-                                            <Text className="h-4 w-4 text-muted-foreground" />
+                                        <div className="">
+                                            <RichTextEditor
+                                                value={data.description}
+                                                onChange={(val) => setData('description', val)}
+                                                disabled={processing}
+                                                placeholder="Task description"
+                                            />
                                         </div>
-                                        <Textarea
-                                            id="description"
-                                            tabIndex={2}
-                                            value={data.description}
-                                            onChange={(e) => setData('description', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="Task description"
-                                            className="min-h-[100px] pl-10"
-                                        />
                                     </div>
                                     <InputError message={errors.description} />
                                 </div>
@@ -393,6 +394,14 @@ export default function CreateTask({ projects }: Props) {
                                         </Label>
                                     </div>
                                 )}
+
+                                <FileDropzone
+                                    value={data.attachments || []}
+                                    onChange={(files) => setData('attachments', files)}
+                                    label="Attachments"
+                                    description="Drag & drop files here, or click to select"
+                                    disabled={processing}
+                                />
 
                                 <div className="mt-4 flex justify-end gap-3">
                                     <Button

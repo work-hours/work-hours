@@ -24,17 +24,20 @@ final class UpdateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'string', 'max:255'],
-            'description' => ['sometimes', 'nullable', 'string'],
-            'status' => ['sometimes', 'string', 'in:pending,in_progress,completed'],
-            'priority' => ['sometimes', 'string', 'in:low,medium,high'],
-            'due_date' => ['sometimes', 'nullable', 'date'],
-            'assignees' => ['sometimes', 'nullable', 'array'],
+            'project_id' => ['required', 'integer', 'exists:projects,id'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'status' => ['required', 'string', 'in:pending,in_progress,completed'],
+            'priority' => ['required', 'string', 'in:low,medium,high'],
+            'due_date' => ['nullable', 'date'],
+            'assignees' => ['nullable', 'array'],
             'assignees.*' => ['integer', 'exists:users,id'],
-            'tags' => ['sometimes', 'nullable', 'array'],
+            'create_github_issue' => ['nullable', 'boolean'],
+            'create_jira_issue' => ['nullable', 'boolean'],
+            'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:255'],
-            'github_update' => ['sometimes', 'boolean'],
-            'jira_update' => ['sometimes', 'boolean'],
+            'attachments' => ['sometimes', 'array'],
+            'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,gif,doc,docx,pdf,txt,zip'],
         ];
     }
 }

@@ -53,8 +53,11 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
             }
         }
 
-        const handleTaskTimeTrackerStart = (e: { detail: { projectId: number; taskId: number } }) => {
-            startTimeLog(e.detail.projectId, e.detail.taskId)
+        const handleTaskTimeTrackerStart = (e: Event) => {
+            const detail = (e as CustomEvent<{ projectId: number; taskId: number }>).detail
+            if (detail) {
+                startTimeLog(detail.projectId, detail.taskId)
+            }
         }
 
         window.addEventListener('open-time-tracker', handleOpenTimeTracker)
@@ -64,7 +67,7 @@ export default function FloatingTimeTracker({ projects, tasks }: FloatingTimeTra
         return () => {
             window.removeEventListener('open-time-tracker', handleOpenTimeTracker)
 
-            window.addEventListener('task-time-tracker-start', handleTaskTimeTrackerStart)
+            window.removeEventListener('task-time-tracker-start', handleTaskTimeTrackerStart)
         }
     }, [])
 

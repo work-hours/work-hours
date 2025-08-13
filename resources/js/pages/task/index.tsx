@@ -1,7 +1,6 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
 import DeleteTask from '@/components/delete-task'
 import SourceLinkIcon from '@/components/source-link-icon'
-import TaskDetailsSheet from '@/components/task-details-sheet'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -57,8 +56,7 @@ export default function Tasks() {
     const [tasks, setTasks] = useState<Task[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
-    const [selectedTask, setSelectedTask] = useState<Task | null>(null)
-    const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+
     const [statusDialogOpen, setStatusDialogOpen] = useState(false)
     const [selectedStatus, setSelectedStatus] = useState<Task['status'] | null>(null)
     const [isUpdating, setIsUpdating] = useState(false)
@@ -77,11 +75,6 @@ export default function Tasks() {
         search: '',
     })
     const [processing, setProcessing] = useState(false)
-
-    const handleViewDetails = (task: Task): void => {
-        setSelectedTask(task)
-        setIsDetailsOpen(true)
-    }
 
     const handleStatusClick = (task: Task, status: Task['status']): void => {
         setTaskToUpdate(task)
@@ -127,7 +120,7 @@ export default function Tasks() {
                 payload.jira_update = updateJira
             }
 
-            await axios.put(route('task.update', taskToUpdate.id), payload)
+            await axios.put(route('task.updateStatus', taskToUpdate.id), payload)
 
             const updatedTasks = tasks.map((task) => {
                 if (task.id === taskToUpdate.id) {
@@ -674,16 +667,16 @@ export default function Tasks() {
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     {/* View Details Button */}
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-7 w-7 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
-                                                        onClick={() => handleViewDetails(task)}
-                                                        title="View Details"
-                                                    >
-                                                        <Glasses className="h-3.5 w-3.5" />
-                                                        <span className="sr-only">View Details</span>
-                                                    </Button>
+                                                    <Link href={route('task.detail', task.id)} title="View Details">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="h-7 w-7 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
+                                                        >
+                                                            <Glasses className="h-3.5 w-3.5" />
+                                                            <span className="sr-only">View Details</span>
+                                                        </Button>
+                                                    </Link>
 
                                                     {isAssignedToCurrentUser(task) && (
                                                         <Button
@@ -749,9 +742,6 @@ export default function Tasks() {
                         )}
                     </CardContent>
                 </Card>
-
-                {/* Task Details Sheet */}
-                <TaskDetailsSheet task={selectedTask} open={isDetailsOpen} onOpenChange={setIsDetailsOpen} />
 
                 {/* Status Change Dialog */}
                 <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
