@@ -36,6 +36,8 @@ final class StoreTaskRequest extends FormRequest
             'create_jira_issue' => ['nullable', 'boolean'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:255'],
+            'attachments' => ['sometimes', 'array'],
+            'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,gif,doc,docx,pdf,txt,zip'],
         ];
     }
 }

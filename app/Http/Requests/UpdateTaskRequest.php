@@ -35,6 +35,8 @@ final class UpdateTaskRequest extends FormRequest
             'tags.*' => ['string', 'max:255'],
             'github_update' => ['sometimes', 'boolean'],
             'jira_update' => ['sometimes', 'boolean'],
+            'attachments' => ['sometimes', 'array'],
+            'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,gif,doc,docx,pdf,txt,zip'],
         ];
     }
 }

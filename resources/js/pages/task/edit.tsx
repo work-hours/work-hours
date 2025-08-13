@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
+import FileDropzone from '@/components/ui/file-dropzone'
 import RichTextEditor from '@/components/ui/rich-text-editor'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
@@ -42,6 +43,7 @@ type TaskForm = {
     github_update: boolean
     jira_update: boolean
     tags: string[]
+    attachments?: File[]
 }
 
 type Props = {
@@ -128,6 +130,7 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
         put(route('task.update', task.id), {
+            forceFormData: true,
             onSuccess: () => {
                 toast.success('Task updated successfully')
             },
@@ -405,6 +408,14 @@ export default function EditTask({ task, projects, potentialAssignees: initialAs
                                         <InputError message={errors.jira_update} />
                                     </div>
                                 )}
+
+                                <FileDropzone
+                                    value={data.attachments || []}
+                                    onChange={(files) => setData('attachments', files)}
+                                    label="Attachments"
+                                    description="Drag & drop files here, or click to select"
+                                    disabled={processing}
+                                />
 
                                 <div className="mt-4 flex justify-end gap-3">
                                     <Button

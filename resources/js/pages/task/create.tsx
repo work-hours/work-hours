@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
+import FileDropzone from '@/components/ui/file-dropzone'
 import RichTextEditor from '@/components/ui/rich-text-editor'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
@@ -38,6 +39,7 @@ type TaskForm = {
     create_github_issue: boolean
     create_jira_issue: boolean
     tags: string[]
+    attachments?: File[]
 }
 
 type Props = {
@@ -67,6 +69,7 @@ export default function CreateTask({ projects }: Props) {
         create_github_issue: false,
         create_jira_issue: false,
         tags: [],
+        attachments: [],
     })
 
     const [potentialAssignees, setPotentialAssignees] = useState<{ id: number; name: string; email: string }[]>([])
@@ -118,6 +121,7 @@ export default function CreateTask({ projects }: Props) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
         post(route('task.store'), {
+            forceFormData: true,
             onSuccess: () => {
                 toast.success('Task created successfully')
                 reset()
@@ -390,6 +394,14 @@ export default function CreateTask({ projects }: Props) {
                                         </Label>
                                     </div>
                                 )}
+
+                                <FileDropzone
+                                    value={data.attachments || []}
+                                    onChange={(files) => setData('attachments', files)}
+                                    label="Attachments"
+                                    description="Drag & drop files here, or click to select"
+                                    disabled={processing}
+                                />
 
                                 <div className="mt-4 flex justify-end gap-3">
                                     <Button

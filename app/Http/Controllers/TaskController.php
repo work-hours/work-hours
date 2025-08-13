@@ -22,6 +22,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -205,6 +206,14 @@ final class TaskController extends Controller
                 $this->attachTags($request->input('tags'), $task);
             }
 
+            if ($request->hasFile('attachments')) {
+                foreach ($request->file('attachments') as $file) {
+                    if ($file) {
+                        $file->store('tasks/' . $task->id, 'public');
+                    }
+                }
+            }
+
             DB::commit();
 
             if ($request->boolean('create_github_issue')) {
@@ -356,6 +365,14 @@ final class TaskController extends Controller
 
             if ($request->has('tags')) {
                 $this->attachTags($request->input('tags'), $task);
+            }
+
+            if ($request->hasFile('attachments')) {
+                foreach ($request->file('attachments') as $file) {
+                    if ($file) {
+                        $file->store('tasks/' . $task->id, 'public');
+                    }
+                }
             }
 
             DB::commit();
