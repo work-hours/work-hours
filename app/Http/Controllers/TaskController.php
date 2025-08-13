@@ -530,7 +530,7 @@ final class TaskController extends Controller
     /**
      * Store uploaded attachments for the given task.
      */
-    private function storeAttachments($request, Task $task): void
+    private function storeAttachments(StoreTaskRequest|UpdateTaskRequest $request, Task $task): void
     {
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {

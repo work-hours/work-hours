@@ -99,7 +99,7 @@ export default function Dashboard() {
                                     <div className="mr-3 flex h-8 w-8 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                         <BarChart2 className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                     </div>
-                                    <h3 className="text-sm font-extrabold uppercase tracking-wider text-gray-800 dark:text-gray-200">Analytics</h3>
+                                    <h3 className="text-sm font-extrabold tracking-wider text-gray-800 uppercase dark:text-gray-200">Analytics</h3>
                                 </div>
                             </div>
 
@@ -116,7 +116,7 @@ export default function Dashboard() {
                                     <div className="mr-3 flex h-8 w-8 items-center justify-center border border-gray-400 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
                                         <Clock className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" />
                                     </div>
-                                    <h3 className="text-sm font-extrabold uppercase tracking-wider text-gray-800 dark:text-gray-200">Activity</h3>
+                                    <h3 className="text-sm font-extrabold tracking-wider text-gray-800 uppercase dark:text-gray-200">Activity</h3>
                                 </div>
                             </div>
 

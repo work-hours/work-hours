@@ -47,7 +47,6 @@ export default function Navbar() {
     return (
         <nav className="fixed top-0 right-0 left-0 z-50 bg-white shadow-sm dark:bg-gray-800">
             <div className="container mx-auto flex items-center justify-between px-6 lg:px-8">
-                {/* Logo with timesheet-style container */}
                 <Link href="/" className="flex items-center gap-3">
                     <AppLogoIcon className="h-20 w-20 text-gray-700 dark:text-gray-300" />
                     <div>
@@ -56,9 +55,7 @@ export default function Navbar() {
                     </div>
                 </Link>
 
-                {/* Desktop Navigation Menu */}
                 <div className="hidden items-center space-x-8 md:flex">
-                    {/* Features Dropdown */}
                     <div className="relative" ref={dropdownRef}>
                         <button
                             onClick={toggleFeaturesDropdown}
@@ -68,7 +65,6 @@ export default function Navbar() {
                             {featuresDropdownOpen ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />}
                         </button>
 
-                        {/* Features Dropdown Menu */}
                         {featuresDropdownOpen && (
                             <div className="ring-opacity-5 absolute left-0 z-50 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black dark:bg-gray-800">
                                 <div className="py-1" role="menu" aria-orientation="vertical">
@@ -176,7 +172,6 @@ export default function Navbar() {
                     </a>
                 </div>
 
-                {/* Mobile menu button */}
                 <div className="md:hidden">
                     <button
                         onClick={toggleMobileMenu}
@@ -194,7 +189,6 @@ export default function Navbar() {
                     </button>
                 </div>
 
-                {/* Mobile menu dropdown */}
                 {mobileMenuOpen && (
                     <div className="absolute top-20 right-0 left-0 z-50 border border-gray-200 bg-white shadow-lg md:hidden dark:border-gray-700 dark:bg-gray-800">
                         <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
@@ -327,7 +321,7 @@ export default function Navbar() {
                     {isLoggedIn ? (
                         <Link
                             href="/dashboard"
-                            className="inline-flex items-center justify-center bg-primary text-primary-foreground rounded-lg px-5 py-2 text-sm font-medium hover:bg-[#1d4ed8]"
+                            className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:bg-[#1d4ed8]"
                         >
                             Dashboard
                         </Link>
@@ -341,7 +335,7 @@ export default function Navbar() {
                             </Link>
                             <Link
                                 href={route('register')}
-                                className="relative z-10 inline-flex cursor-pointer items-center justify-center bg-primary text-primary-foreground rounded-lg px-5 py-2 text-sm font-medium hover:bg-[#1d4ed8]"
+                                className="relative z-10 inline-flex cursor-pointer items-center justify-center rounded-lg bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:bg-[#1d4ed8]"
                             >
                                 Get Started
                             </Link>

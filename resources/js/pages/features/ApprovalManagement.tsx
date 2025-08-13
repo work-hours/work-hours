@@ -240,7 +240,7 @@ export default function ApprovalManagement() {
                         <div className="md:w-1/3">
                             <a
                                 href={route('register')}
-                                className="inline-flex items-center justify-center bg-primary text-primary-foreground rounded-lg px-6 py-3 text-sm font-medium hover:bg-[#1d4ed8]"
+                                className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-[#1d4ed8]"
                             >
                                 Get Started
                             </a>

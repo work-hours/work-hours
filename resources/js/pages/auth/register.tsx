@@ -138,12 +138,7 @@ export default function Register() {
                     </div>
 
                     {/* Submit button with timesheet styling */}
-                    <Button
-                        type="submit"
-                        className="mt-2 w-full"
-                        tabIndex={5}
-                        disabled={processing}
-                    >
+                    <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
                         {processing ? (
                             <span className="flex items-center justify-center gap-2">
                                 <LoaderCircle className="h-4 w-4 animate-spin" />

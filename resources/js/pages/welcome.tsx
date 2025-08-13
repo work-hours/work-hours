@@ -27,7 +27,7 @@ export default function Welcome() {
         }
     }, [])
     return (
-        <div className="relative min-h-screen overflow-hidden bg-background dark:bg-gray-900" style={{ scrollBehavior: 'smooth' }}>
+        <div className="relative min-h-screen overflow-hidden bg-background" style={{ scrollBehavior: 'smooth' }}>
             <Background />
 
             <Head>
@@ -81,21 +81,25 @@ export default function Welcome() {
 
             <div className="pt-28">
                 <Hero />
-                <div className="mx-auto w-9/12">
-                    <div id="features">
-                        <Features />
-                    </div>
-                    <div id="ai-section">
-                        <AiSection />
-                    </div>
-                    <div id="how-it-works">
-                        <HowItWorks />
+                <div className="container mx-auto px-6 lg:px-8">
+                    <div className="mx-auto max-w-6xl">
+                        <div id="features">
+                            <Features />
+                        </div>
+                        <div id="ai-section">
+                            <AiSection />
+                        </div>
+                        <div id="how-it-works">
+                            <HowItWorks />
+                        </div>
                     </div>
                 </div>
-                <div id="cta">
-                    <CTA />
+                <div id="cta" className="container mx-auto px-6 lg:px-8">
+                    <div className="mx-auto max-w-6xl">
+                        <CTA />
+                    </div>
                 </div>
-                <div className="relative z-10 mx-auto w-full">
+                <div className="relative z-10 w-full">
                     <Footer />
                 </div>
             </div>

@@ -80,37 +80,37 @@
 
 :root {
     /* Primary blue color (#1E3A8A) and variations */
-    --primary: #2563EB; /* Primary blue */
-    --primary-foreground: #FFFFFF;
+    --primary: #2563eb; /* Primary blue */
+    --primary-foreground: #ffffff;
 
     /* Background blues */
-    --background: #F9FAFB; /* Base background */
+    --background: #f9fafb; /* Base background */
     --foreground: #111827; /* Primary text */
 
     /* Card and UI element colors */
-    --card: #FFFFFF; /* Panels */
+    --card: #ffffff; /* Panels */
     --card-foreground: #111827; /* Primary text on cards */
-    --popover: #FFFFFF; /* Popover */
+    --popover: #ffffff; /* Popover */
     --popover-foreground: #111827;
 
     /* Secondary and accent colors */
-    --secondary: #F59E0B; /* Secondary amber accent */
+    --secondary: #f59e0b; /* Secondary amber accent */
     --secondary-foreground: #111827;
-    --accent: #2563EB; /* Primary blue accent */
-    --accent-foreground: #FFFFFF; /* White on blue accent */
+    --accent: #2563eb; /* Primary blue accent */
+    --accent-foreground: #ffffff; /* White on blue accent */
 
     /* Muted colors */
-    --muted: #F3F4F6; /* Light gray */
-    --muted-foreground: #6B7280; /* Secondary text */
+    --muted: #f3f4f6; /* Light gray */
+    --muted-foreground: #6b7280; /* Secondary text */
 
     /* Destructive colors */
-    --destructive: #EF4444; /* Error red */
-    --destructive-foreground: #FFFFFF;
+    --destructive: #ef4444; /* Error red */
+    --destructive-foreground: #ffffff;
 
     /* Border and input colors */
-    --border: #E5E7EB; /* Borders */
-    --input: #E5E7EB; /* Input border */
-    --ring: #2563EB; /* Focus ring blue */
+    --border: #e5e7eb; /* Borders */
+    --input: #e5e7eb; /* Input border */
+    --ring: #2563eb; /* Focus ring blue */
 
     /* Chart colors - blue-based palette */
     --chart-1: oklch(0.5 0.2 260); /* Blue */

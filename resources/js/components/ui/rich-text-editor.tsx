@@ -15,7 +15,6 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
   const editorRef = useRef<unknown>(null)
   const minHeightPx = Math.max(0, Math.round((minRows || 5) * 24))
 
-  // Load Quill (not react-quill) lazily to avoid SSR/Vite issues and reduce bundle
   useEffect(() => {
     let mounted = true
     ;(async () => {
@@ -32,7 +31,6 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
     }
   }, [])
 
-  // Initialize Quill when ready
   useEffect(() => {
     if (!QuillCtor || !containerRef.current || editorRef.current) return
 
@@ -68,7 +66,6 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
       readOnly: !!disabled,
     })
 
-    // Set initial content
     if (value) {
       quill.clipboard.dangerouslyPasteHTML(value)
     }
@@ -81,7 +78,6 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
     quill.on('text-change', handleChange)
     editorRef.current = quill
 
-    // Apply styles
     const root: HTMLElement = quill.root as HTMLElement
     root.style.minHeight = `${minHeightPx}px`
     root.style.fontFamily = 'inherit'
@@ -94,7 +90,6 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
     }
   }, [QuillCtor, containerRef])
 
-  // Keep readOnly, placeholder, and min height in sync
   useEffect(() => {
     const quill = editorRef.current as any
     if (!quill) return
@@ -104,7 +99,6 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
     root.style.minHeight = `${minHeightPx}px`
   }, [disabled, placeholder, minHeightPx])
 
-  // Keep external value in sync if it changes programmatically
   useEffect(() => {
     const quill = editorRef.current as any
     if (!quill) return

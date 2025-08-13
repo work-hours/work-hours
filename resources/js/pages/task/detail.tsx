@@ -11,13 +11,13 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import RichTextEditor from '@/components/ui/rich-text-editor'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
 import DOMPurify from 'dompurify'
 import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Pencil, Save, Trash, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
-import RichTextEditor from '@/components/ui/rich-text-editor'
 import type { Task } from './types'
 
 type Attachment = {
@@ -46,7 +46,11 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
     const [editingBody, setEditingBody] = useState<string>('')
 
-    const stripHtml = (s: string): string => s.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
+    const stripHtml = (s: string): string =>
+        s
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .trim()
 
     const handleConfirmDelete = () => {
         if (commentToDelete == null) return
@@ -244,7 +248,6 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                                     </a>
                                                 </div>
                                             )}
-
                                         </div>
                                     </div>
                                 </div>
@@ -371,8 +374,13 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                                     />
                                                 ) : (
                                                     <div
-                                                        className="prose prose-sm max-w-none dark:prose-invert"
-                                                        dangerouslySetInnerHTML={{ __html: typeof window !== 'undefined' ? DOMPurify.sanitize(comment.body || '') : (comment.body || '') }}
+                                                        className="prose prose-sm dark:prose-invert max-w-none"
+                                                        dangerouslySetInnerHTML={{
+                                                            __html:
+                                                                typeof window !== 'undefined'
+                                                                    ? DOMPurify.sanitize(comment.body || '')
+                                                                    : comment.body || '',
+                                                        }}
                                                     />
                                                 )}
                                             </div>

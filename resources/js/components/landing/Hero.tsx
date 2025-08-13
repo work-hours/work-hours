@@ -34,7 +34,7 @@ export default function Hero() {
                     <div className="flex flex-col justify-center gap-4 sm:flex-row">
                         <Link
                             href={route('register')}
-                            className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-lg px-8 py-3 text-base font-medium hover:bg-[#1d4ed8]"
+                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 text-base font-medium text-primary-foreground hover:bg-[#1d4ed8]"
                             aria-label="Start using Work Hours for free"
                         >
                             Start for free
@@ -42,7 +42,7 @@ export default function Hero() {
                         </Link>
                         <Link
                             href="#features"
-                            className="inline-flex items-center justify-center gap-2 border border-gray-300 bg-white text-primary rounded-lg px-8 py-3 text-base font-medium hover:bg-[#eff6ff] dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-8 py-3 text-base font-medium text-primary hover:bg-[#eff6ff] dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                             aria-label="Learn more about Work Hours features"
                         >
                             Explore features
