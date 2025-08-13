@@ -137,12 +137,10 @@ export default function Team({ teamMembers, filters }: Props) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton href={route('team.export') + window.location.search} label="Export" />
-                                <Link href={route('team.create')}>
-                                    <AddNewButton>
-                                        <UserPlus className="h-4 w-4" />
-                                        <span>Add Member</span>
-                                    </AddNewButton>
-                                </Link>
+                                <AddNewButton href={route('team.create')}>
+                                    <UserPlus className="h-4 w-4" />
+                                    <span>Add Member</span>
+                                </AddNewButton>
                             </div>
                         </div>
 
@@ -298,12 +296,10 @@ export default function Team({ teamMembers, filters }: Props) {
                                     <Users className="mb-4 h-12 w-12 text-gray-300 dark:text-gray-600" />
                                     <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Team Members</h3>
                                     <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You haven't added any team members yet.</p>
-                                    <Link href={route('team.create')}>
-                                        <AddNewButton>
-                                            <UserPlus className="h-4 w-4" />
-                                            <span>Add Team Member</span>
-                                        </AddNewButton>
-                                    </Link>
+                                    <AddNewButton href={route('team.create')}>
+                                        <UserPlus className="h-4 w-4" />
+                                        <span>Add Team Member</span>
+                                    </AddNewButton>
                                 </div>
                             </div>
                         )}
