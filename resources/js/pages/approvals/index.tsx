@@ -2,6 +2,7 @@ import ApprovalTimeLogTable from '@/components/approval-time-log-table'
 import StatsCard from '@/components/dashboard/StatsCard'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import FilterButton from '@/components/filter-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
@@ -373,16 +374,15 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                                 </div>
 
                                 <div className="flex items-end gap-2">
-                                    <Button type="submit" size="icon" className="h-9 w-9" title="Filter" disabled={processing}>
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                        <span className="sr-only">Filter</span>
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="icon"
-                                        disabled={processing || (!data['start-date'] && !data['end-date'] && !data.project && !data.user)}
+                                    <FilterButton
+                                        variant="clear"
+                                        disabled={
+                                            processing || (!data['start-date'] && !data['end-date'] && !data.project && !data.user)
+                                        }
                                         onClick={() => {
                                             setData({
                                                 'start-date': '',
@@ -394,12 +394,10 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                                                 preserveState: true,
                                             })
                                         }}
-                                        className="h-9 w-9"
-                                        title="Clear Filters"
+                                        title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                        <span className="sr-only">Clear</span>
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
 
@@ -448,14 +446,16 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                     </CardHeader>
                     <CardContent>
                         {timeLogs.length > 0 ? (
-                            <ApprovalTimeLogTable
-                                timeLogs={timeLogs}
-                                showCheckboxes={true}
-                                selectedLogs={selectedLogs}
-                                onSelectLog={handleSelectLog}
-                                onApprove={openSingleApproveDialog}
-                                onReject={openSingleRejectDialog}
-                            />
+                            <div className="overflow-x-auto">
+                                <ApprovalTimeLogTable
+                                    timeLogs={timeLogs}
+                                    showCheckboxes={true}
+                                    selectedLogs={selectedLogs}
+                                    onSelectLog={handleSelectLog}
+                                    onApprove={openSingleApproveDialog}
+                                    onReject={openSingleRejectDialog}
+                                />
+                            </div>
                         ) : (
                             <div className="rounded-md border bg-muted/5 p-6">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">

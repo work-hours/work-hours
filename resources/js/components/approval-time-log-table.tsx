@@ -37,20 +37,27 @@ export default function ApprovalTimeLogTable({
         <Table>
             <TableHeader>
                 <TableHeaderRow>
-                    {showCheckboxes && <TableHead className="w-[50px]">Select</TableHead>}
-                    <TableHead>Team Member</TableHead>
-                    <TableHead>Project</TableHead>
-                    <TableHead>Start Time</TableHead>
-                    <TableHead>End Time</TableHead>
-                    <TableHead>Duration</TableHead>
-                    <TableHead>Note</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    {showCheckboxes && (
+                        <TableHead className="w-[50px] dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                            Select
+                        </TableHead>
+                    )}
+                    <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Team Member</TableHead>
+                    <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Project</TableHead>
+                    <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Start Time</TableHead>
+                    <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">End Time</TableHead>
+                    <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Duration</TableHead>
+                    <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Note</TableHead>
+                    <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Status</TableHead>
+                    <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">Actions</TableHead>
                 </TableHeaderRow>
             </TableHeader>
             <TableBody>
                 {timeLogs.map((log) => (
-                    <TableRow key={log.id}>
+                    <TableRow
+                                            key={log.id}
+                                            className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
+                                        >
                         {showCheckboxes && (
                             <TableCell>
                                 <input
@@ -61,16 +68,16 @@ export default function ApprovalTimeLogTable({
                                 />
                             </TableCell>
                         )}
-                        <TableCell className="font-medium">{log.user_name}</TableCell>
-                        <TableCell className="font-medium">{log.project_name || 'No Project'}</TableCell>
-                        <TableCell className="font-medium">{formatDateTime(log.start_timestamp)}</TableCell>
-                        <TableCell className="font-medium">{formatDateTime(log.end_timestamp)}</TableCell>
+                        <TableCell className="font-medium text-gray-800 dark:text-gray-200">{log.user_name}</TableCell>
+                        <TableCell className="text-sm text-gray-700 dark:text-gray-300">{log.project_name || 'No Project'}</TableCell>
+                        <TableCell className="text-sm text-gray-700 dark:text-gray-300">{formatDateTime(log.start_timestamp)}</TableCell>
+                        <TableCell className="text-sm text-gray-700 dark:text-gray-300">{formatDateTime(log.end_timestamp)}</TableCell>
                         <TableCell>
                             <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                                 {log.duration}
                             </span>
                         </TableCell>
-                        <TableCell className="max-w-xs break-words whitespace-normal" title={log.note}>
+                        <TableCell className="max-w-xs break-words whitespace-normal text-sm text-gray-700 dark:text-gray-300" title={log.note}>
                             <div className="max-h-20 overflow-y-auto">{log.note}</div>
                         </TableCell>
                         <TableCell>
