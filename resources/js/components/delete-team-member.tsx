@@ -34,7 +34,7 @@ export default function DeleteTeamMember({ userId }: DeleteTeamMemberProps) {
                 <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 w-7 border-neutral-200 bg-white p-0 text-neutral-600 shadow-sm transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-red-800/50 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                    className="h-7 w-7 border-neutral-200 p-0 shadow-sm transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-red-800/50 dark:hover:bg-red-900/20 dark:hover:text-red-400 bg-red-100 text-red-600"
                     title="Delete Member"
                 >
                     <Trash2 className="h-3 w-3" />
