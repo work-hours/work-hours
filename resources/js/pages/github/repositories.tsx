@@ -203,7 +203,7 @@ export default function GitHubRepositories() {
                     {searchTerm && (
                         <Button
                             onClick={() => setSearchTerm('')}
-                            className="mt-4 flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                            className="mt-4 rounded-full bg-muted px-3 py-1.5 text-sm text-foreground hover:bg-muted/80"
                         >
                             Clear Search
                         </Button>
@@ -218,7 +218,7 @@ export default function GitHubRepositories() {
                     {filteredRepos.map((repo) => (
                         <div
                             key={repo.id}
-                            className="flex flex-col rounded-lg border bg-card p-4 shadow-sm transition-all hover:bg-accent/10 hover:shadow-md"
+                            className="flex flex-col rounded-xl border bg-background p-4 transition-colors hover:bg-muted/50"
                         >
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
@@ -239,10 +239,12 @@ export default function GitHubRepositories() {
                                 <div className="flex items-center gap-2">
                                     {!repo.is_imported ? (
                                         <Button
-                                            className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                            onClick={() => handleImportRepository(repo)}
-                                            disabled={importingRepo === repo.id}
-                                        >
+                                        variant="secondary"
+                                        size="sm"
+                                        className="rounded-full px-3"
+                                        onClick={() => handleImportRepository(repo)}
+                                        disabled={importingRepo === repo.id}
+                                    >
                                             {importingRepo === repo.id ? (
                                                 <>
                                                     <Loader2 className="mr-1 h-4 w-4 animate-spin" />
@@ -257,8 +259,8 @@ export default function GitHubRepositories() {
                                         </Button>
                                     ) : (
                                         <Badge
-                                            variant="secondary"
-                                            className="mr-2 border-green-200 bg-green-100 p-2 text-green-700 dark:border-green-800 dark:bg-green-900 dark:text-green-300"
+                                            variant="outline"
+                                            className="mr-2 border-green-300/50 bg-transparent p-2 text-green-700 dark:text-green-300"
                                         >
                                             Imported
                                         </Badge>
@@ -298,8 +300,10 @@ export default function GitHubRepositories() {
                 <div className="mx-auto flex flex-col gap-4 p-4">
                     {/* Header section */}
                     <section className="mb-2">
-                        <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">
-                            <Github className="h-8 w-8 text-primary" />
+                        <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
+                                <Github className="h-5 w-5 text-muted-foreground" />
+                            </span>
                             GitHub Repositories
                         </h1>
                         <p className="mt-1 text-gray-500 dark:text-gray-400">Loading GitHub repositories</p>
@@ -328,11 +332,13 @@ export default function GitHubRepositories() {
                 <div className="mx-auto flex flex-col gap-4 p-4 md:w-10/12">
                     {/* Header section */}
                     <section className="mb-2">
-                        <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">
-                            <Github className="h-8 w-8" />
+                        <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
+                                <Github className="h-5 w-5 text-muted-foreground" />
+                            </span>
                             GitHub Repositories
                         </h1>
-                        <p className="mt-1 text-gray-500 dark:text-gray-400">Connect and manage GitHub repositories</p>
+                        <p className="mt-1 text-muted-foreground">Connect and manage GitHub repositories</p>
                     </section>
 
                     <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
@@ -354,7 +360,9 @@ export default function GitHubRepositories() {
                                 </p>
                                 <Button
                                     asChild
-                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    variant="secondary"
+                                    size="sm"
+                                    className="rounded-full px-3"
                                 >
                                     <a href={route('auth.github')}>
                                         <Github className="mr-2 h-4 w-4" />
@@ -385,11 +393,13 @@ export default function GitHubRepositories() {
             <Head title="GitHub Repositories" />
             <div className="mx-auto flex flex-col gap-4 p-4">
                 <section className="mb-2">
-                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">
-                        <Github className="h-8 w-8" />
+                    <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
+                            <Github className="h-5 w-5 text-muted-foreground" />
+                        </span>
                         GitHub Repositories
                     </h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">View and manage your GitHub repositories</p>
+                    <p className="mt-1 text-muted-foreground">View and manage your GitHub repositories</p>
                 </section>
 
                 <div className="mt-6 flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
@@ -405,9 +415,9 @@ export default function GitHubRepositories() {
                                             key={`${item.href}-${index}`}
                                             size="sm"
                                             variant="ghost"
-                                            className={cn('mb-1 w-full justify-start p-5', {
-                                                'bg-primary/10 text-primary hover:bg-primary/15': isActive,
-                                                'hover:bg-muted/80': !isActive,
+                                            className={cn('mb-1 w-full justify-start rounded-md px-3 py-2 text-sm', {
+                                                'bg-muted text-foreground ring-1 ring-border': isActive,
+                                                'hover:bg-muted/70': !isActive,
                                             })}
                                             onClick={() => {
                                                 setActiveTab(item.title.toLowerCase())
@@ -452,7 +462,7 @@ export default function GitHubRepositories() {
                                         <Input
                                             type="search"
                                             placeholder="Search repositories..."
-                                            className="h-10 border-gray-200 bg-white pl-8 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
+                                            className="h-10 rounded-full border border-border bg-background pl-8 text-foreground placeholder:text-muted-foreground"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                         />
