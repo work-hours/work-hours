@@ -86,17 +86,6 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                     <TooltipProvider>
                         <nav className="relative z-10 space-y-1">
                             <div className="relative">
-                                {collapsed && (
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
-                                        </TooltipTrigger>
-                                        <TooltipContent side="left">Track Time</TooltipContent>
-                                    </Tooltip>
-                                )}
-                            </div>
-
-                            <div className="relative">
                                 <button
                                     onClick={handleAskAiClick}
                                     className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100"

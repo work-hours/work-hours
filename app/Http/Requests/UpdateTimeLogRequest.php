@@ -29,7 +29,7 @@ final class UpdateTimeLogRequest extends FormRequest
             'task_id' => ['nullable', 'exists:tasks,id'],
             'start_timestamp' => ['required', 'date'],
             'end_timestamp' => ['required', 'date', 'after_or_equal:start_timestamp'],
-            'note' => ['required', 'string'],
+            'note' => ['required_without:task_id', 'string', 'nullable'],
             'mark_task_complete' => ['boolean', 'nullable'],
             'close_github_issue' => ['boolean', 'nullable'],
             'tags' => ['nullable', 'array'],

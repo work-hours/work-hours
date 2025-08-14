@@ -351,14 +351,14 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="note" className="text-sm font-medium">
-                                        Note
+                                        Note {data.task_id ? '(Optional)' : ''}
                                     </Label>
                                     <Input
                                         id="note"
                                         value={data.note}
                                         onChange={(e) => setData('note', e.target.value)}
                                         placeholder="Enter a note about this time log"
-                                        required
+                                        required={!data.task_id}
                                         disabled={processing}
                                         tabIndex={3}
                                     />
