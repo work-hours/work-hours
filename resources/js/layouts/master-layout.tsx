@@ -3,6 +3,7 @@ import FloatingAiChat from '@/components/floating-ai-chat'
 import { MasterContent } from '@/components/master-content'
 import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
+import { TimeTrackerProvider } from '@/contexts/time-tracker-context'
 import { type BreadcrumbItem } from '@/types'
 import { projects } from '@actions/DashboardController'
 import { type ReactNode, useEffect, useState } from 'react'
@@ -62,14 +63,16 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
             <MasterSidebar collapsed={collapsed} />
 
             {/* Content */}
-            <div className={`flex-1 transition-all duration-300 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}>
-                <MasterContent breadcrumbs={breadcrumbs} collapsed={collapsed} setCollapsed={setCollapsed}>
-                    {children}
-                </MasterContent>
-            </div>
+            <TimeTrackerProvider>
+                <div className={`flex-1 transition-all duration-300 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+                    <MasterContent breadcrumbs={breadcrumbs} collapsed={collapsed} setCollapsed={setCollapsed}>
+                        {children}
+                    </MasterContent>
+                </div>
 
-            {/* Right Sidebar */}
-            <MasterRightSidebar collapsed={collapsed} />
+                {/* Right Sidebar */}
+                <MasterRightSidebar collapsed={collapsed} />
+            </TimeTrackerProvider>
 
             {/* AI Chat */}
             {dataLoaded && (

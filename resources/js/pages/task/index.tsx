@@ -21,6 +21,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
+import { useTimeTracker } from '@/contexts/time-tracker-context'
 import {
     AlertCircle,
     Briefcase,
@@ -31,7 +32,7 @@ import {
     FileText,
     Flag,
     Glasses,
-    Loader2,
+    Loader2, Play,
     Plus,
     Search,
     TimerReset,
@@ -46,6 +47,32 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/task',
     },
 ]
+
+function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: number }) {
+    const tracker = useTimeTracker()
+
+    if (!task.assignees.some((a) => a.id === currentUserId)) return null
+
+    return (
+        <Button
+            variant="outline"
+            size="sm"
+            disabled={tracker.running}
+            onClick={() =>
+                tracker.start({
+                    id: task.id,
+                    title: task.title,
+                    project_id: task.project_id,
+                    project_name: task.project.name,
+                })
+            }
+            className="h-7 px-2 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+            title={tracker.running ? 'Another tracker is running' : 'Start tracking'}
+        >
+            <Play className="h-3 w-3" />
+        </Button>
+    )
+}
 
 export default function Tasks() {
     const { auth, projects, tags } = usePage<
@@ -661,6 +688,9 @@ export default function Tasks() {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
+                                                    {/* Quick Start Tracker - only for tasks assigned to current user */}
+                                                    <TaskTrackButton task={task} currentUserId={auth.user.id} />
+
                                                     {/* View Details Button */}
                                                     <Link href={route('task.detail', task.id)} title="View Details">
                                                         <Button

@@ -1,6 +1,7 @@
 import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { HourlyRateStatusBar } from '@/components/hourly-rate-status-bar'
 import { Badge } from '@/components/ui/badge'
+import RunningTracker from '@/components/running-tracker'
 import { type BreadcrumbItem } from '@/types'
 import { all } from '@actions/NotificationsController'
 import { Link } from '@inertiajs/react'
@@ -43,7 +44,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
         <div className="relative flex flex-1 flex-col bg-slate-50 dark:bg-slate-900">
             {/* Enhanced header with improved styling */}
             <div className="sticky top-0 z-20 border-b border-gray-200 bg-white/90 shadow-sm backdrop-blur-sm dark:border-gray-800 dark:bg-gray-800/90">
-                <div className="flex items-center justify-between px-4 py-2.5">
+                <div className="grid grid-cols-[auto_1fr_auto] items-center px-4 py-2.5 gap-2">
                     <div className="flex items-center">
                         <div className="relative flex items-center">
                             <Link
@@ -112,6 +113,11 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                                 ))}
                             </div>
                         )}
+                    </div>
+
+                    {/* Center running tracker */}
+                    <div className="flex items-center justify-center">
+                        <RunningTracker />
                     </div>
 
                     <div className="flex items-center gap-3">
