@@ -48,7 +48,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                     <div className="flex items-center">
                         <div className="relative flex items-center">
                             <Link
-                                href="/dashboard"
+                                href={route('dashboard')}
                                 className="rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                             >
                                 <Home className="h-5 w-5" />

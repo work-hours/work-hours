@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Pause, Play, Square } from 'lucide-react'
+import { Pause, Play, Square, Clock } from 'lucide-react'
 import { useMemo } from 'react'
 import { useTimeTracker } from '@/contexts/time-tracker-context'
 
@@ -21,22 +21,28 @@ export default function RunningTracker() {
 
   return (
     <div className="mx-4 flex max-w-[560px] flex-1 items-center justify-center">
-      <div className="flex items-center gap-3 rounded-full border border-gray-200 bg-white px-4 py-1.5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+      <div className="flex items-center gap-4 rounded-lg border border-gray-100 bg-white/80 px-5 py-3 shadow-md backdrop-blur-sm transition-all dark:border-gray-800 dark:bg-gray-900/90">
         <div className="flex min-w-0 flex-col">
-          <div className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">{task.project_name} • {task.title}</div>
-          <div className="text-xs font-mono text-blue-600 dark:text-blue-400">{timeStr}</div>
+          <div className="flex items-center gap-2">
+            <div className={`h-2 w-2 rounded-full ${paused ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`}></div>
+            <div className="truncate text-sm font-medium tracking-tight text-gray-900 dark:text-gray-50">{task.project_name} • {task.title}</div>
+          </div>
+          <div className="mt-1 flex items-center gap-1.5 text-sm font-mono font-medium text-blue-600 dark:text-blue-400">
+            <Clock className="h-3.5 w-3.5" />
+            {timeStr}
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {paused ? (
-            <Button size="sm" variant="secondary" onClick={resume} title="Resume">
+            <Button size="sm" className="rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:text-emerald-400 dark:hover:bg-emerald-900/50" onClick={resume} title="Resume">
               <Play className="h-4 w-4" />
             </Button>
           ) : (
-            <Button size="sm" variant="secondary" onClick={pause} title="Pause">
+            <Button size="sm" className="rounded-full bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-950/50 dark:text-amber-400 dark:hover:bg-amber-900/50" onClick={pause} title="Pause">
               <Pause className="h-4 w-4" />
             </Button>
           )}
-          <Button size="sm" variant="destructive" onClick={stop} title="Stop">
+          <Button size="sm" className="rounded-full bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950/50 dark:text-red-400 dark:hover:bg-red-900/50" onClick={stop} title="Stop">
             <Square className="h-4 w-4" />
           </Button>
         </div>
