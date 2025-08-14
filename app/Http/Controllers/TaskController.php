@@ -71,13 +71,13 @@ final class TaskController extends Controller
             ->values();
 
         $rawBody = (string) request('body');
+
         $textBody = mb_trim(strip_tags($rawBody));
 
         if ($textBody !== '' && preg_match_all('/@([A-Za-z0-9._-]+)/', $textBody, $matches)) {
             $handles = collect($matches[1] ?? [])->filter()->map(fn ($h): string => mb_strtolower((string) $h))->unique()->values();
 
             if ($handles->isNotEmpty()) {
-
                 $allowedUsers = collect([$task->project->user])
                     ->merge($task->project->teamMembers)
                     ->merge($task->assignees)
@@ -331,6 +331,7 @@ final class TaskController extends Controller
             ->merge($task->project->teamMembers)
             ->merge($task->assignees)
             ->filter()
+            ->reject(fn ($u): bool => $u->id === auth()->id())
             ->unique('id')
             ->values()
             ->map(fn ($u): array => [
