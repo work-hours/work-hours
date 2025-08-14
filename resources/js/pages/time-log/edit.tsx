@@ -122,6 +122,14 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                 date.getMinutes(),
             )
             setData('start_timestamp', localDate.toISOString())
+
+            // If end time exists and is not after new start time, clear it
+            if (data.end_timestamp) {
+                const currentEnd = new Date(data.end_timestamp)
+                if (currentEnd.getTime() <= localDate.getTime()) {
+                    setData('end_timestamp', '')
+                }
+            }
         }
     }
 
@@ -316,6 +324,12 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                                         date.getMonth() === start.getMonth() &&
                                                         date.getFullYear() === start.getFullYear()
                                                     )
+                                                }}
+                                                filterTime={(time) => {
+                                                    // Allow only times strictly after the selected start time
+                                                    const start = new Date(data.start_timestamp)
+                                                    const cmp = new Date(start.getFullYear(), start.getMonth(), start.getDate(), time.getHours(), time.getMinutes())
+                                                    return cmp.getTime() > start.getTime()
                                                 }}
                                                 customInput={
                                                     <CustomInput
