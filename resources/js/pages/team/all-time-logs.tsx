@@ -352,7 +352,7 @@ export default function AllTeamTimeLogs({
                                         id="user"
                                         value={data.user}
                                         onChange={(value) => setData('user', value)}
-                                        options={[{ id: '', name: 'All Members' }, ...teamMembers]}
+                                        options={[{ id: '', name: 'Members' }, ...teamMembers]}
                                         placeholder="Select member"
                                         disabled={processing}
                                         icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
@@ -367,7 +367,7 @@ export default function AllTeamTimeLogs({
                                         id="project"
                                         value={data.project}
                                         onChange={(value) => setData('project', value)}
-                                        options={[{ id: '', name: 'All Projects' }, ...projects]}
+                                        options={[{ id: '', name: 'Projects' }, ...projects]}
                                         placeholder="Select project"
                                         disabled={processing}
                                         icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
@@ -382,15 +382,13 @@ export default function AllTeamTimeLogs({
                                         id="tag"
                                         value={data.tag}
                                         onChange={(value) => setData('tag', value)}
-                                        options={[{ id: '', name: 'All Tags' }, ...tags]}
+                                        options={[{ id: '', name: 'Tags' }, ...tags]}
                                         placeholder="Select tag"
                                         disabled={processing}
                                         icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                         className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                     />
                                 </div>
-                            </form>
-                            <div className="mt-4 flex flex-wrap gap-4">
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="is-paid" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Payment Status
@@ -400,7 +398,7 @@ export default function AllTeamTimeLogs({
                                         value={data['is-paid']}
                                         onChange={(value) => setData('is-paid', value)}
                                         options={[
-                                            { id: '', name: 'All Statuses' },
+                                            { id: '', name: 'Statuses' },
                                             { id: 'true', name: 'Paid' },
                                             { id: 'false', name: 'Unpaid' },
                                         ]}
@@ -419,7 +417,7 @@ export default function AllTeamTimeLogs({
                                         value={data.status}
                                         onChange={(value) => setData('status', value)}
                                         options={[
-                                            { id: '', name: 'All Statuses' },
+                                            { id: '', name: 'Statuses' },
                                             { id: 'pending', name: 'Pending' },
                                             { id: 'approved', name: 'Approved' },
                                             { id: 'rejected', name: 'Rejected' },
@@ -474,7 +472,7 @@ export default function AllTeamTimeLogs({
                                         <TimerReset className="h-4 w-4" />
                                     </Button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">
