@@ -25,7 +25,6 @@
         "deployer/deployer": "^7.5",
         "driftingly/rector-laravel": "^2.0",
         "fakerphp/faker": "^1.23",
-        "laravel/boost": "^1.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.18",
         "laravel/sail": "^1.41",
