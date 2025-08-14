@@ -153,11 +153,17 @@ final class TeamController extends Controller
     {
         Gate::authorize('viewTimeLogs', $user);
 
-        $timeLogs = TimeLogQuery::builder(userId: auth()->id(), member: $user)->get();
+        $baseQuery = TimeLogQuery::builder(userId: auth()->id(), member: $user);
+
+        $paginatedLogs = (clone $baseQuery)
+            ->paginate(15)
+            ->appends(request()->query());
+
+        $allFilteredLogs = (clone $baseQuery)->get();
 
         return Inertia::render('team/time-logs', [
             'user' => $user,
-            ...TimeLogStore::resData(timeLogs: $timeLogs),
+            ...TimeLogStore::resData(timeLogs: $paginatedLogs, fullTimeLogsForStats: $allFilteredLogs),
         ]);
     }
 

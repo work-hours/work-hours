@@ -9,6 +9,7 @@ import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
+import { Pagination } from '@/components/ui/pagination'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, router, useForm } from '@inertiajs/react'
@@ -58,6 +59,7 @@ type Props = {
     paidAmountsByCurrency: Record<string, number>
     currency: string
     weeklyAverage: number
+    links?: { url: string | null; label: string; active: boolean }[]
 }
 
 export default function TeamMemberTimeLogs({
@@ -71,6 +73,7 @@ export default function TeamMemberTimeLogs({
     paidAmountsByCurrency,
     currency,
     weeklyAverage,
+    links = [],
 }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -407,6 +410,12 @@ export default function TeamMemberTimeLogs({
                                     <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Time Logs</h3>
                                     <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">{user.name} hasn't added any time logs yet.</p>
                                 </div>
+                            </div>
+                        )}
+
+                        {links && links.length > 0 && (
+                            <div className="border-t border-gray-100 px-4 py-3 dark:border-gray-700">
+                                <Pagination links={links} />
                             </div>
                         )}
                     </CardContent>
