@@ -1,9 +1,9 @@
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { formatTimeEntry } from '@/lib/utils'
-import { Clock, Info, CalendarDays, Tag, Briefcase, CheckCircle, User, DollarSign, FileText } from 'lucide-react'
-import { TimeLogEntry } from './time-log-table'
 import DOMPurify from 'dompurify'
+import { Briefcase, CalendarDays, CheckCircle, Clock, DollarSign, FileText, Info, Tag, User } from 'lucide-react'
+import { TimeLogEntry } from './time-log-table'
 
 type TimeLogDetailsSheetProps = {
     timeLog: TimeLogEntry | null
@@ -16,7 +16,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent side="right" className="overflow-y-auto bg-white dark:bg-neutral-900 sm:max-w-md md:max-w-lg pl-4 pb-4">
+            <SheetContent side="right" className="overflow-y-auto bg-white pb-4 pl-4 sm:max-w-md md:max-w-lg dark:bg-neutral-900">
                 <SheetHeader className="mb-6">
                     <SheetTitle className="flex items-center gap-2 text-neutral-900 dark:text-white">
                         <Clock className="h-5 w-5 text-primary" />
@@ -30,7 +30,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                 <div className="space-y-6">
                     {/* Basic Information */}
                     <div className="space-y-2.5">
-                        <h3 className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                        <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                             <Briefcase className="h-4 w-4 text-primary/80" />
                             Basic Information
                         </h3>
@@ -65,14 +65,18 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                     {/* Tags Information - Only shown if tags exist */}
                     {timeLog.tags && timeLog.tags.length > 0 && (
                         <div className="space-y-2.5">
-                            <h3 className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                            <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                                 <Tag className="h-4 w-4 text-primary/80" />
                                 Tags
                             </h3>
                             <div className="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-800/50">
                                 <div className="flex flex-wrap gap-2">
                                     {timeLog.tags.map((tag) => (
-                                        <Badge key={tag.id} className="rounded-md px-2 py-0.5 text-xs font-medium" style={{ backgroundColor: tag.color, color: '#fff' }}>
+                                        <Badge
+                                            key={tag.id}
+                                            className="rounded-md px-2 py-0.5 text-xs font-medium"
+                                            style={{ backgroundColor: tag.color, color: '#fff' }}
+                                        >
                                             {tag.name}
                                         </Badge>
                                     ))}
@@ -84,7 +88,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                     {/* Task Information */}
                     {timeLog.task_title && (
                         <div className="space-y-2.5">
-                            <h3 className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                            <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                                 <FileText className="h-4 w-4 text-primary/80" />
                                 Task Information
                             </h3>
@@ -100,11 +104,15 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                             <p className="mb-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">Task Status</p>
                                             <Badge
                                                 variant={
-                                                    timeLog.task_status.toLowerCase() === 'completed' ? 'success' :
-                                                    timeLog.task_status.toLowerCase() === 'in_progress' ? 'warning' :
-                                                    timeLog.task_status.toLowerCase() === 'blocked' ? 'destructive' :
-                                                    timeLog.task_status.toLowerCase() === 'pending' ? 'secondary' :
-                                                    'outline'
+                                                    timeLog.task_status.toLowerCase() === 'completed'
+                                                        ? 'success'
+                                                        : timeLog.task_status.toLowerCase() === 'in_progress'
+                                                          ? 'warning'
+                                                          : timeLog.task_status.toLowerCase() === 'blocked'
+                                                            ? 'destructive'
+                                                            : timeLog.task_status.toLowerCase() === 'pending'
+                                                              ? 'secondary'
+                                                              : 'outline'
                                                 }
                                             >
                                                 {timeLog.task_status}
@@ -117,10 +125,13 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                             <p className="mb-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">Task Priority</p>
                                             <Badge
                                                 variant={
-                                                    timeLog.task_priority.toLowerCase() === 'high' ? 'destructive' :
-                                                    timeLog.task_priority.toLowerCase() === 'medium' ? 'default' :
-                                                    timeLog.task_priority.toLowerCase() === 'low' ? 'outline' :
-                                                    'muted'
+                                                    timeLog.task_priority.toLowerCase() === 'high'
+                                                        ? 'destructive'
+                                                        : timeLog.task_priority.toLowerCase() === 'medium'
+                                                          ? 'default'
+                                                          : timeLog.task_priority.toLowerCase() === 'low'
+                                                            ? 'outline'
+                                                            : 'muted'
                                                 }
                                             >
                                                 {timeLog.task_priority}
@@ -139,19 +150,19 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                     )}
 
                                     {timeLog.task_description && (
-                                    <div>
-                                        <p className="mb-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">Task Description</p>
-                                        <div
-                                            className="prose prose-sm max-w-none rounded-md bg-neutral-50 p-3 text-sm dark:prose-invert dark:bg-neutral-800/70"
-                                            dangerouslySetInnerHTML={{
-                                                __html:
-                                                    typeof window !== 'undefined'
-                                                        ? DOMPurify.sanitize(timeLog.task_description || '')
-                                                        : timeLog.task_description || '',
-                                            }}
-                                        />
-                                    </div>
-                                )}
+                                        <div>
+                                            <p className="mb-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">Task Description</p>
+                                            <div
+                                                className="prose prose-sm dark:prose-invert max-w-none rounded-md bg-neutral-50 p-3 text-sm dark:bg-neutral-800/70"
+                                                dangerouslySetInnerHTML={{
+                                                    __html:
+                                                        typeof window !== 'undefined'
+                                                            ? DOMPurify.sanitize(timeLog.task_description || '')
+                                                            : timeLog.task_description || '',
+                                                }}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -159,7 +170,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
                     {/* Time Information */}
                     <div className="space-y-2.5">
-                        <h3 className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                        <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                             <Clock className="h-4 w-4 text-primary/80" />
                             Time Information
                         </h3>
@@ -182,7 +193,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                         typeof timeLog.hourly_rate === 'number' &&
                         timeLog.hourly_rate > 0 && (
                             <div className="space-y-2.5">
-                                <h3 className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                                <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                                     <DollarSign className="h-4 w-4 text-primary/80" />
                                     Payment Information
                                 </h3>
@@ -240,7 +251,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
                     {/* Approval Information */}
                     <div className="space-y-2.5">
-                        <h3 className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                        <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                             <CheckCircle className="h-4 w-4 text-primary/80" />
                             Approval Information
                         </h3>
@@ -282,7 +293,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                     {/* Additional Information */}
                     {(timeLog.note || timeLog.comment) && (
                         <div className="space-y-2.5">
-                            <h3 className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                            <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                                 <Info className="h-4 w-4 text-primary/80" />
                                 Additional Information
                             </h3>
@@ -291,14 +302,18 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                     {timeLog.note && (
                                         <div>
                                             <p className="mb-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">Note</p>
-                                            <p className="rounded-md bg-neutral-50 p-3 text-sm text-neutral-700 whitespace-pre-wrap dark:bg-neutral-800/70 dark:text-neutral-300">{timeLog.note}</p>
+                                            <p className="rounded-md bg-neutral-50 p-3 text-sm whitespace-pre-wrap text-neutral-700 dark:bg-neutral-800/70 dark:text-neutral-300">
+                                                {timeLog.note}
+                                            </p>
                                         </div>
                                     )}
 
                                     {timeLog.comment && (
                                         <div>
                                             <p className="mb-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">Comment</p>
-                                            <p className="rounded-md bg-neutral-50 p-3 text-sm text-neutral-700 whitespace-pre-wrap dark:bg-neutral-800/70 dark:text-neutral-300">{timeLog.comment}</p>
+                                            <p className="rounded-md bg-neutral-50 p-3 text-sm whitespace-pre-wrap text-neutral-700 dark:bg-neutral-800/70 dark:text-neutral-300">
+                                                {timeLog.comment}
+                                            </p>
                                         </div>
                                     )}
                                 </div>

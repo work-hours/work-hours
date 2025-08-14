@@ -15,13 +15,13 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
+import { useTimeTracker } from '@/contexts/time-tracker-context'
 import MasterLayout from '@/layouts/master-layout'
 import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
-import { useTimeTracker } from '@/contexts/time-tracker-context'
 import {
     AlertCircle,
     Briefcase,
@@ -32,7 +32,8 @@ import {
     FileText,
     Flag,
     Glasses,
-    Loader2, Play,
+    Loader2,
+    Play,
     Plus,
     Search,
     TimerReset,
@@ -66,7 +67,7 @@ function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: n
                     project_name: task.project.name,
                 })
             }
-            className="h-7 px-2 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+            className="h-7 border-emerald-200 bg-emerald-50 px-2 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
             title={tracker.running ? 'Another tracker is running' : 'Start tracking'}
         >
             <Play className="h-3 w-3" />
@@ -298,7 +299,6 @@ export default function Tasks() {
             window.history.pushState({}, '', `?${filtersString}`)
         })
     }
-
 
     useEffect(() => {
         const queryParams = queryStringToObject()
@@ -702,7 +702,6 @@ export default function Tasks() {
                                                             <span className="sr-only">View Details</span>
                                                         </Button>
                                                     </Link>
-
 
                                                     {task.project.user_id === auth.user.id && (
                                                         <ActionButtonGroup>

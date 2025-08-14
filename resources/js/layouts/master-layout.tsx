@@ -14,7 +14,6 @@ interface Project {
     name: string
 }
 
-
 interface MasterLayoutProps {
     children: ReactNode
     breadcrumbs?: BreadcrumbItem[]

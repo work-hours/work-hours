@@ -105,7 +105,6 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                         </nav>
                     </TooltipProvider>
                 </div>
-
             </div>
         </div>
     )
