@@ -134,14 +134,21 @@ final class TeamController extends Controller
 
     public function allTimeLogs()
     {
-        $timeLogs = TimeLogQuery::builder(userId: auth()->id())->get();
+        $baseQuery = TimeLogQuery::builder(userId: auth()->id());
+
+        $paginatedLogs = (clone $baseQuery)
+            ->paginate(15)
+            ->appends(request()->query());
+
+        $allFilteredLogs = (clone $baseQuery)->get();
+
         $teamMembersList = TeamStore::teamMembers(userId: auth()->id());
         $tags = TagStore::userTags(userId: auth()->id());
 
         return Inertia::render('team/all-time-logs', [
             'teamMembers' => $teamMembersList,
             'tags' => $tags,
-            ...TimeLogStore::resData(timeLogs: $timeLogs),
+            ...TimeLogStore::resData(timeLogs: $paginatedLogs, fullTimeLogsForStats: $allFilteredLogs),
         ]);
     }
 
