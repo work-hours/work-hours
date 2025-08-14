@@ -757,19 +757,19 @@ export default function Tasks() {
                                 onValueChange={(value) => setSelectedStatus(value as Task['status'])}
                                 className="flex flex-col space-y-2"
                             >
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2 rounded-md border p-2 hover:bg-muted/30">
                                     <RadioGroupItem value="pending" id="status-pending" />
                                     <Label htmlFor="status-pending" className="cursor-pointer">
                                         Pending
                                     </Label>
                                 </div>
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2 rounded-md border p-2 hover:bg-muted/30">
                                     <RadioGroupItem value="in_progress" id="status-in-progress" />
                                     <Label htmlFor="status-in-progress" className="cursor-pointer">
                                         In Progress
                                     </Label>
                                 </div>
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2 rounded-md border p-2 hover:bg-muted/30">
                                     <RadioGroupItem value="completed" id="status-completed" />
                                     <Label htmlFor="status-completed" className="cursor-pointer">
                                         Completed
@@ -778,7 +778,7 @@ export default function Tasks() {
                             </RadioGroup>
 
                             {taskToUpdate?.is_imported && taskToUpdate?.meta?.source === 'github' && (
-                                <div className="flex items-center space-x-2 pt-2">
+                                <div className="mt-2 flex items-center space-x-2 rounded-md border p-2">
                                     <Checkbox
                                         id="update_github"
                                         checked={updateGithub}
@@ -791,7 +791,7 @@ export default function Tasks() {
                             )}
 
                             {taskToUpdate?.is_imported && taskToUpdate?.meta?.source === 'jira' && (
-                                <div className="flex items-center space-x-2 pt-2">
+                                <div className="mt-2 flex items-center space-x-2 rounded-md border p-2">
                                     <Checkbox id="update_jira" checked={updateJira} onCheckedChange={(checked) => setUpdateJira(checked === true)} />
                                     <Label htmlFor="update_jira" className="text-sm">
                                         Update in Jira?
@@ -799,11 +799,22 @@ export default function Tasks() {
                                 </div>
                             )}
                         </div>
-                        <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setStatusDialogOpen(false)} disabled={isUpdating}>
+                        <DialogFooter className="gap-2">
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => setStatusDialogOpen(false)}
+                                disabled={isUpdating}
+                                className="h-9 rounded-lg border-gray-300 text-gray-700 hover:bg-gray-50/80 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800/50"
+                            >
                                 Cancel
                             </Button>
-                            <Button type="button" onClick={updateTaskStatus} disabled={isUpdating}>
+                            <Button
+                                type="button"
+                                onClick={updateTaskStatus}
+                                disabled={isUpdating}
+                                className="flex h-9 items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                            >
                                 {isUpdating ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
