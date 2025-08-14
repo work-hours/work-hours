@@ -16,7 +16,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent side="right" className="overflow-y-auto bg-white dark:bg-neutral-900 sm:max-w-md md:max-w-lg pl-4">
+            <SheetContent side="right" className="overflow-y-auto bg-white dark:bg-neutral-900 sm:max-w-md md:max-w-lg pl-4 pb-4">
                 <SheetHeader className="mb-6">
                     <SheetTitle className="flex items-center gap-2 text-neutral-900 dark:text-white">
                         <Clock className="h-5 w-5 text-primary" />
@@ -98,18 +98,33 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                     {timeLog.task_status && (
                                         <div>
                                             <p className="mb-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">Task Status</p>
-                                            <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                            <Badge
+                                                variant={
+                                                    timeLog.task_status.toLowerCase() === 'completed' ? 'success' :
+                                                    timeLog.task_status.toLowerCase() === 'in_progress' ? 'warning' :
+                                                    timeLog.task_status.toLowerCase() === 'blocked' ? 'destructive' :
+                                                    timeLog.task_status.toLowerCase() === 'pending' ? 'secondary' :
+                                                    'outline'
+                                                }
+                                            >
                                                 {timeLog.task_status}
-                                            </div>
+                                            </Badge>
                                         </div>
                                     )}
 
                                     {timeLog.task_priority && (
                                         <div>
                                             <p className="mb-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">Task Priority</p>
-                                            <div className="inline-flex items-center rounded-md bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                                            <Badge
+                                                variant={
+                                                    timeLog.task_priority.toLowerCase() === 'high' ? 'destructive' :
+                                                    timeLog.task_priority.toLowerCase() === 'medium' ? 'default' :
+                                                    timeLog.task_priority.toLowerCase() === 'low' ? 'outline' :
+                                                    'muted'
+                                                }
+                                            >
                                                 {timeLog.task_priority}
-                                            </div>
+                                            </Badge>
                                         </div>
                                     )}
 
