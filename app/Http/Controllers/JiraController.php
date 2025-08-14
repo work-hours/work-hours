@@ -238,17 +238,13 @@ final class JiraController extends Controller
             $metaData = $this->prepareTaskMetaFromJiraIssue($issue, $fields, $issueUrl);
 
             if ($existingTaskMeta) {
-
                 $task = Task::query()->find($existingTaskMeta->task_id);
                 if ($task) {
                     $task->update($taskData);
-
                     $existingTaskMeta->update($metaData);
-
                     $stats['updated_tasks']++;
                 }
             } else {
-
                 $task = new Task();
                 $task->fill($taskData);
                 $task->project_id = $project->id;
@@ -260,7 +256,10 @@ final class JiraController extends Controller
 
                 if (isset($fields['labels']) && is_array($fields['labels'])) {
                     foreach ($fields['labels'] as $label) {
-                        $tag = Tag::query()->firstOrCreate(['name' => $label]);
+                        $tag = Tag::query()->firstOrCreate([
+                            'name' => $label,
+                            'user_id' => Auth::id(),
+                        ]);
                         $task->tags()->attach($tag->id);
                     }
                 }

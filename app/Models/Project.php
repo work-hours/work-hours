@@ -30,6 +30,7 @@ use Illuminate\Support\Carbon;
  * @property Collection|User[] $approvers
  * @property Collection|Task[] $tasks
  * @property mixed $repo_id
+ * @property mixed|string $source
  */
 #[UsePolicy(ProjectPolicy::class)]
 final class Project extends Model
