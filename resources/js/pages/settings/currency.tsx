@@ -80,7 +80,7 @@ export default function Currency({ currencies }: { currencies: Currency[] }) {
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <Button disabled={processing} className="flex items-center gap-2">
+                            <Button disabled={processing} className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
                                 {processing ? (
                                     <>
                                         <LoaderCircle className="h-4 w-4 animate-spin" />
