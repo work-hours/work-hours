@@ -195,8 +195,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
         const prev = (selectedIndexRef.current - 1 + items.length) % items.length
         selectedIndexRef.current = prev
         setSelectedIndex(prev)
-      } else if (e.key === 'Enter' || e.key === 'Tab') {
-
+      } else if (e.key === 'Enter' || e.key === 'NumpadEnter' || e.key === 'Tab') {
         e.preventDefault()
         e.stopPropagation()
         const idx = selectedIndexRef.current
