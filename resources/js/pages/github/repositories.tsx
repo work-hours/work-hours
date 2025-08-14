@@ -182,8 +182,8 @@ export default function GitHubRepositories() {
                     <div className="mb-6 rounded-full bg-primary/10 p-4">
                         <Loader2 className="h-10 w-10 animate-spin text-primary" />
                     </div>
-                    <h3 className="mb-2 text-lg font-medium">Loading Repositories</h3>
-                    <p className="text-sm text-muted-foreground">Fetching repositories from GitHub...</p>
+                    <h3 className="mb-2 text-lg font-medium text-gray-800 dark:text-gray-100">Loading Repositories</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Fetching repositories from GitHub...</p>
                 </div>
             )
         }
@@ -191,11 +191,11 @@ export default function GitHubRepositories() {
         if (filteredRepos.length === 0) {
             return (
                 <div className="flex flex-col items-center justify-center py-12">
-                    <div className="mb-6 rounded-full bg-muted p-4">
-                        <Github className="h-12 w-12 text-muted-foreground opacity-80" />
+                    <div className="mb-6 rounded-full bg-gray-100 p-4 dark:bg-gray-700">
+                        <Github className="h-12 w-12 text-gray-600 dark:text-gray-300" />
                     </div>
-                    <h3 className="mb-2 text-lg font-medium">{searchTerm ? 'No repositories match your search' : 'No repositories found'}</h3>
-                    <p className="max-w-md text-center text-sm text-muted-foreground">
+                    <h3 className="mb-2 text-lg font-medium text-gray-800 dark:text-gray-100">{searchTerm ? 'No repositories match your search' : 'No repositories found'}</h3>
+                    <p className="max-w-md text-center text-sm text-gray-500 dark:text-gray-400">
                         {searchTerm
                             ? 'Try a different search term or clear your search to see all repositories.'
                             : 'No repositories were found for this account. If you expect to see repositories, ensure you have granted the necessary permissions.'}
@@ -203,7 +203,7 @@ export default function GitHubRepositories() {
                     {searchTerm && (
                         <Button
                             onClick={() => setSearchTerm('')}
-                            className="mt-4 rounded-full bg-muted px-3 py-1.5 text-sm text-foreground hover:bg-muted/80"
+                            className="mt-4 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                         >
                             Clear Search
                         </Button>
@@ -216,74 +216,75 @@ export default function GitHubRepositories() {
             <ScrollArea className="h-[450px] pr-2">
                 <div className="space-y-4">
                     {filteredRepos.map((repo) => (
-                        <div key={repo.id} className="flex flex-col rounded-xl border bg-background p-4 transition-colors hover:bg-muted/50">
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 text-lg font-medium">
-                                        <Github className="h-4 w-4 text-primary" />
-                                        {repo.name}
-                                        {repo.private && (
+                        <Card key={repo.id} className="overflow-hidden border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+                            <CardContent className="p-4">
+                                <div className="flex items-start justify-between">
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2 text-lg font-medium text-gray-800 dark:text-gray-100">
+                                            <Github className="h-4 w-4 text-primary" />
+                                            {repo.name}
+                                            {repo.private && (
+                                                <Badge
+                                                    variant="outline"
+                                                    className="ml-1 border-amber-200 bg-amber-100 text-xs font-normal text-amber-700 dark:border-amber-800 dark:bg-amber-900 dark:text-amber-300"
+                                                >
+                                                    Private
+                                                </Badge>
+                                            )}
+                                        </div>
+                                        {repo.description && <p className="mt-2 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">{repo.description}</p>}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        {!repo.is_imported ? (
+                                            <Button
+                                                size="sm"
+                                                className="bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                                onClick={() => handleImportRepository(repo)}
+                                                disabled={importingRepo === repo.id}
+                                            >
+                                                {importingRepo === repo.id ? (
+                                                    <>
+                                                        <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                                                        Importing...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Download className="mr-1 h-4 w-4" />
+                                                        Import
+                                                    </>
+                                                )}
+                                            </Button>
+                                        ) : (
                                             <Badge
                                                 variant="outline"
-                                                className="ml-1 border-amber-200 bg-amber-100 text-xs font-normal text-amber-700 dark:border-amber-800 dark:bg-amber-900 dark:text-amber-300"
+                                                className="mr-2 border-green-300/50 bg-transparent p-2 text-green-700 dark:text-green-300"
                                             >
-                                                Private
+                                                Imported
                                             </Badge>
                                         )}
-                                    </div>
-                                    {repo.description && <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{repo.description}</p>}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    {!repo.is_imported ? (
                                         <Button
-                                            variant="secondary"
-                                            size="sm"
-                                            className="rounded-full px-3"
-                                            onClick={() => handleImportRepository(repo)}
-                                            disabled={importingRepo === repo.id}
+                                            variant="ghost"
+                                            size="icon"
+                                            asChild
+                                            className="text-muted-foreground hover:bg-primary/10 hover:text-primary"
                                         >
-                                            {importingRepo === repo.id ? (
-                                                <>
-                                                    <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-                                                    Importing...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Download className="mr-1 h-4 w-4" />
-                                                    Import
-                                                </>
-                                            )}
+                                            <a href={repo.html_url} target="_blank" rel="noopener noreferrer" title="Open in GitHub">
+                                                <ExternalLink className="h-4 w-4" />
+                                            </a>
                                         </Button>
-                                    ) : (
-                                        <Badge
-                                            variant="outline"
-                                            className="mr-2 border-green-300/50 bg-transparent p-2 text-green-700 dark:text-green-300"
-                                        >
-                                            Imported
+                                    </div>
+                                </div>
+                                <Separator className="my-3" />
+                                <div className="flex items-center justify-between text-xs">
+                                    <span className="text-gray-500 dark:text-gray-400">{repo.full_name}</span>
+                                    {repo.organization && (
+                                        <Badge variant="outline" className="text-xs font-normal">
+                                            {repo.organization}
                                         </Badge>
                                     )}
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        asChild
-                                        className="text-muted-foreground hover:bg-primary/10 hover:text-primary"
-                                    >
-                                        <a href={repo.html_url} target="_blank" rel="noopener noreferrer" title="Open in GitHub">
-                                            <ExternalLink className="h-4 w-4" />
-                                        </a>
-                                    </Button>
                                 </div>
-                            </div>
-                            <Separator className="my-3" />
-                            <div className="flex items-center justify-between text-xs">
-                                <span className="text-muted-foreground">{repo.full_name}</span>
-                                {repo.organization && (
-                                    <Badge variant="outline" className="text-xs font-normal">
-                                        {repo.organization}
-                                    </Badge>
-                                )}
-                            </div>
-                        </div>
+                            </CardContent>
+                        </Card>
                     ))}
                 </div>
             </ScrollArea>
@@ -297,13 +298,15 @@ export default function GitHubRepositories() {
                 <div className="mx-auto flex flex-col gap-4 p-4">
                     {/* Header section */}
                     <section className="mb-2">
-                        <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight">
-                            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
-                                <Github className="h-5 w-5 text-muted-foreground" />
-                            </span>
-                            GitHub Repositories
-                        </h1>
-                        <p className="mt-1 text-gray-500 dark:text-gray-400">Loading GitHub repositories</p>
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                                <Github className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                            </div>
+                            <div>
+                                <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">GitHub Repositories</h1>
+                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Loading GitHub repositories</p>
+                            </div>
+                        </div>
                     </section>
 
                     <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
@@ -312,8 +315,8 @@ export default function GitHubRepositories() {
                                 <div className="mb-6 rounded-full bg-primary/10 p-4">
                                     <Loader2 className="h-10 w-10 animate-spin text-primary" />
                                 </div>
-                                <h3 className="mb-2 text-xl font-medium">Checking GitHub Connection</h3>
-                                <p className="text-muted-foreground">Please wait while we verify your GitHub authentication status...</p>
+                                <h3 className="mb-2 text-xl font-medium text-gray-800 dark:text-gray-100">Checking GitHub Connection</h3>
+                                <p className="text-gray-500 dark:text-gray-400">Please wait while we verify your GitHub authentication status...</p>
                             </div>
                         </CardContent>
                     </Card>
@@ -329,33 +332,41 @@ export default function GitHubRepositories() {
                 <div className="mx-auto flex flex-col gap-4 p-4 md:w-10/12">
                     {/* Header section */}
                     <section className="mb-2">
-                        <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight">
-                            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
-                                <Github className="h-5 w-5 text-muted-foreground" />
-                            </span>
-                            GitHub Repositories
-                        </h1>
-                        <p className="mt-1 text-muted-foreground">Connect and manage GitHub repositories</p>
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                                <Github className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                            </div>
+                            <div>
+                                <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">GitHub Repositories</h1>
+                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Connect and manage GitHub repositories</p>
+                            </div>
+                        </div>
                     </section>
 
                     <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                         <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
-                            <CardTitle className="flex items-center gap-2 text-xl text-gray-800 dark:text-gray-100">
-                                <Github className="h-5 w-5" />
-                                GitHub Repositories
-                            </CardTitle>
-                            <CardDescription>Connect your GitHub account to view your repositories</CardDescription>
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                                    <Github className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">GitHub Integration</CardTitle>
+                                    <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+                                        Connect your GitHub account to view your repositories
+                                    </CardDescription>
+                                </div>
+                            </div>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-4">
                             <div className="flex flex-col items-center justify-center py-6">
                                 <div className="mb-6 rounded-full bg-primary/10 p-4">
                                     <Github className="h-16 w-16 text-primary" />
                                 </div>
-                                <h3 className="mb-2 text-xl font-medium">Connect with GitHub</h3>
-                                <p className="mb-6 max-w-md text-center text-muted-foreground">
+                                <h3 className="mb-2 text-xl font-medium text-gray-800 dark:text-gray-100">Connect with GitHub</h3>
+                                <p className="mb-6 max-w-md text-center text-gray-500 dark:text-gray-400">
                                     Link your GitHub account to access and manage your repositories directly from this application.
                                 </p>
-                                <Button asChild variant="secondary" size="sm" className="rounded-full px-3">
+                                <Button asChild className="bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
                                     <a href={route('auth.github')}>
                                         <Github className="mr-2 h-4 w-4" />
                                         Connect GitHub Account
@@ -370,9 +381,7 @@ export default function GitHubRepositories() {
     }
 
     const currentTab = activeTab
-
     const sidebarNavItems = generateSidebarNavItems()
-
     const getRepositoriesToDisplay = () => {
         if (currentTab === 'personal') {
             return personalRepos
@@ -385,18 +394,23 @@ export default function GitHubRepositories() {
             <Head title="GitHub Repositories" />
             <div className="mx-auto flex flex-col gap-4 p-4">
                 <section className="mb-2">
-                    <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight">
-                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
-                            <Github className="h-5 w-5 text-muted-foreground" />
-                        </span>
-                        GitHub Repositories
-                    </h1>
-                    <p className="mt-1 text-muted-foreground">View and manage your GitHub repositories</p>
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                            <Github className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">GitHub Repositories</h1>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">View and manage your GitHub repositories</p>
+                        </div>
+                    </div>
                 </section>
 
                 <div className="mt-6 flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
-                    <aside className="w-full max-w-xl lg:w-56">
+                    <aside className="w-full max-w-xl lg:w-64">
                         <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                            <div className="border-b border-gray-100 p-4 dark:border-gray-700">
+                                <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">Repository Sources</h3>
+                            </div>
                             <nav className="flex flex-col p-2">
                                 {sidebarNavItems.map((item, index) => {
                                     const Icon = item.icon
@@ -407,9 +421,9 @@ export default function GitHubRepositories() {
                                             key={`${item.href}-${index}`}
                                             size="sm"
                                             variant="ghost"
-                                            className={cn('mb-1 w-full justify-start rounded-md px-3 py-2 text-sm', {
-                                                'bg-muted text-foreground ring-1 ring-border': isActive,
-                                                'hover:bg-muted/70': !isActive,
+                                            className={cn('mb-1 w-full justify-start px-3 py-2 text-sm text-gray-800', {
+                                                'bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600': isActive,
+                                                'hover:bg-gray-100 dark:hover:bg-gray-800': !isActive,
                                             })}
                                             onClick={() => {
                                                 setActiveTab(item.title.toLowerCase())
@@ -419,7 +433,7 @@ export default function GitHubRepositories() {
                                                 window.history.pushState({}, '', url)
                                             }}
                                         >
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-3">
                                                 {Icon && <Icon className="h-4 w-4" />}
                                                 <span>{item.title}</span>
                                             </div>
@@ -432,29 +446,35 @@ export default function GitHubRepositories() {
 
                     <Separator className="my-6 md:hidden" />
 
-                    <div className="flex-1 md:max-w-4xl">
+                    <div className="flex-1 md:max-w-3xl">
                         <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                             <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
-                                <CardTitle className="flex items-center gap-2 text-xl text-gray-800 dark:text-gray-100">
-                                    <Github className="h-5 w-5" />
-                                    {currentTab === 'personal' ? 'Personal Repositories' : `${currentTab} Repositories`}
-                                </CardTitle>
-                                <CardDescription>
-                                    {currentTab === 'personal'
-                                        ? 'Browse your personal GitHub repositories'
-                                        : `Browse repositories from the ${currentTab} organization`}
-                                </CardDescription>
+                                <div className="flex items-center gap-3">
+                                    <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                                        <Github className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                                    </div>
+                                    <div>
+                                        <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">
+                                            {currentTab === 'personal' ? 'Personal Repositories' : `${currentTab} Repositories`}
+                                        </CardTitle>
+                                        <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+                                            {currentTab === 'personal'
+                                                ? 'Browse your personal GitHub repositories'
+                                                : `Browse repositories from the ${currentTab} organization`}
+                                        </CardDescription>
+                                    </div>
+                                </div>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="p-4">
                                 {error && <div className="mb-4 rounded-md bg-destructive/15 p-3 text-destructive">{error}</div>}
 
                                 <div className="mb-4">
                                     <div className="relative">
-                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
                                         <Input
                                             type="search"
                                             placeholder="Search repositories..."
-                                            className="h-10 rounded-full border border-border bg-background pl-8 text-foreground placeholder:text-muted-foreground"
+                                            className="h-10 border-gray-200 bg-white pl-9 text-gray-800 placeholder:text-gray-500 focus-visible:ring-primary/70 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                         />
