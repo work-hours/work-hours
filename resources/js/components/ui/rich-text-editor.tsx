@@ -17,7 +17,6 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
   const editorRef = useRef<unknown>(null)
   const minHeightPx = Math.max(0, Math.round((minRows || 5) * 24))
 
-  // Mention state
   const [mentionQuery, setMentionQuery] = useState<string | null>(null)
   const [mentionAtIndex, setMentionAtIndex] = useState<number | null>(null)
   const [mentionPos, setMentionPos] = useState<{ top: number; left: number } | null>(null)
@@ -110,7 +109,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
           return
         }
         const index = sel.index
-        // Get text from start of current line to cursor
+
         const [line, offset] = q.getLine(index)
         if (!line) {
           setMentionQuery(null)
@@ -122,7 +121,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
         }
         const lineStartIndex = index - offset
         const text = q.getText(lineStartIndex, offset)
-        // Find last '@' without spaces after it
+
         const atPos = Math.max(text.lastIndexOf('@'))
         if (atPos === -1) {
           setMentionQuery(null)
@@ -133,7 +132,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
           return
         }
         const token = text.slice(atPos + 1)
-        // Stop if token contains space or punctuation other than . _ -
+
         if (/[^A-Za-z0-9._-]/.test(token)) {
           setMentionQuery(null)
           setMentionAtIndex(null)
@@ -142,7 +141,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
           setSelectedIndex(0)
           return
         }
-        // Show suggestions (including empty token right after '@')
+
         const query = token
         const base = (query || '').toLowerCase()
         const items = (mentions || [])
@@ -167,7 +166,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
         setSelectedIndex(0)
         setMentionPos({ top: bounds.bottom + 4, left: bounds.left })
       } catch (e) {
-        // noop
+
       }
     }
 
@@ -181,7 +180,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
     root.style.fontSize = '120%'
 
     const onKeyDown = (e: KeyboardEvent) => {
-      // Only handle when suggestions are open
+
       const items = filteredRef.current
       if (!items || items.length === 0) return
       if (e.key === 'ArrowDown') {
@@ -244,7 +243,6 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled,
     }
   }, [value])
 
-  // Ensure active item stays in view
   useEffect(() => {
     if (!listRef.current) return
     const items = listRef.current.children
