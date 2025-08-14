@@ -1,4 +1,5 @@
 import { ExportButton } from '@/components/action-buttons'
+import BackButton from '@/components/back-button'
 import StatsCards from '@/components/dashboard/StatsCards'
 import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
@@ -8,10 +9,11 @@ import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
+import { Pagination } from '@/components/ui/pagination'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head, Link, router, useForm } from '@inertiajs/react'
-import { AlertCircle, ArrowLeft, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Search, TimerReset } from 'lucide-react'
+import { Head, router, useForm } from '@inertiajs/react'
+import { AlertCircle, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Search, TimerReset } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
 
 type TimeLog = {
@@ -57,6 +59,7 @@ type Props = {
     paidAmountsByCurrency: Record<string, number>
     currency: string
     weeklyAverage: number
+    links?: { url: string | null; label: string; active: boolean }[]
 }
 
 export default function TeamMemberTimeLogs({
@@ -70,6 +73,7 @@ export default function TeamMemberTimeLogs({
     paidAmountsByCurrency,
     currency,
     weeklyAverage,
+    links = [],
 }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -150,21 +154,12 @@ export default function TeamMemberTimeLogs({
             <div className="mx-auto flex flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <div className="flex items-center gap-4">
-                        <Link href={route('team.index')}>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-8 w-8 rounded-full border-gray-200 p-0 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-                            >
-                                <ArrowLeft className="h-4 w-4" />
-                                <span className="sr-only">Back to Team</span>
-                            </Button>
-                        </Link>
+                    <div className="flex items-center justify-between gap-4">
                         <div>
                             <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">{user.name}'s Time Logs</h1>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Track and manage work hours for this team member</p>
                         </div>
+                        <BackButton />
                     </div>
                 </section>
 
@@ -415,6 +410,12 @@ export default function TeamMemberTimeLogs({
                                     <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Time Logs</h3>
                                     <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">{user.name} hasn't added any time logs yet.</p>
                                 </div>
+                            </div>
+                        )}
+
+                        {links && links.length > 0 && (
+                            <div className="border-t border-gray-100 px-4 py-3 dark:border-gray-700">
+                                <Pagination links={links} />
                             </div>
                         )}
                     </CardContent>

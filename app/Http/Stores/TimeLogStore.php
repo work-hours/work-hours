@@ -19,6 +19,7 @@ use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pipeline\Pipeline;
@@ -215,13 +216,21 @@ final class TimeLogStore
         return $team instanceof Team ? $team->currency : auth()->user()->currency;
     }
 
-    public static function resData(\Illuminate\Support\Collection $timeLogs): array
+    public static function resData(\Illuminate\Support\Collection|LengthAwarePaginator $timeLogs, ?\Illuminate\Support\Collection $fullTimeLogsForStats = null): array
     {
-        $timeLogStats = self::stats($timeLogs);
+        $displayLogs = $timeLogs instanceof LengthAwarePaginator
+            ? collect($timeLogs->items())
+            : $timeLogs;
+
+        $statsCollection = $fullTimeLogsForStats instanceof \Illuminate\Support\Collection
+            ? $fullTimeLogsForStats
+            : $displayLogs;
+
+        $timeLogStats = self::stats($statsCollection);
         $tags = Tag::query()->where('user_id', auth()->id())->get(['id', 'name']);
 
-        return [
-            'timeLogs' => self::timeLogMapper($timeLogs),
+        $response = [
+            'timeLogs' => self::timeLogMapper($displayLogs),
             'filters' => self::filters(),
             'projects' => ProjectStore::userProjects(userId: auth()->id()),
             'totalDuration' => $timeLogStats['total_duration'],
@@ -232,6 +241,13 @@ final class TimeLogStore
             'paidAmountsByCurrency' => $timeLogStats['paid_amounts_by_currency'],
             'tags' => $tags,
         ];
+
+        if ($timeLogs instanceof LengthAwarePaginator) {
+            $array = $timeLogs->toArray();
+            $response['links'] = $array['links'] ?? [];
+        }
+
+        return $response;
     }
 
     public static function stats(\Illuminate\Support\Collection $timeLogs): array
