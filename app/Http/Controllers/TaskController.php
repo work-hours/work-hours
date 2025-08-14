@@ -41,9 +41,7 @@ final class TaskController extends Controller
         private readonly JiraAdapter $jiraAdapter
     ) {}
 
-    /**
-     * Store a new comment on a task.
-     */
+    #[Action(method: 'post', name: 'task.comments.store', params: ['task'], middleware: ['auth', 'verified'])]
     public function storeComment(Task $task): void
     {
         $task->load(['project', 'assignees']);
@@ -133,12 +131,9 @@ final class TaskController extends Controller
         back()->throwResponse();
     }
 
-    /**
-     * Delete a comment from a task.
-     */
+    #[Action(method: 'delete', name: 'task.comments.destroy', params: ['task', 'comment'], middleware: ['auth', 'verified'])]
     public function destroyComment(Task $task, TaskComment $comment): void
     {
-
         abort_if($comment->task_id !== $task->id, 404, 'Comment not found for this task.');
 
         $task->load(['project']);
@@ -153,9 +148,7 @@ final class TaskController extends Controller
         back()->throwResponse();
     }
 
-    /**
-     * Update a comment on a task.
-     */
+    #[Action(method: 'put', name: 'task.comments.update', params: ['task', 'comment'], middleware: ['auth', 'verified'])]
     public function updateComment(Task $task, TaskComment $comment): void
     {
 
@@ -577,9 +570,7 @@ final class TaskController extends Controller
         ]);
     }
 
-    /**
-     * Delete a specific attachment from the task
-     */
+    #[Action(method: 'delete', name: 'task.attachments.destroy', params: ['task', 'filename'], middleware: ['auth', 'verified'])]
     public function destroyAttachment(Task $task, string $filename): void
     {
         $isProjectOwner = $task->project->user_id === auth()->id();
