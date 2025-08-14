@@ -33,11 +33,7 @@ final class ClientController extends Controller
 
         return Inertia::render('client/index', [
             'clients' => $clients,
-            'filters' => [
-                'search' => request('search', ''),
-                'created-date-from' => request('created-date-from', ''),
-                'created-date-to' => request('created-date-to', ''),
-            ],
+            'filters' => ClientStore::filters(),
         ]);
     }
 
@@ -161,7 +157,7 @@ final class ClientController extends Controller
     #[Action(method: 'get', name: 'client.export', middleware: ['auth', 'verified'])]
     public function clientExport(): StreamedResponse
     {
-        $headers = ['ID', 'Name', 'Email', 'Contact Person', 'Phone', 'Address', 'Notes', 'Hourly Rate', 'Currency', 'Created At'];
+        $headers = ClientStore::exportHeaders();
         $filename = 'clients_' . Carbon::now()->format('Y-m-d') . '.csv';
 
         return $this->exportToCsv(
