@@ -143,45 +143,65 @@ export default function Tags({ tags }: TagsPageProps) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Manage Tags" />
-            <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
-                <section className="mb-4 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Manage Tags</h1>
-                        <p className="mt-1 text-gray-500 dark:text-gray-400">View and manage all your tags in one place</p>
+            <div className="mx-auto flex flex-col gap-4 p-4">
+                <section className="mb-2">
+                    <div className="mb-2 flex items-center justify-between">
+                        <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Tag Management</h1>
                     </div>
-                    <Button onClick={openCreateDialog} className="flex items-center gap-2">
-                        <Plus className="h-4 w-4" />
-                        Add New Tag
-                    </Button>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Manage your tags for time logs and projects</p>
+                    <div className="mt-2 flex items-center justify-end">
+                        <Button
+                            onClick={openCreateDialog}
+                            className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                        >
+                            <Plus className="h-4 w-4" />
+                            <span>Add new Tag</span>
+                        </Button>
+                    </div>
                 </section>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Your Tags</CardTitle>
-                        <CardDescription>
-                            You have {tags.total} {(tags.total || 0) === 1 ? 'tag' : 'tags'}
-                        </CardDescription>
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+                            <div>
+                                <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Your Tags</CardTitle>
+                                <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+                                    You have {tags.total} {(tags.total || 0) === 1 ? 'tag' : 'tags'}
+                                </CardDescription>
+                            </div>
+                        </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {tagsList.length === 0 ? (
-                            <div className="py-8 text-center">
-                                <p className="text-gray-500 dark:text-gray-400">You don't have any tags yet</p>
-                                <Button onClick={openCreateDialog} variant="link" className="mt-2">
-                                    Create your first tag
+                            <div className="flex flex-col items-center justify-center py-12 text-center">
+                                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You don't have any tags yet.</p>
+                                <Button
+                                    onClick={openCreateDialog}
+                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add new Tag</span>
                                 </Button>
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left text-sm">
-                                    <thead className="bg-gray-50 text-xs uppercase dark:bg-gray-800">
+                                    <thead>
                                         <tr>
-                                            <th className="px-6 py-3">Tag Name</th>
-                                            <th className="px-6 py-3 text-right">Actions</th>
+                                            <th className="bg-gray-50 px-6 py-3 text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                                                Tag Name
+                                            </th>
+                                            <th className="bg-gray-50 px-6 py-3 text-right text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                                                Actions
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {tagsList.map((tag) => (
-                                            <tr key={tag.id} className="border-b bg-white dark:border-gray-700 dark:bg-gray-900">
+                                            <tr
+                                                key={tag.id}
+                                                className="dark:hover:bg-gray-750 border-b border-gray-100 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
+                                            >
                                                 <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                                     <div className="flex items-center gap-2">
                                                         <div className="h-4 w-4 rounded-full" style={{ backgroundColor: tag.color || '#6366f1' }} />
@@ -189,17 +209,24 @@ export default function Tags({ tags }: TagsPageProps) {
                                                     </div>
                                                 </td>
                                                 <td className="space-x-2 px-6 py-4 text-right">
-                                                    <Button onClick={() => openEditDialog(tag)} variant="ghost" size="icon" className="h-8 w-8">
-                                                        <Edit className="h-4 w-4" />
+                                                    <Button
+                                                        onClick={() => openEditDialog(tag)}
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-7 w-7 border-amber-100 bg-amber-50 p-0 text-amber-700 shadow-sm transition-all duration-200 hover:border-amber-200 hover:bg-amber-100 hover:text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300 dark:hover:bg-amber-900/30"
+                                                        title="Edit Tag"
+                                                    >
+                                                        <Edit className="h-3 w-3" />
                                                         <span className="sr-only">Edit</span>
                                                     </Button>
                                                     <Button
                                                         onClick={() => openDeleteDialog(tag)}
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 text-red-500"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-7 w-7 border-neutral-200 bg-red-100 p-0 text-red-600 shadow-sm transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-red-800/50 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                                                        title="Delete Tag"
                                                     >
-                                                        <Trash2 className="h-4 w-4" />
+                                                        <Trash2 className="h-3 w-3" />
                                                         <span className="sr-only">Delete</span>
                                                     </Button>
                                                 </td>
@@ -244,9 +271,9 @@ export default function Tags({ tags }: TagsPageProps) {
 
             {/* Create Tag Dialog */}
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-                <DialogContent>
+                <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
                     <DialogHeader>
-                        <DialogTitle>Create New Tag</DialogTitle>
+                        <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">Create New Tag</DialogTitle>
                     </DialogHeader>
                     <form
                         onSubmit={(e) => {
@@ -268,10 +295,20 @@ export default function Tags({ tags }: TagsPageProps) {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)} disabled={isLoading}>
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => setIsCreateDialogOpen(false)}
+                                disabled={isLoading}
+                                className="border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                            >
                                 Cancel
                             </Button>
-                            <Button type="submit" disabled={isLoading || !data.name}>
+                            <Button
+                                type="submit"
+                                disabled={isLoading || !data.name}
+                                className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                            >
                                 {isLoading ? (
                                     <>
                                         <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
@@ -280,7 +317,7 @@ export default function Tags({ tags }: TagsPageProps) {
                                 ) : (
                                     <>
                                         <Save className="mr-2 h-4 w-4" />
-                                        Create Tag
+                                        Create tag
                                     </>
                                 )}
                             </Button>
@@ -291,18 +328,18 @@ export default function Tags({ tags }: TagsPageProps) {
 
             {/* Edit Tag Dialog */}
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                <DialogContent>
+                <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
                     <DialogHeader>
-                        <DialogTitle>Edit Tag</DialogTitle>
+                        <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">Edit Tag</DialogTitle>
                     </DialogHeader>
                     <form
                         onSubmit={(e) => {
                             e.preventDefault()
-                            updateTag()
+                            updateTag().then()
                         }}
                     >
-                        <div className="grid gap-4 py-4">
-                            <div className="grid gap-2">
+                        <div className="flex flex-row gap-4 py-4">
+                            <div className="grid w-10/12 gap-2">
                                 <Label htmlFor="edit-name">Tag Name</Label>
                                 <Input
                                     id="edit-name"
@@ -325,10 +362,20 @@ export default function Tags({ tags }: TagsPageProps) {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)} disabled={isLoading}>
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => setIsCreateDialogOpen(false)}
+                                disabled={isLoading}
+                                className="border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                            >
                                 Cancel
                             </Button>
-                            <Button type="submit" disabled={isLoading || !editData.name}>
+                            <Button
+                                type="submit"
+                                className={'flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600'}
+                                disabled={isLoading || !editData.name}
+                            >
                                 {isLoading ? (
                                     <>
                                         <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
@@ -348,19 +395,31 @@ export default function Tags({ tags }: TagsPageProps) {
 
             {/* Delete Tag Dialog */}
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                <DialogContent>
+                <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
                     <DialogHeader>
-                        <DialogTitle>Delete Tag</DialogTitle>
+                        <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">Delete Tag</DialogTitle>
                     </DialogHeader>
                     <div className="py-4">
-                        <p>Are you sure you want to delete the tag "{deletingTag?.name}"?</p>
+                        <p className="text-neutral-700 dark:text-neutral-300">Are you sure you want to delete the tag "{deletingTag?.name}"?</p>
                         <p className="mt-2 text-sm text-red-500">This action cannot be undone. The tag will be removed from all time logs.</p>
                     </div>
                     <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => setIsDeleteDialogOpen(false)} disabled={isLoading}>
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => setIsDeleteDialogOpen(false)}
+                            disabled={isLoading}
+                            className="border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                        >
                             Cancel
                         </Button>
-                        <Button type="button" variant="destructive" onClick={deleteTag} disabled={isLoading}>
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={deleteTag}
+                            disabled={isLoading}
+                            className="bg-red-600 text-white transition-colors duration-200 hover:bg-red-700 dark:bg-red-700/80 dark:hover:bg-red-700"
+                        >
                             {isLoading ? (
                                 <>
                                     <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />

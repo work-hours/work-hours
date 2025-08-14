@@ -1,5 +1,7 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import AddNewButton from '@/components/add-new-button'
 import DeleteTask from '@/components/delete-task'
+import FilterButton from '@/components/filter-button'
 import SourceLinkIcon from '@/components/source-link-icon'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -300,16 +302,16 @@ export default function Tasks() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Tasks" />
-            <div className="mx-auto flex flex-col gap-6 p-3">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Task Management</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your tasks</p>
+                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Task Management</h1>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your tasks</p>
                 </section>
 
-                {/* Time Logs Card with filters in header */}
-                <Card className="transition-all hover:shadow-md">
-                    <CardHeader className="">
+                {/* Tasks Card with filters in header */}
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Tasks</CardTitle>
@@ -319,28 +321,26 @@ export default function Tasks() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton href={route('task.export')} label="Export" />
-                                <Link href={route('task.create')}>
-                                    <Button className="flex items-center gap-2">
-                                        <Plus className="h-4 w-4" />
-                                        <span>Add Task</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('task.create')}>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add Task</span>
+                                </AddNewButton>
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t pt-4">
+                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
                             <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
                                 {/* Search */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="search" className="text-xs font-medium">
+                                    <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Search
                                     </Label>
                                     <div className="relative">
-                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-400 dark:text-gray-500" />
                                         <Input
                                             id="search"
                                             placeholder="Search"
-                                            className="pl-10"
+                                            className="h-10 border-gray-200 bg-white pl-10 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
                                             value={filters.search}
                                             onChange={(e) => handleFilterChange('search', e.target.value)}
                                         />
@@ -349,7 +349,7 @@ export default function Tasks() {
 
                                 {/* Status Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="status" className="text-xs font-medium">
+                                    <Label htmlFor="status" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Status
                                     </Label>
                                     <SearchableSelect
@@ -365,13 +365,13 @@ export default function Tasks() {
                                         ]}
                                         placeholder="Statuses"
                                         disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
 
                                 {/* Priority Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="priority" className="text-xs font-medium">
+                                    <Label htmlFor="priority" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Priority
                                     </Label>
                                     <SearchableSelect
@@ -386,13 +386,13 @@ export default function Tasks() {
                                         ]}
                                         placeholder="Priorities"
                                         disabled={processing}
-                                        icon={<Flag className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<Flag className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
 
                                 {/* Project Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="project" className="text-xs font-medium">
+                                    <Label htmlFor="project" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Project
                                     </Label>
                                     <SearchableSelect
@@ -408,13 +408,13 @@ export default function Tasks() {
                                         ]}
                                         placeholder="Projects"
                                         disabled={processing}
-                                        icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
 
                                 {/* Tag Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="tag" className="text-xs font-medium">
+                                    <Label htmlFor="tag" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Tag
                                     </Label>
                                     <SearchableSelect
@@ -430,13 +430,13 @@ export default function Tasks() {
                                         ]}
                                         placeholder="Tags"
                                         disabled={processing}
-                                        icon={<Flag className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<Flag className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
 
                                 {/* Due Date From */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="due-date-from" className="text-xs font-medium">
+                                    <Label htmlFor="due-date-from" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Due Date From
                                     </Label>
                                     <DatePicker
@@ -448,9 +448,10 @@ export default function Tasks() {
                                         customInput={
                                             <CustomInput
                                                 id="due-date-from"
-                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select start date"
+                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
@@ -458,7 +459,7 @@ export default function Tasks() {
 
                                 {/* Due Date To */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="due-date-to" className="text-xs font-medium">
+                                    <Label htmlFor="due-date-to" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Due Date To
                                     </Label>
                                     <DatePicker
@@ -470,40 +471,37 @@ export default function Tasks() {
                                         customInput={
                                             <CustomInput
                                                 id="due-date-to"
-                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select end date"
+                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
                                 </div>
 
                                 <div className="flex items-end gap-2">
-                                    <Button type="submit" size="icon" className="h-9 w-9" title="Filter">
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                        <span className="sr-only">Filter</span>
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="icon"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={
-                                            filters.status === 'all' &&
-                                            filters.priority === 'all' &&
-                                            filters.project === 'all' &&
-                                            filters.tag === 'all' &&
-                                            !filters['due-date-from'] &&
-                                            !filters['due-date-to'] &&
-                                            !filters.search
+                                            processing ||
+                                            (filters.status === 'all' &&
+                                                filters.priority === 'all' &&
+                                                filters.project === 'all' &&
+                                                filters.tag === 'all' &&
+                                                !filters['due-date-from'] &&
+                                                !filters['due-date-to'] &&
+                                                !filters.search)
                                         }
                                         onClick={clearFilters}
-                                        className="h-9 w-9"
-                                        title="Clear Filters"
+                                        title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                        <span className="sr-only">Clear</span>
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
 
@@ -603,12 +601,18 @@ export default function Tasks() {
                             <Table>
                                 <TableHeader>
                                     <TableHeaderRow>
-                                        <TableHead>Title</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Priority</TableHead>
-                                        <TableHead>Due Date</TableHead>
-                                        <TableHead>Assignees</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Title
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Due Date
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Assignees
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Actions
+                                        </TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
                                 <TableBody>
@@ -617,6 +621,8 @@ export default function Tasks() {
                                             <TableCell className="max-w-xl font-medium">
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <span>{task.title}</span>
+                                                    {getStatusBadge(task, task.status)}
+                                                    {getPriorityBadge(task.priority)}
                                                     {task.is_imported && task.meta?.source && (
                                                         <SourceLinkIcon source={task.meta.source} sourceUrl={task.meta?.source_url} />
                                                     )}
@@ -638,9 +644,7 @@ export default function Tasks() {
                                                     )}
                                                 </div>
                                             </TableCell>
-                                            <TableCell>{getStatusBadge(task, task.status)}</TableCell>
-                                            <TableCell>{getPriorityBadge(task.priority)}</TableCell>
-                                            <TableCell>
+                                            <TableCell className={'text-sm text-gray-500 dark:text-gray-400'}>
                                                 {task.due_date ? (
                                                     new Date(task.due_date).toISOString().split('T')[0]
                                                 ) : (
@@ -708,7 +712,7 @@ export default function Tasks() {
                                                                 href={route('task.edit', task.id)}
                                                                 title="Edit Task"
                                                                 icon={Edit}
-                                                                variant="amber"
+                                                                variant="warning"
                                                                 size="icon"
                                                             />
                                                             <DeleteTask

@@ -42,12 +42,12 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
             <form onSubmit={submit} className="flex flex-col gap-6">
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="email" className="text-sm font-medium">
+                        <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Email Address
                         </Label>
                         <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                             </div>
                             <Input
                                 id="email"
@@ -57,25 +57,24 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                                 value={data.email}
                                 readOnly
                                 onChange={(e) => setData('email', e.target.value)}
-                                className="bg-muted/30 pl-10"
+                                className="bg-gray-50 pl-10 dark:bg-gray-800/50"
                             />
                         </div>
                         <InputError message={errors.email} className="mt-1" />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password" className="text-sm font-medium">
+                        <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             New Password
                         </Label>
                         <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                <Lock className="h-4 w-4 text-muted-foreground" />
+                                <Lock className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                             </div>
                             <Input
                                 id="password"
                                 type="password"
                                 name="password"
-                                autoComplete="new-password"
                                 value={data.password}
                                 autoFocus
                                 onChange={(e) => setData('password', e.target.value)}
@@ -83,22 +82,21 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                                 className="pl-10"
                             />
                         </div>
-                        <InputError message={errors.password} />
+                        <InputError message={errors.password} className="mt-1" />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password_confirmation" className="text-sm font-medium">
+                        <Label htmlFor="password_confirmation" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Confirm Password
                         </Label>
                         <div className="relative">
                             <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                <KeyRound className="h-4 w-4 text-muted-foreground" />
+                                <KeyRound className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                             </div>
                             <Input
                                 id="password_confirmation"
                                 type="password"
                                 name="password_confirmation"
-                                autoComplete="new-password"
                                 value={data.password_confirmation}
                                 onChange={(e) => setData('password_confirmation', e.target.value)}
                                 placeholder="••••••••"
@@ -108,14 +106,18 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                         <InputError message={errors.password_confirmation} className="mt-1" />
                     </div>
 
-                    <Button type="submit" className="mt-2 w-full rounded-md py-2.5 font-medium transition-all hover:shadow-md" disabled={processing}>
+                    <Button
+                        type="submit"
+                        className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-md bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900"
+                        disabled={processing}
+                    >
                         {processing ? (
                             <span className="flex items-center justify-center gap-2">
                                 <LoaderCircle className="h-4 w-4 animate-spin" />
                                 <span>Resetting password...</span>
                             </span>
                         ) : (
-                            'Reset password'
+                            'Reset Password'
                         )}
                     </Button>
                 </div>

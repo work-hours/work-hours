@@ -2,11 +2,13 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import TagInput from '@/components/ui/tag-input'
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 import { Head, useForm } from '@inertiajs/react'
-import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Save, Trash2 } from 'lucide-react'
+import { Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Save, Trash2 } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+import BackButton from '@/components/back-button'
 import InputError from '@/components/input-error'
+import SubmitButton from '@/components/submit-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -93,7 +95,7 @@ export default function EditTask({
     isJira,
     attachments = [],
 }: Props) {
-    const { data, setData, post, transform, processing, errors } = useForm<TaskForm>({
+    const { data, setData, post, processing, errors } = useForm<TaskForm>({
         project_id: task.project_id.toString(),
         title: task.title,
         description: task.description || '',
@@ -195,17 +197,17 @@ export default function EditTask({
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Task" />
-            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Edit Task</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Update information for {task.title}</p>
+                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Edit Task</h1>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Update information for {task.title}</p>
                 </section>
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Task Information</CardTitle>
-                        <CardDescription>Update the task's details</CardDescription>
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                        <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Task Information</CardTitle>
+                        <CardDescription className="text-sm text-gray-500 dark:text-gray-400">Update the task's details</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
@@ -480,7 +482,7 @@ export default function EditTask({
                                                             type="button"
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-7 w-7 border-red-200 bg-red-50 p-0 text-red-700 hover:bg-red-100 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
+                                                            className="h-7 w-7 border-red-200 bg-red-100 p-0 text-red-600 hover:bg-red-200 dark:border-red-800/50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
                                                             onClick={() => openDeleteAttachment(att)}
                                                             aria-label={`Delete ${att.name}`}
                                                             title="Delete"
@@ -516,21 +518,14 @@ export default function EditTask({
                                 </Dialog>
 
                                 <div className="mt-4 flex justify-end gap-3">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => window.history.back()}
-                                        tabIndex={4}
-                                        disabled={processing}
-                                        className="flex items-center gap-2"
-                                    >
-                                        <ArrowLeft className="h-4 w-4" />
-                                        Back
-                                    </Button>
-                                    <Button type="submit" tabIndex={3} disabled={processing} className="flex items-center gap-2">
-                                        {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                        {processing ? 'Updating...' : 'Update Task'}
-                                    </Button>
+                                    <BackButton disabled={processing} />
+                                    <SubmitButton
+                                        loading={processing}
+                                        idleLabel="Update Task"
+                                        loadingLabel="Updating..."
+                                        idleIcon={<Save className="h-4 w-4" />}
+                                        loadingIcon={<LoaderCircle className="h-4 w-4 animate-spin" />}
+                                    />
                                 </div>
                             </div>
                         </form>

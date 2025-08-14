@@ -127,11 +127,13 @@ export default function Notifications() {
             <Head title="Notifications" />
             <div className="mx-auto flex flex-col gap-4 p-4">
                 <div className="mb-6 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Bell className="h-8 w-8 text-primary" />
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                            <Bell className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                        </div>
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight">Notifications</h1>
-                            <p className="text-muted-foreground">
+                            <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Notifications</h1>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                                 {notificationsData.notifications?.meta?.total
                                     ? `You have ${notificationsData.notifications.meta.total} notifications`
                                     : 'Manage your notifications'}
@@ -139,27 +141,30 @@ export default function Notifications() {
                         </div>
                     </div>
                     {(notificationsData.unread_count || 0) > 0 && (
-                        <Button onClick={handleMarkAllAsRead} className="gap-2">
+                        <Button
+                            onClick={handleMarkAllAsRead}
+                            className="gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                        >
                             <CheckCircle className="h-4 w-4" />
                             Mark All as Read
-                            <Badge variant="secondary" className="ml-1">
+                            <Badge variant="secondary" className="ml-1 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
                                 {notificationsData.unread_count}
                             </Badge>
                         </Button>
                     )}
                 </div>
-                <Separator className="mb-4" />
+                <Separator className="mb-4 bg-gray-200 dark:bg-gray-700" />
 
                 {loading ? (
                     <Loader message="Loading notifications..." className="h-40" />
                 ) : (
                     <>
                         {!notificationsData.notifications?.data || notificationsData.notifications.data.length === 0 ? (
-                            <Card className="border-dashed">
+                            <Card className="overflow-hidden border border-gray-200 bg-white shadow-sm transition-all dark:border-gray-700 dark:bg-gray-800">
                                 <div className="flex flex-col items-center justify-center p-6">
-                                    <BellOff className="mb-3 h-10 w-10 text-muted-foreground" />
-                                    <h3 className="mb-1 text-lg font-semibold">No notifications</h3>
-                                    <p className="max-w-md text-center text-sm text-muted-foreground">
+                                    <BellOff className="mb-3 h-10 w-10 text-gray-400 dark:text-gray-500" />
+                                    <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-100">No notifications</h3>
+                                    <p className="max-w-md text-center text-sm text-gray-500 dark:text-gray-400">
                                         You don't have any notifications at the moment. New notifications will appear here when they arrive.
                                     </p>
                                 </div>
@@ -179,17 +184,17 @@ export default function Notifications() {
                                     return (
                                         <Card
                                             key={notification.id}
-                                            className={`transition-all ${
+                                            className={`overflow-hidden transition-all ${
                                                 notification.read_at
-                                                    ? 'border-gray-200 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-800/50'
-                                                    : 'border-l-4 border-l-primary shadow-md'
+                                                    ? 'border border-gray-200 bg-gray-50/50 shadow-sm dark:border-gray-700 dark:bg-gray-800/50'
+                                                    : 'border border-l-4 border-gray-200 border-l-primary bg-white shadow-md dark:border-gray-700 dark:bg-gray-800'
                                             }`}
                                         >
-                                            <CardHeader className="pb-1">
+                                            <CardHeader className="border-b border-gray-100 p-4 pb-2 dark:border-gray-700">
                                                 <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-2">
+                                                    <div className="flex items-center gap-3">
                                                         <div
-                                                            className={`rounded-full p-1.5 ${
+                                                            className={`rounded-full p-2 ${
                                                                 notification.read_at
                                                                     ? 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
                                                                     : 'bg-primary/10 text-primary'
@@ -197,15 +202,23 @@ export default function Notifications() {
                                                         >
                                                             <NotificationIcon className="h-4 w-4" />
                                                         </div>
-                                                        <CardTitle className="text-base">{formatNotificationType(notification.type)}</CardTitle>
+                                                        <CardTitle className="text-base font-medium text-gray-800 dark:text-gray-100">
+                                                            {formatNotificationType(notification.type)}
+                                                        </CardTitle>
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <CardDescription className="text-xs">{notification.created_at}</CardDescription>
-                                                        {!notification.read_at && <Badge variant="default">New</Badge>}
+                                                        <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
+                                                            {notification.created_at}
+                                                        </CardDescription>
+                                                        {!notification.read_at && (
+                                                            <Badge className="bg-primary text-white hover:bg-primary/90 dark:bg-primary dark:text-white dark:hover:bg-primary/90">
+                                                                New
+                                                            </Badge>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </CardHeader>
-                                            <div className="flex items-center justify-between px-6 py-2">
+                                            <div className="flex items-center justify-between bg-white px-6 py-3 dark:bg-gray-800">
                                                 <p className="text-sm text-gray-700 dark:text-gray-300">
                                                     {notification.data?.message || 'No message content'}
                                                 </p>
@@ -214,12 +227,12 @@ export default function Notifications() {
                                                         variant="outline"
                                                         size="icon"
                                                         onClick={() => handleMarkAsRead(notification.id)}
-                                                        className="ml-2 h-8 w-8 flex-shrink-0"
+                                                        className="ml-2 h-8 w-8 flex-shrink-0 border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
                                                     >
                                                         <CheckCircle className="h-4 w-4" />
                                                     </Button>
                                                 ) : (
-                                                    <span className="ml-2 flex items-center gap-1 text-xs text-muted-foreground">
+                                                    <span className="ml-2 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                                                         <CheckCircle className="h-3 w-3" /> Read
                                                     </span>
                                                 )}
@@ -238,7 +251,7 @@ export default function Notifications() {
                                     size="icon"
                                     disabled={!notificationsData.notifications.links?.prev}
                                     onClick={() => fetchNotifications(currentPage - 1)}
-                                    className="h-9 w-9 transition-all hover:bg-primary/10"
+                                    className="h-9 w-9 border-gray-200 bg-white text-gray-700 transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                                     aria-label="Previous page"
                                 >
                                     <ChevronLeft className="h-5 w-5" />
@@ -264,13 +277,13 @@ export default function Notifications() {
                                         if (i > 0 && pageNumbers[i] && pageNumbers[i - 1] && pageNumbers[i] - pageNumbers[i - 1] > 1) {
                                             return (
                                                 <div key={`ellipsis-${i}`} className="flex items-center">
-                                                    <span className="px-2 text-muted-foreground">...</span>
+                                                    <span className="px-2 text-gray-500 dark:text-gray-400">...</span>
                                                     <Button
                                                         key={pageNum}
                                                         variant={currentPage === pageNum ? 'default' : 'outline'}
                                                         size="sm"
                                                         onClick={() => fetchNotifications(pageNum)}
-                                                        className={`h-9 w-9 ${currentPage === pageNum ? 'pointer-events-none' : ''}`}
+                                                        className={`h-9 w-9 ${currentPage === pageNum ? 'bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600' : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'} ${currentPage === pageNum ? 'pointer-events-none' : ''}`}
                                                         aria-label={`Page ${pageNum}`}
                                                         aria-current={currentPage === pageNum ? 'page' : undefined}
                                                     >
@@ -286,7 +299,7 @@ export default function Notifications() {
                                                 variant={currentPage === pageNum ? 'default' : 'outline'}
                                                 size="sm"
                                                 onClick={() => fetchNotifications(pageNum)}
-                                                className={`h-9 w-9 ${currentPage === pageNum ? 'pointer-events-none' : ''}`}
+                                                className={`h-9 w-9 ${currentPage === pageNum ? 'bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600' : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'} ${currentPage === pageNum ? 'pointer-events-none' : ''}`}
                                                 aria-label={`Page ${pageNum}`}
                                                 aria-current={currentPage === pageNum ? 'page' : undefined}
                                             >
@@ -301,7 +314,7 @@ export default function Notifications() {
                                     size="icon"
                                     disabled={!notificationsData.notifications.links?.next}
                                     onClick={() => fetchNotifications(currentPage + 1)}
-                                    className="h-9 w-9 transition-all hover:bg-primary/10"
+                                    className="h-9 w-9 border-gray-200 bg-white text-gray-700 transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                                     aria-label="Next page"
                                 >
                                     <ChevronRight className="h-5 w-5" />

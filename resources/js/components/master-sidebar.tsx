@@ -1,4 +1,3 @@
-import Background from '@/components/ui/background'
 import { type NavItem, type SharedData } from '@/types'
 import { count } from '@actions/ApprovalController'
 import { count as taskCount } from '@actions/TaskController'
@@ -140,21 +139,19 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
     return (
         <div
-            className={`sticky top-0 flex h-screen flex-col border-r border-gray-200 bg-[#f8f6e9] shadow-md transition-all duration-300 ease-in-out dark:border-gray-700 dark:bg-gray-900 ${
-                collapsed ? 'w-20' : 'w-68'
+            className={`sticky top-0 flex h-screen flex-col border-r border-neutral-200 bg-white shadow-sm transition-all duration-300 ease-in-out dark:border-neutral-800 dark:bg-neutral-900 ${
+                collapsed ? 'w-20' : 'w-62'
             }`}
         >
-            <Background showMarginLine={false} />
-
             {/* Header with improved styling */}
             <div
-                className={`relative z-20 border-b border-gray-200 p-4 pt-3 pb-3 transition-all duration-300 ease-in-out dark:border-gray-700 ${
+                className={`border-b border-neutral-200 p-4 pt-3 pb-3 transition-all duration-300 ease-in-out dark:border-neutral-700 ${
                     collapsed ? 'flex flex-col items-center' : 'px-6'
                 }`}
             >
                 <div className={`flex w-full items-center ${collapsed ? 'flex-col justify-center' : ''}`}>
                     <Link href={route('dashboard')} className={`${collapsed ? 'mb-2 flex items-center justify-center p-1' : 'flex items-center'}`}>
-                        {collapsed ? <AppLogoIcon className="h-12 w-24 text-gray-700 dark:text-gray-300" /> : <AppLogo />}
+                        {collapsed ? <AppLogoIcon className="h-12 w-24 text-neutral-700 dark:text-neutral-300" /> : <AppLogo />}
                     </Link>
                 </div>
             </div>
@@ -163,16 +160,16 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
             <div className={`flex flex-1 flex-col overflow-y-auto pt-3 ${collapsed ? 'px-2' : 'px-4'}`}>
                 {/* Platform Navigation with grouped items */}
                 <div className="mb-6">
-                    <div className="mb-3 border-b border-gray-300 pb-2 dark:border-gray-600">
+                    <div className="mb-3 pb-2">
                         <h3
-                            className={`text-xs font-bold tracking-wider text-gray-700 uppercase dark:text-gray-300 ${
+                            className={`text-xs font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400 ${
                                 collapsed ? 'text-center' : 'px-2'
                             }`}
                         >
                             {collapsed ? 'Menu' : 'Platform'}
                         </h3>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                         {navGroups.map((group) => (
                             <SidebarGroup
                                 key={group.title}
@@ -192,7 +189,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
             </div>
 
             {/* Footer with enhanced styling */}
-            <div className={`border-t border-gray-200 pt-3 pb-4 dark:border-gray-700 ${collapsed ? 'px-2' : 'px-4'}`}>
+            <div className={`border-t border-neutral-200 pt-3 pb-4 dark:border-neutral-700 ${collapsed ? 'px-2' : 'px-4'}`}>
                 <FooterNavigation collapsed={collapsed} />
                 <UserSection collapsed={collapsed} user={auth.user} />
             </div>

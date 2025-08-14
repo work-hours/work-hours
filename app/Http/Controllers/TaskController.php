@@ -16,6 +16,7 @@ use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\User;
 use App\Notifications\TaskAssigned;
+use App\Notifications\TaskCommented;
 use App\Notifications\TaskCompleted;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
@@ -45,7 +46,6 @@ final class TaskController extends Controller
      */
     public function storeComment(Task $task): void
     {
-
         $task->load(['project', 'assignees']);
 
         $isProjectOwner = $task->project->user_id === auth()->id();
@@ -58,11 +58,77 @@ final class TaskController extends Controller
             'body' => ['required', 'string', 'max:5000'],
         ]);
 
-        TaskComment::query()->create([
+        $comment = TaskComment::query()->create([
             'task_id' => $task->id,
             'user_id' => auth()->id(),
             'body' => request('body'),
         ]);
+
+        $recipientIds = collect([$task->project->user_id])
+            ->merge($task->assignees->pluck('id'))
+            ->unique()
+            ->reject(fn ($id): bool => $id === (int) auth()->id())
+            ->values();
+
+        $rawBody = (string) request('body');
+
+        $textBody = mb_trim(strip_tags($rawBody));
+
+        if ($textBody !== '' && preg_match_all('/@([A-Za-z0-9._-]+)/', $textBody, $matches)) {
+            $handles = collect($matches[1] ?? [])->filter()->map(fn ($h): string => mb_strtolower($h))->unique()->values();
+
+            if ($handles->isNotEmpty()) {
+                $allowedUsers = collect([$task->project->user])
+                    ->merge($task->project->teamMembers)
+                    ->merge($task->assignees)
+                    ->filter()
+                    ->unique('id')
+                    ->values();
+
+                $normalize = static function (string $name): string {
+                    $base = mb_strtolower($name);
+
+                    return preg_replace('/[^a-z0-9._-]+/i', '', $base) ?? $base;
+                };
+
+                $handleToUserIds = collect();
+                foreach ($allowedUsers as $u) {
+                    $handle = $normalize($u->name);
+                    if ($handle !== '') {
+                        $handleToUserIds->put($handle, $u->id);
+                    }
+
+                    if (! empty($u->email) && str_contains($u->email, '@')) {
+                        $local = mb_strtolower(strtok($u->email, '@'));
+                        if ($local !== '0') {
+                            $handleToUserIds->put($local, $u->id);
+                        }
+                    }
+                }
+
+                $mentionedIds = $handles
+                    ->map(fn ($h) => $handleToUserIds->get($h))
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                if ($mentionedIds->isNotEmpty()) {
+                    $recipientIds = $recipientIds->merge($mentionedIds)->unique()->values();
+                }
+            }
+        }
+
+        $recipientIdArray = $recipientIds
+            ->reject(fn ($id): bool => $id === (int) auth()->id())
+            ->values()
+            ->all();
+
+        if ($recipientIdArray !== []) {
+            $users = User::query()->whereIn('id', $recipientIdArray)->get();
+            foreach ($users as $user) {
+                $user->notify(new TaskCommented($task, $comment, auth()->user()));
+            }
+        }
 
         back()->throwResponse();
     }
@@ -240,7 +306,7 @@ final class TaskController extends Controller
      */
     public function detail(Task $task)
     {
-        $task->load(['project', 'assignees', 'tags', 'comments.user', 'meta']);
+        $task->load(['project', 'project.user', 'project.teamMembers', 'assignees', 'tags', 'comments.user', 'meta']);
 
         $isProjectOwner = $task->project->user_id === auth()->id();
         $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
@@ -255,9 +321,30 @@ final class TaskController extends Controller
                 'size' => Storage::disk('public')->size($path),
             ]);
 
+        $normalize = static function (string $name): string {
+            $base = mb_strtolower($name);
+
+            return preg_replace('/[^a-z0-9._-]+/i', '', $base) ?? $base;
+        };
+
+        $mentionableUsers = collect([$task->project->user])
+            ->merge($task->project->teamMembers)
+            ->merge($task->assignees)
+            ->filter()
+            ->reject(fn ($u): bool => $u->id === auth()->id())
+            ->unique('id')
+            ->values()
+            ->map(fn ($u): array => [
+                'id' => $u->id,
+                'name' => $u->name,
+                'handle' => $normalize($u->name),
+                'email' => $u->email ?? null,
+            ]);
+
         return Inertia::render('task/detail', [
             'task' => $task,
             'attachments' => $files,
+            'mentionableUsers' => $mentionableUsers,
         ]);
     }
 
@@ -530,7 +617,7 @@ final class TaskController extends Controller
     /**
      * Store uploaded attachments for the given task.
      */
-    private function storeAttachments($request, Task $task): void
+    private function storeAttachments(StoreTaskRequest|UpdateTaskRequest $request, Task $task): void
     {
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {

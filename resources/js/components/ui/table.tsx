@@ -27,7 +27,7 @@ interface TableCellProps extends React.HTMLAttributes<HTMLTableCellElement> {
 
 const Table = React.forwardRef<HTMLTableElement, TableProps>(
   ({ className, ...props }, ref) => (
-    <div className="overflow-hidden rounded-md border border-border shadow-sm hover:shadow-md transition-all duration-300">
+    <div className="overflow-hidden rounded-lg border border-gray-200 shadow-sm">
       <table
         ref={ref}
         className={cn("w-full", className)}
@@ -56,7 +56,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
   ({ className, ...props }, ref) => (
     <tr
       ref={ref}
-      className={cn("border-b border-border/50 transition-colors hover:bg-accent/10 dark:hover:bg-accent/20", className)}
+      className={cn("border-b border-gray-200 transition-colors hover:bg-[#F9FAFB] dark:hover:bg-gray-800/60", className)}
       {...props}
     />
   )
@@ -67,7 +67,7 @@ const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
   ({ className, ...props }, ref) => (
     <th
       ref={ref}
-      className={cn("px-4 py-3 text-left font-medium text-secondary-foreground", className)}
+      className={cn("px-4 py-3 text-left font-semibold text-gray-700", className)}
       {...props}
     />
   )
@@ -89,7 +89,7 @@ const TableHeaderRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
   ({ className, ...props }, ref) => (
     <tr
       ref={ref}
-      className={cn("border-b border-border bg-secondary/50 dark:bg-secondary/30 text-secondary-foreground", className)}
+      className={cn("border-b border-gray-200 bg-gray-50 text-gray-700", className)}
       {...props}
     />
   )

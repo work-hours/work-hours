@@ -1,11 +1,12 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
-import { Button } from '@/components/ui/button'
+import AddNewButton from '@/components/add-new-button'
+import BackButton from '@/components/back-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head, Link } from '@inertiajs/react'
-import { ArrowLeft, Edit, FileText, Plus } from 'lucide-react'
+import { Head } from '@inertiajs/react'
+import { Edit, FileText, Plus } from 'lucide-react'
 
 type Invoice = {
     id: number
@@ -86,20 +87,15 @@ export default function ClientInvoices({ client, invoices }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title={`${client.name} - Invoices`} />
-            <div className="mx-auto flex flex-col gap-2 p-3">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <div className="flex items-center gap-4">
-                        <Link href={route('client.index')}>
-                            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                <ArrowLeft className="h-4 w-4" />
-                                <span className="sr-only">Back to Clients</span>
-                            </Button>
-                        </Link>
+                    <div className="flex items-center justify-between gap-4">
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">{client.name} - Invoices</h1>
                             <p className="mt-1 text-gray-500 dark:text-gray-400">Manage invoices for this client</p>
                         </div>
+                        <BackButton />
                     </div>
                 </section>
 
@@ -189,30 +185,30 @@ export default function ClientInvoices({ client, invoices }: Props) {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="py-2">
-                            <div className="flex flex-wrap items-center gap-4">
-                                <div className="flex min-w-[160px] items-center gap-2 rounded-lg border bg-card p-3 text-card-foreground shadow-sm">
+                            <div className="flex flex-row items-center gap-4">
+                                <div className="flex min-w-[160px] items-center gap-2 rounded-lg bg-card p-3 text-card-foreground shadow-sm">
                                     <span className="inline-flex items-center justify-center rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
                                         <span className="text-xs text-gray-500 dark:text-gray-400">📄</span>
                                     </span>
                                     <div>
                                         <h3 className="text-xs leading-tight font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">
-                                            Total Invoiced
+                                            Total
                                         </h3>
                                         <p className="text-lg leading-tight font-bold">{formatCurrency(totalInvoiced)}</p>
                                     </div>
                                 </div>
-                                <div className="flex min-w-[160px] items-center gap-2 rounded-lg border bg-card p-3 text-card-foreground shadow-sm">
+                                <div className="flex min-w-[160px] items-center gap-2 rounded-lg bg-card p-3 text-card-foreground shadow-sm">
                                     <span className="inline-flex items-center justify-center rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
                                         <span className="text-xs text-gray-500 dark:text-gray-400">✅</span>
                                     </span>
                                     <div>
                                         <h3 className="text-xs leading-tight font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">
-                                            Total Paid
+                                            Paid
                                         </h3>
                                         <p className="text-lg leading-tight font-bold">{formatCurrency(totalPaid)}</p>
                                     </div>
                                 </div>
-                                <div className="flex min-w-[160px] items-center gap-2 rounded-lg border bg-card p-3 text-card-foreground shadow-sm">
+                                <div className="flex min-w-[160px] items-center gap-2 rounded-lg bg-card p-3 text-card-foreground shadow-sm">
                                     <span className="inline-flex items-center justify-center rounded-full bg-gray-100 p-1.5 dark:bg-gray-800">
                                         <span className="text-xs text-gray-500 dark:text-gray-400">⏳</span>
                                     </span>
@@ -232,8 +228,8 @@ export default function ClientInvoices({ client, invoices }: Props) {
                 <div className="border-t border-gray-200 dark:border-gray-700" />
 
                 {/* Invoices Card */}
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Invoices</CardTitle>
@@ -245,33 +241,50 @@ export default function ClientInvoices({ client, invoices }: Props) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton href={`${route('invoice.export')}?client_id=${client.id}`} label="Export" />
-                                <Link href={route('invoice.create')}>
-                                    <Button className="flex items-center gap-2">
-                                        <Plus className="h-4 w-4" />
-                                        <span>Create Invoice</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('invoice.create')}>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Create Invoice</span>
+                                </AddNewButton>
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {invoices.length > 0 ? (
-                            <Table>
+                            <Table className="w-full">
                                 <TableHeader>
                                     <TableHeaderRow>
-                                        <TableHead>Invoice #</TableHead>
-                                        <TableHead>Issue Date</TableHead>
-                                        <TableHead>Due Date</TableHead>
-                                        <TableHead>Amount</TableHead>
-                                        <TableHead>Paid</TableHead>
-                                        <TableHead>Balance</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Invoice #
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Issue Date
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Due Date
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Amount
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Paid
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Balance
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Status
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Actions
+                                        </TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
                                 <TableBody>
                                     {invoices.map((invoice) => (
-                                        <TableRow key={invoice.id}>
+                                        <TableRow
+                                            key={invoice.id}
+                                            className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
+                                        >
                                             <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
                                             <TableCell>{new Date(invoice.issue_date).toLocaleDateString()}</TableCell>
                                             <TableCell>{new Date(invoice.due_date).toLocaleDateString()}</TableCell>
@@ -294,7 +307,7 @@ export default function ClientInvoices({ client, invoices }: Props) {
                                                             href={route('invoice.edit', invoice.id)}
                                                             title="Edit Invoice"
                                                             icon={Edit}
-                                                            variant="amber"
+                                                            variant="warning"
                                                             size="icon"
                                                         />
                                                     </ActionButtonGroup>
@@ -310,12 +323,10 @@ export default function ClientInvoices({ client, invoices }: Props) {
                                     <FileText className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Invoices</h3>
                                     <p className="mb-4 text-muted-foreground">This client doesn't have any invoices yet.</p>
-                                    <Link href={route('invoice.create')}>
-                                        <Button className="flex items-center gap-2">
-                                            <Plus className="h-4 w-4" />
-                                            <span>Create Invoice</span>
-                                        </Button>
-                                    </Link>
+                                    <AddNewButton href={route('invoice.create')}>
+                                        <Plus className="h-4 w-4" />
+                                        <span>Create Invoice</span>
+                                    </AddNewButton>
                                 </div>
                             </div>
                         )}

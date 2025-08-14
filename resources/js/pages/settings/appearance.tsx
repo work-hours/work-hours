@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react'
 import { Palette } from 'lucide-react'
 
 import AppearanceTabs from '@/components/appearance-tabs'
-import HeadingSmall from '@/components/heading-small'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { type BreadcrumbItem } from '@/types'
 
 import MasterLayout from '@/layouts/master-layout'
@@ -22,20 +22,24 @@ export default function Appearance() {
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title="Appearance settings" description="Customize how WorkHours looks for you" />
-
-                    <div className="rounded-lg border border-border/40 bg-muted/10 p-6">
-                        <div className="mb-4 flex items-start gap-3">
-                            <div className="rounded-full bg-primary/10 p-2">
-                                <Palette className="h-5 w-5 text-primary" />
+                    <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                        <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                                    <Palette className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Theme Preference</CardTitle>
+                                    <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+                                        Choose your preferred theme mode
+                                    </CardDescription>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-base font-medium">Theme Preference</h3>
-                                <p className="text-sm text-muted-foreground">Choose your preferred theme mode</p>
-                            </div>
-                        </div>
-                        <AppearanceTabs className="mt-4" />
-                    </div>
+                        </CardHeader>
+                        <CardContent className="p-4">
+                            <AppearanceTabs className="mt-2" />
+                        </CardContent>
+                    </Card>
                 </div>
             </SettingsLayout>
         </MasterLayout>

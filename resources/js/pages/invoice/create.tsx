@@ -1,10 +1,12 @@
 import { type SharedData } from '@/types'
 import { Head, useForm, usePage } from '@inertiajs/react'
-import { ArrowLeft, Calendar, FileText, Hash, LoaderCircle, Plus, Save, Trash2, User } from 'lucide-react'
+import { Calendar, FileText, Hash, LoaderCircle, Plus, Trash2, User } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+import BackButton from '@/components/back-button'
 import InputError from '@/components/input-error'
+import SubmitButton from '@/components/submit-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
@@ -345,16 +347,7 @@ export default function CreateInvoice() {
                         <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new invoice for a client</p>
                     </div>
                     <div className="flex gap-3">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => window.history.back()}
-                            disabled={processing}
-                            className="flex items-center gap-2"
-                        >
-                            <ArrowLeft className="h-4 w-4" />
-                            Back
-                        </Button>
+                        <BackButton disabled={processing} />
                     </div>
                 </section>
 
@@ -530,7 +523,12 @@ export default function CreateInvoice() {
                                 <CardTitle className="text-lg">Invoice Items</CardTitle>
                                 <CardDescription>Add the products or services you're invoicing for</CardDescription>
                             </div>
-                            <Button type="button" onClick={addItem} disabled={processing} className="flex items-center gap-2">
+                            <Button
+                                type="button"
+                                onClick={addItem}
+                                disabled={processing}
+                                className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                            >
                                 <Plus className="h-4 w-4" />
                                 Add Item
                             </Button>
@@ -668,7 +666,7 @@ export default function CreateInvoice() {
                                                         size="sm"
                                                         disabled={processing || data.items.length <= 1}
                                                         onClick={() => removeItem(index)}
-                                                        className="h-8 w-8 p-0 text-red-500 hover:bg-red-100/50 hover:text-red-700"
+                                                        className="h-8 w-8 bg-red-100 p-0 text-red-600 hover:bg-red-200"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                         <span className="sr-only">Remove</span>
@@ -805,10 +803,15 @@ export default function CreateInvoice() {
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-end border-t p-4">
-                                <Button type="submit" disabled={processing} className="flex items-center gap-2">
-                                    {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                    {processing ? 'Creating...' : 'Create Invoice'}
-                                </Button>
+                                <SubmitButton
+                                    disabled={processing}
+                                    loading={processing}
+                                    idleLabel="Create Invoice"
+                                    loadingLabel="Creating..."
+                                    idleIcon={<Plus className="h-4 w-4" />}
+                                    loadingIcon={<LoaderCircle className="h-4 w-4 animate-spin" />}
+                                    className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                />
                             </CardFooter>
                         </Card>
                     </div>

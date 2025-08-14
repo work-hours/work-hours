@@ -1,3 +1,5 @@
+import AddNewButton from '@/components/add-new-button'
+import BackButton from '@/components/back-button'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,13 +13,13 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import RichTextEditor from '@/components/ui/rich-text-editor'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
-import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
+import { Head, router, useForm, usePage } from '@inertiajs/react'
 import DOMPurify from 'dompurify'
-import { Calendar, ChevronLeft, ExternalLink, Info, MessageSquare, Pencil, Save, Trash, Trash2, X } from 'lucide-react'
+import { Calendar, ExternalLink, Info, Pencil, Save, Trash, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
-import RichTextEditor from '@/components/ui/rich-text-editor'
 import type { Task } from './types'
 
 type Attachment = {
@@ -26,14 +28,17 @@ type Attachment = {
     size: number
 }
 
+type MentionCandidate = { id: number | string; name: string; handle: string }
+
 type Props = {
     task: Task
     attachments?: Attachment[]
+    mentionableUsers?: MentionCandidate[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Tasks', href: '/task' }]
 
-export default function TaskDetail({ task, attachments = [] }: Props) {
+export default function TaskDetail({ task, attachments = [], mentionableUsers = [] }: Props) {
     const TaskDescription = ({ html }: { html: string }) => {
         const safe = typeof window !== 'undefined' ? DOMPurify.sanitize(html) : html
         return <div dangerouslySetInnerHTML={{ __html: safe }} />
@@ -46,7 +51,11 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
     const [editingBody, setEditingBody] = useState<string>('')
 
-    const stripHtml = (s: string): string => s.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
+    const stripHtml = (s: string): string =>
+        s
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .trim()
 
     const handleConfirmDelete = () => {
         if (commentToDelete == null) return
@@ -134,17 +143,11 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
 
             <div className="mx-auto max-w-4xl space-y-4">
                 <div className="flex items-center justify-between">
-                    <Link href={route('task.index')}>
-                        <Button variant="ghost" className="gap-2">
-                            <ChevronLeft className="h-4 w-4" /> Back to Tasks
-                        </Button>
-                    </Link>
+                    <BackButton />
                     {currentUserId === task.project.user_id && (
-                        <Link href={route('task.edit', task.id)}>
-                            <Button variant="outline" className="gap-2">
-                                <Pencil className="h-4 w-4" /> Edit Task
-                            </Button>
-                        </Link>
+                        <AddNewButton href={route('task.edit', task.id)}>
+                            <Pencil className="h-4 w-4" /> Edit Task
+                        </AddNewButton>
                     )}
                 </div>
 
@@ -226,26 +229,24 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                             {/* Source Link if available */}
                             {task.meta?.source_url && (
                                 <div className="space-y-2">
-                                    <h3 className="ml-4 flex items-center gap-2 text-lg font-semibold text-primary">
-                                        <Info className="h-5 w-5 text-primary" /> Source
-                                    </h3>
-                                    <div className="grid grid-cols-1 gap-4 rounded-lg border bg-muted/40 p-4">
+                                    <div className="grid grid-cols-1 gap-4 bg-muted/40 p-4">
                                         <div className="space-y-2">
                                             {(task.meta?.source || task.meta?.source_number) && (
                                                 <div className="text-sm text-muted-foreground">
                                                     {task.meta?.source && <span className="font-medium text-foreground">{task.meta.source}</span>}
                                                     {task.meta?.source && task.meta?.source_number && <span className="mx-1">•</span>}
                                                     {task.meta?.source_number && <span>#{task.meta.source_number}</span>}
+                                                    <span className="mx-1">•</span>
+                                                    <a
+                                                        href={task.meta.source_url}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                        className="inline-flex items-center text-primary hover:underline"
+                                                    >
+                                                        <ExternalLink className="h-4 w-4" />
+                                                    </a>
                                                 </div>
                                             )}
-                                            <a
-                                                href={task.meta.source_url}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="inline-flex items-center gap-2 text-primary hover:underline"
-                                            >
-                                                <ExternalLink className="h-4 w-4" /> Open Source Item
-                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -279,11 +280,7 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                             )}
                         </div>
 
-                        {/* Comments */}
                         <div className="mt-6 space-y-2">
-                            <h3 className="ml-4 flex items-center gap-2 text-lg font-semibold text-primary">
-                                <MessageSquare className="h-5 w-5 text-primary" /> Comments
-                            </h3>
                             <div className="grid grid-cols-1 gap-4 rounded-lg border bg-muted/40 p-4">
                                 <div className="space-y-4">
                                     {task.comments && task.comments.length > 0 ? (
@@ -291,7 +288,7 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                             <div key={comment.id} className="rounded-md bg-background p-3 shadow-sm">
                                                 <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
                                                     <span className="font-medium text-foreground">{comment.user?.name ?? 'User'}</span>
-                                                    <div className="flex items-center gap-2">
+                                                    <div className="flex items-center gap-4">
                                                         <span>{formatDate(comment.created_at)}</span>
                                                         {(currentUserId === task.project.user_id || currentUserId === (comment.user?.id ?? -1)) && (
                                                             <>
@@ -369,11 +366,17 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                                         onChange={(val) => setEditingBody(val)}
                                                         placeholder="Edit comment..."
                                                         minRows={4}
+                                                        mentions={mentionableUsers}
                                                     />
                                                 ) : (
                                                     <div
-                                                        className="prose prose-sm max-w-none dark:prose-invert"
-                                                        dangerouslySetInnerHTML={{ __html: typeof window !== 'undefined' ? DOMPurify.sanitize(comment.body || '') : (comment.body || '') }}
+                                                        className="prose prose-sm dark:prose-invert mt-4 max-w-none text-sm"
+                                                        dangerouslySetInnerHTML={{
+                                                            __html:
+                                                                typeof window !== 'undefined'
+                                                                    ? DOMPurify.sanitize(comment.body || '')
+                                                                    : comment.body || '',
+                                                        }}
                                                     />
                                                 )}
                                             </div>
@@ -391,9 +394,14 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                             onChange={(val) => setData('body', val)}
                                             placeholder="Add a comment..."
                                             minRows={4}
+                                            mentions={mentionableUsers}
                                         />
                                         <div className="flex justify-end">
-                                            <Button type="submit" disabled={!stripHtml(data.body)}>
+                                            <Button
+                                                type="submit"
+                                                disabled={!stripHtml(data.body)}
+                                                className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                            >
                                                 Post Comment
                                             </Button>
                                         </div>

@@ -61,7 +61,7 @@ export function SearchableSelect({
                 onValueChange={handleSelectChange}
                 disabled={disabled}
             >
-                <SelectTrigger className={cn('pl-10', className)}>
+                <SelectTrigger className={cn('pl-10 h-10', className)}>
                     <SelectValue placeholder={placeholder}>
                         {selectedOption ? selectedOption.name : placeholder}
                     </SelectValue>

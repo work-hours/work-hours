@@ -1,11 +1,12 @@
 import DatePicker from '@/components/ui/date-picker'
 import { Head, useForm } from '@inertiajs/react'
-import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
+import { Clock, LoaderCircle, Save, Timer } from 'lucide-react'
 import { FormEventHandler, useMemo } from 'react'
 import { toast } from 'sonner'
 
+import BackButton from '@/components/back-button'
 import InputError from '@/components/input-error'
-import { Button } from '@/components/ui/button'
+import SubmitButton from '@/components/submit-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import CustomInput from '@/components/ui/custom-input'
@@ -374,21 +375,16 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                 </div>
 
                                 <div className="mt-4 flex justify-end gap-3">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => window.history.back()}
-                                        tabIndex={6}
-                                        disabled={processing}
-                                        className="flex items-center gap-2"
-                                    >
-                                        <ArrowLeft className="h-4 w-4" />
-                                        Back
-                                    </Button>
-                                    <Button type="submit" tabIndex={5} disabled={processing} className="flex items-center gap-2">
-                                        {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                        {processing ? 'Updating...' : 'Update Time Log'}
-                                    </Button>
+                                    <BackButton tabIndex={6} disabled={processing} />
+                                    <SubmitButton
+                                        tabIndex={5}
+                                        loading={processing}
+                                        idleLabel="Update Time Log"
+                                        loadingLabel="Updating..."
+                                        idleIcon={<Save className="h-4 w-4" />}
+                                        loadingIcon={<LoaderCircle className="h-4 w-4 animate-spin" />}
+                                        className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    />
                                 </div>
                             </div>
                         </form>

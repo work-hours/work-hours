@@ -186,20 +186,20 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
 
     return (
         <div
-            className="mx-auto flex h-full w-full max-w-2xl flex-col border border-border bg-gradient-to-br from-background via-white to-slate-100/80 shadow-2xl"
+            className="mx-auto flex h-full w-full max-w-2xl flex-col border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
             role="region"
             aria-label="AI chat window"
             tabIndex={0}
             style={{ minHeight: 0 }}
         >
-            <div className="flex items-center justify-between border-b bg-white/80 p-5 shadow-sm">
+            <div className="flex items-center justify-between border-b border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                 <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center bg-gradient-to-br from-primary/20 to-primary/40 shadow">
-                        <BrainCircuit className="h-7 w-7 text-primary" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-primary dark:bg-gray-700">
+                        <BrainCircuit className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                     </div>
                     <div>
-                        <span className="text-xl font-extrabold tracking-tight text-foreground">AI Assistant</span>
-                        <p className="text-xs font-medium text-muted-foreground">Powered by Google Gemini</p>
+                        <span className="text-lg font-medium text-gray-800 dark:text-gray-100">AI Assistant</span>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Powered by Google Gemini</p>
                     </div>
                 </div>
                 {onClose && (
@@ -207,36 +207,36 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                         onClick={onClose}
                         variant="ghost"
                         size="sm"
-                        className="h-9 w-9 p-1 transition-colors hover:bg-muted/60 hover:text-primary"
+                        className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                         aria-label="Close chat"
                     >
-                        <X className="h-5 w-5" />
+                        <X className="h-4 w-4" />
                     </Button>
                 )}
             </div>
             <div className="flex flex-grow flex-col overflow-hidden">
-                <ScrollArea className="max-h-[60vh] flex-grow overflow-y-auto bg-transparent p-6 sm:max-h-[80vh]">
-                    <div className="flex flex-col gap-6">
+                <ScrollArea className="max-h-[60vh] flex-grow overflow-y-auto bg-gray-50/50 p-4 sm:max-h-[80vh] dark:bg-gray-900/50">
+                    <div className="flex flex-col gap-4">
                         {messages.map((message) => (
                             <div key={message.id} className={`flex items-end ${message.isUser ? 'justify-end' : 'justify-start'}`}>
                                 {/* Avatar */}
                                 {!message.isUser && (
-                                    <div className="mr-3 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/40 shadow">
-                                        <BrainCircuit className="h-5 w-5 text-primary" />
+                                    <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-primary dark:bg-gray-700">
+                                        <BrainCircuit className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                                     </div>
                                 )}
-                                <div className="flex max-w-[80%] flex-col">
+                                <div className="flex max-w-[85%] flex-col">
                                     <div
-                                        className={`rounded-2xl px-5 py-3 shadow-md transition-all duration-200 ${
+                                        className={`rounded-lg px-4 py-2 shadow-sm ${
                                             message.isUser
-                                                ? 'ml-auto rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground'
-                                                : 'rounded-2xl border border-border bg-white text-card-foreground'
+                                                ? 'ml-auto bg-gray-900 text-white dark:bg-gray-700'
+                                                : 'border border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100'
                                         }`}
                                     >
                                         {message.isUser ? (
-                                            <p className="text-base leading-relaxed font-semibold">{message.content}</p>
+                                            <p className="text-sm leading-relaxed">{message.content}</p>
                                         ) : (
-                                            <div className="markdown-content text-base leading-relaxed">
+                                            <div className="markdown-content text-sm leading-relaxed">
                                                 <ReactMarkdown
                                                     components={{
                                                         code({ className, children, ...props }) {
@@ -246,7 +246,10 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                                                                     {String(children).replace(/\n$/, '')}
                                                                 </SyntaxHighlighter>
                                                             ) : (
-                                                                <code className={className} {...props}>
+                                                                <code
+                                                                    className="rounded bg-gray-100 px-1 py-0.5 text-xs text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                                                                    {...props}
+                                                                >
                                                                     {children}
                                                                 </code>
                                                             )
@@ -259,30 +262,44 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                                         )}
                                     </div>
                                     {/* Timestamp */}
-                                    <div className="mt-1 pr-2 text-right text-xs text-muted-foreground">
+                                    <div className="mt-1 pr-2 text-right text-xs text-gray-500 dark:text-gray-400">
                                         {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </div>
                                 </div>
                                 {/* User Avatar */}
                                 {message.isUser && (
-                                    <div className="ml-3 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 font-bold text-primary-foreground shadow">
-                                        <span className="text-lg">U</span>
+                                    <div className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-primary shadow-sm dark:bg-gray-700">
+                                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300">U</span>
                                     </div>
                                 )}
                             </div>
                         ))}
                         {isLoading && (
-                            <div className="mt-2 flex animate-pulse items-center gap-2">
-                                <div className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60" style={{ animationDelay: '0ms' }} />
-                                <div className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/40" style={{ animationDelay: '100ms' }} />
-                                <div className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/20" style={{ animationDelay: '200ms' }} />
-                                <span className="ml-2 text-xs text-muted-foreground">AI is typing…</span>
+                            <div className="mt-2 flex items-center gap-2 px-2">
+                                <div
+                                    className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-400 dark:bg-gray-500"
+                                    style={{ animationDelay: '0ms' }}
+                                />
+                                <div
+                                    className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-400 dark:bg-gray-500"
+                                    style={{ animationDelay: '100ms' }}
+                                />
+                                <div
+                                    className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-400 dark:bg-gray-500"
+                                    style={{ animationDelay: '200ms' }}
+                                />
+                                <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">AI is thinking...</span>
                             </div>
                         )}
                         {error && (
-                            <div className="mt-2 flex items-center gap-2 text-xs text-destructive">
+                            <div className="mt-2 flex items-center gap-2 rounded-md bg-red-50 p-2 text-xs text-red-600 dark:bg-red-900/50 dark:text-red-300">
                                 <span>{error}</span>
-                                <Button variant="outline" onClick={handleSendMessage} disabled={isLoading} className="h-7 px-2 py-1 text-xs">
+                                <Button
+                                    variant="outline"
+                                    onClick={handleSendMessage}
+                                    disabled={isLoading}
+                                    className="h-6 border-gray-200 bg-white px-2 py-0 text-xs text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                                >
                                     Retry
                                 </Button>
                             </div>
@@ -290,7 +307,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                         <div ref={messagesEndRef} />
                     </div>
                 </ScrollArea>
-                <div className="flex items-center gap-3 border-t bg-white/80 p-5 shadow-inner">
+                <div className="flex items-center gap-2 border-t border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
                     <textarea
                         ref={inputRef}
                         value={inputValue}
@@ -302,18 +319,18 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                             }
                         }}
                         rows={1}
-                        className="flex-grow resize-none border border-border bg-white px-4 py-3 text-base shadow-sm transition-all duration-200 placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/30"
+                        className="flex-grow resize-none rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-primary focus:ring-1 focus:ring-primary/30 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
                         placeholder="Type your message here..."
                         aria-label="Type your message"
                     />
                     <Button
                         onClick={handleSendMessage}
-                        size="icon"
+                        size="sm"
                         disabled={!inputValue.trim() || isLoading}
-                        className="flex h-12 w-12 items-center justify-center bg-gradient-to-br from-primary to-primary/80 shadow-lg transition-all duration-200 hover:from-primary/90 hover:to-primary/90"
+                        className="h-9 rounded-md bg-gray-900 px-3 text-white shadow-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                         aria-label="Send message"
                     >
-                        {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                     </Button>
                 </div>
             </div>

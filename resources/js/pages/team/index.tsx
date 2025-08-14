@@ -1,5 +1,7 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import AddNewButton from '@/components/add-new-button'
 import DeleteTeamMember from '@/components/delete-team-member'
+import FilterButton from '@/components/filter-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
@@ -81,32 +83,34 @@ export default function Team({ teamMembers, filters }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Team" />
-            <div className="mx-auto flex flex-col gap-6 p-3">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 <section className="mb-2">
                     <div className="mb-2 flex items-center justify-between">
-                        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Team Management</h1>
+                        <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Team Management</h1>
                         <Link href={route('team.all-time-logs')}>
                             <Button
                                 variant="outline"
-                                className="flex items-center gap-2 border-blue-200 bg-blue-50 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/20 dark:hover:bg-blue-900/30"
+                                className="flex items-center gap-2 text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
                             >
                                 <Clock className="h-4 w-4" />
                                 <span>All Time Logs</span>
                             </Button>
                         </Link>
                     </div>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your team members and their time logs</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Manage your team members and monitor their productivity</p>
                 </section>
 
-                <Card className="transition-all hover:shadow-md">
-                    <CardHeader className="">
-                        <div className="flex items-center justify-between">
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                             <div>
-                                <CardTitle className="text-xl">Team Members</CardTitle>
-                                <CardDescription>You have {teamMembers.length} team members</CardDescription>
+                                <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Team Members</CardTitle>
+                                <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+                                    You have {teamMembers.length} team members
+                                </CardDescription>
 
                                 {(data['start-date'] || data['end-date'] || data.search) && (
-                                    <CardDescription className="mt-1">
+                                    <CardDescription className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                         {(() => {
                                             let description = ''
 
@@ -133,19 +137,17 @@ export default function Team({ teamMembers, filters }: Props) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton href={route('team.export') + window.location.search} label="Export" />
-                                <Link href={route('team.create')}>
-                                    <Button className="flex items-center gap-2">
-                                        <UserPlus className="h-4 w-4" />
-                                        <span>Add Member</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('team.create')}>
+                                    <UserPlus className="h-4 w-4" />
+                                    <span>Add Member</span>
+                                </AddNewButton>
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t pt-4">
+                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
                             <form onSubmit={submit} className="flex w-full flex-row gap-4">
                                 <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="search" className="text-xs font-medium">
+                                    <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Search
                                     </Label>
                                     <div className="relative">
@@ -155,15 +157,15 @@ export default function Team({ teamMembers, filters }: Props) {
                                             value={data.search}
                                             onChange={(e) => setData('search', e.target.value)}
                                             placeholder="Search by name or email"
-                                            className="pl-9"
+                                            className="border-gray-200 bg-white pl-9 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
                                         />
                                         <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Search className="h-4 w-4 text-muted-foreground" />
+                                            <Search className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="start-date" className="text-xs font-medium">
+                                    <Label htmlFor="start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Start Date
                                     </Label>
                                     <DatePicker
@@ -175,15 +177,16 @@ export default function Team({ teamMembers, filters }: Props) {
                                         customInput={
                                             <CustomInput
                                                 id="start-date"
-                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select start date"
+                                                className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="end-date" className="text-xs font-medium">
+                                    <Label htmlFor="end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         End Date
                                     </Label>
                                     <DatePicker
@@ -195,26 +198,21 @@ export default function Team({ teamMembers, filters }: Props) {
                                         customInput={
                                             <CustomInput
                                                 id="end-date"
-                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select end date"
+                                                className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="flex h-9 w-9 items-center justify-center p-0"
-                                        title="Apply filters"
-                                    >
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={processing || (!data['start-date'] && !data['end-date'] && !data.search)}
                                         onClick={() => {
                                             setData({
@@ -226,80 +224,108 @@ export default function Team({ teamMembers, filters }: Props) {
                                                 preserveState: true,
                                             })
                                         }}
-                                        className="flex h-9 w-9 items-center justify-center p-0"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {teamMembers.length > 0 ? (
-                            <Table>
-                                <TableHeader>
-                                    <TableHeaderRow>
-                                        <TableHead>Name / Email</TableHead>
-                                        <TableHead>Hourly Rate</TableHead>
-                                        <TableHead>Currency</TableHead>
-                                        <TableHead>Total Hours</TableHead>
-                                        <TableHead>Unpaid Hours</TableHead>
-                                        <TableHead>Unpaid Amount</TableHead>
-                                        <TableHead>Weekly Average</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableHeaderRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {teamMembers.map((member) => (
-                                        <TableRow key={member.id}>
-                                            <TableCell>
-                                                <div className="font-medium">{member.name}</div>
-                                                <div className="text-xs text-muted-foreground">{member.email}</div>
-                                            </TableCell>
-                                            <TableCell>{member.non_monetary ? '-' : member.hourly_rate}</TableCell>
-                                            <TableCell>{member.non_monetary ? '-' : member.currency}</TableCell>
-                                            <TableCell>{roundToTwoDecimals(member.totalHours)}</TableCell>
-                                            <TableCell>{roundToTwoDecimals(member.unpaidHours)}</TableCell>
-                                            <TableCell>
-                                                {member.non_monetary ? '-' : `${member.currency} ${roundToTwoDecimals(member.unpaidAmount)}`}
-                                            </TableCell>
-                                            <TableCell>{roundToTwoDecimals(member.weeklyAverage)}</TableCell>
-                                            <TableCell className="text-right">
-                                                <ActionButtonGroup>
-                                                    <ActionButton
-                                                        href={route('team.time-logs', member.id)}
-                                                        title="View Time Logs"
-                                                        icon={Clock}
-                                                        label="Logs"
-                                                        variant="blue"
-                                                    />
-                                                    <ActionButton
-                                                        href={route('team.edit', member.id)}
-                                                        title="Edit Member"
-                                                        icon={Edit}
-                                                        variant="amber"
-                                                        size="icon"
-                                                    />
-                                                    <DeleteTeamMember userId={member.id} />
-                                                </ActionButtonGroup>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            <div className="overflow-x-auto">
+                                <Table className="w-full">
+                                    <TableHeader>
+                                        <TableHeaderRow>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Name / Email
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Hourly Rate
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Currency
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Total Hours
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Unpaid Hours
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Unpaid Amount
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Weekly Average
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Actions
+                                            </TableHead>
+                                        </TableHeaderRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {teamMembers.map((member) => (
+                                            <TableRow
+                                                key={member.id}
+                                                className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
+                                            >
+                                                <TableCell className="py-3">
+                                                    <div className="font-medium text-gray-800 dark:text-gray-200">{member.name}</div>
+                                                    <div className="text-xs text-gray-500 dark:text-gray-400">{member.email}</div>
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {member.non_monetary ? '-' : member.hourly_rate}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {member.non_monetary ? '-' : member.currency}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {roundToTwoDecimals(member.totalHours)}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {roundToTwoDecimals(member.unpaidHours)}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {member.non_monetary ? '-' : `${member.currency} ${roundToTwoDecimals(member.unpaidAmount)}`}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {roundToTwoDecimals(member.weeklyAverage)}
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <ActionButtonGroup>
+                                                        <ActionButton
+                                                            href={route('team.time-logs', member.id)}
+                                                            title="View Time Logs"
+                                                            icon={Clock}
+                                                            label="Logs"
+                                                            variant="info"
+                                                        />
+                                                        <ActionButton
+                                                            href={route('team.edit', member.id)}
+                                                            title="Edit Member"
+                                                            icon={Edit}
+                                                            variant="warning"
+                                                            size="icon"
+                                                        />
+                                                        <DeleteTeamMember userId={member.id} />
+                                                    </ActionButtonGroup>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
                         ) : (
-                            <div className="rounded-md border bg-muted/5 p-6">
+                            <div className="rounded-md p-6">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                                    <Users className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                                    <h3 className="mb-1 text-lg font-medium">No Team Members</h3>
-                                    <p className="mb-4 text-muted-foreground">You haven't added any team members yet.</p>
-                                    <Link href={route('team.create')}>
-                                        <Button className="flex items-center gap-2">
-                                            <UserPlus className="h-4 w-4" />
-                                            <span>Add Team Member</span>
-                                        </Button>
-                                    </Link>
+                                    <Users className="mb-4 h-12 w-12 text-gray-300 dark:text-gray-600" />
+                                    <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Team Members</h3>
+                                    <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You haven't added any team members yet.</p>
+                                    <AddNewButton href={route('team.create')}>
+                                        <UserPlus className="h-4 w-4" />
+                                        <span>Add Team Member</span>
+                                    </AddNewButton>
                                 </div>
                             </div>
                         )}

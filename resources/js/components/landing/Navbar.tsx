@@ -2,7 +2,7 @@ import AppLogoIcon from '@/components/app-logo-icon'
 import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Menu, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 export default function Navbar() {
@@ -12,6 +12,7 @@ export default function Navbar() {
     const isFeaturePage = currentPath.startsWith('/features/')
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [featuresDropdownOpen, setFeaturesDropdownOpen] = useState(false)
+    const [activeHash, setActiveHash] = useState<string>(typeof window !== 'undefined' ? window.location.hash : '')
     const dropdownRef = useRef<HTMLDivElement>(null)
 
     const isLoggedIn = auth && auth.user
@@ -31,115 +32,114 @@ export default function Navbar() {
             }
         }
 
+        function handleHashChange() {
+            setActiveHash(window.location.hash)
+        }
+
         document.addEventListener('mousedown', handleClickOutside)
+        window.addEventListener('hashchange', handleHashChange)
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
+            window.removeEventListener('hashchange', handleHashChange)
         }
     }, [])
 
     return (
-        <nav className="fixed top-0 right-0 left-0 z-50 bg-[#f8f6e9] shadow-md dark:bg-gray-900">
-            <div className="container mx-auto flex items-center justify-between px-6 lg:px-8">
-                {/* Logo with timesheet-style container */}
-                <Link href="/" className="flex items-center gap-3">
-                    <AppLogoIcon className="h-20 w-20 text-gray-700 dark:text-gray-300" />
-                    <div>
-                        <span className="-ml-6 text-xl font-bold tracking-wider text-gray-800 uppercase dark:text-gray-200">Work Hours</span>
-                        <div className="mt-1 -ml-6 h-1 w-full bg-gray-300 dark:bg-gray-600"></div>
-                    </div>
+        <nav className="fixed top-0 right-0 left-0 z-50 border-b border-neutral-200 bg-white/90 backdrop-blur-sm dark:border-neutral-700 dark:bg-neutral-900/90">
+            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+                <Link href="/" className="flex items-center gap-2">
+                    <AppLogoIcon className="h-8 w-8 text-neutral-700 dark:text-neutral-300" />
+                    <span className="text-lg font-medium text-neutral-900 dark:text-neutral-100">Work Hours</span>
                 </Link>
 
-                {/* Desktop Navigation Menu */}
-                <div className="hidden items-center space-x-8 md:flex">
-                    {/* Features Dropdown */}
+                <div className="hidden items-center space-x-6 md:flex">
                     <div className="relative" ref={dropdownRef}>
                         <button
                             onClick={toggleFeaturesDropdown}
-                            className="flex items-center text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                            className="flex items-center text-sm text-neutral-600 transition-colors duration-200 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                         >
                             Features
                             {featuresDropdownOpen ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />}
                         </button>
 
-                        {/* Features Dropdown Menu */}
                         {featuresDropdownOpen && (
-                            <div className="ring-opacity-5 absolute left-0 z-50 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black dark:bg-gray-800">
+                            <div className="absolute left-0 z-50 mt-2 w-56 rounded-lg border border-neutral-200 bg-white p-1 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
                                 <div className="py-1" role="menu" aria-orientation="vertical">
                                     <a
                                         href={isFeaturePage ? '/#features' : '#features'}
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                         onClick={() => setFeaturesDropdownOpen(false)}
                                     >
                                         All Features
                                     </a>
-                                    <div className="my-1 border-t border-gray-200 dark:border-gray-700"></div>
+                                    <div className="my-1 border-t border-neutral-100 dark:border-neutral-700"></div>
                                     <Link
                                         href="/features/time-tracking"
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Time Tracking
                                     </Link>
                                     <Link
                                         href="/features/detailed-reports"
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Detailed Reports
                                     </Link>
                                     <Link
                                         href="/features/team-collaboration"
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Team Collaboration
                                     </Link>
                                     <Link
                                         href="/features/client-management"
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Client Management
                                     </Link>
                                     <Link
                                         href="/features/bulk-upload"
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Bulk Upload
                                     </Link>
                                     <Link
                                         href="/features/approval-management"
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Approval Management
                                     </Link>
                                     <Link
                                         href="/features/currency-management"
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Currency Management
                                     </Link>
                                     <Link
                                         href="/features/multi-currency-invoice"
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Multi Currency Invoice
                                     </Link>
                                     <Link
                                         href="/features/task-management"
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Task Management
                                     </Link>
                                     <Link
                                         href="/features/github-integration"
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                        className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         GitHub Integration
@@ -151,51 +151,54 @@ export default function Navbar() {
 
                     <a
                         href={isFeaturePage ? '/#ai-section' : '#ai-section'}
-                        className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                        className={`text-sm transition-colors duration-200 ${
+                            activeHash === '#ai-section'
+                                ? 'text-neutral-900 dark:text-neutral-100'
+                                : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
+                        }`}
                     >
                         AI Assistant
                     </a>
                     <a
                         href={isFeaturePage ? '/#how-it-works' : '#how-it-works'}
-                        className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                        className={`text-sm transition-colors duration-200 ${
+                            activeHash === '#how-it-works'
+                                ? 'text-neutral-900 dark:text-neutral-100'
+                                : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
+                        }`}
                     >
                         How It Works
                     </a>
                     <a
                         href={isFeaturePage ? '/#cta' : '#cta'}
-                        className="text-sm font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                        className={`text-sm transition-colors duration-200 ${
+                            activeHash === '#cta'
+                                ? 'text-neutral-900 dark:text-neutral-100'
+                                : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
+                        }`}
                     >
                         Get Started
                     </a>
                 </div>
 
-                {/* Mobile menu button */}
                 <div className="md:hidden">
                     <button
                         onClick={toggleMobileMenu}
-                        className="flex items-center rounded-md p-2 text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                        className="flex items-center rounded-lg p-1.5 text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                     >
                         <span className="sr-only">Open main menu</span>
-                        {/* Hamburger icon */}
-                        <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            {mobileMenuOpen ? (
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            ) : (
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                            )}
-                        </svg>
+                        {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                     </button>
                 </div>
 
-                {/* Mobile menu dropdown */}
                 {mobileMenuOpen && (
-                    <div className="absolute top-20 right-0 left-0 z-50 border border-gray-200 bg-white shadow-lg md:hidden dark:border-gray-700 dark:bg-gray-800">
-                        <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
+                    <div className="absolute top-16 right-0 left-0 z-50 border-b border-neutral-200 bg-white shadow-sm md:hidden dark:border-neutral-700 dark:bg-neutral-900">
+                        <div className="space-y-1 px-4 py-3">
                             {/* Mobile Features Menu */}
-                            <div className="block px-3 py-2">
+                            <div className="py-1">
                                 <button
                                     onClick={toggleFeaturesDropdown}
-                                    className="flex w-full items-center justify-between text-base font-medium text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                    className="flex w-full items-center justify-between py-2 text-sm text-neutral-600 transition-colors duration-200 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                 >
                                     <span>Features</span>
                                     {featuresDropdownOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -203,81 +206,81 @@ export default function Navbar() {
 
                                 {/* Mobile Features Dropdown */}
                                 {featuresDropdownOpen && (
-                                    <div className="mt-2 border-l-2 border-gray-200 pl-4 dark:border-gray-700">
+                                    <div className="mt-1 space-y-1 border-l border-neutral-200 pl-4 dark:border-neutral-700">
                                         <a
                                             href={isFeaturePage ? '/#features' : '#features'}
-                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            className="block py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                             onClick={toggleMobileMenu}
                                         >
                                             All Features
                                         </a>
-                                        <div className="my-1 border-t border-gray-200 dark:border-gray-700"></div>
+                                        <div className="my-1 border-t border-neutral-100 dark:border-neutral-800"></div>
                                         <Link
                                             href="/features/time-tracking"
-                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            className="block py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                             onClick={toggleMobileMenu}
                                         >
                                             Time Tracking
                                         </Link>
                                         <Link
                                             href="/features/detailed-reports"
-                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            className="block py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                             onClick={toggleMobileMenu}
                                         >
                                             Detailed Reports
                                         </Link>
                                         <Link
                                             href="/features/team-collaboration"
-                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            className="block py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                             onClick={toggleMobileMenu}
                                         >
                                             Team Collaboration
                                         </Link>
                                         <Link
                                             href="/features/client-management"
-                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            className="block py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                             onClick={toggleMobileMenu}
                                         >
                                             Client Management
                                         </Link>
                                         <Link
                                             href="/features/bulk-upload"
-                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            className="block py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                             onClick={toggleMobileMenu}
                                         >
                                             Bulk Upload
                                         </Link>
                                         <Link
                                             href="/features/approval-management"
-                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            className="block py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                             onClick={toggleMobileMenu}
                                         >
                                             Approval Management
                                         </Link>
                                         <Link
                                             href="/features/currency-management"
-                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            className="block py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                             onClick={toggleMobileMenu}
                                         >
                                             Currency Management
                                         </Link>
                                         <Link
                                             href="/features/multi-currency-invoice"
-                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            className="block py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                             onClick={toggleMobileMenu}
                                         >
                                             Multi Currency Invoice
                                         </Link>
                                         <Link
                                             href="/features/task-management"
-                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            className="block py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                             onClick={toggleMobileMenu}
                                         >
                                             Task Management
                                         </Link>
                                         <Link
                                             href="/features/github-integration"
-                                            className="block py-2 text-sm text-gray-700 hover:text-blue-900 dark:text-gray-300 dark:hover:text-blue-400"
+                                            className="block py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
                                             onClick={toggleMobileMenu}
                                         >
                                             GitHub Integration
@@ -288,21 +291,33 @@ export default function Navbar() {
 
                             <a
                                 href={isFeaturePage ? '/#ai-section' : '#ai-section'}
-                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                className={`block py-2 text-sm ${
+                                    activeHash === '#ai-section'
+                                        ? 'text-neutral-900 dark:text-neutral-100'
+                                        : 'text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
+                                }`}
                                 onClick={toggleMobileMenu}
                             >
                                 AI Assistant
                             </a>
                             <a
                                 href={isFeaturePage ? '/#how-it-works' : '#how-it-works'}
-                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                className={`block py-2 text-sm ${
+                                    activeHash === '#how-it-works'
+                                        ? 'text-neutral-900 dark:text-neutral-100'
+                                        : 'text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
+                                }`}
                                 onClick={toggleMobileMenu}
                             >
                                 How It Works
                             </a>
                             <a
                                 href={isFeaturePage ? '/#cta' : '#cta'}
-                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-blue-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                                className={`block py-2 text-sm ${
+                                    activeHash === '#cta'
+                                        ? 'text-neutral-900 dark:text-neutral-100'
+                                        : 'text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
+                                }`}
                                 onClick={toggleMobileMenu}
                             >
                                 Get Started
@@ -311,16 +326,16 @@ export default function Navbar() {
                     </div>
                 )}
 
-                <div className="flex items-center gap-6 md:gap-8">
-                    {/* Appearance toggle with paper-like styling */}
-                    <div className="relative z-10 cursor-pointer border border-gray-400 bg-white p-1 dark:border-gray-600 dark:bg-gray-800">
+                <div className="flex items-center gap-4">
+                    {/* Appearance toggle with modern styling */}
+                    <div className="relative z-10 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
                         <AppearanceToggleDropdown />
                     </div>
 
                     {isLoggedIn ? (
                         <Link
                             href="/dashboard"
-                            className="inline-flex items-center justify-center border-2 border-blue-900 bg-blue-900 px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                            className="inline-flex items-center justify-center rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600"
                         >
                             Dashboard
                         </Link>
@@ -328,13 +343,13 @@ export default function Navbar() {
                         <>
                             <Link
                                 href={route('login')}
-                                className="relative z-10 cursor-pointer border-b-2 border-gray-400 pb-1 text-sm font-bold text-gray-700 hover:border-gray-700 hover:text-gray-900 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-400 dark:hover:text-gray-100"
+                                className="hidden text-sm font-medium text-neutral-600 transition-colors duration-200 hover:text-neutral-900 sm:block dark:text-neutral-400 dark:hover:text-neutral-200"
                             >
                                 Sign in
                             </Link>
                             <Link
                                 href={route('register')}
-                                className="relative z-10 inline-flex cursor-pointer items-center justify-center border-2 border-blue-900 bg-blue-900 px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-800 dark:border-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                                className="inline-flex items-center justify-center rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600"
                             >
                                 Get Started
                             </Link>

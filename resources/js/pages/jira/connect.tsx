@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react'
 import axios from 'axios'
-import { Loader2, ShieldAlert } from 'lucide-react'
+import { Loader2, ShieldAlert, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -79,8 +79,15 @@ export default function JiraConnect() {
             <div className="mx-auto flex max-w-xl flex-col gap-6 p-6">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Connect to Jira</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Enter your Jira credentials to access your projects</p>
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                            <ShieldCheck className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Connect to Jira</h1>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Enter your Jira credentials to access your projects</p>
+                        </div>
+                    </div>
                 </section>
 
                 {/* Messages */}
@@ -91,12 +98,21 @@ export default function JiraConnect() {
                     <div className="rounded-md bg-green-50 p-4 text-sm text-green-700 dark:bg-green-900/50 dark:text-green-200">{successMessage}</div>
                 )}
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Jira Credentials</CardTitle>
-                        <CardDescription>Enter your Jira credentials to connect to your account</CardDescription>
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                                <ShieldAlert className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                            </div>
+                            <div>
+                                <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Jira Credentials</CardTitle>
+                                <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+                                    Enter your Jira credentials to connect to your account
+                                </CardDescription>
+                            </div>
+                        </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-4">
                         <form
                             className="space-y-4"
                             onSubmit={(e) => {
@@ -104,36 +120,50 @@ export default function JiraConnect() {
                                 handleConnect()
                             }}
                         >
-                            <div className="grid w-full items-center gap-1.5">
-                                <Label htmlFor="domain">Jira Domain</Label>
+                            <div className="grid w-full items-center gap-2">
+                                <Label htmlFor="domain" className="text-sm font-medium">
+                                    Jira Domain
+                                </Label>
                                 <div className="flex items-center">
-                                    <Input id="domain" placeholder="mycompany" value={domain} onChange={(e) => setDomain(e.target.value)} />
-                                    <span className="ml-2 text-muted-foreground">.atlassian.net</span>
+                                    <Input
+                                        id="domain"
+                                        placeholder="mycompany"
+                                        value={domain}
+                                        onChange={(e) => setDomain(e.target.value)}
+                                        className="border-gray-200 bg-white text-gray-800 placeholder:text-gray-500 focus-visible:ring-primary/70 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400"
+                                    />
+                                    <span className="ml-2 text-gray-500 dark:text-gray-400">.atlassian.net</span>
                                 </div>
-                                <p className="text-sm text-muted-foreground">Enter only the subdomain part</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Enter only the subdomain part</p>
                             </div>
 
-                            <div className="grid w-full items-center gap-1.5">
-                                <Label htmlFor="email">Email</Label>
+                            <div className="grid w-full items-center gap-2">
+                                <Label htmlFor="email" className="text-sm font-medium">
+                                    Email
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
                                     placeholder="your.email@example.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
+                                    className="border-gray-200 bg-white text-gray-800 placeholder:text-gray-500 focus-visible:ring-primary/70 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400"
                                 />
                             </div>
 
-                            <div className="grid w-full items-center gap-1.5">
-                                <Label htmlFor="token">API Token</Label>
+                            <div className="grid w-full items-center gap-2">
+                                <Label htmlFor="token" className="text-sm font-medium">
+                                    API Token
+                                </Label>
                                 <Input
                                     id="token"
                                     type="password"
                                     placeholder="Your Jira API token"
                                     value={token}
                                     onChange={(e) => setToken(e.target.value)}
+                                    className="border-gray-200 bg-white text-gray-800 placeholder:text-gray-500 focus-visible:ring-primary/70 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400"
                                 />
-                                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                                     <ShieldAlert className="h-4 w-4" />
                                     <span>
                                         Generate an API token in your{' '}
@@ -141,7 +171,7 @@ export default function JiraConnect() {
                                             href="https://id.atlassian.com/manage-profile/security/api-tokens"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="underline hover:text-primary"
+                                            className="font-medium text-primary underline hover:text-primary/80"
                                         >
                                             Atlassian account settings
                                         </a>
@@ -149,8 +179,12 @@ export default function JiraConnect() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2">
-                                <Button type="submit" disabled={isLoading}>
+                            <div className="mt-12 flex items-center justify-end gap-2">
+                                <Button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                >
                                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     Connect to Jira
                                 </Button>

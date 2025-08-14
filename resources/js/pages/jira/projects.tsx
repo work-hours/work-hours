@@ -101,24 +101,46 @@ export default function JiraProjects() {
         return (
             <MasterLayout breadcrumbs={breadcrumbs}>
                 <Head title="Jira Projects" />
-                <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
+                <div className="mx-auto flex flex-col gap-4 p-4 md:w-10/12">
                     <section className="mb-2">
-                        <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Jira Projects</h1>
-                        <p className="mt-1 text-gray-500 dark:text-gray-400">Connect and manage your Jira projects</p>
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                                <Shield className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                            </div>
+                            <div>
+                                <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Jira Projects</h1>
+                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Connect and manage your Jira projects</p>
+                            </div>
+                        </div>
                     </section>
 
-                    <Card>
-                        <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                            <div className="mb-4 rounded-full bg-yellow-100 p-3 text-yellow-600 dark:bg-yellow-900/50 dark:text-yellow-200">
-                                <Shield className="h-6 w-6" />
+                    <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                        <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                                    <Shield className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Jira Integration</CardTitle>
+                                    <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+                                        Connect your Jira account to access your projects
+                                    </CardDescription>
+                                </div>
                             </div>
-                            <h3 className="mb-2 text-xl font-semibold">Jira Credentials Required</h3>
-                            <p className="mb-4 max-w-md text-muted-foreground">
-                                You need to connect your Jira account before you can view and import projects.
-                            </p>
-                            <Button asChild>
-                                <Link href={route('jira.connect')}>Connect to Jira</Link>
-                            </Button>
+                        </CardHeader>
+                        <CardContent className="p-4">
+                            <div className="flex flex-col items-center justify-center py-6">
+                                <div className="mb-6 rounded-full bg-yellow-100 p-4 dark:bg-yellow-900/50">
+                                    <Shield className="h-10 w-10 text-yellow-600 dark:text-yellow-200" />
+                                </div>
+                                <h3 className="mb-2 text-xl font-medium text-gray-800 dark:text-gray-100">Jira Credentials Required</h3>
+                                <p className="mb-6 max-w-md text-center text-gray-500 dark:text-gray-400">
+                                    You need to connect your Jira account before you can view and import projects.
+                                </p>
+                                <Button asChild className="bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
+                                    <Link href={route('jira.connect')}>Connect to Jira</Link>
+                                </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
@@ -136,15 +158,26 @@ export default function JiraProjects() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Jira Projects" />
-            <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
+            <div className="mx-auto flex flex-col gap-4 p-4 md:w-10/12">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Jira Projects</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Browse and import your Jira projects</p>
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                            <Shield className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Jira Projects</h1>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Browse and import your Jira projects</p>
+                        </div>
+                    </div>
                 </section>
 
                 <div className="flex items-center justify-between">
-                    <Button variant="outline" asChild>
+                    <Button
+                        variant="outline"
+                        asChild
+                        className="border-gray-200 bg-white text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
+                    >
                         <Link href={route('jira.connect')}>
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Change Credentials
@@ -152,50 +185,56 @@ export default function JiraProjects() {
                     </Button>
                 </div>
 
-                <div className="flex flex-col space-y-8">
-                    <div className="flex-1 md:max-w-5xl">
-                        <Card className="overflow-hidden transition-all hover:shadow-sm">
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-xl">
-                                    <Shield className="h-5 w-5" />
-                                    Import Jira Projects
-                                </CardTitle>
-                                <CardDescription>Browse and select Jira projects to import into the system</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                {/* Search input */}
-                                <div className="mb-4">
-                                    <div className="relative">
-                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-                                        <Input
-                                            type="search"
-                                            placeholder="Search projects..."
-                                            className="pl-8"
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                        />
-                                    </div>
+                <div className="flex flex-col space-y-6">
+                    <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                        <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                                    <Shield className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                                 </div>
+                                <div>
+                                    <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Import Jira Projects</CardTitle>
+                                    <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+                                        Browse and select Jira projects to import into the system
+                                    </CardDescription>
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="p-4">
+                            {/* Search input */}
+                            <div className="mb-4">
+                                <div className="relative">
+                                    <Search className="absolute top-2.5 left-3 h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                    <Input
+                                        type="search"
+                                        placeholder="Search projects..."
+                                        className="h-10 border-gray-200 bg-white pl-9 text-gray-800 placeholder:text-gray-500 focus-visible:ring-primary/70 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-400"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                            </div>
 
-                                {loadingProjects ? (
-                                    <div className="flex flex-col items-center justify-center py-12">
-                                        <div className="mb-6 rounded-full bg-primary/10 p-4">
-                                            <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                                        </div>
-                                        <h3 className="mb-2 text-lg font-medium">Loading Projects</h3>
-                                        <p className="text-sm text-muted-foreground">Fetching projects from Jira...</p>
+                            {loadingProjects ? (
+                                <div className="flex flex-col items-center justify-center py-12">
+                                    <div className="mb-6 rounded-full bg-primary/10 p-4">
+                                        <Loader2 className="h-10 w-10 animate-spin text-primary" />
                                     </div>
-                                ) : filteredProjects.length > 0 ? (
-                                    <ScrollArea className="h-[450px] pr-2">
-                                        <div className="space-y-4">
-                                            {filteredProjects.map((project) => (
-                                                <div
-                                                    key={project.id}
-                                                    className="flex flex-col rounded-lg border bg-card p-4 shadow-sm transition-all hover:bg-accent/10 hover:shadow-md"
-                                                >
+                                    <h3 className="mb-2 text-lg font-medium text-gray-800 dark:text-gray-100">Loading Projects</h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">Fetching projects from Jira...</p>
+                                </div>
+                            ) : filteredProjects.length > 0 ? (
+                                <ScrollArea className="h-[450px] pr-2">
+                                    <div className="space-y-4">
+                                        {filteredProjects.map((project) => (
+                                            <Card
+                                                key={project.id}
+                                                className="overflow-hidden border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+                                            >
+                                                <CardContent className="p-4">
                                                     <div className="flex items-start justify-between">
                                                         <div className="flex-1">
-                                                            <div className="flex items-center gap-2 text-lg font-medium">
+                                                            <div className="flex items-center gap-2 text-lg font-medium text-gray-800 dark:text-gray-100">
                                                                 <Shield className="h-4 w-4 text-primary" />
                                                                 {project.name}
                                                                 <Badge
@@ -206,7 +245,7 @@ export default function JiraProjects() {
                                                                 </Badge>
                                                             </div>
                                                             {project.description && (
-                                                                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                                                                <p className="mt-2 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
                                                                     {project.description}
                                                                 </p>
                                                             )}
@@ -214,16 +253,15 @@ export default function JiraProjects() {
                                                         <div className="flex items-center gap-2">
                                                             {isProjectImported(project.key) ? (
                                                                 <Badge
-                                                                    variant="secondary"
-                                                                    className="mr-2 border-green-200 bg-green-100 p-2 text-green-700 dark:border-green-800 dark:bg-green-900 dark:text-green-300"
+                                                                    variant="outline"
+                                                                    className="mr-2 border-green-300/50 bg-transparent p-2 text-green-700 dark:text-green-300"
                                                                 >
                                                                     Imported
                                                                 </Badge>
                                                             ) : (
                                                                 <Button
-                                                                    variant="outline"
                                                                     size="sm"
-                                                                    className="border-primary/30 p-4 text-primary transition-all hover:bg-primary/10 hover:text-primary-foreground"
+                                                                    className="bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                                                                     onClick={() => importProject(project)}
                                                                     disabled={importingProject === project.key}
                                                                 >
@@ -244,40 +282,38 @@ export default function JiraProjects() {
                                                     </div>
                                                     <Separator className="my-3" />
                                                     <div className="flex items-center justify-between text-xs">
-                                                        <span className="text-muted-foreground">Project Key: {project.key}</span>
+                                                        <span className="text-gray-500 dark:text-gray-400">Project Key: {project.key}</span>
                                                     </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </ScrollArea>
-                                ) : (
-                                    <div className="flex flex-col items-center justify-center py-12">
-                                        <div className="mb-6 rounded-full bg-muted p-4">
-                                            <Shield className="h-12 w-12 text-muted-foreground opacity-80" />
-                                        </div>
-                                        <h3 className="mb-2 text-lg font-medium">
-                                            {searchTerm ? 'No projects match your search' : 'No projects available to import'}
-                                        </h3>
-                                        <p className="max-w-md text-center text-sm text-muted-foreground">
-                                            {searchTerm
-                                                ? 'Try a different search term or clear your search to see all projects.'
-                                                : 'All your Jira projects may already be imported or no projects were found.'}
-                                        </p>
-                                        {searchTerm && (
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => setSearchTerm('')}
-                                                className="mt-4 border-primary/30 text-primary hover:bg-primary/10"
-                                            >
-                                                Clear Search
-                                            </Button>
-                                        )}
+                                                </CardContent>
+                                            </Card>
+                                        ))}
                                     </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </div>
+                                </ScrollArea>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-12">
+                                    <div className="mb-6 rounded-full bg-gray-100 p-4 dark:bg-gray-700">
+                                        <Shield className="h-12 w-12 text-gray-600 dark:text-gray-300" />
+                                    </div>
+                                    <h3 className="mb-2 text-lg font-medium text-gray-800 dark:text-gray-100">
+                                        {searchTerm ? 'No projects match your search' : 'No projects available to import'}
+                                    </h3>
+                                    <p className="max-w-md text-center text-sm text-gray-500 dark:text-gray-400">
+                                        {searchTerm
+                                            ? 'Try a different search term or clear your search to see all projects.'
+                                            : 'All your Jira projects may already be imported or no projects were found.'}
+                                    </p>
+                                    {searchTerm && (
+                                        <Button
+                                            onClick={() => setSearchTerm('')}
+                                            className="mt-4 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                        >
+                                            Clear Search
+                                        </Button>
+                                    )}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </MasterLayout>

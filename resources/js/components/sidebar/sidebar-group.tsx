@@ -56,12 +56,12 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
             <button
                 type="button"
                 onClick={toggleExpand}
-                className={`group relative z-30 flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100 ${anyItemActive ? 'font-semibold' : ''}`}
+                className={`group relative z-30 flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-700 transition-all duration-200 hover:bg-white hover:text-neutral-900 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 ${anyItemActive ? 'font-medium' : ''}`}
             >
                 <div className="relative">
                     {Icon && (
                         <Icon
-                            className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${!collapsed ? 'mr-3' : ''} text-gray-500 dark:text-gray-400`}
+                            className={`h-5 w-5 flex-shrink-0 text-neutral-500 transition-transform duration-200 group-hover:scale-110 dark:text-neutral-400 ${!collapsed ? 'mr-3' : ''}`}
                             aria-hidden="true"
                         />
                     )}
@@ -70,7 +70,7 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
                     {totalBadgeCount > 0 && (
                         <Badge
                             variant="destructive"
-                            className="absolute -top-0 -right-36 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
+                            className="absolute -top-0 -right-36 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 bg-red-600 px-1 text-xs font-medium text-white shadow-sm dark:bg-red-500"
                         >
                             {totalBadgeCount > 99 ? '99+' : totalBadgeCount}
                         </Badge>
@@ -81,9 +81,9 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
                     <>
                         <span className="flex-1 text-left">{title}</span>
                         {isExpanded ? (
-                            <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200" />
+                            <ChevronDown className="h-4 w-4 text-neutral-500 transition-transform duration-200 dark:text-neutral-400" />
                         ) : (
-                            <ChevronRight className="h-4 w-4 text-gray-500 transition-transform duration-200" />
+                            <ChevronRight className="h-4 w-4 text-neutral-500 transition-transform duration-200 dark:text-neutral-400" />
                         )}
                     </>
                 )}
@@ -104,8 +104,8 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
                                         href={item.href}
                                         className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 ${
                                             isActive
-                                                ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-800 dark:text-gray-100'
-                                                : 'text-gray-700 hover:bg-white hover:text-gray-900 hover:shadow-sm dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100'
+                                                ? 'bg-neutral-50 text-neutral-900 shadow-sm dark:bg-neutral-800 dark:text-neutral-100'
+                                                : 'text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100'
                                         }`}
                                     >
                                         <div className="relative">
@@ -113,14 +113,14 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
                                                 <item.icon
                                                     className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
                                                         !collapsed ? 'mr-3' : ''
-                                                    } ${isActive ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}
+                                                    } ${isActive ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-500 dark:text-neutral-400'}`}
                                                     aria-hidden="true"
                                                 />
                                             )}
                                             {item.href === '/approvals' && approvalCount > 0 && (
                                                 <Badge
                                                     variant="destructive"
-                                                    className="absolute top-0 -right-24 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
+                                                    className="absolute top-0 -right-24 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 bg-red-600 px-1 text-xs font-medium text-white shadow-sm dark:bg-red-500"
                                                 >
                                                     {approvalCount > 99 ? '99+' : approvalCount}
                                                 </Badge>
@@ -128,21 +128,26 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
                                             {item.href === '/task' && pendingTaskCount > 0 && (
                                                 <Badge
                                                     variant="destructive"
-                                                    className="absolute top-0 -right-16 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 px-1 text-xs font-semibold shadow-sm"
+                                                    className="absolute top-0 -right-16 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 bg-red-600 px-1 text-xs font-medium text-white shadow-sm dark:bg-red-500"
                                                 >
                                                     {pendingTaskCount > 99 ? '99+' : pendingTaskCount}
                                                 </Badge>
                                             )}
                                         </div>
                                         {!collapsed && <span>{item.title}</span>}
-                                        {isActive && <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-gray-700 dark:bg-gray-400"></div>}
+                                        {isActive && (
+                                            <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-neutral-600 dark:bg-neutral-400"></div>
+                                        )}
                                     </Link>
                                     {collapsed && (
                                         <Tooltip>
                                             <TooltipTrigger asChild>
                                                 <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
                                             </TooltipTrigger>
-                                            <TooltipContent side="right" className="shadow-lg">
+                                            <TooltipContent
+                                                side="right"
+                                                className="border-neutral-200 bg-white text-neutral-800 shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                                            >
                                                 {item.title}
                                                 {item.href === '/approvals' && approvalCount > 0 && ` (${approvalCount})`}
                                                 {item.href === '/task' && pendingTaskCount > 0 && ` (${pendingTaskCount})`}

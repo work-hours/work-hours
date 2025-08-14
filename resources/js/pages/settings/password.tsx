@@ -4,12 +4,12 @@ import SettingsLayout from '@/layouts/settings/layout'
 import { type BreadcrumbItem } from '@/types'
 import { Transition } from '@headlessui/react'
 import { Head, useForm } from '@inertiajs/react'
-import { CheckCircle, KeyRound, LoaderCircle, Lock } from 'lucide-react'
+import { CheckCircle, KeyRound, LoaderCircle, Lock, ShieldCheck } from 'lucide-react'
 import { FormEventHandler, useRef } from 'react'
 import { toast } from 'sonner'
 
-import HeadingSmall from '@/components/heading-small'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -61,100 +61,118 @@ export default function Password() {
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title="Update password" description="Ensure your account is using a long, random password to stay secure" />
-
-                    <form onSubmit={updatePassword} className="space-y-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="current_password" className="text-sm font-medium">
-                                Current Password
-                            </Label>
-                            <div className="relative">
-                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                    <KeyRound className="h-4 w-4 text-muted-foreground" />
+                    <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                        <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                                    <ShieldCheck className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                                 </div>
-                                <Input
-                                    id="current_password"
-                                    ref={currentPasswordInput}
-                                    value={data.current_password}
-                                    onChange={(e) => setData('current_password', e.target.value)}
-                                    type="password"
-                                    className="pl-10"
-                                    autoComplete="current-password"
-                                    placeholder="••••••••"
-                                />
+                                <div>
+                                    <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Password Security</CardTitle>
+                                    <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+                                        Update your password to maintain account security
+                                    </CardDescription>
+                                </div>
                             </div>
-                            <InputError message={errors.current_password} />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="password" className="text-sm font-medium">
-                                New Password
-                            </Label>
-                            <div className="relative">
-                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                    <Lock className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent className="p-4">
+                            <form onSubmit={updatePassword} className="space-y-4">
+                                <div className="grid gap-3">
+                                    <Label htmlFor="current_password" className="text-sm font-medium">
+                                        Current Password
+                                    </Label>
+                                    <div className="relative">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <KeyRound className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <Input
+                                            id="current_password"
+                                            ref={currentPasswordInput}
+                                            value={data.current_password}
+                                            onChange={(e) => setData('current_password', e.target.value)}
+                                            type="password"
+                                            className="pl-10"
+                                            autoComplete="current-password"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                    <InputError message={errors.current_password} />
                                 </div>
-                                <Input
-                                    id="password"
-                                    ref={passwordInput}
-                                    value={data.password}
-                                    onChange={(e) => setData('password', e.target.value)}
-                                    type="password"
-                                    className="pl-10"
-                                    autoComplete="new-password"
-                                    placeholder="••••••••"
-                                />
-                            </div>
-                            <InputError message={errors.password} />
-                        </div>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation" className="text-sm font-medium">
-                                Confirm Password
-                            </Label>
-                            <div className="relative">
-                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                    <Lock className="h-4 w-4 text-muted-foreground" />
+                                <div className="grid gap-3">
+                                    <Label htmlFor="password" className="text-sm font-medium">
+                                        New Password
+                                    </Label>
+                                    <div className="relative">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <Lock className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <Input
+                                            id="password"
+                                            ref={passwordInput}
+                                            value={data.password}
+                                            onChange={(e) => setData('password', e.target.value)}
+                                            type="password"
+                                            className="pl-10"
+                                            autoComplete="new-password"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                    <InputError message={errors.password} />
                                 </div>
-                                <Input
-                                    id="password_confirmation"
-                                    value={data.password_confirmation}
-                                    onChange={(e) => setData('password_confirmation', e.target.value)}
-                                    type="password"
-                                    className="pl-10"
-                                    autoComplete="new-password"
-                                    placeholder="••••••••"
-                                />
-                            </div>
-                            <InputError message={errors.password_confirmation} />
-                        </div>
 
-                        <div className="flex items-center gap-4">
-                            <Button disabled={processing} className="flex items-center gap-2">
-                                {processing ? (
-                                    <>
-                                        <LoaderCircle className="h-4 w-4 animate-spin" />
-                                        <span>Saving...</span>
-                                    </>
-                                ) : (
-                                    <span>Update Password</span>
-                                )}
-                            </Button>
-
-                            <Transition
-                                show={recentlySuccessful}
-                                enter="transition ease-in-out"
-                                enterFrom="opacity-0"
-                                leave="transition ease-in-out"
-                                leaveTo="opacity-0"
-                            >
-                                <div className="flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
-                                    <CheckCircle className="h-4 w-4" />
-                                    <span>Password updated</span>
+                                <div className="grid gap-3">
+                                    <Label htmlFor="password_confirmation" className="text-sm font-medium">
+                                        Confirm Password
+                                    </Label>
+                                    <div className="relative">
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <Lock className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <Input
+                                            id="password_confirmation"
+                                            value={data.password_confirmation}
+                                            onChange={(e) => setData('password_confirmation', e.target.value)}
+                                            type="password"
+                                            className="pl-10"
+                                            autoComplete="new-password"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                    <InputError message={errors.password_confirmation} />
                                 </div>
-                            </Transition>
-                        </div>
-                    </form>
+
+                                <div className="flex items-center justify-end gap-4 pt-2">
+                                    <Button
+                                        disabled={processing}
+                                        className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    >
+                                        {processing ? (
+                                            <>
+                                                <LoaderCircle className="h-4 w-4 animate-spin" />
+                                                <span>Saving...</span>
+                                            </>
+                                        ) : (
+                                            <span>Update Password</span>
+                                        )}
+                                    </Button>
+
+                                    <Transition
+                                        show={recentlySuccessful}
+                                        enter="transition ease-in-out"
+                                        enterFrom="opacity-0"
+                                        leave="transition ease-in-out"
+                                        leaveTo="opacity-0"
+                                    >
+                                        <div className="flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
+                                            <CheckCircle className="h-4 w-4" />
+                                            <span>Password updated</span>
+                                        </div>
+                                    </Transition>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
                 </div>
             </SettingsLayout>
         </MasterLayout>
