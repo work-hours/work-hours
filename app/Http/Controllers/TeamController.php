@@ -13,7 +13,6 @@ use App\Http\Requests\UpdateTeamMemberRequest;
 use App\Http\Stores\TagStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
-use App\Models\Team;
 use App\Models\User;
 use App\Notifications\PasswordChanged;
 use App\Notifications\TeamMemberAdded;
@@ -113,8 +112,6 @@ final class TeamController extends Controller
     }
 
     /**
-     * Delete the specified team member.
-     *
      * @throws Throwable
      */
     #[Action(method: 'delete', name: 'team.destroy', params: ['user'], middleware: ['auth', 'verified'])]
