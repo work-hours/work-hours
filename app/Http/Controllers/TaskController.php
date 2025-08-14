@@ -75,7 +75,7 @@ final class TaskController extends Controller
         $textBody = mb_trim(strip_tags($rawBody));
 
         if ($textBody !== '' && preg_match_all('/@([A-Za-z0-9._-]+)/', $textBody, $matches)) {
-            $handles = collect($matches[1] ?? [])->filter()->map(fn ($h): string => mb_strtolower((string) $h))->unique()->values();
+            $handles = collect($matches[1] ?? [])->filter()->map(fn ($h): string => mb_strtolower($h))->unique()->values();
 
             if ($handles->isNotEmpty()) {
                 $allowedUsers = collect([$task->project->user])

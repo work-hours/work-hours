@@ -644,7 +644,7 @@ export default function Tasks() {
                                                     )}
                                                 </div>
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className={'text-sm text-gray-500 dark:text-gray-400'}>
                                                 {task.due_date ? (
                                                     new Date(task.due_date).toISOString().split('T')[0]
                                                 ) : (
