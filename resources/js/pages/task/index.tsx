@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
+import { useTimeTracker } from '@/contexts/time-tracker-context'
 import MasterLayout from '@/layouts/master-layout'
 import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem, type SharedData } from '@/types'
@@ -48,6 +49,32 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
+function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: number }) {
+    const tracker = useTimeTracker()
+
+    if (!task.assignees.some((a) => a.id === currentUserId)) return null
+
+    return (
+        <Button
+            variant="outline"
+            size="sm"
+            disabled={tracker.running}
+            onClick={() =>
+                tracker.start({
+                    id: task.id,
+                    title: task.title,
+                    project_id: task.project_id,
+                    project_name: task.project.name,
+                })
+            }
+            className="h-7 border-emerald-200 bg-emerald-50 px-2 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+            title={tracker.running ? 'Another tracker is running' : 'Start tracking'}
+        >
+            <Play className="h-3 w-3" />
+        </Button>
+    )
+}
+
 export default function Tasks() {
     const { auth, projects, tags } = usePage<
         SharedData & {
@@ -65,7 +92,6 @@ export default function Tasks() {
     const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null)
     const [updateGithub, setUpdateGithub] = useState<boolean>(true)
     const [updateJira, setUpdateJira] = useState<boolean>(true)
-    const [isThereRunningTracker, setIsThereRunningTracker] = useState(localStorage.getItem('activeTimeLog') !== null)
 
     const [filters, setFilters] = useState<TaskFilters>({
         status: 'all',
@@ -274,10 +300,6 @@ export default function Tasks() {
         })
     }
 
-    const isAssignedToCurrentUser = (task: Task): boolean => {
-        return task.assignees.some((assignee) => assignee.id === auth.user.id)
-    }
-
     useEffect(() => {
         const queryParams = queryStringToObject()
 
@@ -293,10 +315,6 @@ export default function Tasks() {
 
         setFilters(initialFilters)
         getTasks(initialFilters).then()
-
-        window.addEventListener('time-tracker-stopped', () => {
-            setIsThereRunningTracker(false)
-        })
     }, [])
 
     return (
@@ -670,6 +688,9 @@ export default function Tasks() {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
+                                                    {/* Quick Start Tracker - only for tasks assigned to current user */}
+                                                    <TaskTrackButton task={task} currentUserId={auth.user.id} />
+
                                                     {/* View Details Button */}
                                                     <Link href={route('task.detail', task.id)} title="View Details">
                                                         <Button
@@ -681,30 +702,6 @@ export default function Tasks() {
                                                             <span className="sr-only">View Details</span>
                                                         </Button>
                                                     </Link>
-
-                                                    {isAssignedToCurrentUser(task) && (
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="h-7 w-7 border-cyan-500 bg-cyan-200 p-0 text-cyan-700 hover:bg-cyan-300"
-                                                            onClick={() => {
-                                                                setIsThereRunningTracker(true)
-                                                                window.dispatchEvent(
-                                                                    new CustomEvent('task-time-tracker-start', {
-                                                                        detail: {
-                                                                            taskId: task.id,
-                                                                            projectId: task.project.id,
-                                                                        },
-                                                                    }),
-                                                                )
-                                                            }}
-                                                            disabled={isThereRunningTracker}
-                                                            title="Start Time Tracking"
-                                                        >
-                                                            <Play className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Start Time Tracker</span>
-                                                        </Button>
-                                                    )}
 
                                                     {task.project.user_id === auth.user.id && (
                                                         <ActionButtonGroup>

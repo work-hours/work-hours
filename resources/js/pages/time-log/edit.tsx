@@ -122,6 +122,13 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                 date.getMinutes(),
             )
             setData('start_timestamp', localDate.toISOString())
+
+            if (data.end_timestamp) {
+                const currentEnd = new Date(data.end_timestamp)
+                if (currentEnd.getTime() <= localDate.getTime()) {
+                    setData('end_timestamp', '')
+                }
+            }
         }
     }
 
@@ -317,6 +324,17 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                                         date.getFullYear() === start.getFullYear()
                                                     )
                                                 }}
+                                                filterTime={(time) => {
+                                                    const start = new Date(data.start_timestamp)
+                                                    const cmp = new Date(
+                                                        start.getFullYear(),
+                                                        start.getMonth(),
+                                                        start.getDate(),
+                                                        time.getHours(),
+                                                        time.getMinutes(),
+                                                    )
+                                                    return cmp.getTime() > start.getTime()
+                                                }}
                                                 customInput={
                                                     <CustomInput
                                                         id="end_time"
@@ -347,14 +365,14 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="note" className="text-sm font-medium">
-                                        Note
+                                        Note {data.task_id ? '(Optional)' : ''}
                                     </Label>
                                     <Input
                                         id="note"
                                         value={data.note}
                                         onChange={(e) => setData('note', e.target.value)}
                                         placeholder="Enter a note about this time log"
-                                        required
+                                        required={!data.task_id}
                                         disabled={processing}
                                         tabIndex={3}
                                     />
