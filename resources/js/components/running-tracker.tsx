@@ -21,7 +21,7 @@ export default function RunningTracker() {
 
     return (
         <div className="mx-4 flex max-w-full flex-1 items-center justify-center">
-            <div className="flex items-center gap-3 backdrop-blur-sm transition-all dark:border-gray-800 dark:bg-gray-900/90">
+            <div className="flex items-center gap-6 backdrop-blur-sm transition-all dark:border-gray-800 dark:bg-gray-900/90">
                 <div className="flex min-w-0 flex-row">
                     <div className="flex items-center gap-2">
                         <div className={`h-2 w-2 flex-shrink-0 rounded-full ${paused ? 'animate-pulse bg-amber-500' : 'bg-emerald-500'}`}></div>
@@ -30,7 +30,7 @@ export default function RunningTracker() {
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-3">
                     {paused ? (
                         <Button
                             size="icon"
@@ -59,7 +59,7 @@ export default function RunningTracker() {
                         <Square className="h-3.5 w-3.5" />
                     </Button>
                 </div>
-                <div className="flex items-center gap-2 font-mono text-lg font-medium text-blue-600 dark:text-blue-400">
+                <div className="flex items-center gap-2 text-lg font-medium text-blue-600 dark:text-blue-400">
                     <Clock className="h-3 w-3" />
                     {timeStr}
                 </div>
