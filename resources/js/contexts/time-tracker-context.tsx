@@ -83,6 +83,36 @@ export function TimeTrackerProvider({ children }: { children: ReactNode }) {
         }
     }, [state.running, state.paused])
 
+    // Update browser tab title to show running time when a tracker is active
+    const originalTitleRef = useRef<string | null>(null)
+    useEffect(() => {
+        if (typeof document === 'undefined') return
+
+        const formatHMS = (ms: number) => {
+            const totalSec = Math.floor(ms / 1000)
+            const h = Math.floor(totalSec / 3600)
+            const m = Math.floor((totalSec % 3600) / 60)
+            const s = totalSec % 60
+            const pad = (n: number) => n.toString().padStart(2, '0')
+            return `${pad(h)}:${pad(m)}:${pad(s)}`
+        }
+
+        if (state.running && state.task) {
+            if (!originalTitleRef.current) {
+                originalTitleRef.current = document.title
+            }
+            const timeStr = formatHMS(state.elapsedMs)
+            const statusIcon = state.paused ? '⏸' : '⏵'
+            const taskTitle = state.task.title
+            document.title = `${timeStr} ${statusIcon} ${taskTitle}`
+        } else {
+            if (originalTitleRef.current) {
+                document.title = originalTitleRef.current
+                originalTitleRef.current = null
+            }
+        }
+    }, [state.running, state.paused, state.elapsedMs, state.task])
+
     const start = useCallback((task: TrackerTask) => {
         setState((prev) => {
             if (prev.running) {
