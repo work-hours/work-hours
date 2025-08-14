@@ -288,10 +288,6 @@ export default function Tasks() {
 
         setFilters(initialFilters)
         getTasks(initialFilters).then()
-
-        window.addEventListener('time-tracker-stopped', () => {
-            setIsThereRunningTracker(false)
-        })
     }, [])
 
     return (
