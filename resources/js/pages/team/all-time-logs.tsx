@@ -13,6 +13,7 @@ import { type BreadcrumbItem } from '@/types'
 import { Head, router, useForm } from '@inertiajs/react'
 import { AlertCircle, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Search, TimerReset } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
+import { Pagination } from '@/components/ui/pagination'
 
 type TimeLog = {
     id: number
@@ -65,6 +66,7 @@ type Props = {
     paidAmountsByCurrency: Record<string, number>
     currency: string
     weeklyAverage: number
+    links?: { url: string | null; label: string; active: boolean }[]
 }
 
 export default function AllTeamTimeLogs({
@@ -79,6 +81,7 @@ export default function AllTeamTimeLogs({
     paidAmountsByCurrency,
     currency,
     weeklyAverage,
+    links = [],
 }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -487,6 +490,12 @@ export default function AllTeamTimeLogs({
                                     <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Time Logs</h3>
                                     <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">No time logs found with the selected filters.</p>
                                 </div>
+                            </div>
+                        )}
+
+                        {links && links.length > 0 && (
+                            <div className="border-t border-gray-100 px-4 py-3 dark:border-gray-700">
+                                <Pagination links={links} />
                             </div>
                         )}
                     </CardContent>
