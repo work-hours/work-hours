@@ -39,7 +39,7 @@ const navGroups: NavItemGroup[] = [
         ],
     },
     {
-        title: 'Work Management',
+        title: 'Work',
         icon: Building,
         items: [
             {
