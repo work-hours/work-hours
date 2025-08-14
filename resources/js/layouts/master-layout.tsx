@@ -1,11 +1,10 @@
 import CookieConsent from '@/components/cookie-consent'
 import FloatingAiChat from '@/components/floating-ai-chat'
-import FloatingTimeTracker from '@/components/floating-time-tracker'
 import { MasterContent } from '@/components/master-content'
 import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
 import { type BreadcrumbItem } from '@/types'
-import { projects, tasks } from '@actions/DashboardController'
+import { projects } from '@actions/DashboardController'
 import { type ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 
@@ -14,11 +13,6 @@ interface Project {
     name: string
 }
 
-interface Task {
-    id: number
-    title: string
-    project_id: number
-}
 
 interface MasterLayoutProps {
     children: ReactNode
@@ -36,15 +30,13 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     })
 
     const [userProjects, setUserProjects] = useState<Project[]>([])
-    const [userTasks, setUserTasks] = useState<Task[]>([])
     const [dataLoaded, setDataLoaded] = useState(false)
     const [pageLoaded, setPageLoaded] = useState(false)
 
     const fetchData = async (): Promise<void> => {
         try {
-            const [projectsResponse, tasksResponse] = await Promise.all([projects.data({}), tasks.data({})])
+            const projectsResponse = await projects.data({})
             setUserProjects(projectsResponse.projects)
-            setUserTasks(tasksResponse.tasks)
             setDataLoaded(true)
         } catch (error: unknown) {
             console.error('Failed to fetch data:', error)
@@ -79,10 +71,9 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
             {/* Right Sidebar */}
             <MasterRightSidebar collapsed={collapsed} />
 
-            {/* Floating Time Tracker and AI Chat */}
+            {/* AI Chat */}
             {dataLoaded && (
                 <>
-                    <FloatingTimeTracker projects={userProjects} tasks={userTasks} />
                     <FloatingAiChat projects={userProjects} />
                 </>
             )}

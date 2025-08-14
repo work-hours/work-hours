@@ -1,9 +1,7 @@
-import { SidebarTrackerDisplay } from '@/components/sidebar-tracker-display'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/react'
 import { BarChart3, BrainCircuit, ClockIcon, PlusCircle, UsersIcon } from 'lucide-react'
-import { useState } from 'react'
 
 interface MasterRightSidebarProps {
     collapsed?: boolean
@@ -33,15 +31,9 @@ const quickLinks: NavItem[] = [
 ]
 
 export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps) {
-    const handleTrackTimeClick = () => {
-        window.dispatchEvent(new Event('open-time-tracker'))
-    }
-
     const handleAskAiClick = () => {
         window.dispatchEvent(new Event('open-ai-chat'))
     }
-
-    const [isThereRunningTimeLog, setIsThereRunningTimeLog] = useState(localStorage.getItem('activeTimeLog') !== null)
 
     return (
         <div
@@ -94,13 +86,6 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                     <TooltipProvider>
                         <nav className="relative z-10 space-y-1">
                             <div className="relative">
-                                <button
-                                    onClick={handleTrackTimeClick}
-                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100"
-                                >
-                                    <ClockIcon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                    {!collapsed && <span>Track Time</span>}
-                                </button>
                                 {collapsed && (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
@@ -132,21 +117,6 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                     </TooltipProvider>
                 </div>
 
-                {/* Active Time Log */}
-                {isThereRunningTimeLog && (
-                    <div className="px-4">
-                        <div className="mb-3 pb-2">
-                            <h3
-                                className={`text-xs font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400 ${
-                                    collapsed ? 'text-center' : ''
-                                }`}
-                            >
-                                {collapsed ? 'Active' : 'Active Time Log'}
-                            </h3>
-                        </div>
-                        <SidebarTrackerDisplay collapsed={collapsed} setIsThereRunningTimeLog={setIsThereRunningTimeLog} />
-                    </div>
-                )}
             </div>
         </div>
     )

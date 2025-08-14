@@ -32,7 +32,6 @@ import {
     Flag,
     Glasses,
     Loader2,
-    Play,
     Plus,
     Search,
     TimerReset,
@@ -65,7 +64,6 @@ export default function Tasks() {
     const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null)
     const [updateGithub, setUpdateGithub] = useState<boolean>(true)
     const [updateJira, setUpdateJira] = useState<boolean>(true)
-    const [isThereRunningTracker, setIsThereRunningTracker] = useState(localStorage.getItem('activeTimeLog') !== null)
 
     const [filters, setFilters] = useState<TaskFilters>({
         status: 'all',
@@ -274,9 +272,6 @@ export default function Tasks() {
         })
     }
 
-    const isAssignedToCurrentUser = (task: Task): boolean => {
-        return task.assignees.some((assignee) => assignee.id === auth.user.id)
-    }
 
     useEffect(() => {
         const queryParams = queryStringToObject()
@@ -682,29 +677,6 @@ export default function Tasks() {
                                                         </Button>
                                                     </Link>
 
-                                                    {isAssignedToCurrentUser(task) && (
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="h-7 w-7 border-cyan-500 bg-cyan-200 p-0 text-cyan-700 hover:bg-cyan-300"
-                                                            onClick={() => {
-                                                                setIsThereRunningTracker(true)
-                                                                window.dispatchEvent(
-                                                                    new CustomEvent('task-time-tracker-start', {
-                                                                        detail: {
-                                                                            taskId: task.id,
-                                                                            projectId: task.project.id,
-                                                                        },
-                                                                    }),
-                                                                )
-                                                            }}
-                                                            disabled={isThereRunningTracker}
-                                                            title="Start Time Tracking"
-                                                        >
-                                                            <Play className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Start Time Tracker</span>
-                                                        </Button>
-                                                    )}
 
                                                     {task.project.user_id === auth.user.id && (
                                                         <ActionButtonGroup>
