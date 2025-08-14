@@ -605,12 +605,6 @@ export default function Tasks() {
                                             Title
                                         </TableHead>
                                         <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
-                                            Status
-                                        </TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
-                                            Priority
-                                        </TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
                                             Due Date
                                         </TableHead>
                                         <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -627,6 +621,8 @@ export default function Tasks() {
                                             <TableCell className="max-w-xl font-medium">
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <span>{task.title}</span>
+                                                    {getStatusBadge(task, task.status)}
+                                                    {getPriorityBadge(task.priority)}
                                                     {task.is_imported && task.meta?.source && (
                                                         <SourceLinkIcon source={task.meta.source} sourceUrl={task.meta?.source_url} />
                                                     )}
@@ -648,8 +644,6 @@ export default function Tasks() {
                                                     )}
                                                 </div>
                                             </TableCell>
-                                            <TableCell>{getStatusBadge(task, task.status)}</TableCell>
-                                            <TableCell>{getPriorityBadge(task.priority)}</TableCell>
                                             <TableCell>
                                                 {task.due_date ? (
                                                     new Date(task.due_date).toISOString().split('T')[0]
