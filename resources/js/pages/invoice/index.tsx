@@ -452,13 +452,12 @@ export default function Invoices() {
                                     <FilterButton
                                         variant="clear"
                                         disabled={
-                                            processing || (
-                                                !filters.search &&
+                                            processing ||
+                                            (!filters.search &&
                                                 filters.client === 'all' &&
                                                 filters.status === 'all' &&
                                                 !filters['created-date-from'] &&
-                                                !filters['created-date-to']
-                                            )
+                                                !filters['created-date-to'])
                                         }
                                         onClick={clearFilters}
                                         title="Clear filters"
@@ -542,13 +541,27 @@ export default function Invoices() {
                             <Table>
                                 <TableHeader>
                                     <TableHeaderRow>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Invoice #</TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Client</TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Issue Date</TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Due Date</TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Amount</TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Status</TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">Actions</TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Invoice #
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Client
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Issue Date
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Due Date
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Amount
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Status
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Actions
+                                        </TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
                                 <TableBody>
@@ -559,9 +572,15 @@ export default function Invoices() {
                                         >
                                             <TableCell className="font-medium text-gray-800 dark:text-gray-200">{invoice.invoice_number}</TableCell>
                                             <TableCell className="text-sm text-gray-700 dark:text-gray-300">{invoice.client.name}</TableCell>
-                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">{new Date(invoice.issue_date).toISOString().split('T')[0]}</TableCell>
-                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">{new Date(invoice.due_date).toISOString().split('T')[0]}</TableCell>
-                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">{formatCurrency(invoice.total_amount, invoice.currency)}</TableCell>
+                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                {new Date(invoice.issue_date).toISOString().split('T')[0]}
+                                            </TableCell>
+                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                {new Date(invoice.due_date).toISOString().split('T')[0]}
+                                            </TableCell>
+                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                {formatCurrency(invoice.total_amount, invoice.currency)}
+                                            </TableCell>
                                             <TableCell>
                                                 <span
                                                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeClass(

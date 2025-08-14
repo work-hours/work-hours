@@ -5,7 +5,6 @@ import { CheckCircle, DollarSign, LoaderCircle, Mail, Save, User, UserCircle } f
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
-import HeadingSmall from '@/components/heading-small'
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -59,8 +58,6 @@ export default function Profile({ mustVerifyEmail, status, currencies }: { mustV
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title="Profile information" description="Update your name and email address" />
-
                     <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                         <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                             <div className="flex items-center gap-3">
@@ -200,8 +197,11 @@ export default function Profile({ mustVerifyEmail, status, currencies }: { mustV
                                     </div>
                                 )}
 
-                                <div className="flex items-center gap-4 pt-2">
-                                    <Button disabled={processing} className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
+                                <div className="flex items-center justify-end gap-4 pt-2">
+                                    <Button
+                                        disabled={processing}
+                                        className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    >
                                         {processing ? (
                                             <>
                                                 <LoaderCircle className="h-4 w-4 animate-spin" />

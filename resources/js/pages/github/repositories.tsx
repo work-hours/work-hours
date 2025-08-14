@@ -216,10 +216,7 @@ export default function GitHubRepositories() {
             <ScrollArea className="h-[450px] pr-2">
                 <div className="space-y-4">
                     {filteredRepos.map((repo) => (
-                        <div
-                            key={repo.id}
-                            className="flex flex-col rounded-xl border bg-background p-4 transition-colors hover:bg-muted/50"
-                        >
+                        <div key={repo.id} className="flex flex-col rounded-xl border bg-background p-4 transition-colors hover:bg-muted/50">
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 text-lg font-medium">
@@ -239,12 +236,12 @@ export default function GitHubRepositories() {
                                 <div className="flex items-center gap-2">
                                     {!repo.is_imported ? (
                                         <Button
-                                        variant="secondary"
-                                        size="sm"
-                                        className="rounded-full px-3"
-                                        onClick={() => handleImportRepository(repo)}
-                                        disabled={importingRepo === repo.id}
-                                    >
+                                            variant="secondary"
+                                            size="sm"
+                                            className="rounded-full px-3"
+                                            onClick={() => handleImportRepository(repo)}
+                                            disabled={importingRepo === repo.id}
+                                        >
                                             {importingRepo === repo.id ? (
                                                 <>
                                                     <Loader2 className="mr-1 h-4 w-4 animate-spin" />
@@ -358,12 +355,7 @@ export default function GitHubRepositories() {
                                 <p className="mb-6 max-w-md text-center text-muted-foreground">
                                     Link your GitHub account to access and manage your repositories directly from this application.
                                 </p>
-                                <Button
-                                    asChild
-                                    variant="secondary"
-                                    size="sm"
-                                    className="rounded-full px-3"
-                                >
+                                <Button asChild variant="secondary" size="sm" className="rounded-full px-3">
                                     <a href={route('auth.github')}>
                                         <Github className="mr-2 h-4 w-4" />
                                         Connect GitHub Account

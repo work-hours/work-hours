@@ -150,7 +150,10 @@ export default function Tags({ tags }: TagsPageProps) {
                     </div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Manage your tags for time logs and projects</p>
                     <div className="mt-2 flex items-center justify-end">
-                        <Button onClick={openCreateDialog} className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
+                        <Button
+                            onClick={openCreateDialog}
+                            className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                        >
                             <Plus className="h-4 w-4" />
                             <span>Add new Tag</span>
                         </Button>
@@ -172,7 +175,10 @@ export default function Tags({ tags }: TagsPageProps) {
                         {tagsList.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-12 text-center">
                                 <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You don't have any tags yet.</p>
-                                <Button onClick={openCreateDialog} className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
+                                <Button
+                                    onClick={openCreateDialog}
+                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                >
                                     <Plus className="h-4 w-4" />
                                     <span>Add new Tag</span>
                                 </Button>
@@ -182,13 +188,20 @@ export default function Tags({ tags }: TagsPageProps) {
                                 <table className="w-full text-left text-sm">
                                     <thead>
                                         <tr>
-                                            <th className="bg-gray-50 px-6 py-3 text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">Tag Name</th>
-                                            <th className="bg-gray-50 px-6 py-3 text-right text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">Actions</th>
+                                            <th className="bg-gray-50 px-6 py-3 text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                                                Tag Name
+                                            </th>
+                                            <th className="bg-gray-50 px-6 py-3 text-right text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                                                Actions
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {tagsList.map((tag) => (
-                                            <tr key={tag.id} className="border-b border-gray-100 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-750">
+                                            <tr
+                                                key={tag.id}
+                                                className="dark:hover:bg-gray-750 border-b border-gray-100 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
+                                            >
                                                 <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                                     <div className="flex items-center gap-2">
                                                         <div className="h-4 w-4 rounded-full" style={{ backgroundColor: tag.color || '#6366f1' }} />
@@ -326,7 +339,7 @@ export default function Tags({ tags }: TagsPageProps) {
                         }}
                     >
                         <div className="flex flex-row gap-4 py-4">
-                            <div className="grid gap-2 w-10/12">
+                            <div className="grid w-10/12 gap-2">
                                 <Label htmlFor="edit-name">Tag Name</Label>
                                 <Input
                                     id="edit-name"
@@ -358,9 +371,11 @@ export default function Tags({ tags }: TagsPageProps) {
                             >
                                 Cancel
                             </Button>
-                            <Button type="submit"
-                                    className={'flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600'}
-                                    disabled={isLoading || !editData.name}>
+                            <Button
+                                type="submit"
+                                className={'flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600'}
+                                disabled={isLoading || !editData.name}
+                            >
                                 {isLoading ? (
                                     <>
                                         <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />

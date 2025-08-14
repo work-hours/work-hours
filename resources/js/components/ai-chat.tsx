@@ -228,9 +228,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                                 <div className="flex max-w-[85%] flex-col">
                                     <div
                                         className={`rounded-lg px-4 py-2 shadow-sm ${
-                                            message.isUser
-                                                ? 'ml-auto bg-primary text-white'
-                                                : 'border border-slate-200 bg-white text-slate-800'
+                                            message.isUser ? 'ml-auto bg-primary text-white' : 'border border-slate-200 bg-white text-slate-800'
                                         }`}
                                     >
                                         {message.isUser ? (
@@ -302,7 +300,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                             }
                         }}
                         rows={1}
-                        className="flex-grow resize-none rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
+                        className="flex-grow resize-none rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-primary focus:ring-1 focus:ring-primary/30 focus:outline-none"
                         placeholder="Type your message here..."
                         aria-label="Type your message"
                     />

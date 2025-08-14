@@ -145,10 +145,10 @@ export default function JiraProjects() {
                 {/* Header section */}
                 <section className="mb-2">
                     <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
-                        <Shield className="h-5 w-5 text-muted-foreground" />
-                    </span>
-                    Jira Projects
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
+                            <Shield className="h-5 w-5 text-muted-foreground" />
+                        </span>
+                        Jira Projects
                     </h1>
                     <p className="mt-1 text-muted-foreground">Browse and import your Jira projects</p>
                 </section>

@@ -5,15 +5,14 @@ import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
 import DeleteCurrency from '@/components/delete-currency'
-import HeadingSmall from '@/components/heading-small'
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import SettingsLayout from '@/layouts/settings/layout'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -57,8 +56,6 @@ export default function Currency({ currencies }: { currencies: Currency[] }) {
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title="Currency management" description="Add and manage currencies for your application" />
-
                     <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                         <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                             <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Add Currency</CardTitle>
@@ -88,8 +85,11 @@ export default function Currency({ currencies }: { currencies: Currency[] }) {
                                     <InputError className="mt-1" message={errors.code} />
                                 </div>
 
-                                <div className="flex items-center gap-4 pt-2">
-                                    <Button disabled={processing} className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
+                                <div className="flex items-center justify-end gap-4 pt-2">
+                                    <Button
+                                        disabled={processing}
+                                        className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    >
                                         {processing ? (
                                             <>
                                                 <LoaderCircle className="h-4 w-4 animate-spin" />

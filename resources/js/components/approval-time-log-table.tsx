@@ -38,7 +38,7 @@ export default function ApprovalTimeLogTable({
             <TableHeader>
                 <TableHeaderRow>
                     {showCheckboxes && (
-                        <TableHead className="w-[50px] dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                        <TableHead className="dark:bg-gray-750 w-[50px] bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
                             Select
                         </TableHead>
                     )}
@@ -49,15 +49,14 @@ export default function ApprovalTimeLogTable({
                     <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Duration</TableHead>
                     <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Note</TableHead>
                     <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Status</TableHead>
-                    <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">Actions</TableHead>
+                    <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                        Actions
+                    </TableHead>
                 </TableHeaderRow>
             </TableHeader>
             <TableBody>
                 {timeLogs.map((log) => (
-                    <TableRow
-                                            key={log.id}
-                                            className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
-                                        >
+                    <TableRow key={log.id} className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700">
                         {showCheckboxes && (
                             <TableCell>
                                 <input
@@ -77,7 +76,7 @@ export default function ApprovalTimeLogTable({
                                 {log.duration}
                             </span>
                         </TableCell>
-                        <TableCell className="max-w-xs break-words whitespace-normal text-sm text-gray-700 dark:text-gray-300" title={log.note}>
+                        <TableCell className="max-w-xs text-sm break-words whitespace-normal text-gray-700 dark:text-gray-300" title={log.note}>
                             <div className="max-h-20 overflow-y-auto">{log.note}</div>
                         </TableCell>
                         <TableCell>

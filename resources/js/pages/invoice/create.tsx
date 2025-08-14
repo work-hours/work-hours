@@ -4,8 +4,8 @@ import { Calendar, FileText, Hash, LoaderCircle, Plus, Trash2, User } from 'luci
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-import InputError from '@/components/input-error'
 import BackButton from '@/components/back-button'
+import InputError from '@/components/input-error'
 import SubmitButton from '@/components/submit-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -523,7 +523,12 @@ export default function CreateInvoice() {
                                 <CardTitle className="text-lg">Invoice Items</CardTitle>
                                 <CardDescription>Add the products or services you're invoicing for</CardDescription>
                             </div>
-                            <Button type="button" onClick={addItem} disabled={processing} className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
+                            <Button
+                                type="button"
+                                onClick={addItem}
+                                disabled={processing}
+                                className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                            >
                                 <Plus className="h-4 w-4" />
                                 Add Item
                             </Button>
@@ -661,7 +666,7 @@ export default function CreateInvoice() {
                                                         size="sm"
                                                         disabled={processing || data.items.length <= 1}
                                                         onClick={() => removeItem(index)}
-                                                        className="h-8 w-8 p-0 bg-red-100 text-red-600 hover:bg-red-200"
+                                                        className="h-8 w-8 bg-red-100 p-0 text-red-600 hover:bg-red-200"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                         <span className="sr-only">Remove</span>

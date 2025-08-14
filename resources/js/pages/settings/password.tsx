@@ -8,7 +8,6 @@ import { CheckCircle, KeyRound, LoaderCircle, Lock, ShieldCheck } from 'lucide-r
 import { FormEventHandler, useRef } from 'react'
 import { toast } from 'sonner'
 
-import HeadingSmall from '@/components/heading-small'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -62,8 +61,6 @@ export default function Password() {
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title="Update password" description="Ensure your account is using a long, random password to stay secure" />
-
                     <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                         <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                             <div className="flex items-center gap-3">
@@ -145,8 +142,11 @@ export default function Password() {
                                     <InputError message={errors.password_confirmation} />
                                 </div>
 
-                                <div className="flex items-center gap-4 pt-2">
-                                    <Button disabled={processing} className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
+                                <div className="flex items-center justify-end gap-4 pt-2">
+                                    <Button
+                                        disabled={processing}
+                                        className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    >
                                         {processing ? (
                                             <>
                                                 <LoaderCircle className="h-4 w-4 animate-spin" />

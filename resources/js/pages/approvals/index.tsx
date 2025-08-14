@@ -1,8 +1,8 @@
 import ApprovalTimeLogTable from '@/components/approval-time-log-table'
 import StatsCard from '@/components/dashboard/StatsCard'
+import FilterButton from '@/components/filter-button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import FilterButton from '@/components/filter-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
@@ -380,9 +380,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
 
                                     <FilterButton
                                         variant="clear"
-                                        disabled={
-                                            processing || (!data['start-date'] && !data['end-date'] && !data.project && !data.user)
-                                        }
+                                        disabled={processing || (!data['start-date'] && !data['end-date'] && !data.project && !data.user)}
                                         onClick={() => {
                                             setData({
                                                 'start-date': '',

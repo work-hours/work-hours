@@ -2,9 +2,8 @@ import { Head } from '@inertiajs/react'
 import { Palette } from 'lucide-react'
 
 import AppearanceTabs from '@/components/appearance-tabs'
-import HeadingSmall from '@/components/heading-small'
-import { type BreadcrumbItem } from '@/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { type BreadcrumbItem } from '@/types'
 
 import MasterLayout from '@/layouts/master-layout'
 import SettingsLayout from '@/layouts/settings/layout'
@@ -23,8 +22,6 @@ export default function Appearance() {
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title="Appearance settings" description="Customize how WorkHours looks for you" />
-
                     <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                         <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                             <div className="flex items-center gap-3">

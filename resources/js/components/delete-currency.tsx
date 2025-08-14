@@ -46,7 +46,7 @@ export default function DeleteCurrency({ currencyId, currencyCode }: DeleteCurre
                 <Button
                     variant="outline"
                     size="icon"
-                    className="h-8 w-8 border-neutral-200 bg-white p-0 text-neutral-600 shadow-sm transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-red-800/50 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                    className="h-8 w-8 border-neutral-200 bg-red-100 text-red-600 shadow-sm transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-red-800/50 dark:hover:bg-red-900/20 dark:hover:text-red-400"
                 >
                     <Trash2 className="h-4 w-4" />
                     <span className="sr-only">Delete</span>

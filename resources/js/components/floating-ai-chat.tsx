@@ -137,9 +137,7 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
                                                 <Clock className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-slate-400" />
                                                 <div className="overflow-hidden">
                                                     <p className="text-xs font-medium text-slate-700">{chat.title}</p>
-                                                    <p className="text-xs text-slate-500">
-                                                        {new Date(chat.updated_at).toLocaleDateString()}
-                                                    </p>
+                                                    <p className="text-xs text-slate-500">{new Date(chat.updated_at).toLocaleDateString()}</p>
                                                 </div>
                                             </div>
                                             <div className="opacity-0 transition-opacity duration-200 group-hover:opacity-100">
