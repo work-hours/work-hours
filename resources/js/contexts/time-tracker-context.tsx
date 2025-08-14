@@ -83,7 +83,6 @@ export function TimeTrackerProvider({ children }: { children: ReactNode }) {
         }
     }, [state.running, state.paused])
 
-    // Update browser tab title to show running time when a tracker is active
     const originalTitleRef = useRef<string | null>(null)
     useEffect(() => {
         if (typeof document === 'undefined') return
