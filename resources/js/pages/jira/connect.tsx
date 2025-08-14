@@ -121,7 +121,9 @@ export default function JiraConnect() {
                             }}
                         >
                             <div className="grid w-full items-center gap-2">
-                                <Label htmlFor="domain" className="text-sm font-medium">Jira Domain</Label>
+                                <Label htmlFor="domain" className="text-sm font-medium">
+                                    Jira Domain
+                                </Label>
                                 <div className="flex items-center">
                                     <Input
                                         id="domain"
@@ -136,7 +138,9 @@ export default function JiraConnect() {
                             </div>
 
                             <div className="grid w-full items-center gap-2">
-                                <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                                <Label htmlFor="email" className="text-sm font-medium">
+                                    Email
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -148,7 +152,9 @@ export default function JiraConnect() {
                             </div>
 
                             <div className="grid w-full items-center gap-2">
-                                <Label htmlFor="token" className="text-sm font-medium">API Token</Label>
+                                <Label htmlFor="token" className="text-sm font-medium">
+                                    API Token
+                                </Label>
                                 <Input
                                     id="token"
                                     type="password"
@@ -174,7 +180,11 @@ export default function JiraConnect() {
                             </div>
 
                             <div className="mt-12 flex items-center justify-end gap-2">
-                                <Button type="submit" disabled={isLoading} className="bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
+                                <Button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                >
                                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     Connect to Jira
                                 </Button>

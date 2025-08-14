@@ -215,7 +215,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                 )}
             </div>
             <div className="flex flex-grow flex-col overflow-hidden">
-                <ScrollArea className="max-h-[60vh] flex-grow overflow-y-auto bg-gray-50/50 p-4 dark:bg-gray-900/50 sm:max-h-[80vh]">
+                <ScrollArea className="max-h-[60vh] flex-grow overflow-y-auto bg-gray-50/50 p-4 sm:max-h-[80vh] dark:bg-gray-900/50">
                     <div className="flex flex-col gap-4">
                         {messages.map((message) => (
                             <div key={message.id} className={`flex items-end ${message.isUser ? 'justify-end' : 'justify-start'}`}>
@@ -229,8 +229,8 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                                     <div
                                         className={`rounded-lg px-4 py-2 shadow-sm ${
                                             message.isUser
-                                            ? 'ml-auto bg-gray-900 text-white dark:bg-gray-700'
-                                            : 'border border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100'
+                                                ? 'ml-auto bg-gray-900 text-white dark:bg-gray-700'
+                                                : 'border border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100'
                                         }`}
                                     >
                                         {message.isUser ? (
@@ -246,7 +246,10 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                                                                     {String(children).replace(/\n$/, '')}
                                                                 </SyntaxHighlighter>
                                                             ) : (
-                                                                <code className="rounded bg-gray-100 px-1 py-0.5 text-xs text-gray-800 dark:bg-gray-700 dark:text-gray-200" {...props}>
+                                                                <code
+                                                                    className="rounded bg-gray-100 px-1 py-0.5 text-xs text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                                                                    {...props}
+                                                                >
                                                                     {children}
                                                                 </code>
                                                             )
@@ -273,9 +276,18 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                         ))}
                         {isLoading && (
                             <div className="mt-2 flex items-center gap-2 px-2">
-                                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-400 dark:bg-gray-500" style={{ animationDelay: '0ms' }} />
-                                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-400 dark:bg-gray-500" style={{ animationDelay: '100ms' }} />
-                                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-400 dark:bg-gray-500" style={{ animationDelay: '200ms' }} />
+                                <div
+                                    className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-400 dark:bg-gray-500"
+                                    style={{ animationDelay: '0ms' }}
+                                />
+                                <div
+                                    className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-400 dark:bg-gray-500"
+                                    style={{ animationDelay: '100ms' }}
+                                />
+                                <div
+                                    className="h-1.5 w-1.5 animate-pulse rounded-full bg-gray-400 dark:bg-gray-500"
+                                    style={{ animationDelay: '200ms' }}
+                                />
                                 <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">AI is thinking...</span>
                             </div>
                         )}
@@ -307,7 +319,7 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                             }
                         }}
                         rows={1}
-                        className="flex-grow resize-none rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
+                        className="flex-grow resize-none rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-primary focus:ring-1 focus:ring-primary/30 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
                         placeholder="Type your message here..."
                         aria-label="Type your message"
                     />

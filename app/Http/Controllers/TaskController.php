@@ -16,6 +16,7 @@ use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\User;
 use App\Notifications\TaskAssigned;
+use App\Notifications\TaskCommented;
 use App\Notifications\TaskCompleted;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
@@ -58,11 +59,25 @@ final class TaskController extends Controller
             'body' => ['required', 'string', 'max:5000'],
         ]);
 
-        TaskComment::query()->create([
+        $comment = TaskComment::query()->create([
             'task_id' => $task->id,
             'user_id' => auth()->id(),
             'body' => request('body'),
         ]);
+
+        $recipientIds = collect([$task->project->user_id])
+            ->merge($task->assignees->pluck('id'))
+            ->unique()
+            ->reject(fn ($id): bool => (int) $id === (int) auth()->id())
+            ->values()
+            ->all();
+
+        if ($recipientIds !== []) {
+            $users = User::query()->whereIn('id', $recipientIds)->get();
+            foreach ($users as $user) {
+                $user->notify(new TaskCommented($task, $comment, auth()->user()));
+            }
+        }
 
         back()->throwResponse();
     }

@@ -141,7 +141,10 @@ export default function Notifications() {
                         </div>
                     </div>
                     {(notificationsData.unread_count || 0) > 0 && (
-                        <Button onClick={handleMarkAllAsRead} className="gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
+                        <Button
+                            onClick={handleMarkAllAsRead}
+                            className="gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                        >
                             <CheckCircle className="h-4 w-4" />
                             Mark All as Read
                             <Badge variant="secondary" className="ml-1 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
@@ -184,7 +187,7 @@ export default function Notifications() {
                                             className={`overflow-hidden transition-all ${
                                                 notification.read_at
                                                     ? 'border border-gray-200 bg-gray-50/50 shadow-sm dark:border-gray-700 dark:bg-gray-800/50'
-                                                    : 'border border-gray-200 border-l-4 border-l-primary bg-white shadow-md dark:border-gray-700 dark:bg-gray-800'
+                                                    : 'border border-l-4 border-gray-200 border-l-primary bg-white shadow-md dark:border-gray-700 dark:bg-gray-800'
                                             }`}
                                         >
                                             <CardHeader className="border-b border-gray-100 p-4 pb-2 dark:border-gray-700">
@@ -199,11 +202,19 @@ export default function Notifications() {
                                                         >
                                                             <NotificationIcon className="h-4 w-4" />
                                                         </div>
-                                                        <CardTitle className="text-base font-medium text-gray-800 dark:text-gray-100">{formatNotificationType(notification.type)}</CardTitle>
+                                                        <CardTitle className="text-base font-medium text-gray-800 dark:text-gray-100">
+                                                            {formatNotificationType(notification.type)}
+                                                        </CardTitle>
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <CardDescription className="text-xs text-gray-500 dark:text-gray-400">{notification.created_at}</CardDescription>
-                                                        {!notification.read_at && <Badge className="bg-primary text-white hover:bg-primary/90 dark:bg-primary dark:text-white dark:hover:bg-primary/90">New</Badge>}
+                                                        <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
+                                                            {notification.created_at}
+                                                        </CardDescription>
+                                                        {!notification.read_at && (
+                                                            <Badge className="bg-primary text-white hover:bg-primary/90 dark:bg-primary dark:text-white dark:hover:bg-primary/90">
+                                                                New
+                                                            </Badge>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </CardHeader>

@@ -84,7 +84,7 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
 
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <div className="fixed bottom-24 right-4 z-50 hidden animate-in fade-in slide-in-from-right-5 duration-300">
+            <div className="fixed right-4 bottom-24 z-50 hidden duration-300 animate-in fade-in slide-in-from-right-5">
                 <SheetTrigger asChild>
                     <Button
                         variant="outline"
@@ -137,7 +137,9 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
                                                 <Clock className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-gray-400 dark:text-gray-500" />
                                                 <div className="overflow-hidden">
                                                     <p className="text-xs font-medium text-gray-700 dark:text-gray-200">{chat.title}</p>
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400">{new Date(chat.updated_at).toLocaleDateString()}</p>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                        {new Date(chat.updated_at).toLocaleDateString()}
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div className="opacity-0 transition-opacity duration-200 group-hover:opacity-100">

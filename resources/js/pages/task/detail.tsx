@@ -18,7 +18,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { Head, router, useForm, usePage } from '@inertiajs/react'
 import DOMPurify from 'dompurify'
-import { Calendar, ExternalLink, Info, MessageSquare, Pencil, Save, Trash, Trash2, X } from 'lucide-react'
+import { Calendar, ExternalLink, Info, Pencil, Save, Trash, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import type { Task } from './types'
 
@@ -277,11 +277,7 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                             )}
                         </div>
 
-                        {/* Comments */}
                         <div className="mt-6 space-y-2">
-                            <h3 className="ml-4 flex items-center gap-2 text-lg font-semibold text-primary">
-                                <MessageSquare className="h-5 w-5 text-primary" /> Comments
-                            </h3>
                             <div className="grid grid-cols-1 gap-4 rounded-lg border bg-muted/40 p-4">
                                 <div className="space-y-4">
                                     {task.comments && task.comments.length > 0 ? (
@@ -289,7 +285,7 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                             <div key={comment.id} className="rounded-md bg-background p-3 shadow-sm">
                                                 <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
                                                     <span className="font-medium text-foreground">{comment.user?.name ?? 'User'}</span>
-                                                    <div className="flex items-center gap-2">
+                                                    <div className="flex items-center gap-4">
                                                         <span>{formatDate(comment.created_at)}</span>
                                                         {(currentUserId === task.project.user_id || currentUserId === (comment.user?.id ?? -1)) && (
                                                             <>
@@ -370,7 +366,7 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                                     />
                                                 ) : (
                                                     <div
-                                                        className="prose prose-sm dark:prose-invert max-w-none"
+                                                        className="prose prose-sm dark:prose-invert mt-4 max-w-none text-sm"
                                                         dangerouslySetInnerHTML={{
                                                             __html:
                                                                 typeof window !== 'undefined'

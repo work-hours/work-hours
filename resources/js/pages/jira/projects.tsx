@@ -173,7 +173,11 @@ export default function JiraProjects() {
                 </section>
 
                 <div className="flex items-center justify-between">
-                    <Button variant="outline" asChild className="border-gray-200 bg-white text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700">
+                    <Button
+                        variant="outline"
+                        asChild
+                        className="border-gray-200 bg-white text-gray-800 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
+                    >
                         <Link href={route('jira.connect')}>
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Change Credentials
@@ -200,7 +204,7 @@ export default function JiraProjects() {
                             {/* Search input */}
                             <div className="mb-4">
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                    <Search className="absolute top-2.5 left-3 h-4 w-4 text-gray-500 dark:text-gray-400" />
                                     <Input
                                         type="search"
                                         placeholder="Search projects..."
@@ -223,7 +227,10 @@ export default function JiraProjects() {
                                 <ScrollArea className="h-[450px] pr-2">
                                     <div className="space-y-4">
                                         {filteredProjects.map((project) => (
-                                            <Card key={project.id} className="overflow-hidden border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+                                            <Card
+                                                key={project.id}
+                                                className="overflow-hidden border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+                                            >
                                                 <CardContent className="p-4">
                                                     <div className="flex items-start justify-between">
                                                         <div className="flex-1">

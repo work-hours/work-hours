@@ -194,7 +194,9 @@ export default function GitHubRepositories() {
                     <div className="mb-6 rounded-full bg-gray-100 p-4 dark:bg-gray-700">
                         <Github className="h-12 w-12 text-gray-600 dark:text-gray-300" />
                     </div>
-                    <h3 className="mb-2 text-lg font-medium text-gray-800 dark:text-gray-100">{searchTerm ? 'No repositories match your search' : 'No repositories found'}</h3>
+                    <h3 className="mb-2 text-lg font-medium text-gray-800 dark:text-gray-100">
+                        {searchTerm ? 'No repositories match your search' : 'No repositories found'}
+                    </h3>
                     <p className="max-w-md text-center text-sm text-gray-500 dark:text-gray-400">
                         {searchTerm
                             ? 'Try a different search term or clear your search to see all repositories.'
@@ -216,7 +218,10 @@ export default function GitHubRepositories() {
             <ScrollArea className="h-[450px] pr-2">
                 <div className="space-y-4">
                     {filteredRepos.map((repo) => (
-                        <Card key={repo.id} className="overflow-hidden border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+                        <Card
+                            key={repo.id}
+                            className="overflow-hidden border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
+                        >
                             <CardContent className="p-4">
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
@@ -232,7 +237,9 @@ export default function GitHubRepositories() {
                                                 </Badge>
                                             )}
                                         </div>
-                                        {repo.description && <p className="mt-2 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">{repo.description}</p>}
+                                        {repo.description && (
+                                            <p className="mt-2 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">{repo.description}</p>
+                                        )}
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {!repo.is_imported ? (
@@ -470,7 +477,7 @@ export default function GitHubRepositories() {
 
                                 <div className="mb-4">
                                     <div className="relative">
-                                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                        <Search className="absolute top-2.5 left-3 h-4 w-4 text-gray-500 dark:text-gray-400" />
                                         <Input
                                             type="search"
                                             placeholder="Search repositories..."
