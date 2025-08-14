@@ -28,14 +28,17 @@ type Attachment = {
     size: number
 }
 
+type MentionCandidate = { id: number | string; name: string; handle: string }
+
 type Props = {
     task: Task
     attachments?: Attachment[]
+    mentionableUsers?: MentionCandidate[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Tasks', href: '/task' }]
 
-export default function TaskDetail({ task, attachments = [] }: Props) {
+export default function TaskDetail({ task, attachments = [], mentionableUsers = [] }: Props) {
     const TaskDescription = ({ html }: { html: string }) => {
         const safe = typeof window !== 'undefined' ? DOMPurify.sanitize(html) : html
         return <div dangerouslySetInnerHTML={{ __html: safe }} />
@@ -363,6 +366,7 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                                         onChange={(val) => setEditingBody(val)}
                                                         placeholder="Edit comment..."
                                                         minRows={4}
+                                                        mentions={mentionableUsers}
                                                     />
                                                 ) : (
                                                     <div
@@ -390,6 +394,7 @@ export default function TaskDetail({ task, attachments = [] }: Props) {
                                             onChange={(val) => setData('body', val)}
                                             placeholder="Add a comment..."
                                             minRows={4}
+                                            mentions={mentionableUsers}
                                         />
                                         <div className="flex justify-end">
                                             <Button

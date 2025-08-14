@@ -64,15 +64,74 @@ final class TaskController extends Controller
             'body' => request('body'),
         ]);
 
+        // Base recipients: project owner and assignees (excluding the commenter)
         $recipientIds = collect([$task->project->user_id])
             ->merge($task->assignees->pluck('id'))
             ->unique()
             ->reject(fn ($id): bool => (int) $id === (int) auth()->id())
+            ->values();
+
+        // Mentions: parse @handles from the comment body and notify mentioned users (within project context)
+        $rawBody = (string) request('body');
+        $textBody = trim(strip_tags($rawBody));
+
+        // Capture @handles consisting of letters, digits, dot, underscore, or dash (e.g., @john.smith, @john_smith)
+        if ($textBody !== '' && preg_match_all('/@([A-Za-z0-9._-]+)/', $textBody, $matches)) {
+            $handles = collect($matches[1] ?? [])->filter()->map(fn ($h) => strtolower((string) $h))->unique()->values();
+
+            if ($handles->isNotEmpty()) {
+                // Build allowed users within the project context: owner + team members + assignees
+                $allowedUsers = collect([$task->project->user])
+                    ->merge($task->project->teamMembers)
+                    ->merge($task->assignees)
+                    ->filter()
+                    ->unique('id')
+                    ->values();
+
+                // Create a map of normalized user "handles" from their names: lowercase, remove non [A-Za-z0-9._-]
+                $normalize = static function (string $name): string {
+                    $base = strtolower($name);
+                    // Replace spaces with nothing and strip disallowed characters
+                    $base = preg_replace('/[^a-z0-9._-]+/i', '', $base) ?? $base;
+                    return $base;
+                };
+
+                $handleToUserIds = collect();
+                foreach ($allowedUsers as $u) {
+                    $handle = $normalize($u->name);
+                    if ($handle !== '') {
+                        $handleToUserIds->put($handle, $u->id);
+                    }
+
+                    // Also allow mentioning by email local-part (before @), if available
+                    if (! empty($u->email) && str_contains($u->email, '@')) {
+                        $local = strtolower(strtok($u->email, '@'));
+                        if ($local) {
+                            $handleToUserIds->put($local, $u->id);
+                        }
+                    }
+                }
+
+                // Resolve mentioned handles to user IDs
+                $mentionedIds = $handles
+                    ->map(fn ($h) => $handleToUserIds->get($h))
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                if ($mentionedIds->isNotEmpty()) {
+                    $recipientIds = $recipientIds->merge($mentionedIds)->unique()->values();
+                }
+            }
+        }
+
+        $recipientIdArray = $recipientIds
+            ->reject(fn ($id): bool => (int) $id === (int) auth()->id())
             ->values()
             ->all();
 
-        if ($recipientIds !== []) {
-            $users = User::query()->whereIn('id', $recipientIds)->get();
+        if ($recipientIdArray !== []) {
+            $users = User::query()->whereIn('id', $recipientIdArray)->get();
             foreach ($users as $user) {
                 $user->notify(new TaskCommented($task, $comment, auth()->user()));
             }
@@ -254,7 +313,7 @@ final class TaskController extends Controller
      */
     public function detail(Task $task)
     {
-        $task->load(['project', 'assignees', 'tags', 'comments.user', 'meta']);
+        $task->load(['project', 'project.user', 'project.teamMembers', 'assignees', 'tags', 'comments.user', 'meta']);
 
         $isProjectOwner = $task->project->user_id === auth()->id();
         $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
@@ -269,9 +328,30 @@ final class TaskController extends Controller
                 'size' => Storage::disk('public')->size($path),
             ]);
 
+        // Build mentionable users within project context (owner + team members + assignees)
+        $normalize = static function (string $name): string {
+            $base = strtolower($name);
+            $base = preg_replace('/[^a-z0-9._-]+/i', '', $base) ?? $base;
+            return $base;
+        };
+
+        $mentionableUsers = collect([$task->project->user])
+            ->merge($task->project->teamMembers)
+            ->merge($task->assignees)
+            ->filter()
+            ->unique('id')
+            ->values()
+            ->map(fn ($u) => [
+                'id' => $u->id,
+                'name' => $u->name,
+                'handle' => $normalize($u->name),
+                'email' => $u->email ?? null,
+            ]);
+
         return Inertia::render('task/detail', [
             'task' => $task,
             'attachments' => $files,
+            'mentionableUsers' => $mentionableUsers,
         ]);
     }
 
