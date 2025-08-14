@@ -46,7 +46,6 @@ final class TaskController extends Controller
      */
     public function storeComment(Task $task): void
     {
-
         $task->load(['project', 'assignees']);
 
         $isProjectOwner = $task->project->user_id === auth()->id();

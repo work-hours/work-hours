@@ -46,7 +46,7 @@ final class TaskCommented extends Notification
             ->greeting('Hello ' . $notifiable->name . '!')
             ->line($this->messageFormatter())
             ->when($this->task->project, fn (MailMessage $message) => $message->line('Project: ' . $this->task->project->name))
-            ->action('View Task', url('/tasks/' . $this->task->id))
+            ->action('View Task', url('/task/' . $this->task->id))
             ->line('Thank you for using WorkHours!');
     }
 
