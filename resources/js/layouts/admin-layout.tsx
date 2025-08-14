@@ -44,12 +44,12 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                     {/* Sidebar Header */}
                     <div className="flex h-16 items-center justify-between border-b border-gray-100 px-4 dark:border-gray-800">
                         {!collapsed && (
-                            <Link href="/administration" className="text-lg font-medium tracking-tight text-gray-800 dark:text-gray-200">
+                            <Link href={route('admin.index')} className="text-lg font-medium tracking-tight text-gray-800 dark:text-gray-200">
                                 Administration
                             </Link>
                         )}
                         {collapsed && (
-                            <Link href="/administration" className="flex w-full items-center justify-center text-gray-800 dark:text-gray-200">
+                            <Link href={route('admin.index')} className="flex w-full items-center justify-center text-gray-800 dark:text-gray-200">
                                 <span className="sr-only">Administration</span>
                                 <Settings className="h-5 w-5" />
                             </Link>
@@ -61,7 +61,7 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                         <ul className="space-y-1">
                             <li>
                                 <Link
-                                    href="/administration"
+                                    href={route('admin.index')}
                                     className={`flex items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/60 dark:hover:text-gray-100 ${
                                         window.location.pathname === '/administration'
                                             ? 'bg-gray-50/80 text-gray-900 dark:bg-gray-800/40 dark:text-gray-100'
@@ -74,7 +74,7 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                             </li>
                             <li>
                                 <Link
-                                    href="/administration/users"
+                                    href={route('admin.users.index')}
                                     className={`flex items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/60 dark:hover:text-gray-100 ${
                                         window.location.pathname.startsWith('/administration/users')
                                             ? 'bg-gray-50/80 text-gray-900 dark:bg-gray-800/40 dark:text-gray-100'
@@ -92,7 +92,7 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                     {/* Back to main app */}
                     <div className="border-t border-gray-100 p-3 dark:border-gray-800">
                         <Link
-                            href="/dashboard"
+                            href={route('dashboard')}
                             className="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/60 dark:hover:text-gray-100"
                         >
                             <ChevronLeft className="h-4 w-4 flex-shrink-0 opacity-80" />

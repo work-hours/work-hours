@@ -47,7 +47,7 @@ export default function Navbar() {
     return (
         <nav className="fixed top-0 right-0 left-0 z-50 border-b border-neutral-200 bg-white/90 backdrop-blur-sm dark:border-neutral-700 dark:bg-neutral-900/90">
             <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <Link href="/" className="flex items-center gap-2">
+                <Link href={route('home')} className="flex items-center gap-2">
                     <AppLogoIcon className="h-8 w-8 text-neutral-700 dark:text-neutral-300" />
                     <span className="text-lg font-medium text-neutral-900 dark:text-neutral-100">Work Hours</span>
                 </Link>
@@ -75,70 +75,70 @@ export default function Navbar() {
                                     </a>
                                     <div className="my-1 border-t border-neutral-100 dark:border-neutral-700"></div>
                                     <Link
-                                        href="/features/time-tracking"
+                                        href={route('features.time-tracking')}
                                         className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Time Tracking
                                     </Link>
                                     <Link
-                                        href="/features/detailed-reports"
+                                        href={route('features.detailed-reports')}
                                         className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Detailed Reports
                                     </Link>
                                     <Link
-                                        href="/features/team-collaboration"
+                                        href={route('features.team-collaboration')}
                                         className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Team Collaboration
                                     </Link>
                                     <Link
-                                        href="/features/client-management"
+                                        href={route('features.client-management')}
                                         className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Client Management
                                     </Link>
                                     <Link
-                                        href="/features/bulk-upload"
+                                        href={route('features.bulk-upload')}
                                         className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Bulk Upload
                                     </Link>
                                     <Link
-                                        href="/features/approval-management"
+                                        href={route('features.approval-management')}
                                         className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Approval Management
                                     </Link>
                                     <Link
-                                        href="/features/currency-management"
+                                        href={route('features.currency-management')}
                                         className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Currency Management
                                     </Link>
                                     <Link
-                                        href="/features/multi-currency-invoice"
+                                        href={route('features.multi-currency-invoice')}
                                         className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Multi Currency Invoice
                                     </Link>
                                     <Link
-                                        href="/features/task-management"
+                                        href={route('features.task-management')}
                                         className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
                                         Task Management
                                     </Link>
                                     <Link
-                                        href="/features/github-integration"
+                                        href={route('features.github-integration')}
                                         className="block rounded-md px-3 py-1.5 text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700/50 dark:hover:text-neutral-200"
                                         role="menuitem"
                                     >
@@ -334,7 +334,7 @@ export default function Navbar() {
 
                     {isLoggedIn ? (
                         <Link
-                            href="/dashboard"
+                            href={route('dashboard')}
                             className="inline-flex items-center justify-center rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600"
                         >
                             Dashboard

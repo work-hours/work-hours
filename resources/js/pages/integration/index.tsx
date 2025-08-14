@@ -14,7 +14,7 @@ type Props = {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Integration',
-        href: '/integration',
+        href: route('integration.index'),
     },
 ]
 
@@ -45,7 +45,7 @@ export default function Integration({ isGitHubIntegrated, isJiraIntegrated }: Pr
                                     asChild
                                     className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                                 >
-                                    <Link href="/github/repositories">Manage Repositories</Link>
+                                    <Link href={route('github.repositories')}>Manage Repositories</Link>
                                 </Button>
                             </div>
                         ) : (
@@ -55,7 +55,7 @@ export default function Integration({ isGitHubIntegrated, isJiraIntegrated }: Pr
                                     asChild
                                     className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                                 >
-                                    <a href="/auth/github">
+                                    <a href={route('auth.github')}>
                                         <Github className="mr-2 h-4 w-4" />
                                         Connect with GitHub
                                     </a>
