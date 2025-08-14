@@ -1,4 +1,5 @@
 import { ExportButton } from '@/components/action-buttons'
+import BackButton from '@/components/back-button'
 import StatsCards from '@/components/dashboard/StatsCards'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Button } from '@/components/ui/button'
@@ -9,8 +10,8 @@ import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head, Link, router, useForm } from '@inertiajs/react'
-import { AlertCircle, ArrowLeft, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Search, TimerReset } from 'lucide-react'
+import { Head, router, useForm } from '@inertiajs/react'
+import { AlertCircle, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Search, TimerReset } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
 
 type TimeLog = {
@@ -158,21 +159,12 @@ export default function AllTeamTimeLogs({
             <div className="mx-auto flex flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <div className="flex items-center gap-4">
-                        <Link href={route('team.index')}>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-8 w-8 rounded-full border-gray-200 p-0 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-                            >
-                                <ArrowLeft className="h-4 w-4" />
-                                <span className="sr-only">Back to Team</span>
-                            </Button>
-                        </Link>
+                    <div className="flex items-center justify-between gap-4">
                         <div>
                             <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">All Team Time Logs</h1>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">View and manage time logs for all team members</p>
                         </div>
+                        <BackButton />
                     </div>
                 </section>
 
