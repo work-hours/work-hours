@@ -9,6 +9,7 @@ use App\Adapters\JiraAdapter;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Stores\ProjectStore;
+use App\Http\Stores\TagStore;
 use App\Http\Stores\TaskStore;
 use App\Models\Project;
 use App\Models\Tag;
@@ -22,6 +23,7 @@ use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Concurrency;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -177,32 +179,21 @@ final class TaskController extends Controller
      */
     public function index()
     {
-        $projects = ProjectStore::userProjects(userId: auth()->id())
-            ->map(fn ($project): array => [
-                'id' => $project->id,
-                'name' => $project->name,
-            ]);
+        $userId = (int) auth()->id();
 
-        $tags = Tag::all()->map(fn ($tag): array => [
-            'id' => $tag->id,
-            'name' => $tag->name,
-            'color' => $tag->color,
-        ]);
-
-        $filters = request()->only([
-            'status',
-            'priority',
-            'project',
-            'tag',
-            'due-date-from',
-            'due-date-to',
-            'search',
+        [$projects, $tags] = Concurrency::run([
+            fn () => ProjectStore::userProjects(userId: $userId)
+                ->map(fn ($project): array => [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                ]),
+            fn (): Collection => TagStore::projectTags(userId: $userId, map: true),
         ]);
 
         return Inertia::render('task/index', [
             'projects' => $projects,
             'tags' => $tags,
-            'filters' => $filters,
+            'filters' => TaskStore::filters(),
         ]);
     }
 
@@ -251,8 +242,6 @@ final class TaskController extends Controller
 
             if ($request->has('assignees')) {
                 $task->assignees()->sync($request->input('assignees'));
-
-                $this->notifyAssignees($task, $request->input('assignees'));
             }
 
             if ($request->has('tags')) {
@@ -262,6 +251,10 @@ final class TaskController extends Controller
             $this->storeAttachments($request, $task);
 
             DB::commit();
+
+            if ($request->has('assignees')) {
+                $this->notifyAssignees($task, $request->input('assignees', []));
+            }
 
             if ($request->boolean('create_github_issue')) {
                 $this->gitHubAdapter->createGitHubIssue($task);
@@ -307,12 +300,16 @@ final class TaskController extends Controller
 
         abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
 
-        $files = collect(Storage::disk('public')->files('tasks/' . $task->id))
-            ->map(fn (string $path): array => [
-                'name' => basename($path),
-                'url' => Storage::disk('public')->url($path),
-                'size' => Storage::disk('public')->size($path),
-            ]);
+        $taskId = (int) $task->id;
+
+        [$files] = Concurrency::run([
+            fn () => collect(Storage::disk('public')->files('tasks/' . $taskId))
+                ->map(fn (string $path): array => [
+                    'name' => basename($path),
+                    'url' => Storage::disk('public')->url($path),
+                    'size' => Storage::disk('public')->size($path),
+                ]),
+        ]);
 
         $normalize = static function (string $name): string {
             $base = mb_strtolower($name);
@@ -346,18 +343,28 @@ final class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-
         $task->load(['project', 'assignees', 'meta', 'tags']);
 
         $isProjectOwner = $task->project->user_id === auth()->id();
 
         abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
 
-        $projects = ProjectStore::userProjects(userId: auth()->id())
-            ->map(fn ($project): array => [
-                'id' => $project->id,
-                'name' => $project->name,
-            ]);
+        $userId = (int) auth()->id();
+        $taskId = (int) $task->id;
+
+        [$projects, $files] = Concurrency::run([
+            fn () => ProjectStore::userProjects(userId: $userId)
+                ->map(fn ($project): array => [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                ]),
+            fn () => collect(Storage::disk('public')->files('tasks/' . $taskId))
+                ->map(fn (string $path): array => [
+                    'name' => basename($path),
+                    'url' => Storage::disk('public')->url($path),
+                    'size' => Storage::disk('public')->size($path),
+                ]),
+        ]);
 
         $potentialAssignees = collect([$task->project->user])
             ->concat($task->project->teamMembers)
@@ -372,13 +379,6 @@ final class TaskController extends Controller
 
         $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
         $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
-
-        $files = collect(Storage::disk('public')->files('tasks/' . $task->id))
-            ->map(fn (string $path): array => [
-                'name' => basename($path),
-                'url' => Storage::disk('public')->url($path),
-                'size' => Storage::disk('public')->size($path),
-            ]);
 
         return Inertia::render('task/edit', [
             'task' => $task,
@@ -416,7 +416,6 @@ final class TaskController extends Controller
                 $task->assignees()->sync($newAssigneeIds);
 
                 $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
-                $this->notifyAssignees($task, $addedAssigneeIds);
             } else {
                 $task->assignees()->detach();
             }
@@ -428,6 +427,10 @@ final class TaskController extends Controller
             $this->storeAttachments($request, $task);
 
             DB::commit();
+
+            if ($request->has('assignees')) {
+                $this->notifyAssignees($task, $addedAssigneeIds ?? []);
+            }
 
             $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
 
@@ -620,7 +623,9 @@ final class TaskController extends Controller
     }
 
     /**
-     * Notify users that have been assigned to the task.
+     * Notify the given user IDs that they have been assigned to the task.
+     *
+     * @param  array<int>  $userIds
      */
     private function notifyAssignees(Task $task, array $userIds): void
     {
@@ -639,11 +644,16 @@ final class TaskController extends Controller
     }
 
     /**
-     * Notify project owner if task transitioned to completed by a non-owner.
+     * Notify project owner when task is completed by a non-owner.
      */
     private function notifyOnCompletion(Task $task, string $oldStatus, bool $isProjectOwner): void
     {
-        if ($oldStatus !== 'completed' && request('status') === 'completed' && ! $isProjectOwner) {
+        if ($oldStatus === 'completed') {
+            return;
+        }
+
+        $newStatus = $task->status;
+        if ($newStatus === 'completed' && ! $isProjectOwner) {
             if (! $task->relationLoaded('project')) {
                 $task->load('project');
             }
@@ -654,18 +664,18 @@ final class TaskController extends Controller
     }
 
     /**
-     * Update external integrations for imported tasks when requested.
+     * Update external integrations for imported tasks when flags are enabled.
      */
-    private function updateExternalIntegrations(Task $task, bool $githubFlag, bool $jiraFlag): void
+    private function updateExternalIntegrations(Task $task, bool $githubUpdate, bool $jiraUpdate): void
     {
         $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
         $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
 
-        if ($isGithub && $githubFlag) {
+        if ($isGithub && $githubUpdate) {
             $this->gitHubAdapter->updateGitHubIssue($task);
         }
 
-        if ($isJira && $jiraFlag) {
+        if ($isJira && $jiraUpdate) {
             $this->jiraAdapter->updateJiraIssue($task);
         }
     }

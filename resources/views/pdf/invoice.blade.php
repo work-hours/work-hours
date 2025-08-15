@@ -9,11 +9,11 @@
             margin: 0;
         }
         @font-face {
-            font-family: 'Roboto Mono';
-            src: url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap');
+            font-family: Inter;
+            src: url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
         }
         body {
-            font-family: 'Roboto Mono', monospace;
+            font-family: Inter, monospace;
             font-size: 14px;
             line-height: 1.6;
             color: #333;
