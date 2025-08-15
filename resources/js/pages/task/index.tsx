@@ -623,9 +623,6 @@ export default function Tasks() {
                                             Title
                                         </TableHead>
                                         <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
-                                            Due Date
-                                        </TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
                                             Assignees
                                         </TableHead>
                                         <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -641,6 +638,24 @@ export default function Tasks() {
                                                     <span>{task.title}</span>
                                                     {getStatusBadge(task, task.status)}
                                                     {getPriorityBadge(task.priority)}
+                                                    {task.comments_count !== undefined && task.comments_count > 0 && (
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="flex items-center gap-1 border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                                                        >
+                                                            <FileText className="h-3 w-3" />
+                                                            <span>{task.comments_count}</span>
+                                                        </Badge>
+                                                    )}
+                                                    {task.due_date && (
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="flex items-center gap-1 border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
+                                                        >
+                                                            <Calendar className="h-0.5 w-0.5" />
+                                                            <span className={'text-sm'}>{new Date(task.due_date).toISOString().split('T')[0]}</span>
+                                                        </Badge>
+                                                    )}
                                                     {task.is_imported && task.meta?.source && (
                                                         <SourceLinkIcon source={task.meta.source} sourceUrl={task.meta?.source_url} />
                                                     )}
@@ -661,13 +676,6 @@ export default function Tasks() {
                                                         </div>
                                                     )}
                                                 </div>
-                                            </TableCell>
-                                            <TableCell className={'text-sm text-gray-500 dark:text-gray-400'}>
-                                                {task.due_date ? (
-                                                    new Date(task.due_date).toISOString().split('T')[0]
-                                                ) : (
-                                                    <span className="text-muted-foreground/50">No due date</span>
-                                                )}
                                             </TableCell>
                                             <TableCell>
                                                 {task.assignees && task.assignees.length > 0 ? (
