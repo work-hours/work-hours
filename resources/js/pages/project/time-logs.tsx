@@ -15,8 +15,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link, router, useForm } from '@inertiajs/react'
-import { AlertCircle, Calendar, CalendarRange, CheckCircle, ClipboardList, ClockIcon, Edit, Plus, Search, TimerReset, User } from 'lucide-react'
+import { AlertCircle, Calendar, CalendarRange, CheckCircle, ClipboardList, ClockIcon, Edit, MoreVertical, Plus, Search, TimerReset, User } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
+import ProjectTaskDeleteAction from '@/components/project-task-delete-action'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 type TimeLog = {
     id: number
@@ -533,14 +535,26 @@ export default function ProjectTimeLogs({
                                                 )}
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    <Link href={route('task.edit', task.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Edit className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Edit</span>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+                                                        >
+                                                            <MoreVertical className="h-4 w-4" />
                                                         </Button>
-                                                    </Link>
-                                                </div>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-48">
+                                                        <a href={route('task.edit', task.id)}>
+                                                            <DropdownMenuItem className="group cursor-pointer">
+                                                                <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                <span>Edit</span>
+                                                            </DropdownMenuItem>
+                                                        </a>
+                                                        <ProjectTaskDeleteAction taskId={task.id} taskTitle={task.title} />
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </TableCell>
                                         </TableRow>
                                     ))}
