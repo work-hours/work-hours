@@ -9,6 +9,7 @@ use App\Adapters\JiraAdapter;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Stores\ProjectStore;
+use App\Http\Stores\TagStore;
 use App\Http\Stores\TaskStore;
 use App\Models\Project;
 use App\Models\Tag;
@@ -183,26 +184,12 @@ final class TaskController extends Controller
                 'name' => $project->name,
             ]);
 
-        $tags = Tag::all()->map(fn ($tag): array => [
-            'id' => $tag->id,
-            'name' => $tag->name,
-            'color' => $tag->color,
-        ]);
-
-        $filters = request()->only([
-            'status',
-            'priority',
-            'project',
-            'tag',
-            'due-date-from',
-            'due-date-to',
-            'search',
-        ]);
+        $tags = TagStore::allTags(map: true);
 
         return Inertia::render('task/index', [
             'projects' => $projects,
             'tags' => $tags,
-            'filters' => $filters,
+            'filters' => TaskStore::filters(),
         ]);
     }
 

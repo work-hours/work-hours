@@ -95,4 +95,17 @@ final class TaskStore
             ])
             ->thenReturn();
     }
+
+    public static function filters(): array
+    {
+        return request()->only([
+            'status',
+            'priority',
+            'project',
+            'tag',
+            'due-date-from',
+            'due-date-to',
+            'search',
+        ]);
+    }
 }
