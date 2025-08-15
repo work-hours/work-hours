@@ -14,7 +14,6 @@ final class ProjectNoteController extends Controller
     /**
      * List notes for a project (newest first)
      */
-    #[Action(method: 'get', name: 'project.notes', params: ['project'], middleware: ['auth', 'verified'])]
     public function index(Project $project): Collection
     {
         $project->loadMissing('teamMembers');
@@ -44,7 +43,6 @@ final class ProjectNoteController extends Controller
     /**
      * Store a new note
      */
-    #[Action(method: 'post', name: 'project.notes.store', params: ['project'], middleware: ['auth', 'verified'])]
     public function store(Project $project): void
     {
         $project->loadMissing('teamMembers');
@@ -69,7 +67,6 @@ final class ProjectNoteController extends Controller
     /**
      * Update a note
      */
-    #[Action(method: 'put', name: 'project.notes.update', params: ['project', 'note'], middleware: ['auth', 'verified'])]
     public function update(Project $project, ProjectNote $note): void
     {
         abort_if($note->project_id !== $project->id, 404, 'Note not found for this project.');
@@ -93,7 +90,6 @@ final class ProjectNoteController extends Controller
     /**
      * Delete a note
      */
-    #[Action(method: 'delete', name: 'project.notes.destroy', params: ['project', 'note'], middleware: ['auth', 'verified'])]
     public function destroy(Project $project, ProjectNote $note): void
     {
         abort_if($note->project_id !== $project->id, 404, 'Note not found for this project.');
