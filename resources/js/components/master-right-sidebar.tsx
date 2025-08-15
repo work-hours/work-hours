@@ -5,6 +5,7 @@ import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/react'
 import { BarChart3, BrainCircuit, ClockIcon, PlusCircle, UsersIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 interface MasterRightSidebarProps {
     collapsed?: boolean
@@ -52,6 +53,8 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
             e.preventDefault()
             if (!running) {
                 setQuickOpen(true)
+            } else {
+                toast.info('Tracker in session')
             }
         }
 
@@ -129,7 +132,13 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
 
                             <div className="relative">
                                 <button
-                                    onClick={() => setQuickOpen(true)}
+                                    onClick={() => {
+                                        if (running) {
+                                            toast.info('Tracker in session')
+                                            return
+                                        }
+                                        setQuickOpen(true)
+                                    }}
                                     disabled={running}
                                     className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100"
                                 >

@@ -6,6 +6,9 @@ import type { Project as ProjectType, Task as TaskType } from '@/pages/task/type
 import { projects as _projects, tasks as _tasks } from '@actions/DashboardController'
 import { Play } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
+import { usePage } from '@inertiajs/react'
+import type { SharedData } from '@/types'
 
 interface QuickTrackModalProps {
     open: boolean
@@ -14,6 +17,9 @@ interface QuickTrackModalProps {
 
 export default function QuickTrackModal({ open, onOpenChange }: QuickTrackModalProps) {
     const { start, running } = useTimeTracker()
+
+    const page = usePage<SharedData>()
+    const currentUserId = page.props.auth?.user?.id
 
     const [loading, setLoading] = useState(false)
     const [projects, setProjects] = useState<ProjectType[]>([])
@@ -47,8 +53,15 @@ export default function QuickTrackModal({ open, onOpenChange }: QuickTrackModalP
     const filteredTasks = useMemo(() => {
         const pid = Number(projectId)
         if (!pid) return []
-        return tasks.filter((t) => t.project_id === pid)
-    }, [projectId, tasks])
+
+        // Only include tasks that belong to the selected project AND are assigned to the current user
+        // Fallback: if assignees array is missing, we consider it already filtered by backend
+        return tasks.filter((t) => {
+            if (t.project_id !== pid) return false
+            if (!Array.isArray(t.assignees)) return true
+            return t.assignees.some((u) => u.id === currentUserId)
+        })
+    }, [projectId, tasks, currentUserId])
 
     const selectedProject = useMemo(() => {
         const pid = Number(projectId)
@@ -56,7 +69,10 @@ export default function QuickTrackModal({ open, onOpenChange }: QuickTrackModalP
     }, [projectId, projects])
 
     const handlePlay = (task: TaskType) => {
-        if (running) return
+        if (running) {
+            toast.info('Tracker in session')
+            return
+        }
         start({
             id: task.id,
             title: task.title,
@@ -70,8 +86,19 @@ export default function QuickTrackModal({ open, onOpenChange }: QuickTrackModalP
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="border-neutral-200 bg-white sm:max-w-3xl md:max-w-4xl dark:border-neutral-700 dark:bg-neutral-800">
                 <DialogHeader>
-                    <DialogTitle>Quick Track</DialogTitle>
-                    <DialogDescription>Select a project to quickly start tracking one of your assigned tasks.</DialogDescription>
+                    <div className="flex items-start justify-between gap-3">
+                        <div>
+                            <DialogTitle>Quick Track</DialogTitle>
+                            <DialogDescription>Select a project to quickly start tracking one of your assigned tasks.</DialogDescription>
+                        </div>
+                        <div className="hidden sm:flex items-center gap-1 rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[10px] font-medium text-neutral-600 dark:border-neutral-700 dark:bg-neutral-800/60 dark:text-neutral-300 mr-12">
+                            <kbd className="rounded bg-white/70 px-1 py-[1px] shadow-sm dark:bg-neutral-700/60">Ctrl</kbd>
+                            <span>+</span>
+                            <kbd className="rounded bg-white/70 px-1 py-[1px] shadow-sm dark:bg-neutral-700/60">Shift</kbd>
+                            <span>+</span>
+                            <kbd className="rounded bg-white/70 px-1 py-[1px] shadow-sm dark:bg-neutral-700/60">T</kbd>
+                        </div>
+                    </div>
                 </DialogHeader>
 
                 <div className="space-y-4">
