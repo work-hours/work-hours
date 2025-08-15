@@ -1,14 +1,16 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import axios from 'axios'
-import { Edit, LoaderCircle, Plus, Save, Trash2 } from 'lucide-react'
+import { Edit, LoaderCircle, MoreVertical, Plus, Save, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import TagDeleteAction from '@/components/tag-delete-action'
 import MasterLayout from '@/layouts/master-layout'
 
 type Tag = {
@@ -65,11 +67,6 @@ export default function Tags({ tags }: TagsPageProps) {
         setEditingTag(tag)
         setEditData({ name: tag.name, color: tag.color })
         setIsEditDialogOpen(true)
-    }
-
-    const openDeleteDialog = (tag: Tag) => {
-        setDeletingTag(tag)
-        setIsDeleteDialogOpen(true)
     }
 
     const createTag = async () => {
@@ -208,27 +205,28 @@ export default function Tags({ tags }: TagsPageProps) {
                                                         {tag.name}
                                                     </div>
                                                 </td>
-                                                <td className="space-x-2 px-6 py-4 text-right">
-                                                    <Button
-                                                        onClick={() => openEditDialog(tag)}
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-7 w-7 border-amber-100 bg-amber-50 p-0 text-amber-700 shadow-sm transition-all duration-200 hover:border-amber-200 hover:bg-amber-100 hover:text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300 dark:hover:bg-amber-900/30"
-                                                        title="Edit Tag"
-                                                    >
-                                                        <Edit className="h-3 w-3" />
-                                                        <span className="sr-only">Edit</span>
-                                                    </Button>
-                                                    <Button
-                                                        onClick={() => openDeleteDialog(tag)}
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-7 w-7 border-neutral-200 bg-red-100 p-0 text-red-600 shadow-sm transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-red-800/50 dark:hover:bg-red-900/20 dark:hover:text-red-400"
-                                                        title="Delete Tag"
-                                                    >
-                                                        <Trash2 className="h-3 w-3" />
-                                                        <span className="sr-only">Delete</span>
-                                                    </Button>
+                                                <td className="px-6 py-4 text-right">
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                            >
+                                                                <MoreVertical className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="w-48">
+                                                            <DropdownMenuItem
+                                                                onClick={() => openEditDialog(tag)}
+                                                                className="group cursor-pointer"
+                                                            >
+                                                                <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                <span>Edit</span>
+                                                            </DropdownMenuItem>
+                                                            <TagDeleteAction tagId={tag.id} tagName={tag.name} onDeleteSuccess={() => getClients()} />
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 </td>
                                             </tr>
                                         ))}
@@ -278,7 +276,7 @@ export default function Tags({ tags }: TagsPageProps) {
                     <form
                         onSubmit={(e) => {
                             e.preventDefault()
-                            createTag()
+                            createTag().then()
                         }}
                     >
                         <div className="grid gap-4 py-4">

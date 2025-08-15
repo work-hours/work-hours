@@ -95,7 +95,7 @@ function TrackTimeMenuItem({ task }: { task: Task }) {
                 }
             }}
         >
-            <Play className="h-4 w-4 text-emerald-600 group-hover:text-emerald-700 dark:text-emerald-400 dark:group-hover:text-emerald-300" />
+            <Play className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
             <span>{tracker.running ? 'Tracker in session' : 'Start tracking'}</span>
         </DropdownMenuItem>
     )
@@ -762,7 +762,7 @@ export default function Tasks() {
                                                                 {/* View Details action */}
                                                                 <Link href={route('task.detail', task.id)}>
                                                                     <DropdownMenuItem className="group cursor-pointer">
-                                                                        <Glasses className="h-4 w-4 text-blue-600 group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300" />
+                                                                        <Glasses className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                         <span>View</span>
                                                                     </DropdownMenuItem>
                                                                 </Link>

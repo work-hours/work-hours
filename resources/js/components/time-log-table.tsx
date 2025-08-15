@@ -240,7 +240,7 @@ export default function TimeLogTable({
                                                             className="group cursor-pointer"
                                                         >
                                                             <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                            <span>Edit Log</span>
+                                                            <span>Edit</span>
                                                         </DropdownMenuItem>
                                                     ) : (
                                                         <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
