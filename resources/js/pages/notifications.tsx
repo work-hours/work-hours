@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import Loader from '@/components/ui/loader'
 import { Separator } from '@/components/ui/separator'
 import MasterLayout from '@/layouts/master-layout'
@@ -125,7 +125,7 @@ export default function Notifications() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Notifications" />
-            <div className="mx-auto max-w-5xl flex flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="rounded-full bg-gray-50 p-3 dark:bg-gray-950/30">
@@ -212,9 +212,7 @@ export default function Notifications() {
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                                                        {notification.created_at}
-                                                    </span>
+                                                    <span className="text-xs text-gray-500 dark:text-gray-400">{notification.created_at}</span>
                                                     {!notification.read_at && (
                                                         <Badge className="bg-gray-500 text-white hover:bg-gray-600 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500">
                                                             New

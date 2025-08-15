@@ -3,12 +3,12 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useTimeTracker } from '@/contexts/time-tracker-context'
 import type { Project as ProjectType, Task as TaskType } from '@/pages/task/types'
+import type { SharedData } from '@/types'
 import { projects as _projects, tasks as _tasks } from '@actions/DashboardController'
+import { usePage } from '@inertiajs/react'
 import { Play } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { usePage } from '@inertiajs/react'
-import type { SharedData } from '@/types'
 
 interface QuickTrackModalProps {
     open: boolean
@@ -54,8 +54,6 @@ export default function QuickTrackModal({ open, onOpenChange }: QuickTrackModalP
         const pid = Number(projectId)
         if (!pid) return []
 
-        // Only include tasks that belong to the selected project AND are assigned to the current user
-        // Fallback: if assignees array is missing, we consider it already filtered by backend
         return tasks.filter((t) => {
             if (t.project_id !== pid) return false
             if (!Array.isArray(t.assignees)) return true
@@ -91,7 +89,7 @@ export default function QuickTrackModal({ open, onOpenChange }: QuickTrackModalP
                             <DialogTitle>Quick Track</DialogTitle>
                             <DialogDescription>Select a project to quickly start tracking one of your assigned tasks.</DialogDescription>
                         </div>
-                        <div className="hidden sm:flex items-center gap-1 rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[10px] font-medium text-neutral-600 dark:border-neutral-700 dark:bg-neutral-800/60 dark:text-neutral-300 mr-12">
+                        <div className="mr-12 hidden items-center gap-1 rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[10px] font-medium text-neutral-600 sm:flex dark:border-neutral-700 dark:bg-neutral-800/60 dark:text-neutral-300">
                             <kbd className="rounded bg-white/70 px-1 py-[1px] shadow-sm dark:bg-neutral-700/60">Ctrl</kbd>
                             <span>+</span>
                             <kbd className="rounded bg-white/70 px-1 py-[1px] shadow-sm dark:bg-neutral-700/60">Shift</kbd>

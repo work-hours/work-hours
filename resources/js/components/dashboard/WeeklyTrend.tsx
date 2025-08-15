@@ -28,8 +28,20 @@ export default function WeeklyTrend({ weeklyData }: { weeklyData: Array<{ name: 
                         <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.2} />
                         <XAxis dataKey="name" axisLine={false} tickLine={false} tick={tickStyle} />
                         <YAxis axisLine={false} tickLine={false} tick={tickStyle} tickFormatter={(value) => `${value}`} />
-                        <Tooltip formatter={(value) => [`${value} hours`, 'Hours']} contentStyle={tooltipStyle} itemStyle={{ color: 'var(--foreground)' }} />
-                        <Area type="monotone" dataKey="hours" stroke="#64748B" strokeWidth={2} fill="url(#colorHours)" activeDot={{ r: 6, strokeWidth: 0 }} animationDuration={750} />
+                        <Tooltip
+                            formatter={(value) => [`${value} hours`, 'Hours']}
+                            contentStyle={tooltipStyle}
+                            itemStyle={{ color: 'var(--foreground)' }}
+                        />
+                        <Area
+                            type="monotone"
+                            dataKey="hours"
+                            stroke="#64748B"
+                            strokeWidth={2}
+                            fill="url(#colorHours)"
+                            activeDot={{ r: 6, strokeWidth: 0 }}
+                            animationDuration={750}
+                        />
                     </AreaChart>
                 </ResponsiveContainer>
             </CardContent>

@@ -43,14 +43,24 @@ export default function TeamProductivity({ teamStats }: { teamStats: TeamStats }
                             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }} />
                             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }} />
                             <Tooltip formatter={(value) => [`${value} hours`, 'Hours']} contentStyle={tooltipStyle} />
-                            <Bar dataKey="hours" fill="#94A3B8" radius={[4, 4, 0, 0]} barSize={40} animationDuration={750} className="transition-opacity hover:opacity-90" />
+                            <Bar
+                                dataKey="hours"
+                                fill="#94A3B8"
+                                radius={[4, 4, 0, 0]}
+                                barSize={40}
+                                animationDuration={750}
+                                className="transition-opacity hover:opacity-90"
+                            />
                         </BarChart>
                     </ResponsiveContainer>
                 ) : (
                     <div className="flex h-full flex-col items-center justify-center text-gray-500 dark:text-gray-400">
                         <UsersIcon className="mb-3 h-12 w-12 opacity-30" />
                         <p className="mb-2 text-sm">Add team members to see productivity insights</p>
-                        <Link href="/team/create" className="mt-1 rounded-md bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                        <Link
+                            href="/team/create"
+                            className="mt-1 rounded-md bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                        >
                             Add team members
                         </Link>
                     </div>

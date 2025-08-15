@@ -42,14 +42,12 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
     const [quickOpen, setQuickOpen] = useState(false)
     const { running } = useTimeTracker()
 
-    // Keyboard shortcut: Ctrl/Cmd + Shift + T to open Quick Track modal
     useEffect(() => {
         const onKeyDown = (e: KeyboardEvent) => {
             const isT = (e.key || '').toLowerCase() === 't'
             const combo = (e.ctrlKey || e.metaKey) && e.shiftKey && isT
             if (!combo) return
 
-            // Prevent the browser default (often re-open last closed tab)
             e.preventDefault()
             if (!running) {
                 setQuickOpen(true)

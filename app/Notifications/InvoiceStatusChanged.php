@@ -105,12 +105,11 @@ final class InvoiceStatusChanged extends Notification
     /**
      * Generate a PDF for the invoice.
      */
-    private function generateInvoicePdf()
+    private function generateInvoicePdf(): ?\Barryvdh\DomPDF\PDF
     {
         try {
 
             if (! class_exists(Pdf::class)) {
-
                 return null;
             }
 

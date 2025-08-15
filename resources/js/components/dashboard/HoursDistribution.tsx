@@ -35,7 +35,11 @@ export default function HoursDistribution({ hoursData }: { hoursData: Array<{ na
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} className="transition-opacity hover:opacity-80" />
                             ))}
                         </Pie>
-                        <Tooltip formatter={(value) => [`${value} hours`, '']} contentStyle={tooltipStyle} itemStyle={{ color: 'var(--foreground)' }} />
+                        <Tooltip
+                            formatter={(value) => [`${value} hours`, '']}
+                            contentStyle={tooltipStyle}
+                            itemStyle={{ color: 'var(--foreground)' }}
+                        />
                         <Legend iconType="circle" />
                     </PieChart>
                 </ResponsiveContainer>
