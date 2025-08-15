@@ -47,6 +47,31 @@ final class ClientStore
         ]);
     }
 
+    public static function filters(): array
+    {
+        return [
+            'search' => request('search', ''),
+            'created-date-from' => request('created-date-from', ''),
+            'created-date-to' => request('created-date-to', ''),
+        ];
+    }
+
+    public static function exportHeaders(): array
+    {
+        return [
+            'ID',
+            'Name',
+            'Email',
+            'Contact Person',
+            'Phone',
+            'Address',
+            'Notes',
+            'Hourly Rate',
+            'Currency',
+            'Created At',
+        ];
+    }
+
     private static function applyFilterPipeline(Builder $query): Builder
     {
         return app(Pipeline::class)

@@ -1,11 +1,12 @@
 import DatePicker from '@/components/ui/date-picker'
 import { Head, useForm } from '@inertiajs/react'
-import { ArrowLeft, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
+import { Clock, LoaderCircle, Save, Timer } from 'lucide-react'
 import { FormEventHandler, useMemo } from 'react'
 import { toast } from 'sonner'
 
+import BackButton from '@/components/back-button'
 import InputError from '@/components/input-error'
-import { Button } from '@/components/ui/button'
+import SubmitButton from '@/components/submit-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import CustomInput from '@/components/ui/custom-input'
@@ -71,11 +72,9 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
         tags: [],
     })
 
-    // Convert string timestamps to Date objects for DatePicker
     const startDate = data.start_timestamp ? new Date(data.start_timestamp) : new Date()
     const endDate = data.end_timestamp ? new Date(data.end_timestamp) : null
 
-    // Calculate hours between start and end time when both are filled
     const calculatedHours = useMemo(() => {
         if (!data.start_timestamp || !data.end_timestamp) return null
 
@@ -87,15 +86,12 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
         return Math.round(diffHours * 100) / 100 // Round to 2 decimal places
     }, [data.start_timestamp, data.end_timestamp])
 
-    // Handle date and time changes
     const handleDateChange = (date: Date | null) => {
         if (date) {
-            // Preserve the time from the existing start_timestamp
             const currentStart = new Date(data.start_timestamp)
             const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), currentStart.getHours(), currentStart.getMinutes())
             setData('start_timestamp', localDate.toISOString())
 
-            // If end_timestamp exists, update it to use the same date
             if (data.end_timestamp) {
                 const currentEnd = new Date(data.end_timestamp)
                 const newEndDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), currentEnd.getHours(), currentEnd.getMinutes())
@@ -106,7 +102,6 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
 
     const handleStartTimeChange = (date: Date | null) => {
         if (date) {
-            // Preserve the date from the existing start_timestamp
             const currentStart = new Date(data.start_timestamp)
             const localDate = new Date(
                 currentStart.getFullYear(),
@@ -116,12 +111,18 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                 date.getMinutes(),
             )
             setData('start_timestamp', localDate.toISOString())
+
+            if (data.end_timestamp) {
+                const currentEnd = new Date(data.end_timestamp)
+                if (currentEnd.getTime() <= localDate.getTime()) {
+                    setData('end_timestamp', '')
+                }
+            }
         }
     }
 
     const handleEndTimeChange = (date: Date | null) => {
         if (date) {
-            // Use the date from start_timestamp but time from the selected end time
             const startDate = new Date(data.start_timestamp)
             const localDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), date.getHours(), date.getMinutes())
             setData('end_timestamp', localDate.toISOString())
@@ -171,7 +172,7 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                             value={data.project_id !== null ? data.project_id.toString() : ''}
                                             onChange={(value) => {
                                                 setData('project_id', parseInt(value))
-                                                // Reset task_id when project changes
+
                                                 setData('task_id', null)
                                             }}
                                             options={projects}
@@ -306,13 +307,23 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                                 isClearable
                                                 placeholderText="Select end time (optional)"
                                                 filterDate={(date) => {
-                                                    // Only allow the same date as the start date
                                                     const start = new Date(data.start_timestamp)
                                                     return (
                                                         date.getDate() === start.getDate() &&
                                                         date.getMonth() === start.getMonth() &&
                                                         date.getFullYear() === start.getFullYear()
                                                     )
+                                                }}
+                                                filterTime={(time) => {
+                                                    const start = new Date(data.start_timestamp)
+                                                    const cmp = new Date(
+                                                        start.getFullYear(),
+                                                        start.getMonth(),
+                                                        start.getDate(),
+                                                        time.getHours(),
+                                                        time.getMinutes(),
+                                                    )
+                                                    return cmp.getTime() > start.getTime()
                                                 }}
                                                 customInput={
                                                     <CustomInput
@@ -344,14 +355,14 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="note" className="text-sm font-medium">
-                                        Note
+                                        Note {data.task_id ? '(Optional)' : ''}
                                     </Label>
                                     <Input
                                         id="note"
                                         value={data.note}
                                         onChange={(e) => setData('note', e.target.value)}
                                         placeholder="Enter a note about this time log"
-                                        required
+                                        required={!data.task_id}
                                         disabled={processing}
                                         tabIndex={3}
                                     />
@@ -368,21 +379,16 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                 </div>
 
                                 <div className="mt-4 flex justify-end gap-3">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => window.history.back()}
-                                        tabIndex={6}
-                                        disabled={processing}
-                                        className="flex items-center gap-2"
-                                    >
-                                        <ArrowLeft className="h-4 w-4" />
-                                        Back
-                                    </Button>
-                                    <Button type="submit" tabIndex={5} disabled={processing} className="flex items-center gap-2">
-                                        {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                        {processing ? 'Saving...' : 'Save Time Log'}
-                                    </Button>
+                                    <BackButton tabIndex={6} disabled={processing} />
+                                    <SubmitButton
+                                        tabIndex={5}
+                                        loading={processing}
+                                        idleLabel="Save Time Log"
+                                        loadingLabel="Saving..."
+                                        idleIcon={<Save className="h-4 w-4" />}
+                                        loadingIcon={<LoaderCircle className="h-4 w-4 animate-spin" />}
+                                        className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    />
                                 </div>
                             </div>
                         </form>

@@ -1,10 +1,12 @@
 import { type SharedData } from '@/types'
 import { Head, useForm, usePage } from '@inertiajs/react'
-import { ArrowLeft, Calendar, FileText, Hash, LoaderCircle, Plus, Save, Trash2, User } from 'lucide-react'
+import { Calendar, FileText, Hash, LoaderCircle, Plus, Trash2, User } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+import BackButton from '@/components/back-button'
 import InputError from '@/components/input-error'
+import SubmitButton from '@/components/submit-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
@@ -113,7 +115,6 @@ export default function CreateInvoice() {
         ],
     })
 
-    // Load clients
     useEffect(() => {
         const fetchClients = async () => {
             try {
@@ -131,7 +132,6 @@ export default function CreateInvoice() {
         fetchClients().then()
     }, [])
 
-    // Load time logs when a client is selected
     useEffect(() => {
         const fetchTimeLogs = async () => {
             if (!data.client_id) return
@@ -145,7 +145,6 @@ export default function CreateInvoice() {
 
                 setTimeLogs(timeLogsData)
 
-                // Update currency based on client currency or user currency
                 if (timeLogsData.length > 0) {
                     const clientCurrency = timeLogsData[0]?.currency
                     if (clientCurrency) {
@@ -165,14 +164,12 @@ export default function CreateInvoice() {
         fetchTimeLogs().then()
     }, [data.client_id])
 
-    // Calculate subtotal (sum of all item amounts)
     const calculateSubtotal = (): number => {
         return data.items.reduce((total, item) => {
             return total + parseFloat(item.amount || '0')
         }, 0)
     }
 
-    // Calculate discount amount based on type and value
     const calculateDiscount = (): number => {
         const subtotal = calculateSubtotal()
 
@@ -181,20 +178,16 @@ export default function CreateInvoice() {
         }
 
         if (data.discount_type === 'percentage') {
-            // Calculate percentage discount
             return (subtotal * parseFloat(data.discount_value)) / 100
         } else if (data.discount_type === 'fixed') {
-            // Apply fixed discount
             const discountAmount = parseFloat(data.discount_value)
 
-            // Ensure discount doesn't exceed subtotal
             return discountAmount > subtotal ? subtotal : discountAmount
         }
 
         return 0
     }
 
-    // Calculate tax amount based on type and rate
     const calculateTax = (): number => {
         const subtotal = calculateSubtotal()
         const discount = calculateDiscount()
@@ -206,20 +199,16 @@ export default function CreateInvoice() {
         }
 
         if (data.tax_type === 'percentage') {
-            // Calculate percentage tax
             return (taxableAmount * parseFloat(data.tax_rate)) / 100
         } else if (data.tax_type === 'fixed') {
-            // Apply fixed tax
             const taxAmount = parseFloat(data.tax_rate)
 
-            // Ensure tax doesn't exceed subtotal
             return taxAmount > taxableAmount ? taxableAmount : taxAmount
         }
 
         return 0
     }
 
-    // Calculate total amount after discount and tax
     const calculateTotal = (): number => {
         const subtotal = calculateSubtotal()
         const discount = calculateDiscount()
@@ -228,7 +217,6 @@ export default function CreateInvoice() {
         return subtotal - discount + tax
     }
 
-    // Add new item
     const addItem = (): void => {
         setData('items', [
             ...data.items,
@@ -242,14 +230,12 @@ export default function CreateInvoice() {
         ])
     }
 
-    // Remove item
     const removeItem = (index: number): void => {
         const updatedItems = [...data.items]
         updatedItems.splice(index, 1)
         setData('items', updatedItems)
     }
 
-    // Update item
     const updateItem = (index: number, field: keyof InvoiceItemForm, value: string | number): void => {
         const updatedItems = [...data.items]
 
@@ -258,7 +244,6 @@ export default function CreateInvoice() {
             [field]: value.toString(), // Convert value to string to match InvoiceItemForm type
         }
 
-        // Calculate the amount if quantity or unit_price changes
         if (field === 'quantity' || field === 'unit_price') {
             const quantity = parseFloat(field === 'quantity' ? value.toString() : updatedItems[index].quantity || '0')
             const unitPrice = parseFloat(field === 'unit_price' ? value.toString() : updatedItems[index].unit_price || '0')
@@ -268,15 +253,12 @@ export default function CreateInvoice() {
         setData('items', updatedItems)
     }
 
-    // Handle time log selection
     const handleTimeLogSelection = (index: number, value: string | object): void => {
         const updatedItems = [...data.items]
 
-        // Check if value is an empty object and convert it to 'none'
         const stringValue = typeof value === 'object' && Object.keys(value).length === 0 ? 'none' : (value as string)
 
         if (stringValue === 'none') {
-            // Update all fields at once for 'none' selection
             updatedItems[index] = {
                 ...updatedItems[index],
                 time_log_id: null as unknown as string,
@@ -290,13 +272,11 @@ export default function CreateInvoice() {
             return
         }
 
-        // Check if it's a project selection (format: "project-{projectId}")
         if (stringValue.startsWith('project-')) {
             const projectId = parseInt(stringValue.replace('project-', ''))
             const projectGroup = timeLogs.find((group) => group.project_id === projectId)
 
             if (projectGroup) {
-                // Update all fields at once for project selection
                 const amount = ((projectGroup.total_hours || 0) * (projectGroup.hourly_rate || 0)).toFixed(2)
 
                 updatedItems[index] = {
@@ -313,14 +293,11 @@ export default function CreateInvoice() {
             return
         }
 
-        // It's an individual time log selection
         const timeLogId = value
 
-        // Find the project group that contains this time log
         for (const projectGroup of timeLogs) {
             const timeLog = projectGroup.time_logs.find((log) => log.id.toString() === timeLogId)
             if (timeLog) {
-                // Update all fields at once for individual time log selection
                 const amount = ((timeLog.duration || 0) * (projectGroup.hourly_rate || 0)).toFixed(2)
 
                 updatedItems[index] = {
@@ -351,7 +328,6 @@ export default function CreateInvoice() {
         })
     }
 
-    // Format currency
     const formatCurrency = (amount: number): string => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -371,16 +347,7 @@ export default function CreateInvoice() {
                         <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new invoice for a client</p>
                     </div>
                     <div className="flex gap-3">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => window.history.back()}
-                            disabled={processing}
-                            className="flex items-center gap-2"
-                        >
-                            <ArrowLeft className="h-4 w-4" />
-                            Back
-                        </Button>
+                        <BackButton disabled={processing} />
                     </div>
                 </section>
 
@@ -556,7 +523,12 @@ export default function CreateInvoice() {
                                 <CardTitle className="text-lg">Invoice Items</CardTitle>
                                 <CardDescription>Add the products or services you're invoicing for</CardDescription>
                             </div>
-                            <Button type="button" onClick={addItem} disabled={processing} className="flex items-center gap-2">
+                            <Button
+                                type="button"
+                                onClick={addItem}
+                                disabled={processing}
+                                className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                            >
                                 <Plus className="h-4 w-4" />
                                 Add Item
                             </Button>
@@ -694,7 +666,7 @@ export default function CreateInvoice() {
                                                         size="sm"
                                                         disabled={processing || data.items.length <= 1}
                                                         onClick={() => removeItem(index)}
-                                                        className="h-8 w-8 p-0 text-red-500 hover:bg-red-100/50 hover:text-red-700"
+                                                        className="h-8 w-8 bg-red-100 p-0 text-red-600 hover:bg-red-200"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                         <span className="sr-only">Remove</span>
@@ -831,10 +803,15 @@ export default function CreateInvoice() {
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-end border-t p-4">
-                                <Button type="submit" disabled={processing} className="flex items-center gap-2">
-                                    {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                    {processing ? 'Creating...' : 'Create Invoice'}
-                                </Button>
+                                <SubmitButton
+                                    disabled={processing}
+                                    loading={processing}
+                                    idleLabel="Create Invoice"
+                                    loadingLabel="Creating..."
+                                    idleIcon={<Plus className="h-4 w-4" />}
+                                    loadingIcon={<LoaderCircle className="h-4 w-4 animate-spin" />}
+                                    className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                />
                             </CardFooter>
                         </Card>
                     </div>

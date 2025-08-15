@@ -6,41 +6,32 @@ import Footer from '@/components/landing/Footer'
 import Hero from '@/components/landing/Hero'
 import HowItWorks from '@/components/landing/HowItWorks'
 import Navbar from '@/components/landing/Navbar'
-import Background from '@/components/ui/background'
 import { Head } from '@inertiajs/react'
 import { useEffect } from 'react'
 
 export default function Welcome() {
-    // Handle scrolling to section based on URL hash after navigation
     useEffect(() => {
-        // Get the hash from the URL (e.g., #features, #how-it-works)
         const hash = window.location.hash
 
         if (hash) {
-            // Remove the # character
             const sectionId = hash.substring(1)
-
-            // Find the element with the corresponding ID
             const element = document.getElementById(sectionId)
 
-            // If the element exists, scroll to it
             if (element) {
-                // Use a small timeout to ensure the page is fully loaded
                 setTimeout(() => {
                     element.scrollIntoView({ behavior: 'smooth' })
                 }, 100)
             }
         }
     }, [])
-    return (
-        <div className="relative min-h-screen overflow-hidden bg-[#f8f6e9] dark:bg-gray-900" style={{ scrollBehavior: 'smooth' }}>
-            <Background />
 
+    return (
+        <div className="relative min-h-screen bg-gray-50 dark:bg-gray-900" style={{ scrollBehavior: 'smooth' }}>
             <Head>
-                <title>Work Hours - Track Your Time Effortlessly | Time Tracking Software</title>
+                <title>Work Hours - Simple Time Tracking for Productive Teams</title>
                 <meta
                     name="description"
-                    content="A simple, intuitive time tracking solution for teams and individuals. Boost productivity, improve billing accuracy, and gain valuable insights into how you spend your time."
+                    content="A minimal, intuitive time tracking solution for teams and individuals. Boost productivity, improve billing accuracy, and gain valuable insights into how you spend your time."
                 />
                 <meta
                     name="keywords"
@@ -83,28 +74,57 @@ export default function Welcome() {
                 </script>
             </Head>
 
-            <Navbar />
-
-            <div className="pt-28">
-                <Hero />
-                <div className="mx-auto w-9/12">
-                    <div id="features">
-                        <Features />
-                    </div>
-                    <div id="ai-section">
-                        <AiSection />
-                    </div>
-                    <div id="how-it-works">
-                        <HowItWorks />
-                    </div>
-                </div>
-                <div id="cta">
-                    <CTA />
-                </div>
-                <div className="relative z-10 mx-auto w-full">
-                    <Footer />
-                </div>
+            <div className="sticky top-0 z-50 w-full border-b border-gray-200/80 bg-white/80 backdrop-blur-sm dark:border-gray-800/80 dark:bg-gray-900/80">
+                <Navbar />
             </div>
+
+            <main className="flex w-full flex-col">
+                <section className="w-full bg-slate-100 py-20 dark:bg-slate-800/80">
+                    <Hero />
+                </section>
+
+                <section className="w-full bg-white py-20 dark:bg-gray-950">
+                    <div className="container mx-auto px-4 md:px-6 lg:px-8">
+                        <div className="mx-auto max-w-5xl">
+                            <div id="features" className="py-10">
+                                <Features />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="w-full bg-slate-100 py-20 dark:bg-slate-800/80">
+                    <div className="container mx-auto px-4 md:px-6 lg:px-8">
+                        <div className="mx-auto max-w-5xl">
+                            <div id="ai-section" className="py-10">
+                                <AiSection />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="w-full bg-white py-20 dark:bg-gray-950">
+                    <div className="container mx-auto px-4 md:px-6 lg:px-8">
+                        <div className="mx-auto max-w-5xl">
+                            <div id="how-it-works" className="py-10">
+                                <HowItWorks />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="cta" className="w-full bg-slate-100 py-20 dark:bg-slate-800/80">
+                    <div className="container mx-auto px-4 md:px-6 lg:px-8">
+                        <div className="mx-auto">
+                            <CTA />
+                        </div>
+                    </div>
+                </section>
+
+                <section className="relative w-full bg-white py-12 dark:bg-gray-950">
+                    <Footer />
+                </section>
+            </main>
 
             {/* Cookie Consent Banner */}
             <CookieConsent />

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Adapters\GitHubAdapter;
+use App\Adapters\JiraAdapter;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Stores\ProjectStore;
@@ -12,14 +13,17 @@ use App\Http\Stores\TaskStore;
 use App\Models\Project;
 use App\Models\Tag;
 use App\Models\Task;
+use App\Models\TaskComment;
 use App\Models\User;
 use App\Notifications\TaskAssigned;
+use App\Notifications\TaskCommented;
 use App\Notifications\TaskCompleted;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Msamgan\Lact\Attributes\Action;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -33,11 +37,140 @@ final class TaskController extends Controller
      * Constructor for TaskController
      */
     public function __construct(
-        /**
-         * GitHub adapter for handling GitHub-related operations
-         */
-        private GitHubAdapter $gitHubAdapter
+        private readonly GitHubAdapter $gitHubAdapter,
+        private readonly JiraAdapter $jiraAdapter
     ) {}
+
+    #[Action(method: 'post', name: 'task.comments.store', params: ['task'], middleware: ['auth', 'verified'])]
+    public function storeComment(Task $task): void
+    {
+        $task->load(['project', 'assignees']);
+
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
+        $isAssignee = $task->assignees->contains('id', auth()->id());
+
+        abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
+
+        request()->validate([
+            'body' => ['required', 'string', 'max:5000'],
+        ]);
+
+        $comment = TaskComment::query()->create([
+            'task_id' => $task->id,
+            'user_id' => auth()->id(),
+            'body' => request('body'),
+        ]);
+
+        $recipientIds = collect([$task->project->user_id])
+            ->merge($task->assignees->pluck('id'))
+            ->unique()
+            ->reject(fn ($id): bool => $id === (int) auth()->id())
+            ->values();
+
+        $rawBody = (string) request('body');
+
+        $textBody = mb_trim(strip_tags($rawBody));
+
+        if ($textBody !== '' && preg_match_all('/@([A-Za-z0-9._-]+)/', $textBody, $matches)) {
+            $handles = collect($matches[1] ?? [])->filter()->map(fn ($h): string => mb_strtolower($h))->unique()->values();
+
+            if ($handles->isNotEmpty()) {
+                $allowedUsers = collect([$task->project->user])
+                    ->merge($task->project->teamMembers)
+                    ->merge($task->assignees)
+                    ->filter()
+                    ->unique('id')
+                    ->values();
+
+                $normalize = static function (string $name): string {
+                    $base = mb_strtolower($name);
+
+                    return preg_replace('/[^a-z0-9._-]+/i', '', $base) ?? $base;
+                };
+
+                $handleToUserIds = collect();
+                foreach ($allowedUsers as $u) {
+                    $handle = $normalize($u->name);
+                    if ($handle !== '') {
+                        $handleToUserIds->put($handle, $u->id);
+                    }
+
+                    if (! empty($u->email) && str_contains($u->email, '@')) {
+                        $local = mb_strtolower(strtok($u->email, '@'));
+                        if ($local !== '0') {
+                            $handleToUserIds->put($local, $u->id);
+                        }
+                    }
+                }
+
+                $mentionedIds = $handles
+                    ->map(fn ($h) => $handleToUserIds->get($h))
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                if ($mentionedIds->isNotEmpty()) {
+                    $recipientIds = $recipientIds->merge($mentionedIds)->unique()->values();
+                }
+            }
+        }
+
+        $recipientIdArray = $recipientIds
+            ->reject(fn ($id): bool => $id === (int) auth()->id())
+            ->values()
+            ->all();
+
+        if ($recipientIdArray !== []) {
+            $users = User::query()->whereIn('id', $recipientIdArray)->get();
+            foreach ($users as $user) {
+                $user->notify(new TaskCommented($task, $comment, auth()->user()));
+            }
+        }
+
+        back()->throwResponse();
+    }
+
+    #[Action(method: 'delete', name: 'task.comments.destroy', params: ['task', 'comment'], middleware: ['auth', 'verified'])]
+    public function destroyComment(Task $task, TaskComment $comment): void
+    {
+        abort_if($comment->task_id !== $task->id, 404, 'Comment not found for this task.');
+
+        $task->load(['project']);
+
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isCommentOwner = $comment->user_id === auth()->id();
+
+        abort_if(! $isProjectOwner && ! $isCommentOwner, 403, 'Unauthorized action.');
+
+        $comment->delete();
+
+        back()->throwResponse();
+    }
+
+    #[Action(method: 'put', name: 'task.comments.update', params: ['task', 'comment'], middleware: ['auth', 'verified'])]
+    public function updateComment(Task $task, TaskComment $comment): void
+    {
+
+        abort_if($comment->task_id !== $task->id, 404, 'Comment not found for this task.');
+
+        $task->load(['project']);
+
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isCommentOwner = $comment->user_id === auth()->id();
+
+        abort_if(! $isProjectOwner && ! $isCommentOwner, 403, 'Unauthorized action.');
+
+        request()->validate([
+            'body' => ['required', 'string', 'max:5000'],
+        ]);
+
+        $comment->update([
+            'body' => request('body'),
+        ]);
+
+        back()->throwResponse();
+    }
 
     /**
      * Display a listing of the resource.
@@ -119,27 +252,23 @@ final class TaskController extends Controller
             if ($request->has('assignees')) {
                 $task->assignees()->sync($request->input('assignees'));
 
-                // Load the project relationship for the notification
-                $task->load('project');
-
-                // Send notification to all assignees
-                $assigneeIds = $request->input('assignees');
-                $users = User::query()->whereIn('id', $assigneeIds)->get();
-                foreach ($users as $user) {
-                    $user->notify(new TaskAssigned($task, auth()->user()));
-                }
+                $this->notifyAssignees($task, $request->input('assignees'));
             }
 
-            // Attach tags if provided
             if ($request->has('tags')) {
                 $this->attachTags($request->input('tags'), $task);
             }
 
+            $this->storeAttachments($request, $task);
+
             DB::commit();
 
-            // Check if we need to create a GitHub issue for this task
             if ($request->boolean('create_github_issue')) {
                 $this->gitHubAdapter->createGitHubIssue($task);
+            }
+
+            if ($request->boolean('create_jira_issue')) {
+                $this->jiraAdapter->createJiraIssue($task);
             }
         } catch (Exception $e) {
             DB::rollBack();
@@ -153,10 +282,9 @@ final class TaskController extends Controller
     #[Action(method: 'get', name: 'task.show', params: ['task'], middleware: ['auth', 'verified'])]
     public function show(Task $task): Task
     {
-        // Load relationships
+
         $task->load(['project', 'assignees']);
 
-        // Check if user has access to this task
         $isProjectOwner = $task->project->user_id === auth()->id();
         $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
         $isAssignee = $task->assignees->contains('id', auth()->id());
@@ -167,14 +295,60 @@ final class TaskController extends Controller
     }
 
     /**
+     * Show task details page.
+     */
+    public function detail(Task $task)
+    {
+        $task->load(['project', 'project.user', 'project.teamMembers', 'assignees', 'tags', 'comments.user', 'meta']);
+
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
+        $isAssignee = $task->assignees->contains('id', auth()->id());
+
+        abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
+
+        $files = collect(Storage::disk('public')->files('tasks/' . $task->id))
+            ->map(fn (string $path): array => [
+                'name' => basename($path),
+                'url' => Storage::disk('public')->url($path),
+                'size' => Storage::disk('public')->size($path),
+            ]);
+
+        $normalize = static function (string $name): string {
+            $base = mb_strtolower($name);
+
+            return preg_replace('/[^a-z0-9._-]+/i', '', $base) ?? $base;
+        };
+
+        $mentionableUsers = collect([$task->project->user])
+            ->merge($task->project->teamMembers)
+            ->merge($task->assignees)
+            ->filter()
+            ->reject(fn ($u): bool => $u->id === auth()->id())
+            ->unique('id')
+            ->values()
+            ->map(fn ($u): array => [
+                'id' => $u->id,
+                'name' => $u->name,
+                'handle' => $normalize($u->name),
+                'email' => $u->email ?? null,
+            ]);
+
+        return Inertia::render('task/detail', [
+            'task' => $task,
+            'attachments' => $files,
+            'mentionableUsers' => $mentionableUsers,
+        ]);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Task $task)
     {
-        // Load relationships
+
         $task->load(['project', 'assignees', 'meta', 'tags']);
 
-        // Check if a user has access to edit this task
         $isProjectOwner = $task->project->user_id === auth()->id();
 
         abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
@@ -185,7 +359,6 @@ final class TaskController extends Controller
                 'name' => $project->name,
             ]);
 
-        // Get potential assignees (project team members and owner)
         $potentialAssignees = collect([$task->project->user])
             ->concat($task->project->teamMembers)
             ->unique('id')
@@ -198,6 +371,14 @@ final class TaskController extends Controller
         $taskTags = $task->tags->pluck('name')->toArray();
 
         $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
+        $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
+
+        $files = collect(Storage::disk('public')->files('tasks/' . $task->id))
+            ->map(fn (string $path): array => [
+                'name' => basename($path),
+                'url' => Storage::disk('public')->url($path),
+                'size' => Storage::disk('public')->size($path),
+            ]);
 
         return Inertia::render('task/edit', [
             'task' => $task,
@@ -206,6 +387,8 @@ final class TaskController extends Controller
             'assignedUsers' => $assignedUsers,
             'taskTags' => $taskTags,
             'isGithub' => $isGithub,
+            'isJira' => $isJira,
+            'attachments' => $files,
         ]);
     }
 
@@ -214,77 +397,88 @@ final class TaskController extends Controller
      *
      * @throws Throwable
      */
-    #[Action(method: 'put', name: 'task.update', params: ['task'], middleware: ['auth', 'verified'])]
+    #[Action(method: 'post', name: 'task.update', params: ['task'], middleware: ['auth', 'verified'])]
     public function update(UpdateTaskRequest $request, Task $task): void
     {
-        // Check if user has access to update this task
+        $isProjectOwner = $task->project->user_id === auth()->id();
+
+        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
+
+        DB::beginTransaction();
+        try {
+
+            $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
+            $oldStatus = $task->status;
+            $task->update($request->only(['project_id', 'title', 'description', 'status', 'priority', 'due_date']));
+
+            if ($request->has('assignees')) {
+                $newAssigneeIds = $request->input('assignees');
+                $task->assignees()->sync($newAssigneeIds);
+
+                $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
+                $this->notifyAssignees($task, $addedAssigneeIds);
+            } else {
+                $task->assignees()->detach();
+            }
+
+            if ($request->has('tags')) {
+                $this->attachTags($request->input('tags'), $task);
+            }
+
+            $this->storeAttachments($request, $task);
+
+            DB::commit();
+
+            $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
+
+            $this->updateExternalIntegrations(
+                $task,
+                $request->boolean('github_update'),
+                $request->boolean('jira_update')
+            );
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Action(method: 'put', name: 'task.updateStatus', params: ['task'], middleware: ['auth', 'verified'])]
+    public function updateStatus(Task $task): void
+    {
+        $task->loadMissing(['project', 'assignees', 'meta']);
+
         $isProjectOwner = $task->project->user_id === auth()->id();
         $isAssignee = $task->assignees->contains('id', auth()->id());
 
         abort_if(! $isProjectOwner && ! $isAssignee, 403, 'Unauthorized action.');
 
+        request()->validate([
+            'status' => ['required', 'string', 'in:pending,in_progress,completed'],
+            'github_update' => ['sometimes', 'boolean'],
+            'jira_update' => ['sometimes', 'boolean'],
+        ]);
+
         DB::beginTransaction();
         try {
-            // Store the old status to check if it's being changed to completed
+
             $oldStatus = $task->status;
 
-            // Get current assignees before update
-            $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
-
-            // If the project owner, allow full update
-            if ($isProjectOwner) {
-                $task->update($request->only(['title', 'description', 'status', 'priority', 'due_date']));
-
-                if ($request->has('assignees')) {
-                    $newAssigneeIds = $request->input('assignees');
-                    $task->assignees()->sync($newAssigneeIds);
-
-                    // Find newly added assignees
-                    $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
-
-                    if ($addedAssigneeIds !== []) {
-                        // Load the project relationship for the notification
-                        $task->load('project');
-
-                        // Send notification only to newly assigned users
-                        $newUsers = User::query()->whereIn('id', $addedAssigneeIds)->get();
-                        foreach ($newUsers as $user) {
-                            $user->notify(new TaskAssigned($task, auth()->user()));
-                        }
-                    }
-                } else {
-                    $task->assignees()->detach();
-                }
-            } else {
-                // If assignee, only allow status update
-                $task->update($request->only(['status']));
-            }
-
-            // Check if the status was changed to complete by someone other than the project owner
-            if ($oldStatus !== 'completed' && $request->input('status') === 'completed' && ! $isProjectOwner) {
-                // Load the project relationship for the notification if not already loaded
-                if (! $task->relationLoaded('project')) {
-                    $task->load('project');
-                }
-
-                // Get the project owner (task creator)
-                $projectOwner = User::query()->find($task->project->user_id);
-
-                // Send a notification to the project owner
-                $projectOwner->notify(new TaskCompleted($task, auth()->user()));
-            }
-
-            // Attach tags if provided
-            if ($request->has('tags')) {
-                $this->attachTags($request->input('tags'), $task);
-            }
+            $task->update([
+                'status' => request('status'),
+            ]);
 
             DB::commit();
 
-            // Update GitHub issue if requested
-            if ($task->is_imported && $task->meta && $task->meta->source === 'github' && $request->boolean('github_update')) {
-                $this->gitHubAdapter->updateGitHubIssue($task);
-            }
+            $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
+
+            $this->updateExternalIntegrations(
+                $task,
+                request()->boolean('github_update'),
+                request()->boolean('jira_update')
+            );
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -309,10 +503,12 @@ final class TaskController extends Controller
                 $this->gitHubAdapter->deleteGitHubIssue($task);
             }
 
-            // Detach all assignees first
+            if (request()->boolean('delete_from_jira') && $task->is_imported && $task->meta && $task->meta->source === 'jira') {
+                $this->jiraAdapter->deleteJiraIssue($task);
+            }
+
             $task->assignees()->detach();
 
-            // Delete the task
             $task->delete();
 
             DB::commit();
@@ -347,7 +543,6 @@ final class TaskController extends Controller
 
         abort_if(! $isProjectOwner && ! $isTeamMember, 403, 'Unauthorized action.');
 
-        // Get potential assignees (project team members and owner)
         return collect([$project->user])
             ->concat($project->teamMembers)
             ->unique('id')
@@ -375,6 +570,22 @@ final class TaskController extends Controller
         ]);
     }
 
+    #[Action(method: 'delete', name: 'task.attachments.destroy', params: ['task', 'filename'], middleware: ['auth', 'verified'])]
+    public function destroyAttachment(Task $task, string $filename): void
+    {
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
+
+        $basename = basename($filename);
+        $path = 'tasks/' . $task->id . '/' . $basename;
+
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
+
+        back()->throwResponse();
+    }
+
     /**
      * Attach tags to a task
      */
@@ -391,7 +602,71 @@ final class TaskController extends Controller
             $tagIds[] = $tag->id;
         }
 
-        // Sync the tags with the task
         $task->tags()->sync($tagIds);
+    }
+
+    /**
+     * Store uploaded attachments for the given task.
+     */
+    private function storeAttachments(StoreTaskRequest|UpdateTaskRequest $request, Task $task): void
+    {
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                if ($file) {
+                    $file->storeAs('tasks/' . $task->id, $file->getClientOriginalName(), 'public');
+                }
+            }
+        }
+    }
+
+    /**
+     * Notify users that have been assigned to the task.
+     */
+    private function notifyAssignees(Task $task, array $userIds): void
+    {
+        if ($userIds === []) {
+            return;
+        }
+
+        if (! $task->relationLoaded('project')) {
+            $task->load('project');
+        }
+
+        $users = User::query()->whereIn('id', $userIds)->get();
+        foreach ($users as $user) {
+            $user->notify(new TaskAssigned($task, auth()->user()));
+        }
+    }
+
+    /**
+     * Notify project owner if task transitioned to completed by a non-owner.
+     */
+    private function notifyOnCompletion(Task $task, string $oldStatus, bool $isProjectOwner): void
+    {
+        if ($oldStatus !== 'completed' && request('status') === 'completed' && ! $isProjectOwner) {
+            if (! $task->relationLoaded('project')) {
+                $task->load('project');
+            }
+
+            $projectOwner = User::query()->find($task->project->user_id);
+            $projectOwner?->notify(new TaskCompleted($task, auth()->user()));
+        }
+    }
+
+    /**
+     * Update external integrations for imported tasks when requested.
+     */
+    private function updateExternalIntegrations(Task $task, bool $githubFlag, bool $jiraFlag): void
+    {
+        $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
+        $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
+
+        if ($isGithub && $githubFlag) {
+            $this->gitHubAdapter->updateGitHubIssue($task);
+        }
+
+        if ($isJira && $jiraFlag) {
+            $this->jiraAdapter->updateJiraIssue($task);
+        }
     }
 }

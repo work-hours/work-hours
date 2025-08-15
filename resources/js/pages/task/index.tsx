@@ -1,6 +1,8 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import AddNewButton from '@/components/add-new-button'
 import DeleteTask from '@/components/delete-task'
-import TaskDetailsSheet from '@/components/task-details-sheet'
+import FilterButton from '@/components/filter-button'
+import SourceLinkIcon from '@/components/source-link-icon'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,6 +15,7 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
+import { useTimeTracker } from '@/contexts/time-tracker-context'
 import MasterLayout from '@/layouts/master-layout'
 import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem, type SharedData } from '@/types'
@@ -28,7 +31,6 @@ import {
     Edit,
     FileText,
     Flag,
-    GithubIcon,
     Glasses,
     Loader2,
     Play,
@@ -47,6 +49,32 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
+function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: number }) {
+    const tracker = useTimeTracker()
+
+    if (!task.assignees.some((a) => a.id === currentUserId)) return null
+
+    return (
+        <Button
+            variant="outline"
+            size="sm"
+            disabled={tracker.running}
+            onClick={() =>
+                tracker.start({
+                    id: task.id,
+                    title: task.title,
+                    project_id: task.project_id,
+                    project_name: task.project.name,
+                })
+            }
+            className="h-7 border-emerald-200 bg-emerald-50 px-2 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+            title={tracker.running ? 'Another tracker is running' : 'Start tracking'}
+        >
+            <Play className="h-3 w-3" />
+        </Button>
+    )
+}
+
 export default function Tasks() {
     const { auth, projects, tags } = usePage<
         SharedData & {
@@ -57,16 +85,14 @@ export default function Tasks() {
     const [tasks, setTasks] = useState<Task[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
-    const [selectedTask, setSelectedTask] = useState<Task | null>(null)
-    const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+
     const [statusDialogOpen, setStatusDialogOpen] = useState(false)
     const [selectedStatus, setSelectedStatus] = useState<Task['status'] | null>(null)
     const [isUpdating, setIsUpdating] = useState(false)
     const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null)
     const [updateGithub, setUpdateGithub] = useState<boolean>(true)
-    const [isThereRunningTracker, setIsThereRunningTracker] = useState(localStorage.getItem('activeTimeLog') !== null)
+    const [updateJira, setUpdateJira] = useState<boolean>(true)
 
-    // Filter states
     const [filters, setFilters] = useState<TaskFilters>({
         status: 'all',
         priority: 'all',
@@ -78,15 +104,11 @@ export default function Tasks() {
     })
     const [processing, setProcessing] = useState(false)
 
-    const handleViewDetails = (task: Task): void => {
-        setSelectedTask(task)
-        setIsDetailsOpen(true)
-    }
-
     const handleStatusClick = (task: Task, status: Task['status']): void => {
         setTaskToUpdate(task)
         setSelectedStatus(status)
-        setUpdateGithub(true) // Default to checked
+        setUpdateGithub(true)
+        setUpdateJira(true)
         setStatusDialogOpen(true)
     }
 
@@ -107,9 +129,9 @@ export default function Tasks() {
                 due_date: string | null
                 assignees: number[]
                 github_update?: boolean
+                jira_update?: boolean
             } = {
                 status: selectedStatus,
-                // Include other required fields to avoid validation errors
                 title: taskToUpdate.title,
                 project_id: taskToUpdate.project_id,
                 priority: taskToUpdate.priority,
@@ -118,14 +140,16 @@ export default function Tasks() {
                 assignees: taskToUpdate.assignees.map((a) => a.id),
             }
 
-            // Add github_update parameter for GitHub tasks
             if (taskToUpdate.is_imported && taskToUpdate.meta?.source === 'github') {
                 payload.github_update = updateGithub
             }
 
-            await axios.put(route('task.update', taskToUpdate.id), payload)
+            if (taskToUpdate.is_imported && taskToUpdate.meta?.source === 'jira') {
+                payload.jira_update = updateJira
+            }
 
-            // Update the task status locally
+            await axios.put(route('task.updateStatus', taskToUpdate.id), payload)
+
             const updatedTasks = tasks.map((task) => {
                 if (task.id === taskToUpdate.id) {
                     return { ...task, status: selectedStatus }
@@ -144,7 +168,6 @@ export default function Tasks() {
         }
     }
 
-    // Update URL with filters
     const getTasks = async (filters?: TaskFilters): Promise<void> => {
         setLoading(true)
         setError(false)
@@ -277,10 +300,6 @@ export default function Tasks() {
         })
     }
 
-    const isAssignedToCurrentUser = (task: Task): boolean => {
-        return task.assignees.some((assignee) => assignee.id === auth.user.id)
-    }
-
     useEffect(() => {
         const queryParams = queryStringToObject()
 
@@ -296,25 +315,21 @@ export default function Tasks() {
 
         setFilters(initialFilters)
         getTasks(initialFilters).then()
-
-        window.addEventListener('time-tracker-stopped', () => {
-            setIsThereRunningTracker(false)
-        })
     }, [])
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Tasks" />
-            <div className="mx-auto flex flex-col gap-6 p-3">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Task Management</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your tasks</p>
+                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Task Management</h1>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your tasks</p>
                 </section>
 
-                {/* Time Logs Card with filters in header */}
-                <Card className="transition-all hover:shadow-md">
-                    <CardHeader className="">
+                {/* Tasks Card with filters in header */}
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Tasks</CardTitle>
@@ -324,28 +339,26 @@ export default function Tasks() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton href={route('task.export')} label="Export" />
-                                <Link href={route('task.create')}>
-                                    <Button className="flex items-center gap-2">
-                                        <Plus className="h-4 w-4" />
-                                        <span>Add Task</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('task.create')}>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add Task</span>
+                                </AddNewButton>
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t pt-4">
+                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
                             <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
                                 {/* Search */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="search" className="text-xs font-medium">
+                                    <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Search
                                     </Label>
                                     <div className="relative">
-                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-400 dark:text-gray-500" />
                                         <Input
                                             id="search"
                                             placeholder="Search"
-                                            className="pl-10"
+                                            className="h-10 border-gray-200 bg-white pl-10 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
                                             value={filters.search}
                                             onChange={(e) => handleFilterChange('search', e.target.value)}
                                         />
@@ -354,7 +367,7 @@ export default function Tasks() {
 
                                 {/* Status Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="status" className="text-xs font-medium">
+                                    <Label htmlFor="status" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Status
                                     </Label>
                                     <SearchableSelect
@@ -370,13 +383,13 @@ export default function Tasks() {
                                         ]}
                                         placeholder="Statuses"
                                         disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
 
                                 {/* Priority Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="priority" className="text-xs font-medium">
+                                    <Label htmlFor="priority" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Priority
                                     </Label>
                                     <SearchableSelect
@@ -391,13 +404,13 @@ export default function Tasks() {
                                         ]}
                                         placeholder="Priorities"
                                         disabled={processing}
-                                        icon={<Flag className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<Flag className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
 
                                 {/* Project Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="project" className="text-xs font-medium">
+                                    <Label htmlFor="project" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Project
                                     </Label>
                                     <SearchableSelect
@@ -413,13 +426,13 @@ export default function Tasks() {
                                         ]}
                                         placeholder="Projects"
                                         disabled={processing}
-                                        icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
 
                                 {/* Tag Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="tag" className="text-xs font-medium">
+                                    <Label htmlFor="tag" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Tag
                                     </Label>
                                     <SearchableSelect
@@ -435,13 +448,13 @@ export default function Tasks() {
                                         ]}
                                         placeholder="Tags"
                                         disabled={processing}
-                                        icon={<Flag className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<Flag className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                     />
                                 </div>
 
                                 {/* Due Date From */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="due-date-from" className="text-xs font-medium">
+                                    <Label htmlFor="due-date-from" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Due Date From
                                     </Label>
                                     <DatePicker
@@ -453,9 +466,10 @@ export default function Tasks() {
                                         customInput={
                                             <CustomInput
                                                 id="due-date-from"
-                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select start date"
+                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
@@ -463,7 +477,7 @@ export default function Tasks() {
 
                                 {/* Due Date To */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="due-date-to" className="text-xs font-medium">
+                                    <Label htmlFor="due-date-to" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Due Date To
                                     </Label>
                                     <DatePicker
@@ -475,40 +489,37 @@ export default function Tasks() {
                                         customInput={
                                             <CustomInput
                                                 id="due-date-to"
-                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select end date"
+                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
                                 </div>
 
                                 <div className="flex items-end gap-2">
-                                    <Button type="submit" size="icon" className="h-9 w-9" title="Filter">
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                        <span className="sr-only">Filter</span>
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="icon"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={
-                                            filters.status === 'all' &&
-                                            filters.priority === 'all' &&
-                                            filters.project === 'all' &&
-                                            filters.tag === 'all' &&
-                                            !filters['due-date-from'] &&
-                                            !filters['due-date-to'] &&
-                                            !filters.search
+                                            processing ||
+                                            (filters.status === 'all' &&
+                                                filters.priority === 'all' &&
+                                                filters.project === 'all' &&
+                                                filters.tag === 'all' &&
+                                                !filters['due-date-from'] &&
+                                                !filters['due-date-to'] &&
+                                                !filters.search)
                                         }
                                         onClick={clearFilters}
-                                        className="h-9 w-9"
-                                        title="Clear Filters"
+                                        title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                        <span className="sr-only">Clear</span>
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
 
@@ -608,12 +619,18 @@ export default function Tasks() {
                             <Table>
                                 <TableHeader>
                                     <TableHeaderRow>
-                                        <TableHead>Title</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Priority</TableHead>
-                                        <TableHead>Due Date</TableHead>
-                                        <TableHead>Assignees</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Title
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Due Date
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Assignees
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Actions
+                                        </TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
                                 <TableBody>
@@ -622,7 +639,11 @@ export default function Tasks() {
                                             <TableCell className="max-w-xl font-medium">
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <span>{task.title}</span>
-                                                    {task.is_imported && <GithubIcon className="h-3 w-3 text-purple-600 dark:text-purple-400" />}
+                                                    {getStatusBadge(task, task.status)}
+                                                    {getPriorityBadge(task.priority)}
+                                                    {task.is_imported && task.meta?.source && (
+                                                        <SourceLinkIcon source={task.meta.source} sourceUrl={task.meta?.source_url} />
+                                                    )}
                                                 </div>
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <small>{task.project.name}</small>
@@ -641,9 +662,7 @@ export default function Tasks() {
                                                     )}
                                                 </div>
                                             </TableCell>
-                                            <TableCell>{getStatusBadge(task, task.status)}</TableCell>
-                                            <TableCell>{getPriorityBadge(task.priority)}</TableCell>
-                                            <TableCell>
+                                            <TableCell className={'text-sm text-gray-500 dark:text-gray-400'}>
                                                 {task.due_date ? (
                                                     new Date(task.due_date).toISOString().split('T')[0]
                                                 ) : (
@@ -669,41 +688,20 @@ export default function Tasks() {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
-                                                    {/* View Details Button */}
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-7 w-7 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
-                                                        onClick={() => handleViewDetails(task)}
-                                                        title="View Details"
-                                                    >
-                                                        <Glasses className="h-3.5 w-3.5" />
-                                                        <span className="sr-only">View Details</span>
-                                                    </Button>
+                                                    {/* Quick Start Tracker - only for tasks assigned to current user */}
+                                                    <TaskTrackButton task={task} currentUserId={auth.user.id} />
 
-                                                    {isAssignedToCurrentUser(task) && (
+                                                    {/* View Details Button */}
+                                                    <Link href={route('task.detail', task.id)} title="View Details">
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-7 w-7 border-cyan-500 bg-cyan-200 p-0 text-cyan-700 hover:bg-cyan-300"
-                                                            onClick={() => {
-                                                                setIsThereRunningTracker(true)
-                                                                window.dispatchEvent(
-                                                                    new CustomEvent('task-time-tracker-start', {
-                                                                        detail: {
-                                                                            taskId: task.id,
-                                                                            projectId: task.project.id,
-                                                                        },
-                                                                    }),
-                                                                )
-                                                            }}
-                                                            disabled={isThereRunningTracker}
-                                                            title="Start Time Tracking"
+                                                            className="h-7 w-7 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
                                                         >
-                                                            <Play className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Start Time Tracker</span>
+                                                            <Glasses className="h-3.5 w-3.5" />
+                                                            <span className="sr-only">View Details</span>
                                                         </Button>
-                                                    )}
+                                                    </Link>
 
                                                     {task.project.user_id === auth.user.id && (
                                                         <ActionButtonGroup>
@@ -711,12 +709,13 @@ export default function Tasks() {
                                                                 href={route('task.edit', task.id)}
                                                                 title="Edit Task"
                                                                 icon={Edit}
-                                                                variant="amber"
+                                                                variant="warning"
                                                                 size="icon"
                                                             />
                                                             <DeleteTask
                                                                 taskId={task.id}
                                                                 isGithub={task.is_imported && task.meta?.source === 'github'}
+                                                                isJira={task.is_imported && task.meta?.source === 'jira'}
                                                                 onDelete={() => setTasks(tasks.filter((t) => t.id !== task.id))}
                                                             />
                                                         </ActionButtonGroup>
@@ -745,9 +744,6 @@ export default function Tasks() {
                     </CardContent>
                 </Card>
 
-                {/* Task Details Sheet */}
-                <TaskDetailsSheet task={selectedTask} open={isDetailsOpen} onOpenChange={setIsDetailsOpen} />
-
                 {/* Status Change Dialog */}
                 <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
                     <DialogContent className="sm:max-w-md">
@@ -761,19 +757,19 @@ export default function Tasks() {
                                 onValueChange={(value) => setSelectedStatus(value as Task['status'])}
                                 className="flex flex-col space-y-2"
                             >
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2 rounded-md border p-2 hover:bg-muted/30">
                                     <RadioGroupItem value="pending" id="status-pending" />
                                     <Label htmlFor="status-pending" className="cursor-pointer">
                                         Pending
                                     </Label>
                                 </div>
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2 rounded-md border p-2 hover:bg-muted/30">
                                     <RadioGroupItem value="in_progress" id="status-in-progress" />
                                     <Label htmlFor="status-in-progress" className="cursor-pointer">
                                         In Progress
                                     </Label>
                                 </div>
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2 rounded-md border p-2 hover:bg-muted/30">
                                     <RadioGroupItem value="completed" id="status-completed" />
                                     <Label htmlFor="status-completed" className="cursor-pointer">
                                         Completed
@@ -782,7 +778,7 @@ export default function Tasks() {
                             </RadioGroup>
 
                             {taskToUpdate?.is_imported && taskToUpdate?.meta?.source === 'github' && (
-                                <div className="flex items-center space-x-2 pt-2">
+                                <div className="mt-2 flex items-center space-x-2 rounded-md border p-2">
                                     <Checkbox
                                         id="update_github"
                                         checked={updateGithub}
@@ -793,12 +789,32 @@ export default function Tasks() {
                                     </Label>
                                 </div>
                             )}
+
+                            {taskToUpdate?.is_imported && taskToUpdate?.meta?.source === 'jira' && (
+                                <div className="mt-2 flex items-center space-x-2 rounded-md border p-2">
+                                    <Checkbox id="update_jira" checked={updateJira} onCheckedChange={(checked) => setUpdateJira(checked === true)} />
+                                    <Label htmlFor="update_jira" className="text-sm">
+                                        Update in Jira?
+                                    </Label>
+                                </div>
+                            )}
                         </div>
-                        <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setStatusDialogOpen(false)} disabled={isUpdating}>
+                        <DialogFooter className="gap-2">
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => setStatusDialogOpen(false)}
+                                disabled={isUpdating}
+                                className="h-9 rounded-lg border-gray-300 text-gray-700 hover:bg-gray-50/80 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800/50"
+                            >
                                 Cancel
                             </Button>
-                            <Button type="button" onClick={updateTaskStatus} disabled={isUpdating}>
+                            <Button
+                                type="button"
+                                onClick={updateTaskStatus}
+                                disabled={isUpdating}
+                                className="flex h-9 items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                            >
                                 {isUpdating ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -3,119 +3,130 @@ import { BarChart2, CheckCircle, DollarSign, Globe, RefreshCw, Settings } from '
 
 export default function CurrencyManagement() {
     return (
-        <FeatureLayout title="Currency Management" icon={<DollarSign className="h-8 w-8 text-blue-900 dark:text-blue-400" />}>
-            <div className="space-y-8">
+        <FeatureLayout title="Currency Management" icon={<DollarSign className="h-7 w-7 text-blue-600 dark:text-blue-400" />}>
+            <div className="space-y-10">
                 {/* Introduction Section */}
-                <section className="space-y-4">
-                    <p className="text-lg leading-relaxed">
+                <section className="space-y-5">
+                    <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
                         Work with multiple currencies across projects and clients with our comprehensive currency management system. Track earnings,
                         expenses, and billing in various currencies while maintaining accurate financial records.
                     </p>
-                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-900/20">
-                        <p className="text-blue-900 dark:text-blue-400">
-                            <span className="font-semibold">Pro Tip:</span> Set your preferred display currency for reports to see all financial data
-                            converted to a single currency for easier analysis, while still maintaining the original currency information.
+                    <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
+                        <p className="flex items-center text-blue-700 dark:text-blue-300">
+                            <span className="mr-2">
+                                <Globe className="h-5 w-5" />
+                            </span>
+                            <span>
+                                <span className="font-medium">Pro Tip:</span> Set your preferred display currency for reports to see all financial
+                                data converted to a single currency for easier analysis, while still maintaining the original currency information.
+                            </span>
                         </p>
                     </div>
                 </section>
 
                 {/* Key Features Section */}
-                <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
+                <section className="space-y-6">
+                    <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Key Features
                     </h2>
                     <div className="grid gap-6 md:grid-cols-2">
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <DollarSign className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <DollarSign className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Currency Conversion</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Currency Conversion</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-400">
                                 Automatic currency conversion using up-to-date exchange rates for accurate financial reporting.
                             </p>
                         </div>
 
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <Globe className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <Globe className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Multi-Currency Support</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Multi-Currency Support</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-400">
                                 Support for over 170 global currencies with proper formatting for each currency's display conventions.
                             </p>
                         </div>
 
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <Settings className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <Settings className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Client-Specific Settings</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Client-Specific Settings</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-400">
                                 Assign different currencies to each client and project for accurate billing in their preferred currency.
                             </p>
                         </div>
 
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <BarChart2 className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <BarChart2 className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Unified Reporting</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Unified Reporting</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">
-                                Generate reports that consolidate multiple currencies into your base currency for comprehensive financial analysis.
+                            <p className="text-gray-600 dark:text-gray-400">
+                                Generate reports with all finances converted to your preferred currency for consistent analysis.
                             </p>
                         </div>
                     </div>
                 </section>
 
-                {/* Currency Features Section */}
-                <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
-                        Currency Management Features
+                {/* Exchange Rate Features Section */}
+                <section className="space-y-6">
+                    <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
+                        Exchange Rate Features
                     </h2>
-                    <div className="grid gap-4 md:grid-cols-3">
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex justify-center">
-                                <RefreshCw className="h-12 w-12 text-blue-900 dark:text-blue-400" />
+                    <div className="grid gap-6 md:grid-cols-3">
+                        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                            <div className="mb-4 flex justify-center">
+                                <div className="rounded-full bg-blue-50 p-4 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <RefreshCw className="h-8 w-8" />
+                                </div>
                             </div>
-                            <h3 className="mb-2 text-center text-lg font-semibold text-gray-800 dark:text-gray-200">Exchange Rate Management</h3>
-                            <p className="text-center text-gray-700 dark:text-gray-300">
-                                Automatic updates of exchange rates or manual override options for specific business needs.
+                            <h3 className="mb-2 text-center text-lg font-semibold text-gray-800 dark:text-gray-200">Automatic Updates</h3>
+                            <p className="text-center text-gray-600 dark:text-gray-400">
+                                Exchange rates are automatically updated daily from reliable financial data sources.
                             </p>
                         </div>
 
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex justify-center">
-                                <DollarSign className="h-12 w-12 text-blue-900 dark:text-blue-400" />
+                        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                            <div className="mb-4 flex justify-center">
+                                <div className="rounded-full bg-blue-50 p-4 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <Settings className="h-8 w-8" />
+                                </div>
                             </div>
-                            <h3 className="mb-2 text-center text-lg font-semibold text-gray-800 dark:text-gray-200">Base Currency Setting</h3>
-                            <p className="text-center text-gray-700 dark:text-gray-300">
-                                Set your organization's base currency for standardized financial reporting and analysis.
+                            <h3 className="mb-2 text-center text-lg font-semibold text-gray-800 dark:text-gray-200">Manual Override</h3>
+                            <p className="text-center text-gray-600 dark:text-gray-400">
+                                Set custom exchange rates for specific transactions when needed for contract requirements.
                             </p>
                         </div>
 
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex justify-center">
-                                <Globe className="h-12 w-12 text-blue-900 dark:text-blue-400" />
+                        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                            <div className="mb-4 flex justify-center">
+                                <div className="rounded-full bg-blue-50 p-4 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <BarChart2 className="h-8 w-8" />
+                                </div>
                             </div>
-                            <h3 className="mb-2 text-center text-lg font-semibold text-gray-800 dark:text-gray-200">Currency Format Localization</h3>
-                            <p className="text-center text-gray-700 dark:text-gray-300">
-                                Display currencies with proper formatting based on regional standards and preferences.
+                            <h3 className="mb-2 text-center text-lg font-semibold text-gray-800 dark:text-gray-200">Historical Rates</h3>
+                            <p className="text-center text-gray-600 dark:text-gray-400">
+                                Access historical exchange rates for accurate reporting of past transactions.
                             </p>
                         </div>
                     </div>
                 </section>
 
                 {/* How It Works Section */}
-                <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
+                <section className="space-y-6">
+                    <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         How It Works
                     </h2>
                     <ol className="space-y-6">
@@ -124,9 +135,9 @@ export default function CurrencyManagement() {
                                 1
                             </div>
                             <div>
-                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Configure Currency Settings</h3>
+                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Set Base Currency</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Set your organization's base currency and configure exchange rate update preferences in the system settings.
+                                    Configure your organization's base currency which will be used for accounting and financial reporting.
                                 </p>
                             </div>
                         </li>
@@ -135,9 +146,9 @@ export default function CurrencyManagement() {
                                 2
                             </div>
                             <div>
-                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Assign Currencies to Clients</h3>
+                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Assign Client Currencies</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Specify the preferred billing currency for each client in their profile settings.
+                                    Set the preferred currency for each client which will be used for invoices and communications.
                                 </p>
                             </div>
                         </li>
@@ -146,9 +157,9 @@ export default function CurrencyManagement() {
                                 3
                             </div>
                             <div>
-                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Track Time with Rates</h3>
+                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Track & Convert</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Record time entries with the appropriate hourly rate in the client's currency or your base currency.
+                                    Record transactions in their original currency, with automatic conversion to your base currency in the background.
                                 </p>
                             </div>
                         </li>
@@ -157,10 +168,9 @@ export default function CurrencyManagement() {
                                 4
                             </div>
                             <div>
-                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Generate Reports & Invoices</h3>
+                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Generate Reports</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Create financial reports and invoices in the appropriate currency, with automatic conversion for consolidated
-                                    reporting.
+                                    View financial reports in any currency with accurate conversion rates applied for each transaction period.
                                 </p>
                             </div>
                         </li>
@@ -168,57 +178,34 @@ export default function CurrencyManagement() {
                 </section>
 
                 {/* Benefits Section */}
-                <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
+                <section className="space-y-6">
+                    <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Benefits
                     </h2>
                     <div className="grid gap-4 md:grid-cols-2">
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Simplified billing for international clients</p>
+                            <p className="text-gray-700 dark:text-gray-300">Simplify international client billing with local currency invoices</p>
                         </div>
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Accurate financial reporting across currencies</p>
+                            <p className="text-gray-700 dark:text-gray-300">Maintain accurate financial records in your base currency</p>
                         </div>
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Reduced manual currency conversion errors</p>
+                            <p className="text-gray-700 dark:text-gray-300">Generate consistent financial reports across multiple currencies</p>
                         </div>
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Better financial planning with consolidated views</p>
+                            <p className="text-gray-700 dark:text-gray-300">Reduce manual conversion errors with automated exchange rates</p>
                         </div>
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Improved client satisfaction with localized billing</p>
+                            <p className="text-gray-700 dark:text-gray-300">Improve client relationships with localized billing options</p>
                         </div>
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Streamlined accounting and financial reconciliation</p>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Use Cases Section */}
-                <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
-                        Common Use Cases
-                    </h2>
-                    <div className="grid gap-6 md:grid-cols-2">
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200">International Client Management</h3>
-                            <p className="text-gray-700 dark:text-gray-300">
-                                Agencies and consultancies with clients in multiple countries can bill each client in their local currency while
-                                maintaining consolidated financial reporting in their base currency.
-                            </p>
-                        </div>
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <h3 className="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200">Multi-National Organizations</h3>
-                            <p className="text-gray-700 dark:text-gray-300">
-                                Companies with teams in different countries can track time and expenses in local currencies while providing management
-                                with unified financial reports in a single currency.
-                            </p>
+                            <p className="text-gray-700 dark:text-gray-300">Track historical exchange rate changes for accurate reporting</p>
                         </div>
                     </div>
                 </section>
@@ -227,9 +214,9 @@ export default function CurrencyManagement() {
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
                         <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
-                            <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Manage Multiple Currencies?</h3>
+                            <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready for Global Financial Management?</h3>
                             <p className="text-blue-800 dark:text-blue-300">
-                                Sign up for Work Hours today and simplify your international time tracking and billing.
+                                Start using our currency management system today and streamline your international billing.
                             </p>
                         </div>
                         <div className="md:w-1/3">

@@ -133,12 +133,10 @@ final class AiChatController extends Controller
                 ], 500);
             }
 
-            // Prepare context data
             $context = $request->input('context', []);
             $chatHistoryId = $request->input('chat_history_id');
             $userMessage = $request->input('message');
 
-            // Build the prompt with context
             $prompt = 'You are an AI assistant for a time tracking application. ';
             $prompt .= 'The user is asking about their time tracking data. ';
 
@@ -179,7 +177,6 @@ final class AiChatController extends Controller
 
             $prompt .= "User's question: " . $userMessage;
 
-            // Call Google Gemini API
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'X-goog-api-key' => $apiKey,
@@ -217,11 +214,9 @@ final class AiChatController extends Controller
 
             $aiResponse = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? 'Sorry, I could not generate a response.';
 
-            // Prepare messages for storage
             $messages = [];
             $chatHistory = null;
 
-            // If chat history ID is provided, retrieve the existing chat history
             if ($chatHistoryId) {
                 $chatHistory = AiChatHistory::query()->where('id', $chatHistoryId)
                     ->where('user_id', auth()->id())
@@ -232,7 +227,6 @@ final class AiChatController extends Controller
                 }
             }
 
-            // Add new messages
             $messages[] = [
                 'id' => uniqid(),
                 'content' => $userMessage,
@@ -247,13 +241,12 @@ final class AiChatController extends Controller
                 'timestamp' => now()->toIso8601String(),
             ];
 
-            // Create or update the chat history
             if ($chatHistory) {
                 $chatHistory->update([
                     'messages' => $messages,
                 ]);
             } else {
-                // Generate title from the first user message
+
                 $title = mb_strlen((string) $userMessage) > 50
                     ? mb_substr((string) $userMessage, 0, 47) . '...'
                     : $userMessage;

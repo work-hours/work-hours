@@ -1,4 +1,6 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import AddNewButton from '@/components/add-new-button'
+import FilterButton from '@/components/filter-button'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -22,7 +24,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { invoices as _invoices } from '@actions/InvoiceController'
-import { Head, Link, router, usePage } from '@inertiajs/react'
+import { Head, router, usePage } from '@inertiajs/react'
 import { Calendar, CalendarRange, Download, Edit, FileText, Loader2, Mail, Plus, Search, TimerReset } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -86,7 +88,6 @@ export default function Invoices() {
     const [newStatus, setNewStatus] = useState<string>('')
     const [newPaidAmount, setNewPaidAmount] = useState<string>('')
 
-    // Filter states
     const [filters, setFilters] = useState<InvoiceFilters>({
         search: pageFilters?.search || '',
         client: pageFilters?.client || 'all',
@@ -114,10 +115,8 @@ export default function Invoices() {
         setError(false)
         setProcessing(true)
         try {
-            // Create a copy of filters to avoid modifying the original
             const apiFilters = filters ? { ...filters } : undefined
 
-            // Convert "all" values to empty strings for API
             if (apiFilters) {
                 if (apiFilters.client === 'all') {
                     apiFilters.client = ''
@@ -155,7 +154,6 @@ export default function Invoices() {
         e.preventDefault()
         const formattedFilters = { ...filters }
 
-        // Convert "all" values to empty strings for API
         if (formattedFilters.client === 'all') {
             formattedFilters.client = ''
         }
@@ -200,7 +198,6 @@ export default function Invoices() {
         getInvoices(initialFilters).then()
     }, [])
 
-    // Format currency
     const formatCurrency = (amount: number, currency: string = 'USD'): string => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -209,7 +206,6 @@ export default function Invoices() {
         }).format(amount)
     }
 
-    // Get status badge class
     const getStatusBadgeClass = (status: string): string => {
         switch (status) {
             case 'draft':
@@ -229,18 +225,15 @@ export default function Invoices() {
         }
     }
 
-    // Format status label
     const formatStatusLabel = (status: string): string => {
         return status.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
-    // Handle opening the email confirmation dialog
     const handleEmailClick = (invoice: Invoice): void => {
         setSelectedInvoice(invoice)
         setEmailDialogOpen(true)
     }
 
-    // Handle opening the status update dialog
     const handleStatusClick = (invoice: Invoice): void => {
         setSelectedInvoice(invoice)
         setNewStatus(invoice.status)
@@ -248,7 +241,6 @@ export default function Invoices() {
         setStatusDialogOpen(true)
     }
 
-    // Handle sending the email
     const handleSendEmail = async () => {
         if (!selectedInvoice) return
 
@@ -256,7 +248,6 @@ export default function Invoices() {
         try {
             await router.post(route('invoice.sendEmail', selectedInvoice.id))
 
-            // Update the invoice status in the local state
             setInvoices(
                 invoices.map((invoice) => {
                     if (invoice.id === selectedInvoice.id) {
@@ -266,7 +257,6 @@ export default function Invoices() {
                 }),
             )
 
-            // Close the dialog
             setEmailDialogOpen(false)
             setSelectedInvoice(null)
         } catch (error) {
@@ -276,19 +266,16 @@ export default function Invoices() {
         }
     }
 
-    // Handle updating the invoice status
     const handleStatusUpdate = async () => {
         if (!selectedInvoice) return
 
         setUpdatingStatus(true)
         try {
-            // Make API call to update the invoice status
             await router.post(route('invoice.updateStatus', selectedInvoice.id), {
                 status: newStatus,
                 paid_amount: newPaidAmount,
             })
 
-            // Update the invoice status in the local state
             setInvoices(
                 invoices.map((invoice) => {
                     if (invoice.id === selectedInvoice.id) {
@@ -302,10 +289,8 @@ export default function Invoices() {
                 }),
             )
 
-            // Show success message
             toast.success(`Invoice status updated to ${formatStatusLabel(newStatus)}`)
 
-            // Close the dialog
             setStatusDialogOpen(false)
             setSelectedInvoice(null)
         } catch (error) {
@@ -346,12 +331,10 @@ export default function Invoices() {
                                     })}`}
                                     label="Export"
                                 />
-                                <Link href={route('invoice.create')}>
-                                    <Button className="flex items-center gap-2">
-                                        <Plus className="h-3 w-3" />
-                                        <span>Create Invoice</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('invoice.create')}>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Create Invoice</span>
+                                </AddNewButton>
                             </div>
                         </div>
 
@@ -462,29 +445,25 @@ export default function Invoices() {
 
                                 {/* Filter Buttons */}
                                 <div className="flex items-end gap-2">
-                                    <Button type="submit" size="icon" className="h-9 w-9" title="Filter">
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                        <span className="sr-only">Filter</span>
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="icon"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={
-                                            !filters.search &&
-                                            filters.client === 'all' &&
-                                            filters.status === 'all' &&
-                                            !filters['created-date-from'] &&
-                                            !filters['created-date-to']
+                                            processing ||
+                                            (!filters.search &&
+                                                filters.client === 'all' &&
+                                                filters.status === 'all' &&
+                                                !filters['created-date-from'] &&
+                                                !filters['created-date-to'])
                                         }
                                         onClick={clearFilters}
-                                        className="h-9 w-9"
-                                        title="Clear Filters"
+                                        title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                        <span className="sr-only">Clear</span>
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
 
@@ -562,23 +541,46 @@ export default function Invoices() {
                             <Table>
                                 <TableHeader>
                                     <TableHeaderRow>
-                                        <TableHead>Invoice #</TableHead>
-                                        <TableHead>Client</TableHead>
-                                        <TableHead>Issue Date</TableHead>
-                                        <TableHead>Due Date</TableHead>
-                                        <TableHead>Amount</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Invoice #
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Client
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Issue Date
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Due Date
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Amount
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Status
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Actions
+                                        </TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
                                 <TableBody>
                                     {invoices.map((invoice) => (
-                                        <TableRow key={invoice.id}>
-                                            <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
-                                            <TableCell>{invoice.client.name}</TableCell>
-                                            <TableCell>{new Date(invoice.issue_date).toISOString().split('T')[0]}</TableCell>
-                                            <TableCell>{new Date(invoice.due_date).toISOString().split('T')[0]}</TableCell>
-                                            <TableCell>{formatCurrency(invoice.total_amount, invoice.currency)}</TableCell>
+                                        <TableRow
+                                            key={invoice.id}
+                                            className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
+                                        >
+                                            <TableCell className="font-medium text-gray-800 dark:text-gray-200">{invoice.invoice_number}</TableCell>
+                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">{invoice.client.name}</TableCell>
+                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                {new Date(invoice.issue_date).toISOString().split('T')[0]}
+                                            </TableCell>
+                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                {new Date(invoice.due_date).toISOString().split('T')[0]}
+                                            </TableCell>
+                                            <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                {formatCurrency(invoice.total_amount, invoice.currency)}
+                                            </TableCell>
                                             <TableCell>
                                                 <span
                                                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeClass(
@@ -601,9 +603,9 @@ export default function Invoices() {
                                                     <ActionButtonGroup>
                                                         <ActionButton
                                                             href={route('invoice.edit', invoice.id)}
-                                                            title="Edit Task"
+                                                            title="Edit Invoice"
                                                             icon={Edit}
-                                                            variant="amber"
+                                                            variant="warning"
                                                             size="icon"
                                                         />
                                                     </ActionButtonGroup>
@@ -630,12 +632,10 @@ export default function Invoices() {
                                     <FileText className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Invoices</h3>
                                     <p className="mb-4 text-muted-foreground">You haven't created any invoices yet.</p>
-                                    <Link href={route('invoice.create')}>
-                                        <Button className="flex items-center gap-2">
-                                            <Plus className="h-4 w-4" />
-                                            <span>Create Invoice</span>
-                                        </Button>
-                                    </Link>
+                                    <AddNewButton href={route('invoice.create')}>
+                                        <Plus className="h-4 w-4" />
+                                        <span>Create Invoice</span>
+                                    </AddNewButton>
                                 </div>
                             </div>
                         )}
@@ -697,12 +697,10 @@ export default function Invoices() {
                                     value={newStatus}
                                     onValueChange={(value) => {
                                         setNewStatus(value)
-                                        // If status is changed to paid, set paid_amount to total invoice amount
+
                                         if (value === 'paid' && selectedInvoice) {
                                             setNewPaidAmount(selectedInvoice.total_amount.toString())
-                                        }
-                                        // If status is changed to partially_paid, reset paid_amount to zero
-                                        else if (value === 'partially_paid') {
+                                        } else if (value === 'partially_paid') {
                                             setNewPaidAmount('0')
                                         }
                                     }}

@@ -5,7 +5,8 @@
         "build": "vite build",
         "build:ssr": "vite build && vite build --ssr",
         "dev": "vite",
-        "format": "prettier --write resources/ && ./vendor/bin/rector process && ./vendor/bin/pint",
+        "format": "php artisan app:remove-comments && prettier --write resources/ && ./vendor/bin/rector process && ./vendor/bin/pint",
+        "rector": "./vendor/bin/rector process",
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
         "types": "tsc --noEmit"
@@ -45,21 +46,24 @@
         "@radix-ui/react-toggle-group": "^1.1.2",
         "@radix-ui/react-tooltip": "^1.1.8",
         "@tailwindcss/vite": "^4.0.6",
-        "@types/react": "^19.0.3",
+        "@types/react": "^18.2.79",
         "@types/react-datepicker": "^6.2.0",
-        "@types/react-dom": "^19.0.2",
+        "@types/react-dom": "^18.2.25",
         "@vitejs/plugin-react": "^4.3.4",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "concurrently": "^9.0.1",
+        "dompurify": "^3.1.7",
         "globals": "^15.14.0",
         "laravel-vite-plugin": "^1.0",
         "lucide-react": "^0.475.0",
         "moment": "^2.30.1",
-        "react": "^19.0.0",
+        "react": "^18.3.1",
         "react-datepicker": "^8.4.0",
-        "react-dom": "^19.0.0",
+        "react-dom": "^18.3.1",
         "react-markdown": "^10.1.0",
+        "react-quill": "^2.0.0",
+        "quill": "^1.3.7",
         "react-syntax-highlighter": "^15.6.1",
         "recharts": "^2.12.0",
         "sonner": "^2.0.6",
@@ -73,5 +77,9 @@
         "@rollup/rollup-linux-x64-gnu": "4.9.5",
         "@tailwindcss/oxide-linux-x64-gnu": "^4.0.1",
         "lightningcss-linux-x64-gnu": "^1.29.1"
+    },
+    "overrides": {
+        "@types/react": "^18.2.79",
+        "@types/react-dom": "^18.2.25"
     }
 }

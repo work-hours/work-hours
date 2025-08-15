@@ -1,6 +1,6 @@
 import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { HourlyRateStatusBar } from '@/components/hourly-rate-status-bar'
-import Background from '@/components/ui/background'
+import RunningTracker from '@/components/running-tracker'
 import { Badge } from '@/components/ui/badge'
 import { type BreadcrumbItem } from '@/types'
 import { all } from '@actions/NotificationsController'
@@ -19,14 +19,12 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
     const [unreadCount, setUnreadCount] = useState(0)
     const [isAdmin, setIsAdmin] = useState(false)
 
-    // Fetch unread notification count when the component mounts
     useEffect(() => {
         const fetchUnreadCount = async () => {
             try {
                 const response = await all.data({ page: 1 })
                 setUnreadCount(response.unread_count)
 
-                // Check if user is admin (this data will be passed from the backend)
                 if (response.user && response.user.is_admin) {
                     setIsAdmin(true)
                 }
@@ -37,30 +35,27 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
 
         fetchUnreadCount().then()
 
-        // Set up an interval to refresh the count every minute
         const intervalId = setInterval(fetchUnreadCount, 60000)
 
-        // Cleanup interval on component unmount
         return () => clearInterval(intervalId)
     }, [])
 
     return (
-        <div className="relative flex flex-1 flex-col bg-[#f8f6e9] dark:bg-gray-900">
-            <Background showMarginLine={false} showPunches={false} />
+        <div className="relative flex flex-1 flex-col bg-slate-50 dark:bg-slate-900">
             {/* Enhanced header with improved styling */}
-            <div className="sticky top-0 z-20 border-b border-gray-200 bg-white/95 backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/95">
-                <div className="flex items-center justify-between px-4 py-2.5">
+            <div className="sticky top-0 z-20 border-b border-gray-200 bg-white/90 shadow-sm backdrop-blur-sm dark:border-gray-800 dark:bg-gray-800/90">
+                <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 px-4 py-2.5">
                     <div className="flex items-center">
                         <div className="relative flex items-center">
                             <Link
-                                href="/dashboard"
-                                className="rounded-md p-1.5 text-gray-600 transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+                                href={route('dashboard')}
+                                className="rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                             >
                                 <Home className="h-5 w-5" />
                             </Link>
-                            <button
+                            {/*<button
                                 onClick={() => setCollapsed(!collapsed)}
-                                className="ml-2 rounded-md p-1.5 transition-all duration-200 hover:bg-gray-100 hover:shadow-sm dark:hover:bg-gray-700"
+                                className="ml-2 rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                 aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                             >
                                 {collapsed ? (
@@ -96,7 +91,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                                         <polyline points="18 17 13 12 18 7"></polyline>
                                     </svg>
                                 )}
-                            </button>
+                            </button>*/}
                         </div>
                         {breadcrumbs.length > 0 && (
                             <div className="ml-2 flex items-center overflow-x-auto">
@@ -106,7 +101,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                                         {breadcrumb.href ? (
                                             <Link
                                                 href={breadcrumb.href}
-                                                className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+                                                className="text-sm font-medium text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
                                             >
                                                 {breadcrumb.title}
                                             </Link>
@@ -120,6 +115,11 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                         )}
                     </div>
 
+                    {/* Center running tracker */}
+                    <div className="flex items-center justify-center">
+                        <RunningTracker />
+                    </div>
+
                     <div className="flex items-center gap-3">
                         {/* Theme Switcher */}
                         <AppearanceToggleDropdown className="rounded-md text-gray-600 dark:text-gray-300" />
@@ -127,7 +127,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                         {/* Calendar Link */}
                         <Link
                             href="/calendar"
-                            className="relative flex items-center rounded-md p-1.5 text-gray-600 transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+                            className="relative flex items-center rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                             aria-label="View calendar"
                         >
                             <svg
@@ -153,7 +153,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                         {isAdmin && (
                             <Link
                                 href="/administration"
-                                className="relative flex items-center rounded-md p-1.5 text-gray-600 transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+                                className="relative flex items-center rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                 aria-label="Admin Dashboard"
                             >
                                 <Settings className="h-5 w-5" />
@@ -163,7 +163,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                         {/* Notification Link */}
                         <Link
                             href="/notifications"
-                            className="relative flex items-center rounded-md p-1.5 text-gray-600 transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+                            className="relative flex items-center rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                             aria-label="View notifications"
                         >
                             <Bell className="h-5 w-5" />
@@ -184,7 +184,7 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                 <HourlyRateStatusBar />
 
                 {/* Enhanced content container with improved padding */}
-                <div className="container mx-auto pt-4 pb-16">{children}</div>
+                <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-16">{children}</div>
             </main>
         </div>
     )

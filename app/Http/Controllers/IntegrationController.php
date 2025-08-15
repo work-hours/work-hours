@@ -17,9 +17,11 @@ final class IntegrationController extends Controller
     {
         $user = Auth::user();
         $isGitHubIntegrated = ! empty($user->github_token);
+        $isJiraIntegrated = $user->isJiraIntegrated();
 
         return Inertia::render('integration/index', [
             'isGitHubIntegrated' => $isGitHubIntegrated,
+            'isJiraIntegrated' => $isJiraIntegrated,
         ]);
     }
 }

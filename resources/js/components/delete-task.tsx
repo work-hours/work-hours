@@ -11,10 +11,11 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 interface DeleteTaskProps {
     taskId: number
     isGithub?: boolean
+    isJira?: boolean
     onDelete?: () => void
 }
 
-export default function DeleteTask({ taskId, isGithub = false, onDelete }: DeleteTaskProps) {
+export default function DeleteTask({ taskId, isGithub = false, isJira = false, onDelete }: DeleteTaskProps) {
     const {
         delete: destroy,
         processing,
@@ -23,15 +24,21 @@ export default function DeleteTask({ taskId, isGithub = false, onDelete }: Delet
         setData,
     } = useForm({
         delete_from_github: true,
+        delete_from_jira: true,
     })
 
     const [deleteFromGithub, setDeleteFromGithub] = useState<boolean>(true)
+    const [deleteFromJira, setDeleteFromJira] = useState<boolean>(true)
 
     const deleteTask: FormEventHandler = (e) => {
         e.preventDefault()
 
         if (isGithub) {
             setData('delete_from_github', deleteFromGithub as never)
+        }
+
+        if (isJira) {
+            setData('delete_from_jira', deleteFromJira as never)
         }
 
         destroy(route('task.destroy', taskId), {
@@ -57,15 +64,17 @@ export default function DeleteTask({ taskId, isGithub = false, onDelete }: Delet
                 <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 w-7 border-red-200 bg-red-50 p-0 text-red-700 shadow-sm transition-all hover:bg-red-100 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
+                    className="h-7 w-7 border-red-200 bg-red-100 p-0 text-red-600 shadow-sm transition-all duration-200 hover:bg-red-200 dark:border-red-800/50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
                 >
                     <Trash2 className="h-3 w-3" />
                     <span className="sr-only">Delete</span>
                 </Button>
             </DialogTrigger>
-            <DialogContent>
-                <DialogTitle>Are you sure you want to delete this task?</DialogTitle>
-                <DialogDescription>
+            <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
+                <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
+                    Are you sure you want to delete this task?
+                </DialogTitle>
+                <DialogDescription className="text-neutral-600 dark:text-neutral-400">
                     Once the task is deleted, all of its data will be permanently removed. This action cannot be undone.
                 </DialogDescription>
                 <form className="space-y-6" onSubmit={deleteTask}>
@@ -75,20 +84,43 @@ export default function DeleteTask({ taskId, isGithub = false, onDelete }: Delet
                                 id="delete_from_github"
                                 checked={deleteFromGithub}
                                 onCheckedChange={(checked) => setDeleteFromGithub(checked === true)}
+                                className="border-neutral-300 text-neutral-700 focus:ring-neutral-500 dark:border-neutral-600 dark:text-neutral-300"
                             />
-                            <Label htmlFor="delete_from_github" className="text-sm">
+                            <Label htmlFor="delete_from_github" className="text-sm text-neutral-700 dark:text-neutral-300">
                                 Delete from GitHub?
+                            </Label>
+                        </div>
+                    )}
+                    {isJira && (
+                        <div className="flex items-center space-x-2 pt-2">
+                            <Checkbox
+                                id="delete_from_jira"
+                                checked={deleteFromJira}
+                                onCheckedChange={(checked) => setDeleteFromJira(checked === true)}
+                                className="border-neutral-300 text-neutral-700 focus:ring-neutral-500 dark:border-neutral-600 dark:text-neutral-300"
+                            />
+                            <Label htmlFor="delete_from_jira" className="text-sm text-neutral-700 dark:text-neutral-300">
+                                Delete from Jira?
                             </Label>
                         </div>
                     )}
                     <DialogFooter className="gap-2">
                         <DialogClose asChild>
-                            <Button variant="secondary" onClick={closeModal}>
+                            <Button
+                                variant="secondary"
+                                onClick={closeModal}
+                                className="border-neutral-200 bg-white text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                            >
                                 Cancel
                             </Button>
                         </DialogClose>
 
-                        <Button variant="destructive" disabled={processing} asChild>
+                        <Button
+                            variant="destructive"
+                            disabled={processing}
+                            className="bg-red-600 text-white transition-colors duration-200 hover:bg-red-700 dark:bg-red-700/80 dark:hover:bg-red-700"
+                            asChild
+                        >
                             <button type="submit">Delete Task</button>
                         </Button>
                     </DialogFooter>

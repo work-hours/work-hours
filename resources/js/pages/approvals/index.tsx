@@ -1,5 +1,6 @@
 import ApprovalTimeLogTable from '@/components/approval-time-log-table'
 import StatsCard from '@/components/dashboard/StatsCard'
+import FilterButton from '@/components/filter-button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -141,13 +142,11 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
         try {
             let response
             if (singleApprovalId) {
-                // Approve single time log
                 response = await axios.post(route('approvals.approve'), {
                     time_log_id: singleApprovalId,
                     comment: comment,
                 })
             } else {
-                // Approve multiple time logs
                 response = await axios.post(route('approvals.approve-multiple'), {
                     time_log_ids: selectedLogs,
                     comment: comment,
@@ -156,7 +155,6 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
 
             setApprovalSuccess(response.data.message)
 
-            // Refresh the page after a short delay
             setTimeout(() => {
                 get(route('approvals.index'), { preserveState: true })
                 closeApproveDialog()
@@ -189,13 +187,11 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
         try {
             let response
             if (singleApprovalId) {
-                // Reject single time log
                 response = await axios.post(route('approvals.reject'), {
                     time_log_id: singleApprovalId,
                     comment: comment,
                 })
             } else {
-                // Reject multiple time logs
                 response = await axios.post(route('approvals.reject-multiple'), {
                     time_log_ids: selectedLogs,
                     comment: comment,
@@ -204,7 +200,6 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
 
             setApprovalSuccess(response.data.message)
 
-            // Refresh the page after a short delay
             setTimeout(() => {
                 get(route('approvals.index'), { preserveState: true })
                 closeRejectDialog()
@@ -266,7 +261,6 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
 
                 {timeLogs.length > 0 && (
                     <section className="mb-4 w-3/12">
-                        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
                         <StatsCard
                             title="Total Hours"
                             icon={<ClockIcon className="h-4 w-4 text-muted-foreground" />}
@@ -380,15 +374,12 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                                 </div>
 
                                 <div className="flex items-end gap-2">
-                                    <Button type="submit" size="icon" className="h-9 w-9" title="Filter" disabled={processing}>
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                        <span className="sr-only">Filter</span>
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="icon"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={processing || (!data['start-date'] && !data['end-date'] && !data.project && !data.user)}
                                         onClick={() => {
                                             setData({
@@ -401,12 +392,10 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                                                 preserveState: true,
                                             })
                                         }}
-                                        className="h-9 w-9"
-                                        title="Clear Filters"
+                                        title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                        <span className="sr-only">Clear</span>
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
 
@@ -455,14 +444,16 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                     </CardHeader>
                     <CardContent>
                         {timeLogs.length > 0 ? (
-                            <ApprovalTimeLogTable
-                                timeLogs={timeLogs}
-                                showCheckboxes={true}
-                                selectedLogs={selectedLogs}
-                                onSelectLog={handleSelectLog}
-                                onApprove={openSingleApproveDialog}
-                                onReject={openSingleRejectDialog}
-                            />
+                            <div className="overflow-x-auto">
+                                <ApprovalTimeLogTable
+                                    timeLogs={timeLogs}
+                                    showCheckboxes={true}
+                                    selectedLogs={selectedLogs}
+                                    onSelectLog={handleSelectLog}
+                                    onApprove={openSingleApproveDialog}
+                                    onReject={openSingleRejectDialog}
+                                />
+                            </div>
                         ) : (
                             <div className="rounded-md border bg-muted/5 p-6">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">

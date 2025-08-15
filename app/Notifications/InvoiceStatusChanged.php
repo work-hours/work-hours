@@ -50,10 +50,8 @@ final class InvoiceStatusChanged extends Notification
             ->action('View Invoice', url('/invoices/' . $this->invoice->id))
             ->line('Thank you for your business!');
 
-        // Generate PDF and attach to email
         $pdf = $this->generateInvoicePdf();
 
-        // If PDF generation fails, log the error but continue with the email
         if ($pdf) {
             $message->attachData(
                 $pdf->output(),
@@ -110,13 +108,12 @@ final class InvoiceStatusChanged extends Notification
     private function generateInvoicePdf()
     {
         try {
-            // Check if the PDF package is installed
+
             if (! class_exists(Pdf::class)) {
-                // If not, try to use another PDF library or return null
+
                 return null;
             }
 
-            // Generate PDF using the invoice data
             return Pdf::loadView('pdf.invoice', [
                 'invoice' => $this->invoice,
                 'client' => $this->invoice->client,
@@ -124,7 +121,7 @@ final class InvoiceStatusChanged extends Notification
             ]);
 
         } catch (Exception $e) {
-            // Log the error but don't fail the notification
+
             Log::error('Failed to generate invoice PDF: ' . $e->getMessage());
 
             return null;

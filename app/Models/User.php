@@ -31,6 +31,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $currency
  * @property mixed $unreadNotifications
  * @property Collection|Task[] $assignedTasks
+ * @property mixed $currencies
  */
 #[UsePolicy(TeamPolicy::class)]
 final class User extends Authenticatable implements MustVerifyEmail
@@ -93,12 +94,25 @@ final class User extends Authenticatable implements MustVerifyEmail
             ->withTimestamps();
     }
 
+    public function credentials(): HasMany
+    {
+        return $this->hasMany(Credential::class);
+    }
+
     /**
      * Check if the user is an admin.
      */
     public function isAdmin(): bool
     {
         return in_array($this->id, config('app.admin_ids', []));
+    }
+
+    /**
+     * Check if the user has integrated with Jira.
+     */
+    public function isJiraIntegrated(): bool
+    {
+        return $this->credentials()->where('source', 'jira')->exists();
     }
 
     /**

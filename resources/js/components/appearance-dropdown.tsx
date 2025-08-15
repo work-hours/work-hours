@@ -10,11 +10,11 @@ export default function AppearanceToggleDropdown({ className = '', ...props }: H
     const getCurrentIcon = () => {
         switch (appearance) {
             case 'dark':
-                return <Moon className="h-5 w-5" />
+                return <Moon className="h-4 w-4" />
             case 'light':
-                return <Sun className="h-5 w-5" />
+                return <Sun className="h-4 w-4" />
             default:
-                return <Monitor className="h-5 w-5" />
+                return <Monitor className="h-4 w-4" />
         }
     }
 
@@ -22,29 +22,39 @@ export default function AppearanceToggleDropdown({ className = '', ...props }: H
         <div className={className} {...props}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-md">
+                    <Button
+                        variant="ghost"
+                        size="xs"
+                        className="rounded-md text-neutral-600 hover:bg-neutral-100 hover:text-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+                    >
                         {getCurrentIcon()}
                         <span className="sr-only">Toggle theme</span>
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => updateAppearance('light')}>
-                        <span className="flex items-center gap-2">
-                            <Sun className="h-5 w-5" />
-                            Light
-                        </span>
+                <DropdownMenuContent
+                    align="end"
+                    className="w-36 rounded-md border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900"
+                >
+                    <DropdownMenuItem
+                        onClick={() => updateAppearance('light')}
+                        className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                    >
+                        <Sun className="h-4 w-4" />
+                        Light
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => updateAppearance('dark')}>
-                        <span className="flex items-center gap-2">
-                            <Moon className="h-5 w-5" />
-                            Dark
-                        </span>
+                    <DropdownMenuItem
+                        onClick={() => updateAppearance('dark')}
+                        className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                    >
+                        <Moon className="h-4 w-4" />
+                        Dark
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => updateAppearance('system')}>
-                        <span className="flex items-center gap-2">
-                            <Monitor className="h-5 w-5" />
-                            System
-                        </span>
+                    <DropdownMenuItem
+                        onClick={() => updateAppearance('system')}
+                        className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                    >
+                        <Monitor className="h-4 w-4" />
+                        System
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

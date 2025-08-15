@@ -2,12 +2,13 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import TagInput from '@/components/ui/tag-input'
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
 import { Head, useForm } from '@inertiajs/react'
-import { ArrowLeft, Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus, Text } from 'lucide-react'
+import { Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus } from 'lucide-react'
 import { FormEventHandler, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+import BackButton from '@/components/back-button'
 import InputError from '@/components/input-error'
-import { Button } from '@/components/ui/button'
+import SubmitButton from '@/components/submit-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import CustomInput from '@/components/ui/custom-input'
@@ -15,7 +16,9 @@ import DatePicker from '@/components/ui/date-picker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Textarea } from '@/components/ui/textarea'
+
+import FileDropzone from '@/components/ui/file-dropzone'
+import RichTextEditor from '@/components/ui/rich-text-editor'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 
@@ -35,7 +38,9 @@ type TaskForm = {
     due_date: string
     assignees: number[]
     create_github_issue: boolean
+    create_jira_issue: boolean
     tags: string[]
+    attachments?: File[]
 }
 
 type Props = {
@@ -63,20 +68,19 @@ export default function CreateTask({ projects }: Props) {
         due_date: '',
         assignees: [],
         create_github_issue: false,
+        create_jira_issue: false,
         tags: [],
+        attachments: [],
     })
 
-    // State to store potential assignees
     const [potentialAssignees, setPotentialAssignees] = useState<{ id: number; name: string; email: string }[]>([])
     const [loadingAssignees, setLoadingAssignees] = useState<boolean>(false)
 
-    // State to track if the selected project is from GitHub
     const [isGithubProject, setIsGithubProject] = useState<boolean>(false)
+    const [isJiraProject, setIsJiraProject] = useState<boolean>(false)
 
-    // State for due date
     const [dueDate, setDueDate] = useState<Date | null>(data.due_date ? new Date(data.due_date) : null)
 
-    // Handle due date change
     const handleDueDateChange = (date: Date | null) => {
         setDueDate(date)
         if (date) {
@@ -86,7 +90,6 @@ export default function CreateTask({ projects }: Props) {
         }
     }
 
-    // Fetch potential assignees when project_id changes
     useEffect(() => {
         if (data.project_id) {
             setLoadingAssignees(true)
@@ -110,15 +113,16 @@ export default function CreateTask({ projects }: Props) {
         }
     }, [data.project_id])
 
-    // Check if the selected project is a GitHub project
     useEffect(() => {
         const selectedProject = projects.find((project) => project.id === Number(data.project_id))
         setIsGithubProject(!!selectedProject?.is_github)
+        setIsJiraProject(!!selectedProject?.source && selectedProject.source.toLowerCase() === 'jira')
     }, [data.project_id, projects])
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
         post(route('task.store'), {
+            forceFormData: true,
             onSuccess: () => {
                 toast.success('Task created successfully')
                 reset()
@@ -134,10 +138,8 @@ export default function CreateTask({ projects }: Props) {
         const index = currentAssignees.indexOf(assigneeId)
 
         if (index === -1) {
-            // Add assignee if not already selected
             currentAssignees.push(assigneeId)
         } else {
-            // Remove assignee if already selected
             currentAssignees.splice(index, 1)
         }
 
@@ -147,17 +149,17 @@ export default function CreateTask({ projects }: Props) {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Task" />
-            <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
+            <div className="mx-auto flex max-w-3xl flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Add Task</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Create a new task</p>
+                    <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Add Task</h1>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Create a new task</p>
                 </section>
 
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Task Details</CardTitle>
-                        <CardDescription>Enter the information for the new task</CardDescription>
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                        <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Task Details</CardTitle>
+                        <CardDescription className="text-sm text-gray-500 dark:text-gray-400">Enter the information for the new task</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form className="flex flex-col gap-6" onSubmit={submit}>
@@ -231,18 +233,14 @@ export default function CreateTask({ projects }: Props) {
                                         Description <span className="text-xs text-muted-foreground">(optional)</span>
                                     </Label>
                                     <div className="relative">
-                                        <div className="pointer-events-none absolute inset-y-0 top-0 left-3 flex items-center pt-2">
-                                            <Text className="h-4 w-4 text-muted-foreground" />
+                                        <div className="">
+                                            <RichTextEditor
+                                                value={data.description}
+                                                onChange={(val) => setData('description', val)}
+                                                disabled={processing}
+                                                placeholder="Task description"
+                                            />
                                         </div>
-                                        <Textarea
-                                            id="description"
-                                            tabIndex={2}
-                                            value={data.description}
-                                            onChange={(e) => setData('description', e.target.value)}
-                                            disabled={processing}
-                                            placeholder="Task description"
-                                            className="min-h-[100px] pl-10"
-                                        />
                                     </div>
                                     <InputError message={errors.description} />
                                 </div>
@@ -384,22 +382,37 @@ export default function CreateTask({ projects }: Props) {
                                     </div>
                                 )}
 
+                                {isJiraProject && (
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                            id="create_jira_issue"
+                                            checked={data.create_jira_issue}
+                                            onCheckedChange={(checked) => setData('create_jira_issue', !!checked)}
+                                            disabled={processing}
+                                        />
+                                        <Label htmlFor="create_jira_issue" className="cursor-pointer text-sm">
+                                            Create issue on Jira
+                                        </Label>
+                                    </div>
+                                )}
+
+                                <FileDropzone
+                                    value={data.attachments || []}
+                                    onChange={(files) => setData('attachments', files)}
+                                    label="Attachments"
+                                    description="Drag & drop files here, or click to select"
+                                    disabled={processing}
+                                />
+
                                 <div className="mt-4 flex justify-end gap-3">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => window.history.back()}
-                                        tabIndex={4}
-                                        disabled={processing}
-                                        className="flex items-center gap-2"
-                                    >
-                                        <ArrowLeft className="h-4 w-4" />
-                                        Back
-                                    </Button>
-                                    <Button type="submit" tabIndex={3} disabled={processing} className="flex items-center gap-2">
-                                        {processing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                                        {processing ? 'Creating...' : 'Create Task'}
-                                    </Button>
+                                    <BackButton disabled={processing} />
+                                    <SubmitButton
+                                        loading={processing}
+                                        idleLabel="Create Task"
+                                        loadingLabel="Creating..."
+                                        idleIcon={<Plus className="h-4 w-4" />}
+                                        loadingIcon={<LoaderCircle className="h-4 w-4 animate-spin" />}
+                                    />
                                 </div>
                             </div>
                         </form>

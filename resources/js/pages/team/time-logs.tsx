@@ -1,5 +1,7 @@
 import { ExportButton } from '@/components/action-buttons'
+import BackButton from '@/components/back-button'
 import StatsCards from '@/components/dashboard/StatsCards'
+import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -7,10 +9,11 @@ import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
+import { Pagination } from '@/components/ui/pagination'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head, Link, router, useForm } from '@inertiajs/react'
-import { AlertCircle, ArrowLeft, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Search, TimerReset } from 'lucide-react'
+import { Head, router, useForm } from '@inertiajs/react'
+import { AlertCircle, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Search, TimerReset } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
 
 type TimeLog = {
@@ -56,6 +59,7 @@ type Props = {
     paidAmountsByCurrency: Record<string, number>
     currency: string
     weeklyAverage: number
+    links?: { url: string | null; label: string; active: boolean }[]
 }
 
 export default function TeamMemberTimeLogs({
@@ -69,6 +73,7 @@ export default function TeamMemberTimeLogs({
     paidAmountsByCurrency,
     currency,
     weeklyAverage,
+    links = [],
 }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -81,10 +86,8 @@ export default function TeamMemberTimeLogs({
         },
     ]
 
-    // State for selected time logs
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
 
-    // Handle checkbox selection
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
             setSelectedLogs([...selectedLogs, id])
@@ -93,7 +96,6 @@ export default function TeamMemberTimeLogs({
         }
     }
 
-    // Mark selected logs as paid
     const markAsPaid = () => {
         if (selectedLogs.length === 0) {
             return
@@ -120,11 +122,9 @@ export default function TeamMemberTimeLogs({
         status: filters.status || '',
     })
 
-    // Convert string dates to Date objects for DatePicker
     const startDate = data['start-date'] ? new Date(data['start-date']) : null
     const endDate = data['end-date'] ? new Date(data['end-date']) : null
 
-    // Handle date changes
     const handleStartDateChange = (date: Date | null) => {
         if (date) {
             setData('start-date', date.toISOString().split('T')[0])
@@ -151,27 +151,21 @@ export default function TeamMemberTimeLogs({
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title={`${user.name}'s Time Logs`} />
-            <div className="mx-auto flex flex-col gap-6 p-3">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 {/* Header section */}
                 <section className="mb-2">
-                    <div className="flex items-center gap-4">
-                        <Link href={route('team.index')}>
-                            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                <ArrowLeft className="h-4 w-4" />
-                                <span className="sr-only">Back to Team</span>
-                            </Button>
-                        </Link>
+                    <div className="flex items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">{user.name}'s Time Logs</h1>
-                            <p className="mt-1 text-gray-500 dark:text-gray-400">Track and manage work hours for this team member</p>
+                            <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">{user.name}'s Time Logs</h1>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Track and manage work hours for this team member</p>
                         </div>
+                        <BackButton />
                     </div>
                 </section>
 
                 {/* Stats Cards */}
                 {timeLogs.length > 0 && (
                     <section className="mb-4">
-                        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Metrics Dashboard</h3>
                         <StatsCards
                             teamStats={{
                                 count: -1, // Just one team member
@@ -190,23 +184,22 @@ export default function TeamMemberTimeLogs({
                 )}
 
                 {/* Time Logs Card with filters in header */}
-                <Card className="transition-all hover:shadow-md">
-                    <CardHeader className="">
-                        <div className="flex items-center justify-between">
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                             <div>
-                                <CardTitle className="text-xl">{user.name}'s Time Logs</CardTitle>
-                                <CardDescription>
+                                <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">{user.name}'s Time Logs</CardTitle>
+                                <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
                                     {timeLogs.length > 0
                                         ? `Showing ${timeLogs.length} time ${timeLogs.length === 1 ? 'entry' : 'entries'}`
                                         : 'No time logs found for the selected period'}
                                 </CardDescription>
 
                                 {(data['start-date'] || data['end-date'] || data.project || data['is-paid'] || data.status) && (
-                                    <CardDescription className="mt-1">
+                                    <CardDescription className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                         {(() => {
                                             let description = ''
 
-                                            // Date range description
                                             if (data['start-date'] && data['end-date']) {
                                                 description = `Showing logs from ${data['start-date']} to ${data['end-date']}`
                                             } else if (data['start-date']) {
@@ -215,7 +208,6 @@ export default function TeamMemberTimeLogs({
                                                 description = `Showing logs until ${data['end-date']}`
                                             }
 
-                                            // Project description
                                             if (data.project) {
                                                 const selectedProject = projects.find((project) => project.id.toString() === data.project)
                                                 const projectName = selectedProject ? selectedProject.name : ''
@@ -227,7 +219,6 @@ export default function TeamMemberTimeLogs({
                                                 }
                                             }
 
-                                            // Payment status description
                                             if (data['is-paid']) {
                                                 const paymentStatus = data['is-paid'] === 'true' ? 'paid' : 'unpaid'
 
@@ -238,7 +229,6 @@ export default function TeamMemberTimeLogs({
                                                 }
                                             }
 
-                                            // Approval status description
                                             if (data.status) {
                                                 const statusText =
                                                     data.status === 'pending' ? 'pending' : data.status === 'approved' ? 'approved' : 'rejected'
@@ -261,18 +251,21 @@ export default function TeamMemberTimeLogs({
                                     label="Export"
                                 />
                                 {selectedLogs.length > 0 && (
-                                    <Button onClick={markAsPaid} variant="secondary" className="flex items-center gap-2">
-                                        <CheckCircle className="h-3 w-3" />
+                                    <Button
+                                        onClick={markAsPaid}
+                                        className="flex items-center gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                                    >
+                                        <CheckCircle className="h-3.5 w-3.5" />
                                         <span>Mark as Paid ({selectedLogs.length})</span>
                                     </Button>
                                 )}
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t pt-4">
+                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
                             <form onSubmit={submit} className="flex w-full flex-row flex-wrap gap-4">
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="start-date" className="text-xs font-medium">
+                                    <Label htmlFor="start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Start Date
                                     </Label>
                                     <DatePicker
@@ -284,15 +277,16 @@ export default function TeamMemberTimeLogs({
                                         customInput={
                                             <CustomInput
                                                 id="start-date"
-                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select start date"
+                                                className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="end-date" className="text-xs font-medium">
+                                    <Label htmlFor="end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         End Date
                                     </Label>
                                     <DatePicker
@@ -304,29 +298,31 @@ export default function TeamMemberTimeLogs({
                                         customInput={
                                             <CustomInput
                                                 id="end-date"
-                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select end date"
+                                                className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="project" className="text-xs font-medium">
+                                    <Label htmlFor="project" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Project
                                     </Label>
                                     <SearchableSelect
                                         id="project"
                                         value={data.project}
                                         onChange={(value) => setData('project', value)}
-                                        options={[{ id: '', name: 'All Projects' }, ...projects]}
+                                        options={[{ id: '', name: 'Projects' }, ...projects]}
                                         placeholder="Select project"
                                         disabled={processing}
-                                        icon={<Briefcase className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
+                                        className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="is-paid" className="text-xs font-medium">
+                                    <Label htmlFor="is-paid" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Payment Status
                                     </Label>
                                     <SearchableSelect
@@ -334,17 +330,18 @@ export default function TeamMemberTimeLogs({
                                         value={data['is-paid']}
                                         onChange={(value) => setData('is-paid', value)}
                                         options={[
-                                            { id: '', name: 'All Statuses' },
+                                            { id: '', name: 'Statuses' },
                                             { id: 'true', name: 'Paid' },
                                             { id: 'false', name: 'Unpaid' },
                                         ]}
                                         placeholder="Select status"
                                         disabled={processing}
-                                        icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<CheckCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
+                                        className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                     />
                                 </div>
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="status" className="text-xs font-medium">
+                                    <Label htmlFor="status" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Approval Status
                                     </Label>
                                     <SearchableSelect
@@ -352,29 +349,24 @@ export default function TeamMemberTimeLogs({
                                         value={data.status}
                                         onChange={(value) => setData('status', value)}
                                         options={[
-                                            { id: '', name: 'All Statuses' },
+                                            { id: '', name: 'Statuses' },
                                             { id: 'pending', name: 'Pending' },
                                             { id: 'approved', name: 'Approved' },
                                             { id: 'rejected', name: 'Rejected' },
                                         ]}
                                         placeholder="Select approval status"
                                         disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
+                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
+                                        className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                     />
                                 </div>
                                 <div className="flex items-end gap-2">
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="flex h-9 w-9 items-center justify-center p-0"
-                                        title="Apply filters"
-                                    >
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
+                                    <FilterButton
+                                        variant="clear"
                                         disabled={
                                             processing ||
                                             (!data['start-date'] && !data['end-date'] && !data.project && !data['is-paid'] && !data.status)
@@ -391,32 +383,39 @@ export default function TeamMemberTimeLogs({
                                                 preserveState: true,
                                             })
                                         }}
-                                        className="flex h-9 w-9 items-center justify-center p-0"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {timeLogs.length > 0 ? (
-                            <TimeLogTable
-                                timeLogs={timeLogs as TimeLogEntry[]}
-                                showCheckboxes={true}
-                                showActions={true}
-                                showEditDelete={false}
-                                selectedLogs={selectedLogs}
-                                onSelectLog={handleSelectLog}
-                            />
+                            <div className="overflow-x-auto">
+                                <TimeLogTable
+                                    timeLogs={timeLogs as TimeLogEntry[]}
+                                    showCheckboxes={true}
+                                    showActions={true}
+                                    showEditDelete={false}
+                                    selectedLogs={selectedLogs}
+                                    onSelectLog={handleSelectLog}
+                                />
+                            </div>
                         ) : (
-                            <div className="rounded-md border bg-muted/5 p-6">
+                            <div className="rounded-md p-6">
                                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                                    <ClockIcon className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                                    <h3 className="mb-1 text-lg font-medium">No Time Logs</h3>
-                                    <p className="mb-4 text-muted-foreground">{user.name} hasn't added any time logs yet.</p>
+                                    <ClockIcon className="mb-4 h-12 w-12 text-gray-300 dark:text-gray-600" />
+                                    <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Time Logs</h3>
+                                    <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">{user.name} hasn't added any time logs yet.</p>
                                 </div>
+                            </div>
+                        )}
+
+                        {links && links.length > 0 && (
+                            <div className="border-t border-gray-100 px-4 py-3 dark:border-gray-700">
+                                <Pagination links={links} />
                             </div>
                         )}
                     </CardContent>

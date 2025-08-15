@@ -19,7 +19,7 @@ export default function LegalLayout({ title, children }: LegalLayoutProps) {
     ]
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-[#f8f6e9] dark:bg-gray-900" style={{ scrollBehavior: 'smooth' }}>
+        <div className="relative min-h-screen overflow-hidden bg-background dark:bg-gray-900" style={{ scrollBehavior: 'smooth' }}>
             <Background />
             <Head title={`${title} - Work Hours`} />
             <Navbar />

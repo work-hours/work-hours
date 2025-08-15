@@ -30,7 +30,6 @@ export default function MonthView({ timeLogs, date, onTimeLogClick, onSwitchToDa
     const monthEnd = endOfMonth(currentDate)
     const days = eachDayOfInterval({ start: monthStart, end: monthEnd })
 
-    // Add days before the start of the month to fill the first week
     const firstDayOfWeek = monthStart.getDay() // 0 = Sunday, 1 = Monday, etc.
     const daysBeforeMonth = []
     for (let i = 0; i < firstDayOfWeek; i++) {
@@ -39,7 +38,6 @@ export default function MonthView({ timeLogs, date, onTimeLogClick, onSwitchToDa
         daysBeforeMonth.push(prevDate)
     }
 
-    // Add days after the end of the month to fill the last week
     const lastDayOfWeek = monthEnd.getDay()
     const daysAfterMonth = []
     for (let i = 1; i < 7 - lastDayOfWeek; i++) {
@@ -48,10 +46,8 @@ export default function MonthView({ timeLogs, date, onTimeLogClick, onSwitchToDa
         daysAfterMonth.push(nextDate)
     }
 
-    // Combine all days
     const allDays = [...daysBeforeMonth, ...days, ...daysAfterMonth]
 
-    // Group logs by date
     const logsByDate: Record<string, any[]> = {}
 
     timeLogs.forEach((log) => {
@@ -84,7 +80,6 @@ export default function MonthView({ timeLogs, date, onTimeLogClick, onSwitchToDa
                     const isToday = isSameDay(day, new Date())
                     const dayLogs = logsByDate[dateKey] || []
 
-                    // Calculate total hours logged for this day
                     const totalHours = dayLogs.reduce((sum, log) => sum + log.duration, 0)
                     const hasLogs = dayLogs.length > 0
 
@@ -113,7 +108,7 @@ export default function MonthView({ timeLogs, date, onTimeLogClick, onSwitchToDa
                                         onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()
-                                            // Use a more direct approach with window.location
+
                                             const dayDate = format(day, 'yyyy-MM-dd')
                                             window.location.href = `/calendar?view=day&date=${dayDate}`
                                         }}

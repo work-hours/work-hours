@@ -36,27 +36,22 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
     const [isLoading, setIsLoading] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
 
-    // Load chat histories when the component mounts
     useEffect(() => {
         loadChatHistories().then()
     }, [])
 
-    // Listen for custom event to open the AI chat
     useEffect(() => {
         const handleOpenAiChat = () => {
             setIsOpen(true)
         }
 
-        // Add event listener
         window.addEventListener('open-ai-chat', handleOpenAiChat)
 
-        // Clean up
         return () => {
             window.removeEventListener('open-ai-chat', handleOpenAiChat)
         }
     }, [])
 
-    // Function to load chat histories
     const loadChatHistories = async () => {
         try {
             setIsLoading(true)
@@ -75,17 +70,14 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
         }
     }
 
-    // Function to handle chat deletion
     const handleChatDeleted = (id: number) => {
-        // If the deleted chat was selected, clear the selection
         if (selectedChatId === id) {
             setSelectedChatId(null)
         }
-        // Reload chat histories
+
         loadChatHistories()
     }
 
-    // Function to start a new chat
     const handleNewChat = () => {
         setSelectedChatId(null)
     }
@@ -97,11 +89,11 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
                     <Button
                         variant="outline"
                         size="icon"
-                        className="h-16 w-16 rounded-xl border border-primary/20 bg-background shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary/5"
+                        className="h-14 w-14 rounded-lg border border-gray-200 bg-white shadow-md transition-all duration-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
                     >
                         <div className="relative flex flex-col items-center justify-center gap-1">
-                            <BrainCircuit className="h-7 w-7 text-primary" />
-                            <span className="text-xs font-semibold text-primary">Ask AI</span>
+                            <BrainCircuit className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+                            <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Ask AI</span>
                         </div>
                     </Button>
                 </SheetTrigger>
@@ -109,41 +101,48 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
             <SheetContent className="overflow-hidden p-0 sm:max-w-lg md:max-w-2xl lg:max-w-3xl">
                 <div className="flex h-full">
                     {/* Chat History Sidebar */}
-                    <div className="w-64 border-r border-border bg-muted/30">
-                        <div className="border-b border-border p-4">
-                            <h3 className="text-lg font-semibold">Chat History</h3>
-                            <Button variant="outline" size="sm" className="mt-2 w-full gap-2" onClick={handleNewChat}>
-                                <Plus className="h-4 w-4" />
+                    <div className="w-60 border-r border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
+                        <div className="border-b border-gray-200 p-3 dark:border-gray-700">
+                            <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">Chat History</h3>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="mt-2 w-full gap-1 border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                onClick={handleNewChat}
+                            >
+                                <Plus className="h-3 w-3" />
                                 New Chat
                             </Button>
                         </div>
                         <ScrollArea className="h-[calc(100vh-120px)]">
                             {isLoading ? (
-                                <div className="flex h-20 items-center justify-center">
-                                    <p className="text-sm text-muted-foreground">Loading...</p>
+                                <div className="flex h-16 items-center justify-center">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Loading...</p>
                                 </div>
                             ) : chatHistories.length === 0 ? (
                                 <div className="p-4 text-center">
-                                    <p className="text-sm text-muted-foreground">No chat history yet</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">No chat history yet</p>
                                 </div>
                             ) : (
-                                <div className="space-y-1 p-2">
+                                <div className="space-y-0.5 p-2">
                                     {chatHistories.map((chat) => (
                                         <div
                                             key={chat.id}
-                                            className={`group flex cursor-pointer items-start justify-between rounded-md p-2 hover:bg-muted ${
-                                                selectedChatId === chat.id ? 'bg-muted' : ''
+                                            className={`group flex cursor-pointer items-start justify-between rounded-md p-2 transition-colors duration-150 hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                                                selectedChatId === chat.id ? 'bg-gray-100 dark:bg-gray-800' : ''
                                             }`}
                                             onClick={() => setSelectedChatId(chat.id)}
                                         >
                                             <div className="flex items-start space-x-2">
-                                                <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                                                <Clock className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-gray-400 dark:text-gray-500" />
                                                 <div className="overflow-hidden">
-                                                    <p className="text-sm font-medium">{chat.title}</p>
-                                                    <p className="text-xs text-muted-foreground">{new Date(chat.updated_at).toLocaleDateString()}</p>
+                                                    <p className="text-xs font-medium text-gray-700 dark:text-gray-200">{chat.title}</p>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                        {new Date(chat.updated_at).toLocaleDateString()}
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <div className="opacity-0 transition-opacity group-hover:opacity-100">
+                                            <div className="opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                                                 <DeleteChatHistory chatId={chat.id} onDelete={() => handleChatDeleted(chat.id)} />
                                             </div>
                                         </div>

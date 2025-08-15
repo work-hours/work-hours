@@ -31,12 +31,10 @@ final class GitHubAuthController extends Controller
         try {
             $result = $this->githubAdapter->handleGitHubCallback();
 
-            // Store the GitHub token in the user's record
             $user = $result['user'];
             $user->github_token = $result['token'];
             $user->save();
 
-            // Also store in session for backward compatibility
             session(['github_token' => $result['token']]);
 
             Auth::login($user);

@@ -33,8 +33,11 @@ final class StoreTaskRequest extends FormRequest
             'assignees' => ['nullable', 'array'],
             'assignees.*' => ['integer', 'exists:users,id'],
             'create_github_issue' => ['nullable', 'boolean'],
+            'create_jira_issue' => ['nullable', 'boolean'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:255'],
+            'attachments' => ['sometimes', 'array'],
+            'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,gif,doc,docx,pdf,txt,zip'],
         ];
     }
 }

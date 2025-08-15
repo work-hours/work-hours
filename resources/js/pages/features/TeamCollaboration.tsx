@@ -3,139 +3,87 @@ import { Bell, Calendar, CheckCircle, MessageSquare, Users } from 'lucide-react'
 
 export default function TeamCollaboration() {
     return (
-        <FeatureLayout title="Team Collaboration" icon={<Users className="h-8 w-8 text-blue-900 dark:text-blue-400" />}>
-            <div className="space-y-8">
+        <FeatureLayout title="Team Collaboration" icon={<Users className="h-7 w-7 text-blue-600 dark:text-blue-400" />}>
+            <div className="space-y-10">
                 {/* Introduction Section */}
-                <section className="space-y-4">
-                    <p className="text-lg leading-relaxed">
+                <section className="space-y-5">
+                    <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
                         Enhance your team's productivity with our powerful collaboration tools. Work Hours makes it easy for teams of any size to
                         coordinate, communicate, and track progress on projects together.
                     </p>
-                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-900/20">
-                        <p className="text-blue-900 dark:text-blue-400">
-                            <span className="font-semibold">Pro Tip:</span> Set up team dashboards to get a quick overview of everyone's current tasks
-                            and progress at a glance.
+                    <div className="rounded-lg border border-blue-100 bg-blue-50 p-5 dark:border-blue-900/30 dark:bg-blue-900/10">
+                        <p className="flex items-center text-blue-700 dark:text-blue-300">
+                            <span className="mr-2">
+                                <Users className="h-5 w-5" />
+                            </span>
+                            <span>
+                                <span className="font-medium">Pro Tip:</span> Set up team dashboards to get a quick overview of everyone's current
+                                tasks and progress at a glance.
+                            </span>
                         </p>
                     </div>
                 </section>
 
                 {/* Key Features Section */}
-                <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
+                <section className="space-y-6">
+                    <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Key Features
                     </h2>
                     <div className="grid gap-6 md:grid-cols-2">
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <Users className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <Users className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Team Management</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Team Management</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-400">
                                 Create teams, assign roles, and manage permissions to ensure everyone has access to what they need.
                             </p>
                         </div>
 
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <MessageSquare className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <MessageSquare className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Comments & Notes</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Comments & Notes</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-400">
                                 Leave comments on time entries and projects to provide context and updates to team members.
                             </p>
                         </div>
 
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <Calendar className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <Calendar className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Shared Calendars</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Shared Calendars</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-400">
                                 View team schedules, deadlines, and availability in a unified calendar interface.
                             </p>
                         </div>
 
-                        <div className="rounded-lg border border-gray-300 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                            <div className="mb-3 flex items-center">
-                                <div className="mr-3 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
-                                    <Bell className="h-5 w-5 text-blue-900 dark:text-blue-400" />
+                        <div className="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-900">
+                            <div className="mb-4 flex items-center">
+                                <div className="mr-4 rounded-full bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+                                    <Bell className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Real-time Notifications</h3>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Real-time Notifications</h3>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300">
-                                Stay informed with instant notifications about project updates, comments, and team activities.
+                            <p className="text-gray-600 dark:text-gray-400">
+                                Stay informed with instant notifications about team activities, comments, and updates.
                             </p>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Collaboration Tools Section */}
-                <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
-                        Collaboration Tools
-                    </h2>
-                    <div className="rounded-lg border border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-                        <div className="grid gap-8 md:grid-cols-2">
-                            <div>
-                                <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-200">Team Dashboard</h3>
-                                <p className="mb-4 text-gray-700 dark:text-gray-300">
-                                    Get a comprehensive view of your team's activities, including:
-                                </p>
-                                <ul className="space-y-2 pl-5">
-                                    <li className="flex items-start">
-                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
-                                        <span className="text-gray-700 dark:text-gray-300">Current active tasks for each team member</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
-                                        <span className="text-gray-700 dark:text-gray-300">Weekly and monthly time summaries</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
-                                        <span className="text-gray-700 dark:text-gray-300">Project progress indicators</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
-                                        <span className="text-gray-700 dark:text-gray-300">Upcoming deadlines and milestones</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-200">Workload Management</h3>
-                                <p className="mb-4 text-gray-700 dark:text-gray-300">Optimize your team's workload with tools designed to:</p>
-                                <ul className="space-y-2 pl-5">
-                                    <li className="flex items-start">
-                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
-                                        <span className="text-gray-700 dark:text-gray-300">Visualize capacity and availability</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
-                                        <span className="text-gray-700 dark:text-gray-300">Balance tasks across team members</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
-                                        <span className="text-gray-700 dark:text-gray-300">Identify bottlenecks and overallocations</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <div className="mt-1 mr-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-900 dark:bg-blue-400"></div>
-                                        <span className="text-gray-700 dark:text-gray-300">Plan resources for upcoming projects</span>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </section>
 
                 {/* How It Works Section */}
-                <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
-                        How It Works
+                <section className="space-y-6">
+                    <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
+                        How Team Collaboration Works
                     </h2>
                     <ol className="space-y-6">
                         <li className="flex">
@@ -145,7 +93,7 @@ export default function TeamCollaboration() {
                             <div>
                                 <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Create Your Team</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Set up your team structure and invite members via email. Assign roles and permissions based on responsibilities.
+                                    Set up your team by inviting members via email. Assign roles and permissions based on their responsibilities.
                                 </p>
                             </div>
                         </li>
@@ -154,9 +102,9 @@ export default function TeamCollaboration() {
                                 2
                             </div>
                             <div>
-                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Assign Projects & Tasks</h3>
+                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Assign Projects</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Distribute work among team members. Set deadlines, priorities, and estimated hours for each task.
+                                    Distribute projects and tasks among team members, setting deadlines and priorities.
                                 </p>
                             </div>
                         </li>
@@ -165,9 +113,9 @@ export default function TeamCollaboration() {
                                 3
                             </div>
                             <div>
-                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Track Progress Together</h3>
+                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Track Progress</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Monitor real-time updates as team members log their time. Add comments and notes to provide context and feedback.
+                                    Monitor real-time updates as team members track their time and complete tasks.
                                 </p>
                             </div>
                         </li>
@@ -176,10 +124,9 @@ export default function TeamCollaboration() {
                                 4
                             </div>
                             <div>
-                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Analyze & Optimize</h3>
+                                <h3 className="mb-1 text-lg font-semibold text-gray-800 dark:text-gray-200">Collaborate & Communicate</h3>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    Generate team reports to identify trends, bottlenecks, and opportunities for improvement in your collaborative
-                                    workflow.
+                                    Use comments, notes, and notifications to maintain clear communication throughout the project lifecycle.
                                 </p>
                             </div>
                         </li>
@@ -187,34 +134,34 @@ export default function TeamCollaboration() {
                 </section>
 
                 {/* Benefits Section */}
-                <section className="space-y-4">
-                    <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
-                        Benefits
+                <section className="space-y-6">
+                    <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
+                        Benefits of Team Collaboration
                     </h2>
                     <div className="grid gap-4 md:grid-cols-2">
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Improved communication and reduced misunderstandings</p>
+                            <p className="text-gray-700 dark:text-gray-300">Improved coordination across team members</p>
                         </div>
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Increased accountability and transparency</p>
+                            <p className="text-gray-700 dark:text-gray-300">Enhanced accountability with transparent tracking</p>
                         </div>
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Better coordination across team members</p>
+                            <p className="text-gray-700 dark:text-gray-300">Reduced miscommunication and project delays</p>
                         </div>
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Enhanced project visibility and oversight</p>
+                            <p className="text-gray-700 dark:text-gray-300">Easier resource allocation and workload balancing</p>
                         </div>
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Streamlined workflow and reduced bottlenecks</p>
+                            <p className="text-gray-700 dark:text-gray-300">More accurate project estimations and planning</p>
                         </div>
                         <div className="flex items-start">
                             <CheckCircle className="mr-2 h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-500" />
-                            <p className="text-gray-700 dark:text-gray-300">Improved resource allocation and planning</p>
+                            <p className="text-gray-700 dark:text-gray-300">Centralized information accessible to all team members</p>
                         </div>
                     </div>
                 </section>
@@ -225,7 +172,7 @@ export default function TeamCollaboration() {
                         <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">
                             <h3 className="mb-2 text-xl font-bold text-blue-900 dark:text-blue-400">Ready to Boost Team Productivity?</h3>
                             <p className="text-blue-800 dark:text-blue-300">
-                                Sign up for Work Hours today and transform how your team works together.
+                                Start using our team collaboration tools today and see how much more your team can accomplish.
                             </p>
                         </div>
                         <div className="md:w-1/3">

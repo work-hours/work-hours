@@ -1,5 +1,7 @@
 import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import AddNewButton from '@/components/add-new-button'
 import DeleteClient from '@/components/delete-client'
+import FilterButton from '@/components/filter-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
@@ -11,7 +13,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { formatDateValue, objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
-import { Head, Link, usePage } from '@inertiajs/react'
+import { Head, usePage } from '@inertiajs/react'
 import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, Plus, Search, TimerReset, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -52,14 +54,12 @@ export default function Clients() {
     const [error, setError] = useState<boolean>(false)
     const [processing, setProcessing] = useState(false)
 
-    // Convert string date to Date object if needed
     const parseDate = (dateValue: Date | string | null): Date | null => {
         if (dateValue === null) return null
         if (typeof dateValue === 'string') return new Date(dateValue)
         return dateValue
     }
 
-    // Filter states
     const [filters, setFilters] = useState<ClientFilters>({
         search: pageFilters?.search || '',
         'created-date-from': pageFilters?.['created-date-from'] || null,
@@ -138,23 +138,25 @@ export default function Clients() {
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Clients" />
-            <div className="mx-auto flex flex-col gap-6 p-3">
+            <div className="mx-auto flex flex-col gap-4 p-4">
                 <section className="mb-2">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Client Management</h1>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your clients</p>
+                    <div className="mb-2 flex items-center justify-between">
+                        <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Client Management</h1>
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Manage your clients and their associated projects</p>
                 </section>
 
-                <Card className="transition-all hover:shadow-md">
-                    <CardHeader className="">
-                        <div className="flex items-center justify-between">
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                             <div>
-                                <CardTitle className="text-xl">Clients</CardTitle>
-                                <CardDescription>
+                                <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Client List</CardTitle>
+                                <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
                                     {loading ? 'Loading clients...' : error ? 'Failed to load clients' : `You have ${clients.length} clients`}
                                 </CardDescription>
 
                                 {(filters.search || filters['created-date-from'] || filters['created-date-to']) && (
-                                    <CardDescription className="mt-1">
+                                    <CardDescription className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                         {(() => {
                                             let description = ''
 
@@ -188,38 +190,36 @@ export default function Clients() {
                                     })}`}
                                     label="Export"
                                 />
-                                <Link href={route('client.create')}>
-                                    <Button className="flex items-center gap-2">
-                                        <Plus className="h-4 w-4" />
-                                        <span>Add Client</span>
-                                    </Button>
-                                </Link>
+                                <AddNewButton href={route('client.create')}>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add Client</span>
+                                </AddNewButton>
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t pt-4">
-                            <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="search" className="text-xs font-medium">
+                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
+                            <form onSubmit={handleSubmit} className="flex w-full flex-row gap-4">
+                                <div className="flex w-full flex-col gap-1">
+                                    <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Search
                                     </Label>
                                     <div className="relative">
                                         <Input
                                             id="search"
-                                            placeholder="Search"
-                                            className="pl-9"
+                                            placeholder="Search clients..."
+                                            className="h-10 border-gray-200 bg-white pl-9 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
                                             value={filters.search}
                                             onChange={(e) => handleFilterChange('search', e.target.value)}
                                         />
                                         <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Search className="h-4 w-4 text-muted-foreground" />
+                                            <Search className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="created-date-from" className="text-xs font-medium">
-                                        Created Date From
+                                <div className="flex w-full flex-col gap-1">
+                                    <Label htmlFor="created-date-from" className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                        Created From
                                     </Label>
                                     <DatePicker
                                         selected={parseDate(filters['created-date-from'])}
@@ -230,17 +230,18 @@ export default function Clients() {
                                         customInput={
                                             <CustomInput
                                                 id="created-date-from"
-                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select start date"
+                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
                                 </div>
 
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="created-date-to" className="text-xs font-medium">
-                                        Created Date To
+                                <div className="flex w-full flex-col gap-1">
+                                    <Label htmlFor="created-date-to" className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                        Created To
                                     </Label>
                                     <DatePicker
                                         selected={parseDate(filters['created-date-to'])}
@@ -251,117 +252,140 @@ export default function Clients() {
                                         customInput={
                                             <CustomInput
                                                 id="created-date-to"
-                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                                                 disabled={processing}
                                                 placeholder="Select end date"
+                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                             />
                                         }
                                     />
                                 </div>
 
                                 <div className="flex items-end gap-2">
-                                    <Button type="submit" className="flex h-9 w-9 items-center justify-center p-0" title="Apply filters">
+                                    <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        disabled={!filters.search && !filters['created-date-from'] && !filters['created-date-to']}
+                                    <FilterButton
+                                        variant="clear"
+                                        disabled={processing || (!filters.search && !filters['created-date-from'] && !filters['created-date-to'])}
                                         onClick={clearFilters}
-                                        className="flex h-9 w-9 items-center justify-center p-0"
                                         title="Clear filters"
                                     >
                                         <TimerReset className="h-4 w-4" />
-                                    </Button>
+                                    </FilterButton>
                                 </div>
                             </form>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {loading ? (
-                            <div className="flex flex-col items-center justify-center py-12 text-center">
-                                <Loader2 className="mb-4 h-12 w-12 animate-spin text-muted-foreground/50" />
-                                <h3 className="mb-1 text-lg font-medium">Loading Clients</h3>
-                                <p className="mb-4 text-muted-foreground">Please wait while we fetch your clients...</p>
+                            <div className="flex flex-col items-center justify-center py-16 text-center">
+                                <Loader2 className="mb-4 h-10 w-10 animate-spin text-gray-300 dark:text-gray-600" />
+                                <h3 className="mb-1 text-base font-medium text-gray-700 dark:text-gray-300">Loading Clients</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Please wait while we fetch your clients...</p>
                             </div>
                         ) : error ? (
-                            <div className="rounded-md border border-red-200 bg-red-50 p-6 dark:border-red-800 dark:bg-red-900/20">
-                                <div className="flex flex-col items-center justify-center py-12 text-center">
-                                    <Users className="mb-4 h-12 w-12 text-red-500" />
-                                    <h3 className="mb-1 text-lg font-medium text-red-700 dark:text-red-400">Failed to Load Clients</h3>
-                                    <p className="mb-4 text-red-600 dark:text-red-300">There was an error loading your clients. Please try again.</p>
-                                    <Button onClick={() => getClients()} className="flex items-center gap-2">
-                                        <Loader2 className="h-4 w-4" />
-                                        <span>Retry</span>
-                                    </Button>
-                                </div>
+                            <div className="flex flex-col items-center justify-center py-12 text-center">
+                                <Users className="mb-4 h-10 w-10 text-gray-400 dark:text-gray-500" />
+                                <h3 className="mb-1 text-base font-medium text-gray-700 dark:text-gray-300">Failed to Load Clients</h3>
+                                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                                    There was an error loading your clients. Please try again.
+                                </p>
+                                <Button
+                                    onClick={() => getClients()}
+                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                >
+                                    <Loader2 className="h-4 w-4" />
+                                    <span>Retry</span>
+                                </Button>
                             </div>
                         ) : clients.length > 0 ? (
-                            <Table>
-                                <TableHeader>
-                                    <TableHeaderRow>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>Contact Person</TableHead>
-                                        <TableHead>Email</TableHead>
-                                        <TableHead>Phone</TableHead>
-                                        <TableHead>Currency</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableHeaderRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {clients.map((client) => (
-                                        <TableRow key={client.id}>
-                                            <TableCell className="font-medium">{client.name}</TableCell>
-                                            <TableCell>
-                                                {client.contact_person || <span className="text-muted-foreground/50">Not specified</span>}
-                                            </TableCell>
-                                            <TableCell>{client.email || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
-                                            <TableCell>{client.phone || <span className="text-muted-foreground/50">Not specified</span>}</TableCell>
-                                            <TableCell>{client.currency || 'USD'}</TableCell>
-                                            <TableCell className="text-right">
-                                                <ActionButtonGroup>
-                                                    <ActionButton
-                                                        href={route('client.projects', client.id)}
-                                                        title="View Projects"
-                                                        icon={Folder}
-                                                        label="Projects"
-                                                        variant="indigo"
-                                                    />
-                                                    <ActionButton
-                                                        href={route('client.invoices', client.id)}
-                                                        title="View Invoices"
-                                                        icon={FileText}
-                                                        label="Invoices"
-                                                        variant="violet"
-                                                    />
-                                                    <ActionButton
-                                                        href={route('client.edit', client.id)}
-                                                        title="Edit Client"
-                                                        icon={Edit}
-                                                        variant="amber"
-                                                        size="icon"
-                                                    />
-                                                    <DeleteClient clientId={client.id} getClients={getClients} />
-                                                </ActionButtonGroup>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            <div className="overflow-x-auto">
+                                <Table className="w-full">
+                                    <TableHeader>
+                                        <TableHeaderRow>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Name
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Contact Person
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Email
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Phone
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Currency
+                                            </TableHead>
+                                            <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                Actions
+                                            </TableHead>
+                                        </TableHeaderRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {clients.map((client) => (
+                                            <TableRow
+                                                key={client.id}
+                                                className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
+                                            >
+                                                <TableCell className="py-3">
+                                                    <div className="font-medium text-gray-800 dark:text-gray-200">{client.name}</div>
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {client.contact_person || (
+                                                        <span className="text-xs text-gray-400 dark:text-gray-500">Not specified</span>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {client.email || <span className="text-xs text-gray-400 dark:text-gray-500">Not specified</span>}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+                                                    {client.phone || <span className="text-xs text-gray-400 dark:text-gray-500">Not specified</span>}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-gray-700 dark:text-gray-300">{client.currency || 'USD'}</TableCell>
+                                                <TableCell className="text-right">
+                                                    <ActionButtonGroup>
+                                                        <ActionButton
+                                                            href={route('client.projects', client.id)}
+                                                            title="View Projects"
+                                                            icon={Folder}
+                                                            label="Projects"
+                                                            variant="info"
+                                                        />
+                                                        <ActionButton
+                                                            href={route('client.invoices', client.id)}
+                                                            title="View Invoices"
+                                                            icon={FileText}
+                                                            label="Invoices"
+                                                            variant="secondary"
+                                                        />
+                                                        <ActionButton
+                                                            href={route('client.edit', client.id)}
+                                                            title="Edit Client"
+                                                            icon={Edit}
+                                                            variant="warning"
+                                                            size="icon"
+                                                        />
+                                                        <DeleteClient clientId={client.id} getClients={getClients} />
+                                                    </ActionButtonGroup>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
                         ) : (
-                            <div className="rounded-md border bg-muted/5 p-6">
-                                <div className="flex flex-col items-center justify-center py-12 text-center">
-                                    <Users className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                                    <h3 className="mb-1 text-lg font-medium">No Clients</h3>
-                                    <p className="mb-4 text-muted-foreground">You haven't added any clients yet.</p>
-                                    <Link href={route('client.create')}>
-                                        <Button className="flex items-center gap-2">
-                                            <Plus className="h-4 w-4" />
-                                            <span>Add Client</span>
-                                        </Button>
-                                    </Link>
-                                </div>
+                            <div className="flex flex-col items-center justify-center py-12 text-center">
+                                <Users className="mb-4 h-12 w-12 text-gray-300 dark:text-gray-600" />
+                                <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Clients</h3>
+                                <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You haven't added any clients yet.</p>
+                                <AddNewButton href={route('client.create')}>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add Client</span>
+                                </AddNewButton>
                             </div>
                         )}
                     </CardContent>

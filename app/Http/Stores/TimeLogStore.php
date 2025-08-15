@@ -19,6 +19,7 @@ use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pipeline\Pipeline;
@@ -91,7 +92,6 @@ final class TimeLogStore
             });
         }
 
-        // Round all amounts to 2 decimal places
         foreach ($unpaidAmounts as $currency => $amount) {
             $unpaidAmounts[$currency] = round($amount, 2);
         }
@@ -111,19 +111,17 @@ final class TimeLogStore
 
     public static function unpaidTimeLogs(int $teamMemberId): Collection
     {
-        // Alias for unpaidTimeLog to fix the error in InvoiceController
+
         return self::unpaidTimeLog($teamMemberId);
     }
 
     public static function unpaidTimeLogsByClient(int $clientId): Collection
     {
-        // Get the client
+
         $client = Client::query()->findOrFail($clientId);
 
-        // Get all projects for the client
         $projects = ClientStore::clientProjects($client);
 
-        // Get all time logs for these projects
         $timeLogs = new Collection();
         foreach ($projects as $project) {
             $projectTimeLogs = TimeLog::query()
@@ -141,13 +139,11 @@ final class TimeLogStore
 
     public static function unpaidTimeLogsGroupedByProject(int $clientId): array
     {
-        // Get unpaid time logs for the client
+
         $timeLogs = self::unpaidTimeLogsByClient($clientId);
 
-        // Get client for hourly rate and currency
         $client = Client::query()->find($clientId);
 
-        // Group time logs by project
         $groupedTimeLogs = [];
 
         foreach ($timeLogs as $timeLog) {
@@ -155,7 +151,7 @@ final class TimeLogStore
             $projectName = $timeLog->project->name;
 
             if (! isset($groupedTimeLogs[$projectId])) {
-                // Use client's hourly_rate and currency if available, otherwise fall back to user's values
+
                 $hourlyRate = ($client && $client->hourly_rate) ? $client->hourly_rate : (auth()->user()->hourly_rate ?? 0);
                 $currency = ($client && $client->currency) ? $client->currency : (auth()->user()->currency ?? 'USD');
 
@@ -169,14 +165,11 @@ final class TimeLogStore
                 ];
             }
 
-            // Add time log to the project group
             $groupedTimeLogs[$projectId]['time_logs'][] = $timeLog;
 
-            // Add duration to total hours
             $groupedTimeLogs[$projectId]['total_hours'] += $timeLog->duration;
         }
 
-        // Convert to an indexed array
         return array_values($groupedTimeLogs);
     }
 
@@ -199,7 +192,6 @@ final class TimeLogStore
             });
         }
 
-        // Round all amounts to 2 decimal places
         foreach ($paidAmounts as $currency => $amount) {
             $paidAmounts[$currency] = round($amount, 2);
         }
@@ -224,13 +216,21 @@ final class TimeLogStore
         return $team instanceof Team ? $team->currency : auth()->user()->currency;
     }
 
-    public static function resData(\Illuminate\Support\Collection $timeLogs): array
+    public static function resData(\Illuminate\Support\Collection|LengthAwarePaginator $timeLogs, ?\Illuminate\Support\Collection $fullTimeLogsForStats = null): array
     {
-        $timeLogStats = self::stats($timeLogs);
+        $displayLogs = $timeLogs instanceof LengthAwarePaginator
+            ? collect($timeLogs->items())
+            : $timeLogs;
+
+        $statsCollection = $fullTimeLogsForStats instanceof \Illuminate\Support\Collection
+            ? $fullTimeLogsForStats
+            : $displayLogs;
+
+        $timeLogStats = self::stats($statsCollection);
         $tags = Tag::query()->where('user_id', auth()->id())->get(['id', 'name']);
 
-        return [
-            'timeLogs' => self::timeLogMapper($timeLogs),
+        $response = [
+            'timeLogs' => self::timeLogMapper($displayLogs),
             'filters' => self::filters(),
             'projects' => ProjectStore::userProjects(userId: auth()->id()),
             'totalDuration' => $timeLogStats['total_duration'],
@@ -241,6 +241,13 @@ final class TimeLogStore
             'paidAmountsByCurrency' => $timeLogStats['paid_amounts_by_currency'],
             'tags' => $tags,
         ];
+
+        if ($timeLogs instanceof LengthAwarePaginator) {
+            $array = $timeLogs->toArray();
+            $response['links'] = $array['links'] ?? [];
+        }
+
+        return $response;
     }
 
     public static function stats(\Illuminate\Support\Collection $timeLogs): array
@@ -274,7 +281,6 @@ final class TimeLogStore
             }
         });
 
-        // Round all amounts to 2 decimal places
         foreach ($unpaidAmounts as $currency => $amount) {
             $unpaidAmounts[$currency] = round($amount, 2);
         }
@@ -298,7 +304,6 @@ final class TimeLogStore
             }
         });
 
-        // Round all amounts to 2 decimal places
         foreach ($paidAmounts as $currency => $amount) {
             $paidAmounts[$currency] = round($amount, 2);
         }

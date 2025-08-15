@@ -4,35 +4,42 @@ export default function Background({ showPunches = true, showMarginLine = true }
 }) {
     return (
         <>
-            {/* Paper texture overlay */}
+            {/* Subtle minimalist gradient overlay */}
             <div
-                className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPgogIDxmaWx0ZXIgaWQ9Im5vaXNlIj4KICAgIDxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVCbGVuZCBtb2RlPSJtdWx0aXBseSIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2UiLz4KICA8L2ZpbHRlcj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+Cjwvc3ZnPg==')] opacity-100 dark:opacity-30"></div>
-
-            {/* Horizontal lines like a timesheet */}
-            <div
-                className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:100%_2rem] dark:bg-[linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)]"
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(1600px_800px_at_15%_0%,rgba(var(--color-primary),0.03),transparent_70%),radial-gradient(1000px_500px_at_85%_20%,rgba(var(--color-primary),0.02),transparent_70%)] animate-background-shine [background-size:200%_100%]"
                 aria-hidden="true"
             ></div>
 
-            {/* Vertical lines like a timesheet */}
+            {/* Ultra-fine horizontal grid lines */}
             <div
-                className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[length:2rem_100%] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]"
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(var(--color-primary),0.04)_1px,transparent_1px)] bg-[length:100%_3rem] dark:bg-[linear-gradient(0deg,rgba(var(--color-primary),0.06)_1px,transparent_1px)]"
                 aria-hidden="true"
             ></div>
 
-            {/* Punch card holes */}
+            {/* Ultra-fine vertical grid lines */}
+            <div
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(var(--color-primary),0.03)_1px,transparent_1px)] bg-[length:3rem_100%] dark:bg-[linear-gradient(90deg,rgba(var(--color-primary),0.05)_1px,transparent_1px)]"
+                aria-hidden="true"
+            ></div>
+
+            {/* Minimalist side dots */}
             {
-                showPunches && (<div
-                    className="absolute top-0 bottom-0 left-4 w-4 bg-[radial-gradient(circle,rgba(0,0,0,0.1)_3px,transparent_3px)] bg-[length:8px_24px] bg-[position:center] bg-repeat-y dark:bg-[radial-gradient(circle,rgba(255,255,255,0.1)_3px,transparent_3px)]"
-                    aria-hidden="true"
-                ></div>)
+                showPunches && (
+                    <div
+                        className="pointer-events-none absolute inset-y-0 left-3 w-2 bg-[radial-gradient(circle,rgba(var(--color-primary),0.12)_2px,transparent_2px)] bg-[length:6px_32px] bg-[position:center] bg-repeat-y dark:bg-[radial-gradient(circle,rgba(var(--color-primary),0.16)_2px,transparent_2px)]"
+                        aria-hidden="true"
+                    ></div>
+                )
             }
 
-            {/* Red margin line */}
+            {/* Subtle margin line */}
             {
-                showMarginLine &&
-                <div className="absolute top-0 bottom-0 left-12 w-[1px] bg-red-400/30 dark:bg-red-500/20"
-                     aria-hidden="true"></div>
+                showMarginLine && (
+                    <div
+                        className="pointer-events-none absolute inset-y-0 left-10 w-px bg-[rgba(var(--color-primary),0.15)] dark:bg-[rgba(var(--color-primary),0.12)]"
+                        aria-hidden="true"
+                    ></div>
+                )
             }
         </>
     )

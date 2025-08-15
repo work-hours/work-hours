@@ -1,24 +1,17 @@
 import CookieConsent from '@/components/cookie-consent'
 import FloatingAiChat from '@/components/floating-ai-chat'
-import FloatingTimeTracker from '@/components/floating-time-tracker'
 import { MasterContent } from '@/components/master-content'
 import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
-import Background from '@/components/ui/background'
+import { TimeTrackerProvider } from '@/contexts/time-tracker-context'
 import { type BreadcrumbItem } from '@/types'
-import { projects, tasks } from '@actions/DashboardController'
+import { projects } from '@actions/DashboardController'
 import { type ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 
 interface Project {
     id: number
     name: string
-}
-
-interface Task {
-    id: number
-    title: string
-    project_id: number
 }
 
 interface MasterLayoutProps {
@@ -28,7 +21,6 @@ interface MasterLayoutProps {
 
 export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayoutProps) {
     const [collapsed, setCollapsed] = useState(() => {
-        // Initialize from localStorage if available
         if (typeof window !== 'undefined') {
             const savedState = localStorage.getItem('sidebar_collapsed')
             return savedState === 'true'
@@ -38,16 +30,13 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     })
 
     const [userProjects, setUserProjects] = useState<Project[]>([])
-    const [userTasks, setUserTasks] = useState<Task[]>([])
     const [dataLoaded, setDataLoaded] = useState(false)
     const [pageLoaded, setPageLoaded] = useState(false)
 
-    // Fetch projects and tasks for the time tracker
     const fetchData = async (): Promise<void> => {
         try {
-            const [projectsResponse, tasksResponse] = await Promise.all([projects.data({}), tasks.data({})])
+            const projectsResponse = await projects.data({})
             setUserProjects(projectsResponse.projects)
-            setUserTasks(tasksResponse.tasks)
             setDataLoaded(true)
         } catch (error: unknown) {
             console.error('Failed to fetch data:', error)
@@ -58,38 +47,35 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
         fetchData().then()
     }, [])
 
-    // Save collapsed state to localStorage when it changes
     useEffect(() => {
         localStorage.setItem('sidebar_collapsed', String(collapsed))
     }, [])
 
-    // Add page transition effect
     useEffect(() => {
         setPageLoaded(true)
         return () => setPageLoaded(false)
     }, [])
 
     return (
-        <div className="flex min-h-screen bg-[#f8f6e9] dark:bg-gray-900">
-            <Background />
-
+        <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900">
             {/* Left Sidebar */}
             <MasterSidebar collapsed={collapsed} />
 
             {/* Content */}
-            <div className={`flex-1 transition-all duration-300 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}>
-                <MasterContent breadcrumbs={breadcrumbs} collapsed={collapsed} setCollapsed={setCollapsed}>
-                    {children}
-                </MasterContent>
-            </div>
+            <TimeTrackerProvider>
+                <div className={`flex-1 transition-all duration-300 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+                    <MasterContent breadcrumbs={breadcrumbs} collapsed={collapsed} setCollapsed={setCollapsed}>
+                        {children}
+                    </MasterContent>
+                </div>
 
-            {/* Right Sidebar */}
-            <MasterRightSidebar collapsed={collapsed} />
+                {/* Right Sidebar */}
+                <MasterRightSidebar collapsed={collapsed} />
+            </TimeTrackerProvider>
 
-            {/* Floating Time Tracker and AI Chat */}
+            {/* AI Chat */}
             {dataLoaded && (
                 <>
-                    <FloatingTimeTracker projects={userProjects} tasks={userTasks} />
                     <FloatingAiChat projects={userProjects} />
                 </>
             )}
@@ -99,7 +85,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                 position="top-right"
                 closeButton={true}
                 toastOptions={{
-                    className: 'shadow-lg rounded-lg border border-gray-100 dark:border-gray-700',
+                    className: 'shadow-md rounded-lg border border-gray-200 dark:border-gray-800',
                     duration: 5000,
                 }}
             />
