@@ -15,7 +15,7 @@ export function HourlyRateStatusBar() {
     return (
         <Alert
             variant="destructive"
-            className="mx-auto mt-4 ml-3 w-10/12 border-red-100 bg-red-50 text-red-800 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-300"
+            className="mx-auto mt-4 w-10/12 border-red-100 bg-red-50 text-red-800 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-300"
         >
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Hourly Rate Required</AlertTitle>
