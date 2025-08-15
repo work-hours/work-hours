@@ -1,27 +1,21 @@
 import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
 import FilterButton from '@/components/filter-button'
+import TeamMemberDeleteAction from '@/components/team-member-delete-action'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
-import { Head, Link, router, useForm } from '@inertiajs/react'
-import { Calendar, CalendarRange, Clock, Edit, Search, TimerReset, UserPlus, Users, MoreVertical, Trash2 } from 'lucide-react'
+import { Head, Link, useForm } from '@inertiajs/react'
+import { Calendar, CalendarRange, Clock, Edit, MoreVertical, Search, TimerReset, UserPlus, Users } from 'lucide-react'
 import { FormEventHandler } from 'react'
-import { toast } from 'sonner'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -312,59 +306,18 @@ export default function Team({ teamMembers, filters }: Props) {
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end" className="w-48">
                                                             <Link href={route('team.time-logs', member.id)}>
-                                                                <DropdownMenuItem className="cursor-pointer group">
+                                                                <DropdownMenuItem className="group cursor-pointer">
                                                                     <Clock className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                     <span>Time Logs</span>
                                                                 </DropdownMenuItem>
                                                             </Link>
                                                             <Link href={route('team.edit', member.id)}>
-                                                                <DropdownMenuItem className="cursor-pointer group">
+                                                                <DropdownMenuItem className="group cursor-pointer">
                                                                     <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                     <span>Edit</span>
                                                                 </DropdownMenuItem>
                                                             </Link>
-                                                            <Dialog>
-                                                                <DialogTrigger asChild>
-                                                                    <DropdownMenuItem className="cursor-pointer group">
-                                                                        <Trash2 className="h-4 w-4 text-red-600 group-hover:text-red-700 dark:text-red-400 dark:group-hover:text-red-300" />
-                                                                        <span className="text-red-600 dark:text-red-400">Delete</span>
-                                                                    </DropdownMenuItem>
-                                                                </DialogTrigger>
-                                                                <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
-                                                                    <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
-                                                                        Are you sure you want to delete this team member?
-                                                                    </DialogTitle>
-                                                                    <DialogDescription className="text-neutral-600 dark:text-neutral-400">
-                                                                        Once the team member is deleted, all of their data will be permanently removed. This action cannot be undone.
-                                                                    </DialogDescription>
-                                                                    <form className="space-y-6" onSubmit={(e) => {
-                                                                        e.preventDefault();
-                                                                        router.delete(route('team.destroy', member.id), {
-                                                                            preserveScroll: true,
-                                                                            onSuccess: () => toast.success('Team member deleted successfully')
-                                                                        });
-                                                                    }}>
-                                                                        <DialogFooter className="gap-2">
-                                                                            <DialogClose asChild>
-                                                                                <Button
-                                                                                    variant="secondary"
-                                                                                    className="border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                                                                                >
-                                                                                    Cancel
-                                                                                </Button>
-                                                                            </DialogClose>
-
-                                                                            <Button
-                                                                                variant="destructive"
-                                                                                className="bg-red-600 text-white transition-colors duration-200 hover:bg-red-700 dark:bg-red-700/80 dark:hover:bg-red-700"
-                                                                                asChild
-                                                                            >
-                                                                                <button type="submit">Delete Team Member</button>
-                                                                            </Button>
-                                                                        </DialogFooter>
-                                                                    </form>
-                                                                </DialogContent>
-                                                            </Dialog>
+                                                            <TeamMemberDeleteAction memberId={member.id} memberName={member.name} />
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </TableCell>
