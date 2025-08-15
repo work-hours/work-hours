@@ -1,4 +1,3 @@
-import DeleteTimeLog from '@/components/delete-time-log'
 import TimeLogDeleteAction from '@/components/time-log-delete-action'
 import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
 import { Badge } from '@/components/ui/badge'
@@ -219,17 +218,14 @@ export default function TimeLogTable({
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-8 w-8 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700"
+                                                className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
                                             >
                                                 <MoreVertical className="h-4 w-4" />
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="w-48">
                                             {/* View Details Action */}
-                                            <DropdownMenuItem
-                                                className="group cursor-pointer"
-                                                onSelect={() => handleViewDetails(log)}
-                                            >
+                                            <DropdownMenuItem className="group cursor-pointer" onSelect={() => handleViewDetails(log)}>
                                                 <Glasses className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                 <span>View</span>
                                             </DropdownMenuItem>
@@ -247,7 +243,7 @@ export default function TimeLogTable({
                                                             <span>Edit Log</span>
                                                         </DropdownMenuItem>
                                                     ) : (
-                                                        <DropdownMenuItem disabled className="opacity-50 cursor-not-allowed">
+                                                        <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
                                                             <Edit className="mr-2 h-4 w-4 text-gray-400" />
                                                             <span>Edit Log</span>
                                                         </DropdownMenuItem>
@@ -257,7 +253,7 @@ export default function TimeLogTable({
                                                     {!log.is_paid ? (
                                                         <TimeLogDeleteAction timeLogId={log.id} />
                                                     ) : (
-                                                        <DropdownMenuItem disabled className="opacity-50 cursor-not-allowed">
+                                                        <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
                                                             <Trash2 className="mr-2 h-4 w-4 text-gray-400" />
                                                             <span>Delete</span>
                                                         </DropdownMenuItem>

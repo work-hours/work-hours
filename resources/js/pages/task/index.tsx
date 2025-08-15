@@ -77,7 +77,6 @@ function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: n
     )
 }
 
-// Track Time Menu Item Component
 function TrackTimeMenuItem({ task }: { task: Task }) {
     const tracker = useTimeTracker()
 
@@ -97,7 +96,7 @@ function TrackTimeMenuItem({ task }: { task: Task }) {
             }}
         >
             <Play className="h-4 w-4 text-emerald-600 group-hover:text-emerald-700 dark:text-emerald-400 dark:group-hover:text-emerald-300" />
-            <span>{tracker.running ? 'Another tracker is running' : 'Start tracking'}</span>
+            <span>{tracker.running ? 'Tracker in session' : 'Start tracking'}</span>
         </DropdownMenuItem>
     )
 }
@@ -749,8 +748,12 @@ export default function Tasks() {
                                                 <div className="flex justify-end">
                                                     {task.project.user_id === auth.user.id || task.assignees.some((a) => a.id === auth.user.id) ? (
                                                         <DropdownMenu>
-                                                            <DropdownMenuTrigger>
-                                                                <Button variant="outline" size="sm" className="h-7 w-7 border-gray-200 bg-gray-50 p-0 text-gray-700 hover:bg-gray-100">
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                                >
                                                                     <MoreVertical className="h-4 w-4" />
                                                                     <span className="sr-only">Open menu</span>
                                                                 </Button>
