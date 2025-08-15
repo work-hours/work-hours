@@ -19,7 +19,7 @@ import { syncProject } from '@actions/JiraController'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, StickyNote, TimerReset, User } from 'lucide-react'
-import ProjectNotesOffCanvas from './components/ProjectNotesOffCanvas'
+import ProjectNotesSheet from './components/ProjectNotesSheet'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -618,10 +618,10 @@ export default function Projects() {
                     </CardContent>
                 </Card>
             </div>
-            <ProjectNotesOffCanvas
+            <ProjectNotesSheet
                 projectId={notesProjectId}
                 open={notesOpen}
-                onClose={() => setNotesOpen(false)}
+                onOpenChange={(open) => setNotesOpen(open)}
             />
         </MasterLayout>
     )
