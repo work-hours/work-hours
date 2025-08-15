@@ -12,44 +12,13 @@ import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
-import { type BreadcrumbItem } from '@/types'
+import { TeamFilters, TeamPageProps, teamBreadcrumbs } from '@/pages/team/types'
 import { Head, Link, useForm } from '@inertiajs/react'
 import { Calendar, CalendarRange, Clock, Edit, MoreVertical, Search, TimerReset, UserPlus, Users } from 'lucide-react'
 import { FormEventHandler } from 'react'
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Team',
-        href: '/team',
-    },
-]
-
-type TeamMember = {
-    id: number
-    name: string
-    email: string
-    hourly_rate: number
-    currency: string
-    non_monetary: boolean
-    totalHours: number
-    weeklyAverage: number
-    unpaidHours: number
-    unpaidAmount: number
-}
-
-type Filters = {
-    'start-date': string
-    'end-date': string
-    search: string
-}
-
-type Props = {
-    teamMembers: TeamMember[]
-    filters: Filters
-}
-
-export default function Team({ teamMembers, filters }: Props) {
-    const { data, setData, get, processing } = useForm<Filters>({
+export default function Team({ teamMembers, filters }: TeamPageProps) {
+    const { data, setData, get, processing } = useForm<TeamFilters>({
         'start-date': filters['start-date'] || '',
         'end-date': filters['end-date'] || '',
         search: filters.search || '',
@@ -82,7 +51,7 @@ export default function Team({ teamMembers, filters }: Props) {
     }
 
     return (
-        <MasterLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={teamBreadcrumbs}>
             <Head title="Team" />
             <div className="mx-auto flex flex-col gap-4 p-4">
                 <section className="mb-2">
