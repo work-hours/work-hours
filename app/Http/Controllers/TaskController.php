@@ -238,7 +238,6 @@ final class TaskController extends Controller
 
             if ($request->has('assignees')) {
                 $task->assignees()->sync($request->input('assignees'));
-
                 $this->notifyAssignees($task, $request->input('assignees'));
             }
 
