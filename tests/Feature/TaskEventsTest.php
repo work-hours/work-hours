@@ -17,7 +17,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\post;
 use function Pest\Laravel\put;
 
-it('dispatches TaskCreated event when storing a task', function (): void {
+it('does not dispatch TaskCreated event when storing a task', function (): void {
     Event::fake();
 
     $owner = User::factory()->create();
@@ -36,12 +36,13 @@ it('dispatches TaskCreated event when storing a task', function (): void {
         'title' => 'New Task',
         'description' => 'Body',
         'status' => 'pending',
+        'priority' => 'medium',
     ])->assertSuccessful();
 
-    Event::assertDispatched(TaskCreated::class);
+    Event::assertNotDispatched(TaskCreated::class);
 });
 
-it('dispatches TaskUpdated event when updating task status', function (): void {
+it('does not dispatch TaskUpdated event when updating task status', function (): void {
     Event::fake();
 
     $owner = User::factory()->create();
@@ -74,5 +75,5 @@ it('dispatches TaskUpdated event when updating task status', function (): void {
         'jira_update' => false,
     ])->assertSuccessful();
 
-    Event::assertDispatched(TaskUpdated::class);
+    Event::assertNotDispatched(TaskUpdated::class);
 });
