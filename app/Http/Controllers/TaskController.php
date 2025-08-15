@@ -23,6 +23,7 @@ use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Concurrency;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -178,13 +179,16 @@ final class TaskController extends Controller
      */
     public function index()
     {
-        $projects = ProjectStore::userProjects(userId: auth()->id())
-            ->map(fn ($project): array => [
-                'id' => $project->id,
-                'name' => $project->name,
-            ]);
+        $userId = (int) auth()->id();
 
-        $tags = TagStore::projectTags(userId: auth()->id(), map: true);
+        [$projects, $tags] = Concurrency::run([
+            fn () => ProjectStore::userProjects(userId: $userId)
+                ->map(fn ($project): array => [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                ]),
+            fn (): Collection => TagStore::projectTags(userId: $userId, map: true),
+        ]);
 
         return Inertia::render('task/index', [
             'projects' => $projects,
@@ -296,12 +300,16 @@ final class TaskController extends Controller
 
         abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
 
-        $files = collect(Storage::disk('public')->files('tasks/' . $task->id))
-            ->map(fn (string $path): array => [
-                'name' => basename($path),
-                'url' => Storage::disk('public')->url($path),
-                'size' => Storage::disk('public')->size($path),
-            ]);
+        $taskId = (int) $task->id;
+
+        [$files] = Concurrency::run([
+            fn () => collect(Storage::disk('public')->files('tasks/' . $taskId))
+                ->map(fn (string $path): array => [
+                    'name' => basename($path),
+                    'url' => Storage::disk('public')->url($path),
+                    'size' => Storage::disk('public')->size($path),
+                ]),
+        ]);
 
         $normalize = static function (string $name): string {
             $base = mb_strtolower($name);
@@ -341,11 +349,22 @@ final class TaskController extends Controller
 
         abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
 
-        $projects = ProjectStore::userProjects(userId: auth()->id())
-            ->map(fn ($project): array => [
-                'id' => $project->id,
-                'name' => $project->name,
-            ]);
+        $userId = (int) auth()->id();
+        $taskId = (int) $task->id;
+
+        [$projects, $files] = Concurrency::run([
+            fn () => ProjectStore::userProjects(userId: $userId)
+                ->map(fn ($project): array => [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                ]),
+            fn () => collect(Storage::disk('public')->files('tasks/' . $taskId))
+                ->map(fn (string $path): array => [
+                    'name' => basename($path),
+                    'url' => Storage::disk('public')->url($path),
+                    'size' => Storage::disk('public')->size($path),
+                ]),
+        ]);
 
         $potentialAssignees = collect([$task->project->user])
             ->concat($task->project->teamMembers)
@@ -360,13 +379,6 @@ final class TaskController extends Controller
 
         $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
         $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
-
-        $files = collect(Storage::disk('public')->files('tasks/' . $task->id))
-            ->map(fn (string $path): array => [
-                'name' => basename($path),
-                'url' => Storage::disk('public')->url($path),
-                'size' => Storage::disk('public')->size($path),
-            ]);
 
         return Inertia::render('task/edit', [
             'task' => $task,
