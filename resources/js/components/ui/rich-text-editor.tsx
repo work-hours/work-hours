@@ -1,315 +1,123 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { cn } from '@/lib/utils'
+import { Bold, Italic, Underline, Link as LinkIcon, List, ListOrdered, Undo, Redo } from 'lucide-react'
 
-export type MentionCandidate = { id: number | string; name: string; handle: string }
-export type RichTextEditorProps = {
+type Props = {
   value: string
-  onChange: (value: string) => void
+  onChange: (html: string) => void
   placeholder?: string
-  disabled?: boolean
   className?: string
-  minRows?: number
-  mentions?: MentionCandidate[]
+  disabled?: boolean
 }
 
-export default function RichTextEditor({ value, onChange, placeholder, disabled, className, minRows = 5, mentions = [] }: RichTextEditorProps) {
-  const [QuillCtor, setQuillCtor] = useState<unknown>(null)
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const editorRef = useRef<unknown>(null)
-  const minHeightPx = Math.max(0, Math.round((minRows || 5) * 24))
 
-  const [mentionQuery, setMentionQuery] = useState<string | null>(null)
-  const [mentionAtIndex, setMentionAtIndex] = useState<number | null>(null)
-  const [mentionPos, setMentionPos] = useState<{ top: number; left: number } | null>(null)
-  const [filteredMentions, setFilteredMentions] = useState<MentionCandidate[]>([])
-  const [selectedIndex, setSelectedIndex] = useState<number>(0)
-  const listRef = useRef<HTMLUListElement | null>(null)
-  const selectedIndexRef = useRef<number>(0)
-  const filteredRef = useRef<MentionCandidate[]>([])
-  useEffect(() => {
-    selectedIndexRef.current = selectedIndex
-  }, [selectedIndex])
-  useEffect(() => {
-    filteredRef.current = filteredMentions
-  }, [filteredMentions])
+export default function RichTextEditor({ value, onChange, placeholder = 'Write something…', className, disabled = false }: Props) {
+  const ref = useRef<HTMLDivElement | null>(null)
+  const [isFocused, setIsFocused] = useState(false)
 
   useEffect(() => {
-    let mounted = true
-    ;(async () => {
-      try {
-        const mod = await import('quill')
-        await import('react-quill/dist/quill.snow.css')
-        if (mounted) setQuillCtor(() => mod.default ?? mod)
-      } catch (e) {
-        console.error('Failed to load editor', e)
-      }
-    })()
-    return () => {
-      mounted = false
+    const el = ref.current
+    if (!el) return
+    const current = el.innerHTML
+    if (!isFocused && current !== value) {
+      el.innerHTML = value || ''
     }
-  }, [])
+  }, [value, isFocused])
 
-  useEffect(() => {
-    if (!QuillCtor || !containerRef.current || editorRef.current) return
+  const exec = (command: string, valueArg?: string) => {
+    if (disabled) return
 
-    const el = document.createElement('div')
-    containerRef.current.appendChild(el)
+    document.execCommand(command, false, valueArg)
 
-    const quill = new (QuillCtor as any)(el, {
-      theme: 'snow',
-      modules: {
-        toolbar: [
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          [{ color: [] }, { background: [] }],
-          [{ align: [] }],
-          ['link', 'clean'],
-        ],
-        clipboard: { matchVisual: false },
-      },
-      formats: [
-        'header',
-        'bold',
-        'italic',
-        'underline',
-        'strike',
-        'list',
-        'bullet',
-        'color',
-        'background',
-        'align',
-        'link',
-      ],
-      placeholder,
-      readOnly: !!disabled,
-    })
-
-    if (value) {
-      quill.clipboard.dangerouslyPasteHTML(value)
+    const el = ref.current
+    if (el) {
+      onChange(el.innerHTML)
     }
+  }
 
-    const handleChange = () => {
-      const html = (quill.root as HTMLElement).innerHTML
-      onChange(html)
-      updateMention(quill)
+  const handleLink = () => {
+    if (disabled) return
+    const url = window.prompt('Enter URL')
+    if (url) {
+      exec('createLink', url)
     }
+  }
 
-    const handleSelection = () => {
-      updateMention(quill)
-    }
+  const onInput = () => {
+    const el = ref.current
+    if (el) onChange(el.innerHTML)
+  }
 
-    const updateMention = (q: any) => {
-      try {
-        const sel = q.getSelection()
-        if (!sel) {
-          setMentionQuery(null)
-          setMentionAtIndex(null)
-          setFilteredMentions([])
-          setMentionPos(null)
-          setSelectedIndex(0)
-          return
-        }
-        const index = sel.index
+  const onPaste: React.ClipboardEventHandler<HTMLDivElement> = () => {
 
-        const [line, offset] = q.getLine(index)
-        if (!line) {
-          setMentionQuery(null)
-          setMentionAtIndex(null)
-          setFilteredMentions([])
-          setMentionPos(null)
-          setSelectedIndex(0)
-          return
-        }
-        const lineStartIndex = index - offset
-        const text = q.getText(lineStartIndex, offset)
 
-        const atPos = Math.max(text.lastIndexOf('@'))
-        if (atPos === -1) {
-          setMentionQuery(null)
-          setMentionAtIndex(null)
-          setFilteredMentions([])
-          setMentionPos(null)
-          setSelectedIndex(0)
-          return
-        }
-        const token = text.slice(atPos + 1)
 
-        if (/[^A-Za-z0-9._-]/.test(token)) {
-          setMentionQuery(null)
-          setMentionAtIndex(null)
-          setFilteredMentions([])
-          setMentionPos(null)
-          setSelectedIndex(0)
-          return
-        }
 
-        const query = token
-        const base = (query || '').toLowerCase()
-        const items = (mentions || [])
-          .filter((m) => m && (m.handle || m.name))
-          .filter((m) => {
-            if (!base) return true
-            return m.handle.toLowerCase().startsWith(base) || m.name.toLowerCase().includes(base)
-          })
-          .slice(0, 8)
-        if (items.length === 0) {
-          setMentionQuery(null)
-          setMentionAtIndex(null)
-          setFilteredMentions([])
-          setMentionPos(null)
-          setSelectedIndex(0)
-          return
-        }
-        const bounds = q.getBounds(index)
-        setMentionQuery(query)
-        setMentionAtIndex(lineStartIndex + atPos)
-        setFilteredMentions(items)
-        setSelectedIndex(0)
-        setMentionPos({ top: bounds.bottom + 4, left: bounds.left })
-      } catch (e) {
 
-      }
-    }
-
-    quill.on('text-change', handleChange)
-    quill.on('selection-change', handleSelection)
-    editorRef.current = quill
-
-    const root: HTMLElement = quill.root as HTMLElement
-    root.style.minHeight = `${minHeightPx}px`
-    root.style.fontFamily = 'inherit'
-    root.style.fontSize = '120%'
-
-    const onKeyDown = (e: KeyboardEvent) => {
-
-      const items = filteredRef.current
-      if (!items || items.length === 0) return
-      if (e.key === 'ArrowDown') {
-        e.preventDefault()
-        e.stopPropagation()
-        const next = (selectedIndexRef.current + 1) % items.length
-        selectedIndexRef.current = next
-        setSelectedIndex(next)
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault()
-        e.stopPropagation()
-        const prev = (selectedIndexRef.current - 1 + items.length) % items.length
-        selectedIndexRef.current = prev
-        setSelectedIndex(prev)
-      } else if (e.key === 'Enter' || e.key === 'NumpadEnter' || e.key === 'Tab') {
-        e.preventDefault()
-        e.stopPropagation()
-        const idx = selectedIndexRef.current
-        const chosen = items[Math.max(0, Math.min(items.length - 1, idx))]
-        if (chosen) insertMention(chosen.handle)
-      } else if (e.key === 'Escape') {
-        e.preventDefault()
-        e.stopPropagation()
-        setMentionQuery(null)
-        setMentionAtIndex(null)
-        setFilteredMentions([])
-        setMentionPos(null)
-        setSelectedIndex(0)
-      }
-    }
-
-    root.addEventListener('keydown', onKeyDown, true)
-
-    return () => {
-      quill.off('text-change', handleChange)
-      editorRef.current = null
-      root.removeEventListener('keydown', onKeyDown, true)
-      if (containerRef.current) containerRef.current.innerHTML = ''
-    }
-  }, [QuillCtor, containerRef])
-
-  useEffect(() => {
-    const quill = editorRef.current as any
-    if (!quill) return
-    quill.enable(!disabled)
-    ;(quill.root as HTMLElement).setAttribute('data-placeholder', placeholder || '')
-    const root: HTMLElement = quill.root as HTMLElement
-    root.style.minHeight = `${minHeightPx}px`
-  }, [disabled, placeholder, minHeightPx])
-
-  useEffect(() => {
-    const quill = editorRef.current as any
-    if (!quill) return
-    const currentHtml = (quill.root as HTMLElement).innerHTML
-    if (value !== currentHtml) {
-      const sel = quill.getSelection()
-      quill.clipboard.dangerouslyPasteHTML(value || '')
-      if (sel) quill.setSelection(sel)
-    }
-  }, [value])
-
-  useEffect(() => {
-    if (!listRef.current) return
-    const items = listRef.current.children
-    if (!items || items.length === 0) return
-    const el = items[Math.max(0, Math.min(items.length - 1, selectedIndex))] as HTMLElement | undefined
-    if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' })
-  }, [selectedIndex, filteredMentions])
-
-  const insertMention = (handle: string) => {
-    const q = editorRef.current as any
-    if (!q || mentionAtIndex == null) return
-    const sel = q.getSelection()
-    const cursorIndex = sel ? sel.index : (q.getLength ? q.getLength() : 0)
-    const from = mentionAtIndex
-    const to = cursorIndex
-    const len = Math.max(0, to - from)
-    q.deleteText(from, len)
-    q.insertText(from, `@${handle} `)
-    q.setSelection(from + handle.length + 2)
-    setMentionQuery(null)
-    setMentionAtIndex(null)
-    setFilteredMentions([])
-    setMentionPos(null)
   }
 
   return (
-    <div
-      className={`relative rounded-md border bg-background text-sm ${className ?? ''}`}
-      style={{ fontSize: '120%' }}
-    >
-      {/* Container where Quill will mount */}
-      <div ref={containerRef} />
-      {!QuillCtor && (
-        <div
-          className="p-3 text-muted-foreground"
-          style={{ minHeight: minHeightPx }}
-        >
-          {placeholder ?? 'Loading editor...'}
-        </div>
-      )}
-      {mentionPos && filteredMentions.length > 0 && (
-        <div
-          className="absolute z-50 w-64 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md"
-          style={{ top: mentionPos.top, left: mentionPos.left }}
-        >
-          <ul ref={listRef} role="listbox" className="max-h-60 overflow-y-auto py-1 text-sm">
-            {filteredMentions.map((m, idx) => {
-              const active = idx === selectedIndex
-              return (
-                <li
-                  key={String(m.id)}
-                  role="option"
-                  aria-selected={active}
-                  className={`cursor-pointer px-3 py-2 ${active ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'}`}
-                  onMouseEnter={() => setSelectedIndex(idx)}
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                    insertMention(m.handle)
-                  }}
-                >
-                  <span className="font-medium">@{m.handle}</span>
-                  <span className="ml-2 text-muted-foreground">{m.name}</span>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      )}
+    <div className={cn('flex w-full flex-col rounded-md border border-input bg-transparent shadow-sm', disabled && 'opacity-60', className)}>
+      {/* Toolbar */}
+      <div className="flex items-center gap-1 border-b px-2 py-1 text-muted-foreground">
+        <ToolbarButton onClick={() => exec('bold')} title="Bold" icon={Bold} disabled={disabled} />
+        <ToolbarButton onClick={() => exec('italic')} title="Italic" icon={Italic} disabled={disabled} />
+        <ToolbarButton onClick={() => exec('underline')} title="Underline" icon={Underline} disabled={disabled} />
+        <div className="mx-1 h-5 w-px bg-gray-200" />
+        <ToolbarButton onClick={() => exec('insertUnorderedList')} title="Bulleted list" icon={List} disabled={disabled} />
+        <ToolbarButton onClick={() => exec('insertOrderedList')} title="Numbered list" icon={ListOrdered} disabled={disabled} />
+        <div className="mx-1 h-5 w-px bg-gray-200" />
+        <ToolbarButton onClick={handleLink} title="Insert link" icon={LinkIcon} disabled={disabled} />
+        <div className="mx-1 h-5 w-px bg-gray-200" />
+        <ToolbarButton onClick={() => exec('undo')} title="Undo" icon={Undo} disabled={disabled} />
+        <ToolbarButton onClick={() => exec('redo')} title="Redo" icon={Redo} disabled={disabled} />
+      </div>
+
+      {/* Editable area */}
+      <div
+        ref={ref}
+        className={cn(
+          'prose prose-sm max-w-none px-3 py-2 text-gray-900 outline-none dark:text-gray-100',
+
+          'hover:border-primary/50 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] rounded-b-md min-h-28',
+        )}
+        contentEditable={!disabled}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        onInput={onInput}
+        onPaste={onPaste}
+        data-placeholder={placeholder}
+        suppressContentEditableWarning
+      />
+
+      {/* Placeholder styling */}
+      <style>{`
+        [contenteditable][data-placeholder]:empty:before {
+          content: attr(data-placeholder);
+          color: var(--muted-foreground);
+        }
+        .prose :where(ul) { list-style: disc; padding-left: 1.25rem; }
+        .prose :where(ol) { list-style: decimal; padding-left: 1.25rem; }
+        .prose :where(a) { color: #2563eb; text-decoration: underline; }
+      `}</style>
     </div>
+  )
+}
+
+function ToolbarButton({ onClick, title, icon: Icon, disabled }: { onClick: () => void; title: string; icon: React.ComponentType<{ className?: string }>; disabled?: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      disabled={disabled}
+      className={cn(
+        'inline-flex h-8 items-center justify-center rounded px-2 text-xs transition-colors',
+        'hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700',
+        'disabled:opacity-50 disabled:cursor-not-allowed'
+      )}
+    >
+      <Icon className="h-4 w-4" />
+    </button>
   )
 }

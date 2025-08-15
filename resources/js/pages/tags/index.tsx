@@ -1,12 +1,14 @@
 import { Head, Link, useForm } from '@inertiajs/react'
 import axios from 'axios'
-import { Edit, LoaderCircle, Plus, Save, Trash2 } from 'lucide-react'
+import { Edit, LoaderCircle, MoreVertical, Plus, Save, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
+import TagDeleteAction from '@/components/tag-delete-action'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import MasterLayout from '@/layouts/master-layout'
@@ -41,7 +43,7 @@ export default function Tags({ tags }: TagsPageProps) {
     const [editingTag, setEditingTag] = useState<Tag | null>(null)
     const [deletingTag, setDeletingTag] = useState<Tag | null>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const [tagsList, setTagsList] = useState<Tag[]>(tags.data)
+    const [tagsList, setTagsList] = useState<Tag[]>(tags?.data || [])
 
     const { data, setData, reset, errors } = useForm({
         name: '',
@@ -65,11 +67,6 @@ export default function Tags({ tags }: TagsPageProps) {
         setEditingTag(tag)
         setEditData({ name: tag.name, color: tag.color })
         setIsEditDialogOpen(true)
-    }
-
-    const openDeleteDialog = (tag: Tag) => {
-        setDeletingTag(tag)
-        setIsDeleteDialogOpen(true)
     }
 
     const createTag = async () => {
@@ -172,7 +169,7 @@ export default function Tags({ tags }: TagsPageProps) {
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">
-                        {tagsList.length === 0 ? (
+                        {Array.isArray(tagsList) && tagsList.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-12 text-center">
                                 <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You don't have any tags yet.</p>
                                 <Button
@@ -197,41 +194,59 @@ export default function Tags({ tags }: TagsPageProps) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {tagsList.map((tag) => (
-                                            <tr
-                                                key={tag.id}
-                                                className="dark:hover:bg-gray-750 border-b border-gray-100 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
-                                            >
-                                                <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="h-4 w-4 rounded-full" style={{ backgroundColor: tag.color || '#6366f1' }} />
-                                                        {tag.name}
-                                                    </div>
-                                                </td>
-                                                <td className="space-x-2 px-6 py-4 text-right">
-                                                    <Button
-                                                        onClick={() => openEditDialog(tag)}
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-7 w-7 border-amber-100 bg-amber-50 p-0 text-amber-700 shadow-sm transition-all duration-200 hover:border-amber-200 hover:bg-amber-100 hover:text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300 dark:hover:bg-amber-900/30"
-                                                        title="Edit Tag"
-                                                    >
-                                                        <Edit className="h-3 w-3" />
-                                                        <span className="sr-only">Edit</span>
-                                                    </Button>
-                                                    <Button
-                                                        onClick={() => openDeleteDialog(tag)}
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-7 w-7 border-neutral-200 bg-red-100 p-0 text-red-600 shadow-sm transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-red-800/50 dark:hover:bg-red-900/20 dark:hover:text-red-400"
-                                                        title="Delete Tag"
-                                                    >
-                                                        <Trash2 className="h-3 w-3" />
-                                                        <span className="sr-only">Delete</span>
-                                                    </Button>
+                                        {Array.isArray(tagsList) ? (
+                                            tagsList.map((tag) => (
+                                                <tr
+                                                    key={tag.id}
+                                                    className="dark:hover:bg-gray-750 border-b border-gray-100 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
+                                                >
+                                                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                                        <div className="flex items-center gap-2">
+                                                            <div
+                                                                className="h-4 w-4 rounded-full"
+                                                                style={{ backgroundColor: tag.color || '#6366f1' }}
+                                                            />
+                                                            {tag.name}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right">
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                                >
+                                                                    <MoreVertical className="h-4 w-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end" className="w-48">
+                                                                <DropdownMenuItem
+                                                                    onClick={() => openEditDialog(tag)}
+                                                                    className="group cursor-pointer"
+                                                                >
+                                                                    <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Edit</span>
+                                                                </DropdownMenuItem>
+                                                                <TagDeleteAction
+                                                                    tagId={tag.id}
+                                                                    tagName={tag.name}
+                                                                    onDeleteSuccess={async () => {
+                                                                        setTagsList((prev) => prev.filter((t) => t.id !== tag.id))
+                                                                    }}
+                                                                />
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={2} className="px-6 py-4 text-center text-gray-500">
+                                                    No tags available
                                                 </td>
                                             </tr>
-                                        ))}
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
@@ -278,7 +293,7 @@ export default function Tags({ tags }: TagsPageProps) {
                     <form
                         onSubmit={(e) => {
                             e.preventDefault()
-                            createTag()
+                            createTag().then()
                         }}
                     >
                         <div className="grid gap-4 py-4">
@@ -365,7 +380,7 @@ export default function Tags({ tags }: TagsPageProps) {
                             <Button
                                 type="button"
                                 variant="secondary"
-                                onClick={() => setIsCreateDialogOpen(false)}
+                                onClick={() => setIsEditDialogOpen(false)}
                                 disabled={isLoading}
                                 className="border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                             >

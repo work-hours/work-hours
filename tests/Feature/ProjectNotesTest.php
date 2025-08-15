@@ -18,7 +18,7 @@ function makeProject(User $owner): Project
     ]);
 }
 
-it('lists notes for owner and team member, forbids unrelated user', function () {
+it('lists notes for owner and team member, forbids unrelated user', function (): void {
     $owner = User::factory()->create();
     $member = User::factory()->create();
     $stranger = User::factory()->create();
@@ -47,7 +47,7 @@ it('lists notes for owner and team member, forbids unrelated user', function () 
         ->assertForbidden();
 });
 
-it('allows owner or team member to create note and validates body', function () {
+it('allows owner or team member to create note and validates body', function (): void {
     $owner = User::factory()->create();
     $member = User::factory()->create();
     $stranger = User::factory()->create();
@@ -79,7 +79,7 @@ it('allows owner or team member to create note and validates body', function () 
         ->assertForbidden();
 });
 
-it('allows creator or owner to update and delete, forbids others', function () {
+it('allows creator or owner to update and delete, forbids others', function (): void {
     $owner = User::factory()->create();
     $creator = User::factory()->create();
     $member = User::factory()->create();
@@ -121,7 +121,7 @@ it('allows creator or owner to update and delete, forbids others', function () {
     expect(ProjectNote::query()->find($note->id))->toBeNull();
 });
 
-it('returns latest notes first', function () {
+it('returns latest notes first', function (): void {
     $owner = User::factory()->create();
     $project = makeProject($owner);
 

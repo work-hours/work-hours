@@ -12,7 +12,6 @@ Route::middleware('auth')->middleware('verified')->group(function (): void {
     Route::get('project/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
     Route::get('project/{project}/time-logs', [ProjectController::class, 'timeLogs'])->name('project.time-logs');
 
-    // Project Notes
     Route::get('project/{project}/notes', [ProjectNoteController::class, 'index'])->name('project.notes');
     Route::post('project/{project}/notes', [ProjectNoteController::class, 'store'])->name('project.notes.store');
     Route::put('project/{project}/notes/{note}', [ProjectNoteController::class, 'update'])->name('project.notes.update');

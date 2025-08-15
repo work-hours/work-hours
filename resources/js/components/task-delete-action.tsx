@@ -1,74 +1,63 @@
-import { useForm } from '@inertiajs/react'
+import { router } from '@inertiajs/react'
+import { Trash2 } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import { Trash2 } from 'lucide-react'
-
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { Label } from '@/components/ui/label'
 
-interface DeleteTaskProps {
+interface TaskDeleteActionProps {
     taskId: number
     isGithub?: boolean
     isJira?: boolean
-    onDelete?: () => void
+    onDeleteSuccess?: () => Promise<void> | void
 }
 
-export default function DeleteTask({ taskId, isGithub = false, isJira = false, onDelete }: DeleteTaskProps) {
-    const {
-        delete: destroy,
-        processing,
-        reset,
-        clearErrors,
-        setData,
-    } = useForm({
-        delete_from_github: true,
-        delete_from_jira: true,
-    })
-
+export default function TaskDeleteAction({ taskId, isGithub = false, isJira = false, onDeleteSuccess }: TaskDeleteActionProps) {
+    const [processing, setProcessing] = useState(false)
     const [deleteFromGithub, setDeleteFromGithub] = useState<boolean>(true)
     const [deleteFromJira, setDeleteFromJira] = useState<boolean>(true)
 
     const deleteTask: FormEventHandler = (e) => {
         e.preventDefault()
+        setProcessing(true)
+
+        const data: Record<string, boolean> = {}
 
         if (isGithub) {
-            setData('delete_from_github', deleteFromGithub as never)
+            data.delete_from_github = deleteFromGithub
         }
 
         if (isJira) {
-            setData('delete_from_jira', deleteFromJira as never)
+            data.delete_from_jira = deleteFromJira
         }
 
-        destroy(route('task.destroy', taskId), {
+        router.delete(route('task.destroy', taskId), {
+            data,
             preserveScroll: true,
             onSuccess: () => {
-                closeModal()
-                if (onDelete) {
-                    onDelete()
-                }
+                toast.success('Task deleted successfully')
+                if (onDeleteSuccess) onDeleteSuccess()
             },
-            onFinish: () => reset(),
+            onFinish: () => setProcessing(false),
         })
-    }
-
-    const closeModal = () => {
-        clearErrors()
-        reset()
     }
 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 w-7 border-red-200 bg-red-100 p-0 text-red-600 shadow-sm transition-all duration-200 hover:bg-red-200 dark:border-red-800/50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
+                <DropdownMenuItem
+                    className="group cursor-pointer"
+                    onSelect={(event) => {
+                        event.preventDefault()
+                    }}
                 >
-                    <Trash2 className="h-3 w-3" />
-                    <span className="sr-only">Delete</span>
-                </Button>
+                    <Trash2 className="h-4 w-4 text-red-600 group-hover:text-red-700 dark:text-red-400 dark:group-hover:text-red-300" />
+                    <span className="text-red-600 dark:text-red-400">Delete</span>
+                </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
                 <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
@@ -108,8 +97,7 @@ export default function DeleteTask({ taskId, isGithub = false, isJira = false, o
                         <DialogClose asChild>
                             <Button
                                 variant="secondary"
-                                onClick={closeModal}
-                                className="border-neutral-200 bg-white text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
+                                className="border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                             >
                                 Cancel
                             </Button>

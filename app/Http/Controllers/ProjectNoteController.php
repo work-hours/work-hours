@@ -17,7 +17,6 @@ final class ProjectNoteController extends Controller
     #[Action(method: 'get', name: 'project.notes', params: ['project'], middleware: ['auth', 'verified'])]
     public function index(Project $project): Collection
     {
-        // Allow project owner or team members to view notes
         $project->loadMissing('teamMembers');
         $isOwner = $project->user_id === auth()->id();
         $isTeamMember = $project->teamMembers->contains('id', auth()->id());
@@ -28,7 +27,7 @@ final class ProjectNoteController extends Controller
             ->with(['user:id,name'])
             ->latest('created_at')
             ->get()
-            ->map(fn (ProjectNote $note) => [
+            ->map(fn (ProjectNote $note): array => [
                 'id' => $note->id,
                 'body' => $note->body,
                 'created_at' => $note->created_at?->toIso8601String(),

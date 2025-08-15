@@ -476,7 +476,7 @@ export default function AllTeamTimeLogs({
                                 <TimeLogTable
                                     timeLogs={timeLogs as TimeLogEntry[]}
                                     showCheckboxes={true}
-                                    showActions={false}
+                                    showActions={true}
                                     showEditDelete={false}
                                     showMember={true}
                                     selectedLogs={selectedLogs}

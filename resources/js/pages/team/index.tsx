@@ -1,87 +1,20 @@
-import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
-import DeleteTeamMember from '@/components/delete-team-member'
-import FilterButton from '@/components/filter-button'
+import TeamMemberDeleteAction from '@/components/team-member-delete-action'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import CustomInput from '@/components/ui/custom-input'
-import DatePicker from '@/components/ui/date-picker'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
-import { type BreadcrumbItem } from '@/types'
-import { Head, Link, useForm } from '@inertiajs/react'
-import { Calendar, CalendarRange, Clock, Edit, Search, TimerReset, UserPlus, Users } from 'lucide-react'
-import { FormEventHandler } from 'react'
+import TeamFiltersComponent, { getFilterDescription } from '@/pages/team/components/TeamFilters'
+import { TeamPageProps, teamBreadcrumbs } from '@/pages/team/types'
+import { Head, Link } from '@inertiajs/react'
+import { Clock, Edit, MoreVertical, UserPlus, Users } from 'lucide-react'
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Team',
-        href: '/team',
-    },
-]
-
-type TeamMember = {
-    id: number
-    name: string
-    email: string
-    hourly_rate: number
-    currency: string
-    non_monetary: boolean
-    totalHours: number
-    weeklyAverage: number
-    unpaidHours: number
-    unpaidAmount: number
-}
-
-type Filters = {
-    'start-date': string
-    'end-date': string
-    search: string
-}
-
-type Props = {
-    teamMembers: TeamMember[]
-    filters: Filters
-}
-
-export default function Team({ teamMembers, filters }: Props) {
-    const { data, setData, get, processing } = useForm<Filters>({
-        'start-date': filters['start-date'] || '',
-        'end-date': filters['end-date'] || '',
-        search: filters.search || '',
-    })
-
-    const startDate = data['start-date'] ? new Date(data['start-date']) : null
-    const endDate = data['end-date'] ? new Date(data['end-date']) : null
-
-    const handleStartDateChange = (date: Date | null) => {
-        if (date) {
-            setData('start-date', date.toISOString().split('T')[0])
-        } else {
-            setData('start-date', '')
-        }
-    }
-
-    const handleEndDateChange = (date: Date | null) => {
-        if (date) {
-            setData('end-date', date.toISOString().split('T')[0])
-        } else {
-            setData('end-date', '')
-        }
-    }
-
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault()
-        get(route('team.index'), {
-            preserveState: true,
-        })
-    }
-
+export default function Team({ teamMembers, filters }: TeamPageProps) {
     return (
-        <MasterLayout breadcrumbs={breadcrumbs}>
+        <MasterLayout breadcrumbs={teamBreadcrumbs}>
             <Head title="Team" />
             <div className="mx-auto flex flex-col gap-4 p-4">
                 <section className="mb-2">
@@ -109,29 +42,9 @@ export default function Team({ teamMembers, filters }: Props) {
                                     You have {teamMembers.length} team members
                                 </CardDescription>
 
-                                {(data['start-date'] || data['end-date'] || data.search) && (
+                                {(filters['start-date'] || filters['end-date'] || filters.search) && (
                                     <CardDescription className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                        {(() => {
-                                            let description = ''
-
-                                            if (data['start-date'] && data['end-date']) {
-                                                description = `Showing team data from ${data['start-date']} to ${data['end-date']}`
-                                            } else if (data['start-date']) {
-                                                description = `Showing team data from ${data['start-date']}`
-                                            } else if (data['end-date']) {
-                                                description = `Showing team data until ${data['end-date']}`
-                                            }
-
-                                            if (data.search) {
-                                                if (description) {
-                                                    description += ` matching "${data.search}"`
-                                                } else {
-                                                    description = `Showing team members matching "${data.search}"`
-                                                }
-                                            }
-
-                                            return description
-                                        })()}
+                                        {getFilterDescription(filters)}
                                     </CardDescription>
                                 )}
                             </div>
@@ -145,91 +58,7 @@ export default function Team({ teamMembers, filters }: Props) {
                         </div>
 
                         <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
-                            <form onSubmit={submit} className="flex w-full flex-row gap-4">
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Search
-                                    </Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="search"
-                                            type="text"
-                                            value={data.search}
-                                            onChange={(e) => setData('search', e.target.value)}
-                                            placeholder="Search by name or email"
-                                            className="border-gray-200 bg-white pl-9 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
-                                        />
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Search className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Start Date
-                                    </Label>
-                                    <DatePicker
-                                        selected={startDate}
-                                        onChange={handleStartDateChange}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="start-date"
-                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select start date"
-                                                className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        End Date
-                                    </Label>
-                                    <DatePicker
-                                        selected={endDate}
-                                        onChange={handleEndDateChange}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="end-date"
-                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select end date"
-                                                className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-                                <div className="flex items-end gap-2">
-                                    <FilterButton title="Apply filters" disabled={processing}>
-                                        <Search className="h-4 w-4" />
-                                    </FilterButton>
-
-                                    <FilterButton
-                                        variant="clear"
-                                        disabled={processing || (!data['start-date'] && !data['end-date'] && !data.search)}
-                                        onClick={() => {
-                                            setData({
-                                                'start-date': '',
-                                                'end-date': '',
-                                                search: '',
-                                            })
-                                            get(route('team.index'), {
-                                                preserveState: true,
-                                            })
-                                        }}
-                                        title="Clear filters"
-                                    >
-                                        <TimerReset className="h-4 w-4" />
-                                    </FilterButton>
-                                </div>
-                            </form>
+                            <TeamFiltersComponent filters={filters} />
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">
@@ -293,23 +122,32 @@ export default function Team({ teamMembers, filters }: Props) {
                                                     {roundToTwoDecimals(member.weeklyAverage)}
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <ActionButtonGroup>
-                                                        <ActionButton
-                                                            href={route('team.time-logs', member.id)}
-                                                            title="View Time Logs"
-                                                            icon={Clock}
-                                                            label="Logs"
-                                                            variant="info"
-                                                        />
-                                                        <ActionButton
-                                                            href={route('team.edit', member.id)}
-                                                            title="Edit Member"
-                                                            icon={Edit}
-                                                            variant="warning"
-                                                            size="icon"
-                                                        />
-                                                        <DeleteTeamMember userId={member.id} />
-                                                    </ActionButtonGroup>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                            >
+                                                                <MoreVertical className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="w-48">
+                                                            <Link href={route('team.time-logs', member.id)}>
+                                                                <DropdownMenuItem className="group cursor-pointer">
+                                                                    <Clock className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Time Logs</span>
+                                                                </DropdownMenuItem>
+                                                            </Link>
+                                                            <Link href={route('team.edit', member.id)}>
+                                                                <DropdownMenuItem className="group cursor-pointer">
+                                                                    <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Edit</span>
+                                                                </DropdownMenuItem>
+                                                            </Link>
+                                                            <TeamMemberDeleteAction memberId={member.id} memberName={member.name} />
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 </TableCell>
                                             </TableRow>
                                         ))}

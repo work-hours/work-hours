@@ -1,8 +1,8 @@
-import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
-import DeleteTask from '@/components/delete-task'
 import FilterButton from '@/components/filter-button'
 import SourceLinkIcon from '@/components/source-link-icon'
+import TaskDeleteAction from '@/components/task-delete-action'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -33,6 +34,7 @@ import {
     Flag,
     Glasses,
     Loader2,
+    MoreVertical,
     Play,
     Plus,
     Search,
@@ -72,6 +74,30 @@ function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: n
         >
             <Play className="h-3 w-3" />
         </Button>
+    )
+}
+
+function TrackTimeMenuItem({ task }: { task: Task }) {
+    const tracker = useTimeTracker()
+
+    return (
+        <DropdownMenuItem
+            className="group cursor-pointer"
+            disabled={tracker.running}
+            onClick={() => {
+                if (!tracker.running) {
+                    tracker.start({
+                        id: task.id,
+                        title: task.title,
+                        project_id: task.project_id,
+                        project_name: task.project.name,
+                    })
+                }
+            }}
+        >
+            <Play className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+            <span>{tracker.running ? 'Tracker in session' : 'Start tracking'}</span>
+        </DropdownMenuItem>
     )
 }
 
@@ -663,7 +689,9 @@ export default function Tasks() {
                                                         {task.comments_count !== undefined && task.comments_count > 0 && (
                                                             <div className="ml-4 flex items-center text-gray-600 dark:text-gray-400">
                                                                 <FileText className="mr-1.5 h-3.5 w-3.5" />
-                                                                <span>{task.comments_count} {task.comments_count === 1 ? 'comment' : 'comments'}</span>
+                                                                <span>
+                                                                    {task.comments_count} {task.comments_count === 1 ? 'comment' : 'comments'}
+                                                                </span>
                                                             </div>
                                                         )}
                                                     </div>
@@ -674,7 +702,9 @@ export default function Tasks() {
                                                         <div className="flex items-center gap-2">
                                                             {task.tags && task.tags.length > 0 ? (
                                                                 <>
-                                                                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Tags:</span>
+                                                                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                                        Tags:
+                                                                    </span>
                                                                     <div className="flex flex-wrap gap-1">
                                                                         {task.tags.map((tag) => (
                                                                             <Badge
@@ -715,39 +745,53 @@ export default function Tasks() {
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    {/* Quick Start Tracker - only for tasks assigned to current user */}
-                                                    <TaskTrackButton task={task} currentUserId={auth.user.id} />
+                                                <div className="flex justify-end">
+                                                    {task.project.user_id === auth.user.id || task.assignees.some((a) => a.id === auth.user.id) ? (
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                                >
+                                                                    <MoreVertical className="h-4 w-4" />
+                                                                    <span className="sr-only">Open menu</span>
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent>
+                                                                {/* View Details action */}
+                                                                <Link href={route('task.detail', task.id)}>
+                                                                    <DropdownMenuItem className="group cursor-pointer">
+                                                                        <Glasses className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                        <span>View</span>
+                                                                    </DropdownMenuItem>
+                                                                </Link>
 
-                                                    {/* View Details Button */}
-                                                    <Link href={route('task.detail', task.id)} title="View Details">
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="h-7 w-7 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
-                                                        >
-                                                            <Glasses className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">View Details</span>
-                                                        </Button>
-                                                    </Link>
+                                                                {/* Track time button - only for tasks assigned to current user */}
+                                                                {task.assignees.some((a) => a.id === auth.user.id) && (
+                                                                    <TrackTimeMenuItem task={task} />
+                                                                )}
 
-                                                    {task.project.user_id === auth.user.id && (
-                                                        <ActionButtonGroup>
-                                                            <ActionButton
-                                                                href={route('task.edit', task.id)}
-                                                                title="Edit Task"
-                                                                icon={Edit}
-                                                                variant="warning"
-                                                                size="icon"
-                                                            />
-                                                            <DeleteTask
-                                                                taskId={task.id}
-                                                                isGithub={task.is_imported && task.meta?.source === 'github'}
-                                                                isJira={task.is_imported && task.meta?.source === 'jira'}
-                                                                onDelete={() => setTasks(tasks.filter((t) => t.id !== task.id))}
-                                                            />
-                                                        </ActionButtonGroup>
-                                                    )}
+                                                                {/* Edit and Delete actions - only for project owner */}
+                                                                {task.project.user_id === auth.user.id && (
+                                                                    <>
+                                                                        <Link href={route('task.edit', task.id)}>
+                                                                            <DropdownMenuItem className="group cursor-pointer">
+                                                                                <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                                <span>Edit</span>
+                                                                            </DropdownMenuItem>
+                                                                        </Link>
+                                                                        <TaskDeleteAction
+                                                                            taskId={task.id}
+                                                                            isGithub={task.is_imported && task.meta?.source === 'github'}
+                                                                            isJira={task.is_imported && task.meta?.source === 'jira'}
+                                                                            onDeleteSuccess={() => setTasks(tasks.filter((t) => t.id !== task.id))}
+                                                                        />
+                                                                    </>
+                                                                )}
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    ) : null}
                                                 </div>
                                             </TableCell>
                                         </TableRow>

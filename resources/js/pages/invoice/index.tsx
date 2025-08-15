@@ -1,6 +1,7 @@
-import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
 import FilterButton from '@/components/filter-button'
+import InvoiceDeleteAction from '@/components/invoice-delete-action'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -15,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -24,8 +26,8 @@ import MasterLayout from '@/layouts/master-layout'
 import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { invoices as _invoices } from '@actions/InvoiceController'
-import { Head, router, usePage } from '@inertiajs/react'
-import { Calendar, CalendarRange, Download, Edit, FileText, Loader2, Mail, Plus, Search, TimerReset } from 'lucide-react'
+import { Head, Link, router, usePage } from '@inertiajs/react'
+import { Calendar, CalendarRange, Download, Edit, FileText, Loader2, Mail, MoreVertical, Plus, Search, TimerReset } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -593,33 +595,62 @@ export default function Invoices() {
                                                 </span>
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    <a href={route('invoice.downloadPdf', invoice.id)} target="_blank" rel="noopener noreferrer">
-                                                        <Button variant="outline" size="sm" className="h-7 w-7 p-0">
-                                                            <Download className="h-3 w-3" />
-                                                            <span className="sr-only">Download PDF</span>
-                                                        </Button>
-                                                    </a>
-                                                    <ActionButtonGroup>
-                                                        <ActionButton
-                                                            href={route('invoice.edit', invoice.id)}
-                                                            title="Edit Invoice"
-                                                            icon={Edit}
-                                                            variant="warning"
-                                                            size="icon"
-                                                        />
-                                                    </ActionButtonGroup>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-7 w-7 p-0"
-                                                        onClick={() => handleEmailClick(invoice)}
-                                                        title={invoice.status === 'sent' ? 'Invoice already sent' : 'Send invoice email to client'}
-                                                        disabled={invoice.status === 'sent' || invoice.status === 'paid'}
-                                                    >
-                                                        <Mail className={`h-3 w-3 ${invoice.status === 'sent' ? 'text-muted-foreground/50' : ''}`} />
-                                                        <span className="sr-only">Send Email</span>
-                                                    </Button>
+                                                <div className="flex justify-end">
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                            >
+                                                                <MoreVertical className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="w-48">
+                                                            <a
+                                                                href={route('invoice.downloadPdf', invoice.id)}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <DropdownMenuItem className="group cursor-pointer">
+                                                                    <Download className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Download PDF</span>
+                                                                </DropdownMenuItem>
+                                                            </a>
+                                                            <Link href={route('invoice.edit', invoice.id)}>
+                                                                <DropdownMenuItem className="group cursor-pointer">
+                                                                    <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Edit Invoice</span>
+                                                                </DropdownMenuItem>
+                                                            </Link>
+                                                            <DropdownMenuItem
+                                                                className="group cursor-pointer"
+                                                                onClick={() => handleEmailClick(invoice)}
+                                                                disabled={invoice.status === 'sent' || invoice.status === 'paid'}
+                                                            >
+                                                                <Mail
+                                                                    className={`mr-2 h-4 w-4 ${invoice.status === 'sent' || invoice.status === 'paid' ? 'text-gray-300 dark:text-gray-600' : 'text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300'}`}
+                                                                />
+                                                                <span
+                                                                    className={
+                                                                        invoice.status === 'sent' || invoice.status === 'paid'
+                                                                            ? 'text-gray-300 dark:text-gray-600'
+                                                                            : ''
+                                                                    }
+                                                                >
+                                                                    Send Email
+                                                                </span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                className="group cursor-pointer"
+                                                                onClick={() => handleStatusClick(invoice)}
+                                                            >
+                                                                <Calendar className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                <span>Update Status</span>
+                                                            </DropdownMenuItem>
+                                                            <InvoiceDeleteAction invoiceId={invoice.id} invoiceNumber={invoice.invoice_number} />
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 </div>
                                             </TableCell>
                                         </TableRow>

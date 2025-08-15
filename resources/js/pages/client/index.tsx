@@ -1,11 +1,12 @@
-import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
-import DeleteClient from '@/components/delete-client'
+import ClientDeleteAction from '@/components/client-delete-action'
 import FilterButton from '@/components/filter-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
@@ -13,8 +14,8 @@ import MasterLayout from '@/layouts/master-layout'
 import { formatDateValue, objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
-import { Head, usePage } from '@inertiajs/react'
-import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, Plus, Search, TimerReset, Users } from 'lucide-react'
+import { Head, Link, usePage } from '@inertiajs/react'
+import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, MoreVertical, Plus, Search, TimerReset, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -347,30 +348,38 @@ export default function Clients() {
                                                 </TableCell>
                                                 <TableCell className="text-sm text-gray-700 dark:text-gray-300">{client.currency || 'USD'}</TableCell>
                                                 <TableCell className="text-right">
-                                                    <ActionButtonGroup>
-                                                        <ActionButton
-                                                            href={route('client.projects', client.id)}
-                                                            title="View Projects"
-                                                            icon={Folder}
-                                                            label="Projects"
-                                                            variant="info"
-                                                        />
-                                                        <ActionButton
-                                                            href={route('client.invoices', client.id)}
-                                                            title="View Invoices"
-                                                            icon={FileText}
-                                                            label="Invoices"
-                                                            variant="secondary"
-                                                        />
-                                                        <ActionButton
-                                                            href={route('client.edit', client.id)}
-                                                            title="Edit Client"
-                                                            icon={Edit}
-                                                            variant="warning"
-                                                            size="icon"
-                                                        />
-                                                        <DeleteClient clientId={client.id} getClients={getClients} />
-                                                    </ActionButtonGroup>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                            >
+                                                                <MoreVertical className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="w-48">
+                                                            <Link href={route('client.projects', client.id)}>
+                                                                <DropdownMenuItem className="group cursor-pointer">
+                                                                    <Folder className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Projects</span>
+                                                                </DropdownMenuItem>
+                                                            </Link>
+                                                            <Link href={route('client.invoices', client.id)}>
+                                                                <DropdownMenuItem className="group cursor-pointer">
+                                                                    <FileText className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Invoices</span>
+                                                                </DropdownMenuItem>
+                                                            </Link>
+                                                            <Link href={route('client.edit', client.id)}>
+                                                                <DropdownMenuItem className="group cursor-pointer">
+                                                                    <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Edit</span>
+                                                                </DropdownMenuItem>
+                                                            </Link>
+                                                            <ClientDeleteAction clientId={client.id} onDeleteSuccess={getClients} />
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 </TableCell>
                                             </TableRow>
                                         ))}

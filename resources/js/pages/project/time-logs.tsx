@@ -3,19 +3,34 @@ import AddNewButton from '@/components/add-new-button'
 import BackButton from '@/components/back-button'
 import StatsCards from '@/components/dashboard/StatsCards'
 import FilterButton from '@/components/filter-button'
+import ProjectTaskDeleteAction from '@/components/project-task-delete-action'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head, Link, router, useForm } from '@inertiajs/react'
-import { AlertCircle, Calendar, CalendarRange, CheckCircle, ClipboardList, ClockIcon, Edit, Plus, Search, TimerReset, User } from 'lucide-react'
+import { Head, router, useForm } from '@inertiajs/react'
+import {
+    AlertCircle,
+    Calendar,
+    CalendarRange,
+    CheckCircle,
+    ClipboardList,
+    ClockIcon,
+    Edit,
+    MoreVertical,
+    Plus,
+    Search,
+    TimerReset,
+    User,
+} from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
 
 type TimeLog = {
@@ -439,7 +454,7 @@ export default function ProjectTimeLogs({
 
                 {/* Tasks Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">{project.name} - Tasks</CardTitle>
@@ -457,90 +472,116 @@ export default function ProjectTimeLogs({
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {tasks.length > 0 ? (
                             <Table>
                                 <TableHeader>
                                     <TableHeaderRow>
-                                        <TableHead>Title</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Priority</TableHead>
-                                        <TableHead>Due Date</TableHead>
-                                        <TableHead>Assignees</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Task Details
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Actions
+                                        </TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
                                 <TableBody>
                                     {tasks.map((task) => (
-                                        <TableRow key={task.id}>
-                                            <TableCell className="font-medium">{task.title}</TableCell>
-                                            <TableCell>
-                                                {task.status === 'completed' && (
-                                                    <Badge variant="success" className="capitalize">
-                                                        {task.status.replace('_', ' ')}
-                                                    </Badge>
-                                                )}
-                                                {task.status === 'in_progress' && (
-                                                    <Badge variant="warning" className="capitalize">
-                                                        {task.status.replace('_', ' ')}
-                                                    </Badge>
-                                                )}
-                                                {task.status === 'pending' && (
-                                                    <Badge variant="secondary" className="capitalize">
-                                                        {task.status.replace('_', ' ')}
-                                                    </Badge>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {task.priority === 'high' && (
-                                                    <Badge variant="destructive" className="capitalize">
-                                                        {task.priority}
-                                                    </Badge>
-                                                )}
-                                                {task.priority === 'medium' && (
-                                                    <Badge variant="default" className="capitalize">
-                                                        {task.priority}
-                                                    </Badge>
-                                                )}
-                                                {task.priority === 'low' && (
-                                                    <Badge variant="outline" className="capitalize">
-                                                        {task.priority}
-                                                    </Badge>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {task.due_date ? (
-                                                    new Date(task.due_date).toLocaleDateString()
-                                                ) : (
-                                                    <span className="text-muted-foreground/50">No due date</span>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {task.assignees && task.assignees.length > 0 ? (
-                                                    <div className="flex flex-wrap gap-1">
-                                                        {task.assignees.map((assignee) => (
-                                                            <span
-                                                                key={assignee.id}
-                                                                className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
-                                                                title={assignee.email}
-                                                            >
-                                                                {assignee.name}
-                                                            </span>
-                                                        ))}
+                                        <TableRow
+                                            key={task.id}
+                                            className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
+                                        >
+                                            <TableCell className="max-w-xl">
+                                                <div className="flex flex-col gap-3">
+                                                    {/* Task Title and Primary Badges */}
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <span className="font-medium text-gray-900 dark:text-gray-100">{task.title}</span>
+                                                        <div className="flex flex-wrap items-center gap-1.5">
+                                                            {task.status === 'completed' && (
+                                                                <Badge variant="success" className="capitalize">
+                                                                    {task.status.replace('_', ' ')}
+                                                                </Badge>
+                                                            )}
+                                                            {task.status === 'in_progress' && (
+                                                                <Badge variant="warning" className="capitalize">
+                                                                    {task.status.replace('_', ' ')}
+                                                                </Badge>
+                                                            )}
+                                                            {task.status === 'pending' && (
+                                                                <Badge variant="secondary" className="capitalize">
+                                                                    {task.status.replace('_', ' ')}
+                                                                </Badge>
+                                                            )}
+
+                                                            {task.priority === 'high' && (
+                                                                <Badge variant="destructive" className="capitalize">
+                                                                    {task.priority}
+                                                                </Badge>
+                                                            )}
+                                                            {task.priority === 'medium' && (
+                                                                <Badge variant="default" className="capitalize">
+                                                                    {task.priority}
+                                                                </Badge>
+                                                            )}
+                                                            {task.priority === 'low' && (
+                                                                <Badge variant="outline" className="capitalize">
+                                                                    {task.priority}
+                                                                </Badge>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                ) : (
-                                                    <span className="text-muted-foreground/50">No assignees</span>
-                                                )}
+
+                                                    {/* Due Date */}
+                                                    {task.due_date && (
+                                                        <div className="flex items-center text-sm text-amber-700 dark:text-amber-400">
+                                                            <Calendar className="mr-1.5 h-3.5 w-3.5" />
+                                                            <span>{new Date(task.due_date).toLocaleDateString()}</span>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Assignees Section */}
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Assigned to:</span>
+                                                        {task.assignees && task.assignees.length > 0 ? (
+                                                            <div className="flex flex-wrap gap-1">
+                                                                {task.assignees.map((assignee) => (
+                                                                    <span
+                                                                        key={assignee.id}
+                                                                        className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
+                                                                        title={assignee.email}
+                                                                    >
+                                                                        {assignee.name}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        ) : (
+                                                            <span className="text-xs text-gray-400 dark:text-gray-500">Unassigned</span>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    <Link href={route('task.edit', task.id)}>
-                                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                                                            <Edit className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Edit</span>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+                                                        >
+                                                            <MoreVertical className="h-4 w-4" />
+                                                            <span className="sr-only">Open menu</span>
                                                         </Button>
-                                                    </Link>
-                                                </div>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-48">
+                                                        <a href={route('task.edit', task.id)}>
+                                                            <DropdownMenuItem className="group cursor-pointer">
+                                                                <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                <span>Edit</span>
+                                                            </DropdownMenuItem>
+                                                        </a>
+                                                        <ProjectTaskDeleteAction taskId={task.id} taskTitle={task.title} />
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </TableCell>
                                         </TableRow>
                                     ))}
