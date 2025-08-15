@@ -95,15 +95,12 @@ final class TagController extends Controller
     /**
      * Delete a tag
      */
-    public function destroy(Tag $tag): JsonResponse
+    public function destroy(Tag $tag): void
     {
-
         if ($tag->user_id !== auth()->id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            abort(403, 'Unauthorized');
         }
 
         $tag->delete();
-
-        return response()->json(['success' => true]);
     }
 }

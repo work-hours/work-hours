@@ -224,7 +224,14 @@ export default function Tags({ tags }: TagsPageProps) {
                                                                 <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                 <span>Edit</span>
                                                             </DropdownMenuItem>
-                                                            <TagDeleteAction tagId={tag.id} tagName={tag.name} onDeleteSuccess={() => getClients()} />
+                                                            <TagDeleteAction tagId={tag.id} tagName={tag.name} onDeleteSuccess={async () => {
+                                                                try {
+                                                                    const response = await axios.get('/tags');
+                                                                    setTagsList(response.data.data);
+                                                                } catch (error) {
+                                                                    console.error('Failed to refresh tags after deletion:', error);
+                                                                }
+                                                            }} />
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </td>
