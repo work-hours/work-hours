@@ -6,20 +6,15 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-use App\Events\TaskCreated;
-use App\Events\TaskUpdated;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\post;
 use function Pest\Laravel\put;
 
-it('does not dispatch TaskCreated event when storing a task', function (): void {
-    Event::fake();
-
+it('stores a task successfully without events/listeners', function (): void {
     $owner = User::factory()->create();
     actingAs($owner);
 
@@ -39,12 +34,10 @@ it('does not dispatch TaskCreated event when storing a task', function (): void 
         'priority' => 'medium',
     ])->assertSuccessful();
 
-    Event::assertNotDispatched(TaskCreated::class);
+    expect(Task::query()->where('project_id', $project->id)->where('title', 'New Task')->exists())->toBeTrue();
 });
 
-it('does not dispatch TaskUpdated event when updating task status', function (): void {
-    Event::fake();
-
+it('updates task status successfully without events/listeners', function (): void {
     $owner = User::factory()->create();
     $assignee = User::factory()->create();
     actingAs($owner);
@@ -75,5 +68,5 @@ it('does not dispatch TaskUpdated event when updating task status', function ():
         'jira_update' => false,
     ])->assertSuccessful();
 
-    Event::assertNotDispatched(TaskUpdated::class);
+    expect($task->fresh()->status)->toBe('completed');
 });
