@@ -441,7 +441,7 @@ export default function ProjectTimeLogs({
 
                 {/* Tasks Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">{project.name} - Tasks</CardTitle>
@@ -459,80 +459,90 @@ export default function ProjectTimeLogs({
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {tasks.length > 0 ? (
                             <Table>
                                 <TableHeader>
                                     <TableHeaderRow>
-                                        <TableHead>Title</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Priority</TableHead>
-                                        <TableHead>Due Date</TableHead>
-                                        <TableHead>Assignees</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Task Details
+                                        </TableHead>
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                            Actions
+                                        </TableHead>
                                     </TableHeaderRow>
                                 </TableHeader>
                                 <TableBody>
                                     {tasks.map((task) => (
-                                        <TableRow key={task.id}>
-                                            <TableCell className="font-medium">{task.title}</TableCell>
-                                            <TableCell>
-                                                {task.status === 'completed' && (
-                                                    <Badge variant="success" className="capitalize">
-                                                        {task.status.replace('_', ' ')}
-                                                    </Badge>
-                                                )}
-                                                {task.status === 'in_progress' && (
-                                                    <Badge variant="warning" className="capitalize">
-                                                        {task.status.replace('_', ' ')}
-                                                    </Badge>
-                                                )}
-                                                {task.status === 'pending' && (
-                                                    <Badge variant="secondary" className="capitalize">
-                                                        {task.status.replace('_', ' ')}
-                                                    </Badge>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {task.priority === 'high' && (
-                                                    <Badge variant="destructive" className="capitalize">
-                                                        {task.priority}
-                                                    </Badge>
-                                                )}
-                                                {task.priority === 'medium' && (
-                                                    <Badge variant="default" className="capitalize">
-                                                        {task.priority}
-                                                    </Badge>
-                                                )}
-                                                {task.priority === 'low' && (
-                                                    <Badge variant="outline" className="capitalize">
-                                                        {task.priority}
-                                                    </Badge>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {task.due_date ? (
-                                                    new Date(task.due_date).toLocaleDateString()
-                                                ) : (
-                                                    <span className="text-muted-foreground/50">No due date</span>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {task.assignees && task.assignees.length > 0 ? (
-                                                    <div className="flex flex-wrap gap-1">
-                                                        {task.assignees.map((assignee) => (
-                                                            <span
-                                                                key={assignee.id}
-                                                                className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
-                                                                title={assignee.email}
-                                                            >
-                                                                {assignee.name}
-                                                            </span>
-                                                        ))}
+                                        <TableRow key={task.id} className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700">
+                                            <TableCell className="max-w-xl">
+                                                <div className="flex flex-col gap-3">
+                                                    {/* Task Title and Primary Badges */}
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <span className="font-medium text-gray-900 dark:text-gray-100">{task.title}</span>
+                                                        <div className="flex flex-wrap items-center gap-1.5">
+                                                            {task.status === 'completed' && (
+                                                                <Badge variant="success" className="capitalize">
+                                                                    {task.status.replace('_', ' ')}
+                                                                </Badge>
+                                                            )}
+                                                            {task.status === 'in_progress' && (
+                                                                <Badge variant="warning" className="capitalize">
+                                                                    {task.status.replace('_', ' ')}
+                                                                </Badge>
+                                                            )}
+                                                            {task.status === 'pending' && (
+                                                                <Badge variant="secondary" className="capitalize">
+                                                                    {task.status.replace('_', ' ')}
+                                                                </Badge>
+                                                            )}
+
+                                                            {task.priority === 'high' && (
+                                                                <Badge variant="destructive" className="capitalize">
+                                                                    {task.priority}
+                                                                </Badge>
+                                                            )}
+                                                            {task.priority === 'medium' && (
+                                                                <Badge variant="default" className="capitalize">
+                                                                    {task.priority}
+                                                                </Badge>
+                                                            )}
+                                                            {task.priority === 'low' && (
+                                                                <Badge variant="outline" className="capitalize">
+                                                                    {task.priority}
+                                                                </Badge>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                ) : (
-                                                    <span className="text-muted-foreground/50">No assignees</span>
-                                                )}
+
+                                                    {/* Due Date */}
+                                                    {task.due_date && (
+                                                        <div className="flex items-center text-amber-700 dark:text-amber-400 text-sm">
+                                                            <Calendar className="mr-1.5 h-3.5 w-3.5" />
+                                                            <span>{new Date(task.due_date).toLocaleDateString()}</span>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Assignees Section */}
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Assigned to:</span>
+                                                        {task.assignees && task.assignees.length > 0 ? (
+                                                            <div className="flex flex-wrap gap-1">
+                                                                {task.assignees.map((assignee) => (
+                                                                    <span
+                                                                        key={assignee.id}
+                                                                        className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
+                                                                        title={assignee.email}
+                                                                    >
+                                                                        {assignee.name}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        ) : (
+                                                            <span className="text-xs text-gray-400 dark:text-gray-500">Unassigned</span>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <DropdownMenu>
@@ -543,6 +553,7 @@ export default function ProjectTimeLogs({
                                                             className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
                                                         >
                                                             <MoreVertical className="h-4 w-4" />
+                                                            <span className="sr-only">Open menu</span>
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end" className="w-48">
