@@ -491,104 +491,108 @@ export default function Projects() {
                                                 </TableCell>
                                                 <TableCell className="text-right">
                                                     <div className="flex justify-end gap-2">
+                                                        <ActionButtonGroup>
+                                                            {/* Notes button available to all users associated with the project */}
+                                                            <Button
+                                                                onClick={(e) => {
+                                                                    e.preventDefault()
+                                                                    setNotesProjectId(project.id)
+                                                                    setNotesOpen(true)
+                                                                }}
+                                                                title="Project Notes"
+                                                                variant="outline"
+                                                                size="icon"
+                                                                className="h-7 w-7"
+                                                            >
+                                                                <StickyNote className="h-4 w-4" />
+                                                            </Button>
 
-                                                        {project.user.id === auth.user.id && (
-                                                            <ActionButtonGroup>
-                                                                <ActionButton
-                                                                    href={route('project.time-logs', project.id)}
-                                                                    title="View Time Logs"
-                                                                    icon={Clock}
-                                                                    label="Logs"
-                                                                    variant="info"
-                                                                />
-                                                                {project.source === 'github' && project.repo_id && (
-                                                                    <Button
-                                                                        onClick={(e) => {
-                                                                            e.preventDefault()
-                                                                            setLoading(true)
+                                                            {project.user.id === auth.user.id && (
+                                                                <>
+                                                                    <ActionButton
+                                                                        href={route('project.time-logs', project.id)}
+                                                                        title="View Time Logs"
+                                                                        icon={Clock}
+                                                                        label="Logs"
+                                                                        variant="info"
+                                                                    />
+                                                                    {project.source === 'github' && project.repo_id && (
+                                                                        <Button
+                                                                            onClick={(e) => {
+                                                                                e.preventDefault()
+                                                                                setLoading(true)
 
-                                                                            syncRepository
-                                                                                .call({
-                                                                                    params: { project: project.id },
-                                                                                })
-                                                                                .then((response) => response.json())
-                                                                                .then((data) => {
-                                                                                    if (data.success) {
-                                                                                        toast.success('Project synced successfully!')
-                                                                                        getProjects(filters).then()
-                                                                                    } else {
-                                                                                        console.error('Error syncing project:', data.error)
+                                                                                syncRepository
+                                                                                    .call({
+                                                                                        params: { project: project.id },
+                                                                                    })
+                                                                                    .then((response) => response.json())
+                                                                                    .then((data) => {
+                                                                                        if (data.success) {
+                                                                                            toast.success('Project synced successfully!')
+                                                                                            getProjects(filters).then()
+                                                                                        } else {
+                                                                                            console.error('Error syncing project:', data.error)
+                                                                                            setLoading(false)
+                                                                                        }
+                                                                                    })
+                                                                                    .catch(() => {
                                                                                         setLoading(false)
-                                                                                    }
-                                                                                })
-                                                                                .catch(() => {
-                                                                                    setLoading(false)
-                                                                                })
-                                                                        }}
-                                                                        title="Sync with GitHub"
-                                                                        variant="outline"
-                                                                        size="sm"
-                                                                        className="h-7 border-purple-200 bg-purple-50 text-xs text-purple-700 shadow-sm transition-all hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
-                                                                    >
-                                                                        <GithubIcon className="mr-1 h-3 w-3" />
-                                                                    </Button>
-                                                                )}
-                                                                <Button
-                                                                    onClick={(e) => {
-                                                                        e.preventDefault()
-                                                                        setNotesProjectId(project.id)
-                                                                        setNotesOpen(true)
-                                                                    }}
-                                                                    title="Project Notes"
-                                                                    variant="outline"
-                                                                    size="icon"
-                                                                    className="h-7 w-7"
-                                                                >
-                                                                    <StickyNote className="h-4 w-4" />
-                                                                </Button>
-                                                                {project.source === 'jira' && (
-                                                                    <Button
-                                                                        onClick={(e) => {
-                                                                            e.preventDefault()
-                                                                            setLoading(true)
+                                                                                    })
+                                                                            }}
+                                                                            title="Sync with GitHub"
+                                                                            variant="outline"
+                                                                            size="sm"
+                                                                            className="h-7 border-purple-200 bg-purple-50 text-xs text-purple-700 shadow-sm transition-all hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
+                                                                        >
+                                                                            <GithubIcon className="mr-1 h-3 w-3" />
+                                                                        </Button>
+                                                                    )}
 
-                                                                            syncProject
-                                                                                .call({
-                                                                                    params: { project: project.id },
-                                                                                })
-                                                                                .then((response) => response.json())
-                                                                                .then((data) => {
-                                                                                    if (data.success) {
-                                                                                        toast.success('Project synced successfully with Jira!')
-                                                                                        getProjects(filters).then()
-                                                                                    } else {
-                                                                                        console.error('Error syncing project with Jira:', data.error)
+                                                                    {project.source === 'jira' && (
+                                                                        <Button
+                                                                            onClick={(e) => {
+                                                                                e.preventDefault()
+                                                                                setLoading(true)
+
+                                                                                syncProject
+                                                                                    .call({
+                                                                                        params: { project: project.id },
+                                                                                    })
+                                                                                    .then((response) => response.json())
+                                                                                    .then((data) => {
+                                                                                        if (data.success) {
+                                                                                            toast.success('Project synced successfully with Jira!')
+                                                                                            getProjects(filters).then()
+                                                                                        } else {
+                                                                                            console.error('Error syncing project with Jira:', data.error)
+                                                                                            setLoading(false)
+                                                                                        }
+                                                                                    })
+                                                                                    .catch((error) => {
+                                                                                        console.error('Failed to sync with Jira:', error)
+                                                                                        toast.error('Failed to sync with Jira')
                                                                                         setLoading(false)
-                                                                                    }
-                                                                                })
-                                                                                .catch((error) => {
-                                                                                    console.error('Failed to sync with Jira:', error)
-                                                                                    toast.error('Failed to sync with Jira')
-                                                                                    setLoading(false)
-                                                                                })
-                                                                        }}
-                                                                        title="Sync with Jira"
-                                                                        variant="outline"
-                                                                        size="sm"
-                                                                        className="h-7 border-blue-200 bg-blue-50 text-xs text-blue-700 shadow-sm transition-all hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/30"
-                                                                    >
-                                                                        <JiraIcon className="mr-1 h-3 w-3" />
-                                                                    </Button>
-                                                                )}
-                                                                <ActionButton
-                                                                    href={route('project.edit', project.id)}
-                                                                    title="Edit Project"
-                                                                    icon={Edit}
-                                                                    variant="warning"
-                                                                />
-                                                                <DeleteProject projectId={project.id} onDelete={() => getProjects(filters)} />
-                                                            </ActionButtonGroup>
-                                                        )}
+                                                                                    })
+                                                                            }}
+                                                                            title="Sync with Jira"
+                                                                            variant="outline"
+                                                                            size="sm"
+                                                                            className="h-7 border-blue-200 bg-blue-50 text-xs text-blue-700 shadow-sm transition-all hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/30"
+                                                                        >
+                                                                            <JiraIcon className="mr-1 h-3 w-3" />
+                                                                        </Button>
+                                                                    )}
+                                                                    <ActionButton
+                                                                        href={route('project.edit', project.id)}
+                                                                        title="Edit Project"
+                                                                        icon={Edit}
+                                                                        variant="warning"
+                                                                    />
+                                                                    <DeleteProject projectId={project.id} onDelete={() => getProjects(filters)} />
+                                                                </>
+                                                            )}
+                                                        </ActionButtonGroup>
                                                     </div>
                                                 </TableCell>
                                             </TableRow>
