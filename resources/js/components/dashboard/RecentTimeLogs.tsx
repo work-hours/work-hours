@@ -18,10 +18,7 @@ interface RecentLogsData {
 }
 
 export default function RecentTimeLogs() {
-    const [recentLogs, setRecentLogs] = useState<RecentLogsData>({
-        entries: [],
-        allLogsLink: '',
-    })
+    const [recentLogs, setRecentLogs] = useState<RecentLogsData>({ entries: [], allLogsLink: '' })
     const [loading, setLoading] = useState(true)
 
     const getRecentLogs = async (): Promise<void> => {
@@ -36,9 +33,9 @@ export default function RecentTimeLogs() {
         }
     }
 
-    useEffect(() => {
-        getRecentLogs().then()
-    }, [])
+    useEffect(() => { getRecentLogs().then() }, [])
+
+    const dateOptions = { weekday: 'short', month: 'short', day: 'numeric' } as const
 
     return (
         <Card className="overflow-hidden bg-white shadow-sm transition-colors dark:bg-gray-800">
@@ -46,10 +43,7 @@ export default function RecentTimeLogs() {
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Recent Time Logs</CardTitle>
                     {!loading && (
-                        <Link
-                            href={recentLogs.allLogsLink}
-                            className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                        >
+                        <Link href={recentLogs.allLogsLink} className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                             View all
                         </Link>
                     )}
@@ -73,11 +67,7 @@ export default function RecentTimeLogs() {
                                             <div>
                                                 <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{log.user}</p>
                                                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                    {new Date(log.date).toLocaleDateString('en-US', {
-                                                        weekday: 'short',
-                                                        month: 'short',
-                                                        day: 'numeric',
-                                                    })}
+                                                    {new Date(log.date).toLocaleDateString('en-US', dateOptions)}
                                                 </p>
                                             </div>
                                         </div>
@@ -92,10 +82,7 @@ export default function RecentTimeLogs() {
                         <div className="flex flex-col items-center justify-center py-8 text-center text-gray-500 dark:text-gray-400">
                             <ClockIcon className="mb-2 h-10 w-10 opacity-40" />
                             <p className="mb-2 text-sm">No recent time logs found</p>
-                            <Link
-                                href={route('time-log.create')}
-                                className="text-xs font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
-                            >
+                            <Link href={route('time-log.create')} className="text-xs font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100">
                                 Create your first time log
                             </Link>
                         </div>

@@ -1,11 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
-interface WeeklyTrendProps {
-    weeklyData: Array<{ name: string; hours: number }>
-}
+export default function WeeklyTrend({ weeklyData }: { weeklyData: Array<{ name: string; hours: number }> }) {
+    const tooltipStyle = {
+        borderRadius: '4px',
+        backgroundColor: 'var(--background)',
+        borderColor: 'var(--border)',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+    }
 
-export default function WeeklyTrend({ weeklyData }: WeeklyTrendProps) {
+    const tickStyle = { fontSize: 12, fill: 'var(--foreground-muted)' }
+
     return (
         <Card className="overflow-hidden bg-white shadow-sm transition-colors dark:bg-gray-800">
             <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
@@ -21,32 +26,10 @@ export default function WeeklyTrend({ weeklyData }: WeeklyTrendProps) {
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.2} />
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }} />
-                        <YAxis
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fontSize: 12, fill: 'var(--foreground-muted)' }}
-                            tickFormatter={(value) => `${value}`}
-                        />
-                        <Tooltip
-                            formatter={(value) => [`${value} hours`, 'Hours']}
-                            contentStyle={{
-                                borderRadius: '4px',
-                                backgroundColor: 'var(--background)',
-                                borderColor: 'var(--border)',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                            }}
-                            itemStyle={{ color: 'var(--foreground)' }}
-                        />
-                        <Area
-                            type="monotone"
-                            dataKey="hours"
-                            stroke="#64748B"
-                            strokeWidth={2}
-                            fill="url(#colorHours)"
-                            activeDot={{ r: 6, strokeWidth: 0 }}
-                            animationDuration={750}
-                        />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={tickStyle} />
+                        <YAxis axisLine={false} tickLine={false} tick={tickStyle} tickFormatter={(value) => `${value}`} />
+                        <Tooltip formatter={(value) => [`${value} hours`, 'Hours']} contentStyle={tooltipStyle} itemStyle={{ color: 'var(--foreground)' }} />
+                        <Area type="monotone" dataKey="hours" stroke="#64748B" strokeWidth={2} fill="url(#colorHours)" activeDot={{ r: 6, strokeWidth: 0 }} animationDuration={750} />
                     </AreaChart>
                 </ResponsiveContainer>
             </CardContent>
