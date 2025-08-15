@@ -1,7 +1,11 @@
+import QuickTrackModal from '@/components/quick-track-modal'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useTimeTracker } from '@/contexts/time-tracker-context'
 import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/react'
 import { BarChart3, BrainCircuit, ClockIcon, PlusCircle, UsersIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 interface MasterRightSidebarProps {
     collapsed?: boolean
@@ -34,6 +38,29 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
     const handleAskAiClick = () => {
         window.dispatchEvent(new Event('open-ai-chat'))
     }
+
+    const [quickOpen, setQuickOpen] = useState(false)
+    const { running } = useTimeTracker()
+
+    // Keyboard shortcut: Ctrl/Cmd + Shift + T to open Quick Track modal
+    useEffect(() => {
+        const onKeyDown = (e: KeyboardEvent) => {
+            const isT = (e.key || '').toLowerCase() === 't'
+            const combo = (e.ctrlKey || e.metaKey) && e.shiftKey && isT
+            if (!combo) return
+
+            // Prevent the browser default (often re-open last closed tab)
+            e.preventDefault()
+            if (!running) {
+                setQuickOpen(true)
+            } else {
+                toast.info('Tracker in session')
+            }
+        }
+
+        window.addEventListener('keydown', onKeyDown)
+        return () => window.removeEventListener('keydown', onKeyDown)
+    }, [running])
 
     return (
         <div
@@ -102,10 +129,36 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                                     </Tooltip>
                                 )}
                             </div>
+
+                            <div className="relative">
+                                <button
+                                    onClick={() => {
+                                        if (running) {
+                                            toast.info('Tracker in session')
+                                            return
+                                        }
+                                        setQuickOpen(true)
+                                    }}
+                                    disabled={running}
+                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100"
+                                >
+                                    <ClockIcon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                    {!collapsed && <span>Quick Track</span>}
+                                </button>
+                                {collapsed && (
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="left">Quick Track</TooltipContent>
+                                    </Tooltip>
+                                )}
+                            </div>
                         </nav>
                     </TooltipProvider>
                 </div>
             </div>
+            <QuickTrackModal open={quickOpen} onOpenChange={setQuickOpen} />
         </div>
     )
 }
