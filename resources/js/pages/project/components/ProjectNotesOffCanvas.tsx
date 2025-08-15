@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
+import RichTextEditor from '@/components/ui/rich-text-editor'
 import { router } from '@inertiajs/react'
 import { format } from 'date-fns'
 import { Edit, Save, Trash2, X } from 'lucide-react'
@@ -22,6 +22,7 @@ interface Props {
 }
 
 export default function ProjectNotesOffCanvas({ projectId, open, onClose }: Props) {
+  const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '').replace(/&nbsp;|\s+/g, ' ').trim()
   const [notes, setNotes] = useState<Note[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -101,9 +102,9 @@ export default function ProjectNotesOffCanvas({ projectId, open, onClose }: Prop
         <div className="flex-1 overflow-y-auto p-4">
           {/* New Note */}
           <div className="space-y-2">
-            <Textarea placeholder="Write a quick note..." value={body} onChange={(e) => setBody(e.target.value)} />
+            <RichTextEditor placeholder="Write a quick note..." value={body} onChange={(html) => setBody(html)} />
             <div className="flex justify-end">
-              <Button onClick={saveNote} disabled={body.trim() === ''}>Save</Button>
+              <Button onClick={saveNote} disabled={stripHtml(body) === ''}>Save</Button>
             </div>
           </div>
 
@@ -141,16 +142,16 @@ export default function ProjectNotesOffCanvas({ projectId, open, onClose }: Prop
 
                 {editingId === note.id ? (
                   <div className="space-y-2">
-                    <Textarea value={editingBody} onChange={(e) => setEditingBody(e.target.value)} />
+                    <RichTextEditor value={editingBody} onChange={(html) => setEditingBody(html)} />
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" onClick={cancelEdit}>Cancel</Button>
-                      <Button onClick={() => updateNote(note.id)}>
+                      <Button onClick={() => updateNote(note.id)} disabled={stripHtml(editingBody) === ''}>
                         <Save className="mr-2 h-4 w-4" /> Update
                       </Button>
                     </div>
                   </div>
                 ) : (
-                  <div className="whitespace-pre-wrap text-sm text-gray-800">{note.body}</div>
+                  <div className="prose prose-sm max-w-none text-sm text-gray-800 dark:text-gray-100" dangerouslySetInnerHTML={{ __html: note.body }} />
                 )}
               </div>
             ))}
