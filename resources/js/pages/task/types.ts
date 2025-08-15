@@ -40,6 +40,7 @@ export type Task = {
     assignees: User[]
     tags?: Tag[]
     comments?: TaskComment[]
+    comments_count?: number
     meta?: {
         source?: string
         source_url?: string

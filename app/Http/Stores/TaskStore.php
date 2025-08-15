@@ -27,6 +27,7 @@ final class TaskStore
                 $query->where('user_id', $userId);
             })
             ->with(['project', 'assignees', 'meta', 'tags'])
+            ->withCount('comments')
             ->orderByDesc('created_at');
 
         $assignedTasksQuery = Task::query()
@@ -34,6 +35,7 @@ final class TaskStore
                 $query->where('users.id', $userId);
             })
             ->with(['project', 'assignees', 'meta', 'tags'])
+            ->withCount('comments')
             ->orderByDesc('created_at');
 
         $ownedProjectTasks = self::applyFilterPipeline($ownedProjectTasksQuery)->get();

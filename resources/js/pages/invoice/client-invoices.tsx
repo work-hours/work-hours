@@ -1,12 +1,15 @@
-import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
 import BackButton from '@/components/back-button'
+import InvoiceDeleteAction from '@/components/invoice-delete-action'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head } from '@inertiajs/react'
-import { Edit, FileText, Plus } from 'lucide-react'
+import { Head, Link } from '@inertiajs/react'
+import { Edit, FileText, MoreVertical, Plus } from 'lucide-react'
 
 type Invoice = {
     id: number
@@ -301,17 +304,26 @@ export default function ClientInvoices({ client, invoices }: Props) {
                                                 </span>
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    <ActionButtonGroup>
-                                                        <ActionButton
-                                                            href={route('invoice.edit', invoice.id)}
-                                                            title="Edit Invoice"
-                                                            icon={Edit}
-                                                            variant="warning"
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button
+                                                            variant="ghost"
                                                             size="icon"
-                                                        />
-                                                    </ActionButtonGroup>
-                                                </div>
+                                                            className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                        >
+                                                            <MoreVertical className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-48">
+                                                        <Link href={route('invoice.edit', invoice.id)}>
+                                                            <DropdownMenuItem className="group cursor-pointer">
+                                                                <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                <span>Edit</span>
+                                                            </DropdownMenuItem>
+                                                        </Link>
+                                                        <InvoiceDeleteAction invoiceId={invoice.id} invoiceNumber={invoice.invoice_number} />
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </TableCell>
                                         </TableRow>
                                     ))}

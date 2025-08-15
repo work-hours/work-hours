@@ -1,13 +1,14 @@
-import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
 import BackButton from '@/components/back-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
+import ProjectDeleteAction from '@/pages/project/components/ProjectDeleteAction'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
-import { Clock, Edit, FileText, FolderPlus, Mail, Phone, User, Users } from 'lucide-react'
+import { Clock, Edit, FileText, FolderPlus, Mail, MoreVertical, Phone, User, Users } from 'lucide-react'
 
 type Project = {
     id: number
@@ -207,22 +208,35 @@ export default function ClientProjects({ client, projects }: Props) {
                                                     )}
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <ActionButtonGroup>
-                                                        <ActionButton
-                                                            href={route('project.time-logs', project.id)}
-                                                            title="View Time Logs"
-                                                            icon={Clock}
-                                                            label="Time Logs"
-                                                            variant="info"
-                                                        />
-                                                        <ActionButton
-                                                            href={route('project.edit', project.id)}
-                                                            title="Edit Project"
-                                                            icon={Edit}
-                                                            variant="warning"
-                                                            size="icon"
-                                                        />
-                                                    </ActionButtonGroup>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                            >
+                                                                <MoreVertical className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="w-48">
+                                                            <a href={route('project.time-logs', project.id)}>
+                                                                <DropdownMenuItem className="group cursor-pointer">
+                                                                    <Clock className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Time Logs</span>
+                                                                </DropdownMenuItem>
+                                                            </a>
+                                                            <a href={route('project.edit', project.id)}>
+                                                                <DropdownMenuItem className="group cursor-pointer">
+                                                                    <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Edit</span>
+                                                                </DropdownMenuItem>
+                                                            </a>
+                                                            <ProjectDeleteAction
+                                                                projectId={project.id}
+                                                                onDeleteSuccess={() => window.location.reload()}
+                                                            />
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 </TableCell>
                                             </TableRow>
                                         ))}

@@ -1,12 +1,12 @@
-import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
-import DeleteProject from '@/components/delete-project'
 import FilterButton from '@/components/filter-button'
 import JiraIcon from '@/components/icons/jira-icon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
@@ -18,9 +18,26 @@ import { syncRepository } from '@actions/GitHubRepositoryController'
 import { syncProject } from '@actions/JiraController'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, TimerReset, User } from 'lucide-react'
+import {
+    Briefcase,
+    Calendar,
+    CalendarRange,
+    Clock,
+    Edit,
+    FolderPlus,
+    Folders,
+    GithubIcon,
+    Loader2,
+    MoreVertical,
+    Search,
+    StickyNote,
+    TimerReset,
+    User,
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import ProjectDeleteAction from './components/ProjectDeleteAction'
+import ProjectNotesSheet from './components/ProjectNotesSheet'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -77,6 +94,8 @@ type Props = {
 }
 
 export default function Projects() {
+    const [notesOpen, setNotesOpen] = useState(false)
+    const [notesProjectId, setNotesProjectId] = useState<number | null>(null)
     const { auth, filters: pageFilters, clients, teamMembers } = usePage<Props>().props
     const [projects, setProjects] = useState<Project[]>([])
     const [loading, setLoading] = useState<boolean>(true)
@@ -487,92 +506,116 @@ export default function Projects() {
                                                     )}
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <div className="flex justify-end gap-2">
-                                                        {project.user.id === auth.user.id && (
-                                                            <ActionButtonGroup>
-                                                                <ActionButton
-                                                                    href={route('project.time-logs', project.id)}
-                                                                    title="View Time Logs"
-                                                                    icon={Clock}
-                                                                    label="Logs"
-                                                                    variant="info"
-                                                                />
-                                                                {project.source === 'github' && project.repo_id && (
-                                                                    <Button
-                                                                        onClick={(e) => {
-                                                                            e.preventDefault()
-                                                                            setLoading(true)
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                className="h-8 w-8 p-0 data-[state=open]:bg-gray-100 dark:data-[state=open]:bg-gray-800"
+                                                            >
+                                                                <span className="sr-only">Open menu</span>
+                                                                <MoreVertical className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuItem
+                                                                className="group cursor-pointer"
+                                                                onSelect={(e) => {
+                                                                    e.preventDefault()
+                                                                    setNotesProjectId(project.id)
+                                                                    setNotesOpen(true)
+                                                                }}
+                                                            >
+                                                                <StickyNote className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                <span>Notes</span>
+                                                            </DropdownMenuItem>
 
-                                                                            syncRepository
-                                                                                .call({
-                                                                                    params: { project: project.id },
-                                                                                })
-                                                                                .then((response) => response.json())
-                                                                                .then((data) => {
-                                                                                    if (data.success) {
-                                                                                        toast.success('Project synced successfully!')
-                                                                                        getProjects(filters).then()
-                                                                                    } else {
-                                                                                        console.error('Error syncing project:', data.error)
-                                                                                        setLoading(false)
-                                                                                    }
-                                                                                })
-                                                                                .catch(() => {
-                                                                                    setLoading(false)
-                                                                                })
-                                                                        }}
-                                                                        title="Sync with GitHub"
-                                                                        variant="outline"
-                                                                        size="sm"
-                                                                        className="h-7 border-purple-200 bg-purple-50 text-xs text-purple-700 shadow-sm transition-all hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
-                                                                    >
-                                                                        <GithubIcon className="mr-1 h-3 w-3" />
-                                                                    </Button>
-                                                                )}
-                                                                {project.source === 'jira' && (
-                                                                    <Button
-                                                                        onClick={(e) => {
-                                                                            e.preventDefault()
-                                                                            setLoading(true)
+                                                            {project.user.id === auth.user.id && (
+                                                                <>
+                                                                    <Link href={route('project.time-logs', project.id)}>
+                                                                        <DropdownMenuItem className="group cursor-pointer">
+                                                                            <Clock className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                            <span>Time Logs</span>
+                                                                        </DropdownMenuItem>
+                                                                    </Link>
 
-                                                                            syncProject
-                                                                                .call({
-                                                                                    params: { project: project.id },
-                                                                                })
-                                                                                .then((response) => response.json())
-                                                                                .then((data) => {
-                                                                                    if (data.success) {
-                                                                                        toast.success('Project synced successfully with Jira!')
-                                                                                        getProjects(filters).then()
-                                                                                    } else {
-                                                                                        console.error('Error syncing project with Jira:', data.error)
+                                                                    {project.source === 'github' && project.repo_id && (
+                                                                        <DropdownMenuItem
+                                                                            className="group cursor-pointer"
+                                                                            onSelect={(e) => {
+                                                                                e.preventDefault()
+                                                                                setLoading(true)
+
+                                                                                syncRepository
+                                                                                    .call({
+                                                                                        params: { project: project.id },
+                                                                                    })
+                                                                                    .then((response) => response.json())
+                                                                                    .then((data) => {
+                                                                                        if (data.success) {
+                                                                                            toast.success('Project synced successfully!')
+                                                                                            getProjects(filters).then()
+                                                                                        } else {
+                                                                                            console.error('Error syncing project:', data.error)
+                                                                                            setLoading(false)
+                                                                                        }
+                                                                                    })
+                                                                                    .catch(() => {
                                                                                         setLoading(false)
-                                                                                    }
-                                                                                })
-                                                                                .catch((error) => {
-                                                                                    console.error('Failed to sync with Jira:', error)
-                                                                                    toast.error('Failed to sync with Jira')
-                                                                                    setLoading(false)
-                                                                                })
-                                                                        }}
-                                                                        title="Sync with Jira"
-                                                                        variant="outline"
-                                                                        size="sm"
-                                                                        className="h-7 border-blue-200 bg-blue-50 text-xs text-blue-700 shadow-sm transition-all hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/30"
-                                                                    >
-                                                                        <JiraIcon className="mr-1 h-3 w-3" />
-                                                                    </Button>
-                                                                )}
-                                                                <ActionButton
-                                                                    href={route('project.edit', project.id)}
-                                                                    title="Edit Project"
-                                                                    icon={Edit}
-                                                                    variant="warning"
-                                                                />
-                                                                <DeleteProject projectId={project.id} onDelete={() => getProjects(filters)} />
-                                                            </ActionButtonGroup>
-                                                        )}
-                                                    </div>
+                                                                                    })
+                                                                            }}
+                                                                        >
+                                                                            <GithubIcon className="h-4 w-4 text-purple-500 group-hover:text-purple-700 dark:text-purple-400 dark:group-hover:text-purple-300" />
+                                                                            <span>Sync GitHub</span>
+                                                                        </DropdownMenuItem>
+                                                                    )}
+
+                                                                    {project.source === 'jira' && (
+                                                                        <DropdownMenuItem
+                                                                            className="group cursor-pointer"
+                                                                            onSelect={(e) => {
+                                                                                e.preventDefault()
+                                                                                setLoading(true)
+
+                                                                                syncProject
+                                                                                    .call({
+                                                                                        params: { project: project.id },
+                                                                                    })
+                                                                                    .then((response) => response.json())
+                                                                                    .then((data) => {
+                                                                                        if (data.success) {
+                                                                                            toast.success('Project synced successfully with Jira!')
+                                                                                            getProjects(filters).then()
+                                                                                        } else {
+                                                                                            console.error(
+                                                                                                'Error syncing project with Jira:',
+                                                                                                data.error,
+                                                                                            )
+                                                                                            setLoading(false)
+                                                                                        }
+                                                                                    })
+                                                                                    .catch((error) => {
+                                                                                        console.error('Failed to sync with Jira:', error)
+                                                                                        toast.error('Failed to sync with Jira')
+                                                                                        setLoading(false)
+                                                                                    })
+                                                                            }}
+                                                                        >
+                                                                            <JiraIcon className="h-4 w-4 text-blue-500 group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300" />
+                                                                            <span>Sync Jira</span>
+                                                                        </DropdownMenuItem>
+                                                                    )}
+
+                                                                    <Link href={route('project.edit', project.id)}>
+                                                                        <DropdownMenuItem className="group cursor-pointer">
+                                                                            <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                            <span>Edit</span>
+                                                                        </DropdownMenuItem>
+                                                                    </Link>
+                                                                    <ProjectDeleteAction projectId={project.id} onDeleteSuccess={getProjects} />
+                                                                </>
+                                                            )}
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -597,6 +640,7 @@ export default function Projects() {
                     </CardContent>
                 </Card>
             </div>
+            <ProjectNotesSheet projectId={notesProjectId} open={notesOpen} onOpenChange={(open) => setNotesOpen(open)} />
         </MasterLayout>
     )
 }
