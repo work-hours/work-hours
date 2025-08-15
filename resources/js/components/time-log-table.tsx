@@ -234,14 +234,12 @@ export default function TimeLogTable({
                                                 <>
                                                     {/* Edit Action */}
                                                     {!log.is_paid ? (
-                                                        <DropdownMenuItem
-                                                            as="a"
-                                                            href={route('time-log.edit', log.id)}
-                                                            className="group cursor-pointer"
-                                                        >
-                                                            <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                            <span>Edit</span>
-                                                        </DropdownMenuItem>
+                                                        <a href={route('time-log.edit', log.id)}>
+                                                            <DropdownMenuItem className="group cursor-pointer">
+                                                                <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                <span>Edit</span>
+                                                            </DropdownMenuItem>
+                                                        </a>
                                                     ) : (
                                                         <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
                                                             <Edit className="mr-2 h-4 w-4 text-gray-400" />
