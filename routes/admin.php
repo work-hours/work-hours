@@ -15,6 +15,6 @@ Route::middleware('auth')->middleware('verified')->group(function (): void {
         ->group(function (): void {
             Route::get('/', [AdminController::class, 'index'])->name('index');
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
-            Route::get('/projects', [AdminProjectController::class, 'index'])->name('projects.index');
+            Route::get('/projects', (new AdminProjectController())->index(...))->name('projects.index');
         });
 });

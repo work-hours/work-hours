@@ -1,6 +1,6 @@
 import Background from '@/components/ui/background'
 import { Head, Link } from '@inertiajs/react'
-import { ChevronLeft, ChevronRight, LayoutDashboard, Settings, Users } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LayoutDashboard, Projector, Settings, Users } from 'lucide-react'
 import { ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 
@@ -95,7 +95,7 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                                     }`}
                                 >
                                     {/* Using Users icon to keep dependencies minimal */}
-                                    <Users className="h-4 w-4 flex-shrink-0 opacity-80" />
+                                    <Projector className="h-4 w-4 flex-shrink-0 opacity-80" />
                                     {!collapsed && <span className="ml-3">Projects</span>}
                                 </Link>
                             </li>
