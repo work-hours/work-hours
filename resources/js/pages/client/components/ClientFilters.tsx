@@ -1,11 +1,11 @@
-import { FormEventHandler } from 'react'
 import { Calendar, CalendarRange, Search, TimerReset } from 'lucide-react'
+import { FormEventHandler } from 'react'
 
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
 import FilterButton from '@/components/filter-button'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 import { ClientFilters } from '@/pages/client/types'
 
@@ -24,7 +24,7 @@ export default function ClientFiltersComponent({
     handleFilterChange,
     clearFilters,
     handleSubmit,
-    parseDate
+    parseDate,
 }: ClientFiltersProps) {
     const hasActiveFilters = !!(filters.search || filters['created-date-from'] || filters['created-date-to'])
 
@@ -97,12 +97,7 @@ export default function ClientFiltersComponent({
                     <Search className="h-4 w-4" />
                 </FilterButton>
 
-                <FilterButton
-                    variant="clear"
-                    disabled={processing || !hasActiveFilters}
-                    onClick={clearFilters}
-                    title="Clear filters"
-                >
+                <FilterButton variant="clear" disabled={processing || !hasActiveFilters} onClick={clearFilters} title="Clear filters">
                     <TimerReset className="h-4 w-4" />
                 </FilterButton>
             </div>

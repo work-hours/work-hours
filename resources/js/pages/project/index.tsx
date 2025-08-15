@@ -1,12 +1,12 @@
-import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
-import DeleteProject from '@/components/delete-project'
 import FilterButton from '@/components/filter-button'
 import JiraIcon from '@/components/icons/jira-icon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
@@ -28,6 +28,7 @@ import {
     Folders,
     GithubIcon,
     Loader2,
+    MoreVertical,
     Search,
     StickyNote,
     TimerReset,
@@ -35,6 +36,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import ProjectDeleteAction from './components/ProjectDeleteAction'
 import ProjectNotesSheet from './components/ProjectNotesSheet'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -504,35 +506,42 @@ export default function Projects() {
                                                     )}
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <div className="flex justify-end gap-2">
-                                                        <ActionButtonGroup>
-                                                            {/* Notes button available to all users associated with the project */}
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
                                                             <Button
-                                                                onClick={(e) => {
+                                                                variant="ghost"
+                                                                className="h-8 w-8 p-0 data-[state=open]:bg-gray-100 dark:data-[state=open]:bg-gray-800"
+                                                            >
+                                                                <span className="sr-only">Open menu</span>
+                                                                <MoreVertical className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuItem
+                                                                className="group cursor-pointer"
+                                                                onSelect={(e) => {
                                                                     e.preventDefault()
                                                                     setNotesProjectId(project.id)
                                                                     setNotesOpen(true)
                                                                 }}
-                                                                title="Project Notes"
-                                                                variant="outline"
-                                                                size="icon"
-                                                                className="h-7 w-7"
                                                             >
-                                                                <StickyNote className="h-4 w-4" />
-                                                            </Button>
+                                                                <StickyNote className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                <span>Notes</span>
+                                                            </DropdownMenuItem>
 
                                                             {project.user.id === auth.user.id && (
                                                                 <>
-                                                                    <ActionButton
-                                                                        href={route('project.time-logs', project.id)}
-                                                                        title="View Time Logs"
-                                                                        icon={Clock}
-                                                                        label="Logs"
-                                                                        variant="info"
-                                                                    />
+                                                                    <a href={route('project.time-logs', project.id)}>
+                                                                        <DropdownMenuItem className="group cursor-pointer">
+                                                                            <Clock className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                            <span>Time Logs</span>
+                                                                        </DropdownMenuItem>
+                                                                    </a>
+
                                                                     {project.source === 'github' && project.repo_id && (
-                                                                        <Button
-                                                                            onClick={(e) => {
+                                                                        <DropdownMenuItem
+                                                                            className="group cursor-pointer"
+                                                                            onSelect={(e) => {
                                                                                 e.preventDefault()
                                                                                 setLoading(true)
 
@@ -554,18 +563,16 @@ export default function Projects() {
                                                                                         setLoading(false)
                                                                                     })
                                                                             }}
-                                                                            title="Sync with GitHub"
-                                                                            variant="outline"
-                                                                            size="sm"
-                                                                            className="h-7 border-purple-200 bg-purple-50 text-xs text-purple-700 shadow-sm transition-all hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-900/20 dark:text-purple-300 dark:hover:bg-purple-900/30"
                                                                         >
-                                                                            <GithubIcon className="mr-1 h-3 w-3" />
-                                                                        </Button>
+                                                                            <GithubIcon className="h-4 w-4 text-purple-500 group-hover:text-purple-700 dark:text-purple-400 dark:group-hover:text-purple-300" />
+                                                                            <span>Sync GitHub</span>
+                                                                        </DropdownMenuItem>
                                                                     )}
 
                                                                     {project.source === 'jira' && (
-                                                                        <Button
-                                                                            onClick={(e) => {
+                                                                        <DropdownMenuItem
+                                                                            className="group cursor-pointer"
+                                                                            onSelect={(e) => {
                                                                                 e.preventDefault()
                                                                                 setLoading(true)
 
@@ -592,25 +599,24 @@ export default function Projects() {
                                                                                         setLoading(false)
                                                                                     })
                                                                             }}
-                                                                            title="Sync with Jira"
-                                                                            variant="outline"
-                                                                            size="sm"
-                                                                            className="h-7 border-blue-200 bg-blue-50 text-xs text-blue-700 shadow-sm transition-all hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300 dark:hover:bg-blue-900/30"
                                                                         >
-                                                                            <JiraIcon className="mr-1 h-3 w-3" />
-                                                                        </Button>
+                                                                            <JiraIcon className="h-4 w-4 text-blue-500 group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300" />
+                                                                            <span>Sync Jira</span>
+                                                                        </DropdownMenuItem>
                                                                     )}
-                                                                    <ActionButton
-                                                                        href={route('project.edit', project.id)}
-                                                                        title="Edit Project"
-                                                                        icon={Edit}
-                                                                        variant="warning"
-                                                                    />
-                                                                    <DeleteProject projectId={project.id} onDelete={() => getProjects(filters)} />
+
+                                                                    <a href={route('project.edit', project.id)}>
+                                                                        <DropdownMenuItem className="group cursor-pointer">
+                                                                            <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                            <span>Edit</span>
+                                                                        </DropdownMenuItem>
+                                                                    </a>
+
+                                                                    <ProjectDeleteAction projectId={project.id} onDeleteSuccess={getProjects} />
                                                                 </>
                                                             )}
-                                                        </ActionButtonGroup>
-                                                    </div>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 </TableCell>
                                             </TableRow>
                                         ))}

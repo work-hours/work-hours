@@ -3,19 +3,14 @@ import AddNewButton from '@/components/add-new-button'
 import TeamMemberDeleteAction from '@/components/team-member-delete-action'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
-import { TeamPageProps, teamBreadcrumbs } from '@/pages/team/types'
 import TeamFiltersComponent, { getFilterDescription } from '@/pages/team/components/TeamFilters'
+import { TeamPageProps, teamBreadcrumbs } from '@/pages/team/types'
 import { Head, Link } from '@inertiajs/react'
 import { Clock, Edit, MoreVertical, UserPlus, Users } from 'lucide-react'
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
 
 export default function Team({ teamMembers, filters }: TeamPageProps) {
     return (

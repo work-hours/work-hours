@@ -1,12 +1,12 @@
-import { FormEventHandler } from 'react'
-import { Calendar, CalendarRange, Search, TimerReset } from 'lucide-react'
 import { useForm } from '@inertiajs/react'
+import { Calendar, CalendarRange, Search, TimerReset } from 'lucide-react'
+import { FormEventHandler } from 'react'
 
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
 import FilterButton from '@/components/filter-button'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 import { TeamFilters } from '@/pages/team/types'
 
@@ -127,12 +127,7 @@ export default function TeamFiltersComponent({ filters }: TeamFiltersProps) {
                     <Search className="h-4 w-4" />
                 </FilterButton>
 
-                <FilterButton
-                    variant="clear"
-                    disabled={processing || !hasActiveFilters}
-                    onClick={resetFilters}
-                    title="Clear filters"
-                >
+                <FilterButton variant="clear" disabled={processing || !hasActiveFilters} onClick={resetFilters} title="Clear filters">
                     <TimerReset className="h-4 w-4" />
                 </FilterButton>
             </div>
