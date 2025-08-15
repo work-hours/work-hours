@@ -513,7 +513,7 @@ export default function Projects() {
                                                                 className="h-8 w-8 p-0 data-[state=open]:bg-gray-100 dark:data-[state=open]:bg-gray-800"
                                                             >
                                                                 <span className="sr-only">Open menu</span>
-                                                                <MoreVertical className="h-4 w-4" />
+                                                                <MoreVertical className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                                             </Button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end">

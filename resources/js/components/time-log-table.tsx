@@ -1,11 +1,12 @@
-import { ActionButton, ActionButtonGroup } from '@/components/action-buttons'
 import DeleteTimeLog from '@/components/delete-time-log'
+import TimeLogDeleteAction from '@/components/time-log-delete-action'
 import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { formatTimeEntry } from '@/lib/utils'
-import { Edit, Glasses, Trash2 } from 'lucide-react'
+import { Edit, Glasses, MoreVertical, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 export type TimeLogEntry = {
@@ -226,49 +227,34 @@ export default function TimeLogTable({
                                             <span className="sr-only">View Details</span>
                                         </Button>
 
-                                        <ActionButtonGroup>
-                                            {showEditDelete && (
-                                                <>
-                                                    {/* Edit Button */}
-                                                    {!log.is_paid ? (
-                                                        <ActionButton
+                                        {/* Dropdown menu for actions */}
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger>
+                                                <Button variant="outline" size="sm" className="h-7 w-7 p-0">
+                                                    <MoreVertical className="h-4 w-4" />
+                                                    <span className="sr-only">Actions</span>
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                {showEditDelete && (
+                                                    <>
+                                                        {/* Edit Action */}
+                                                        <DropdownMenuItem
+                                                            as="a"
                                                             href={route('time-log.edit', log.id)}
-                                                            title="Edit Log"
-                                                            icon={Edit}
-                                                            variant="warning"
-                                                            size="icon"
-                                                        />
-                                                    ) : (
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="h-7 w-7 p-0"
-                                                            disabled
-                                                            title="Paid time logs cannot be edited"
+                                                            className="cursor-pointer"
+                                                            onClick={(e) => e.stopPropagation()}
                                                         >
-                                                            <Edit className="h-3.5 w-3.5" />
-                                                            <span className="sr-only">Edit</span>
-                                                        </Button>
-                                                    )}
+                                                            <Edit className="mr-2 h-4 w-4" />
+                                                            Edit Log
+                                                        </DropdownMenuItem>
 
-                                                    {/* Delete Button */}
-                                                    {!log.is_paid ? (
-                                                        <DeleteTimeLog timeLogId={log.id} />
-                                                    ) : (
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="h-7 w-7 p-0"
-                                                            disabled
-                                                            title="Paid time logs cannot be deleted"
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                            <span className="sr-only">Delete</span>
-                                                        </Button>
-                                                    )}
-                                                </>
-                                            )}
-                                        </ActionButtonGroup>
+                                                        {/* Delete Action */}
+                                                        <TimeLogDeleteAction timeLogId={log.id} />
+                                                    </>
+                                                )}
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </div>
                                 </TableCell>
                             )}
