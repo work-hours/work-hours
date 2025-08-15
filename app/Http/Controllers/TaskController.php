@@ -184,7 +184,7 @@ final class TaskController extends Controller
                 'name' => $project->name,
             ]);
 
-        $tags = TagStore::allTags(map: true);
+        $tags = TagStore::projectTags(userId: auth()->id(), map: true);
 
         return Inertia::render('task/index', [
             'projects' => $projects,

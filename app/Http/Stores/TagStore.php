@@ -6,6 +6,7 @@ namespace App\Http\Stores;
 
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 final class TagStore
 {
@@ -18,9 +19,35 @@ final class TagStore
         return Tag::query()->where('user_id', $userId)->get();
     }
 
-    public static function allTags(bool $map = false): Collection|\Illuminate\Support\Collection
+    public static function allTags(bool $map = false): Collection|SupportCollection
     {
         $tags = Tag::all();
+
+        if ($map) {
+            return $tags->map(fn ($tag): array => [
+                'id' => $tag->id,
+                'name' => $tag->name,
+                'color' => $tag->color,
+            ]);
+        }
+
+        return $tags;
+    }
+
+    public static function projectTags(int $userId, bool $map = false): Collection|SupportCollection
+    {
+        $projectIds = ProjectStore::userProjects(userId: $userId)->pluck('id');
+
+        if ($projectIds->isEmpty()) {
+            return collect();
+        }
+
+        $tags = Tag::query()
+            ->whereHas('tasks', function ($query) use ($projectIds): void {
+                $query->whereIn('project_id', $projectIds);
+            })
+            ->distinct()
+            ->get();
 
         if ($map) {
             return $tags->map(fn ($tag): array => [
