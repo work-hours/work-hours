@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/react'
+import axios from 'axios'
 import { Trash2 } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
 import { toast } from 'sonner'
@@ -16,18 +17,20 @@ interface TagDeleteActionProps {
 export default function TagDeleteAction({ tagId, tagName, onDeleteSuccess }: TagDeleteActionProps) {
     const [processing, setProcessing] = useState(false)
 
-    const deleteTag: FormEventHandler = (e) => {
+    const deleteTag: FormEventHandler = async (e) => {
         e.preventDefault()
         setProcessing(true)
 
-        router.delete(`/tags/${tagId}`, {
-            preserveScroll: true,
-            onSuccess: () => {
-                toast.success('Tag deleted successfully')
-                if (onDeleteSuccess) onDeleteSuccess()
-            },
-            onFinish: () => setProcessing(false),
-        })
+        try {
+            await axios.delete(`/tags/${tagId}`)
+            toast.success('Tag deleted successfully')
+            if (onDeleteSuccess) await onDeleteSuccess()
+        } catch (error) {
+            toast.error('Failed to delete tag')
+            console.error(error)
+        } finally {
+            setProcessing(false)
+        }
     }
 
     return (

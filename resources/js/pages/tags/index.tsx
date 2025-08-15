@@ -43,7 +43,7 @@ export default function Tags({ tags }: TagsPageProps) {
     const [editingTag, setEditingTag] = useState<Tag | null>(null)
     const [deletingTag, setDeletingTag] = useState<Tag | null>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const [tagsList, setTagsList] = useState<Tag[]>(tags.data)
+    const [tagsList, setTagsList] = useState<Tag[]>(tags?.data || [])
 
     const { data, setData, reset, errors } = useForm({
         name: '',
@@ -169,7 +169,7 @@ export default function Tags({ tags }: TagsPageProps) {
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">
-                        {tagsList.length === 0 ? (
+                        {Array.isArray(tagsList) && tagsList.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-12 text-center">
                                 <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You don't have any tags yet.</p>
                                 <Button
@@ -194,7 +194,7 @@ export default function Tags({ tags }: TagsPageProps) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {tagsList.map((tag) => (
+                                        {Array.isArray(tagsList) ? tagsList.map((tag) => (
                                             <tr
                                                 key={tag.id}
                                                 className="dark:hover:bg-gray-750 border-b border-gray-100 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
@@ -227,16 +227,28 @@ export default function Tags({ tags }: TagsPageProps) {
                                                             <TagDeleteAction tagId={tag.id} tagName={tag.name} onDeleteSuccess={async () => {
                                                                 try {
                                                                     const response = await axios.get('/tags');
-                                                                    setTagsList(response.data.data);
+                                                                    if (response.data && Array.isArray(response.data.data)) {
+                                                                        setTagsList(response.data.data);
+                                                                    } else {
+                                                                        setTagsList([]);
+                                                                        console.error('Invalid response format from /tags endpoint');
+                                                                    }
                                                                 } catch (error) {
                                                                     console.error('Failed to refresh tags after deletion:', error);
+                                                                    setTagsList([]);
                                                                 }
                                                             }} />
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </td>
                                             </tr>
-                                        ))}
+                                        )) : (
+                                            <tr>
+                                                <td colSpan={2} className="px-6 py-4 text-center text-gray-500">
+                                                    No tags available
+                                                </td>
+                                            </tr>
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
