@@ -214,48 +214,58 @@ export default function TimeLogTable({
                             </TableCell>
                             {showActions && (
                                 <TableCell className="text-right">
-                                    <div className="flex justify-end gap-2">
-                                        {/* View Details Button */}
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="h-7 w-7 border-blue-200 bg-blue-50 p-0 text-blue-700 hover:bg-blue-100"
-                                            onClick={() => handleViewDetails(log)}
-                                            title="View Details"
-                                        >
-                                            <Glasses className="h-3.5 w-3.5" />
-                                            <span className="sr-only">View Details</span>
-                                        </Button>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700"
+                                            >
+                                                <MoreVertical className="h-4 w-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end" className="w-48">
+                                            {/* View Details Action */}
+                                            <DropdownMenuItem
+                                                className="group cursor-pointer"
+                                                onSelect={() => handleViewDetails(log)}
+                                            >
+                                                <Glasses className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                <span>View</span>
+                                            </DropdownMenuItem>
 
-                                        {/* Dropdown menu for actions */}
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger>
-                                                <Button variant="outline" size="sm" className="h-7 w-7 p-0">
-                                                    <MoreVertical className="h-4 w-4" />
-                                                    <span className="sr-only">Actions</span>
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                {showEditDelete && (
-                                                    <>
-                                                        {/* Edit Action */}
+                                            {showEditDelete && (
+                                                <>
+                                                    {/* Edit Action */}
+                                                    {!log.is_paid ? (
                                                         <DropdownMenuItem
                                                             as="a"
                                                             href={route('time-log.edit', log.id)}
-                                                            className="cursor-pointer"
-                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="group cursor-pointer"
                                                         >
-                                                            <Edit className="mr-2 h-4 w-4" />
-                                                            Edit Log
+                                                            <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                            <span>Edit Log</span>
                                                         </DropdownMenuItem>
+                                                    ) : (
+                                                        <DropdownMenuItem disabled className="opacity-50 cursor-not-allowed">
+                                                            <Edit className="mr-2 h-4 w-4 text-gray-400" />
+                                                            <span>Edit Log</span>
+                                                        </DropdownMenuItem>
+                                                    )}
 
-                                                        {/* Delete Action */}
+                                                    {/* Delete Action */}
+                                                    {!log.is_paid ? (
                                                         <TimeLogDeleteAction timeLogId={log.id} />
-                                                    </>
-                                                )}
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
+                                                    ) : (
+                                                        <DropdownMenuItem disabled className="opacity-50 cursor-not-allowed">
+                                                            <Trash2 className="mr-2 h-4 w-4 text-gray-400" />
+                                                            <span>Delete</span>
+                                                        </DropdownMenuItem>
+                                                    )}
+                                                </>
+                                            )}
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </TableCell>
                             )}
                         </TableRow>
