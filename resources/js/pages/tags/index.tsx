@@ -225,18 +225,7 @@ export default function Tags({ tags }: TagsPageProps) {
                                                                 <span>Edit</span>
                                                             </DropdownMenuItem>
                                                             <TagDeleteAction tagId={tag.id} tagName={tag.name} onDeleteSuccess={async () => {
-                                                                try {
-                                                                    const response = await axios.get('/tags');
-                                                                    if (response.data && Array.isArray(response.data.data)) {
-                                                                        setTagsList(response.data.data);
-                                                                    } else {
-                                                                        setTagsList([]);
-                                                                        console.error('Invalid response format from /tags endpoint');
-                                                                    }
-                                                                } catch (error) {
-                                                                    console.error('Failed to refresh tags after deletion:', error);
-                                                                    setTagsList([]);
-                                                                }
+                                                                setTagsList((prev) => prev.filter((t) => t.id !== tag.id))
                                                             }} />
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
@@ -382,7 +371,7 @@ export default function Tags({ tags }: TagsPageProps) {
                             <Button
                                 type="button"
                                 variant="secondary"
-                                onClick={() => setIsCreateDialogOpen(false)}
+                                onClick={() => setIsEditDialogOpen(false)}
                                 disabled={isLoading}
                                 className="border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                             >
