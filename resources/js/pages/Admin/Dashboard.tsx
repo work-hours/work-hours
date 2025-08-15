@@ -31,7 +31,7 @@ export default function Dashboard({ userCount, timeLogCount, projectCount, clien
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {statCard({ title: 'Users', count: userCount, link: '/administration/users' })}
-                    {statCard({ title: 'Projects', count: projectCount, link: null })}
+                    {statCard({ title: 'Projects', count: projectCount, link: '/administration/projects' })}
                     {statCard({ title: 'Clients', count: clientCount, link: null })}
                     {statCard({ title: 'Time Logs', count: timeLogCount, link: null })}
                 </div>
