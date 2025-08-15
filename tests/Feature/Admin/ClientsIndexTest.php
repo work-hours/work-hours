@@ -14,7 +14,7 @@ it('renders the admin clients index for admins', function (): void {
     $this->actingAs($user)
         ->get(route('admin.clients.index'))
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
+        ->assertInertia(fn (Assert $page): Assert => $page
             ->component('Admin/Clients/Index')
             ->has('clients')
         );

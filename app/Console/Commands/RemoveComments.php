@@ -66,10 +66,6 @@ final class RemoveComments extends Command
 
             $newCode = preg_replace('/^\s*\/\/ .*/m', '', $code);
 
-            if (str_ends_with($filePath, '.tsx')) {
-                $newCode = preg_replace('/^\s*\/\* .*/m', '', $newCode);
-            }
-
             if ($newCode !== null && $newCode !== $code) {
                 file_put_contents($filePath, $newCode);
                 $modifiedFiles++;
