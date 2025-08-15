@@ -620,10 +620,7 @@ export default function Tasks() {
                                 <TableHeader>
                                     <TableHeaderRow>
                                         <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
-                                            Title
-                                        </TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
-                                            Assignees
+                                            Task Details
                                         </TableHead>
                                         <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
                                             Actions
@@ -633,66 +630,89 @@ export default function Tasks() {
                                 <TableBody>
                                     {tasks.map((task) => (
                                         <TableRow key={task.id}>
-                                            <TableCell className="max-w-xl font-medium">
-                                                <div className="flex flex-wrap items-center gap-2">
-                                                    <span>{task.title}</span>
-                                                    {getStatusBadge(task, task.status)}
-                                                    {getPriorityBadge(task.priority)}
-                                                    {task.comments_count !== undefined && task.comments_count > 0 && (
-                                                        <Badge
-                                                            variant="outline"
-                                                            className="flex items-center gap-1 border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                                                        >
-                                                            <FileText className="h-3 w-3" />
-                                                            <span>{task.comments_count}</span>
-                                                        </Badge>
-                                                    )}
-                                                    {task.due_date && (
-                                                        <Badge
-                                                            variant="outline"
-                                                            className="flex items-center gap-1 border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
-                                                        >
-                                                            <Calendar className="h-0.5 w-0.5" />
-                                                            <span className={'text-sm'}>{new Date(task.due_date).toISOString().split('T')[0]}</span>
-                                                        </Badge>
-                                                    )}
-                                                    {task.is_imported && task.meta?.source && (
-                                                        <SourceLinkIcon source={task.meta.source} sourceUrl={task.meta?.source_url} />
-                                                    )}
-                                                </div>
-                                                <div className="flex flex-wrap items-center gap-2">
-                                                    <small>{task.project.name}</small>
-                                                    {task.tags && task.tags.length > 0 && (
-                                                        <div className="mt-1 flex flex-wrap gap-1">
-                                                            {task.tags.map((tag) => (
-                                                                <Badge
-                                                                    key={tag.id}
-                                                                    className="text-xs"
-                                                                    style={{ backgroundColor: tag.color, color: '#fff' }}
-                                                                >
-                                                                    {tag.name}
-                                                                </Badge>
-                                                            ))}
+                                            <TableCell className="max-w-xl">
+                                                <div className="flex flex-col gap-3">
+                                                    {/* Task Title and Primary Badges */}
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <span className="font-medium text-gray-900 dark:text-gray-100">{task.title}</span>
+                                                        <div className="flex flex-wrap items-center gap-1.5">
+                                                            {getStatusBadge(task, task.status)}
+                                                            {getPriorityBadge(task.priority)}
+                                                            {task.is_imported && task.meta?.source && (
+                                                                <SourceLinkIcon source={task.meta.source} sourceUrl={task.meta?.source_url} />
+                                                            )}
                                                         </div>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {task.assignees && task.assignees.length > 0 ? (
-                                                    <div className="flex flex-wrap gap-1">
-                                                        {task.assignees.map((assignee) => (
-                                                            <span
-                                                                key={assignee.id}
-                                                                className="inline-flex items-center bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
-                                                                title={assignee.email}
-                                                            >
-                                                                {assignee.name}
-                                                            </span>
-                                                        ))}
                                                     </div>
-                                                ) : (
-                                                    <span className="text-muted-foreground/50">No assignees</span>
-                                                )}
+
+                                                    {/* Metadata Row with visual separators */}
+                                                    <div className="flex flex-wrap items-center text-sm">
+                                                        <div className="flex items-center text-gray-600 dark:text-gray-400">
+                                                            <Briefcase className="mr-1.5 h-3.5 w-3.5" />
+                                                            <span>{task.project.name}</span>
+                                                        </div>
+
+                                                        {/* Due Date */}
+                                                        {task.due_date && (
+                                                            <div className="ml-4 flex items-center text-amber-700 dark:text-amber-400">
+                                                                <Calendar className="mr-1.5 h-3.5 w-3.5" />
+                                                                <span>{new Date(task.due_date).toISOString().split('T')[0]}</span>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Comment Count */}
+                                                        {task.comments_count !== undefined && task.comments_count > 0 && (
+                                                            <div className="ml-4 flex items-center text-gray-600 dark:text-gray-400">
+                                                                <FileText className="mr-1.5 h-3.5 w-3.5" />
+                                                                <span>{task.comments_count} {task.comments_count === 1 ? 'comment' : 'comments'}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Tags and Assignees Row with clear section labels */}
+                                                    <div className="flex flex-wrap gap-4">
+                                                        {/* Tags Section */}
+                                                        <div className="flex items-center gap-2">
+                                                            {task.tags && task.tags.length > 0 ? (
+                                                                <>
+                                                                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Tags:</span>
+                                                                    <div className="flex flex-wrap gap-1">
+                                                                        {task.tags.map((tag) => (
+                                                                            <Badge
+                                                                                key={tag.id}
+                                                                                className="text-xs"
+                                                                                style={{ backgroundColor: tag.color, color: '#fff' }}
+                                                                            >
+                                                                                {tag.name}
+                                                                            </Badge>
+                                                                        ))}
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <span className="text-xs text-gray-400 dark:text-gray-500">No tags</span>
+                                                            )}
+                                                        </div>
+
+                                                        {/* Assignees Section */}
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Assigned to:</span>
+                                                            {task.assignees && task.assignees.length > 0 ? (
+                                                                <div className="flex flex-wrap gap-1">
+                                                                    {task.assignees.map((assignee) => (
+                                                                        <span
+                                                                            key={assignee.id}
+                                                                            className="inline-flex items-center bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
+                                                                            title={assignee.email}
+                                                                        >
+                                                                            {assignee.name}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
+                                                            ) : (
+                                                                <span className="text-xs text-gray-400 dark:text-gray-500">Unassigned</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">

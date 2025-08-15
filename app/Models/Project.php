@@ -74,4 +74,9 @@ final class Project extends Model
     {
         return $this->hasMany(TimeLog::class);
     }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(ProjectNote::class);
+    }
 }

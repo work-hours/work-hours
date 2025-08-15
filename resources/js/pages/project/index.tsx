@@ -18,7 +18,8 @@ import { syncRepository } from '@actions/GitHubRepositoryController'
 import { syncProject } from '@actions/JiraController'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, TimerReset, User } from 'lucide-react'
+import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, StickyNote, TimerReset, User } from 'lucide-react'
+import ProjectNotesOffCanvas from './components/ProjectNotesOffCanvas'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -77,6 +78,8 @@ type Props = {
 }
 
 export default function Projects() {
+    const [notesOpen, setNotesOpen] = useState(false)
+    const [notesProjectId, setNotesProjectId] = useState<number | null>(null)
     const { auth, filters: pageFilters, clients, teamMembers } = usePage<Props>().props
     const [projects, setProjects] = useState<Project[]>([])
     const [loading, setLoading] = useState<boolean>(true)
@@ -488,6 +491,19 @@ export default function Projects() {
                                                 </TableCell>
                                                 <TableCell className="text-right">
                                                     <div className="flex justify-end gap-2">
+                                                                                                            <Button
+                                                                                                                onClick={(e) => {
+                                                                                                                    e.preventDefault()
+                                                                                                                    setNotesProjectId(project.id)
+                                                                                                                    setNotesOpen(true)
+                                                                                                                }}
+                                                                                                                title="Project Notes"
+                                                                                                                variant="outline"
+                                                                                                                size="icon"
+                                                                                                                className="h-7 w-7"
+                                                                                                            >
+                                                                                                                <StickyNote className="h-4 w-4" />
+                                                                                                            </Button>
                                                         {project.user.id === auth.user.id && (
                                                             <ActionButtonGroup>
                                                                 <ActionButton
@@ -597,6 +613,11 @@ export default function Projects() {
                     </CardContent>
                 </Card>
             </div>
+            <ProjectNotesOffCanvas
+                projectId={notesProjectId}
+                open={notesOpen}
+                onClose={() => setNotesOpen(false)}
+            />
         </MasterLayout>
     )
 }
