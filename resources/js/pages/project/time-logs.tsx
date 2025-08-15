@@ -548,7 +548,7 @@ export default function ProjectTimeLogs({
                                                     <DropdownMenuContent align="end" className="w-48">
                                                         <a href={route('task.edit', task.id)}>
                                                             <DropdownMenuItem className="group cursor-pointer">
-                                                                <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                 <span>Edit</span>
                                                             </DropdownMenuItem>
                                                         </a>
