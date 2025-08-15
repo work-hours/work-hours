@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import { formatTimeEntry } from '@/lib/utils'
 import { Edit, Glasses, MoreVertical, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from '@inertiajs/react'
 
 export type TimeLogEntry = {
     id: number
@@ -234,12 +235,12 @@ export default function TimeLogTable({
                                                 <>
                                                     {/* Edit Action */}
                                                     {!log.is_paid ? (
-                                                        <a href={route('time-log.edit', log.id)}>
+                                                        <Link href={route('time-log.edit', log.id)}>
                                                             <DropdownMenuItem className="group cursor-pointer">
                                                                 <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                 <span>Edit</span>
                                                             </DropdownMenuItem>
-                                                        </a>
+                                                        </Link>
                                                     ) : (
                                                         <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
                                                             <Edit className="mr-2 h-4 w-4 text-gray-400" />

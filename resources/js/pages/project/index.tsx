@@ -531,12 +531,12 @@ export default function Projects() {
 
                                                             {project.user.id === auth.user.id && (
                                                                 <>
-                                                                    <a href={route('project.time-logs', project.id)}>
+                                                                    <Link href={route('project.time-logs', project.id)}>
                                                                         <DropdownMenuItem className="group cursor-pointer">
                                                                             <Clock className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                             <span>Time Logs</span>
                                                                         </DropdownMenuItem>
-                                                                    </a>
+                                                                    </Link>
 
                                                                     {project.source === 'github' && project.repo_id && (
                                                                         <DropdownMenuItem
@@ -605,13 +605,12 @@ export default function Projects() {
                                                                         </DropdownMenuItem>
                                                                     )}
 
-                                                                    <a href={route('project.edit', project.id)}>
+                                                                    <Link href={route('project.edit', project.id)}>
                                                                         <DropdownMenuItem className="group cursor-pointer">
                                                                             <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                             <span>Edit</span>
                                                                         </DropdownMenuItem>
-                                                                    </a>
-
+                                                                    </Link>
                                                                     <ProjectDeleteAction projectId={project.id} onDeleteSuccess={getProjects} />
                                                                 </>
                                                             )}

@@ -14,7 +14,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { formatDateValue, objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
-import { Head, usePage } from '@inertiajs/react'
+import { Head, Link, usePage } from '@inertiajs/react'
 import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, MoreVertical, Plus, Search, TimerReset, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -359,24 +359,24 @@ export default function Clients() {
                                                             </Button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end" className="w-48">
-                                                            <a href={route('client.projects', client.id)}>
+                                                            <Link href={route('client.projects', client.id)}>
                                                                 <DropdownMenuItem className="group cursor-pointer">
                                                                     <Folder className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                     <span>Projects</span>
                                                                 </DropdownMenuItem>
-                                                            </a>
-                                                            <a href={route('client.invoices', client.id)}>
+                                                            </Link>
+                                                            <Link href={route('client.invoices', client.id)}>
                                                                 <DropdownMenuItem className="group cursor-pointer">
                                                                     <FileText className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                     <span>Invoices</span>
                                                                 </DropdownMenuItem>
-                                                            </a>
-                                                            <a href={route('client.edit', client.id)}>
+                                                            </Link>
+                                                            <Link href={route('client.edit', client.id)}>
                                                                 <DropdownMenuItem className="group cursor-pointer">
                                                                     <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                     <span>Edit</span>
                                                                 </DropdownMenuItem>
-                                                            </a>
+                                                            </Link>
                                                             <ClientDeleteAction clientId={client.id} onDeleteSuccess={getClients} />
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
