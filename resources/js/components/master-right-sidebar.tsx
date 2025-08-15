@@ -2,6 +2,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/react'
 import { BarChart3, BrainCircuit, ClockIcon, PlusCircle, UsersIcon } from 'lucide-react'
+import { useState } from 'react'
+import QuickTrackModal from '@/components/quick-track-modal'
+import { useTimeTracker } from '@/contexts/time-tracker-context'
 
 interface MasterRightSidebarProps {
     collapsed?: boolean
@@ -34,6 +37,9 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
     const handleAskAiClick = () => {
         window.dispatchEvent(new Event('open-ai-chat'))
     }
+
+    const [quickOpen, setQuickOpen] = useState(false)
+    const { running } = useTimeTracker()
 
     return (
         <div
@@ -102,10 +108,30 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                                     </Tooltip>
                                 )}
                             </div>
+
+                            <div className="relative">
+                                <button
+                                    onClick={() => setQuickOpen(true)}
+                                    disabled={running}
+                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <ClockIcon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                    {!collapsed && <span>Quick Track</span>}
+                                </button>
+                                {collapsed && (
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="left">Quick Track</TooltipContent>
+                                    </Tooltip>
+                                )}
+                            </div>
                         </nav>
                     </TooltipProvider>
                 </div>
             </div>
+            <QuickTrackModal open={quickOpen} onOpenChange={setQuickOpen} />
         </div>
     )
 }

@@ -1,5 +1,9 @@
 import { roundToTwoDecimals } from '@/lib/utils'
 import StatsCard from './StatsCard'
+import {
+    Users, Clock, CreditCard, Wallet,
+    BarChart3, Building2, DollarSign, PiggyBank
+} from 'lucide-react'
 
 interface TeamStats {
     count: number
@@ -22,42 +26,114 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
     const renderUnpaidAmountCards = () => {
         if (!teamStats.unpaidAmountsByCurrency || Object.keys(teamStats.unpaidAmountsByCurrency).length === 0) {
             if (teamStats.unpaidAmount < 0) return null
-            return <StatsCard title="Unpaid Amount" value={`${teamStats.currency || 'USD'} ${roundToTwoDecimals(teamStats.unpaidAmount)}`} />
+            return (
+                <StatsCard
+                    title="Unpaid Amount"
+                    value={`${teamStats.currency || 'USD'} ${roundToTwoDecimals(teamStats.unpaidAmount)}`}
+                    icon={<Wallet className="stroke-amber-600" />}
+                    color="amber"
+                />
+            )
         }
         return Object.entries(teamStats.unpaidAmountsByCurrency)
             .filter(([, amount]) => amount >= 0)
             .map(([currencyCode, amount]) => (
-                <StatsCard key={currencyCode} title={`Unpaid Amount (${currencyCode})`} value={`${currencyCode} ${roundToTwoDecimals(amount)}`} />
+                <StatsCard
+                    key={currencyCode}
+                    title={`Unpaid Amount (${currencyCode})`}
+                    value={`${currencyCode} ${roundToTwoDecimals(amount)}`}
+                    icon={<Wallet className="stroke-amber-600" />}
+                    color="amber"
+                />
             ))
     }
 
     const renderPaidAmountCards = () => {
         if (!teamStats.paidAmountsByCurrency || Object.keys(teamStats.paidAmountsByCurrency).length === 0) {
             if (teamStats.paidAmount < 0) return null
-            return <StatsCard title="Paid Amount" value={`${teamStats.currency || 'USD'} ${roundToTwoDecimals(teamStats.paidAmount)}`} />
+            return (
+                <StatsCard
+                    title="Paid Amount"
+                    value={`${teamStats.currency || 'USD'} ${roundToTwoDecimals(teamStats.paidAmount)}`}
+                    icon={<DollarSign className="stroke-emerald-600" />}
+                    color="emerald"
+                />
+            )
         }
         return Object.entries(teamStats.paidAmountsByCurrency)
             .filter(([, amount]) => amount >= 0)
             .map(([currencyCode, amount]) => (
-                <StatsCard key={currencyCode} title={`Paid Amount (${currencyCode})`} value={`${currencyCode} ${roundToTwoDecimals(amount)}`} />
+                <StatsCard
+                    key={currencyCode}
+                    title={`Paid Amount (${currencyCode})`}
+                    value={`${currencyCode} ${roundToTwoDecimals(amount)}`}
+                    icon={<DollarSign className="stroke-emerald-600" />}
+                    color="emerald"
+                />
             ))
     }
 
     return (
-        <section className="relative mb-4 rounded-lg bg-white p-6 dark:bg-gray-800">
-            <div className="mb-4">
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Key Metrics</h3>
+        <section className="relative mb-4 overflow-hidden rounded-lg bg-gray-50/80 p-4 shadow-sm backdrop-blur-sm dark:bg-gray-900/50">
+            <div className="mb-3 flex items-center">
+                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Key Metrics</h3>
+                <div className="ml-2 h-1 w-1 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">Dashboard Overview</span>
             </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                {teamStats.count >= 0 && <StatsCard title="Team Members" value={teamStats.count} />}
-                {teamStats.clientCount >= 0 && <StatsCard title="Active Clients" value={teamStats.clientCount} />}
-
-                {teamStats.totalHours >= 0 && <StatsCard title="Total Hours" value={`${roundToTwoDecimals(teamStats.totalHours)} hrs`} />}
-                {teamStats.unpaidHours >= 0 && <StatsCard title="Unpaid Hours" value={`${roundToTwoDecimals(teamStats.unpaidHours)} hrs`} />}
-                {teamStats.totalHours - teamStats.unpaidHours >= 0 && (
-                    <StatsCard title="Paid Hours" value={`${roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours)} hrs`} />
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                {teamStats.count >= 0 && (
+                    <StatsCard
+                        title="Team Members"
+                        value={teamStats.count}
+                        icon={<Users className="stroke-blue-600" />}
+                        color="blue"
+                    />
                 )}
-                {teamStats.weeklyAverage >= 0 && <StatsCard title="Weekly Average" value={`${roundToTwoDecimals(teamStats.weeklyAverage)} hrs`} />}
+
+                {teamStats.clientCount >= 0 && (
+                    <StatsCard
+                        title="Active Clients"
+                        value={teamStats.clientCount}
+                        icon={<Building2 className="stroke-indigo-600" />}
+                        color="indigo"
+                    />
+                )}
+
+                {teamStats.totalHours >= 0 && (
+                    <StatsCard
+                        title="Total Hours"
+                        value={`${roundToTwoDecimals(teamStats.totalHours)} hrs`}
+                        icon={<Clock className="stroke-violet-600" />}
+                        color="violet"
+                    />
+                )}
+
+                {teamStats.unpaidHours >= 0 && (
+                    <StatsCard
+                        title="Unpaid Hours"
+                        value={`${roundToTwoDecimals(teamStats.unpaidHours)} hrs`}
+                        icon={<CreditCard className="stroke-pink-600" />}
+                        color="pink"
+                    />
+                )}
+
+                {teamStats.totalHours - teamStats.unpaidHours >= 0 && (
+                    <StatsCard
+                        title="Paid Hours"
+                        value={`${roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours)} hrs`}
+                        icon={<PiggyBank className="stroke-teal-600" />}
+                        color="teal"
+                    />
+                )}
+
+                {teamStats.weeklyAverage >= 0 && (
+                    <StatsCard
+                        title="Weekly Average"
+                        value={`${roundToTwoDecimals(teamStats.weeklyAverage)} hrs`}
+                        icon={<BarChart3 className="stroke-cyan-600" />}
+                        color="cyan"
+                    />
+                )}
 
                 {renderPaidAmountCards()}
                 {renderUnpaidAmountCards()}
