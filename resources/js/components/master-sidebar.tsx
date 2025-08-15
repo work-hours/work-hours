@@ -143,10 +143,9 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                 collapsed ? 'w-20' : 'w-62'
             }`}
         >
-            {/* Header with improved styling */}
             <div
-                className={`border-b border-neutral-200 p-4 pt-3 pb-3 transition-all duration-300 ease-in-out dark:border-neutral-700 ${
-                    collapsed ? 'flex flex-col items-center' : 'px-6'
+                className={`border-b border-neutral-200 transition-all duration-300 ease-in-out dark:border-neutral-700 ${
+                    collapsed ? 'flex flex-col items-center' : 'px-2'
                 }`}
             >
                 <div className={`flex w-full items-center ${collapsed ? 'flex-col justify-center' : ''}`}>
@@ -156,7 +155,6 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                 </div>
             </div>
 
-            {/* Navigation - scrollable content */}
             <div className={`flex flex-1 flex-col overflow-y-auto pt-3 ${collapsed ? 'px-2' : 'px-4'}`}>
                 {/* Platform Navigation with grouped items */}
                 <div className="mb-6">
@@ -188,7 +186,6 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                 <IntegrationNavigation collapsed={collapsed} isGitHubIntegrated={isGitHubIntegrated} isJiraIntegrated={isJiraIntegrated} />
             </div>
 
-            {/* Footer with enhanced styling */}
             <div className={`border-t border-neutral-200 pt-3 pb-4 dark:border-neutral-700 ${collapsed ? 'px-2' : 'px-4'}`}>
                 <FooterNavigation collapsed={collapsed} />
                 <UserSection collapsed={collapsed} user={auth.user} />

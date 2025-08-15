@@ -8,7 +8,7 @@ export default function AppLogo({ className }: HTMLAttributes<HTMLDivElement>) {
     return (
         <>
             <div className="">
-                <AppLogoIcon className="size-16 text-sidebar-primary-foreground" />
+                <AppLogoIcon className="size-13 text-sidebar-primary-foreground" />
             </div>
             <div className={cn('ml-2 grid flex-1 text-left', className)}>
                 <span className="-ml-4 truncate text-sm leading-tight font-bold tracking-tight">{appName}</span>
