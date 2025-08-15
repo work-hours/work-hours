@@ -12,7 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('ALTER TABLE time_logs MODIFY COLUMN note TEXT NULL');
+        // Only run this raw statement on MySQL-compatible drivers.
+        $driver = DB::getDriverName();
+        if (in_array($driver, ['mysql', 'mariadb'], true)) {
+            DB::statement('ALTER TABLE time_logs MODIFY COLUMN note TEXT NULL');
+        }
+        // For SQLite and others, skip since altering column nullability is not supported easily.
     }
 
     /**
@@ -20,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        // No-op: reverting nullability change would require full column rebuild on some drivers.
     }
 };
