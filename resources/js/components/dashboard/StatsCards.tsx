@@ -1,9 +1,6 @@
 import { roundToTwoDecimals } from '@/lib/utils'
+import { BarChart3, Building2, Clock, CreditCard, DollarSign, PiggyBank, Users, Wallet } from 'lucide-react'
 import StatsCard from './StatsCard'
-import {
-    Users, Clock, CreditCard, Wallet,
-    BarChart3, Building2, DollarSign, PiggyBank
-} from 'lucide-react'
 
 interface TeamStats {
     count: number
@@ -74,20 +71,10 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
     }
 
     return (
-        <section className="relative mb-4 overflow-hidden rounded-lg bg-gray-50/80 p-4 shadow-sm backdrop-blur-sm dark:bg-gray-900/50">
-            <div className="mb-3 flex items-center">
-                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Key Metrics</h3>
-                <div className="ml-2 h-1 w-1 rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">Dashboard Overview</span>
-            </div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <section className="relative mb-2 overflow-hidden rounded-md bg-gray-50/80 p-4 backdrop-blur-sm dark:bg-gray-900/50">
+            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                 {teamStats.count >= 0 && (
-                    <StatsCard
-                        title="Team Members"
-                        value={teamStats.count}
-                        icon={<Users className="stroke-blue-600" />}
-                        color="blue"
-                    />
+                    <StatsCard title="Team Members" value={teamStats.count} icon={<Users className="stroke-blue-600" />} color="blue" />
                 )}
 
                 {teamStats.clientCount >= 0 && (

@@ -1,10 +1,10 @@
+import QuickTrackModal from '@/components/quick-track-modal'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useTimeTracker } from '@/contexts/time-tracker-context'
 import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/react'
 import { BarChart3, BrainCircuit, ClockIcon, PlusCircle, UsersIcon } from 'lucide-react'
 import { useState } from 'react'
-import QuickTrackModal from '@/components/quick-track-modal'
-import { useTimeTracker } from '@/contexts/time-tracker-context'
 
 interface MasterRightSidebarProps {
     collapsed?: boolean
@@ -113,7 +113,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                                 <button
                                     onClick={() => setQuickOpen(true)}
                                     disabled={running}
-                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100"
                                 >
                                     <ClockIcon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
                                     {!collapsed && <span>Quick Track</span>}
