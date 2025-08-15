@@ -97,9 +97,7 @@ final class TagController extends Controller
      */
     public function destroy(Tag $tag): void
     {
-        if ($tag->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized');
-        }
+        abort_if($tag->user_id !== auth()->id(), 403, 'Unauthorized');
 
         $tag->delete();
     }

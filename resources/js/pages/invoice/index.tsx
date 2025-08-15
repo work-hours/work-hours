@@ -1,4 +1,4 @@
-import { ActionButton, ActionButtonGroup, ExportButton } from '@/components/action-buttons'
+import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
 import FilterButton from '@/components/filter-button'
 import InvoiceDeleteAction from '@/components/invoice-delete-action'
@@ -607,7 +607,11 @@ export default function Invoices() {
                                                             </Button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end" className="w-48">
-                                                            <a href={route('invoice.downloadPdf', invoice.id)} target="_blank" rel="noopener noreferrer">
+                                                            <a
+                                                                href={route('invoice.downloadPdf', invoice.id)}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
                                                                 <DropdownMenuItem className="group cursor-pointer">
                                                                     <Download className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                     <span>Download PDF</span>
@@ -624,8 +628,16 @@ export default function Invoices() {
                                                                 onClick={() => handleEmailClick(invoice)}
                                                                 disabled={invoice.status === 'sent' || invoice.status === 'paid'}
                                                             >
-                                                                <Mail className={`mr-2 h-4 w-4 ${invoice.status === 'sent' || invoice.status === 'paid' ? 'text-gray-300 dark:text-gray-600' : 'text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300'}`} />
-                                                                <span className={invoice.status === 'sent' || invoice.status === 'paid' ? 'text-gray-300 dark:text-gray-600' : ''}>
+                                                                <Mail
+                                                                    className={`mr-2 h-4 w-4 ${invoice.status === 'sent' || invoice.status === 'paid' ? 'text-gray-300 dark:text-gray-600' : 'text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300'}`}
+                                                                />
+                                                                <span
+                                                                    className={
+                                                                        invoice.status === 'sent' || invoice.status === 'paid'
+                                                                            ? 'text-gray-300 dark:text-gray-600'
+                                                                            : ''
+                                                                    }
+                                                                >
                                                                     Send Email
                                                                 </span>
                                                             </DropdownMenuItem>

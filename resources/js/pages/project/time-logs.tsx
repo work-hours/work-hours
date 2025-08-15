@@ -3,22 +3,35 @@ import AddNewButton from '@/components/add-new-button'
 import BackButton from '@/components/back-button'
 import StatsCards from '@/components/dashboard/StatsCards'
 import FilterButton from '@/components/filter-button'
+import ProjectTaskDeleteAction from '@/components/project-task-delete-action'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head, Link, router, useForm } from '@inertiajs/react'
-import { AlertCircle, Calendar, CalendarRange, CheckCircle, ClipboardList, ClockIcon, Edit, MoreVertical, Plus, Search, TimerReset, User } from 'lucide-react'
+import { Head, router, useForm } from '@inertiajs/react'
+import {
+    AlertCircle,
+    Calendar,
+    CalendarRange,
+    CheckCircle,
+    ClipboardList,
+    ClockIcon,
+    Edit,
+    MoreVertical,
+    Plus,
+    Search,
+    TimerReset,
+    User,
+} from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
-import ProjectTaskDeleteAction from '@/components/project-task-delete-action'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 type TimeLog = {
     id: number
@@ -474,7 +487,10 @@ export default function ProjectTimeLogs({
                                 </TableHeader>
                                 <TableBody>
                                     {tasks.map((task) => (
-                                        <TableRow key={task.id} className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700">
+                                        <TableRow
+                                            key={task.id}
+                                            className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
+                                        >
                                             <TableCell className="max-w-xl">
                                                 <div className="flex flex-col gap-3">
                                                     {/* Task Title and Primary Badges */}
@@ -517,7 +533,7 @@ export default function ProjectTimeLogs({
 
                                                     {/* Due Date */}
                                                     {task.due_date && (
-                                                        <div className="flex items-center text-amber-700 dark:text-amber-400 text-sm">
+                                                        <div className="flex items-center text-sm text-amber-700 dark:text-amber-400">
                                                             <Calendar className="mr-1.5 h-3.5 w-3.5" />
                                                             <span>{new Date(task.due_date).toLocaleDateString()}</span>
                                                         </div>

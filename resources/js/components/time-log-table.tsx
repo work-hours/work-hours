@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { formatTimeEntry } from '@/lib/utils'
+import { Link } from '@inertiajs/react'
 import { Edit, Glasses, MoreVertical, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from '@inertiajs/react'
 
 export type TimeLogEntry = {
     id: number

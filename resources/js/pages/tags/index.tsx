@@ -4,13 +4,13 @@ import { Edit, LoaderCircle, MoreVertical, Plus, Save, Trash2 } from 'lucide-rea
 import { useState } from 'react'
 import { toast } from 'sonner'
 
+import TagDeleteAction from '@/components/tag-delete-action'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import TagDeleteAction from '@/components/tag-delete-action'
 import MasterLayout from '@/layouts/master-layout'
 
 type Tag = {
@@ -194,44 +194,53 @@ export default function Tags({ tags }: TagsPageProps) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {Array.isArray(tagsList) ? tagsList.map((tag) => (
-                                            <tr
-                                                key={tag.id}
-                                                className="dark:hover:bg-gray-750 border-b border-gray-100 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
-                                            >
-                                                <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="h-4 w-4 rounded-full" style={{ backgroundColor: tag.color || '#6366f1' }} />
-                                                        {tag.name}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
-                                                            >
-                                                                <MoreVertical className="h-4 w-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end" className="w-48">
-                                                            <DropdownMenuItem
-                                                                onClick={() => openEditDialog(tag)}
-                                                                className="group cursor-pointer"
-                                                            >
-                                                                <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                <span>Edit</span>
-                                                            </DropdownMenuItem>
-                                                            <TagDeleteAction tagId={tag.id} tagName={tag.name} onDeleteSuccess={async () => {
-                                                                setTagsList((prev) => prev.filter((t) => t.id !== tag.id))
-                                                            }} />
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </td>
-                                            </tr>
-                                        )) : (
+                                        {Array.isArray(tagsList) ? (
+                                            tagsList.map((tag) => (
+                                                <tr
+                                                    key={tag.id}
+                                                    className="dark:hover:bg-gray-750 border-b border-gray-100 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
+                                                >
+                                                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                                        <div className="flex items-center gap-2">
+                                                            <div
+                                                                className="h-4 w-4 rounded-full"
+                                                                style={{ backgroundColor: tag.color || '#6366f1' }}
+                                                            />
+                                                            {tag.name}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right">
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                                                                >
+                                                                    <MoreVertical className="h-4 w-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end" className="w-48">
+                                                                <DropdownMenuItem
+                                                                    onClick={() => openEditDialog(tag)}
+                                                                    className="group cursor-pointer"
+                                                                >
+                                                                    <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Edit</span>
+                                                                </DropdownMenuItem>
+                                                                <TagDeleteAction
+                                                                    tagId={tag.id}
+                                                                    tagName={tag.name}
+                                                                    onDeleteSuccess={async () => {
+                                                                        setTagsList((prev) => prev.filter((t) => t.id !== tag.id))
+                                                                    }}
+                                                                />
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
                                             <tr>
                                                 <td colSpan={2} className="px-6 py-4 text-center text-gray-500">
                                                     No tags available

@@ -1,11 +1,11 @@
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import AddNewButton from '@/components/add-new-button'
 import BackButton from '@/components/back-button'
-import ProjectDeleteAction from '@/pages/project/components/ProjectDeleteAction'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
+import ProjectDeleteAction from '@/pages/project/components/ProjectDeleteAction'
 import { type BreadcrumbItem } from '@/types'
 import { Head, Link } from '@inertiajs/react'
 import { Clock, Edit, FileText, FolderPlus, Mail, MoreVertical, Phone, User, Users } from 'lucide-react'
@@ -231,7 +231,10 @@ export default function ClientProjects({ client, projects }: Props) {
                                                                     <span>Edit</span>
                                                                 </DropdownMenuItem>
                                                             </a>
-                                                            <ProjectDeleteAction projectId={project.id} onDeleteSuccess={() => window.location.reload()} />
+                                                            <ProjectDeleteAction
+                                                                projectId={project.id}
+                                                                onDeleteSuccess={() => window.location.reload()}
+                                                            />
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </TableCell>

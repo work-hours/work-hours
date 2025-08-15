@@ -1,4 +1,3 @@
-import { router } from '@inertiajs/react'
 import axios from 'axios'
 import { Trash2 } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
