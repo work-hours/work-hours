@@ -248,7 +248,6 @@ final class TaskController extends Controller
 
             DB::commit();
 
-            // Notify assignees and handle external integrations (restored in-controller behavior)
             if ($request->has('assignees')) {
                 $this->notifyAssignees($task, $request->input('assignees', []));
             }
@@ -417,7 +416,6 @@ final class TaskController extends Controller
 
             DB::commit();
 
-            // Notify assignees added and on completion; update external integrations (restored behavior)
             if ($request->has('assignees')) {
                 $this->notifyAssignees($task, $addedAssigneeIds ?? []);
             }
@@ -465,7 +463,6 @@ final class TaskController extends Controller
 
             DB::commit();
 
-            // Notify on completion; update external integrations (restored behavior)
             $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
 
             $this->updateExternalIntegrations(
