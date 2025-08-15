@@ -1,6 +1,6 @@
 import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
-import DeleteClient from '@/components/delete-client'
+import ClientDeleteAction from '@/components/client-delete-action'
 import FilterButton from '@/components/filter-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -19,9 +19,10 @@ import MasterLayout from '@/layouts/master-layout'
 import { formatDateValue, objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
-import { Head, usePage } from '@inertiajs/react'
-import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, MoreVertical, Plus, Search, TimerReset, Users } from 'lucide-react'
+import { Head, router, usePage } from '@inertiajs/react'
+import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, MoreVertical, Plus, Search, TimerReset, Trash2, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -382,7 +383,7 @@ export default function Clients() {
                                                                     <span>Edit</span>
                                                                 </DropdownMenuItem>
                                                             </a>
-                                                            <DeleteClient clientId={client.id} getClients={getClients} />
+                                                            <ClientDeleteAction clientId={client.id} onDeleteSuccess={getClients} />
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </TableCell>

@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react'
-import { FormEventHandler, useState } from 'react'
 import { Trash2 } from 'lucide-react'
+import { FormEventHandler, useState } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -10,11 +10,10 @@ import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 interface ClientDeleteActionProps {
     clientId: number
     clientName?: string
-    onSuccess?: () => void
-    getClients?: () => Promise<void>
+    onDeleteSuccess?: () => Promise<void>
 }
 
-export default function ClientDeleteAction({ clientId, clientName, onSuccess, getClients }: ClientDeleteActionProps) {
+export default function ClientDeleteAction({ clientId, clientName, onDeleteSuccess }: ClientDeleteActionProps) {
     const [processing, setProcessing] = useState(false)
 
     const deleteClient: FormEventHandler = (e) => {
@@ -25,10 +24,9 @@ export default function ClientDeleteAction({ clientId, clientName, onSuccess, ge
             preserveScroll: true,
             onSuccess: () => {
                 toast.success('Client deleted successfully')
-                if (onSuccess) onSuccess()
-                if (getClients) getClients()
+                if (onDeleteSuccess) onDeleteSuccess()
             },
-            onFinish: () => setProcessing(false)
+            onFinish: () => setProcessing(false),
         })
     }
 
@@ -36,9 +34,8 @@ export default function ClientDeleteAction({ clientId, clientName, onSuccess, ge
         <Dialog>
             <DialogTrigger asChild>
                 <DropdownMenuItem
-                    className="cursor-pointer group"
+                    className="group cursor-pointer"
                     onSelect={(event) => {
-                        // This prevents the dropdown from closing when clicking this item
                         event.preventDefault()
                     }}
                 >
@@ -51,7 +48,7 @@ export default function ClientDeleteAction({ clientId, clientName, onSuccess, ge
                     Are you sure you want to delete {clientName ? `"${clientName}"` : 'this client'}?
                 </DialogTitle>
                 <DialogDescription className="text-neutral-600 dark:text-neutral-400">
-                    Once the client is deleted, all of their data will be permanently removed. This action cannot be undone.
+                    Once the client is deleted, all of its data will be permanently removed. This action cannot be undone.
                 </DialogDescription>
                 <form className="space-y-6" onSubmit={deleteClient}>
                     <DialogFooter className="gap-2">
