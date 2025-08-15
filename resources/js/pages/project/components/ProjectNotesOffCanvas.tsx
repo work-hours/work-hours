@@ -90,7 +90,7 @@ export default function ProjectNotesOffCanvas({ projectId, open, onClose }: Prop
   }
 
   return (
-    <div className={`fixed inset-y-0 right-0 z-50 w-full transform bg-white shadow-xl transition-transform duration-300 sm:w-[420px] ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+    <div className={`fixed inset-y-0 right-0 z-60 w-full transform bg-white shadow-xl transition-transform duration-300 sm:w-[400px] ${open ? 'translate-x-0' : 'translate-x-full'}`}>
       <div className="flex h-full flex-col overflow-hidden">
         <div className="flex items-center justify-between border-b p-4">
           <h2 className="text-xl font-semibold">Project Notes</h2>

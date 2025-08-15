@@ -491,19 +491,7 @@ export default function Projects() {
                                                 </TableCell>
                                                 <TableCell className="text-right">
                                                     <div className="flex justify-end gap-2">
-                                                                                                            <Button
-                                                                                                                onClick={(e) => {
-                                                                                                                    e.preventDefault()
-                                                                                                                    setNotesProjectId(project.id)
-                                                                                                                    setNotesOpen(true)
-                                                                                                                }}
-                                                                                                                title="Project Notes"
-                                                                                                                variant="outline"
-                                                                                                                size="icon"
-                                                                                                                className="h-7 w-7"
-                                                                                                            >
-                                                                                                                <StickyNote className="h-4 w-4" />
-                                                                                                            </Button>
+
                                                         {project.user.id === auth.user.id && (
                                                             <ActionButtonGroup>
                                                                 <ActionButton
@@ -545,6 +533,19 @@ export default function Projects() {
                                                                         <GithubIcon className="mr-1 h-3 w-3" />
                                                                     </Button>
                                                                 )}
+                                                                <Button
+                                                                    onClick={(e) => {
+                                                                        e.preventDefault()
+                                                                        setNotesProjectId(project.id)
+                                                                        setNotesOpen(true)
+                                                                    }}
+                                                                    title="Project Notes"
+                                                                    variant="outline"
+                                                                    size="icon"
+                                                                    className="h-7 w-7"
+                                                                >
+                                                                    <StickyNote className="h-4 w-4" />
+                                                                </Button>
                                                                 {project.source === 'jira' && (
                                                                     <Button
                                                                         onClick={(e) => {

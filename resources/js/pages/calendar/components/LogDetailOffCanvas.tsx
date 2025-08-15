@@ -71,7 +71,7 @@ export default function LogDetailOffCanvas({ timeLogId, isOpen, onClose }: LogDe
 
     return (
         <div
-            className={`fixed inset-y-0 right-0 z-50 w-full transform bg-white shadow-xl transition-transform duration-300 sm:w-[400px] ${
+            className={`fixed inset-y-0 right-0 z-60 w-full transform bg-white shadow-xl transition-transform duration-300 sm:w-[400px] ${
                 isOpen ? 'translate-x-0' : 'translate-x-full'
             }`}
         >
