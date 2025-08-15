@@ -663,7 +663,9 @@ export default function Tasks() {
                                                         {task.comments_count !== undefined && task.comments_count > 0 && (
                                                             <div className="ml-4 flex items-center text-gray-600 dark:text-gray-400">
                                                                 <FileText className="mr-1.5 h-3.5 w-3.5" />
-                                                                <span>{task.comments_count} {task.comments_count === 1 ? 'comment' : 'comments'}</span>
+                                                                <span>
+                                                                    {task.comments_count} {task.comments_count === 1 ? 'comment' : 'comments'}
+                                                                </span>
                                                             </div>
                                                         )}
                                                     </div>
@@ -674,7 +676,9 @@ export default function Tasks() {
                                                         <div className="flex items-center gap-2">
                                                             {task.tags && task.tags.length > 0 ? (
                                                                 <>
-                                                                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Tags:</span>
+                                                                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                                        Tags:
+                                                                    </span>
                                                                     <div className="flex flex-wrap gap-1">
                                                                         {task.tags.map((tag) => (
                                                                             <Badge

@@ -18,10 +18,24 @@ import { syncRepository } from '@actions/GitHubRepositoryController'
 import { syncProject } from '@actions/JiraController'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Briefcase, Calendar, CalendarRange, Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, Search, StickyNote, TimerReset, User } from 'lucide-react'
-import ProjectNotesSheet from './components/ProjectNotesSheet'
+import {
+    Briefcase,
+    Calendar,
+    CalendarRange,
+    Clock,
+    Edit,
+    FolderPlus,
+    Folders,
+    GithubIcon,
+    Loader2,
+    Search,
+    StickyNote,
+    TimerReset,
+    User,
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import ProjectNotesSheet from './components/ProjectNotesSheet'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -565,7 +579,10 @@ export default function Projects() {
                                                                                             toast.success('Project synced successfully with Jira!')
                                                                                             getProjects(filters).then()
                                                                                         } else {
-                                                                                            console.error('Error syncing project with Jira:', data.error)
+                                                                                            console.error(
+                                                                                                'Error syncing project with Jira:',
+                                                                                                data.error,
+                                                                                            )
                                                                                             setLoading(false)
                                                                                         }
                                                                                     })
@@ -618,11 +635,7 @@ export default function Projects() {
                     </CardContent>
                 </Card>
             </div>
-            <ProjectNotesSheet
-                projectId={notesProjectId}
-                open={notesOpen}
-                onOpenChange={(open) => setNotesOpen(open)}
-            />
+            <ProjectNotesSheet projectId={notesProjectId} open={notesOpen} onOpenChange={(open) => setNotesOpen(open)} />
         </MasterLayout>
     )
 }

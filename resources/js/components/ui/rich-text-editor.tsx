@@ -10,13 +10,11 @@ type Props = {
   disabled?: boolean
 }
 
-// Simple, dependency-free rich text editor using contenteditable and execCommand
-// Minimal toolbar to keep bundle small and UI consistent.
+
 export default function RichTextEditor({ value, onChange, placeholder = 'Write something…', className, disabled = false }: Props) {
   const ref = useRef<HTMLDivElement | null>(null)
   const [isFocused, setIsFocused] = useState(false)
 
-  // Keep DOM in sync when external value changes (avoid loop while focused and user typing)
   useEffect(() => {
     const el = ref.current
     if (!el) return
@@ -28,9 +26,9 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Write s
 
   const exec = (command: string, valueArg?: string) => {
     if (disabled) return
-    // document.execCommand is deprecated but broadly supported and sufficient for a small internal editor.
+
     document.execCommand(command, false, valueArg)
-    // trigger change after command
+
     const el = ref.current
     if (el) {
       onChange(el.innerHTML)
@@ -51,11 +49,11 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Write s
   }
 
   const onPaste: React.ClipboardEventHandler<HTMLDivElement> = () => {
-    // Paste as rich text but sanitize very lightly by allowing browser defaults.
-    // If you want plain text paste, uncomment below:
-    // e.preventDefault();
-    // const text = e.clipboardData.getData('text/plain');
-    // document.execCommand('insertText', false, text);
+
+
+
+
+
   }
 
   return (
@@ -80,7 +78,7 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Write s
         ref={ref}
         className={cn(
           'prose prose-sm max-w-none px-3 py-2 text-gray-900 outline-none dark:text-gray-100',
-          // borders on focus to match inputs
+
           'hover:border-primary/50 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] rounded-b-md min-h-28',
         )}
         contentEditable={!disabled}
