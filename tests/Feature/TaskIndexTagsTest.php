@@ -92,7 +92,7 @@ it('only includes tags associated with tasks from user\'s available projects on 
                 // includes tag1, tag2, tag4
                 $includes = $ids->contains($tag1->id) && $ids->contains($tag2->id) && $ids->contains($tag4->id);
                 // excludes tag3
-                $excludes = ! $ids->contains($tag3->id);
+                $excludes = $ids->doesntContain($tag3->id);
 
                 return $includes && $excludes;
             })

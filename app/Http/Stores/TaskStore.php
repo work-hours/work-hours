@@ -80,6 +80,19 @@ final class TaskStore
         ];
     }
 
+    public static function filters(): array
+    {
+        return request()->only([
+            'status',
+            'priority',
+            'project',
+            'tag',
+            'due-date-from',
+            'due-date-to',
+            'search',
+        ]);
+    }
+
     private static function applyFilterPipeline(Builder $query): Builder
     {
         return app(Pipeline::class)
@@ -94,18 +107,5 @@ final class TaskStore
                 SearchFilter::class,
             ])
             ->thenReturn();
-    }
-
-    public static function filters(): array
-    {
-        return request()->only([
-            'status',
-            'priority',
-            'project',
-            'tag',
-            'due-date-from',
-            'due-date-to',
-            'search',
-        ]);
     }
 }

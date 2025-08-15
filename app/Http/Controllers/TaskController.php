@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Adapters\GitHubAdapter;
 use App\Adapters\JiraAdapter;
+use App\Events\TaskCreated;
+use App\Events\TaskUpdated;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Stores\ProjectStore;
@@ -16,9 +18,7 @@ use App\Models\Tag;
 use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\User;
-use App\Notifications\TaskAssigned;
 use App\Notifications\TaskCommented;
-use App\Notifications\TaskCompleted;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
@@ -238,7 +238,6 @@ final class TaskController extends Controller
 
             if ($request->has('assignees')) {
                 $task->assignees()->sync($request->input('assignees'));
-                $this->notifyAssignees($task, $request->input('assignees'));
             }
 
             if ($request->has('tags')) {
@@ -249,13 +248,12 @@ final class TaskController extends Controller
 
             DB::commit();
 
-            if ($request->boolean('create_github_issue')) {
-                $this->gitHubAdapter->createGitHubIssue($task);
-            }
-
-            if ($request->boolean('create_jira_issue')) {
-                $this->jiraAdapter->createJiraIssue($task);
-            }
+            event(new TaskCreated(
+                task: $task,
+                assigneeIds: $request->input('assignees', []),
+                createGithubIssue: $request->boolean('create_github_issue'),
+                createJiraIssue: $request->boolean('create_jira_issue')
+            ));
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -332,7 +330,6 @@ final class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-
         $task->load(['project', 'assignees', 'meta', 'tags']);
 
         $isProjectOwner = $task->project->user_id === auth()->id();
@@ -402,7 +399,6 @@ final class TaskController extends Controller
                 $task->assignees()->sync($newAssigneeIds);
 
                 $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
-                $this->notifyAssignees($task, $addedAssigneeIds);
             } else {
                 $task->assignees()->detach();
             }
@@ -415,13 +411,15 @@ final class TaskController extends Controller
 
             DB::commit();
 
-            $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
-
-            $this->updateExternalIntegrations(
-                $task,
-                $request->boolean('github_update'),
-                $request->boolean('jira_update')
-            );
+            event(new TaskUpdated(
+                task: $task,
+                addedAssigneeIds: $request->has('assignees') ? $addedAssigneeIds ?? [] : [],
+                oldStatus: $oldStatus,
+                isProjectOwner: $isProjectOwner,
+                githubUpdate: $request->boolean('github_update'),
+                jiraUpdate: $request->boolean('jira_update'),
+                newStatus: $request->input('status')
+            ));
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -458,13 +456,15 @@ final class TaskController extends Controller
 
             DB::commit();
 
-            $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
-
-            $this->updateExternalIntegrations(
-                $task,
-                request()->boolean('github_update'),
-                request()->boolean('jira_update')
-            );
+            event(new TaskUpdated(
+                task: $task,
+                addedAssigneeIds: [],
+                oldStatus: $oldStatus,
+                isProjectOwner: $isProjectOwner,
+                githubUpdate: request()->boolean('github_update'),
+                jiraUpdate: request()->boolean('jira_update'),
+                newStatus: request('status')
+            ));
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -602,57 +602,6 @@ final class TaskController extends Controller
                     $file->storeAs('tasks/' . $task->id, $file->getClientOriginalName(), 'public');
                 }
             }
-        }
-    }
-
-    /**
-     * Notify users that have been assigned to the task.
-     */
-    private function notifyAssignees(Task $task, array $userIds): void
-    {
-        if ($userIds === []) {
-            return;
-        }
-
-        if (! $task->relationLoaded('project')) {
-            $task->load('project');
-        }
-
-        $users = User::query()->whereIn('id', $userIds)->get();
-        foreach ($users as $user) {
-            $user->notify(new TaskAssigned($task, auth()->user()));
-        }
-    }
-
-    /**
-     * Notify project owner if task transitioned to completed by a non-owner.
-     */
-    private function notifyOnCompletion(Task $task, string $oldStatus, bool $isProjectOwner): void
-    {
-        if ($oldStatus !== 'completed' && request('status') === 'completed' && ! $isProjectOwner) {
-            if (! $task->relationLoaded('project')) {
-                $task->load('project');
-            }
-
-            $projectOwner = User::query()->find($task->project->user_id);
-            $projectOwner?->notify(new TaskCompleted($task, auth()->user()));
-        }
-    }
-
-    /**
-     * Update external integrations for imported tasks when requested.
-     */
-    private function updateExternalIntegrations(Task $task, bool $githubFlag, bool $jiraFlag): void
-    {
-        $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
-        $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
-
-        if ($isGithub && $githubFlag) {
-            $this->gitHubAdapter->updateGitHubIssue($task);
-        }
-
-        if ($isJira && $jiraFlag) {
-            $this->jiraAdapter->updateJiraIssue($task);
         }
     }
 }

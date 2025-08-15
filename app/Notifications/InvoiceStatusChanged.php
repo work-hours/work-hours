@@ -52,7 +52,7 @@ final class InvoiceStatusChanged extends Notification
 
         $pdf = $this->generateInvoicePdf();
 
-        if ($pdf) {
+        if ($pdf instanceof \Barryvdh\DomPDF\PDF) {
             $message->attachData(
                 $pdf->output(),
                 "Invoice_{$this->invoice->invoice_number}.pdf",
