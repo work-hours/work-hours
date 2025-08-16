@@ -63,8 +63,16 @@ final class RemoveComments extends Command
             $totalFiles++;
             $filePath = $file->getRealPath();
             $code = file_get_contents($filePath);
+            $newCode = $code;
 
-            $newCode = preg_replace('/^\s*\/\/ .*/m', '', $code);
+            $extension = pathinfo((string) $filePath, PATHINFO_EXTENSION);
+
+            if ($extension === 'tsx') {
+                $newCode = preg_replace('/^\s*\/\/ .*/m', '', $code);
+                $newCode = preg_replace('/{\s*\/\*.*?\*\/\s*}/s', '', (string) $newCode);
+            } else {
+                $newCode = preg_replace('/^\s*\/\/ .*/m', '', $code);
+            }
 
             if ($newCode !== null && $newCode !== $code) {
                 file_put_contents($filePath, $newCode);
