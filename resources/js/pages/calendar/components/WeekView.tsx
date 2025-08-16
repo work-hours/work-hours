@@ -52,7 +52,6 @@ export default function WeekView({ timeLogs, date, onTimeLogClick }: WeekViewPro
     return (
         <div className="overflow-x-auto rounded-lg bg-white shadow dark:bg-gray-800">
             <div className="min-w-[800px]">
-                {/* Header with days */}
                 <div className="grid grid-cols-8 border-b dark:border-gray-700">
                     <div className="sticky left-0 z-10 border-r bg-white p-3 text-center font-medium dark:border-gray-700 dark:bg-gray-800">
                         <span className="text-gray-600 dark:text-gray-300">Time</span>
@@ -70,7 +69,6 @@ export default function WeekView({ timeLogs, date, onTimeLogClick }: WeekViewPro
                     ))}
                 </div>
 
-                {/* Time grid */}
                 <div className="relative">
                     {hours.map((hour) => (
                         <div key={hour} className="grid grid-cols-8 border-b dark:border-gray-700">
@@ -82,10 +80,8 @@ export default function WeekView({ timeLogs, date, onTimeLogClick }: WeekViewPro
 
                             {days.map((day, dayIndex) => (
                                 <div key={dayIndex} className="relative h-[60px] border-r last:border-r-0 dark:border-gray-700">
-                                    {/* Render half-hour marker */}
                                     <div className="absolute top-1/2 right-0 left-0 border-t border-dotted border-gray-200 dark:border-gray-700"></div>
 
-                                    {/* Render time logs for this day and hour */}
                                     {getTimeLogsForCell(day, hour).map((timeLog, logIndex) => {
                                         const style = getTimeLogStyle(timeLog)
 
@@ -131,7 +127,6 @@ export default function WeekView({ timeLogs, date, onTimeLogClick }: WeekViewPro
                         </div>
                     ))}
 
-                    {/* Current time indicator */}
                     {days.some((day) => isSameDay(day, new Date())) && (
                         <div
                             className="pointer-events-none absolute right-0 left-0 z-20"

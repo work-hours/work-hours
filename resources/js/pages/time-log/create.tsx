@@ -148,7 +148,6 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Time Log" />
             <div className="mx-auto flex max-w-3xl flex-col gap-6 p-6">
-                {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Log Your Time</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Record your work hours by entering start and end times</p>
@@ -202,14 +201,12 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                     </div>
                                 </div>
 
-                                {/* No tasks message in a separate row */}
                                 {data.project_id !== null && tasks.filter((task) => task.project_id === data.project_id).length === 0 && (
                                     <div className="-mt-4">
                                         <p className="text-xs text-muted-foreground">No tasks assigned to you in this project</p>
                                     </div>
                                 )}
 
-                                {/* Show checkbox to mark task as complete only when a task is selected */}
                                 {data.task_id && (
                                     <div className="space-y-2">
                                         <div className="flex items-center space-x-2">
@@ -223,7 +220,6 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                             </Label>
                                         </div>
 
-                                        {/* Show checkbox to close GitHub issue only for imported GitHub tasks that are open */}
                                         {tasks.find((task) => task.id === data.task_id)?.is_imported &&
                                             tasks.find((task) => task.id === data.task_id)?.meta?.source === 'github' &&
                                             tasks.find((task) => task.id === data.task_id)?.meta?.source_state !== 'closed' && (
@@ -339,14 +335,12 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                     </div>
                                 </div>
 
-                                {/* Duration text in a separate row */}
                                 {calculatedHours !== null && (
                                     <div className="-mt-4">
                                         <p className="text-sm font-medium text-green-600 dark:text-green-400">Duration: {calculatedHours} hours</p>
                                     </div>
                                 )}
 
-                                {/* Help text in a separate row */}
                                 {calculatedHours === null && (
                                     <div className="-mt-5">
                                         <p className="text-xs text-muted-foreground">Leave end time empty if you're still working</p>
@@ -369,7 +363,6 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                     <InputError message={errors.note} className="mt-1" />
                                 </div>
 
-                                {/* Tags input */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="tags" className="text-sm font-medium">
                                         Tags (Optional)

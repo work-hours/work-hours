@@ -194,7 +194,6 @@ export default function Navbar() {
                 {mobileMenuOpen && (
                     <div className="absolute top-16 right-0 left-0 z-50 border-b border-neutral-200 bg-white shadow-sm md:hidden dark:border-neutral-700 dark:bg-neutral-900">
                         <div className="space-y-1 px-4 py-3">
-                            {/* Mobile Features Menu */}
                             <div className="py-1">
                                 <button
                                     onClick={toggleFeaturesDropdown}
@@ -204,7 +203,6 @@ export default function Navbar() {
                                     {featuresDropdownOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                                 </button>
 
-                                {/* Mobile Features Dropdown */}
                                 {featuresDropdownOpen && (
                                     <div className="mt-1 space-y-1 border-l border-neutral-200 pl-4 dark:border-neutral-700">
                                         <a
@@ -327,7 +325,6 @@ export default function Navbar() {
                 )}
 
                 <div className="flex items-center gap-4">
-                    {/* Appearance toggle with modern styling */}
                     <div className="relative z-10 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
                         <AppearanceToggleDropdown />
                     </div>

@@ -245,7 +245,6 @@ export default function Notifications() {
                             </div>
                         )}
 
-                        {/* Pagination */}
                         {notificationsData.notifications.meta?.last_page > 1 && (
                             <div className="mt-6 flex items-center justify-center gap-2">
                                 <Button

@@ -3,16 +3,13 @@ import { Clock, FolderPlus, UserPlus, Users, Zap } from 'lucide-react'
 export default function HowItWorks() {
     return (
         <section className="relative w-full" aria-label="How to use Work Hours">
-            {/* Minimal modern header */}
             <div className="mb-14 text-center">
                 <span className="mb-3 inline-block text-sm font-medium text-gray-500 dark:text-gray-400">HOW IT WORKS</span>
                 <h2 className="mb-4 text-3xl font-medium text-gray-900 md:text-4xl dark:text-gray-100">Four steps to improved productivity</h2>
                 <p className="mx-auto max-w-2xl text-base text-gray-600 dark:text-gray-400">Get started quickly and see results right away</p>
             </div>
 
-            {/* Process steps with minimal connecting elements */}
             <div className="relative">
-                {/* Subtle connecting line */}
                 <div
                     className="absolute top-12 left-1/2 hidden h-[calc(100%-80px)] w-0 -translate-x-1/2 border-l border-gray-200 lg:block dark:border-gray-800"
                     aria-hidden="true"

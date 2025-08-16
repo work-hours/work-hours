@@ -232,8 +232,6 @@ export default function Profile({ mustVerifyEmail, status, currencies }: { mustV
                         </CardContent>
                     </Card>
                 </div>
-
-                {/*<DeleteUser />*/}
             </SettingsLayout>
         </MasterLayout>
     )

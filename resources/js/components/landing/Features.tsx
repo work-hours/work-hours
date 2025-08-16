@@ -10,7 +10,6 @@ export default function Features() {
         <>
             <section id="features" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8" aria-label="Product features">
                 <div className="mb-16 text-center">
-                    {/* Minimal section header */}
                     <div className="mb-6 inline-flex rounded-full bg-neutral-100 px-4 py-1.5 dark:bg-neutral-800/80">
                         <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Features</span>
                     </div>
@@ -23,9 +22,7 @@ export default function Features() {
                     </p>
                 </div>
 
-                {/* Modern features grid */}
                 <div className="mb-16 grid gap-6 md:grid-cols-3">
-                    {/* Feature: Time Tracking */}
                     <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800">
                         <div className="border-b border-neutral-100 p-5 dark:border-neutral-700">
                             <div className="flex items-center justify-between">
@@ -47,7 +44,6 @@ export default function Features() {
                         </div>
                     </div>
 
-                    {/* Feature: Detailed Reports */}
                     <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800">
                         <div className="border-b border-neutral-100 p-5 dark:border-neutral-700">
                             <div className="flex items-center justify-between">
@@ -69,7 +65,6 @@ export default function Features() {
                         </div>
                     </div>
 
-                    {/* Feature: Team Collaboration */}
                     <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800">
                         <div className="border-b border-neutral-100 p-5 dark:border-neutral-700">
                             <div className="flex items-center justify-between">
@@ -91,7 +86,6 @@ export default function Features() {
                         </div>
                     </div>
 
-                    {/* Feature: Client Management */}
                     <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800">
                         <div className="border-b border-neutral-100 p-5 dark:border-neutral-700">
                             <div className="flex items-center justify-between">
@@ -113,7 +107,6 @@ export default function Features() {
                         </div>
                     </div>
 
-                    {/* Feature: Bulk Upload */}
                     <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800">
                         <div className="border-b border-neutral-100 p-5 dark:border-neutral-700">
                             <div className="flex items-center justify-between">
@@ -135,7 +128,6 @@ export default function Features() {
                         </div>
                     </div>
 
-                    {/* Feature: Approval Management */}
                     <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800">
                         <div className="border-b border-neutral-100 p-5 dark:border-neutral-700">
                             <div className="flex items-center justify-between">
@@ -162,7 +154,6 @@ export default function Features() {
                         </div>
                     </div>
 
-                    {/* Feature: Currency Management */}
                     <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800">
                         <div className="border-b border-neutral-100 p-5 dark:border-neutral-700">
                             <div className="flex items-center justify-between">
@@ -184,7 +175,6 @@ export default function Features() {
                         </div>
                     </div>
 
-                    {/* Feature: Multi Currency Invoice */}
                     <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800">
                         <div className="border-b border-neutral-100 p-5 dark:border-neutral-700">
                             <div className="flex items-center justify-between">
@@ -211,7 +201,6 @@ export default function Features() {
                         </div>
                     </div>
 
-                    {/* Feature: Task Management */}
                     <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800">
                         <div className="border-b border-neutral-100 p-5 dark:border-neutral-700">
                             <div className="flex items-center justify-between">
@@ -240,7 +229,6 @@ export default function Features() {
                 </div>
             </section>
 
-            {/* GitHub Integration - Modern style */}
             <section id="featured-integration" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8" aria-label="Featured integration">
                 <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition-all duration-200 dark:border-neutral-700 dark:bg-neutral-800">
                     <div className="border-b border-neutral-100 p-6 dark:border-neutral-700">
@@ -263,7 +251,6 @@ export default function Features() {
                     </div>
 
                     <div className="grid gap-6 p-6 md:grid-cols-2">
-                        {/* Left column - Feature description */}
                         <div>
                             <div className="mb-6 border-l-2 border-neutral-200 pl-4 dark:border-neutral-600">
                                 <p className="text-neutral-600 dark:text-neutral-400">
@@ -302,7 +289,6 @@ export default function Features() {
                             </div>
                         </div>
 
-                        {/* Right column - Visual representation */}
                         <div className="flex items-center justify-center">
                             <div className="w-full max-w-md overflow-hidden rounded-lg border border-neutral-200 bg-slate-50 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
                                 <div className="border-b border-neutral-200 bg-white p-2 dark:border-neutral-600 dark:bg-neutral-900/50">
@@ -331,7 +317,6 @@ export default function Features() {
                 </div>
             </section>
 
-            {/* Jira Integration - Modern style */}
             <section id="featured-integration-jira" className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8" aria-label="Jira integration">
                 <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
                     <div className="border-b border-neutral-100 p-6 dark:border-neutral-700">
@@ -354,7 +339,6 @@ export default function Features() {
                     </div>
 
                     <div className="grid gap-6 p-6 md:grid-cols-2">
-                        {/* Left column - Feature description */}
                         <div>
                             <div className="mb-6 border-l-2 border-neutral-200 pl-4 dark:border-neutral-600">
                                 <p className="text-neutral-600 dark:text-neutral-400">
@@ -389,7 +373,6 @@ export default function Features() {
                             </div>
                         </div>
 
-                        {/* Right column - Visual representation */}
                         <div className="flex items-center justify-center">
                             <div className="w-full max-w-md overflow-hidden rounded-lg border border-neutral-200 bg-slate-50 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
                                 <div className="border-b border-neutral-200 bg-white p-2 dark:border-neutral-600 dark:bg-neutral-900/50">

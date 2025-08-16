@@ -22,9 +22,7 @@ final class TaskCommented extends Notification
         private readonly Task $task,
         private readonly TaskComment $comment,
         private readonly User $commenter
-    ) {
-        //
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.

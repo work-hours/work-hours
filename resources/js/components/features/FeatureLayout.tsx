@@ -25,7 +25,6 @@ export default function FeatureLayout({ title, icon, children }: FeatureLayoutPr
                             <h1 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl dark:text-white">{title}</h1>
                         </div>
 
-                        {/* Beta Release Note */}
                         <div className="mb-8 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800/40 dark:bg-amber-900/20">
                             <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
                                 This is a beta release, all the mentioned features may not be available at this moment. Our Team is working hard to

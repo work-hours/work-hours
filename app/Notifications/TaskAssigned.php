@@ -20,9 +20,7 @@ final class TaskAssigned extends Notification
     public function __construct(
         private readonly Task $task,
         private readonly User $assigner
-    ) {
-        //
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.

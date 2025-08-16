@@ -18,7 +18,6 @@ export default function AiSection() {
                 </p>
             </div>
 
-            {/* Featured AI capability with minimal design */}
             <div className="relative mb-16 overflow-hidden rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
                 <div className="relative z-10 flex flex-col items-start gap-6 md:flex-row">
                     <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-purple-50 dark:bg-purple-900/20">
@@ -57,9 +56,7 @@ export default function AiSection() {
                 </div>
             </div>
 
-            {/* AI Features Grid with minimal design */}
             <div className="grid gap-6 md:grid-cols-2">
-                {/* Feature 1: Time Analysis */}
                 <div className="overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:border-purple-200 dark:border-gray-800 dark:bg-gray-900 dark:hover:border-purple-800/50">
                     <div className="flex items-start gap-4 p-5">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
@@ -87,7 +84,6 @@ export default function AiSection() {
                     </div>
                 </div>
 
-                {/* Feature 2: Project Insights */}
                 <div className="overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:border-purple-200 dark:border-gray-800 dark:bg-gray-900 dark:hover:border-purple-800/50">
                     <div className="flex items-start gap-4 p-5">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
@@ -115,7 +111,6 @@ export default function AiSection() {
                 </div>
             </div>
 
-            {/* Call-to-action button with minimal design */}
             <div className="mt-12 text-center">
                 <button className="inline-flex items-center justify-center rounded-md bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:outline-none dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-offset-gray-900">
                     <BrainCircuit className="mr-2 h-4 w-4" />

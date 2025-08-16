@@ -13,9 +13,7 @@ export default function AuthSimpleLayout({ children, title, description }: Props
     return (
         <div className="flex min-h-svh flex-col items-center justify-center bg-slate-50 p-6 md:p-8 dark:bg-slate-900">
             <div className="w-full max-w-md">
-                {/* Card container */}
                 <div className="overflow-hidden rounded-xl border border-gray-200 bg-white p-8 shadow-md dark:border-gray-800 dark:bg-gray-800">
-                    {/* Form header */}
                     <div className="mb-8">
                         <div className="flex flex-col gap-8">
                             <div className="flex flex-col items-center gap-4">
@@ -38,7 +36,6 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                 </div>
             </div>
 
-            {/* Footer */}
             <div className="mt-8 text-center text-sm">
                 <div className="mb-4">
                     <a
@@ -53,7 +50,6 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                 <p className="text-sm text-gray-600 dark:text-gray-400">&copy; {new Date().getFullYear()} Work Hours. All rights reserved.</p>
             </div>
 
-            {/* Cookie Consent Banner */}
             <CookieConsent />
         </div>
     )

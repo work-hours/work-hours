@@ -340,7 +340,6 @@ export default function CreateInvoice() {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Invoice" />
             <div className="mx-auto flex flex-col gap-6 p-3">
-                {/* Header section with improved styling */}
                 <section className="mb-2 flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Create Invoice</h1>
@@ -352,13 +351,11 @@ export default function CreateInvoice() {
                 </section>
 
                 <form className="flex flex-col gap-6" onSubmit={submit}>
-                    {/* Invoice Details Section */}
                     <h2 className="mt-2 flex items-center gap-2 border-b pb-2 text-xl font-semibold">
                         <FileText className="h-5 w-5" />
                         Invoice Details
                     </h2>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        {/* Basic Info Card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-lg">Basic Information</CardTitle>
@@ -492,7 +489,6 @@ export default function CreateInvoice() {
                             </CardContent>
                         </Card>
 
-                        {/* Additional Info Card */}
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-lg">Additional Information</CardTitle>
@@ -561,7 +557,6 @@ export default function CreateInvoice() {
                                                         <SelectContent>
                                                             <SelectItem value="none">None</SelectItem>
 
-                                                            {/* Project Groups */}
                                                             {timeLogs.length > 0 && (
                                                                 <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
                                                                     Project Totals
@@ -579,7 +574,6 @@ export default function CreateInvoice() {
                                                                 </SelectItem>
                                                             ))}
 
-                                                            {/* Individual Time Logs */}
                                                             {timeLogs.length > 0 && (
                                                                 <div className="mt-2 px-2 py-1.5 text-xs font-medium text-muted-foreground">
                                                                     Individual Time Logs
@@ -680,7 +674,6 @@ export default function CreateInvoice() {
                         </CardContent>
                     </Card>
 
-                    {/* Tax, Discount and Summary Section */}
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <Card className="overflow-hidden transition-all hover:shadow-md">
                             <CardHeader>
@@ -688,7 +681,6 @@ export default function CreateInvoice() {
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-6">
-                                    {/* Discount */}
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <Label htmlFor="discount_type" className="text-sm font-medium">
@@ -730,7 +722,6 @@ export default function CreateInvoice() {
 
                                     <Separator />
 
-                                    {/* Tax */}
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <Label htmlFor="tax_type" className="text-sm font-medium">

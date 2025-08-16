@@ -59,7 +59,6 @@ export default function ClientProjects({ client, projects }: Props) {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title={`${client.name} - Projects`} />
             <div className="mx-auto flex flex-col gap-4 p-4">
-                {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center justify-between gap-4">
                         <div>
@@ -70,7 +69,6 @@ export default function ClientProjects({ client, projects }: Props) {
                     </div>
                 </section>
 
-                {/* Client Info Card */}
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                     <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <CardTitle className="flex items-center gap-2 text-base font-medium text-gray-800 dark:text-gray-100">
@@ -126,7 +124,6 @@ export default function ClientProjects({ client, projects }: Props) {
                     </CardContent>
                 </Card>
 
-                {/* Projects Card */}
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                     <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">

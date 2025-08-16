@@ -4,7 +4,6 @@ export default function PrivacyPolicy() {
     return (
         <LegalLayout title="Privacy Policy">
             <div className="space-y-8">
-                {/* Introduction Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Introduction</h2>
                     <p className="leading-relaxed">
@@ -14,7 +13,6 @@ export default function PrivacyPolicy() {
                     </p>
                 </section>
 
-                {/* Data Collection Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">The Data We Collect About You</h2>
                     <p className="leading-relaxed">
@@ -41,7 +39,6 @@ export default function PrivacyPolicy() {
                     </ul>
                 </section>
 
-                {/* Data Usage Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">How We Use Your Personal Data</h2>
                     <p className="leading-relaxed">
@@ -63,7 +60,6 @@ export default function PrivacyPolicy() {
                     </ul>
                 </section>
 
-                {/* Data Security Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Data Security</h2>
                     <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
@@ -76,7 +72,6 @@ export default function PrivacyPolicy() {
                     </div>
                 </section>
 
-                {/* Data Retention Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Data Retention</h2>
                     <p className="leading-relaxed">
@@ -85,7 +80,6 @@ export default function PrivacyPolicy() {
                     </p>
                 </section>
 
-                {/* Legal Rights Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Your Legal Rights</h2>
                     <p className="leading-relaxed">
@@ -111,7 +105,6 @@ export default function PrivacyPolicy() {
                     </div>
                 </section>
 
-                {/* Changes Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Changes to This Privacy Policy</h2>
                     <p className="leading-relaxed">
@@ -120,7 +113,6 @@ export default function PrivacyPolicy() {
                     </p>
                 </section>
 
-                {/* Contact Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Contact Us</h2>
                     <p className="leading-relaxed">

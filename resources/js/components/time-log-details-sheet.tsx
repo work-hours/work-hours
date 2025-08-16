@@ -28,7 +28,6 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                 </SheetHeader>
 
                 <div className="space-y-6">
-                    {/* Basic Information */}
                     <div className="space-y-2.5">
                         <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                             <Briefcase className="h-4 w-4 text-primary/80" />
@@ -62,7 +61,6 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                         </div>
                     </div>
 
-                    {/* Tags Information - Only shown if tags exist */}
                     {timeLog.tags && timeLog.tags.length > 0 && (
                         <div className="space-y-2.5">
                             <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
@@ -85,7 +83,6 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                         </div>
                     )}
 
-                    {/* Task Information */}
                     {timeLog.task_title && (
                         <div className="space-y-2.5">
                             <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
@@ -168,7 +165,6 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                         </div>
                     )}
 
-                    {/* Time Information */}
                     <div className="space-y-2.5">
                         <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                             <Clock className="h-4 w-4 text-primary/80" />
@@ -187,7 +183,6 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                         </div>
                     </div>
 
-                    {/* Payment Information - Only shown for monetary users */}
                     {timeLog.hourly_rate !== undefined &&
                         timeLog.hourly_rate !== null &&
                         typeof timeLog.hourly_rate === 'number' &&
@@ -249,7 +244,6 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                             </div>
                         )}
 
-                    {/* Approval Information */}
                     <div className="space-y-2.5">
                         <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                             <CheckCircle className="h-4 w-4 text-primary/80" />
@@ -290,7 +284,6 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                         </div>
                     </div>
 
-                    {/* Additional Information */}
                     {(timeLog.note || timeLog.comment) && (
                         <div className="space-y-2.5">
                             <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">

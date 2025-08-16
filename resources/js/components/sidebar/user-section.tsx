@@ -33,7 +33,6 @@ export function UserSection({ collapsed, user }: UserSectionProps) {
                 </div>
             </div>
 
-            {/* Bottom link with enhanced styling */}
             <div className="mt-auto border-t border-gray-200 px-2 pt-3 dark:border-gray-700">
                 <TooltipProvider>
                     <div className="relative">

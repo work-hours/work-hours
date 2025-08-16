@@ -4,7 +4,6 @@ export default function TermsOfService() {
     return (
         <LegalLayout title="Terms of Service">
             <div className="space-y-8">
-                {/* Introduction Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Introduction</h2>
                     <p className="leading-relaxed">
@@ -17,7 +16,6 @@ export default function TermsOfService() {
                     </p>
                 </section>
 
-                {/* License Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">License</h2>
                     <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
@@ -29,7 +27,6 @@ export default function TermsOfService() {
                     </div>
                 </section>
 
-                {/* Restrictions Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Restrictions</h2>
                     <p className="leading-relaxed font-medium text-foreground">You must not:</p>
@@ -49,7 +46,6 @@ export default function TermsOfService() {
                     </ul>
                 </section>
 
-                {/* User Account Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">User Account</h2>
                     <p className="leading-relaxed">
@@ -59,7 +55,6 @@ export default function TermsOfService() {
                     </p>
                 </section>
 
-                {/* Service Availability Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Service Availability</h2>
                     <p className="leading-relaxed">
@@ -67,7 +62,6 @@ export default function TermsOfService() {
                     </p>
                 </section>
 
-                {/* Third-Party Services Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Third-Party Services</h2>
                     <p className="leading-relaxed">
@@ -77,7 +71,6 @@ export default function TermsOfService() {
                     </p>
                 </section>
 
-                {/* Limitation of Liability Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Limitation of Liability</h2>
                     <div className="rounded-lg border border-border/40 bg-card p-4 shadow-sm">
@@ -90,7 +83,6 @@ export default function TermsOfService() {
                     </div>
                 </section>
 
-                {/* Governing Law Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Governing Law</h2>
                     <p className="leading-relaxed">
@@ -98,7 +90,6 @@ export default function TermsOfService() {
                     </p>
                 </section>
 
-                {/* Changes to Terms Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Changes to Terms</h2>
                     <p className="leading-relaxed">
@@ -107,7 +98,6 @@ export default function TermsOfService() {
                     </p>
                 </section>
 
-                {/* Contact Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Contact Us</h2>
                     <p className="leading-relaxed">

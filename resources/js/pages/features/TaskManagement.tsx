@@ -5,12 +5,10 @@ export default function TaskManagement() {
     return (
         <FeatureLayout title="Task Management" icon={<CheckSquare className="h-7 w-7 text-blue-600 dark:text-blue-400" />}>
             <div className="space-y-10">
-                {/* New Feature Badge */}
                 <div className="inline-flex items-center rounded-md border border-rose-600/30 bg-rose-50 px-3 py-1 text-sm font-medium text-rose-700 uppercase dark:border-rose-500/30 dark:bg-rose-900/20 dark:text-rose-400">
                     New Feature
                 </div>
 
-                {/* Introduction Section */}
                 <section className="space-y-5">
                     <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
                         Create, assign, and track tasks efficiently with our comprehensive task management system. Organize your work with priorities,
@@ -29,7 +27,6 @@ export default function TaskManagement() {
                     </div>
                 </section>
 
-                {/* Key Features Section */}
                 <section className="space-y-6">
                     <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Key Features
@@ -85,7 +82,6 @@ export default function TaskManagement() {
                     </div>
                 </section>
 
-                {/* Task Views Section */}
                 <section className="space-y-6">
                     <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Task Views
@@ -129,7 +125,6 @@ export default function TaskManagement() {
                     </div>
                 </section>
 
-                {/* How It Works Section */}
                 <section className="space-y-6">
                     <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         How It Works
@@ -182,7 +177,6 @@ export default function TaskManagement() {
                     </ol>
                 </section>
 
-                {/* Benefits Section */}
                 <section className="space-y-6">
                     <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Benefits
@@ -215,7 +209,6 @@ export default function TaskManagement() {
                     </div>
                 </section>
 
-                {/* CTA Section */}
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
                         <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">

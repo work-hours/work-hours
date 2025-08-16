@@ -79,7 +79,6 @@ export default function EditTeamMember({ user, currencies }: Props) {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Team Member" />
             <div className="mx-auto flex max-w-3xl flex-col gap-4 p-4">
-                {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Edit Team Member</h1>
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Update information for {user.name}</p>

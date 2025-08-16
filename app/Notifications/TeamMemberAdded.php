@@ -19,9 +19,7 @@ final class TeamMemberAdded extends Notification
     public function __construct(
         private readonly User $member,
         private readonly User $creator
-    ) {
-        //
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.

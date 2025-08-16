@@ -252,7 +252,6 @@ export default function Tags({ tags }: TagsPageProps) {
                             </div>
                         )}
 
-                        {/* Pagination if there are multiple pages */}
                         {tags.last_page > 1 && (
                             <div className="mt-4 flex items-center justify-between border-t pt-4">
                                 <div className="text-sm text-gray-700">
@@ -284,7 +283,6 @@ export default function Tags({ tags }: TagsPageProps) {
                 </Card>
             </div>
 
-            {/* Create Tag Dialog */}
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                 <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
                     <DialogHeader>
@@ -341,7 +339,6 @@ export default function Tags({ tags }: TagsPageProps) {
                 </DialogContent>
             </Dialog>
 
-            {/* Edit Tag Dialog */}
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
                     <DialogHeader>
@@ -408,7 +405,6 @@ export default function Tags({ tags }: TagsPageProps) {
                 </DialogContent>
             </Dialog>
 
-            {/* Delete Tag Dialog */}
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
                     <DialogHeader>

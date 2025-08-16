@@ -120,7 +120,6 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Project" />
             <div className="mx-auto flex max-w-3xl flex-col gap-4 p-4">
-                {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
                         <Link href={route('project.index')}>

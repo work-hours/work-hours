@@ -20,9 +20,7 @@ final class PasswordChanged extends Notification
         private readonly User $user,
         private readonly User $updatedBy,
         private readonly ?string $plainPassword = null
-    ) {
-        //
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.

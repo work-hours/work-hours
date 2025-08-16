@@ -42,7 +42,6 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
 
     return (
         <div className="relative flex flex-1 flex-col bg-slate-50 dark:bg-slate-900">
-            {/* Enhanced header with improved styling */}
             <div className="sticky top-0 z-20 border-b border-gray-200 bg-white/90 shadow-sm backdrop-blur-sm dark:border-gray-800 dark:bg-gray-800/90">
                 <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 px-4 py-2.5">
                     <div className="flex items-center">
@@ -53,45 +52,6 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                             >
                                 <Home className="h-5 w-5" />
                             </Link>
-                            {/*<button
-                                onClick={() => setCollapsed(!collapsed)}
-                                className="ml-2 rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-                                aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                            >
-                                {collapsed ? (
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="18"
-                                        height="18"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="text-gray-600 dark:text-gray-300"
-                                    >
-                                        <polyline points="13 17 18 12 13 7"></polyline>
-                                        <polyline points="6 17 11 12 6 7"></polyline>
-                                    </svg>
-                                ) : (
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="18"
-                                        height="18"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="text-gray-600 dark:text-gray-300"
-                                    >
-                                        <polyline points="11 17 6 12 11 7"></polyline>
-                                        <polyline points="18 17 13 12 18 7"></polyline>
-                                    </svg>
-                                )}
-                            </button>*/}
                         </div>
                         {breadcrumbs.length > 0 && (
                             <div className="ml-2 flex items-center overflow-x-auto">
@@ -115,16 +75,13 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                         )}
                     </div>
 
-                    {/* Center running tracker */}
                     <div className="flex items-center justify-center">
                         <RunningTracker />
                     </div>
 
                     <div className="flex items-center gap-3">
-                        {/* Theme Switcher */}
                         <AppearanceToggleDropdown className="rounded-md text-gray-600 dark:text-gray-300" />
 
-                        {/* Calendar Link */}
                         <Link
                             href="/calendar"
                             className="relative flex items-center rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
@@ -149,7 +106,6 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                             </svg>
                         </Link>
 
-                        {/* Admin Dashboard Link (Only visible for admins) */}
                         {isAdmin && (
                             <Link
                                 href="/administration"
@@ -160,7 +116,6 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                             </Link>
                         )}
 
-                        {/* Notification Link */}
                         <Link
                             href="/notifications"
                             className="relative flex items-center rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
@@ -180,10 +135,8 @@ export function MasterContent({ children, breadcrumbs = [], collapsed, setCollap
                 </div>
             </div>
             <main className="relative z-10 flex-1 overflow-y-auto">
-                {/* Hourly rate status bar */}
                 <HourlyRateStatusBar />
 
-                {/* Enhanced content container with improved padding */}
                 <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-16">{children}</div>
             </main>
         </div>

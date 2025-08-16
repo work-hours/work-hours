@@ -196,7 +196,6 @@ export default function Projects() {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Projects" />
             <div className="mx-auto flex flex-col gap-4 p-4">
-                {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Project Management</h1>
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your projects</p>

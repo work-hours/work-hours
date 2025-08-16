@@ -80,7 +80,6 @@ export default function ApprovalTimeLogTable({
                             <div className="max-h-20 overflow-y-auto">{log.note}</div>
                         </TableCell>
                         <TableCell>
-                            {/* Approval Status */}
                             {log.status === 'approved' ? (
                                 <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                                     Approved

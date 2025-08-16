@@ -147,7 +147,6 @@ export default function CookieConsent() {
                         </p>
 
                         <div className="mt-4 space-y-3">
-                            {/* Essential Cookies - Always enabled */}
                             <div className="flex items-center justify-between rounded-md border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-700 dark:bg-neutral-800/50">
                                 <div>
                                     <h3 className="font-medium text-neutral-900 dark:text-neutral-100">Essential Cookies</h3>
@@ -165,7 +164,6 @@ export default function CookieConsent() {
                                 </div>
                             </div>
 
-                            {/* Preferences Cookies */}
                             <div className="flex items-center justify-between rounded-md border border-neutral-200 p-3 transition-colors duration-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800/50">
                                 <div>
                                     <h3 className="font-medium text-neutral-900 dark:text-neutral-100">Preferences Cookies</h3>
@@ -183,7 +181,6 @@ export default function CookieConsent() {
                                 </div>
                             </div>
 
-                            {/* Analytics Cookies */}
                             <div className="flex items-center justify-between rounded-md border border-neutral-200 p-3 transition-colors duration-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800/50">
                                 <div>
                                     <h3 className="font-medium text-neutral-900 dark:text-neutral-100">Analytics Cookies</h3>
@@ -201,7 +198,6 @@ export default function CookieConsent() {
                                 </div>
                             </div>
 
-                            {/* Advertising Cookies */}
                             <div className="flex items-center justify-between rounded-md border border-neutral-200 p-3 transition-colors duration-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800/50">
                                 <div>
                                     <h3 className="font-medium text-neutral-900 dark:text-neutral-100">Advertising Cookies</h3>

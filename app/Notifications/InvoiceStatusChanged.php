@@ -20,10 +20,7 @@ final class InvoiceStatusChanged extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(private readonly Invoice $invoice)
-    {
-        //
-    }
+    public function __construct(private readonly Invoice $invoice) {}
 
     /**
      * Get the notification's delivery channels.

@@ -27,7 +27,6 @@ export function Pagination({ links }: PaginationProps) {
       className="flex items-center justify-between"
     >
       <div className="flex w-full flex-1 items-center justify-center gap-1 md:hidden">
-        {/* Previous Button for Mobile */}
         {links[0].url ? (
           <Link
             href={links[0].url as string}
@@ -43,12 +42,10 @@ export function Pagination({ links }: PaginationProps) {
           </span>
         )}
 
-        {/* Mobile current page indicator */}
         <span className="text-sm font-medium">
           {pageLinks.findIndex(link => link.active) + 1} / {pageLinks.length}
         </span>
 
-        {/* Next Button for Mobile */}
         {links[links.length - 1].url ? (
           <Link
             href={links[links.length - 1].url as string}
@@ -66,7 +63,6 @@ export function Pagination({ links }: PaginationProps) {
       </div>
 
       <div className="hidden md:flex md:flex-1 md:items-center md:justify-center">
-        {/* Previous Button */}
         {links[0].url ? (
           <Link
             href={links[0].url as string}
@@ -82,7 +78,6 @@ export function Pagination({ links }: PaginationProps) {
           </span>
         )}
 
-        {/* Page Links */}
         <div className="flex items-center space-x-1">
           {pageLinks.map((link, i) => {
 
@@ -121,7 +116,6 @@ export function Pagination({ links }: PaginationProps) {
           })}
         </div>
 
-        {/* Next Button */}
         {links[links.length - 1].url ? (
           <Link
             href={links[links.length - 1].url as string}

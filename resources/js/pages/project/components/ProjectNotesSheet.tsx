@@ -148,7 +148,6 @@ export default function ProjectNotesSheet({ projectId, open, onOpenChange }: Pro
                 </SheetHeader>
 
                 <div className="space-y-6">
-                    {/* Add New Note Section */}
                     <div className="space-y-2.5">
                         <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                             <Edit className="h-4 w-4 text-primary/80" />
@@ -168,14 +167,12 @@ export default function ProjectNotesSheet({ projectId, open, onOpenChange }: Pro
                         </div>
                     </div>
 
-                    {/* Error display */}
                     {error && (
                         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
                             {error}
                         </div>
                     )}
 
-                    {/* Loading state */}
                     {loading && (
                         <div className="flex flex-col items-center justify-center py-8">
                             <div className="h-10 w-10 animate-spin rounded-full border-4 border-neutral-300 border-t-primary"></div>
@@ -183,7 +180,6 @@ export default function ProjectNotesSheet({ projectId, open, onOpenChange }: Pro
                         </div>
                     )}
 
-                    {/* Notes List */}
                     {!loading && notes.length > 0 && (
                         <div className="space-y-2.5">
                             <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
@@ -271,7 +267,6 @@ export default function ProjectNotesSheet({ projectId, open, onOpenChange }: Pro
                         </div>
                     )}
 
-                    {/* Empty state */}
                     {!loading && notes.length === 0 && (
                         <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-8 text-center dark:border-neutral-800 dark:bg-neutral-800/50">
                             <StickyNote className="mx-auto mb-3 h-10 w-10 text-neutral-300 dark:text-neutral-600" />
@@ -282,7 +277,6 @@ export default function ProjectNotesSheet({ projectId, open, onOpenChange }: Pro
                 </div>
             </SheetContent>
 
-            {/* Delete Confirmation Dialog */}
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>

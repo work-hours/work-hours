@@ -5,12 +5,10 @@ export default function ApprovalManagement() {
     return (
         <FeatureLayout title="Approval Management" icon={<CheckSquare className="h-8 w-8 text-blue-900 dark:text-blue-400" />}>
             <div className="space-y-8">
-                {/* New Feature Badge */}
                 <div className="inline-flex items-center rounded-md border border-red-800/40 px-3 py-1 text-sm font-bold text-red-800/70 uppercase dark:border-red-400/40 dark:text-red-400/90">
                     New Feature
                 </div>
 
-                {/* Introduction Section */}
                 <section className="space-y-4">
                     <p className="text-lg leading-relaxed">
                         Streamline your workflow with our robust approval management system. Ensure accountability and maintain quality control by
@@ -24,7 +22,6 @@ export default function ApprovalManagement() {
                     </div>
                 </section>
 
-                {/* Key Features Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
                         Key Features
@@ -80,7 +77,6 @@ export default function ApprovalManagement() {
                     </div>
                 </section>
 
-                {/* Approval Types Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
                         What Can Be Approved
@@ -118,7 +114,6 @@ export default function ApprovalManagement() {
                     </div>
                 </section>
 
-                {/* How It Works Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
                         How It Works
@@ -172,7 +167,6 @@ export default function ApprovalManagement() {
                     </ol>
                 </section>
 
-                {/* Benefits Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
                         Benefits
@@ -205,7 +199,6 @@ export default function ApprovalManagement() {
                     </div>
                 </section>
 
-                {/* Use Cases Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-gray-300 pb-2 text-2xl font-bold text-gray-800 dark:border-gray-700 dark:text-gray-200">
                         Common Use Cases
@@ -228,7 +221,6 @@ export default function ApprovalManagement() {
                     </div>
                 </section>
 
-                {/* CTA Section */}
                 <section className="mt-12 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
                         <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">

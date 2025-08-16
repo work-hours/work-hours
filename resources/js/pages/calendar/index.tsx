@@ -207,7 +207,6 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                     </div>
                 </div>
 
-                {/* Current Month/Week/Day Display */}
                 <div className="mb-4 text-center">
                     <h2 className="text-xl font-semibold">
                         {(() => {
@@ -270,7 +269,6 @@ export default function Calendar({ timeLogs, view = 'month', date, period }: Cal
                 </Tabs>
             </div>
 
-            {/* Time log details sheet */}
             <TimeLogDetailsSheet timeLog={timeLogDetails} open={isSheetOpen} onOpenChange={setIsSheetOpen} />
         </MasterLayout>
     )

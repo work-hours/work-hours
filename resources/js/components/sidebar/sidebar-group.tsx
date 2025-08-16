@@ -52,7 +52,6 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
 
     return (
         <div className="mb-2">
-            {/* Group header */}
             <button
                 type="button"
                 onClick={toggleExpand}
@@ -66,7 +65,6 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
                         />
                     )}
 
-                    {/* Show badge on parent menu if any child items have counts */}
                     {totalBadgeCount > 0 && (
                         <Badge
                             variant="destructive"
@@ -89,7 +87,6 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
                 )}
             </button>
 
-            {/* Group items */}
             {(collapsed || isExpanded) && (
                 <div className={`mt-1 space-y-1 ${collapsed ? '' : 'ml-4'} overflow-hidden transition-all duration-300`}>
                     <TooltipProvider>

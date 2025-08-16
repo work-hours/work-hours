@@ -77,7 +77,6 @@ export default function JiraConnect() {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Connect to Jira" />
             <div className="mx-auto flex max-w-xl flex-col gap-6 p-6">
-                {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-3">
                         <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
@@ -90,7 +89,6 @@ export default function JiraConnect() {
                     </div>
                 </section>
 
-                {/* Messages */}
                 {errorMessage && (
                     <div className="rounded-md bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/50 dark:text-red-200">{errorMessage}</div>
                 )}

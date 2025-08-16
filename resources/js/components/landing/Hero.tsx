@@ -6,12 +6,10 @@ export default function Hero() {
         <section className="w-full py-16 md:py-24" aria-label="Hero section">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col items-center">
-                    {/* Subtle tag line */}
                     <div className="mb-6 rounded-full bg-neutral-100 px-4 py-1.5 dark:bg-neutral-800/80">
                         <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Time Tracking & Insights</span>
                     </div>
 
-                    {/* Main heading with minimalist style */}
                     <h1 className="mb-6 text-center text-4xl font-medium tracking-tight text-neutral-900 sm:text-5xl md:text-6xl dark:text-neutral-100">
                         Track Your Work Hours
                         <span className="block text-neutral-600 dark:text-neutral-300">Effortlessly</span>
@@ -22,7 +20,6 @@ export default function Hero() {
                         valuable insights into how you spend your time.
                     </p>
 
-                    {/* Clean, minimal CTAs */}
                     <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
                         <Link
                             href={route('register')}
@@ -42,7 +39,6 @@ export default function Hero() {
                         </Link>
                     </div>
 
-                    {/* Simplified statistics section */}
                     <div className="mt-20 grid grid-cols-2 gap-8 md:grid-cols-4" aria-label="Key statistics">
                         <div className="flex flex-col items-center">
                             <span className="text-3xl font-light text-neutral-900 dark:text-neutral-200">10k+</span>
@@ -62,7 +58,6 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    {/* Simplified benefits section */}
                     <div className="mt-16 flex flex-wrap items-center justify-center gap-6" aria-label="Key benefits">
                         <div className="flex items-center gap-2">
                             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">

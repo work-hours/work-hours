@@ -4,7 +4,6 @@ export default function Security() {
     return (
         <LegalLayout title="Security">
             <div className="space-y-8">
-                {/* Commitment Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Our Commitment to Security</h2>
                     <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
@@ -15,7 +14,6 @@ export default function Security() {
                     </div>
                 </section>
 
-                {/* Data Protection Measures Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Data Protection Measures</h2>
                     <p className="leading-relaxed">We implement various security measures to maintain the safety of your personal information:</p>
@@ -43,7 +41,6 @@ export default function Security() {
                     </ul>
                 </section>
 
-                {/* Account Security Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Account Security</h2>
                     <p className="leading-relaxed">We recommend the following practices to help keep your account secure:</p>
@@ -67,7 +64,6 @@ export default function Security() {
                     </div>
                 </section>
 
-                {/* Security Incident Response Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Security Incident Response</h2>
                     <p className="leading-relaxed">In the event of a security incident that affects your data, we will:</p>
@@ -80,7 +76,6 @@ export default function Security() {
                     </ul>
                 </section>
 
-                {/* Third-Party Security Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Third-Party Security</h2>
                     <p className="leading-relaxed">
@@ -89,7 +84,6 @@ export default function Security() {
                     </p>
                 </section>
 
-                {/* Security Updates Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Security Updates</h2>
                     <p className="leading-relaxed">
@@ -98,7 +92,6 @@ export default function Security() {
                     </p>
                 </section>
 
-                {/* Reporting Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Reporting Security Issues</h2>
                     <div className="rounded-lg border border-border/40 bg-card p-4 shadow-sm">

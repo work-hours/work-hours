@@ -34,14 +34,12 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
             <Head title={`${title} - Administration`} />
             <Background />
 
-            {/* Left Sidebar - Modern minimal version */}
             <div
                 className={`fixed top-0 left-0 z-30 h-screen border-r border-gray-100 bg-white/80 backdrop-blur-md transition-all duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-900/90 ${
                     collapsed ? 'w-16' : 'w-56'
                 }`}
             >
                 <div className="flex h-full flex-col">
-                    {/* Sidebar Header */}
                     <div className="flex h-16 items-center justify-between border-b border-gray-100 px-4 dark:border-gray-800">
                         {!collapsed && (
                             <Link href={route('admin.index')} className="text-lg font-medium tracking-tight text-gray-800 dark:text-gray-200">
@@ -56,7 +54,6 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                         )}
                     </div>
 
-                    {/* Admin Nav Links */}
                     <nav className="flex-1 overflow-y-auto p-3">
                         <ul className="space-y-1">
                             <li>
@@ -107,7 +104,6 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                                             : ''
                                     }`}
                                 >
-                                    {/* Using Users icon to keep dependencies minimal */}
                                     <Projector className="h-4 w-4 flex-shrink-0 opacity-80" />
                                     {!collapsed && <span className="ml-3">Projects</span>}
                                 </Link>
@@ -125,11 +121,9 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                                     {!collapsed && <span className="ml-3">Invoices</span>}
                                 </Link>
                             </li>
-                            {/* Add more admin menu items here */}
                         </ul>
                     </nav>
 
-                    {/* Back to main app */}
                     <div className="border-t border-gray-100 p-3 dark:border-gray-800">
                         <Link
                             href={route('dashboard')}
@@ -142,7 +136,6 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                 </div>
             </div>
 
-            {/* Content */}
             <div
                 className={`flex-1 transition-all duration-300 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}
                 style={{ marginLeft: collapsed ? '4rem' : '14rem' }}
@@ -173,7 +166,6 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                 </main>
             </div>
 
-            {/* Enhanced Toaster for notifications */}
             <Toaster
                 position="top-right"
                 closeButton={true}

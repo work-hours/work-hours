@@ -58,10 +58,8 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
 
     return (
         <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900">
-            {/* Left Sidebar */}
             <MasterSidebar collapsed={collapsed} />
 
-            {/* Content */}
             <TimeTrackerProvider>
                 <div className={`flex-1 transition-all duration-300 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}>
                     <MasterContent breadcrumbs={breadcrumbs} collapsed={collapsed} setCollapsed={setCollapsed}>
@@ -69,18 +67,15 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                     </MasterContent>
                 </div>
 
-                {/* Right Sidebar */}
                 <MasterRightSidebar collapsed={collapsed} />
             </TimeTrackerProvider>
 
-            {/* AI Chat */}
             {dataLoaded && (
                 <>
                     <FloatingAiChat projects={userProjects} />
                 </>
             )}
 
-            {/* Enhanced Toaster for notifications */}
             <Toaster
                 position="top-right"
                 closeButton={true}
@@ -90,7 +85,6 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                 }}
             />
 
-            {/* Cookie Consent Banner */}
             <CookieConsent />
         </div>
     )

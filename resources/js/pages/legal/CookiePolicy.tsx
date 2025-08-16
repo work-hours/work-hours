@@ -4,7 +4,6 @@ export default function CookiePolicy() {
     return (
         <LegalLayout title="Cookie Policy">
             <div className="space-y-8">
-                {/* What Are Cookies Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">What Are Cookies</h2>
                     <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
@@ -16,7 +15,6 @@ export default function CookiePolicy() {
                     </div>
                 </section>
 
-                {/* How We Use Cookies Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">How We Use Cookies</h2>
                     <p className="leading-relaxed">
@@ -62,7 +60,6 @@ export default function CookiePolicy() {
                     </div>
                 </section>
 
-                {/* Third-Party Cookies Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Third-Party Cookies</h2>
                     <p className="leading-relaxed">
@@ -71,7 +68,6 @@ export default function CookiePolicy() {
                     </p>
                 </section>
 
-                {/* Your Choices Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">What Are Your Choices Regarding Cookies</h2>
                     <p className="leading-relaxed">
@@ -81,7 +77,6 @@ export default function CookiePolicy() {
                     </p>
                 </section>
 
-                {/* More Information Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">
                         Where Can You Find More Information About Cookies
@@ -103,7 +98,6 @@ export default function CookiePolicy() {
                     </ul>
                 </section>
 
-                {/* Changes Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Changes to This Cookie Policy</h2>
                     <p className="leading-relaxed">
@@ -112,7 +106,6 @@ export default function CookiePolicy() {
                     </p>
                 </section>
 
-                {/* Contact Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Contact Us</h2>
                     <p className="leading-relaxed">

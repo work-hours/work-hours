@@ -4,7 +4,6 @@ export default function GDPRCompliance() {
     return (
         <LegalLayout title="GDPR Compliance">
             <div className="space-y-8">
-                {/* Commitment Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Our Commitment to GDPR Compliance</h2>
                     <p className="leading-relaxed">
@@ -14,7 +13,6 @@ export default function GDPRCompliance() {
                     </p>
                 </section>
 
-                {/* What is GDPR Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">What is GDPR?</h2>
                     <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
@@ -26,7 +24,6 @@ export default function GDPRCompliance() {
                     </div>
                 </section>
 
-                {/* Compliance Measures Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">How We Comply with GDPR</h2>
                     <p className="leading-relaxed">We have implemented several measures to ensure our compliance with GDPR:</p>
@@ -55,7 +52,6 @@ export default function GDPRCompliance() {
                     </ul>
                 </section>
 
-                {/* Your Rights Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Your Rights Under GDPR</h2>
                     <p className="leading-relaxed">Under GDPR, you have the following rights:</p>
@@ -99,7 +95,6 @@ export default function GDPRCompliance() {
                     </div>
                 </section>
 
-                {/* Data Transfer Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Data Transfer Outside the EU</h2>
                     <p className="leading-relaxed">
@@ -109,7 +104,6 @@ export default function GDPRCompliance() {
                     </p>
                 </section>
 
-                {/* Changes Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Changes to Our GDPR Compliance Policy</h2>
                     <p className="leading-relaxed">
@@ -118,7 +112,6 @@ export default function GDPRCompliance() {
                     </p>
                 </section>
 
-                {/* Contact Section */}
                 <section className="space-y-4">
                     <h2 className="border-b border-border/40 pb-2 text-2xl font-bold text-foreground">Contact Us</h2>
                     <p className="leading-relaxed">

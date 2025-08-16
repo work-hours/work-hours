@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\ProjectNote;
 use Illuminate\Support\Collection;
-use Msamgan\Lact\Attributes\Action;
 
 final class ProjectNoteController extends Controller
 {

@@ -219,7 +219,6 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                     <div className="flex flex-col gap-4">
                         {messages.map((message) => (
                             <div key={message.id} className={`flex items-end ${message.isUser ? 'justify-end' : 'justify-start'}`}>
-                                {/* Avatar */}
                                 {!message.isUser && (
                                     <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-primary dark:bg-gray-700">
                                         <BrainCircuit className="h-4 w-4 text-gray-600 dark:text-gray-300" />
@@ -261,12 +260,10 @@ export default function AiChat({ onClose, projects = [], chatHistoryId = null, o
                                             </div>
                                         )}
                                     </div>
-                                    {/* Timestamp */}
                                     <div className="mt-1 pr-2 text-right text-xs text-gray-500 dark:text-gray-400">
                                         {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </div>
                                 </div>
-                                {/* User Avatar */}
                                 {message.isUser && (
                                     <div className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-primary shadow-sm dark:bg-gray-700">
                                         <span className="text-sm font-medium text-gray-600 dark:text-gray-300">U</span>

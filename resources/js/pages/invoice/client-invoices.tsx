@@ -91,7 +91,6 @@ export default function ClientInvoices({ client, invoices }: Props) {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title={`${client.name} - Invoices`} />
             <div className="mx-auto flex flex-col gap-4 p-4">
-                {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center justify-between gap-4">
                         <div>
@@ -102,9 +101,7 @@ export default function ClientInvoices({ client, invoices }: Props) {
                     </div>
                 </section>
 
-                {/* Info and Summary side by side */}
                 <div className="flex flex-col gap-2 md:flex-row">
-                    {/* Client Info Card */}
                     <Card className="flex-1 overflow-hidden transition-all hover:shadow-md">
                         <CardHeader className="py-2">
                             <CardTitle className="flex items-center gap-2 text-lg">
@@ -177,7 +174,6 @@ export default function ClientInvoices({ client, invoices }: Props) {
                         </CardContent>
                     </Card>
 
-                    {/* Summary Card */}
                     <Card className="flex-1 overflow-hidden transition-all hover:shadow-md">
                         <CardHeader className="py-2">
                             <CardTitle className="flex items-center gap-2 text-lg">
@@ -227,10 +223,8 @@ export default function ClientInvoices({ client, invoices }: Props) {
                     </Card>
                 </div>
 
-                {/* Divider */}
                 <div className="border-t border-gray-200 dark:border-gray-700" />
 
-                {/* Invoices Card */}
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                     <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">

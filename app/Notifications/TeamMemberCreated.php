@@ -20,9 +20,7 @@ final class TeamMemberCreated extends Notification
         private readonly User $member,
         private readonly User $creator,
         private readonly ?string $password = null
-    ) {
-        //
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.

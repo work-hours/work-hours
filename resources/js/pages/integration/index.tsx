@@ -23,7 +23,6 @@ export default function Integration({ isGitHubIntegrated, isJiraIntegrated }: Pr
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Integration" />
             <div className="mx-auto flex flex-col gap-4 p-4">
-                {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Integration</h1>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Manage your integrations with external services</p>
@@ -65,7 +64,6 @@ export default function Integration({ isGitHubIntegrated, isJiraIntegrated }: Pr
                     </CardContent>
                 </Card>
 
-                {/* Jira Integration Card */}
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                     <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <CardTitle className="flex items-center gap-2 text-xl text-gray-800 dark:text-gray-100">

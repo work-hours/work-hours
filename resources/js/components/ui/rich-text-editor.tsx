@@ -58,7 +58,6 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Write s
 
   return (
     <div className={cn('flex w-full flex-col rounded-md border border-input bg-transparent shadow-sm', disabled && 'opacity-60', className)}>
-      {/* Toolbar */}
       <div className="flex items-center gap-1 border-b px-2 py-1 text-muted-foreground">
         <ToolbarButton onClick={() => exec('bold')} title="Bold" icon={Bold} disabled={disabled} />
         <ToolbarButton onClick={() => exec('italic')} title="Italic" icon={Italic} disabled={disabled} />
@@ -73,7 +72,6 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Write s
         <ToolbarButton onClick={() => exec('redo')} title="Redo" icon={Redo} disabled={disabled} />
       </div>
 
-      {/* Editable area */}
       <div
         ref={ref}
         className={cn(
@@ -90,7 +88,6 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Write s
         suppressContentEditableWarning
       />
 
-      {/* Placeholder styling */}
       <style>{`
         [contenteditable][data-placeholder]:empty:before {
           content: attr(data-placeholder);

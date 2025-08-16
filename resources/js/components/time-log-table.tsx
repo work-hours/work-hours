@@ -161,7 +161,6 @@ export default function TimeLogTable({
                             </TableCell>
                             <TableCell className="text-sm text-gray-700 dark:text-gray-300">
                                 <div className="flex items-center gap-2">
-                                    {/* Always show the amount, calculated if not paid */}
                                     <span
                                         className={`inline-flex items-center ${log.is_paid ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} px-2 py-0.5 text-xs font-medium`}
                                     >
@@ -180,7 +179,6 @@ export default function TimeLogTable({
                                               : '0.00'}
                                     </span>
 
-                                    {/* Payment status badge */}
                                     {log.hourly_rate !== undefined &&
                                         log.hourly_rate !== null &&
                                         typeof log.hourly_rate === 'number' &&
@@ -197,7 +195,6 @@ export default function TimeLogTable({
                                 </div>
                             </TableCell>
                             <TableCell className="text-sm text-gray-700 dark:text-gray-300">
-                                {/* Approval Status Only */}
                                 {log.status === 'approved' ? (
                                     <span className="inline-flex items-center bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                                         Approved
@@ -225,7 +222,6 @@ export default function TimeLogTable({
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="w-48">
-                                            {/* View Details Action */}
                                             <DropdownMenuItem className="group cursor-pointer" onSelect={() => handleViewDetails(log)}>
                                                 <Glasses className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                 <span>View</span>
@@ -233,7 +229,6 @@ export default function TimeLogTable({
 
                                             {showEditDelete && (
                                                 <>
-                                                    {/* Edit Action */}
                                                     {!log.is_paid ? (
                                                         <Link href={route('time-log.edit', log.id)}>
                                                             <DropdownMenuItem className="group cursor-pointer">
@@ -248,7 +243,6 @@ export default function TimeLogTable({
                                                         </DropdownMenuItem>
                                                     )}
 
-                                                    {/* Delete Action */}
                                                     {!log.is_paid ? (
                                                         <TimeLogDeleteAction timeLogId={log.id} />
                                                     ) : (
@@ -268,7 +262,6 @@ export default function TimeLogTable({
                 </TableBody>
             </Table>
 
-            {/* Time Log Details Sheet */}
             <TimeLogDetailsSheet timeLog={selectedTimeLog} open={isDetailsOpen} onOpenChange={setIsDetailsOpen} />
         </>
     )

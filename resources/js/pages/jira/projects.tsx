@@ -159,7 +159,6 @@ export default function JiraProjects() {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Jira Projects" />
             <div className="mx-auto flex flex-col gap-4 p-4 md:w-10/12">
-                {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-3">
                         <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
@@ -201,7 +200,6 @@ export default function JiraProjects() {
                             </div>
                         </CardHeader>
                         <CardContent className="p-4">
-                            {/* Search input */}
                             <div className="mb-4">
                                 <div className="relative">
                                     <Search className="absolute top-2.5 left-3 h-4 w-4 text-gray-500 dark:text-gray-400" />

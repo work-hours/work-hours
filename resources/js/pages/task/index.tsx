@@ -347,13 +347,11 @@ export default function Tasks() {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Tasks" />
             <div className="mx-auto flex flex-col gap-4 p-4">
-                {/* Header section */}
                 <section className="mb-2">
                     <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Task Management</h1>
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your tasks</p>
                 </section>
 
-                {/* Tasks Card with filters in header */}
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                     <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
@@ -374,7 +372,6 @@ export default function Tasks() {
 
                         <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
                             <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
-                                {/* Search */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Search
@@ -391,7 +388,6 @@ export default function Tasks() {
                                     </div>
                                 </div>
 
-                                {/* Status Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="status" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Status
@@ -413,7 +409,6 @@ export default function Tasks() {
                                     />
                                 </div>
 
-                                {/* Priority Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="priority" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Priority
@@ -434,7 +429,6 @@ export default function Tasks() {
                                     />
                                 </div>
 
-                                {/* Project Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="project" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Project
@@ -456,7 +450,6 @@ export default function Tasks() {
                                     />
                                 </div>
 
-                                {/* Tag Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="tag" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Tag
@@ -478,7 +471,6 @@ export default function Tasks() {
                                     />
                                 </div>
 
-                                {/* Due Date From */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="due-date-from" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Due Date From
@@ -501,7 +493,6 @@ export default function Tasks() {
                                     />
                                 </div>
 
-                                {/* Due Date To */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="due-date-to" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Due Date To
@@ -658,7 +649,6 @@ export default function Tasks() {
                                         <TableRow key={task.id}>
                                             <TableCell className="max-w-xl">
                                                 <div className="flex flex-col gap-3">
-                                                    {/* Task Title and Primary Badges */}
                                                     <div className="flex flex-wrap items-center gap-2">
                                                         <span className="font-medium text-gray-900 dark:text-gray-100">{task.title}</span>
                                                         <div className="flex flex-wrap items-center gap-1.5">
@@ -670,14 +660,12 @@ export default function Tasks() {
                                                         </div>
                                                     </div>
 
-                                                    {/* Metadata Row with visual separators */}
                                                     <div className="flex flex-wrap items-center text-sm">
                                                         <div className="flex items-center text-gray-600 dark:text-gray-400">
                                                             <Briefcase className="mr-1.5 h-3.5 w-3.5" />
                                                             <span>{task.project.name}</span>
                                                         </div>
 
-                                                        {/* Due Date */}
                                                         {task.due_date && (
                                                             <div className="ml-4 flex items-center text-amber-700 dark:text-amber-400">
                                                                 <Calendar className="mr-1.5 h-3.5 w-3.5" />
@@ -685,7 +673,6 @@ export default function Tasks() {
                                                             </div>
                                                         )}
 
-                                                        {/* Comment Count */}
                                                         {task.comments_count !== undefined && task.comments_count > 0 && (
                                                             <div className="ml-4 flex items-center text-gray-600 dark:text-gray-400">
                                                                 <FileText className="mr-1.5 h-3.5 w-3.5" />
@@ -696,9 +683,7 @@ export default function Tasks() {
                                                         )}
                                                     </div>
 
-                                                    {/* Tags and Assignees Row with clear section labels */}
                                                     <div className="flex flex-wrap gap-4">
-                                                        {/* Tags Section */}
                                                         <div className="flex items-center gap-2">
                                                             {task.tags && task.tags.length > 0 ? (
                                                                 <>
@@ -722,7 +707,6 @@ export default function Tasks() {
                                                             )}
                                                         </div>
 
-                                                        {/* Assignees Section */}
                                                         <div className="flex items-center gap-2">
                                                             <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Assigned to:</span>
                                                             {task.assignees && task.assignees.length > 0 ? (
@@ -759,7 +743,6 @@ export default function Tasks() {
                                                                 </Button>
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent>
-                                                                {/* View Details action */}
                                                                 <Link href={route('task.detail', task.id)}>
                                                                     <DropdownMenuItem className="group cursor-pointer">
                                                                         <Glasses className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
@@ -767,12 +750,10 @@ export default function Tasks() {
                                                                     </DropdownMenuItem>
                                                                 </Link>
 
-                                                                {/* Track time button - only for tasks assigned to current user */}
                                                                 {task.assignees.some((a) => a.id === auth.user.id) && (
                                                                     <TrackTimeMenuItem task={task} />
                                                                 )}
 
-                                                                {/* Edit and Delete actions - only for project owner */}
                                                                 {task.project.user_id === auth.user.id && (
                                                                     <>
                                                                         <Link href={route('task.edit', task.id)}>
@@ -816,7 +797,6 @@ export default function Tasks() {
                     </CardContent>
                 </Card>
 
-                {/* Status Change Dialog */}
                 <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>

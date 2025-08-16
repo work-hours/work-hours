@@ -36,7 +36,6 @@ export default function Register() {
             <Head title="Register" />
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
-                    {/* Name field */}
                     <div className="grid gap-2">
                         <Label htmlFor="name" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Full Name
@@ -62,7 +61,6 @@ export default function Register() {
                         <InputError message={errors.name} className="mt-1" />
                     </div>
 
-                    {/* Email field */}
                     <div className="grid gap-2">
                         <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Email Address
@@ -87,7 +85,6 @@ export default function Register() {
                         <InputError message={errors.email} className="mt-1" />
                     </div>
 
-                    {/* Password field */}
                     <div className="grid gap-2">
                         <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Password
@@ -111,7 +108,6 @@ export default function Register() {
                         <InputError message={errors.password} className="mt-1" />
                     </div>
 
-                    {/* Confirm Password field */}
                     <div className="grid gap-2">
                         <Label htmlFor="password_confirmation" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Confirm Password
@@ -135,7 +131,6 @@ export default function Register() {
                         <InputError message={errors.password_confirmation} className="mt-1" />
                     </div>
 
-                    {/* Register button */}
                     <Button
                         type="submit"
                         className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-md bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900"
@@ -153,7 +148,6 @@ export default function Register() {
                     </Button>
                 </div>
 
-                {/* Sign in link */}
                 <div className="text-center text-sm text-gray-600 dark:text-gray-400">
                     Already have an account?{' '}
                     <TextLink
@@ -166,7 +160,6 @@ export default function Register() {
                 </div>
             </form>
 
-            {/* Divider */}
             <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
@@ -176,7 +169,6 @@ export default function Register() {
                 </div>
             </div>
 
-            {/* Social register buttons */}
             <div className="flex flex-col gap-3">
                 <a
                     href={route('auth.google')}

@@ -111,7 +111,6 @@ export default function CreateProject({ teamMembers, clients }: Props) {
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Project" />
             <div className="mx-auto flex max-w-3xl flex-col gap-4 p-4">
-                {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center gap-4">
                         <Link href={route('project.index')}>

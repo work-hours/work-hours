@@ -526,7 +526,6 @@ export default function TimeLog({
                     </CardContent>
                 </Card>
 
-                {/* Import Dialog */}
                 <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>

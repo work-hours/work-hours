@@ -68,16 +68,10 @@ final class RemoveComments extends Command
             $extension = pathinfo((string) $filePath, PATHINFO_EXTENSION);
 
             if ($extension === 'tsx') {
-                // Remove entire lines with // comments
                 $newCode = preg_replace('/^\s*\/\/.*$\n?/m', '', $code);
-
-                // Remove TSX comments {/* */} along with the entire line if the comment takes the whole line
                 $newCode = preg_replace('/^[^\S\n]*{\s*\/\*.*?\*\/\s*}[^\S\n]*$\n?/ms', '', (string) $newCode);
-
-                // For inline comments {/* */} that don't take the whole line, just remove the comment
                 $newCode = preg_replace('/{\s*\/\*.*?\*\/\s*}/s', '', (string) $newCode);
             } else {
-                // Remove entire lines with // comments
                 $newCode = preg_replace('/^\s*\/\/.*$\n?/m', '', $code);
             }
 

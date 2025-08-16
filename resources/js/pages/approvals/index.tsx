@@ -298,7 +298,6 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                             </div>
                         </div>
 
-                        {/* Filter form */}
                         <div className="mt-4 border-t pt-4">
                             <form onSubmit={submit} className="flex w-full flex-row flex-wrap gap-4">
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
@@ -466,7 +465,6 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                     </CardContent>
                 </Card>
 
-                {/* Approve Dialog */}
                 <Dialog open={approveDialogOpen} onOpenChange={setApproveDialogOpen}>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
@@ -516,7 +514,6 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                     </DialogContent>
                 </Dialog>
 
-                {/* Reject Dialog */}
                 <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>

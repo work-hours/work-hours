@@ -7,7 +7,6 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage()
     return (
         <SidebarGroup className="py-2">
-            {/* We've removed the title here since it's now handled in the parent component */}
             <SidebarMenu className="space-y-1">
                 {items.map((item) => (
                     <SidebarMenuItem key={item.title}>

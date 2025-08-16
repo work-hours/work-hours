@@ -312,7 +312,6 @@ export default function Invoices() {
                     <p className="mt-1 text-gray-500 dark:text-gray-400">Manage your invoices</p>
                 </section>
 
-                {/* Filters and Invoices card */}
                 <Card className="transition-all hover:shadow-md">
                     <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
@@ -340,10 +339,8 @@ export default function Invoices() {
                             </div>
                         </div>
 
-                        {/* Filters form */}
                         <div className="mt-4 border-t pt-4">
                             <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
-                                {/* Search */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="search" className="text-xs font-medium">
                                         Search
@@ -360,7 +357,6 @@ export default function Invoices() {
                                     </div>
                                 </div>
 
-                                {/* Client Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="client_id" className="text-xs font-medium">
                                         Client
@@ -380,7 +376,6 @@ export default function Invoices() {
                                     </Select>
                                 </div>
 
-                                {/* Status Filter */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="status" className="text-xs font-medium">
                                         Status
@@ -401,7 +396,6 @@ export default function Invoices() {
                                     </Select>
                                 </div>
 
-                                {/* Date From */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="created-date-from" className="text-xs font-medium">
                                         Date From
@@ -423,7 +417,6 @@ export default function Invoices() {
                                     />
                                 </div>
 
-                                {/* Date To */}
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="created-date-to" className="text-xs font-medium">
                                         Date To
@@ -445,7 +438,6 @@ export default function Invoices() {
                                     />
                                 </div>
 
-                                {/* Filter Buttons */}
                                 <div className="flex items-end gap-2">
                                     <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
@@ -674,7 +666,6 @@ export default function Invoices() {
                 </Card>
             </div>
 
-            {/* Email Confirmation Dialog */}
             <AlertDialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -708,7 +699,6 @@ export default function Invoices() {
                 </AlertDialogContent>
             </AlertDialog>
 
-            {/* Status Update Dialog */}
             <AlertDialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>

@@ -223,7 +223,6 @@ export default function ProjectTimeLogs({
                     </section>
                 )}
 
-                {/* Time Logs Card with Filters */}
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                     <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
@@ -452,7 +451,6 @@ export default function ProjectTimeLogs({
                     </CardContent>
                 </Card>
 
-                {/* Tasks Card */}
                 <Card className="overflow-hidden transition-all hover:shadow-md">
                     <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
@@ -493,7 +491,6 @@ export default function ProjectTimeLogs({
                                         >
                                             <TableCell className="max-w-xl">
                                                 <div className="flex flex-col gap-3">
-                                                    {/* Task Title and Primary Badges */}
                                                     <div className="flex flex-wrap items-center gap-2">
                                                         <span className="font-medium text-gray-900 dark:text-gray-100">{task.title}</span>
                                                         <div className="flex flex-wrap items-center gap-1.5">
@@ -531,7 +528,6 @@ export default function ProjectTimeLogs({
                                                         </div>
                                                     </div>
 
-                                                    {/* Due Date */}
                                                     {task.due_date && (
                                                         <div className="flex items-center text-sm text-amber-700 dark:text-amber-400">
                                                             <Calendar className="mr-1.5 h-3.5 w-3.5" />
@@ -539,7 +535,6 @@ export default function ProjectTimeLogs({
                                                         </div>
                                                     )}
 
-                                                    {/* Assignees Section */}
                                                     <div className="flex items-center gap-2">
                                                         <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Assigned to:</span>
                                                         {task.assignees && task.assignees.length > 0 ? (

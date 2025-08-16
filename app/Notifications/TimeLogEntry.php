@@ -17,10 +17,7 @@ final class TimeLogEntry extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(private readonly TimeLog $timeLog, private readonly User $creator)
-    {
-        //
-    }
+    public function __construct(private readonly TimeLog $timeLog, private readonly User $creator) {}
 
     /**
      * Get the notification's delivery channels.

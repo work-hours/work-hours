@@ -17,10 +17,7 @@ final class TimeLogApproved extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(private readonly TimeLog $timeLog, private readonly User $actor)
-    {
-        //
-    }
+    public function __construct(private readonly TimeLog $timeLog, private readonly User $actor) {}
 
     /**
      * Get the notification's delivery channels.

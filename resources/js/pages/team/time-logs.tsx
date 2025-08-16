@@ -152,7 +152,6 @@ export default function TeamMemberTimeLogs({
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title={`${user.name}'s Time Logs`} />
             <div className="mx-auto flex flex-col gap-4 p-4">
-                {/* Header section */}
                 <section className="mb-2">
                     <div className="flex items-center justify-between gap-4">
                         <div>
@@ -163,7 +162,6 @@ export default function TeamMemberTimeLogs({
                     </div>
                 </section>
 
-                {/* Stats Cards */}
                 {timeLogs.length > 0 && (
                     <section className="mb-4">
                         <StatsCards
@@ -183,7 +181,6 @@ export default function TeamMemberTimeLogs({
                     </section>
                 )}
 
-                {/* Time Logs Card with filters in header */}
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
                     <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
                         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">

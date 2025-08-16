@@ -20,9 +20,7 @@ final class TaskCompleted extends Notification
     public function __construct(
         private readonly Task $task,
         private readonly User $completer
-    ) {
-        //
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.

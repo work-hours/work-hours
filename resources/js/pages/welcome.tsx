@@ -126,7 +126,6 @@ export default function Welcome() {
                 </section>
             </main>
 
-            {/* Cookie Consent Banner */}
             <CookieConsent />
         </div>
     )

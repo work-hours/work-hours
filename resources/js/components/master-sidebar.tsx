@@ -156,7 +156,6 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
             </div>
 
             <div className={`flex flex-1 flex-col overflow-y-auto pt-3 ${collapsed ? 'px-2' : 'px-4'}`}>
-                {/* Platform Navigation with grouped items */}
                 <div className="mb-6">
                     <div className="mb-3 pb-2">
                         <h3
@@ -182,7 +181,6 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                     </div>
                 </div>
 
-                {/* Integration Navigation */}
                 <IntegrationNavigation collapsed={collapsed} isGitHubIntegrated={isGitHubIntegrated} isJiraIntegrated={isJiraIntegrated} />
             </div>
 

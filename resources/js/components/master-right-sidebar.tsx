@@ -64,7 +64,6 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
         <div
             className={`sticky top-0 flex h-screen flex-col border-l border-neutral-200 bg-white shadow-sm transition-all duration-300 ease-in-out dark:border-neutral-800 dark:bg-neutral-900 ${collapsed ? 'w-20' : 'w-52'}`}
         >
-            {/* Quick Actions section */}
             <div className={`mt-2 flex flex-col overflow-y-auto ${collapsed ? '' : 'mr-8'}`}>
                 <div className="mb-6 px-4">
                     <div className="mb-3 pb-2">
@@ -99,7 +98,6 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                     </TooltipProvider>
                 </div>
 
-                {/* Tools section */}
                 <div className="mb-6 px-4">
                     <div className="mb-3 pb-2">
                         <h3

@@ -22,10 +22,7 @@ use Msamgan\Lact\Attributes\Action;
 
 final class JiraController extends Controller
 {
-    public function __construct(private readonly JiraAdapter $jiraAdapter)
-    {
-        //
-    }
+    public function __construct(private readonly JiraAdapter $jiraAdapter) {}
 
     /**
      * Display the Jira connection page.

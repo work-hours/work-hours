@@ -100,7 +100,6 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
             </div>
             <SheetContent className="overflow-hidden p-0 sm:max-w-lg md:max-w-2xl lg:max-w-3xl">
                 <div className="flex h-full">
-                    {/* Chat History Sidebar */}
                     <div className="w-60 border-r border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
                         <div className="border-b border-gray-200 p-3 dark:border-gray-700">
                             <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">Chat History</h3>
@@ -152,7 +151,6 @@ export default function FloatingAiChat({ projects = [] }: FloatingAiChatProps) {
                         </ScrollArea>
                     </div>
 
-                    {/* Chat Content */}
                     <div className="flex-1">
                         <AiChat projects={projects} chatHistoryId={selectedChatId} onChatSaved={loadChatHistories} />
                     </div>

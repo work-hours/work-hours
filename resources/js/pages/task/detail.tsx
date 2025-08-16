@@ -176,7 +176,6 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
                                 </CardDescription>
                             </div>
 
-                            {/* Assignees */}
                             {task.assignees && task.assignees.length > 0 && (
                                 <div className="space-y-2">
                                     <div className="grid grid-cols-1 gap-4 rounded-lg bg-muted/40">
@@ -191,7 +190,6 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
                                 </div>
                             )}
 
-                            {/* Tags */}
                             {task.tags && task.tags.length > 0 && (
                                 <div className="space-y-2">
                                     <div className="grid grid-cols-1 gap-4 rounded-lg bg-muted/40">
@@ -209,12 +207,10 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
                     </CardHeader>
                     <CardContent>
                         <div className="">
-                            {/* Description */}
                             <div className="space-y-2">
                                 <div className="grid grid-cols-1 gap-4 rounded-lg bg-muted/40 p-4">
                                     {task.description ? (
                                         <div className="text-base">
-                                            {/* Render sanitized HTML description */}
                                             <TaskDescription html={task.description} />
                                         </div>
                                     ) : (
@@ -226,7 +222,6 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
                                 </div>
                             </div>
 
-                            {/* Source Link if available */}
                             {task.meta?.source_url && (
                                 <div className="space-y-2">
                                     <div className="grid grid-cols-1 gap-4 bg-muted/40 p-4">
@@ -252,7 +247,6 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
                                 </div>
                             )}
 
-                            {/* Attachments */}
                             {attachments && attachments.length > 0 && (
                                 <div className="space-y-2">
                                     <div className="grid grid-cols-1 gap-4 bg-muted/40 p-4">

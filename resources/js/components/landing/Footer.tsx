@@ -6,7 +6,6 @@ export default function Footer() {
         <footer className="w-full border-t border-neutral-200 bg-white py-16 dark:border-neutral-800 dark:bg-neutral-900">
             <div className="container mx-auto px-4 md:px-6 lg:px-8">
                 <div className="grid gap-10 md:grid-cols-3">
-                    {/* Brand Section */}
                     <div className="flex flex-col">
                         <div className="mb-4 flex items-center gap-2">
                             <AppLogoIcon className="h-16 w-16 text-neutral-700 dark:text-neutral-300" />
@@ -41,7 +40,6 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Company Links */}
                     <div>
                         <h3 className="mb-6 text-sm font-semibold text-neutral-800 uppercase dark:text-neutral-200">Company</h3>
                         <ul className="space-y-3">
@@ -72,7 +70,6 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Legal Links */}
                     <div>
                         <h3 className="mb-6 text-sm font-semibold text-neutral-800 uppercase dark:text-neutral-200">Legal</h3>
                         <ul className="space-y-3">
@@ -112,7 +109,6 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* Copyright Section */}
                 <div className="mt-12 border-t border-neutral-200 pt-8 text-center dark:border-neutral-800">
                     <p className="text-sm text-neutral-600 dark:text-neutral-400">
                         &copy; {new Date().getFullYear()} Work Hours. All rights reserved.

@@ -28,7 +28,6 @@ export default function LegalLayout({ title, children }: LegalLayoutProps) {
                 <div className="mx-auto w-9/12">
                     <div className="rounded-lg border-border/60 p-8">
                         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-                            {/* Sidebar Navigation */}
                             <div className="md:col-span-1">
                                 <div className="sticky top-8 rounded-lg border border-border/60 bg-card p-6 shadow-sm">
                                     <h3 className="mb-4 text-lg font-semibold text-foreground">Legal Documents</h3>
@@ -50,7 +49,6 @@ export default function LegalLayout({ title, children }: LegalLayoutProps) {
                                 </div>
                             </div>
 
-                            {/* Main Content */}
                             <main className="md:col-span-3">
                                 <div className="rounded-lg border border-border/60 bg-card p-8 shadow-sm">
                                     <h1 className="mb-6 text-3xl font-bold tracking-tight text-foreground md:text-4xl">{title}</h1>

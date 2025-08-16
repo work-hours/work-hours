@@ -5,7 +5,6 @@ export default function CurrencyManagement() {
     return (
         <FeatureLayout title="Currency Management" icon={<DollarSign className="h-7 w-7 text-blue-600 dark:text-blue-400" />}>
             <div className="space-y-10">
-                {/* Introduction Section */}
                 <section className="space-y-5">
                     <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
                         Work with multiple currencies across projects and clients with our comprehensive currency management system. Track earnings,
@@ -24,7 +23,6 @@ export default function CurrencyManagement() {
                     </div>
                 </section>
 
-                {/* Key Features Section */}
                 <section className="space-y-6">
                     <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Key Features
@@ -80,7 +78,6 @@ export default function CurrencyManagement() {
                     </div>
                 </section>
 
-                {/* Exchange Rate Features Section */}
                 <section className="space-y-6">
                     <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Exchange Rate Features
@@ -124,7 +121,6 @@ export default function CurrencyManagement() {
                     </div>
                 </section>
 
-                {/* How It Works Section */}
                 <section className="space-y-6">
                     <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         How It Works
@@ -177,7 +173,6 @@ export default function CurrencyManagement() {
                     </ol>
                 </section>
 
-                {/* Benefits Section */}
                 <section className="space-y-6">
                     <h2 className="border-b border-gray-200 pb-3 text-2xl font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-100">
                         Benefits
@@ -210,7 +205,6 @@ export default function CurrencyManagement() {
                     </div>
                 </section>
 
-                {/* CTA Section */}
                 <section className="mt-12 rounded-lg border-2 border-blue-900 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-900/20">
                     <div className="flex flex-col items-center text-center md:flex-row md:text-left">
                         <div className="mb-4 md:mr-6 md:mb-0 md:w-2/3">

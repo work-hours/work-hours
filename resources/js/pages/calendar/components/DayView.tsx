@@ -74,7 +74,6 @@ export default function DayView({ timeLogs, date, onTimeLogClick }: DayViewProps
 
     return (
         <div className="rounded-lg bg-white shadow dark:bg-gray-800">
-            {/* Header with date and summary */}
             <div className="border-b p-4 dark:border-gray-700">
                 <h2 className="text-center text-xl font-semibold text-gray-800 dark:text-gray-200">{format(currentDate, 'EEEE, MMMM d, yyyy')}</h2>
 
@@ -103,7 +102,6 @@ export default function DayView({ timeLogs, date, onTimeLogClick }: DayViewProps
                 )}
             </div>
 
-            {/* Time grid */}
             <div className="relative">
                 {dayLogs.length === 0 ? (
                     <div className="p-8 text-center text-gray-500 dark:text-gray-400">No time logs recorded for this day</div>
@@ -121,7 +119,6 @@ export default function DayView({ timeLogs, date, onTimeLogClick }: DayViewProps
                                     </div>
 
                                     <div className="relative min-h-[60px] flex-1">
-                                        {/* Half-hour marker */}
                                         <div className="absolute top-1/2 right-0 left-0 border-t border-dashed border-gray-200 dark:border-gray-700"></div>
 
                                         {logsForHour.map((log, index) => (
@@ -164,7 +161,6 @@ export default function DayView({ timeLogs, date, onTimeLogClick }: DayViewProps
                             )
                         })}
 
-                        {/* Current time indicator (if viewing today) */}
                         {isSameDay(currentDate, new Date()) && (
                             <div
                                 className="pointer-events-none absolute right-0 left-0 z-10"
