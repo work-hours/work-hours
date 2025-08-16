@@ -169,6 +169,16 @@ export default function Navbar() {
                     >
                         How It Works
                     </a>
+                    <Link
+                        href={route('pricing')}
+                        className={`text-sm transition-colors duration-200 ${
+                            currentPath === '/pricing'
+                                ? 'text-neutral-900 dark:text-neutral-100'
+                                : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
+                        }`}
+                    >
+                        Pricing
+                    </Link>
                     <a
                         href={isFeaturePage ? '/#cta' : '#cta'}
                         className={`text-sm transition-colors duration-200 ${
@@ -309,6 +319,17 @@ export default function Navbar() {
                             >
                                 How It Works
                             </a>
+                            <Link
+                                href={route('pricing')}
+                                className={`block py-2 text-sm ${
+                                    currentPath === '/pricing'
+                                        ? 'text-neutral-900 dark:text-neutral-100'
+                                        : 'text-neutral-600 transition-colors duration-150 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
+                                }`}
+                                onClick={toggleMobileMenu}
+                            >
+                                Pricing
+                            </Link>
                             <a
                                 href={isFeaturePage ? '/#cta' : '#cta'}
                                 className={`block py-2 text-sm ${

@@ -7,6 +7,7 @@ use Inertia\Inertia;
 
 // Public pages
 Route::get('/', fn () => Inertia::render('welcome'))->name('home');
+Route::get('/pricing', fn () => Inertia::render('pricing'))->name('pricing');
 
 // Feature pages
 Route::get('/features/time-tracking', fn () => Inertia::render('features/TimeTracking'))->name('features.time-tracking');
