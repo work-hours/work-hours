@@ -1,7 +1,6 @@
 import HoursDistribution from '@/components/dashboard/HoursDistribution'
 import RecentTimeLogs from '@/components/dashboard/RecentTimeLogs'
 import StatsCards from '@/components/dashboard/StatsCards'
-import TeamProductivity from '@/components/dashboard/TeamProductivity'
 import DailyTrend from '@/components/dashboard/DailyTrend'
 import WelcomeSection from '@/components/dashboard/WelcomeSection'
 import Loader from '@/components/ui/loader'
@@ -10,9 +9,11 @@ import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
-import { BarChart2, Clock } from 'lucide-react'
+import { BarChart2, Clock, Calendar, CalendarRange } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Input } from '@/components/ui/input'
+import DatePicker from '@/components/ui/date-picker'
+import CustomInput from '@/components/ui/custom-input'
+import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 
 interface TeamStats {
@@ -52,8 +53,8 @@ export default function Dashboard() {
         dailyTrend: [],
     })
 
-    const [startDate, setStartDate] = useState<string>('')
-    const [endDate, setEndDate] = useState<string>('')
+    const [startDate, setStartDate] = useState<Date | null>(null)
+    const [endDate, setEndDate] = useState<Date | null>(null)
 
     const getStats = async (params: Record<string, string> = {}): Promise<void> => {
         try {
@@ -95,59 +96,75 @@ export default function Dashboard() {
 
                         <section className="relative mb-4 rounded-lg bg-white p-6 dark:bg-gray-800">
                             <div className="mb-4 flex flex-col gap-3">
-                                <div className="flex items-center">
-                                    <BarChart2 className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" aria-hidden="true" />
-                                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Analytics</h3>
-                                </div>
-                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-                                    <div className="flex items-center gap-2">
-                                        <Input
-                                            type="date"
-                                            value={startDate}
-                                            onChange={(e) => setStartDate(e.target.value)}
-                                            placeholder="Start date"
-                                            aria-label="Start date"
-                                            className="w-44"
-                                        />
-                                        <span className="text-sm text-gray-500 dark:text-gray-400">to</span>
-                                        <Input
-                                            type="date"
-                                            value={endDate}
-                                            onChange={(e) => setEndDate(e.target.value)}
-                                            placeholder="End date"
-                                            aria-label="End date"
-                                            className="w-44"
-                                        />
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <BarChart2 className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" aria-hidden="true" />
+                                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Daily Trend</h3>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <Button
-                                            onClick={() => {
-                                                const params: Record<string, string> = {}
-                                                if (startDate) params['start-date'] = startDate
-                                                if (endDate) params['end-date'] = endDate
-                                                void getStats(params)
-                                            }}
-                                            className="h-9 px-3"
-                                        >
-                                            Apply
-                                        </Button>
-                                        <Button
-                                            variant="secondary"
-                                            onClick={() => {
-                                                setStartDate('')
-                                                setEndDate('')
-                                                void getStats()
-                                            }}
-                                            className="h-9 px-3"
-                                        >
-                                            Reset
-                                        </Button>
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex flex-col">
+                                            <Label htmlFor="dashboard-start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">Start Date</Label>
+                                            <DatePicker
+                                                selected={startDate}
+                                                onChange={(date) => setStartDate(date)}
+                                                dateFormat="yyyy-MM-dd"
+                                                isClearable
+                                                customInput={
+                                                    <CustomInput
+                                                        id="dashboard-start-date"
+                                                        icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
+                                                        placeholder="Select start date"
+                                                        className="h-9 w-44 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                                    />
+                                                }
+                                            />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <Label htmlFor="dashboard-end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">End Date</Label>
+                                            <DatePicker
+                                                selected={endDate}
+                                                onChange={(date) => setEndDate(date)}
+                                                dateFormat="yyyy-MM-dd"
+                                                isClearable
+                                                customInput={
+                                                    <CustomInput
+                                                        id="dashboard-end-date"
+                                                        icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
+                                                        placeholder="Select end date"
+                                                        className="h-9 w-44 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                                    />
+                                                }
+                                            />
+                                        </div>
+                                        <div className="flex items-end gap-2 pb-0.5">
+                                            <Button
+                                                onClick={() => {
+                                                    const params: Record<string, string> = {}
+                                                    if (startDate) params['start-date'] = new Date(startDate).toISOString().split('T')[0]
+                                                    if (endDate) params['end-date'] = new Date(endDate).toISOString().split('T')[0]
+                                                    void getStats(params)
+                                                }}
+                                                className="h-9 px-3"
+                                            >
+                                                Apply
+                                            </Button>
+                                            <Button
+                                                variant="secondary"
+                                                onClick={() => {
+                                                    setStartDate(null)
+                                                    setEndDate(null)
+                                                    void getStats()
+                                                }}
+                                                className="h-9 px-3"
+                                            >
+                                                Reset
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <HoursDistribution hoursData={hoursData} />
+                            <div>
                                 <DailyTrend data={teamStats.dailyTrend || []} />
                             </div>
                         </section>
@@ -161,8 +178,8 @@ export default function Dashboard() {
                             </div>
 
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <HoursDistribution hoursData={hoursData} />
                                 <RecentTimeLogs />
-                                <TeamProductivity teamStats={teamStats} />
                             </div>
                         </section>
                     </>
