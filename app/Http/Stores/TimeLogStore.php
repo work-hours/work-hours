@@ -26,6 +26,47 @@ use Illuminate\Pipeline\Pipeline;
 
 final class TimeLogStore
 {
+    public static function dailyTrend(array $teamMembersIds, int $userId, int $days = 7, ?Carbon $startDate = null, ?Carbon $endDate = null): array
+    {
+        if ($startDate instanceof Carbon || $endDate instanceof Carbon) {
+            $startDate = ($startDate ?? Carbon::today())->copy()->startOfDay();
+            $endDate = ($endDate ?? Carbon::today())->copy()->endOfDay();
+
+            if ($endDate->lt($startDate)) {
+                [$startDate, $endDate] = [$endDate, $startDate];
+            }
+        } else {
+            $days = max(1, $days);
+            $startDate = Carbon::today()->subDays($days - 1)->startOfDay();
+            $endDate = Carbon::today()->endOfDay();
+        }
+        $logs = TimeLog::query()
+            ->whereIn('user_id', $teamMembersIds)
+            ->where('status', TimeLogStatus::APPROVED)
+            ->whereBetween('start_timestamp', [$startDate, $endDate])
+            ->get(['user_id', 'start_timestamp', 'duration']);
+
+        $groupedByDate = $logs->groupBy(fn (TimeLog $log): string => $log->start_timestamp->toDateString());
+        $totalDays = $startDate->copy()->startOfDay()->diffInDays($endDate->copy()->startOfDay()) + 1;
+
+        $result = [];
+        for ($i = 0; $i < $totalDays; $i++) {
+            $date = $startDate->copy()->addDays($i)->toDateString();
+            $dayLogs = $groupedByDate->get($date, collect());
+
+            $teamHours = round((float) $dayLogs->sum('duration'), 2);
+            $userHours = round((float) $dayLogs->where('user_id', $userId)->sum('duration'), 2);
+
+            $result[] = [
+                'date' => $date,
+                'userHours' => $userHours,
+                'teamHours' => $teamHours,
+            ];
+        }
+
+        return $result;
+    }
+
     public static function recentTeamLogs(array $teamMembersIds, int $limit = 5): Collection
     {
         return TimeLog::query()

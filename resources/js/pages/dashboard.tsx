@@ -1,8 +1,7 @@
+import DailyTrendSection from '@/components/dashboard/DailyTrendSection'
 import HoursDistribution from '@/components/dashboard/HoursDistribution'
 import RecentTimeLogs from '@/components/dashboard/RecentTimeLogs'
 import StatsCards from '@/components/dashboard/StatsCards'
-import TeamProductivity from '@/components/dashboard/TeamProductivity'
-import WeeklyTrend from '@/components/dashboard/WeeklyTrend'
 import WelcomeSection from '@/components/dashboard/WelcomeSection'
 import Loader from '@/components/ui/loader'
 import MasterLayout from '@/layouts/master-layout'
@@ -10,7 +9,7 @@ import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
-import { BarChart2, Clock } from 'lucide-react'
+import { Clock } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface TeamStats {
@@ -24,6 +23,7 @@ interface TeamStats {
     currency: string
     weeklyAverage: number
     clientCount: number
+    dailyTrend: Array<{ date: string; userHours: number; teamHours: number }>
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -46,6 +46,7 @@ export default function Dashboard() {
         currency: 'USD',
         weeklyAverage: 0,
         clientCount: 0,
+        dailyTrend: [],
     })
 
     const getStats = async (): Promise<void> => {
@@ -69,13 +70,6 @@ export default function Dashboard() {
         { name: 'Paid', value: roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours) },
     ]
 
-    const weeklyData = [
-        { name: 'Week 1', hours: roundToTwoDecimals(teamStats.weeklyAverage * 0.9) },
-        { name: 'Week 2', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.1) },
-        { name: 'Week 3', hours: roundToTwoDecimals(teamStats.weeklyAverage * 0.95) },
-        { name: 'Week 4', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.05) },
-    ]
-
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -92,19 +86,7 @@ export default function Dashboard() {
                     <>
                         <StatsCards teamStats={teamStats} />
 
-                        <section className="relative mb-4 rounded-lg bg-white p-6 dark:bg-gray-800">
-                            <div className="mb-4">
-                                <div className="flex items-center">
-                                    <BarChart2 className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" aria-hidden="true" />
-                                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Analytics</h3>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <HoursDistribution hoursData={hoursData} />
-                                <WeeklyTrend weeklyData={weeklyData} />
-                            </div>
-                        </section>
+                        <DailyTrendSection />
 
                         <section className="relative mb-4 rounded-lg bg-white p-6 dark:bg-gray-800">
                             <div className="mb-4">
@@ -115,8 +97,8 @@ export default function Dashboard() {
                             </div>
 
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <HoursDistribution hoursData={hoursData} />
                                 <RecentTimeLogs />
-                                <TeamProductivity teamStats={teamStats} />
                             </div>
                         </section>
                     </>
