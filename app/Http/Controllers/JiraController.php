@@ -237,7 +237,11 @@ final class JiraController extends Controller
             if ($existingTaskMeta) {
                 $task = Task::query()->find($existingTaskMeta->task_id);
                 if ($task) {
-                    $task->update($taskData);
+                    $updateData = $taskData;
+                    if ($task->created_by === null) {
+                        $updateData['created_by'] = $project->user_id;
+                    }
+                    $task->update($updateData);
                     $existingTaskMeta->update($metaData);
                     $stats['updated_tasks']++;
                 }
@@ -246,6 +250,7 @@ final class JiraController extends Controller
                 $task->fill($taskData);
                 $task->project_id = $project->id;
                 $task->is_imported = true;
+                $task->created_by = $project->user_id;
                 $task->save();
 
                 $metaData['source'] = 'jira';

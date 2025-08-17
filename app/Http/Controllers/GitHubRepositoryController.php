@@ -101,16 +101,6 @@ final class GitHubRepositoryController extends Controller
 
             [$repoOwner, $repoName] = explode('/', $project->name);
 
-            $existingTaskSourceIds = $project->tasks()
-                ->with('meta')
-                ->whereHas('meta', function ($query): void {
-                    $query->where('source', 'github');
-                })
-                ->get()
-                ->pluck('meta.source_id')
-                ->filter()
-                ->toArray();
-
             $issues = $this->githubAdapter->getRepositoryIssues($token, $repoOwner, $repoName);
 
             if ($issues instanceof JsonResponse || ! is_array($issues)) {
@@ -139,12 +129,18 @@ final class GitHubRepositoryController extends Controller
                         $status = $this->mapGitHubIssueStatus($issue['state']);
                         $priority = $this->determineIssuePriority($issue);
 
-                        $existingTask->update([
+                        $updateData = [
                             'title' => $issue['title'],
                             'description' => $issue['body'] ?? '',
                             'status' => $status,
                             'priority' => $priority,
-                        ]);
+                        ];
+
+                        if ($existingTask->created_by === null) {
+                            $updateData['created_by'] = $project->user_id;
+                        }
+
+                        $existingTask->update($updateData);
 
                         $existingTask->meta->update([
                             'source_state' => $issue['state'],
@@ -175,6 +171,7 @@ final class GitHubRepositoryController extends Controller
                             'status' => $status,
                             'priority' => $priority,
                             'is_imported' => true,
+                            'created_by' => $project->user_id,
                         ]);
 
                         $task->meta()->create([
@@ -359,6 +356,7 @@ final class GitHubRepositoryController extends Controller
                     'status' => $status,
                     'priority' => $priority,
                     'is_imported' => true,
+                    'created_by' => $project->user_id,
                 ]);
 
                 $task->meta()->create([
