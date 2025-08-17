@@ -112,9 +112,9 @@ final class TimeLogController extends Controller
                         $this->gitHubAdapter->closeGitHubIssue($task);
                     }
 
-                    if ($markJiraDone && $task->is_imported && $task->meta && $task->meta->source === 'jira' && $task->meta->source_state !== 'done') {
+                    /*if ($markJiraDone && $task->is_imported && $task->meta && $task->meta->source === 'jira' && $task->meta->source_state !== 'done') {
                         $this->jiraAdapter->markIssueDone($task);
-                    }
+                    }*/
                 }
             }
 
