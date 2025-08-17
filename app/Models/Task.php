@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property int $project_id
+ * @property int $created_by
  * @property string $title
  * @property string|null $description
  * @property string $status
