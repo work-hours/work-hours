@@ -14,7 +14,7 @@ use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-it('marks a Jira issue as done and updates meta', function () {
+it('marks a Jira issue as done and updates meta', function (): void {
     Http::fake([
         'https://*.atlassian.net/rest/api/3/issue/ABC-123/transitions' => function ($request) {
             if ($request->method() === 'GET') {

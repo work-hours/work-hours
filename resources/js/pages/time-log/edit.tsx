@@ -261,10 +261,10 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                                     </Label>
                                                 </div>
                                             )}
-                                        </div>
-                                    )}
+                                    </div>
+                                )}
 
-                                    <div className="grid gap-6">
+                                <div className="grid gap-6">
                                     <div className="grid grid-cols-3 gap-4">
                                         <div className="grid gap-2">
                                             <Label htmlFor="log_date" className="text-sm font-medium">
