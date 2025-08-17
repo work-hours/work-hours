@@ -231,8 +231,13 @@ final class TaskController extends Controller
     {
         DB::beginTransaction();
         try {
+            $projectId = (int) $request->input('project_id');
+            /** @var Project $project */
+            $project = Project::query()->findOrFail($projectId);
+            $isProjectOwner = $project->user_id === auth()->id();
+
             $task = Task::query()->create([
-                'project_id' => $request->input('project_id'),
+                'project_id' => $projectId,
                 'title' => $request->input('title'),
                 'description' => $request->input('description'),
                 'status' => $request->input('status'),
@@ -240,8 +245,14 @@ final class TaskController extends Controller
                 'due_date' => $request->input('due_date'),
             ]);
 
-            if ($request->has('assignees')) {
-                $task->assignees()->sync($request->input('assignees'));
+            // Enforce assignee restriction: if not project owner, only self can be an assignee
+            $assigneeIds = $request->input('assignees', []);
+            if (! $isProjectOwner) {
+                $assigneeIds = [auth()->id()];
+            }
+            // If there are any assignees to sync, perform sync
+            if ($assigneeIds !== []) {
+                $task->assignees()->sync($assigneeIds);
             }
 
             if ($request->has('tags')) {
@@ -252,9 +263,8 @@ final class TaskController extends Controller
 
             DB::commit();
 
-            if ($request->has('assignees')) {
-                $this->notifyAssignees($task, $request->input('assignees', []));
-            }
+            // Notify only the (possibly enforced) assignees
+            $this->notifyAssignees($task, $assigneeIds);
 
             if ($request->boolean('create_github_issue')) {
                 $this->gitHubAdapter->createGitHubIssue($task);
@@ -541,11 +551,26 @@ final class TaskController extends Controller
     #[Action(method: 'get', name: 'task.potential-assignees', params: ['project'], middleware: ['auth', 'verified'])]
     public function potentialAssignees(Project $project): Collection
     {
-        $isProjectOwner = $project->user_id === auth()->id();
-        $isTeamMember = $project->teamMembers->contains('id', auth()->id());
+        $currentUserId = (int) auth()->id();
+        $isProjectOwner = $project->user_id === $currentUserId;
+        $isTeamMember = $project->teamMembers->contains('id', $currentUserId);
 
         abort_if(! $isProjectOwner && ! $isTeamMember, 403, 'Unauthorized action.');
 
+        // If the current user is not the owner of the project, restrict potential assignees to self only
+        if (! $isProjectOwner) {
+            $user = auth()->user();
+
+            return collect([
+                [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+            ]);
+        }
+
+        // Project owners can assign themselves and any team member
         return collect([$project->user])
             ->concat($project->teamMembers)
             ->unique('id')

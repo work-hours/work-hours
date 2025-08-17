@@ -1,7 +1,7 @@
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import TagInput from '@/components/ui/tag-input'
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
-import { Head, useForm } from '@inertiajs/react'
+import { Head, useForm, usePage } from '@inertiajs/react'
 import { Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus } from 'lucide-react'
 import { FormEventHandler, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -59,6 +59,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function CreateTask({ projects }: Props) {
+    const { auth } = usePage<{ auth: { user: { id: number } } }>().props
     const { data, setData, post, processing, errors, reset } = useForm<TaskForm>({
         project_id: '',
         title: '',
@@ -113,6 +114,15 @@ export default function CreateTask({ projects }: Props) {
         }
     }, [data.project_id])
 
+    // When only the current user is a potential assignee, auto-select and lock-in
+    useEffect(() => {
+        if (potentialAssignees.length === 1 && potentialAssignees[0].id === auth.user.id) {
+            if (!data.assignees.includes(auth.user.id)) {
+                setData('assignees', [auth.user.id])
+            }
+        }
+    }, [potentialAssignees])
+
     useEffect(() => {
         const selectedProject = projects.find((project) => project.id === Number(data.project_id))
         setIsGithubProject(!!selectedProject?.is_github)
@@ -134,6 +144,12 @@ export default function CreateTask({ projects }: Props) {
     }
 
     const handleAssigneeToggle = (assigneeId: number) => {
+        // If only the current user is allowed (non-owner), prevent unchecking self
+        const isRestrictedToSelf = potentialAssignees.length === 1 && potentialAssignees[0].id === auth.user.id
+        if (isRestrictedToSelf && assigneeId === auth.user.id) {
+            return
+        }
+
         const currentAssignees = [...data.assignees]
         const index = currentAssignees.indexOf(assigneeId)
 
@@ -342,7 +358,7 @@ export default function CreateTask({ projects }: Props) {
                                                             id={`assignee-${assignee.id}`}
                                                             checked={data.assignees.includes(assignee.id)}
                                                             onCheckedChange={() => handleAssigneeToggle(assignee.id)}
-                                                            disabled={processing}
+                                                            disabled={processing || (potentialAssignees.length === 1 && potentialAssignees[0].id === auth.user.id)}
                                                         />
                                                         <Label htmlFor={`assignee-${assignee.id}`} className="cursor-pointer text-sm">
                                                             {assignee.name} ({assignee.email})
