@@ -196,9 +196,11 @@ final class TimeLogController extends Controller
 
             $markAsComplete = $data['mark_task_complete'] ?? false;
             $closeGitHubIssue = $data['close_github_issue'] ?? false;
+            $markJiraDone = $data['mark_jira_done'] ?? false;
 
             unset($data['mark_task_complete']);
             unset($data['close_github_issue']);
+            unset($data['mark_jira_done']);
             unset($data['tags']);
 
             $timeLog->update($data);
@@ -213,6 +215,10 @@ final class TimeLogController extends Controller
 
                 if ($closeGitHubIssue && $task && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
                     $this->gitHubAdapter->closeGitHubIssue($task);
+                }
+
+                if ($markJiraDone && $task && $task->is_imported && $task->meta && $task->meta->source === 'jira' && mb_strtolower((string) $task->meta->source_state) !== 'done') {
+                    $this->jiraAdapter->markIssueDone($task);
                 }
             }
 
