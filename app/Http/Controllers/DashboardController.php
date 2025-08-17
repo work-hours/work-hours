@@ -9,6 +9,7 @@ use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TaskStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
+use Carbon\Carbon;
 use Inertia\Response;
 use Msamgan\Lact\Attributes\Action;
 
@@ -47,7 +48,20 @@ final class DashboardController extends Controller
         $unpaidHours = TimeLogStore::unpaidHours(teamMembersIds: $teamMembersIds);
         $unpaidAmountsByCurrency = TimeLogStore::unpaidAmount(teamMembersIds: $teamMembersIds);
         $paidAmountsByCurrency = TimeLogStore::paidAmount(teamMembersIds: $teamMembersIds);
-        $dailyTrend = TimeLogStore::dailyTrend(teamMembersIds: $teamMembersIds, userId: auth()->id(), days: 7);
+
+        // Date range filters for daily trend
+        $startDateStr = request('start-date');
+        $endDateStr = request('end-date');
+        $startDate = $startDateStr ? Carbon::parse($startDateStr)->startOfDay() : null;
+        $endDate = $endDateStr ? Carbon::parse($endDateStr)->endOfDay() : null;
+
+        $dailyTrend = TimeLogStore::dailyTrend(
+            teamMembersIds: $teamMembersIds,
+            userId: (int) auth()->id(),
+            days: 7,
+            startDate: $startDate,
+            endDate: $endDate,
+        );
 
         return [
             'count' => $teamCount,

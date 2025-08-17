@@ -12,6 +12,8 @@ import { stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
 import { BarChart2, Clock } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 interface TeamStats {
     count: number
@@ -50,10 +52,13 @@ export default function Dashboard() {
         dailyTrend: [],
     })
 
-    const getStats = async (): Promise<void> => {
+    const [startDate, setStartDate] = useState<string>('')
+    const [endDate, setEndDate] = useState<string>('')
+
+    const getStats = async (params: Record<string, string> = {}): Promise<void> => {
         try {
             setLoading(true)
-            const response = await stats.data({})
+            const response = await stats.data({ params })
             setTeamStats(response)
         } catch (error: unknown) {
             console.error('Failed to fetch team stats:', error)
@@ -89,10 +94,55 @@ export default function Dashboard() {
                         <StatsCards teamStats={teamStats} />
 
                         <section className="relative mb-4 rounded-lg bg-white p-6 dark:bg-gray-800">
-                            <div className="mb-4">
+                            <div className="mb-4 flex flex-col gap-3">
                                 <div className="flex items-center">
                                     <BarChart2 className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" aria-hidden="true" />
                                     <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Analytics</h3>
+                                </div>
+                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                                    <div className="flex items-center gap-2">
+                                        <Input
+                                            type="date"
+                                            value={startDate}
+                                            onChange={(e) => setStartDate(e.target.value)}
+                                            placeholder="Start date"
+                                            aria-label="Start date"
+                                            className="w-44"
+                                        />
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">to</span>
+                                        <Input
+                                            type="date"
+                                            value={endDate}
+                                            onChange={(e) => setEndDate(e.target.value)}
+                                            placeholder="End date"
+                                            aria-label="End date"
+                                            className="w-44"
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            onClick={() => {
+                                                const params: Record<string, string> = {}
+                                                if (startDate) params['start-date'] = startDate
+                                                if (endDate) params['end-date'] = endDate
+                                                void getStats(params)
+                                            }}
+                                            className="h-9 px-3"
+                                        >
+                                            Apply
+                                        </Button>
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() => {
+                                                setStartDate('')
+                                                setEndDate('')
+                                                void getStats()
+                                            }}
+                                            className="h-9 px-3"
+                                        >
+                                            Reset
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
 

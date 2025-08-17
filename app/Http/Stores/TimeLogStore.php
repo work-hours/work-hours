@@ -26,23 +26,38 @@ use Illuminate\Pipeline\Pipeline;
 
 final class TimeLogStore
 {
-    public static function dailyTrend(array $teamMembersIds, int $userId, int $days = 7): array
+    public static function dailyTrend(array $teamMembersIds, int $userId, int $days = 7, ?Carbon $startDate = null, ?Carbon $endDate = null): array
     {
-        $days = max(1, $days);
-        $startDate = Carbon::today()->subDays($days - 1)->startOfDay();
+        // Determine date range
+        if ($startDate instanceof Carbon || $endDate instanceof Carbon) {
+            $startDate = ($startDate ?? Carbon::today())->copy()->startOfDay();
+            $endDate = ($endDate ?? Carbon::today())->copy()->endOfDay();
 
+            if ($endDate->lt($startDate)) {
+                [$startDate, $endDate] = [$endDate, $startDate];
+            }
+        } else {
+            $days = max(1, $days);
+            $startDate = Carbon::today()->subDays($days - 1)->startOfDay();
+            $endDate = Carbon::today()->endOfDay();
+        }
+
+        // Fetch logs within range
         $logs = TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
             ->where('status', TimeLogStatus::APPROVED)
-            ->where('start_timestamp', '>=', $startDate)
+            ->whereBetween('start_timestamp', [$startDate, $endDate])
             ->get(['user_id', 'start_timestamp', 'duration']);
 
         $groupedByDate = $logs->groupBy(function (TimeLog $log): string {
             return $log->start_timestamp->toDateString();
         });
 
+        // Calculate number of days inclusive
+        $totalDays = $startDate->copy()->startOfDay()->diffInDays($endDate->copy()->startOfDay()) + 1;
+
         $result = [];
-        for ($i = 0; $i < $days; $i++) {
+        for ($i = 0; $i < $totalDays; $i++) {
             $date = $startDate->copy()->addDays($i)->toDateString();
             $dayLogs = $groupedByDate->get($date, collect());
 
@@ -58,6 +73,7 @@ final class TimeLogStore
 
         return $result;
     }
+
     public static function recentTeamLogs(array $teamMembersIds, int $limit = 5): Collection
     {
         return TimeLog::query()
