@@ -8,6 +8,7 @@ use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
 use App\Http\Stores\ProjectStore;
+use App\Http\Stores\TaskStore;
 use App\Http\Stores\TimeLogStore;
 use App\Imports\TimeLogImport;
 use App\Models\Project;
@@ -96,22 +97,7 @@ final class TimeLogController extends Controller
     {
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
-        $tasks = Task::query()
-            ->whereHas('assignees', function ($query): void {
-                $query->where('users.id', auth()->id());
-            })
-            ->with('meta')
-            ->get(['id', 'title', 'project_id', 'is_imported'])
-            ->map(fn ($task): array => [
-                'id' => $task->id,
-                'title' => $task->title,
-                'project_id' => $task->project_id,
-                'is_imported' => $task->is_imported,
-                'meta' => [
-                    'source' => $task->meta?->source,
-                    'source_state' => $task->meta?->source_state,
-                ],
-            ]);
+        $tasks = TaskStore::assignedTasks(userId: auth()->id());
 
         return Inertia::render('time-log/create', [
             'projects' => $projects,
@@ -170,21 +156,7 @@ final class TimeLogController extends Controller
 
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
-        $tasks = Task::query()
-            ->whereHas('assignees', function ($query): void {
-                $query->where('users.id', auth()->id());
-            })
-            ->get(['id', 'title', 'project_id', 'is_imported'])
-            ->map(fn ($task): array => [
-                'id' => $task->id,
-                'title' => $task->title,
-                'project_id' => $task->project_id,
-                'is_imported' => $task->is_imported,
-                'meta' => [
-                    'source' => $task->meta?->source,
-                    'source_state' => $task->meta?->source_state,
-                ],
-            ]);
+        $tasks = TaskStore::assignedTasks(userId: auth()->id());
 
         $timeLog->load('tags');
 
