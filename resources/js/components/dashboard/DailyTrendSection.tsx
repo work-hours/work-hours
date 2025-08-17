@@ -34,9 +34,7 @@ export default function DailyTrendSection() {
     }
 
     useEffect(() => {
-        // Initial load without filters
         fetchTrend().then()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (
@@ -96,7 +94,7 @@ export default function DailyTrendSection() {
                                     void fetchTrend(params)
                                 }}
                                 size="sm"
-                                className="h-9 w-9"
+                                className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                                 aria-label="Apply filters"
                                 title="Apply filters"
                             >
