@@ -11,6 +11,7 @@ use App\Http\Stores\InvoiceStore;
 use App\Http\Stores\TimeLogStore;
 use App\Models\Client;
 use App\Models\Invoice;
+use App\Models\TimeLog;
 use App\Notifications\InvoiceStatusChanged;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -123,6 +124,16 @@ final class InvoiceController extends Controller
     {
         DB::beginTransaction();
         try {
+            $timeLogIds = $invoice->items()
+                ->whereNotNull('time_log_id')
+                ->pluck('time_log_id')
+                ->toArray();
+            if (! empty($timeLogIds)) {
+                TimeLog::query()->whereIn('id', $timeLogIds)
+                    ->where('invoice_id', $invoice->id)
+                    ->update(['invoice_id' => null]);
+            }
+
             $invoice->delete();
             DB::commit();
         } catch (Exception $e) {

@@ -108,10 +108,6 @@ final class InvoiceStore
 
             self::updateInvoiceTotal($invoice);
 
-            if ($invoice->status === InvoiceStatus::PAID) {
-                self::markTimeLogsPaid($invoice);
-            }
-
             if ($invoice->status !== $oldStatus &&
                 ($invoice->status === InvoiceStatus::SENT || $invoice->status === InvoiceStatus::OVERDUE)) {
                 self::sendInvoiceStatusNotification($invoice);
@@ -202,13 +198,17 @@ final class InvoiceStore
      */
     private static function createInvoiceItems(Invoice $invoice, array $items): void
     {
+        $timeLogIds = [];
+
         foreach ($items as $item) {
             $item['invoice_id'] = $invoice->id;
             InvoiceItem::query()->create($item);
-
-            if (isset($item['time_log_id']) && $invoice->status === InvoiceStatus::PAID) {
-                TimeLog::query()->where('id', $item['time_log_id'])->update(['is_paid' => true]);
+            if (isset($item['time_log_id'])) {
+                $timeLogIds[] = $item['time_log_id'];
             }
+        }
+        if ($timeLogIds !== []) {
+            TimeLog::query()->whereIn('id', $timeLogIds)->update(['invoice_id' => $invoice->id]);
         }
     }
 
@@ -266,44 +266,46 @@ final class InvoiceStore
      */
     private static function updateInvoiceItems(Invoice $invoice, array $items): void
     {
-
         $existingItemIds = $invoice->items->pluck('id')->toArray();
         $updatedItemIds = [];
-
-        foreach ($items as $item) {
-            if (isset($item['id'])) {
-
-                $invoiceItem = InvoiceItem::query()->find($item['id']);
-                if ($invoiceItem && $invoiceItem->invoice_id === $invoice->id) {
-                    $invoiceItem->update($item);
-                    $updatedItemIds[] = $invoiceItem->id;
-                }
-            } else {
-
-                $item['invoice_id'] = $invoice->id;
-                $newItem = InvoiceItem::query()->create($item);
-                $updatedItemIds[] = $newItem->id;
-            }
-        }
-
-        $itemsToDelete = array_diff($existingItemIds, $updatedItemIds);
-        if ($itemsToDelete !== []) {
-            InvoiceItem::query()->whereIn('id', $itemsToDelete)->delete();
-        }
-    }
-
-    /**
-     * Mark time logs as paid when invoice is paid
-     */
-    private static function markTimeLogsPaid(Invoice $invoice): void
-    {
-        $timeLogIds = $invoice->items()
+        $currentTimeLogIds = [];
+        $newTimeLogIds = [];
+        $currentTimeLogIds = $invoice->items()
             ->whereNotNull('time_log_id')
             ->pluck('time_log_id')
             ->toArray();
 
-        if (! empty($timeLogIds)) {
-            TimeLog::query()->whereIn('id', $timeLogIds)->update(['is_paid' => true]);
+        foreach ($items as $item) {
+            if (isset($item['id'])) {
+                $invoiceItem = InvoiceItem::query()->find($item['id']);
+                if ($invoiceItem && $invoiceItem->invoice_id === $invoice->id) {
+                    $invoiceItem->update($item);
+                    $updatedItemIds[] = $invoiceItem->id;
+                    if (isset($item['time_log_id'])) {
+                        $newTimeLogIds[] = $item['time_log_id'];
+                    }
+                }
+            } else {
+                $item['invoice_id'] = $invoice->id;
+                $newItem = InvoiceItem::query()->create($item);
+                $updatedItemIds[] = $newItem->id;
+                if (isset($item['time_log_id'])) {
+                    $newTimeLogIds[] = $item['time_log_id'];
+                }
+            }
+        }
+        $itemsToDelete = array_diff($existingItemIds, $updatedItemIds);
+        if ($itemsToDelete !== []) {
+            InvoiceItem::query()->whereIn('id', $itemsToDelete)->delete();
+        }
+        if ($newTimeLogIds !== []) {
+            TimeLog::query()->whereIn('id', $newTimeLogIds)->update(['invoice_id' => $invoice->id]);
+        }
+        $timeLogsToDisassociate = array_diff($currentTimeLogIds, $newTimeLogIds);
+        if ($timeLogsToDisassociate !== []) {
+            TimeLog::query()->whereIn('id', $timeLogsToDisassociate)
+                ->where('invoice_id', $invoice->id)
+                ->update(['invoice_id' => null]);
         }
     }
 

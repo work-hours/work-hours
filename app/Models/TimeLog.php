@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $user_id
  * @property int $project_id
+ * @property int|null $invoice_id
  * @property Carbon $start_timestamp
  * @property Carbon $end_timestamp
  * @property float $duration
@@ -29,6 +30,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Project $project
+ * @property Invoice|null $invoice
  */
 #[UsePolicy(TimeLogPolicy::class)]
 final class TimeLog extends Model
@@ -37,6 +39,7 @@ final class TimeLog extends Model
         'user_id',
         'project_id',
         'task_id',
+        'invoice_id',
         'start_timestamp',
         'end_timestamp',
         'duration',
@@ -69,6 +72,11 @@ final class TimeLog extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
     }
 
     protected function casts(): array
