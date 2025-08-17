@@ -69,7 +69,7 @@ function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: n
                     project_name: task.project.name,
                 })
             }
-            className="h-7 border-emerald-200 bg-emerald-50 px-2 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+            className="h-7 w-7 mt-0.5 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50 rounded-full"
             title={tracker.running ? 'Another tracker is running' : 'Start tracking'}
         >
             <Play className="h-3 w-3" />
@@ -77,29 +77,6 @@ function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: n
     )
 }
 
-function TrackTimeMenuItem({ task }: { task: Task }) {
-    const tracker = useTimeTracker()
-
-    return (
-        <DropdownMenuItem
-            className="group cursor-pointer"
-            disabled={tracker.running}
-            onClick={() => {
-                if (!tracker.running) {
-                    tracker.start({
-                        id: task.id,
-                        title: task.title,
-                        project_id: task.project_id,
-                        project_name: task.project.name,
-                    })
-                }
-            }}
-        >
-            <Play className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-            <span>{tracker.running ? 'Tracker in session' : 'Start tracking'}</span>
-        </DropdownMenuItem>
-    )
-}
 
 export default function Tasks() {
     const { auth, projects, tags } = usePage<
@@ -729,7 +706,10 @@ export default function Tasks() {
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                <div className="flex justify-end">
+                                                <div className="flex justify-end gap-2">
+                                                    {task.assignees.some((a) => a.id === auth.user.id) && (
+                                                        <TaskTrackButton task={task} currentUserId={auth.user.id} />
+                                                    )}
                                                     {task.project.user_id === auth.user.id || task.assignees.some((a) => a.id === auth.user.id) ? (
                                                         <DropdownMenu>
                                                             <DropdownMenuTrigger asChild>
@@ -749,10 +729,6 @@ export default function Tasks() {
                                                                         <span>View</span>
                                                                     </DropdownMenuItem>
                                                                 </Link>
-
-                                                                {task.assignees.some((a) => a.id === auth.user.id) && (
-                                                                    <TrackTimeMenuItem task={task} />
-                                                                )}
 
                                                                 {task.project.user_id === auth.user.id && (
                                                                     <>
