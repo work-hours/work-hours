@@ -30,6 +30,7 @@ type TimeLogForm = {
     note: string
     mark_task_complete: boolean
     close_github_issue: boolean
+    mark_jira_done: boolean
     tags?: string[] // Add tags to the form type
 }
 
@@ -69,6 +70,7 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
         note: '',
         mark_task_complete: false,
         close_github_issue: false,
+        mark_jira_done: false,
         tags: [],
     })
 
@@ -231,6 +233,21 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                                     />
                                                     <Label htmlFor="close_github_issue" className="cursor-pointer text-sm font-medium">
                                                         Close issue on GitHub
+                                                    </Label>
+                                                </div>
+                                            )}
+
+                                        {tasks.find((task) => task.id === data.task_id)?.is_imported &&
+                                            tasks.find((task) => task.id === data.task_id)?.meta?.source === 'jira' &&
+                                            (tasks.find((task) => task.id === data.task_id)?.meta?.source_state || '').toLowerCase() !== 'done' && (
+                                                <div className="flex items-center space-x-2">
+                                                    <Checkbox
+                                                        id="mark_jira_done"
+                                                        checked={data.mark_jira_done}
+                                                        onCheckedChange={(checked) => setData('mark_jira_done', checked as boolean)}
+                                                    />
+                                                    <Label htmlFor="mark_jira_done" className="cursor-pointer text-sm font-medium">
+                                                        Mark issue as Done on Jira
                                                     </Label>
                                                 </div>
                                             )}

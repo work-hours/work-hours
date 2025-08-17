@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Adapters\GitHubAdapter;
 use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
 use App\Http\Stores\ProjectStore;
+use App\Http\Stores\TaskStore;
 use App\Http\Stores\TimeLogStore;
 use App\Imports\TimeLogImport;
 use App\Models\Project;
@@ -17,8 +17,8 @@ use App\Models\Task;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
-use App\Notifications\TimeLogEntry;
 use App\Notifications\TimeLogPaid;
+use App\Services\TimeLogService;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
@@ -40,11 +40,11 @@ final class TimeLogController extends Controller
 {
     use ExportableTrait;
 
-    public function __construct(private readonly GitHubAdapter $gitHubAdapter) {}
+    public function __construct(private readonly TimeLogService $timeLogService) {}
 
     public function index()
     {
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseQuery());
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->timeLogService->baseQuery());
 
         return Inertia::render('time-log/index', TimeLogStore::resData(timeLogs: $timeLogs));
     }
@@ -61,64 +61,32 @@ final class TimeLogController extends Controller
             $data = $request->validated();
             $data['user_id'] = auth()->id();
 
-            $project = Project::query()->find($data['project_id']);
-
-            $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
-            $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
-
-            $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
-
-            if ($isLogCompleted) {
-                $start = Carbon::parse($data['start_timestamp']);
-                $end = Carbon::parse($data['end_timestamp']);
-
-                if ($start->format('Y-m-d') !== $end->format('Y-m-d')) {
-                    $end = Carbon::parse($end->format('H:i:s'))->setDateFrom($start);
-                    $data['end_timestamp'] = $end->toDateTimeString();
-                }
-
-                $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
-
-                if ($project && $project->isCreator(auth()->id())) {
-                    $data['status'] = TimeLogStatus::APPROVED;
-                    $data['approved_by'] = auth()->id();
-                    $data['approved_at'] = Carbon::now();
-                }
-            }
+            $enriched = $this->timeLogService->enrichTimeLogData($data);
+            $data = $enriched['data'];
+            $isLogCompleted = $enriched['is_completed'];
 
             $markAsComplete = $data['mark_task_complete'] ?? false;
             $closeGitHubIssue = $data['close_github_issue'] ?? false;
-            unset($data['mark_task_complete']);
-            unset($data['close_github_issue']);
-            unset($data['tags']);
+            $markJiraDone = $data['mark_jira_done'] ?? false;
+
+            unset($data['mark_task_complete'], $data['close_github_issue'], $data['mark_jira_done'], $data['tags']);
 
             $timeLog = TimeLog::query()->create($data);
 
             $this->attachTags($request, $timeLog);
 
-            if ($isLogCompleted && ! empty($data['task_id'])) {
-                $task = Task::query()->find($data['task_id']);
-
-                if ($task) {
-
-                    if ($markAsComplete) {
-                        $task->update(['status' => 'completed']);
-                    }
-
-                    if ($closeGitHubIssue && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
-                        $this->gitHubAdapter->closeGitHubIssue($task);
-                    }
-                }
-            }
+            $this->timeLogService->processTaskSideEffects(
+                data: ['task_id' => $data['task_id'] ?? null],
+                isCompleted: $isLogCompleted,
+                markAsComplete: $markAsComplete,
+                closeGitHubIssue: $closeGitHubIssue,
+                markJiraDone: $markJiraDone,
+                requireCompleteForIntegrations: false,
+            );
 
             DB::commit();
 
-            if ($isLogCompleted) {
-                $teamLeader = User::teamLeader(project: $timeLog->project);
-                if (auth()->id() !== $teamLeader->getKey()) {
-                    $teamLeader->notify(new TimeLogEntry($timeLog, auth()->user()));
-                }
-            }
+            $this->timeLogService->notifyTeamLeaderIfCompleted($timeLog, $isLogCompleted);
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -129,22 +97,7 @@ final class TimeLogController extends Controller
     {
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
-        $tasks = Task::query()
-            ->whereHas('assignees', function ($query): void {
-                $query->where('users.id', auth()->id());
-            })
-            ->with('meta')
-            ->get(['id', 'title', 'project_id', 'is_imported'])
-            ->map(fn ($task): array => [
-                'id' => $task->id,
-                'title' => $task->title,
-                'project_id' => $task->project_id,
-                'is_imported' => $task->is_imported,
-                'meta' => [
-                    'source' => $task->meta?->source,
-                    'source_state' => $task->meta?->source_state,
-                ],
-            ]);
+        $tasks = TaskStore::assignedTasks(userId: auth()->id());
 
         return Inertia::render('time-log/create', [
             'projects' => $projects,
@@ -164,60 +117,32 @@ final class TimeLogController extends Controller
         try {
             $data = $request->validated();
 
-            $project = Project::query()->find($data['project_id']);
-            $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
-            $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
-
-            $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
-
-            if ($isLogCompleted) {
-                $start = Carbon::parse($data['start_timestamp']);
-                $end = Carbon::parse($data['end_timestamp']);
-
-                if ($start->format('Y-m-d') !== $end->format('Y-m-d')) {
-                    $end = Carbon::parse($end->format('H:i:s'))->setDateFrom($start);
-                    $data['end_timestamp'] = $end->toDateTimeString();
-                }
-
-                $data['duration'] = round(abs($start->diffInMinutes($end)) / 60, 2);
-
-                if ($project && $project->isCreator(auth()->id())) {
-                    $data['status'] = 'approved';
-                    $data['approved_by'] = auth()->id();
-                    $data['approved_at'] = Carbon::now();
-                }
-            }
+            $enriched = $this->timeLogService->enrichTimeLogData($data);
+            $data = $enriched['data'];
+            $isLogCompleted = $enriched['is_completed'];
 
             $markAsComplete = $data['mark_task_complete'] ?? false;
             $closeGitHubIssue = $data['close_github_issue'] ?? false;
+            $markJiraDone = $data['mark_jira_done'] ?? false;
 
-            unset($data['mark_task_complete']);
-            unset($data['close_github_issue']);
-            unset($data['tags']);
+            unset($data['mark_task_complete'], $data['close_github_issue'], $data['mark_jira_done'], $data['tags']);
 
             $timeLog->update($data);
 
             $this->attachTags($request, $timeLog);
 
-            if ($isLogCompleted && ! empty($data['task_id']) && $markAsComplete) {
-                $task = Task::query()->find($data['task_id']);
-                if ($task) {
-                    $task->update(['status' => 'completed']);
-                }
-
-                if ($closeGitHubIssue && $task && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
-                    $this->gitHubAdapter->closeGitHubIssue($task);
-                }
-            }
+            $this->timeLogService->processTaskSideEffects(
+                data: ['task_id' => $data['task_id'] ?? null],
+                isCompleted: $isLogCompleted,
+                markAsComplete: $markAsComplete,
+                closeGitHubIssue: $closeGitHubIssue,
+                markJiraDone: $markJiraDone,
+                requireCompleteForIntegrations: true,
+            );
 
             DB::commit();
 
-            if ($isLogCompleted) {
-                $teamLeader = User::teamLeader(project: $timeLog->project);
-                if (auth()->id() !== $teamLeader->getKey()) {
-                    $teamLeader->notify(new TimeLogEntry($timeLog, auth()->user()));
-                }
-            }
+            $this->timeLogService->notifyTeamLeaderIfCompleted($timeLog, $isLogCompleted);
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -231,21 +156,7 @@ final class TimeLogController extends Controller
 
         $projects = ProjectStore::userProjects(userId: auth()->id());
 
-        $tasks = Task::query()
-            ->whereHas('assignees', function ($query): void {
-                $query->where('users.id', auth()->id());
-            })
-            ->get(['id', 'title', 'project_id', 'is_imported'])
-            ->map(fn ($task): array => [
-                'id' => $task->id,
-                'title' => $task->title,
-                'project_id' => $task->project_id,
-                'is_imported' => $task->is_imported,
-                'meta' => [
-                    'source' => $task->meta?->source,
-                    'source_state' => $task->meta?->source_state,
-                ],
-            ]);
+        $tasks = TaskStore::assignedTasks(userId: auth()->id());
 
         $timeLog->load('tags');
 
@@ -376,7 +287,7 @@ final class TimeLogController extends Controller
     #[Action(method: 'get', name: 'time-log.export', middleware: ['auth', 'verified'])]
     public function export(): StreamedResponse
     {
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseQuery());
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->timeLogService->baseQuery());
         $mappedTimeLogs = TimeLogStore::timeLogExportMapper(timeLogs: $timeLogs);
         $headers = TimeLogStore::timeLogExportHeaders();
         $filename = 'time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
@@ -504,10 +415,5 @@ final class TimeLogController extends Controller
     public function getTags(TimeLog $timeLog): JsonResponse
     {
         return response()->json($timeLog->tags);
-    }
-
-    private function baseQuery()
-    {
-        return TimeLog::query()->where('user_id', auth()->id());
     }
 }

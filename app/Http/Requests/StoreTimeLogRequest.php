@@ -32,6 +32,7 @@ final class StoreTimeLogRequest extends FormRequest
             'note' => ['required_without:task_id', 'string', 'nullable'],
             'mark_task_complete' => ['boolean', 'nullable'],
             'close_github_issue' => ['boolean', 'nullable'],
+            'mark_jira_done' => ['boolean', 'nullable'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:50'],
         ];

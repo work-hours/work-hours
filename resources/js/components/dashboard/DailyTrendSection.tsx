@@ -1,9 +1,9 @@
 import DailyTrend from '@/components/dashboard/DailyTrend'
+import { Button } from '@/components/ui/button'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/ui/loader'
-import { Button } from '@/components/ui/button'
 import { stats } from '@actions/DashboardController'
 import { BarChart2, Calendar, CalendarRange, Filter, RotateCcw } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -46,7 +46,6 @@ export default function DailyTrendSection() {
             'end-date': defaultEndDate.toISOString().split('T')[0],
         }
         fetchTrend(params).then()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (

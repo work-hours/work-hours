@@ -44,6 +44,26 @@ final class TaskStore
         return $ownedProjectTasks->concat($assignedTasks)->unique('id');
     }
 
+    public static function assignedTasks(int $userId): Collection
+    {
+        return Task::query()
+            ->whereHas('assignees', function ($query) use ($userId): void {
+                $query->where('users.id', $userId);
+            })
+            ->with('meta')
+            ->get(['id', 'title', 'project_id', 'is_imported'])
+            ->map(fn ($task): array => [
+                'id' => $task->id,
+                'title' => $task->title,
+                'project_id' => $task->project_id,
+                'is_imported' => $task->is_imported,
+                'meta' => [
+                    'source' => $task->meta?->source,
+                    'source_state' => $task->meta?->source_state,
+                ],
+            ]);
+    }
+
     public static function projectTasks(Project $project): Collection
     {
         return Task::query()
