@@ -271,6 +271,36 @@ final class JiraAdapter
     }
 
     /**
+     * Mark a Jira issue as Done.
+     *
+     * @param  Task  $task  The task containing Jira issue information
+     * @return bool Whether the issue was successfully marked as Done
+     */
+    public function markIssueDone(Task $task): bool
+    {
+        try {
+            if (! $task->meta || $task->meta->source !== 'jira' || ! $task->meta->source_id) {
+                return false;
+            }
+
+            $updated = $this->updateJiraIssueStatus($task, 'Done');
+
+            if ($updated) {
+                $task->meta->update(['source_state' => 'Done']);
+            }
+
+            return $updated;
+        } catch (Exception $e) {
+            $this->logError('Error marking Jira issue as done: ' . $e->getMessage(), [
+                'task_id' => $task->id,
+                'exception' => $e,
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
      * Save Jira credentials to the database.
      *
      * @param  string  $domain  The Jira domain

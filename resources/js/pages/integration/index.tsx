@@ -40,12 +40,20 @@ export default function Integration({ isGitHubIntegrated, isJiraIntegrated }: Pr
                         {isGitHubIntegrated ? (
                             <div className="flex flex-row items-center justify-between">
                                 <p className="text-green-600 dark:text-green-400">Your account is integrated with GitHub.</p>
-                                <Button
-                                    asChild
-                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                >
-                                    <Link href={route('github.repositories')}>Manage Repositories</Link>
-                                </Button>
+                                <div className="flex gap-2">
+                                    <Button
+                                        asChild
+                                        className="flex items-center gap-2 bg-amber-600 text-sm hover:bg-amber-500 dark:bg-amber-700 dark:hover:bg-amber-600"
+                                    >
+                                        <a href={route('auth.github')}>Reauthorize</a>
+                                    </Button>
+                                    <Button
+                                        asChild
+                                        className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    >
+                                        <Link href={route('github.repositories')}>Manage Repositories</Link>
+                                    </Button>
+                                </div>
                             </div>
                         ) : (
                             <div className="flex flex-row items-center justify-between">
