@@ -126,8 +126,7 @@ final class GitHubRepositoryController extends Controller
 
                     if ($existingTask) {
 
-                        $status = $this->mapGitHubIssueStatus($issue['state']);
-                        $priority = $this->determineIssuePriority($issue);
+                        [$status, $priority] = $this->computeStatusAndPriority($issue);
 
                         $updateData = [
                             'title' => $issue['title'],
@@ -145,16 +144,7 @@ final class GitHubRepositoryController extends Controller
                         $existingTask->meta->update([
                             'source_state' => $issue['state'],
                             'source_url' => $issue['html_url'],
-                            'extra_data' => [
-                                'labels' => $issue['labels'] ?? [],
-                                'created_at' => $issue['created_at'] ?? null,
-                                'updated_at' => $issue['updated_at'] ?? null,
-                                'closed_at' => $issue['closed_at'] ?? null,
-                                'user' => isset($issue['user']) ? [
-                                    'id' => $issue['user']['id'] ?? null,
-                                    'login' => $issue['user']['login'] ?? null,
-                                ] : null,
-                            ],
+                            'extra_data' => $this->buildIssueExtraData($issue),
                         ]);
 
                         $this->syncTagsFromGitHubLabels($issue['labels'] ?? [], $project->user_id, $status, $priority, $existingTask, true);
@@ -162,8 +152,7 @@ final class GitHubRepositoryController extends Controller
                         $updatedCount++;
                     } else {
 
-                        $status = $this->mapGitHubIssueStatus($issue['state']);
-                        $priority = $this->determineIssuePriority($issue);
+                        [$status, $priority] = $this->computeStatusAndPriority($issue);
 
                         $task = $project->tasks()->create([
                             'title' => $issue['title'],
@@ -180,16 +169,7 @@ final class GitHubRepositoryController extends Controller
                             'source_number' => (string) $issue['number'],
                             'source_url' => $issue['html_url'],
                             'source_state' => $issue['state'],
-                            'extra_data' => [
-                                'labels' => $issue['labels'] ?? [],
-                                'created_at' => $issue['created_at'] ?? null,
-                                'updated_at' => $issue['updated_at'] ?? null,
-                                'closed_at' => $issue['closed_at'] ?? null,
-                                'user' => isset($issue['user']) ? [
-                                    'id' => $issue['user']['id'] ?? null,
-                                    'login' => $issue['user']['login'] ?? null,
-                                ] : null,
-                            ],
+                            'extra_data' => $this->buildIssueExtraData($issue),
                         ]);
 
                         $this->syncTagsFromGitHubLabels($issue['labels'] ?? [], $project->user_id, $status, $priority, $task, false);
@@ -346,9 +326,7 @@ final class GitHubRepositoryController extends Controller
                     continue;
                 }
 
-                $status = $this->mapGitHubIssueStatus($issue['state']);
-
-                $priority = $this->determineIssuePriority($issue);
+                [$status, $priority] = $this->computeStatusAndPriority($issue);
 
                 $task = $project->tasks()->create([
                     'title' => $issue['title'],
@@ -365,16 +343,7 @@ final class GitHubRepositoryController extends Controller
                     'source_number' => (string) $issue['number'],
                     'source_url' => $issue['html_url'],
                     'source_state' => $issue['state'],
-                    'extra_data' => [
-                        'labels' => $issue['labels'] ?? [],
-                        'created_at' => $issue['created_at'] ?? null,
-                        'updated_at' => $issue['updated_at'] ?? null,
-                        'closed_at' => $issue['closed_at'] ?? null,
-                        'user' => isset($issue['user']) ? [
-                            'id' => $issue['user']['id'] ?? null,
-                            'login' => $issue['user']['login'] ?? null,
-                        ] : null,
-                    ],
+                    'extra_data' => $this->buildIssueExtraData($issue),
                 ]);
 
                 $this->syncTagsFromGitHubLabels($issue['labels'] ?? [], $project->user_id, $status, $priority, $task, false);
@@ -470,5 +439,35 @@ final class GitHubRepositoryController extends Controller
         }
 
         return 'Medium';
+    }
+
+    /**
+     * Build the extra_data array for a task meta from a GitHub issue payload.
+     */
+    private function buildIssueExtraData(array $issue): array
+    {
+        return [
+            'labels' => $issue['labels'] ?? [],
+            'created_at' => $issue['created_at'] ?? null,
+            'updated_at' => $issue['updated_at'] ?? null,
+            'closed_at' => $issue['closed_at'] ?? null,
+            'user' => isset($issue['user']) ? [
+                'id' => $issue['user']['id'] ?? null,
+                'login' => $issue['user']['login'] ?? null,
+            ] : null,
+        ];
+    }
+
+    /**
+     * Compute status and priority for a given GitHub issue payload.
+     *
+     * @return array{0:string,1:string}
+     */
+    private function computeStatusAndPriority(array $issue): array
+    {
+        $status = $this->mapGitHubIssueStatus($issue['state'] ?? 'open');
+        $priority = $this->determineIssuePriority($issue);
+
+        return [$status, $priority];
     }
 }
