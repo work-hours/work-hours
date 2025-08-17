@@ -69,7 +69,7 @@ function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: n
                     project_name: task.project.name,
                 })
             }
-            className="h-7 w-7 mt-0.5 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50 rounded-full"
+            className="h-7 mt-1 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
             title={tracker.running ? 'Another tracker is running' : 'Start tracking'}
         >
             <Play className="h-3 w-3" />
