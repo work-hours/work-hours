@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Adapters\GitHubAdapter;
+use App\Adapters\JiraAdapter;
 use App\Enums\TimeLogStatus;
 use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
@@ -40,7 +41,7 @@ final class TimeLogController extends Controller
 {
     use ExportableTrait;
 
-    public function __construct(private readonly GitHubAdapter $gitHubAdapter) {}
+    public function __construct(private readonly GitHubAdapter $gitHubAdapter, private readonly JiraAdapter $jiraAdapter) {}
 
     public function index()
     {
@@ -88,8 +89,10 @@ final class TimeLogController extends Controller
 
             $markAsComplete = $data['mark_task_complete'] ?? false;
             $closeGitHubIssue = $data['close_github_issue'] ?? false;
+            $markJiraDone = $data['mark_jira_done'] ?? false;
             unset($data['mark_task_complete']);
             unset($data['close_github_issue']);
+            unset($data['mark_jira_done']);
             unset($data['tags']);
 
             $timeLog = TimeLog::query()->create($data);
@@ -107,6 +110,10 @@ final class TimeLogController extends Controller
 
                     if ($closeGitHubIssue && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
                         $this->gitHubAdapter->closeGitHubIssue($task);
+                    }
+
+                    if ($markJiraDone && $task->is_imported && $task->meta && $task->meta->source === 'jira' && $task->meta->source_state !== 'done') {
+                        $this->jiraAdapter->markIssueDone($task);
                     }
                 }
             }
