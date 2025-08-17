@@ -1,10 +1,8 @@
-import { router } from '@inertiajs/react'
 import { Trash2 } from 'lucide-react'
-import { FormEventHandler, useState } from 'react'
-import { toast } from 'sonner'
+import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 
 interface InvoiceDeleteActionProps {
@@ -12,61 +10,40 @@ interface InvoiceDeleteActionProps {
     invoiceNumber?: string
 }
 
-export default function InvoiceDeleteAction({ invoiceId, invoiceNumber }: InvoiceDeleteActionProps) {
-    const [processing, setProcessing] = useState(false)
-
-    const deleteInvoice: FormEventHandler = (e) => {
-        e.preventDefault()
-        setProcessing(true)
-
-        router.delete(route('invoice.destroy', invoiceId), {
-            preserveScroll: true,
-            onSuccess: () => toast.success('Invoice deleted successfully'),
-            onFinish: () => setProcessing(false),
-        })
-    }
+export default function InvoiceDeleteAction({ invoiceNumber }: InvoiceDeleteActionProps) {
+    const [open, setOpen] = useState(false)
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <DropdownMenuItem
                     className="group cursor-pointer"
                     onSelect={(event) => {
                         event.preventDefault()
+                        setOpen(true)
                     }}
                 >
-                    <Trash2 className="h-4 w-4 text-red-600 group-hover:text-red-700 dark:text-red-400 dark:group-hover:text-red-300" />
-                    <span className="text-red-600 dark:text-red-400">Delete</span>
+                    <Trash2 className="h-4 w-4 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400" />
+                    <span className="text-gray-500 dark:text-gray-400">Delete</span>
                 </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
                 <DialogTitle className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
-                    Are you sure you want to delete {invoiceNumber ? `Invoice #${invoiceNumber}` : 'this invoice'}?
+                    Deletion disabled
                 </DialogTitle>
                 <DialogDescription className="text-neutral-600 dark:text-neutral-400">
-                    Once the invoice is deleted, all of its data will be permanently removed. This action cannot be undone.
+                    Invoices cannot be deleted once created{invoiceNumber ? ` (Invoice #${invoiceNumber})` : ''}. If you need to make changes, edit the invoice or update its status.
                 </DialogDescription>
-                <form className="space-y-6" onSubmit={deleteInvoice}>
-                    <DialogFooter className="gap-2">
-                        <DialogClose asChild>
-                            <Button
-                                variant="secondary"
-                                className="border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                            >
-                                Cancel
-                            </Button>
-                        </DialogClose>
-
+                <div className="mt-4 flex justify-end">
+                    <DialogClose asChild>
                         <Button
-                            variant="destructive"
-                            disabled={processing}
-                            className="bg-red-600 text-white transition-colors duration-200 hover:bg-red-700 dark:bg-red-700/80 dark:hover:bg-red-700"
-                            asChild
+                            variant="secondary"
+                            className="border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
                         >
-                            <button type="submit">Delete Invoice</button>
+                            Close
                         </Button>
-                    </DialogFooter>
-                </form>
+                    </DialogClose>
+                </div>
             </DialogContent>
         </Dialog>
     )

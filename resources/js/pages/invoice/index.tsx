@@ -303,6 +303,7 @@ export default function Invoices() {
         }
     }
 
+
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Invoices" />
@@ -640,7 +641,10 @@ export default function Invoices() {
                                                                 <Calendar className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                 <span>Update Status</span>
                                                             </DropdownMenuItem>
-                                                            <InvoiceDeleteAction invoiceId={invoice.id} invoiceNumber={invoice.invoice_number} />
+                                                            <InvoiceDeleteAction
+                                                                invoiceId={invoice.id}
+                                                                invoiceNumber={invoice.invoice_number}
+                                                            />
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </div>
