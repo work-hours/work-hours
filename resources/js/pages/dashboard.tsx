@@ -9,7 +9,7 @@ import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
-import { BarChart2, Clock, Calendar, CalendarRange } from 'lucide-react'
+import { BarChart2, Clock, Calendar, CalendarRange, Filter, RotateCcw } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import DatePicker from '@/components/ui/date-picker'
 import CustomInput from '@/components/ui/custom-input'
@@ -101,7 +101,7 @@ export default function Dashboard() {
                                         <BarChart2 className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" aria-hidden="true" />
                                         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Daily Trend</h3>
                                     </div>
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex gap-3">
                                         <div className="flex flex-col">
                                             <Label htmlFor="dashboard-start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">Start Date</Label>
                                             <DatePicker
@@ -136,7 +136,7 @@ export default function Dashboard() {
                                                 }
                                             />
                                         </div>
-                                        <div className="flex items-end gap-2 pb-0.5">
+                                        <div className="flex items-end gap-2">
                                             <Button
                                                 onClick={() => {
                                                     const params: Record<string, string> = {}
@@ -144,9 +144,13 @@ export default function Dashboard() {
                                                     if (endDate) params['end-date'] = new Date(endDate).toISOString().split('T')[0]
                                                     void getStats(params)
                                                 }}
-                                                className="h-9 px-3"
+                                                size="sm"
+                                                className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                                aria-label="Apply filters"
+                                                title="Apply filters"
                                             >
-                                                Apply
+                                                <Filter className="h-4 w-4" />
+                                                <span className="sr-only">Apply</span>
                                             </Button>
                                             <Button
                                                 variant="secondary"
@@ -155,9 +159,13 @@ export default function Dashboard() {
                                                     setEndDate(null)
                                                     void getStats()
                                                 }}
-                                                className="h-9 px-3"
+                                                size="sm"
+                                                className="h-9 w-9"
+                                                aria-label="Reset filters"
+                                                title="Reset filters"
                                             >
-                                                Reset
+                                                <RotateCcw className="h-4 w-4" />
+                                                <span className="sr-only">Reset</span>
                                             </Button>
                                         </div>
                                     </div>
