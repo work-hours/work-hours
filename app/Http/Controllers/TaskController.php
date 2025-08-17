@@ -238,6 +238,7 @@ final class TaskController extends Controller
 
             $task = Task::query()->create([
                 'project_id' => $projectId,
+                'created_by' => auth()->id(),
                 'title' => $request->input('title'),
                 'description' => $request->input('description'),
                 'status' => $request->input('status'),
