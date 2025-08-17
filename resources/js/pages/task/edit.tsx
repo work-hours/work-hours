@@ -174,9 +174,6 @@ export default function EditTask({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        // include newly added attachments to the payload as multipart
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         transform((d) => ({ ...d, attachments: newAttachments }))
         post(route('task.update', task.id), {
             forceFormData: true,
@@ -191,10 +188,9 @@ export default function EditTask({
     }
 
     const handleAssigneeToggle = (assigneeId: number) => {
-            // Prevent non-owners from removing their own assignment
-            if (!isProjectOwner && assigneeId === auth.user.id) {
-                return
-            }
+        if (!isProjectOwner && assigneeId === auth.user.id) {
+            return
+        }
         const currentAssignees = [...data.assignees]
         const index = currentAssignees.indexOf(assigneeId)
 

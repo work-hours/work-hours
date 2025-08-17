@@ -14,9 +14,9 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
-final class JiraService
+final readonly class JiraService
 {
-    public function __construct(public readonly JiraAdapter $jiraAdapter) {}
+    public function __construct(public JiraAdapter $jiraAdapter) {}
 
     /**
      * Helper method for error responses.

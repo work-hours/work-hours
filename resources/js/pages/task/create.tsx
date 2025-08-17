@@ -112,8 +112,6 @@ export default function CreateTask({ projects }: Props) {
             setPotentialAssignees([])
         }
     }, [data.project_id])
-
-    // When only the current user is a potential assignee, auto-select and lock-in
     useEffect(() => {
         if (potentialAssignees.length === 1 && potentialAssignees[0].id === auth.user.id) {
             if (!data.assignees.includes(auth.user.id)) {
@@ -130,11 +128,6 @@ export default function CreateTask({ projects }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        // include attachments in the payload for multipart submission
-        // transform only affects the next request
-        // attachments is managed outside the form state to satisfy TS constraints
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         transform((d) => ({ ...d, attachments }))
         post(route('task.store'), {
             forceFormData: true,
@@ -150,7 +143,6 @@ export default function CreateTask({ projects }: Props) {
     }
 
     const handleAssigneeToggle = (assigneeId: number) => {
-        // If only the current user is allowed (non-owner), prevent unchecking self
         const isRestrictedToSelf = potentialAssignees.length === 1 && potentialAssignees[0].id === auth.user.id
         if (isRestrictedToSelf && assigneeId === auth.user.id) {
             return
@@ -364,7 +356,10 @@ export default function CreateTask({ projects }: Props) {
                                                             id={`assignee-${assignee.id}`}
                                                             checked={data.assignees.includes(assignee.id)}
                                                             onCheckedChange={() => handleAssigneeToggle(assignee.id)}
-                                                            disabled={processing || (potentialAssignees.length === 1 && potentialAssignees[0].id === auth.user.id)}
+                                                            disabled={
+                                                                processing ||
+                                                                (potentialAssignees.length === 1 && potentialAssignees[0].id === auth.user.id)
+                                                            }
                                                         />
                                                         <Label htmlFor={`assignee-${assignee.id}`} className="cursor-pointer text-sm">
                                                             {assignee.name} ({assignee.email})

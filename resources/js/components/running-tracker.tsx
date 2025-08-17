@@ -130,7 +130,7 @@ export default function RunningTracker() {
                     </DialogHeader>
 
                     <div className="mt-2 flex items-center gap-3">
-                        <div className="flex flex-col items-start w-1/3">
+                        <div className="flex w-1/3 flex-col items-start">
                             <label className="text-xs text-gray-500 dark:text-gray-400">Hours</label>
                             <Input
                                 type="number"
@@ -141,7 +141,7 @@ export default function RunningTracker() {
                                 className="w-full"
                             />
                         </div>
-                        <div className="flex flex-col items-start w-1/3">
+                        <div className="flex w-1/3 flex-col items-start">
                             <label className="text-xs text-gray-500 dark:text-gray-400">Minutes</label>
                             <Input
                                 type="number"
@@ -152,7 +152,7 @@ export default function RunningTracker() {
                                 className="w-full"
                             />
                         </div>
-                        <div className="flex flex-col items-start w-1/3">
+                        <div className="flex w-1/3 flex-col items-start">
                             <label className="text-xs text-gray-500 dark:text-gray-400">Seconds</label>
                             <Input
                                 type="number"
@@ -165,18 +165,37 @@ export default function RunningTracker() {
                         </div>
                     </div>
 
-                    <div className="mt-3 flex gap-2 justify-between">
-                        <Button variant="outline" onClick={() => applyQuick(-15)}>-15m</Button>
-                        <Button variant="outline" onClick={() => applyQuick(-5)}>-5m</Button>
-                        <Button variant="outline" onClick={() => applyQuick(-1)}>-1m</Button>
-                        <Button variant="outline" onClick={() => applyQuick(1)}>+1m</Button>
-                        <Button variant="outline" onClick={() => applyQuick(5)}>+5m</Button>
-                        <Button variant="outline" onClick={() => applyQuick(15)}>+15m</Button>
+                    <div className="mt-3 flex justify-between gap-2">
+                        <Button variant="outline" onClick={() => applyQuick(-15)}>
+                            -15m
+                        </Button>
+                        <Button variant="outline" onClick={() => applyQuick(-5)}>
+                            -5m
+                        </Button>
+                        <Button variant="outline" onClick={() => applyQuick(-1)}>
+                            -1m
+                        </Button>
+                        <Button variant="outline" onClick={() => applyQuick(1)}>
+                            +1m
+                        </Button>
+                        <Button variant="outline" onClick={() => applyQuick(5)}>
+                            +5m
+                        </Button>
+                        <Button variant="outline" onClick={() => applyQuick(15)}>
+                            +15m
+                        </Button>
                     </div>
 
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                        <Button className={'flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600'} onClick={onSave}>Save</Button>
+                        <Button variant="outline" onClick={() => setOpen(false)}>
+                            Cancel
+                        </Button>
+                        <Button
+                            className={'flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600'}
+                            onClick={onSave}
+                        >
+                            Save
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

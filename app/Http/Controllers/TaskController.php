@@ -245,13 +245,10 @@ final class TaskController extends Controller
                 'priority' => $request->input('priority', 'medium'),
                 'due_date' => $request->input('due_date'),
             ]);
-
-            // Enforce assignee restriction: if not project owner, only self can be an assignee
             $assigneeIds = $request->input('assignees', []);
             if (! $isProjectOwner) {
                 $assigneeIds = [auth()->id()];
             }
-            // If there are any assignees to sync, perform sync
             if ($assigneeIds !== []) {
                 $task->assignees()->sync($assigneeIds);
             }
@@ -263,8 +260,6 @@ final class TaskController extends Controller
             $this->storeAttachments($request, $task);
 
             DB::commit();
-
-            // Notify only the (possibly enforced) assignees
             $this->notifyAssignees($task, $assigneeIds);
 
             if ($request->boolean('create_github_issue')) {
@@ -427,18 +422,13 @@ final class TaskController extends Controller
 
             if ($request->has('assignees')) {
                 $newAssigneeIds = $request->input('assignees');
-                // If the current user is not the project owner, ensure they cannot remove themselves
                 if (! $isProjectOwner) {
                     $newAssigneeIds = array_values(array_unique(array_merge($newAssigneeIds, [auth()->id()])));
                 }
                 $task->assignees()->sync($newAssigneeIds);
-
                 $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
-            } else {
-                // If no assignees were explicitly provided, preserve existing assignments for non-owners
-                if ($isProjectOwner) {
-                    $task->assignees()->detach();
-                }
+            } elseif ($isProjectOwner) {
+                $task->assignees()->detach();
             }
 
             if ($request->has('tags')) {
@@ -567,8 +557,6 @@ final class TaskController extends Controller
         $isTeamMember = $project->teamMembers->contains('id', $currentUserId);
 
         abort_if(! $isProjectOwner && ! $isTeamMember, 403, 'Unauthorized action.');
-
-        // If the current user is not the owner of the project, restrict potential assignees to self only
         if (! $isProjectOwner) {
             $user = auth()->user();
 
@@ -581,7 +569,6 @@ final class TaskController extends Controller
             ]);
         }
 
-        // Project owners can assign themselves and any team member
         return collect([$project->user])
             ->concat($project->teamMembers)
             ->unique('id')
