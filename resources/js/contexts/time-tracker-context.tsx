@@ -22,6 +22,8 @@ export type TimeTrackerContextType = TimeTrackerState & {
     pause: () => void
     resume: () => void
     stop: () => Promise<void>
+    adjustElapsed: (deltaMs: number) => void
+    setElapsedExact: (ms: number) => void
 }
 
 const TimeTrackerContext = createContext<TimeTrackerContextType | undefined>(undefined)
@@ -166,7 +168,23 @@ export function TimeTrackerProvider({ children }: { children: ReactNode }) {
         }
     }, [state])
 
-    const value = useMemo<TimeTrackerContextType>(() => ({ ...state, start, pause, resume, stop }), [state, start, pause, resume, stop])
+    const adjustElapsed = useCallback((deltaMs: number) => {
+        setState((prev) => {
+            if (!prev.running) return prev
+            const next = Math.max(0, prev.elapsedMs + deltaMs)
+            return { ...prev, elapsedMs: next }
+        })
+    }, [])
+
+    const setElapsedExact = useCallback((ms: number) => {
+        setState((prev) => {
+            if (!prev.running) return prev
+            const next = Math.max(0, Math.floor(ms))
+            return { ...prev, elapsedMs: next }
+        })
+    }, [])
+
+    const value = useMemo<TimeTrackerContextType>(() => ({ ...state, start, pause, resume, stop, adjustElapsed, setElapsedExact }), [state, start, pause, resume, stop, adjustElapsed, setElapsedExact])
 
     return <TimeTrackerContext.Provider value={value}>{children}</TimeTrackerContext.Provider>
 }
