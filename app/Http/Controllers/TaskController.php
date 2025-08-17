@@ -401,6 +401,7 @@ final class TaskController extends Controller
             'isGithub' => $isGithub,
             'isJira' => $isJira,
             'attachments' => $files,
+            'isProjectOwner' => $isProjectOwner,
         ]);
     }
 
@@ -426,11 +427,18 @@ final class TaskController extends Controller
 
             if ($request->has('assignees')) {
                 $newAssigneeIds = $request->input('assignees');
+                // If the current user is not the project owner, ensure they cannot remove themselves
+                if (! $isProjectOwner) {
+                    $newAssigneeIds = array_values(array_unique(array_merge($newAssigneeIds, [auth()->id()])));
+                }
                 $task->assignees()->sync($newAssigneeIds);
 
                 $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
             } else {
-                $task->assignees()->detach();
+                // If no assignees were explicitly provided, preserve existing assignments for non-owners
+                if ($isProjectOwner) {
+                    $task->assignees()->detach();
+                }
             }
 
             if ($request->has('tags')) {
