@@ -28,7 +28,6 @@ final class TimeLogStore
 {
     public static function dailyTrend(array $teamMembersIds, int $userId, int $days = 7, ?Carbon $startDate = null, ?Carbon $endDate = null): array
     {
-        // Determine date range
         if ($startDate instanceof Carbon || $endDate instanceof Carbon) {
             $startDate = ($startDate ?? Carbon::today())->copy()->startOfDay();
             $endDate = ($endDate ?? Carbon::today())->copy()->endOfDay();
@@ -41,19 +40,13 @@ final class TimeLogStore
             $startDate = Carbon::today()->subDays($days - 1)->startOfDay();
             $endDate = Carbon::today()->endOfDay();
         }
-
-        // Fetch logs within range
         $logs = TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
             ->where('status', TimeLogStatus::APPROVED)
             ->whereBetween('start_timestamp', [$startDate, $endDate])
             ->get(['user_id', 'start_timestamp', 'duration']);
 
-        $groupedByDate = $logs->groupBy(function (TimeLog $log): string {
-            return $log->start_timestamp->toDateString();
-        });
-
-        // Calculate number of days inclusive
+        $groupedByDate = $logs->groupBy(fn (TimeLog $log): string => $log->start_timestamp->toDateString());
         $totalDays = $startDate->copy()->startOfDay()->diffInDays($endDate->copy()->startOfDay()) + 1;
 
         $result = [];

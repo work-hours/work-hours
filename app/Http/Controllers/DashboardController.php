@@ -48,8 +48,6 @@ final class DashboardController extends Controller
         $unpaidHours = TimeLogStore::unpaidHours(teamMembersIds: $teamMembersIds);
         $unpaidAmountsByCurrency = TimeLogStore::unpaidAmount(teamMembersIds: $teamMembersIds);
         $paidAmountsByCurrency = TimeLogStore::paidAmount(teamMembersIds: $teamMembersIds);
-
-        // Date range filters for daily trend
         $startDateStr = request('start-date');
         $endDateStr = request('end-date');
         $startDate = $startDateStr ? Carbon::parse($startDateStr)->startOfDay() : null;

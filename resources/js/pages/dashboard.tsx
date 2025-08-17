@@ -1,20 +1,20 @@
+import DailyTrend from '@/components/dashboard/DailyTrend'
 import HoursDistribution from '@/components/dashboard/HoursDistribution'
 import RecentTimeLogs from '@/components/dashboard/RecentTimeLogs'
 import StatsCards from '@/components/dashboard/StatsCards'
-import DailyTrend from '@/components/dashboard/DailyTrend'
 import WelcomeSection from '@/components/dashboard/WelcomeSection'
+import { Button } from '@/components/ui/button'
+import CustomInput from '@/components/ui/custom-input'
+import DatePicker from '@/components/ui/date-picker'
+import { Label } from '@/components/ui/label'
 import Loader from '@/components/ui/loader'
 import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { stats } from '@actions/DashboardController'
 import { Head } from '@inertiajs/react'
-import { BarChart2, Clock, Calendar, CalendarRange, Filter, RotateCcw } from 'lucide-react'
+import { BarChart2, Calendar, CalendarRange, Clock, Filter, RotateCcw } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import DatePicker from '@/components/ui/date-picker'
-import CustomInput from '@/components/ui/custom-input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
 
 interface TeamStats {
     count: number
@@ -77,7 +77,6 @@ export default function Dashboard() {
         { name: 'Paid', value: roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours) },
     ]
 
-
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -103,7 +102,9 @@ export default function Dashboard() {
                                     </div>
                                     <div className="flex gap-3">
                                         <div className="flex flex-col">
-                                            <Label htmlFor="dashboard-start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">Start Date</Label>
+                                            <Label htmlFor="dashboard-start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                                Start Date
+                                            </Label>
                                             <DatePicker
                                                 selected={startDate}
                                                 onChange={(date) => setStartDate(date)}
@@ -120,7 +121,9 @@ export default function Dashboard() {
                                             />
                                         </div>
                                         <div className="flex flex-col">
-                                            <Label htmlFor="dashboard-end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">End Date</Label>
+                                            <Label htmlFor="dashboard-end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                                End Date
+                                            </Label>
                                             <DatePicker
                                                 selected={endDate}
                                                 onChange={(date) => setEndDate(date)}
