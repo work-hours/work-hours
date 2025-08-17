@@ -17,8 +17,15 @@ export type DailyPoint = {
 export default function DailyTrendSection() {
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState<DailyPoint[]>([])
-    const [startDate, setStartDate] = useState<Date | null>(null)
-    const [endDate, setEndDate] = useState<Date | null>(null)
+    const getDefaultDates = (): { start: Date; end: Date } => {
+        const end = new Date()
+        const start = new Date(end)
+        start.setDate(start.getDate() - 6)
+        return { start, end }
+    }
+    const { start: defaultStartDate, end: defaultEndDate } = getDefaultDates()
+    const [startDate, setStartDate] = useState<Date | null>(defaultStartDate)
+    const [endDate, setEndDate] = useState<Date | null>(defaultEndDate)
 
     const fetchTrend = async (params: Record<string, string> = {}): Promise<void> => {
         try {
@@ -34,7 +41,12 @@ export default function DailyTrendSection() {
     }
 
     useEffect(() => {
-        fetchTrend().then()
+        const params: Record<string, string> = {
+            'start-date': defaultStartDate.toISOString().split('T')[0],
+            'end-date': defaultEndDate.toISOString().split('T')[0],
+        }
+        fetchTrend(params).then()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (
@@ -104,9 +116,13 @@ export default function DailyTrendSection() {
                             <Button
                                 variant="secondary"
                                 onClick={() => {
-                                    setStartDate(null)
-                                    setEndDate(null)
-                                    void fetchTrend()
+                                    setStartDate(defaultStartDate)
+                                    setEndDate(defaultEndDate)
+                                    const params: Record<string, string> = {
+                                        'start-date': defaultStartDate.toISOString().split('T')[0],
+                                        'end-date': defaultEndDate.toISOString().split('T')[0],
+                                    }
+                                    void fetchTrend(params)
                                 }}
                                 size="sm"
                                 className="h-9 w-9"
