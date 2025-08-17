@@ -40,7 +40,6 @@ type TaskForm = {
     create_github_issue: boolean
     create_jira_issue: boolean
     tags: string[]
-    attachments?: File[]
 }
 
 type Props = {
@@ -60,7 +59,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function CreateTask({ projects }: Props) {
     const { auth } = usePage<{ auth: { user: { id: number } } }>().props
-    const { data, setData, post, processing, errors, reset } = useForm<TaskForm>({
+    const { data, setData, post, processing, errors, reset, transform } = useForm<TaskForm>({
         project_id: '',
         title: '',
         description: '',
@@ -71,7 +70,6 @@ export default function CreateTask({ projects }: Props) {
         create_github_issue: false,
         create_jira_issue: false,
         tags: [],
-        attachments: [],
     })
 
     const [potentialAssignees, setPotentialAssignees] = useState<{ id: number; name: string; email: string }[]>([])
@@ -80,6 +78,7 @@ export default function CreateTask({ projects }: Props) {
     const [isGithubProject, setIsGithubProject] = useState<boolean>(false)
     const [isJiraProject, setIsJiraProject] = useState<boolean>(false)
 
+    const [attachments, setAttachments] = useState<File[]>([])
     const [dueDate, setDueDate] = useState<Date | null>(data.due_date ? new Date(data.due_date) : null)
 
     const handleDueDateChange = (date: Date | null) => {
@@ -131,11 +130,18 @@ export default function CreateTask({ projects }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
+        // include attachments in the payload for multipart submission
+        // transform only affects the next request
+        // attachments is managed outside the form state to satisfy TS constraints
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        transform((d) => ({ ...d, attachments }))
         post(route('task.store'), {
             forceFormData: true,
             onSuccess: () => {
                 toast.success('Task created successfully')
                 reset()
+                setAttachments([])
             },
             onError: () => {
                 toast.error('Failed to create task')
@@ -412,8 +418,8 @@ export default function CreateTask({ projects }: Props) {
                                 )}
 
                                 <FileDropzone
-                                    value={data.attachments || []}
-                                    onChange={(files) => setData('attachments', files)}
+                                    value={attachments}
+                                    onChange={setAttachments}
                                     label="Attachments"
                                     description="Drag & drop files here, or click to select"
                                     disabled={processing}

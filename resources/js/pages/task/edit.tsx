@@ -46,7 +46,6 @@ type TaskForm = {
     github_update: boolean
     jira_update: boolean
     tags: string[]
-    attachments?: File[]
 }
 
 type Attachment = {
@@ -98,7 +97,8 @@ export default function EditTask({
     isProjectOwner,
 }: Props) {
     const { auth } = usePage<{ auth: { user: { id: number } } }>().props
-    const { data, setData, post, processing, errors } = useForm<TaskForm>({
+    const [newAttachments, setNewAttachments] = useState<File[]>([])
+    const { data, setData, post, processing, errors, transform } = useForm<TaskForm>({
         project_id: task.project_id.toString(),
         title: task.title,
         description: task.description || '',
@@ -174,9 +174,15 @@ export default function EditTask({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
+        // include newly added attachments to the payload as multipart
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        transform((d) => ({ ...d, attachments: newAttachments }))
         post(route('task.update', task.id), {
+            forceFormData: true,
             onSuccess: () => {
                 toast.success('Task updated successfully')
+                setNewAttachments([])
             },
             onError: () => {
                 toast.error('Failed to update task')
@@ -457,8 +463,8 @@ export default function EditTask({
                                 )}
 
                                 <FileDropzone
-                                    value={data.attachments || []}
-                                    onChange={(files) => setData('attachments', files)}
+                                    value={newAttachments}
+                                    onChange={setNewAttachments}
                                     label="Attachments"
                                     description="Drag & drop files here, or click to select"
                                     disabled={processing}
