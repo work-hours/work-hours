@@ -41,10 +41,13 @@ final class DashboardController extends Controller
         $clientCount = ClientStore::userClients(userId: auth()->id())->count();
 
         $teamMembers = TeamStore::teamMembersIds(userId: auth()->id())->merge([auth()->id()]);
-        $totalHours = TimeLogStore::totalHours(teamMembersIds: $teamMembers->toArray());
-        $unpaidHours = TimeLogStore::unpaidHours(teamMembersIds: $teamMembers->toArray());
-        $unpaidAmountsByCurrency = TimeLogStore::unpaidAmount(teamMembersIds: $teamMembers->toArray());
-        $paidAmountsByCurrency = TimeLogStore::paidAmount(teamMembersIds: $teamMembers->toArray());
+        $teamMembersIds = $teamMembers->toArray();
+
+        $totalHours = TimeLogStore::totalHours(teamMembersIds: $teamMembersIds);
+        $unpaidHours = TimeLogStore::unpaidHours(teamMembersIds: $teamMembersIds);
+        $unpaidAmountsByCurrency = TimeLogStore::unpaidAmount(teamMembersIds: $teamMembersIds);
+        $paidAmountsByCurrency = TimeLogStore::paidAmount(teamMembersIds: $teamMembersIds);
+        $dailyTrend = TimeLogStore::dailyTrend(teamMembersIds: $teamMembersIds, userId: auth()->id(), days: 7);
 
         return [
             'count' => $teamCount,
@@ -55,6 +58,7 @@ final class DashboardController extends Controller
             'currency' => 'USD',
             'weeklyAverage' => $teamCount > 0 ? round($totalHours / $teamCount, 2) : 0,
             'clientCount' => $clientCount,
+            'dailyTrend' => $dailyTrend,
         ];
     }
 

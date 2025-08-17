@@ -26,6 +26,38 @@ use Illuminate\Pipeline\Pipeline;
 
 final class TimeLogStore
 {
+    public static function dailyTrend(array $teamMembersIds, int $userId, int $days = 7): array
+    {
+        $days = max(1, $days);
+        $startDate = Carbon::today()->subDays($days - 1)->startOfDay();
+
+        $logs = TimeLog::query()
+            ->whereIn('user_id', $teamMembersIds)
+            ->where('status', TimeLogStatus::APPROVED)
+            ->where('start_timestamp', '>=', $startDate)
+            ->get(['user_id', 'start_timestamp', 'duration']);
+
+        $groupedByDate = $logs->groupBy(function (TimeLog $log): string {
+            return $log->start_timestamp->toDateString();
+        });
+
+        $result = [];
+        for ($i = 0; $i < $days; $i++) {
+            $date = $startDate->copy()->addDays($i)->toDateString();
+            $dayLogs = $groupedByDate->get($date, collect());
+
+            $teamHours = round((float) $dayLogs->sum('duration'), 2);
+            $userHours = round((float) $dayLogs->where('user_id', $userId)->sum('duration'), 2);
+
+            $result[] = [
+                'date' => $date,
+                'userHours' => $userHours,
+                'teamHours' => $teamHours,
+            ];
+        }
+
+        return $result;
+    }
     public static function recentTeamLogs(array $teamMembersIds, int $limit = 5): Collection
     {
         return TimeLog::query()

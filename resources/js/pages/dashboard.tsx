@@ -2,7 +2,7 @@ import HoursDistribution from '@/components/dashboard/HoursDistribution'
 import RecentTimeLogs from '@/components/dashboard/RecentTimeLogs'
 import StatsCards from '@/components/dashboard/StatsCards'
 import TeamProductivity from '@/components/dashboard/TeamProductivity'
-import WeeklyTrend from '@/components/dashboard/WeeklyTrend'
+import DailyTrend from '@/components/dashboard/DailyTrend'
 import WelcomeSection from '@/components/dashboard/WelcomeSection'
 import Loader from '@/components/ui/loader'
 import MasterLayout from '@/layouts/master-layout'
@@ -24,6 +24,7 @@ interface TeamStats {
     currency: string
     weeklyAverage: number
     clientCount: number
+    dailyTrend: Array<{ date: string; userHours: number; teamHours: number }>
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -46,6 +47,7 @@ export default function Dashboard() {
         currency: 'USD',
         weeklyAverage: 0,
         clientCount: 0,
+        dailyTrend: [],
     })
 
     const getStats = async (): Promise<void> => {
@@ -69,12 +71,6 @@ export default function Dashboard() {
         { name: 'Paid', value: roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours) },
     ]
 
-    const weeklyData = [
-        { name: 'Week 1', hours: roundToTwoDecimals(teamStats.weeklyAverage * 0.9) },
-        { name: 'Week 2', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.1) },
-        { name: 'Week 3', hours: roundToTwoDecimals(teamStats.weeklyAverage * 0.95) },
-        { name: 'Week 4', hours: roundToTwoDecimals(teamStats.weeklyAverage * 1.05) },
-    ]
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
@@ -102,7 +98,7 @@ export default function Dashboard() {
 
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <HoursDistribution hoursData={hoursData} />
-                                <WeeklyTrend weeklyData={weeklyData} />
+                                <DailyTrend data={teamStats.dailyTrend || []} />
                             </div>
                         </section>
 
