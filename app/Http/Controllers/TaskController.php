@@ -357,8 +357,9 @@ final class TaskController extends Controller
         $task->load(['project', 'assignees', 'meta', 'tags']);
 
         $isProjectOwner = $task->project->user_id === auth()->id();
+        $isTaskCreator = $task->created_by === auth()->id();
 
-        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
+        abort_if(! $isProjectOwner && ! $isTaskCreator, 403, 'Unauthorized action.');
 
         $userId = (int) auth()->id();
         $taskId = (int) $task->id;
@@ -412,8 +413,9 @@ final class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Task $task): void
     {
         $isProjectOwner = $task->project->user_id === auth()->id();
+        $isTaskCreator = $task->created_by === auth()->id();
 
-        abort_if(! $isProjectOwner, 403, 'Unauthorized action.');
+        abort_if(! $isProjectOwner && ! $isTaskCreator, 403, 'Unauthorized action.');
 
         DB::beginTransaction();
         try {

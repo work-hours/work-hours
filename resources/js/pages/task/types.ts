@@ -30,6 +30,7 @@ export type TaskComment = {
 export type Task = {
     id: number
     project_id: number
+    created_by: number
     title: string
     description: string | null
     status: 'pending' | 'in_progress' | 'completed'

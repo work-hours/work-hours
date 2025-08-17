@@ -730,7 +730,7 @@ export default function Tasks() {
                                                                     </DropdownMenuItem>
                                                                 </Link>
 
-                                                                {task.project.user_id === auth.user.id && (
+                                                                {(task.project.user_id === auth.user.id || task.created_by === auth.user.id) && (
                                                                     <>
                                                                         <Link href={route('task.edit', task.id)}>
                                                                             <DropdownMenuItem className="group cursor-pointer">
@@ -738,12 +738,14 @@ export default function Tasks() {
                                                                                 <span>Edit</span>
                                                                             </DropdownMenuItem>
                                                                         </Link>
-                                                                        <TaskDeleteAction
-                                                                            taskId={task.id}
-                                                                            isGithub={task.is_imported && task.meta?.source === 'github'}
-                                                                            isJira={task.is_imported && task.meta?.source === 'jira'}
-                                                                            onDeleteSuccess={() => setTasks(tasks.filter((t) => t.id !== task.id))}
-                                                                        />
+                                                                        {task.project.user_id === auth.user.id && (
+                                                                            <TaskDeleteAction
+                                                                                taskId={task.id}
+                                                                                isGithub={task.is_imported && task.meta?.source === 'github'}
+                                                                                isJira={task.is_imported && task.meta?.source === 'jira'}
+                                                                                onDeleteSuccess={() => setTasks(tasks.filter((t) => t.id !== task.id))}
+                                                                            />
+                                                                        )}
                                                                     </>
                                                                 )}
                                                             </DropdownMenuContent>
