@@ -1,7 +1,7 @@
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import TagInput from '@/components/ui/tag-input'
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
-import { Head, useForm } from '@inertiajs/react'
+import { Head, useForm, usePage } from '@inertiajs/react'
 import { Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Plus } from 'lucide-react'
 import { FormEventHandler, SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -40,7 +40,6 @@ type TaskForm = {
     create_github_issue: boolean
     create_jira_issue: boolean
     tags: string[]
-    attachments?: File[]
 }
 
 type Props = {
@@ -59,7 +58,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function CreateTask({ projects }: Props) {
-    const { data, setData, post, processing, errors, reset } = useForm<TaskForm>({
+    const { auth } = usePage<{ auth: { user: { id: number } } }>().props
+    const { data, setData, post, processing, errors, reset, transform } = useForm<TaskForm>({
         project_id: '',
         title: '',
         description: '',
@@ -70,7 +70,6 @@ export default function CreateTask({ projects }: Props) {
         create_github_issue: false,
         create_jira_issue: false,
         tags: [],
-        attachments: [],
     })
 
     const [potentialAssignees, setPotentialAssignees] = useState<{ id: number; name: string; email: string }[]>([])
@@ -79,6 +78,7 @@ export default function CreateTask({ projects }: Props) {
     const [isGithubProject, setIsGithubProject] = useState<boolean>(false)
     const [isJiraProject, setIsJiraProject] = useState<boolean>(false)
 
+    const [attachments, setAttachments] = useState<File[]>([])
     const [dueDate, setDueDate] = useState<Date | null>(data.due_date ? new Date(data.due_date) : null)
 
     const handleDueDateChange = (date: Date | null) => {
@@ -113,6 +113,15 @@ export default function CreateTask({ projects }: Props) {
         }
     }, [data.project_id])
 
+    // When only the current user is a potential assignee, auto-select and lock-in
+    useEffect(() => {
+        if (potentialAssignees.length === 1 && potentialAssignees[0].id === auth.user.id) {
+            if (!data.assignees.includes(auth.user.id)) {
+                setData('assignees', [auth.user.id])
+            }
+        }
+    }, [potentialAssignees])
+
     useEffect(() => {
         const selectedProject = projects.find((project) => project.id === Number(data.project_id))
         setIsGithubProject(!!selectedProject?.is_github)
@@ -121,11 +130,18 @@ export default function CreateTask({ projects }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
+        // include attachments in the payload for multipart submission
+        // transform only affects the next request
+        // attachments is managed outside the form state to satisfy TS constraints
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        transform((d) => ({ ...d, attachments }))
         post(route('task.store'), {
             forceFormData: true,
             onSuccess: () => {
                 toast.success('Task created successfully')
                 reset()
+                setAttachments([])
             },
             onError: () => {
                 toast.error('Failed to create task')
@@ -134,6 +150,12 @@ export default function CreateTask({ projects }: Props) {
     }
 
     const handleAssigneeToggle = (assigneeId: number) => {
+        // If only the current user is allowed (non-owner), prevent unchecking self
+        const isRestrictedToSelf = potentialAssignees.length === 1 && potentialAssignees[0].id === auth.user.id
+        if (isRestrictedToSelf && assigneeId === auth.user.id) {
+            return
+        }
+
         const currentAssignees = [...data.assignees]
         const index = currentAssignees.indexOf(assigneeId)
 
@@ -342,7 +364,7 @@ export default function CreateTask({ projects }: Props) {
                                                             id={`assignee-${assignee.id}`}
                                                             checked={data.assignees.includes(assignee.id)}
                                                             onCheckedChange={() => handleAssigneeToggle(assignee.id)}
-                                                            disabled={processing}
+                                                            disabled={processing || (potentialAssignees.length === 1 && potentialAssignees[0].id === auth.user.id)}
                                                         />
                                                         <Label htmlFor={`assignee-${assignee.id}`} className="cursor-pointer text-sm">
                                                             {assignee.name} ({assignee.email})
@@ -396,8 +418,8 @@ export default function CreateTask({ projects }: Props) {
                                 )}
 
                                 <FileDropzone
-                                    value={data.attachments || []}
-                                    onChange={(files) => setData('attachments', files)}
+                                    value={attachments}
+                                    onChange={setAttachments}
                                     label="Attachments"
                                     description="Drag & drop files here, or click to select"
                                     disabled={processing}

@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property int $project_id
+ * @property int $created_by
  * @property string $title
  * @property string|null $description
  * @property string $status
@@ -35,6 +36,7 @@ final class Task extends Model
 {
     protected $fillable = [
         'project_id',
+        'created_by',
         'title',
         'description',
         'status',
@@ -46,6 +48,11 @@ final class Task extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function assignees(): BelongsToMany

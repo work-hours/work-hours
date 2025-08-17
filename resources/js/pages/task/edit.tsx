@@ -1,7 +1,7 @@
 import { SearchableSelect } from '@/components/ui/searchable-select'
 import TagInput from '@/components/ui/tag-input'
 import { potentialAssignees as _potentialAssignees } from '@actions/TaskController'
-import { Head, useForm } from '@inertiajs/react'
+import { Head, useForm, usePage } from '@inertiajs/react'
 import { Calendar, CheckSquare, ClipboardList, FileText, LoaderCircle, Save, Trash2 } from 'lucide-react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -46,7 +46,6 @@ type TaskForm = {
     github_update: boolean
     jira_update: boolean
     tags: string[]
-    attachments?: File[]
 }
 
 type Attachment = {
@@ -72,6 +71,7 @@ type Props = {
     isGithub: boolean
     isJira: boolean
     attachments?: Attachment[]
+    isProjectOwner: boolean
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -94,8 +94,11 @@ export default function EditTask({
     isGithub,
     isJira,
     attachments = [],
+    isProjectOwner,
 }: Props) {
-    const { data, setData, post, processing, errors } = useForm<TaskForm>({
+    const { auth } = usePage<{ auth: { user: { id: number } } }>().props
+    const [newAttachments, setNewAttachments] = useState<File[]>([])
+    const { data, setData, post, processing, errors, transform } = useForm<TaskForm>({
         project_id: task.project_id.toString(),
         title: task.title,
         description: task.description || '',
@@ -171,9 +174,15 @@ export default function EditTask({
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
+        // include newly added attachments to the payload as multipart
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        transform((d) => ({ ...d, attachments: newAttachments }))
         post(route('task.update', task.id), {
+            forceFormData: true,
             onSuccess: () => {
                 toast.success('Task updated successfully')
+                setNewAttachments([])
             },
             onError: () => {
                 toast.error('Failed to update task')
@@ -182,6 +191,10 @@ export default function EditTask({
     }
 
     const handleAssigneeToggle = (assigneeId: number) => {
+            // Prevent non-owners from removing their own assignment
+            if (!isProjectOwner && assigneeId === auth.user.id) {
+                return
+            }
         const currentAssignees = [...data.assignees]
         const index = currentAssignees.indexOf(assigneeId)
 
@@ -390,7 +403,7 @@ export default function EditTask({
                                                             id={`assignee-${assignee.id}`}
                                                             checked={data.assignees.includes(assignee.id)}
                                                             onCheckedChange={() => handleAssigneeToggle(assignee.id)}
-                                                            disabled={processing}
+                                                            disabled={processing || (!isProjectOwner && assignee.id === auth.user.id)}
                                                         />
                                                         <Label htmlFor={`assignee-${assignee.id}`} className="cursor-pointer text-sm">
                                                             {assignee.name} ({assignee.email})
@@ -450,8 +463,8 @@ export default function EditTask({
                                 )}
 
                                 <FileDropzone
-                                    value={data.attachments || []}
-                                    onChange={(files) => setData('attachments', files)}
+                                    value={newAttachments}
+                                    onChange={setNewAttachments}
                                     label="Attachments"
                                     description="Drag & drop files here, or click to select"
                                     disabled={processing}

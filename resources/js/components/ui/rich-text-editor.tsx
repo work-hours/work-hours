@@ -8,10 +8,12 @@ type Props = {
   placeholder?: string
   className?: string
   disabled?: boolean
+  minRows?: number
+  mentions?: Array<{ id: number | string; name: string; handle: string }>
 }
 
 
-export default function RichTextEditor({ value, onChange, placeholder = 'Write something…', className, disabled = false }: Props) {
+export default function RichTextEditor({ value, onChange, placeholder = 'Write something…', className, disabled = false, minRows }: Props) {
   const ref = useRef<HTMLDivElement | null>(null)
   const [isFocused, setIsFocused] = useState(false)
 
@@ -79,6 +81,7 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Write s
 
           'hover:border-primary/50 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] rounded-b-md min-h-28',
         )}
+        style={minRows ? { minHeight: `${minRows * 24}px` } : undefined}
         contentEditable={!disabled}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
