@@ -1,0 +1,41 @@
+<svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Loading">
+  <defs>
+    <linearGradient id="ringGrad" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%"  stop-color="#00E6FF"/>
+      <stop offset="100%" stop-color="#00A99D"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="220" height="220" fill="#0B1D2A" rx="20"/>
+
+  <!-- Clock outline -->
+  <circle cx="110" cy="110" r="60" fill="none" stroke="#E0E6ED" stroke-width="6" opacity="0.2"/>
+
+  <!-- Animated sweep ring -->
+  <circle cx="110" cy="110" r="60" fill="none" stroke="url(#ringGrad)"
+          stroke-width="8" stroke-linecap="round"
+          stroke-dasharray="1 400">
+    <animate attributeName="stroke-dasharray"
+             values="1 400; 120 400; 1 400"
+             dur="2.4s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="rotate"
+                      from="0 110 110" to="360 110 110"
+                      dur="2s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Clock hands -->
+  <g transform="translate(110,110)" stroke="#9B5DE5" stroke-linecap="round">
+    <g>
+      <line x1="0" y1="0" x2="0" y2="-24" stroke-width="5"/>
+      <animateTransform attributeName="transform" type="rotate"
+                        from="0" to="360" dur="8s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <line x1="0" y1="0" x2="30" y2="0" stroke-width="5"/>
+      <animateTransform attributeName="transform" type="rotate"
+                        from="0" to="360" dur="2s" repeatCount="indefinite"/>
+    </g>
+    <circle cx="0" cy="0" r="6" fill="#E0E6ED"/>
+  </g>
+</svg>
