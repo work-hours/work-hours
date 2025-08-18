@@ -4,6 +4,7 @@ import { createInertiaApp } from '@inertiajs/react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createRoot } from 'react-dom/client'
 import { initializeTheme } from './hooks/use-appearance'
+import GlobalLoader from './components/global-loader'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Work Hours'
 
@@ -13,11 +14,14 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el)
 
-        root.render(<App {...props} />)
+        root.render(
+            <>
+                <App {...props} />
+                <GlobalLoader />
+            </>
+        )
     },
-    progress: {
-        color: '#4B5563',
-    },
+    progress: false,
 }).then()
 
 initializeTheme()
