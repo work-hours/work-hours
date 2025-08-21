@@ -5,8 +5,7 @@ declare(strict_types=1);
 use App\Adapters\GitHubAdapter;
 use App\Services\GitHubRepositoryService;
 
-
-it('maps github issue state to task status correctly', function () {
+it('maps github issue state to task status correctly', function (): void {
     $adapter = new GitHubAdapter();
     $service = new GitHubRepositoryService($adapter);
 
@@ -15,7 +14,7 @@ it('maps github issue state to task status correctly', function () {
     expect($service->mapGitHubIssueStatus('unknown'))->toBe('pending');
 });
 
-it('computes status and priority from issue payload', function () {
+it('computes status and priority from issue payload', function (): void {
     $adapter = new GitHubAdapter();
     $service = new GitHubRepositoryService($adapter);
 

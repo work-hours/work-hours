@@ -13,7 +13,6 @@ export default function GlobalLoader() {
 
     useEffect(() => {
         const showWithDelay = () => {
-            // Debounce to prevent flicker on quick navigations
             timerRef.current = setTimeout(() => setVisible(true), 150)
         }
 
@@ -27,16 +26,10 @@ export default function GlobalLoader() {
 
         const onStart = () => showWithDelay()
         const onFinish = () => hideNow()
-        const onProgress = () => {
-            // no-op for now; we could display incremental progress if needed
-        }
-
-        // Inertia router events
+        const onProgress = () => {}
         router.on('start', onStart)
         router.on('finish', onFinish)
         router.on('progress', onProgress)
-
-        // Window-level inertia events for compatibility across versions
         const winStart = () => showWithDelay()
         const winFinish = () => hideNow()
         const winProgress = () => {}

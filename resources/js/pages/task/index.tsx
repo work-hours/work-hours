@@ -69,14 +69,13 @@ function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: n
                     project_name: task.project.name,
                 })
             }
-            className="h-7 mt-1 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+            className="mt-1 h-7 border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
             title={tracker.running ? 'Another tracker is running' : 'Start tracking'}
         >
             <Play className="h-3 w-3" />
         </Button>
     )
 }
-
 
 export default function Tasks() {
     const { auth, projects, tags } = usePage<
@@ -743,7 +742,9 @@ export default function Tasks() {
                                                                                 taskId={task.id}
                                                                                 isGithub={task.is_imported && task.meta?.source === 'github'}
                                                                                 isJira={task.is_imported && task.meta?.source === 'jira'}
-                                                                                onDeleteSuccess={() => setTasks(tasks.filter((t) => t.id !== task.id))}
+                                                                                onDeleteSuccess={() =>
+                                                                                    setTasks(tasks.filter((t) => t.id !== task.id))
+                                                                                }
                                                                             />
                                                                         )}
                                                                     </>

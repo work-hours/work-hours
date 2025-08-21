@@ -184,7 +184,10 @@ export function TimeTrackerProvider({ children }: { children: ReactNode }) {
         })
     }, [])
 
-    const value = useMemo<TimeTrackerContextType>(() => ({ ...state, start, pause, resume, stop, adjustElapsed, setElapsedExact }), [state, start, pause, resume, stop, adjustElapsed, setElapsedExact])
+    const value = useMemo<TimeTrackerContextType>(
+        () => ({ ...state, start, pause, resume, stop, adjustElapsed, setElapsedExact }),
+        [state, start, pause, resume, stop, adjustElapsed, setElapsedExact],
+    )
 
     return <TimeTrackerContext.Provider value={value}>{children}</TimeTrackerContext.Provider>
 }
