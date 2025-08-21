@@ -133,6 +133,24 @@ final class TaskController extends Controller
         back()->throwResponse();
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $projects = ProjectStore::userProjects(userId: auth()->id())
+            ->map(fn ($project): array => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'source' => $project->source,
+                'is_github' => $project->source === 'github',
+            ]);
+
+        return Inertia::render('task/create', [
+            'projects' => $projects,
+        ]);
+    }
+
     #[Action(method: 'delete', name: 'task.comments.destroy', params: ['task', 'comment'], middleware: ['auth', 'verified'])]
     public function destroyComment(Task $task, TaskComment $comment): void
     {
@@ -175,6 +193,62 @@ final class TaskController extends Controller
     }
 
     /**
+     * Update the specified resource in storage.
+     *
+     * @throws Throwable
+     */
+    #[Action(method: 'post', name: 'task.update', params: ['task'], middleware: ['auth', 'verified'])]
+    public function update(UpdateTaskRequest $request, Task $task): void
+    {
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isTaskCreator = $task->created_by === auth()->id();
+
+        abort_if(! $isProjectOwner && ! $isTaskCreator, 403, 'Unauthorized action.');
+
+        DB::beginTransaction();
+        try {
+
+            $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
+            $oldStatus = $task->status;
+            $task->update($request->only(['project_id', 'title', 'description', 'status', 'priority', 'due_date']));
+
+            if ($request->has('assignees')) {
+                $newAssigneeIds = $request->input('assignees');
+                if (! $isProjectOwner) {
+                    $newAssigneeIds = array_values(array_unique(array_merge($newAssigneeIds, [auth()->id()])));
+                }
+                $task->assignees()->sync($newAssigneeIds);
+                $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
+            } elseif ($isProjectOwner) {
+                $task->assignees()->detach();
+            }
+
+            if ($request->has('tags')) {
+                $this->attachTags($request->input('tags'), $task);
+            }
+
+            $this->storeAttachments($request, $task);
+
+            DB::commit();
+
+            if ($request->has('assignees')) {
+                $this->notifyAssignees($task, $addedAssigneeIds ?? []);
+            }
+
+            $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
+
+            $this->updateExternalIntegrations(
+                $task,
+                $request->boolean('github_update'),
+                $request->boolean('jira_update')
+            );
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
@@ -204,24 +278,6 @@ final class TaskController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $projects = ProjectStore::userProjects(userId: auth()->id())
-            ->map(fn ($project): array => [
-                'id' => $project->id,
-                'name' => $project->name,
-                'source' => $project->source,
-                'is_github' => $project->source === 'github',
-            ]);
-
-        return Inertia::render('task/create', [
-            'projects' => $projects,
-        ]);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @throws Throwable
@@ -245,10 +301,13 @@ final class TaskController extends Controller
                 'priority' => $request->input('priority', 'medium'),
                 'due_date' => $request->input('due_date'),
             ]);
+
             $assigneeIds = $request->input('assignees', []);
+
             if (! $isProjectOwner) {
                 $assigneeIds = [auth()->id()];
             }
+
             if ($assigneeIds !== []) {
                 $task->assignees()->sync($assigneeIds);
             }
@@ -260,6 +319,7 @@ final class TaskController extends Controller
             $this->storeAttachments($request, $task);
 
             DB::commit();
+
             $this->notifyAssignees($task, $assigneeIds);
 
             if ($request->boolean('create_github_issue')) {
@@ -398,62 +458,6 @@ final class TaskController extends Controller
             'attachments' => $files,
             'isProjectOwner' => $isProjectOwner,
         ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @throws Throwable
-     */
-    #[Action(method: 'post', name: 'task.update', params: ['task'], middleware: ['auth', 'verified'])]
-    public function update(UpdateTaskRequest $request, Task $task): void
-    {
-        $isProjectOwner = $task->project->user_id === auth()->id();
-        $isTaskCreator = $task->created_by === auth()->id();
-
-        abort_if(! $isProjectOwner && ! $isTaskCreator, 403, 'Unauthorized action.');
-
-        DB::beginTransaction();
-        try {
-
-            $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
-            $oldStatus = $task->status;
-            $task->update($request->only(['project_id', 'title', 'description', 'status', 'priority', 'due_date']));
-
-            if ($request->has('assignees')) {
-                $newAssigneeIds = $request->input('assignees');
-                if (! $isProjectOwner) {
-                    $newAssigneeIds = array_values(array_unique(array_merge($newAssigneeIds, [auth()->id()])));
-                }
-                $task->assignees()->sync($newAssigneeIds);
-                $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
-            } elseif ($isProjectOwner) {
-                $task->assignees()->detach();
-            }
-
-            if ($request->has('tags')) {
-                $this->attachTags($request->input('tags'), $task);
-            }
-
-            $this->storeAttachments($request, $task);
-
-            DB::commit();
-
-            if ($request->has('assignees')) {
-                $this->notifyAssignees($task, $addedAssigneeIds ?? []);
-            }
-
-            $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
-
-            $this->updateExternalIntegrations(
-                $task,
-                $request->boolean('github_update'),
-                $request->boolean('jira_update')
-            );
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
     }
 
     /**
@@ -663,6 +667,7 @@ final class TaskController extends Controller
         $users = User::query()->whereIn('id', $userIds)->get();
         foreach ($users as $user) {
             $user->notify(new TaskAssigned($task, auth()->user()));
+            \App\Events\TaskAssigned::dispatch($task, auth()->user(), $user);
         }
     }
 

@@ -4,10 +4,12 @@ import { MasterContent } from '@/components/master-content'
 import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
 import { TimeTrackerProvider } from '@/contexts/time-tracker-context'
-import { type BreadcrumbItem } from '@/types'
+import { type BreadcrumbItem, SharedData } from '@/types'
 import { projects } from '@actions/DashboardController'
 import { type ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
+import { useEcho } from '@laravel/echo-react'
+import { usePage } from '@inertiajs/react'
 
 interface Project {
     id: number
@@ -20,6 +22,7 @@ interface MasterLayoutProps {
 }
 
 export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayoutProps) {
+    const {auth} = usePage<SharedData>().props;
     const [collapsed, setCollapsed] = useState(() => {
         if (typeof window !== 'undefined') {
             const savedState = localStorage.getItem('sidebar_collapsed')
@@ -42,6 +45,14 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
             console.error('Failed to fetch data:', error)
         }
     }
+
+    useEcho(
+        `App.Models.User.${auth.user.id}`,
+        "TaskAssigned",
+        (e) => {
+            console.log(e);
+        },
+    );
 
     useEffect(() => {
         fetchData().then()
