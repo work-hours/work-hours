@@ -6,10 +6,10 @@ import { MasterSidebar } from '@/components/master-sidebar'
 import { TimeTrackerProvider } from '@/contexts/time-tracker-context'
 import { type BreadcrumbItem, SharedData } from '@/types'
 import { projects } from '@actions/DashboardController'
+import { usePage } from '@inertiajs/react'
+import { useEcho } from '@laravel/echo-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
-import { useEcho } from '@laravel/echo-react'
-import { usePage } from '@inertiajs/react'
 
 interface Project {
     id: number
@@ -22,7 +22,7 @@ interface MasterLayoutProps {
 }
 
 export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayoutProps) {
-    const {auth} = usePage<SharedData>().props;
+    const { auth } = usePage<SharedData>().props
     const [collapsed, setCollapsed] = useState(() => {
         if (typeof window !== 'undefined') {
             const savedState = localStorage.getItem('sidebar_collapsed')
@@ -46,13 +46,9 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
         }
     }
 
-    useEcho(
-        `App.Models.User.${auth.user.id}`,
-        "TaskAssigned",
-        (e) => {
-            console.log(e);
-        },
-    );
+    useEcho(`App.Models.User.${auth.user.id}`, 'TaskAssigned', (e) => {
+        console.log(e)
+    })
 
     useEffect(() => {
         fetchData().then()

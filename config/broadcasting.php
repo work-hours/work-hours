@@ -43,9 +43,9 @@ return [
                 'scheme' => env('REVERB_SCHEME', 'https'),
                 'useTLS' => env('REVERB_SCHEME', 'https') === 'https',
             ],
-            'client_options' => [
-                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
-            ],
+            'client_options' => env('APP_ENV') === 'local' ? [
+                'verify' => false,
+            ] : [],
         ],
 
         'pusher' => [
@@ -61,7 +61,10 @@ return [
                 'encrypted' => true,
                 'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',
             ],
-            'client_options' => [
+            'client_options' => env('APP_ENV') === 'local' ? [
+                // Disable SSL verification for local development with self-signed certs
+                'verify' => false,
+            ] : [
                 // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
             ],
         ],
