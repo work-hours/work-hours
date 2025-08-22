@@ -214,7 +214,6 @@ declare interface TaskCommentedEvent {
     }
 }
 
-
 // Realtime event for time log paid
 declare interface TimeLogPaidEvent {
     timeLog: {
