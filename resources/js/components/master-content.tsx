@@ -1,21 +1,14 @@
+import { MasterContentProps } from '@/@types/components'
 import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { HourlyRateStatusBar } from '@/components/hourly-rate-status-bar'
 import RunningTracker from '@/components/running-tracker'
 import { Badge } from '@/components/ui/badge'
-import { type BreadcrumbItem } from '@/types'
 import { all } from '@actions/NotificationsController'
 import { Link } from '@inertiajs/react'
 import { Bell, ChevronRight, Home, Settings } from 'lucide-react'
-import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-interface MasterContentProps {
-    children: ReactNode
-    breadcrumbs?: BreadcrumbItem[]
-    collapsed: boolean
-    setCollapsed: Dispatch<SetStateAction<boolean>>
-}
-
-export function MasterContent({ children, breadcrumbs = [], collapsed, setCollapsed }: MasterContentProps) {
+export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps) {
     const [unreadCount, setUnreadCount] = useState(0)
     const [isAdmin, setIsAdmin] = useState(false)
 
