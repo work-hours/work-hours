@@ -17,8 +17,8 @@ use App\Models\User;
 use App\Notifications\PasswordChanged;
 use App\Notifications\TeamMemberAdded;
 use App\Notifications\TeamMemberCreated;
+use App\Services\TeamService;
 use App\Traits\ExportableTrait;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -32,6 +32,8 @@ use Throwable;
 final class TeamController extends Controller
 {
     use ExportableTrait;
+
+    public function __construct(private readonly TeamService $teamService) {}
 
     /**
      * @throws ContainerExceptionInterface
@@ -133,11 +135,7 @@ final class TeamController extends Controller
     {
         $baseQuery = TimeLogQuery::builder(userId: auth()->id());
 
-        $paginatedLogs = (clone $baseQuery)
-            ->paginate(15)
-            ->appends(request()->query());
-
-        $allFilteredLogs = (clone $baseQuery)->get();
+        [$paginatedLogs, $allFilteredLogs] = $this->teamService->paginateWithFull($baseQuery);
 
         $teamMembersList = TeamStore::teamMembers(userId: auth()->id());
         $tags = TagStore::userTags(userId: auth()->id());
@@ -155,11 +153,7 @@ final class TeamController extends Controller
 
         $baseQuery = TimeLogQuery::builder(userId: auth()->id(), member: $user);
 
-        $paginatedLogs = (clone $baseQuery)
-            ->paginate(15)
-            ->appends(request()->query());
-
-        $allFilteredLogs = (clone $baseQuery)->get();
+        [$paginatedLogs, $allFilteredLogs] = $this->teamService->paginateWithFull($baseQuery);
 
         return Inertia::render('team/time-logs', [
             'user' => $user,
@@ -176,7 +170,7 @@ final class TeamController extends Controller
     {
         $teamMembers = TeamListSearchableQuery::builder()->get()->map(fn ($team): array => TeamListMapper::map($team));
         $headers = TeamStore::exportHeaders();
-        $filename = 'team_members_' . Carbon::now()->format('Y-m-d') . '.csv';
+        $filename = $this->teamService->csvDateFilename('team_members');
 
         return $this->exportToCsv($teamMembers, $headers, $filename);
     }
@@ -187,7 +181,7 @@ final class TeamController extends Controller
         $timeLogs = TimeLogQuery::builder(userId: auth()->id())->get();
         $mappedTimeLogs = TimeLogStore::timeLogExportMapper(timeLogs: $timeLogs);
         $headers = TimeLogStore::timeLogExportHeaders();
-        $filename = 'team_time_logs_' . Carbon::now()->format('Y-m-d') . '.csv';
+        $filename = $this->teamService->csvDateFilename('team_time_logs');
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);
     }
