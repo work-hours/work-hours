@@ -4,6 +4,7 @@ import TeamMemberAddedToast from '@/components/notifications/team-member-added-t
 import TimeLogEntryCreatedToast from '@/components/notifications/time-log-entry-created-toast'
 import TimeLogApprovedToast from '@/components/notifications/time-log-approved-toast'
 import TimeLogRejectedToast from '@/components/notifications/time-log-rejected-toast'
+import TaskCommentedToast from '@/components/notifications/task-commented-toast'
 import { useNotifications } from '@/contexts/notifications-context'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
@@ -26,6 +27,8 @@ export default function RealTimeNotification() {
             toast.success(<TimeLogApprovedToast e={lastRealtimeNotification.data} />)
         } else if (lastRealtimeNotification.type === 'TimeLogRejected') {
             toast.error(<TimeLogRejectedToast e={lastRealtimeNotification.data} />)
+        } else if (lastRealtimeNotification.type === 'TaskCommented') {
+            toast.success(<TaskCommentedToast e={lastRealtimeNotification.data} />)
         }
     }, [lastRealtimeNotification])
 
