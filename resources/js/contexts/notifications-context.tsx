@@ -6,12 +6,16 @@ import { usePage } from '@inertiajs/react'
 import { useEcho } from '@laravel/echo-react'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
+type RealtimeNotification =
+    | { type: 'TaskAssigned'; data: TaskAssignedEvent }
+    | { type: 'TaskCompleted'; data: TaskCompletedEvent }
+
 export type NotificationsContextType = {
     unreadCount: number
     pendingTaskCount: number
     approvalCount: number
     isAdmin: boolean
-    lastTaskAssignedEvent: TaskAssignedEvent | null
+    lastRealtimeNotification: RealtimeNotification | null
     refreshUnreadCount: () => Promise<void>
     refreshPendingTaskCount: () => Promise<void>
     refreshApprovalCount: () => Promise<void>
@@ -26,7 +30,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     const [pendingTaskCount, setPendingTaskCount] = useState(0)
     const [approvalCount, setApprovalCount] = useState(0)
     const [isAdmin, setIsAdmin] = useState(false)
-    const [lastTaskAssignedEvent, setLastTaskAssignedEvent] = useState<TaskAssignedEvent | null>(null)
+    const [lastRealtimeNotification, setLastRealtimeNotification] = useState<RealtimeNotification | null>(null)
 
     const refreshUnreadCount = useCallback(async () => {
         try {
@@ -70,7 +74,14 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     }, [])
 
     useEcho(`App.Models.User.${auth.user.id}`, 'TaskAssigned', (e: TaskAssignedEvent) => {
-        setLastTaskAssignedEvent(e)
+        setLastRealtimeNotification({ type: 'TaskAssigned', data: e })
+        refreshUnreadCount().then()
+        refreshPendingTaskCount().then()
+        refreshApprovalCount().then()
+    })
+
+    useEcho(`App.Models.User.${auth.user.id}`, 'TaskCompleted', (e: TaskCompletedEvent) => {
+        setLastRealtimeNotification({ type: 'TaskCompleted', data: e })
         refreshUnreadCount().then()
         refreshPendingTaskCount().then()
         refreshApprovalCount().then()
@@ -82,7 +93,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
             pendingTaskCount,
             approvalCount,
             isAdmin,
-            lastTaskAssignedEvent,
+            lastRealtimeNotification,
             refreshUnreadCount,
             refreshPendingTaskCount,
             refreshApprovalCount,
@@ -92,7 +103,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
             pendingTaskCount,
             approvalCount,
             isAdmin,
-            lastTaskAssignedEvent,
+            lastRealtimeNotification,
             refreshUnreadCount,
             refreshPendingTaskCount,
             refreshApprovalCount,
