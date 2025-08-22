@@ -1,4 +1,5 @@
-import { type NavItem, type SharedData } from '@/types'
+import { MasterSidebarProps, NavItemGroup } from '@/@types/components'
+import { type SharedData } from '@/types'
 import { count } from '@actions/ApprovalController'
 import { count as taskCount } from '@actions/TaskController'
 import { Link, usePage } from '@inertiajs/react'
@@ -11,16 +12,6 @@ import { FooterNavigation } from './sidebar/footer-navigation'
 import { IntegrationNavigation } from './sidebar/integration-navigation'
 import { SidebarGroup } from './sidebar/sidebar-group'
 import { UserSection } from './sidebar/user-section'
-
-interface MasterSidebarProps {
-    collapsed: boolean
-}
-
-interface NavItemGroup {
-    title: string
-    icon?: React.ElementType
-    items: NavItem[]
-}
 
 const navGroups: NavItemGroup[] = [
     {
