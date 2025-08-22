@@ -57,7 +57,7 @@ final class TeamController extends Controller
         $result = TeamStore::createOrAttachMemberForUser(
             ownerUserId: auth()->id(),
             userData: $userData,
-            hourlyRate: $request->get('hourly_rate'),
+            hourlyRate: (int) $request->get('hourly_rate'),
             currency: $request->get('currency'),
             nonMonetary: $nonMonetary,
         );

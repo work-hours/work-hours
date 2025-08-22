@@ -87,6 +87,10 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         countRefresher()
     })
 
+    useEcho(`App.Models.User.${auth.user.id}`, 'MarkAsReadNotification', () => {
+        countRefresher()
+    })
+
     const value = useMemo<NotificationsContextType>(
         () => ({
             unreadCount,
