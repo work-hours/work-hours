@@ -46,6 +46,9 @@ final class TimeLog extends Model
         'currency',
         'status',
         'mark_task_complete',
+        'approved_by',
+        'approved_at',
+        'comment',
     ];
 
     public function user(): BelongsTo

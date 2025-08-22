@@ -21,7 +21,7 @@ final class TaskAssigned implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public readonly Task $task,
+        private readonly Task $task,
         private readonly User $assigner,
         private readonly User $assignee
     ) {}

@@ -95,6 +95,7 @@ final readonly class TaskService
 
             $projectOwner = User::query()->find($task->project->user_id);
             $projectOwner?->notify(new TaskCompleted($task, auth()->user()));
+            \App\Events\TaskCompleted::dispatch($task, auth()->user(), $projectOwner);
         }
     }
 
