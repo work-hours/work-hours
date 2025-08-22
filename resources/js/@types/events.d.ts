@@ -57,3 +57,42 @@ declare interface TimeLogEntryCreatedEvent {
         name?: string
     }
 }
+
+declare interface TimeLogApprovedEvent {
+    timeLog: {
+        id: number
+        duration?: number
+        project?: {
+            name?: string
+        }
+    }
+    approver: {
+        id?: number
+        name?: string
+    }
+    timeLogOwner: {
+        id?: number
+        name?: string
+    }
+}
+
+
+
+declare interface TimeLogRejectedEvent {
+    timeLog: {
+        id: number
+        duration?: number
+        project?: {
+            name?: string
+        }
+        comment?: string
+    }
+    approver: {
+        id?: number
+        name?: string
+    }
+    timeLogOwner: {
+        id?: number
+        name?: string
+    }
+}

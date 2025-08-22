@@ -63,6 +63,8 @@ final readonly class TimeLogService
                 $data['status'] = TimeLogStatus::APPROVED;
                 $data['approved_by'] = auth()->id();
                 $data['approved_at'] = Carbon::now();
+            } else {
+                $data['status'] = TimeLogStatus::PENDING;
             }
         }
 

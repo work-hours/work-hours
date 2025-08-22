@@ -70,8 +70,10 @@ final class ApprovalService
         if ($timeLogOwner && auth()->id() !== $timeLogOwner->getKey()) {
             if ($status === TimeLogStatus::APPROVED) {
                 $timeLogOwner->notify(new TimeLogApproved($timeLog, auth()->user()));
+                \App\Events\TimeLogApproved::dispatch($timeLog, auth()->user(), $timeLogOwner);
             } elseif ($status === TimeLogStatus::REJECTED) {
                 $timeLogOwner->notify(new TimeLogRejected($timeLog, auth()->user()));
+                \App\Events\TimeLogRejected::dispatch($timeLog, auth()->user(), $timeLogOwner);
             }
         }
 
