@@ -3,35 +3,41 @@ import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { HourlyRateStatusBar } from '@/components/hourly-rate-status-bar'
 import RunningTracker from '@/components/running-tracker'
 import { Badge } from '@/components/ui/badge'
+import { SharedData } from '@/types'
 import { all } from '@actions/NotificationsController'
-import { Link } from '@inertiajs/react'
+import { Link, usePage } from '@inertiajs/react'
+import { useEcho } from '@laravel/echo-react'
 import { Bell, ChevronRight, Home, Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps) {
+    const { auth } = usePage<SharedData>().props
     const [unreadCount, setUnreadCount] = useState(0)
     const [isAdmin, setIsAdmin] = useState(false)
 
-    useEffect(() => {
-        const fetchUnreadCount = async () => {
-            try {
-                const response = await all.data({ page: 1 })
-                setUnreadCount(response.unread_count)
+    const fetchUnreadCount = async () => {
+        try {
+            const response = await all.data({ page: 1 })
+            setUnreadCount(response.unread_count)
 
-                if (response.user && response.user.is_admin) {
-                    setIsAdmin(true)
-                }
-            } catch (error) {
-                console.error('Failed to fetch unread notifications count', error)
+            if (response.user && response.user.is_admin) {
+                setIsAdmin(true)
             }
+        } catch (error) {
+            console.error('Failed to fetch unread notifications count', error)
         }
+    }
 
+    useEffect(() => {
         fetchUnreadCount().then()
-
         const intervalId = setInterval(fetchUnreadCount, 60000)
 
         return () => clearInterval(intervalId)
     }, [])
+
+    useEcho(`App.Models.User.${auth.user.id}`, 'TaskAssigned', () => {
+        fetchUnreadCount().then()
+    })
 
     return (
         <div className="relative flex flex-1 flex-col bg-slate-50 dark:bg-slate-900">

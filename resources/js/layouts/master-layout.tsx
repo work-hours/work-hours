@@ -72,7 +72,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                 closeButton={true}
                 toastOptions={{
                     className: 'shadow-md rounded-lg border border-gray-200 dark:border-gray-800',
-                    duration: 5000,
+                    duration: 10000,
                 }}
             />
 

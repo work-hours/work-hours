@@ -5,6 +5,10 @@ declare interface MasterSidebarProps {
     collapsed: boolean
 }
 
+declare interface MasterRightSidebarProps {
+    collapsed?: boolean
+}
+
 declare interface NavItemGroup {
     title: string
     icon?: ElementType
