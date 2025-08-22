@@ -51,38 +51,34 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
         return <div dangerouslySetInnerHTML={{ __html: safe }} />
     }
     const { auth } = usePage<SharedData>().props
-        const [comments, setComments] = useState<CommentItem[]>(Array.isArray(task.comments) ? (task.comments as CommentItem[]) : [])
+    const [comments, setComments] = useState<CommentItem[]>(Array.isArray(task.comments) ? (task.comments as CommentItem[]) : [])
     const currentUserId = auth.user.id
 
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [commentToDelete, setCommentToDelete] = useState<number | null>(null)
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
+    useEcho(`App.Models.User.${auth.user.id}`, 'TaskCommented', (e: TaskCommentedEvent) => {
+        try {
+            if (!e || !e.task) return
+            if (e.task.id !== task.id) return
 
-        // Real-time: append new comments to this task as they arrive
-        useEcho(`App.Models.User.${auth.user.id}`, 'TaskCommented', (e: TaskCommentedEvent) => {
-            try {
-                if (!e || !e.task) return
-                if (e.task.id !== task.id) return
+            const incomingId = e.comment?.id
+            if (typeof incomingId !== 'number') return
 
-                const incomingId = e.comment?.id
-                if (typeof incomingId !== 'number') return
-
-                setComments((prev) => {
-                    if (prev.some((c) => c.id === incomingId)) {
-                        return prev
-                    }
-                    const newItem: CommentItem = {
-                        id: incomingId,
-                        body: e.comment?.body ?? '',
-                        user: { id: e.commenter?.id, name: e.commenter?.name },
-                        created_at: new Date().toISOString(),
-                    }
-                    return [...prev, newItem]
-                })
-            } catch {
-                // noop
-            }
-        })
+            setComments((prev) => {
+                if (prev.some((c) => c.id === incomingId)) {
+                    return prev
+                }
+                const newItem: CommentItem = {
+                    id: incomingId,
+                    body: e.comment?.body ?? '',
+                    user: { id: e.commenter?.id, name: e.commenter?.name },
+                    created_at: new Date().toISOString(),
+                }
+                return [...prev, newItem]
+            })
+        } catch {}
+    })
     const [editingBody, setEditingBody] = useState<string>('')
 
     const stripHtml = (s: string): string =>
@@ -109,11 +105,23 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (!stripHtml(data.body)) return
+        const currentBody = data.body
         post(route('task.comments.store', { task: task.id }), {
             preserveScroll: true,
             onSuccess: () => {
+                setComments((prev) => [
+                    ...prev,
+                    {
+                        id: Date.now(),
+                        body: currentBody,
+                        user: { id: auth.user.id, name: auth.user.name },
+                        created_at: new Date().toISOString(),
+                    },
+                ])
+
                 reset('body')
             },
+            onError: () => {},
         })
     }
 

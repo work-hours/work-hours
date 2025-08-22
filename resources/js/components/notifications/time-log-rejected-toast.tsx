@@ -24,9 +24,7 @@ export default function TimeLogRejectedToast({ e }: { e: TimeLogRejectedEvent })
             <div className="flex-1">
                 <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Time Log Rejected</div>
                 <div className="mt-0.5 text-sm text-gray-600 dark:text-gray-300">{parts.join(' ')}</div>
-                {comment && (
-                    <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">Reason: {comment}</div>
-                )}
+                {comment && <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">Reason: {comment}</div>}
             </div>
             <Link
                 href={route('time-log.index')}

@@ -111,8 +111,7 @@ final class ApprovalService
                 $processed++;
             } catch (Exception) {
                 $skipped++;
-            } catch (Throwable $e) {
-                //
+            } catch (Throwable) {
             }
         }
 

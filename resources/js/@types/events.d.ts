@@ -76,8 +76,6 @@ declare interface TimeLogApprovedEvent {
     }
 }
 
-
-
 declare interface TimeLogRejectedEvent {
     timeLog: {
         id: number
@@ -174,8 +172,6 @@ declare interface TimeLogApprovedEvent {
         name?: string
     }
 }
-
-
 
 declare interface TimeLogRejectedEvent {
     timeLog: {
