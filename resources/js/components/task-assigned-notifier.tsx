@@ -2,24 +2,11 @@ import { SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 import { useEcho } from '@laravel/echo-react'
 import { toast } from 'sonner'
-interface TaskAssignedEvent {
-    task: {
-        id: number
-        title: string
-        project?: {
-            name?: string
-        }
-    }
-    assigner: {
-        name?: string
-    }
-}
 
 export default function TaskAssignedNotifier() {
     const { auth } = usePage<SharedData>().props
 
     useEcho(`App.Models.User.${auth.user.id}`, 'TaskAssigned', (e: TaskAssignedEvent) => {
-        console.log(e)
         const title = e?.task?.title ?? 'A task'
         const projectName = e?.task?.project?.name
         const assignerName = e?.assigner?.name

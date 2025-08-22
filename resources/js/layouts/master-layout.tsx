@@ -1,3 +1,4 @@
+import { MasterLayoutProps, Project } from '@/@types/layouts'
 import CookieConsent from '@/components/cookie-consent'
 import FloatingAiChat from '@/components/floating-ai-chat'
 import { MasterContent } from '@/components/master-content'
@@ -5,20 +6,9 @@ import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
 import TaskAssignedNotifier from '@/components/task-assigned-notifier'
 import { TimeTrackerProvider } from '@/contexts/time-tracker-context'
-import { type BreadcrumbItem } from '@/types'
 import { projects } from '@actions/DashboardController'
-import { type ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
-
-interface Project {
-    id: number
-    name: string
-}
-
-interface MasterLayoutProps {
-    children: ReactNode
-    breadcrumbs?: BreadcrumbItem[]
-}
 
 export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayoutProps) {
     const [collapsed, setCollapsed] = useState(() => {

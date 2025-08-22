@@ -2,6 +2,7 @@ import { type NavItem, type SharedData } from '@/types'
 import { count } from '@actions/ApprovalController'
 import { count as taskCount } from '@actions/TaskController'
 import { Link, usePage } from '@inertiajs/react'
+import { useEcho } from '@laravel/echo-react'
 import { Building, CheckSquare, ClipboardList, FileText, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import AppLogo from './app-logo'
@@ -129,9 +130,11 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
 
     useEffect(() => {
         fetchPendingTaskCount().then()
-        const intervalId = setInterval(fetchPendingTaskCount, 60000)
-        return () => clearInterval(intervalId)
     }, [])
+
+    useEcho(`App.Models.User.${auth.user.id}`, 'TaskAssigned', () => {
+        fetchPendingTaskCount().then()
+    })
 
     return (
         <div
