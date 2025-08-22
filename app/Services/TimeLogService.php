@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Adapters\GitHubAdapter;
 use App\Adapters\JiraAdapter;
 use App\Enums\TimeLogStatus;
+use App\Events\TaskCompleted;
 use App\Http\Stores\TimeLogStore;
 use App\Models\Project;
 use App\Models\Task;
@@ -88,9 +89,10 @@ final readonly class TimeLogService
             if ($task) {
                 if ($markAsComplete) {
                     $task->update(['status' => 'completed']);
+                    TaskCompleted::dispatch($task, auth()->user(), $task->project->user);
                 }
 
-                $canRunIntegrations = $requireCompleteForIntegrations ? $markAsComplete : true;
+                $canRunIntegrations = ! $requireCompleteForIntegrations || $markAsComplete;
 
                 if ($canRunIntegrations && $closeGitHubIssue && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
                     $this->gitHubAdapter->closeGitHubIssue($task);

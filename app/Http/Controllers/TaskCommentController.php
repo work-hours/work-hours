@@ -13,7 +13,7 @@ use Msamgan\Lact\Attributes\Action;
 final class TaskCommentController extends Controller
 {
     #[Action(method: 'post', name: 'task.comments.store', params: ['task'], middleware: ['auth', 'verified'])]
-    public function storeComment(Task $task): void
+    public function store(Task $task): void
     {
         $task->load(['project', 'assignees']);
 
@@ -102,7 +102,7 @@ final class TaskCommentController extends Controller
     }
 
     #[Action(method: 'delete', name: 'task.comments.destroy', params: ['task', 'comment'], middleware: ['auth', 'verified'])]
-    public function destroyComment(Task $task, TaskComment $comment): void
+    public function destroy(Task $task, TaskComment $comment): void
     {
         abort_if($comment->task_id !== $task->id, 404, 'Comment not found for this task.');
 
@@ -119,7 +119,7 @@ final class TaskCommentController extends Controller
     }
 
     #[Action(method: 'put', name: 'task.comments.update', params: ['task', 'comment'], middleware: ['auth', 'verified'])]
-    public function updateComment(Task $task, TaskComment $comment): void
+    public function update(Task $task, TaskComment $comment): void
     {
         abort_if($comment->task_id !== $task->id, 404, 'Comment not found for this task.');
 
