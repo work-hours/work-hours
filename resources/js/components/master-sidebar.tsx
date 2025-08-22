@@ -1,11 +1,8 @@
 import { MasterSidebarProps, NavItemGroup } from '@/@types/components'
+import { useNotifications } from '@/contexts/notifications-context'
 import { type SharedData } from '@/types'
-import { count } from '@actions/ApprovalController'
-import { count as taskCount } from '@actions/TaskController'
 import { Link, usePage } from '@inertiajs/react'
-import { useEcho } from '@laravel/echo-react'
 import { Building, CheckSquare, ClipboardList, FileText, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
 import { FooterNavigation } from './sidebar/footer-navigation'
@@ -92,40 +89,7 @@ const navGroups: NavItemGroup[] = [
 
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     const { isGitHubIntegrated, isJiraIntegrated, auth } = usePage<SharedData>().props
-    const [approvalCount, setApprovalCount] = useState(0)
-    const [pendingTaskCount, setPendingTaskCount] = useState(0)
-
-    const fetchApprovalCount = async () => {
-        try {
-            const response = await count.data({})
-            setApprovalCount(response.count)
-        } catch (error) {
-            console.error('Failed to fetch approval count', error)
-        }
-    }
-
-    const fetchPendingTaskCount = async () => {
-        try {
-            const response = await taskCount.data({})
-            setPendingTaskCount(response.count)
-        } catch (error) {
-            console.error('Failed to fetch pending task count', error)
-        }
-    }
-
-    useEffect(() => {
-        fetchApprovalCount().then()
-        const intervalId = setInterval(fetchApprovalCount, 60000)
-        return () => clearInterval(intervalId)
-    }, [])
-
-    useEffect(() => {
-        fetchPendingTaskCount().then()
-    }, [])
-
-    useEcho(`App.Models.User.${auth.user.id}`, 'TaskAssigned', () => {
-        fetchPendingTaskCount().then()
-    })
+    const { pendingTaskCount, approvalCount } = useNotifications()
 
     return (
         <div

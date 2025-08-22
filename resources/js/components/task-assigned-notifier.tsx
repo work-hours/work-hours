@@ -1,12 +1,14 @@
-import { SharedData } from '@/types'
-import { Link, usePage } from '@inertiajs/react'
-import { useEcho } from '@laravel/echo-react'
+import { useNotifications } from '@/contexts/notifications-context'
+import { Link } from '@inertiajs/react'
+import { useEffect } from 'react'
 import { toast } from 'sonner'
 
 export default function TaskAssignedNotifier() {
-    const { auth } = usePage<SharedData>().props
+    const { lastTaskAssignedEvent: e } = useNotifications()
 
-    useEcho(`App.Models.User.${auth.user.id}`, 'TaskAssigned', (e: TaskAssignedEvent) => {
+    useEffect(() => {
+        if (!e) return
+
         const title = e?.task?.title ?? 'A task'
         const projectName = e?.task?.project?.name
         const assignerName = e?.assigner?.name
@@ -34,6 +36,7 @@ export default function TaskAssignedNotifier() {
                 </Link>
             </div>,
         )
-    })
+    }, [e])
+
     return null
 }
