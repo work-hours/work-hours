@@ -68,9 +68,12 @@ final class TeamController extends Controller
         $isNewUser = $result['is_new'];
 
         $creator = auth()->user();
-        $isNewUser
-            ? $user->notify(new TeamMemberCreated($user, $creator, $userData['password']))
-            : $user->notify(new TeamMemberAdded($user, $creator));
+        if ($isNewUser) {
+            $user->notify(new TeamMemberCreated($user, $creator, $userData['password']));
+        } else {
+            $user->notify(new TeamMemberAdded($user, $creator));
+            \App\Events\TeamMemberAdded::dispatch($user, $creator);
+        }
     }
 
     public function create()

@@ -28,3 +28,14 @@ declare interface TaskCompletedEvent {
         name?: string
     }
 }
+
+declare interface TeamMemberAddedEvent {
+    member: {
+        id: number
+        name?: string
+    }
+    creator: {
+        id: number
+        name?: string
+    }
+}
