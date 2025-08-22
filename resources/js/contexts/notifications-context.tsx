@@ -62,10 +62,14 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         }
     }, [])
 
-    useEffect(() => {
+    const countRefresher = () => {
         refreshUnreadCount().then()
         refreshPendingTaskCount().then()
         refreshApprovalCount().then()
+    }
+
+    useEffect(() => {
+        countRefresher()
         const intervalId = window.setInterval(() => {
             refreshUnreadCount().then()
             refreshApprovalCount().then()
@@ -75,16 +79,12 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
     useEcho(`App.Models.User.${auth.user.id}`, 'TaskAssigned', (e: TaskAssignedEvent) => {
         setLastRealtimeNotification({ type: 'TaskAssigned', data: e })
-        refreshUnreadCount().then()
-        refreshPendingTaskCount().then()
-        refreshApprovalCount().then()
+        countRefresher()
     })
 
     useEcho(`App.Models.User.${auth.user.id}`, 'TaskCompleted', (e: TaskCompletedEvent) => {
         setLastRealtimeNotification({ type: 'TaskCompleted', data: e })
-        refreshUnreadCount().then()
-        refreshPendingTaskCount().then()
-        refreshApprovalCount().then()
+        countRefresher()
     })
 
     const value = useMemo<NotificationsContextType>(

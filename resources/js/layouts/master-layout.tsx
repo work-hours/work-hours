@@ -4,7 +4,7 @@ import FloatingAiChat from '@/components/floating-ai-chat'
 import { MasterContent } from '@/components/master-content'
 import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
-import TaskAssignedNotifier from '@/components/task-assigned-notifier'
+import RealTimeNotification from '@/components/real-time-notification'
 import { NotificationsProvider } from '@/contexts/notifications-context'
 import { TimeTrackerProvider } from '@/contexts/time-tracker-context'
 import { projects } from '@actions/DashboardController'
@@ -79,7 +79,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                 />
 
                 <CookieConsent />
-                <TaskAssignedNotifier />
+                <RealTimeNotification />
             </div>
         </NotificationsProvider>
     )
