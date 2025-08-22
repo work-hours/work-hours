@@ -13,6 +13,7 @@ type RealtimeNotification =
     | { type: 'TimeLogEntryCreated'; data: TimeLogEntryCreatedEvent }
     | { type: 'TimeLogApproved'; data: TimeLogApprovedEvent }
     | { type: 'TimeLogRejected'; data: TimeLogRejectedEvent }
+    | { type: 'TimeLogPaid'; data: TimeLogPaidEvent }
     | { type: 'TaskCommented'; data: TaskCommentedEvent }
 
 export type NotificationsContextType = {
@@ -114,6 +115,11 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
     useEcho(`App.Models.User.${auth.user.id}`, 'TimeLogRejected', (e: TimeLogRejectedEvent) => {
         setLastRealtimeNotification({ type: 'TimeLogRejected', data: e })
+        countRefresher()
+    })
+
+    useEcho(`App.Models.User.${auth.user.id}`, 'TimeLogPaid', (e: TimeLogPaidEvent) => {
+        setLastRealtimeNotification({ type: 'TimeLogPaid', data: e })
         countRefresher()
     })
 

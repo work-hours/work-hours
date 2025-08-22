@@ -249,10 +249,12 @@ final class TimeLogController extends Controller
 
                 if ($currentUser->id === $teamLeader->id && $currentUser->id !== $timeLogOwner->id) {
                     $timeLogOwner->notify(new TimeLogPaid($timeLog, $currentUser));
+                    \App\Events\TimeLogPaid::dispatch($timeLog, $currentUser, $timeLogOwner);
                 }
 
                 if ($currentUser->id !== $teamLeader->id && $currentUser->id === $timeLogOwner->id) {
                     $teamLeader->notify(new TimeLogPaid($timeLog, $currentUser));
+                    \App\Events\TimeLogPaid::dispatch($timeLog, $currentUser, $teamLeader);
                 }
             }
 

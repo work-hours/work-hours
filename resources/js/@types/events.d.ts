@@ -213,3 +213,23 @@ declare interface TaskCommentedEvent {
         name?: string
     }
 }
+
+
+// Realtime event for time log paid
+declare interface TimeLogPaidEvent {
+    timeLog: {
+        id: number
+        duration?: number
+        project?: {
+            name?: string
+        }
+    }
+    payer: {
+        id?: number
+        name?: string
+    }
+    recipient: {
+        id?: number
+        name?: string
+    }
+}

@@ -35,6 +35,7 @@ final class TimeLogPaid extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
+            ->subject('Time Log Paid')
             ->line($this->messageFormatter())
             ->action('View Notifications', url('/notifications'))
             ->line('Thank you for using our application!');
@@ -49,16 +50,21 @@ final class TimeLogPaid extends Notification
     {
         return [
             'message' => $this->messageFormatter(),
+            'time_log_id' => $this->timeLog->id,
+            'project_id' => $this->timeLog->project_id,
+            'project_name' => $this->timeLog->project ? $this->timeLog->project->name : 'No Project',
+            'actor_id' => $this->actor->id,
+            'actor_name' => $this->actor->name,
         ];
     }
 
     private function messageFormatter(): string
     {
         return sprintf(
-            'Time log for %s on %s with duration %s hours has been marked as paid by %s.',
-            $this->timeLog->project->name,
+            'Your time log for %s on %s with duration %s hours has been marked as paid by %s.',
+            $this->timeLog->project ? $this->timeLog->project->name : 'No Project',
             $this->timeLog->created_at->format('Y-m-d H:i:s'),
-            $this->timeLog->duration,
+            (string) $this->timeLog->duration,
             $this->actor->name
         );
     }
