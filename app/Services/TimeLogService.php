@@ -8,6 +8,7 @@ use App\Adapters\GitHubAdapter;
 use App\Adapters\JiraAdapter;
 use App\Enums\TimeLogStatus;
 use App\Events\TaskCompleted;
+use App\Events\TimeLogEntryCreated;
 use App\Http\Stores\TimeLogStore;
 use App\Models\Project;
 use App\Models\Task;
@@ -114,6 +115,7 @@ final readonly class TimeLogService
             $teamLeader = User::teamLeader(project: $timeLog->project);
             if (auth()->id() !== $teamLeader->getKey()) {
                 $teamLeader->notify(new TimeLogEntry($timeLog, auth()->user()));
+                TimeLogEntryCreated::dispatch($timeLog, auth()->user(), $teamLeader);
             }
         }
     }

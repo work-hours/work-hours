@@ -39,3 +39,21 @@ declare interface TeamMemberAddedEvent {
         name?: string
     }
 }
+
+declare interface TimeLogEntryCreatedEvent {
+    timeLog: {
+        id: number
+        duration?: number
+        project?: {
+            name?: string
+        }
+    }
+    creator: {
+        id?: number
+        name?: string
+    }
+    teamLeader: {
+        id?: number
+        name?: string
+    }
+}
