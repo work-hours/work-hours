@@ -37,4 +37,12 @@ final class TaskAssigned implements ShouldBroadcast
             new PrivateChannel('App.Models.User.' . $this->assignee->id),
         ];
     }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'task' => $this->task,
+            'assigner' => $this->assigner,
+        ];
+    }
 }

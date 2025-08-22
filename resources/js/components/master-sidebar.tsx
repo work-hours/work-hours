@@ -103,37 +103,33 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     const [approvalCount, setApprovalCount] = useState(0)
     const [pendingTaskCount, setPendingTaskCount] = useState(0)
 
-    useEffect(() => {
-        const fetchApprovalCount = async () => {
-            try {
-                const response = await count.data({})
-                setApprovalCount(response.count)
-            } catch (error) {
-                console.error('Failed to fetch approval count', error)
-            }
+    const fetchApprovalCount = async () => {
+        try {
+            const response = await count.data({})
+            setApprovalCount(response.count)
+        } catch (error) {
+            console.error('Failed to fetch approval count', error)
         }
+    }
 
+    const fetchPendingTaskCount = async () => {
+        try {
+            const response = await taskCount.data({})
+            setPendingTaskCount(response.count)
+        } catch (error) {
+            console.error('Failed to fetch pending task count', error)
+        }
+    }
+
+    useEffect(() => {
         fetchApprovalCount().then()
-
         const intervalId = setInterval(fetchApprovalCount, 60000)
-
         return () => clearInterval(intervalId)
     }, [])
 
     useEffect(() => {
-        const fetchPendingTaskCount = async () => {
-            try {
-                const response = await taskCount.data({})
-                setPendingTaskCount(response.count)
-            } catch (error) {
-                console.error('Failed to fetch pending task count', error)
-            }
-        }
-
         fetchPendingTaskCount().then()
-
         const intervalId = setInterval(fetchPendingTaskCount, 60000)
-
         return () => clearInterval(intervalId)
     }, [])
 

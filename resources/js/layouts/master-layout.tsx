@@ -3,11 +3,10 @@ import FloatingAiChat from '@/components/floating-ai-chat'
 import { MasterContent } from '@/components/master-content'
 import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
+import TaskAssignedNotifier from '@/components/task-assigned-notifier'
 import { TimeTrackerProvider } from '@/contexts/time-tracker-context'
-import { type BreadcrumbItem, SharedData } from '@/types'
+import { type BreadcrumbItem } from '@/types'
 import { projects } from '@actions/DashboardController'
-import { usePage } from '@inertiajs/react'
-import { useEcho } from '@laravel/echo-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 
@@ -22,7 +21,6 @@ interface MasterLayoutProps {
 }
 
 export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayoutProps) {
-    const { auth } = usePage<SharedData>().props
     const [collapsed, setCollapsed] = useState(() => {
         if (typeof window !== 'undefined') {
             const savedState = localStorage.getItem('sidebar_collapsed')
@@ -45,10 +43,6 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
             console.error('Failed to fetch data:', error)
         }
     }
-
-    useEcho(`App.Models.User.${auth.user.id}`, 'TaskAssigned', (e) => {
-        console.log(e)
-    })
 
     useEffect(() => {
         fetchData().then()
@@ -93,6 +87,7 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
             />
 
             <CookieConsent />
+            <TaskAssignedNotifier />
         </div>
     )
 }
