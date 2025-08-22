@@ -1,6 +1,7 @@
 import TaskAssignedToast from '@/components/notifications/task-assigned-toast'
 import TaskCompletedToast from '@/components/notifications/task-completed-toast'
 import TeamMemberAddedToast from '@/components/notifications/team-member-added-toast'
+import TimeLogEntryCreatedToast from '@/components/notifications/time-log-entry-created-toast'
 import { useNotifications } from '@/contexts/notifications-context'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
@@ -17,6 +18,8 @@ export default function RealTimeNotification() {
             toast.success(<TaskCompletedToast e={lastRealtimeNotification.data} />)
         } else if (lastRealtimeNotification.type === 'TeamMemberAdded') {
             toast.success(<TeamMemberAddedToast e={lastRealtimeNotification.data} />)
+        } else if (lastRealtimeNotification.type === 'TimeLogEntryCreated') {
+            toast.success(<TimeLogEntryCreatedToast e={lastRealtimeNotification.data} />)
         }
     }, [lastRealtimeNotification])
 

@@ -10,6 +10,7 @@ type RealtimeNotification =
     | { type: 'TaskAssigned'; data: TaskAssignedEvent }
     | { type: 'TaskCompleted'; data: TaskCompletedEvent }
     | { type: 'TeamMemberAdded'; data: TeamMemberAddedEvent }
+    | { type: 'TimeLogEntryCreated'; data: TimeLogEntryCreatedEvent }
 
 export type NotificationsContextType = {
     unreadCount: number
@@ -90,6 +91,11 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
     useEcho(`App.Models.User.${auth.user.id}`, 'TeamMemberAdded', (e: TeamMemberAddedEvent) => {
         setLastRealtimeNotification({ type: 'TeamMemberAdded', data: e })
+        countRefresher()
+    })
+
+    useEcho(`App.Models.User.${auth.user.id}`, 'TimeLogEntryCreated', (e: TimeLogEntryCreatedEvent) => {
+        setLastRealtimeNotification({ type: 'TimeLogEntryCreated', data: e })
         countRefresher()
     })
 
