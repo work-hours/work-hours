@@ -175,4 +175,36 @@ final class TeamStore
             'unpaidAmount',
         ];
     }
+
+    /**
+     * Build the team context for the given user.
+     *
+     * Returns an array with keys:
+     * - leaderIds: list<int> IDs of leaders for teams where the user is a member
+     * - memberIds: list<int> IDs of members for teams where the user is a leader
+     *
+     * @return array{leaderIds: list<int>, memberIds: list<int>}
+     */
+    public static function getContextFor(User $user): array
+    {
+        $memberIds = Team::query()
+            ->where('user_id', $user->id)
+            ->pluck('member_id')
+            ->map(static fn ($id): int => (int) $id)
+            ->values()
+            ->all();
+
+        $leaderIds = Team::query()
+            ->where('member_id', $user->id)
+            ->pluck('user_id')
+            ->map(static fn ($id): int => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        return [
+            'leaderIds' => $leaderIds,
+            'memberIds' => $memberIds,
+        ];
+    }
 }

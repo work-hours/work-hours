@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Models\Team;
+use App\Http\Stores\TeamStore;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -21,6 +21,8 @@ final class HandleInertiaRequests extends Middleware
      * @var string
      */
     protected $rootView = 'app';
+
+    public function __construct() {}
 
     /**
      * Determines the current asset version.
@@ -46,32 +48,7 @@ final class HandleInertiaRequests extends Middleware
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
         $user = $request->user();
-
-        // Compute minimal team context for the authenticated user
-        $teamContext = null;
-        if ($user) {
-            // If user is a team leader, list their member ids
-            $memberIds = Team::query()
-                ->where('user_id', $user->id)
-                ->pluck('member_id')
-                ->map(fn ($id) => (int) $id)
-                ->values()
-                ->all();
-
-            // If user is a team member, list all leader ids (may be multiple)
-            $leaderIds = Team::query()
-                ->where('member_id', $user->id)
-                ->pluck('user_id')
-                ->map(fn ($id) => (int) $id)
-                ->unique()
-                ->values()
-                ->all();
-
-            $teamContext = [
-                'leaderIds' => $leaderIds,
-                'memberIds' => $memberIds,
-            ];
-        }
+        $teamContext = $user ? TeamStore::getContextFor($user) : null;
 
         return [
             ...parent::share($request),

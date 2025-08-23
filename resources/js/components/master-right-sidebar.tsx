@@ -2,7 +2,7 @@ import { MasterRightSidebarProps } from '@/@types/components'
 import QuickTrackModal from '@/components/quick-track-modal'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useTimeTracker } from '@/contexts/time-tracker-context'
-import { type NavItem, type User, type SharedData } from '@/types'
+import { type NavItem, type SharedData, type User } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 import { useEchoPresence } from '@laravel/echo-react'
 import { BarChart3, BrainCircuit, ClockIcon, PlusCircle, UsersIcon } from 'lucide-react'
@@ -42,8 +42,6 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
     const { auth, teamContext } = usePage<SharedData>().props as SharedData & {
         teamContext?: { leaderIds: number[]; memberIds: number[] } | null
     }
-
-    // Online users via presence channel
     type PresenceUser = Pick<User, 'id' | 'name' | 'email' | 'avatar'>
     const [online, setOnline] = useState<PresenceUser[]>([])
 
@@ -51,11 +49,9 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
 
     useEffect(() => {
         const ch = channel()
-        // Initialize current online users
         ch.here((users: PresenceUser[]) => {
             setOnline(users.filter((u) => u.id !== auth.user.id))
         })
-        // Someone joined
         ch.joining((user: PresenceUser) => {
             if (user.id === auth.user.id) {
                 return
@@ -65,7 +61,6 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                 return [...prev, user]
             })
         })
-        // Someone left
         ch.leaving((user: PresenceUser) => {
             if (user.id === auth.user.id) {
                 return
@@ -74,10 +69,8 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
         })
 
         return () => {
-            // Leave presence channel on unmount
             leave()
         }
-        // We want to (re)bind when the channel function identity changes
     }, [channel, leave, auth.user.id])
 
     useEffect(() => {
@@ -97,8 +90,6 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
         window.addEventListener('keydown', onKeyDown)
         return () => window.removeEventListener('keydown', onKeyDown)
     }, [running])
-
-    // Filter online users based on team context
     const filteredOnline: PresenceUser[] = (() => {
         const tc = teamContext ?? null
         if (!tc) {
@@ -211,7 +202,6 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                     </TooltipProvider>
                 </div>
 
-                {/* Online Now */}
                 <div className="mb-6 px-4">
                     <div className="mb-3 pb-2">
                         <h3
@@ -243,9 +233,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                                         <span className="ml-2 text-sm text-neutral-700 dark:text-neutral-300">{u.name}</span>
                                     </li>
                                 ))}
-                                {filteredOnline.length === 0 && (
-                                    <li className="text-sm text-neutral-500 dark:text-neutral-400">No one online</li>
-                                )}
+                                {filteredOnline.length === 0 && <li className="text-sm text-neutral-500 dark:text-neutral-400">No one online</li>}
                             </ul>
                         )}
                     </TooltipProvider>
