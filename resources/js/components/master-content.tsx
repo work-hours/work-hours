@@ -1,44 +1,14 @@
+import { MasterContentProps } from '@/@types/components'
 import AppearanceToggleDropdown from '@/components/appearance-dropdown'
 import { HourlyRateStatusBar } from '@/components/hourly-rate-status-bar'
 import RunningTracker from '@/components/running-tracker'
 import { Badge } from '@/components/ui/badge'
-import { type BreadcrumbItem } from '@/types'
-import { all } from '@actions/NotificationsController'
+import { useNotifications } from '@/contexts/notifications-context'
 import { Link } from '@inertiajs/react'
 import { Bell, ChevronRight, Home, Settings } from 'lucide-react'
-import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useState } from 'react'
 
-interface MasterContentProps {
-    children: ReactNode
-    breadcrumbs?: BreadcrumbItem[]
-    collapsed: boolean
-    setCollapsed: Dispatch<SetStateAction<boolean>>
-}
-
-export function MasterContent({ children, breadcrumbs = [], collapsed, setCollapsed }: MasterContentProps) {
-    const [unreadCount, setUnreadCount] = useState(0)
-    const [isAdmin, setIsAdmin] = useState(false)
-
-    useEffect(() => {
-        const fetchUnreadCount = async () => {
-            try {
-                const response = await all.data({ page: 1 })
-                setUnreadCount(response.unread_count)
-
-                if (response.user && response.user.is_admin) {
-                    setIsAdmin(true)
-                }
-            } catch (error) {
-                console.error('Failed to fetch unread notifications count', error)
-            }
-        }
-
-        fetchUnreadCount().then()
-
-        const intervalId = setInterval(fetchUnreadCount, 60000)
-
-        return () => clearInterval(intervalId)
-    }, [])
+export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps) {
+    const { unreadCount, isAdmin } = useNotifications()
 
     return (
         <div className="relative flex flex-1 flex-col bg-slate-50 dark:bg-slate-900">

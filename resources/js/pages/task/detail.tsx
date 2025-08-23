@@ -17,6 +17,7 @@ import RichTextEditor from '@/components/ui/rich-text-editor'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { Head, router, useForm, usePage } from '@inertiajs/react'
+import { useEcho } from '@laravel/echo-react'
 import DOMPurify from 'dompurify'
 import { Calendar, ExternalLink, Info, Pencil, Save, Trash, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
@@ -39,16 +40,45 @@ type Props = {
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Tasks', href: '/task' }]
 
 export default function TaskDetail({ task, attachments = [], mentionableUsers = [] }: Props) {
+    type CommentItem = {
+        id: number
+        body: string
+        user?: { id?: number; name?: string }
+        created_at?: string
+    }
     const TaskDescription = ({ html }: { html: string }) => {
         const safe = typeof window !== 'undefined' ? DOMPurify.sanitize(html) : html
         return <div dangerouslySetInnerHTML={{ __html: safe }} />
     }
     const { auth } = usePage<SharedData>().props
+    const [comments, setComments] = useState<CommentItem[]>(Array.isArray(task.comments) ? (task.comments as CommentItem[]) : [])
     const currentUserId = auth.user.id
 
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [commentToDelete, setCommentToDelete] = useState<number | null>(null)
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
+    useEcho(`App.Models.User.${auth.user.id}`, 'TaskCommented', (e: TaskCommentedEvent) => {
+        try {
+            if (!e || !e.task) return
+            if (e.task.id !== task.id) return
+
+            const incomingId = e.comment?.id
+            if (typeof incomingId !== 'number') return
+
+            setComments((prev) => {
+                if (prev.some((c) => c.id === incomingId)) {
+                    return prev
+                }
+                const newItem: CommentItem = {
+                    id: incomingId,
+                    body: e.comment?.body ?? '',
+                    user: { id: e.commenter?.id, name: e.commenter?.name },
+                    created_at: new Date().toISOString(),
+                }
+                return [...prev, newItem]
+            })
+        } catch {}
+    })
     const [editingBody, setEditingBody] = useState<string>('')
 
     const stripHtml = (s: string): string =>
@@ -75,11 +105,23 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (!stripHtml(data.body)) return
+        const currentBody = data.body
         post(route('task.comments.store', { task: task.id }), {
             preserveScroll: true,
             onSuccess: () => {
+                setComments((prev) => [
+                    ...prev,
+                    {
+                        id: Date.now(),
+                        body: currentBody,
+                        user: { id: auth.user.id, name: auth.user.name },
+                        created_at: new Date().toISOString(),
+                    },
+                ])
+
                 reset('body')
             },
+            onError: () => {},
         })
     }
 
@@ -129,7 +171,9 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
         }
     }
 
-    const formatDate = (value: string) => {
+    const formatDate = (value: string | undefined) => {
+        if (!value) return ''
+
         const d = new Date(value)
         const y = d.getFullYear()
         const m = String(d.getMonth() + 1).padStart(2, '0')
@@ -277,8 +321,8 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
                         <div className="mt-6 space-y-2">
                             <div className="grid grid-cols-1 gap-4 rounded-lg border bg-muted/40 p-4">
                                 <div className="space-y-4">
-                                    {task.comments && task.comments.length > 0 ? (
-                                        task.comments.map((comment) => (
+                                    {comments && comments.length > 0 ? (
+                                        comments.map((comment) => (
                                             <div key={comment.id} className="rounded-md bg-background p-3 shadow-sm">
                                                 <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
                                                     <span className="font-medium text-foreground">{comment.user?.name ?? 'User'}</span>

@@ -1,23 +1,15 @@
+import { MasterLayoutProps, Project } from '@/@types/layouts'
 import CookieConsent from '@/components/cookie-consent'
 import FloatingAiChat from '@/components/floating-ai-chat'
 import { MasterContent } from '@/components/master-content'
 import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
+import RealTimeNotification from '@/components/real-time-notification'
+import { NotificationsProvider } from '@/contexts/notifications-context'
 import { TimeTrackerProvider } from '@/contexts/time-tracker-context'
-import { type BreadcrumbItem } from '@/types'
 import { projects } from '@actions/DashboardController'
-import { type ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
-
-interface Project {
-    id: number
-    name: string
-}
-
-interface MasterLayoutProps {
-    children: ReactNode
-    breadcrumbs?: BreadcrumbItem[]
-}
 
 export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayoutProps) {
     const [collapsed, setCollapsed] = useState(() => {
@@ -57,35 +49,38 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     }, [])
 
     return (
-        <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900">
-            <MasterSidebar collapsed={collapsed} />
+        <NotificationsProvider>
+            <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900">
+                <MasterSidebar collapsed={collapsed} />
 
-            <TimeTrackerProvider>
-                <div className={`flex-1 transition-all duration-300 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}>
-                    <MasterContent breadcrumbs={breadcrumbs} collapsed={collapsed} setCollapsed={setCollapsed}>
-                        {children}
-                    </MasterContent>
-                </div>
+                <TimeTrackerProvider>
+                    <div className={`flex-1 transition-all duration-300 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+                        <MasterContent breadcrumbs={breadcrumbs} collapsed={collapsed} setCollapsed={setCollapsed}>
+                            {children}
+                        </MasterContent>
+                    </div>
 
-                <MasterRightSidebar collapsed={collapsed} />
-            </TimeTrackerProvider>
+                    <MasterRightSidebar collapsed={collapsed} />
+                </TimeTrackerProvider>
 
-            {dataLoaded && (
-                <>
-                    <FloatingAiChat projects={userProjects} />
-                </>
-            )}
+                {dataLoaded && (
+                    <>
+                        <FloatingAiChat projects={userProjects} />
+                    </>
+                )}
 
-            <Toaster
-                position="top-right"
-                closeButton={true}
-                toastOptions={{
-                    className: 'shadow-md rounded-lg border border-gray-200 dark:border-gray-800',
-                    duration: 5000,
-                }}
-            />
+                <Toaster
+                    position="top-right"
+                    closeButton={true}
+                    toastOptions={{
+                        className: 'shadow-md rounded-lg border border-gray-200 dark:border-gray-800',
+                        duration: 10000,
+                    }}
+                />
 
-            <CookieConsent />
-        </div>
+                <CookieConsent />
+                <RealTimeNotification />
+            </div>
+        </NotificationsProvider>
     )
 }

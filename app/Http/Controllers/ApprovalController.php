@@ -9,10 +9,7 @@ use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
 use App\Models\TimeLog;
-use App\Models\User;
-use App\Notifications\TimeLogApproved;
-use App\Notifications\TimeLogRejected;
-use Carbon\Carbon;
+use App\Services\ApprovalService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -22,13 +19,15 @@ use Throwable;
 
 final class ApprovalController extends Controller
 {
+    public function __construct(public ApprovalService $approvalService) {}
+
     /**
      * Get the count of pending approvals for the current user
      */
     #[Action(method: 'get', name: 'approvals.count', middleware: ['auth', 'verified'])]
     public function count(): JsonResponse
     {
-        $pendingTimeLogs = $this->getPendingApprovals();
+        $pendingTimeLogs = $this->approvalService->getPendingApprovals();
         $count = $pendingTimeLogs->count();
 
         return response()->json([
@@ -38,7 +37,7 @@ final class ApprovalController extends Controller
 
     public function index()
     {
-        $pendingTimeLogs = $this->getPendingApprovals();
+        $pendingTimeLogs = $this->approvalService->getPendingApprovals();
         $mappedTimeLogs = TimeLogStore::timeLogMapper($pendingTimeLogs);
         $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
         $projects = ProjectStore::userProjects(userId: auth()->id());
@@ -70,21 +69,9 @@ final class ApprovalController extends Controller
         try {
             $timeLog = TimeLog::query()->findOrFail($timeLogId);
 
-            $this->authorizeApproval($timeLog);
-
-            $timeLog->update([
-                'status' => TimeLogStatus::APPROVED,
-                'approved_by' => auth()->id(),
-                'approved_at' => Carbon::now(),
-                'comment' => request('comment'),
-            ]);
+            $this->approvalService->processTimeLog($timeLog, TimeLogStatus::APPROVED, request('comment'));
 
             DB::commit();
-
-            $timeLogOwner = User::query()->find($timeLog->user_id);
-            if ($timeLogOwner && auth()->id() !== $timeLogOwner->getKey()) {
-                $timeLogOwner->notify(new TimeLogApproved($timeLog, auth()->user()));
-            }
 
             return response()->json([
                 'success' => true,
@@ -114,40 +101,13 @@ final class ApprovalController extends Controller
 
         DB::beginTransaction();
         try {
-            $timeLogs = TimeLog::query()
-                ->whereIn('id', $timeLogIds)
-                ->get();
-
-            $approvedCount = 0;
-            $skippedCount = 0;
-
-            foreach ($timeLogs as $timeLog) {
-                try {
-                    $this->authorizeApproval($timeLog);
-
-                    $timeLog->update([
-                        'status' => TimeLogStatus::APPROVED,
-                        'approved_by' => auth()->id(),
-                        'approved_at' => Carbon::now(),
-                        'comment' => request('comment'),
-                    ]);
-
-                    $approvedCount++;
-
-                    $timeLogOwner = User::query()->find($timeLog->user_id);
-                    if ($timeLogOwner && auth()->id() !== $timeLogOwner->getKey()) {
-                        $timeLogOwner->notify(new TimeLogApproved($timeLog, auth()->user()));
-                    }
-                } catch (Exception) {
-                    $skippedCount++;
-                }
-            }
+            [$processed, $skipped] = $this->approvalService->processMultipleTimeLogs($timeLogIds, TimeLogStatus::APPROVED, request('comment'));
 
             DB::commit();
 
-            $message = $approvedCount . ' time logs approved successfully.';
-            if ($skippedCount > 0) {
-                $message .= ' ' . $skippedCount . ' time logs were skipped because you are not authorized to approve them.';
+            $message = $processed . ' time logs approved successfully.';
+            if ($skipped > 0) {
+                $message .= ' ' . $skipped . ' time logs were skipped because you are not authorized to approve them.';
             }
 
             return response()->json([
@@ -180,32 +140,9 @@ final class ApprovalController extends Controller
         try {
             $timeLog = TimeLog::query()->findOrFail($timeLogId);
 
-            $this->authorizeApproval($timeLog);
-
-            $timeLog->update([
-                'status' => TimeLogStatus::REJECTED,
-                'approved_by' => auth()->id(),
-                'approved_at' => Carbon::now(),
-                'comment' => request('comment'),
-            ]);
+            $this->approvalService->processTimeLog($timeLog, TimeLogStatus::REJECTED, request('comment'));
 
             DB::commit();
-
-            $timeLogOwner = User::query()->find($timeLog->user_id);
-            if ($timeLogOwner && auth()->id() !== $timeLogOwner->getKey()) {
-                $timeLogOwner->notify(new TimeLogRejected($timeLog, auth()->user()));
-            }
-
-            $teamLeader = User::teamLeader(project: $timeLog->project);
-            $isApprover = DB::table('project_team')
-                ->where('project_id', $timeLog->project_id)
-                ->where('member_id', auth()->id())
-                ->where('is_approver', true)
-                ->exists();
-
-            if ($isApprover && auth()->id() !== $teamLeader->getKey()) {
-                $teamLeader->notify(new TimeLogRejected($timeLog, auth()->user()));
-            }
 
             return response()->json([
                 'success' => true,
@@ -235,51 +172,13 @@ final class ApprovalController extends Controller
 
         DB::beginTransaction();
         try {
-            $timeLogs = TimeLog::query()
-                ->whereIn('id', $timeLogIds)
-                ->get();
-
-            $rejectedCount = 0;
-            $skippedCount = 0;
-
-            foreach ($timeLogs as $timeLog) {
-                try {
-                    $this->authorizeApproval($timeLog);
-
-                    $timeLog->update([
-                        'status' => TimeLogStatus::REJECTED,
-                        'approved_by' => auth()->id(),
-                        'approved_at' => Carbon::now(),
-                        'comment' => request('comment'),
-                    ]);
-
-                    $rejectedCount++;
-
-                    $timeLogOwner = User::query()->find($timeLog->user_id);
-                    if ($timeLogOwner && auth()->id() !== $timeLogOwner->getKey()) {
-                        $timeLogOwner->notify(new TimeLogRejected($timeLog, auth()->user()));
-                    }
-
-                    $teamLeader = User::teamLeader(project: $timeLog->project);
-                    $isApprover = DB::table('project_team')
-                        ->where('project_id', $timeLog->project_id)
-                        ->where('member_id', auth()->id())
-                        ->where('is_approver', true)
-                        ->exists();
-
-                    if ($isApprover && auth()->id() !== $teamLeader->getKey()) {
-                        $teamLeader->notify(new TimeLogRejected($timeLog, auth()->user()));
-                    }
-                } catch (Exception) {
-                    $skippedCount++;
-                }
-            }
+            [$processed, $skipped] = $this->approvalService->processMultipleTimeLogs($timeLogIds, TimeLogStatus::REJECTED, request('comment'));
 
             DB::commit();
 
-            $message = $rejectedCount . ' time logs rejected successfully.';
-            if ($skippedCount > 0) {
-                $message .= ' ' . $skippedCount . ' time logs were skipped because you are not authorized to reject them.';
+            $message = $processed . ' time logs rejected successfully.';
+            if ($skipped > 0) {
+                $message .= ' ' . $skipped . ' time logs were skipped because you are not authorized to reject them.';
             }
 
             return response()->json([
@@ -294,54 +193,5 @@ final class ApprovalController extends Controller
                 'message' => 'Failed to reject time logs: ' . $e->getMessage(),
             ], 500);
         }
-    }
-
-    /**
-     * Get all pending time logs for team members where the current user is a team leader or approver
-     */
-    private function getPendingApprovals()
-    {
-        $leadProjects = ProjectStore::userProjects(userId: auth()->id())
-            ->pluck('id')
-            ->toArray();
-
-        $approverProjects = DB::table('project_team')
-            ->where('member_id', auth()->id())
-            ->where('is_approver', true)
-            ->pluck('project_id')
-            ->toArray();
-
-        $allProjects = array_unique(array_merge($leadProjects, $approverProjects));
-
-        $teamMemberIds = DB::table('project_team')
-            ->whereIn('project_id', $allProjects)
-            ->where('member_id', '!=', auth()->id())
-            ->pluck('member_id')
-            ->toArray();
-
-        return TimeLogStore::timeLogs(
-            baseQuery: TimeLog::query()
-                ->whereIn('user_id', $teamMemberIds)
-                ->whereIn('project_id', $allProjects)
-                ->where('status', 'pending')
-        );
-    }
-
-    /**
-     * Check if the current user is authorized to approve/reject the given time log
-     *
-     * @throws Exception|Throwable
-     */
-    private function authorizeApproval(TimeLog $timeLog): void
-    {
-        $teamLeader = User::teamLeader(project: $timeLog->project);
-
-        $isApprover = DB::table('project_team')
-            ->where('project_id', $timeLog->project_id)
-            ->where('member_id', auth()->id())
-            ->where('is_approver', true)
-            ->exists();
-
-        throw_if(auth()->id() !== $teamLeader->getKey() && ! $isApprover, new Exception('You are not authorized to approve this time log.'));
     }
 }

@@ -1,3 +1,5 @@
+import { MasterRightSidebarProps } from '@/@types/components'
+import OnlineUsers from '@/components/online-users'
 import QuickTrackModal from '@/components/quick-track-modal'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useTimeTracker } from '@/contexts/time-tracker-context'
@@ -6,10 +8,6 @@ import { Link } from '@inertiajs/react'
 import { BarChart3, BrainCircuit, ClockIcon, PlusCircle, UsersIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-
-interface MasterRightSidebarProps {
-    collapsed?: boolean
-}
 
 const quickLinks: NavItem[] = [
     {
@@ -153,6 +151,8 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                         </nav>
                     </TooltipProvider>
                 </div>
+
+                <OnlineUsers collapsed={collapsed} />
             </div>
             <QuickTrackModal open={quickOpen} onOpenChange={setQuickOpen} />
         </div>

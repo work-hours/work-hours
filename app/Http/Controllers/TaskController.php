@@ -12,13 +12,8 @@ use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TagStore;
 use App\Http\Stores\TaskStore;
 use App\Models\Project;
-use App\Models\Tag;
 use App\Models\Task;
-use App\Models\TaskComment;
-use App\Models\User;
-use App\Notifications\TaskAssigned;
-use App\Notifications\TaskCommented;
-use App\Notifications\TaskCompleted;
+use App\Services\TaskService;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
@@ -40,138 +35,82 @@ final class TaskController extends Controller
      */
     public function __construct(
         private readonly GitHubAdapter $gitHubAdapter,
-        private readonly JiraAdapter $jiraAdapter
+        private readonly JiraAdapter $jiraAdapter,
+        private readonly TaskService $taskService,
     ) {}
 
-    #[Action(method: 'post', name: 'task.comments.store', params: ['task'], middleware: ['auth', 'verified'])]
-    public function storeComment(Task $task): void
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-        $task->load(['project', 'assignees']);
+        $projects = ProjectStore::userProjects(userId: auth()->id())
+            ->map(fn ($project): array => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'source' => $project->source,
+                'is_github' => $project->source === 'github',
+            ]);
 
-        $isProjectOwner = $task->project->user_id === auth()->id();
-        $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
-        $isAssignee = $task->assignees->contains('id', auth()->id());
-
-        abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
-
-        request()->validate([
-            'body' => ['required', 'string', 'max:5000'],
+        return Inertia::render('task/create', [
+            'projects' => $projects,
         ]);
-
-        $comment = TaskComment::query()->create([
-            'task_id' => $task->id,
-            'user_id' => auth()->id(),
-            'body' => request('body'),
-        ]);
-
-        $recipientIds = collect([$task->project->user_id])
-            ->merge($task->assignees->pluck('id'))
-            ->unique()
-            ->reject(fn ($id): bool => $id === (int) auth()->id())
-            ->values();
-
-        $rawBody = (string) request('body');
-
-        $textBody = mb_trim(strip_tags($rawBody));
-
-        if ($textBody !== '' && preg_match_all('/@([A-Za-z0-9._-]+)/', $textBody, $matches)) {
-            $handles = collect($matches[1] ?? [])->filter()->map(fn ($h): string => mb_strtolower($h))->unique()->values();
-
-            if ($handles->isNotEmpty()) {
-                $allowedUsers = collect([$task->project->user])
-                    ->merge($task->project->teamMembers)
-                    ->merge($task->assignees)
-                    ->filter()
-                    ->unique('id')
-                    ->values();
-
-                $normalize = static function (string $name): string {
-                    $base = mb_strtolower($name);
-
-                    return preg_replace('/[^a-z0-9._-]+/i', '', $base) ?? $base;
-                };
-
-                $handleToUserIds = collect();
-                foreach ($allowedUsers as $u) {
-                    $handle = $normalize($u->name);
-                    if ($handle !== '') {
-                        $handleToUserIds->put($handle, $u->id);
-                    }
-
-                    if (! empty($u->email) && str_contains($u->email, '@')) {
-                        $local = mb_strtolower(strtok($u->email, '@'));
-                        if ($local !== '0') {
-                            $handleToUserIds->put($local, $u->id);
-                        }
-                    }
-                }
-
-                $mentionedIds = $handles
-                    ->map(fn ($h) => $handleToUserIds->get($h))
-                    ->filter()
-                    ->unique()
-                    ->values();
-
-                if ($mentionedIds->isNotEmpty()) {
-                    $recipientIds = $recipientIds->merge($mentionedIds)->unique()->values();
-                }
-            }
-        }
-
-        $recipientIdArray = $recipientIds
-            ->reject(fn ($id): bool => $id === (int) auth()->id())
-            ->values()
-            ->all();
-
-        if ($recipientIdArray !== []) {
-            $users = User::query()->whereIn('id', $recipientIdArray)->get();
-            foreach ($users as $user) {
-                $user->notify(new TaskCommented($task, $comment, auth()->user()));
-            }
-        }
-
-        back()->throwResponse();
     }
 
-    #[Action(method: 'delete', name: 'task.comments.destroy', params: ['task', 'comment'], middleware: ['auth', 'verified'])]
-    public function destroyComment(Task $task, TaskComment $comment): void
+    /**
+     * Update the specified resource in storage.
+     *
+     * @throws Throwable
+     */
+    #[Action(method: 'post', name: 'task.update', params: ['task'], middleware: ['auth', 'verified'])]
+    public function update(UpdateTaskRequest $request, Task $task): void
     {
-        abort_if($comment->task_id !== $task->id, 404, 'Comment not found for this task.');
-
-        $task->load(['project']);
-
         $isProjectOwner = $task->project->user_id === auth()->id();
-        $isCommentOwner = $comment->user_id === auth()->id();
+        $isTaskCreator = $task->created_by === auth()->id();
 
-        abort_if(! $isProjectOwner && ! $isCommentOwner, 403, 'Unauthorized action.');
+        abort_if(! $isProjectOwner && ! $isTaskCreator, 403, 'Unauthorized action.');
 
-        $comment->delete();
+        DB::beginTransaction();
+        try {
 
-        back()->throwResponse();
-    }
+            $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
+            $oldStatus = $task->status;
+            $task->update($request->only(['project_id', 'title', 'description', 'status', 'priority', 'due_date']));
 
-    #[Action(method: 'put', name: 'task.comments.update', params: ['task', 'comment'], middleware: ['auth', 'verified'])]
-    public function updateComment(Task $task, TaskComment $comment): void
-    {
+            if ($request->has('assignees')) {
+                $newAssigneeIds = $request->input('assignees');
+                if (! $isProjectOwner) {
+                    $newAssigneeIds = array_values(array_unique(array_merge($newAssigneeIds, [auth()->id()])));
+                }
+                $task->assignees()->sync($newAssigneeIds);
+                $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
+            } elseif ($isProjectOwner) {
+                $task->assignees()->detach();
+            }
 
-        abort_if($comment->task_id !== $task->id, 404, 'Comment not found for this task.');
+            if ($request->has('tags')) {
+                $this->taskService->attachTags($request->input('tags'), $task);
+            }
 
-        $task->load(['project']);
+            $this->taskService->storeAttachments($request, $task);
 
-        $isProjectOwner = $task->project->user_id === auth()->id();
-        $isCommentOwner = $comment->user_id === auth()->id();
+            DB::commit();
 
-        abort_if(! $isProjectOwner && ! $isCommentOwner, 403, 'Unauthorized action.');
+            if ($request->has('assignees')) {
+                $this->taskService->notifyAssignees($task, $addedAssigneeIds ?? []);
+            }
 
-        request()->validate([
-            'body' => ['required', 'string', 'max:5000'],
-        ]);
+            $this->taskService->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
 
-        $comment->update([
-            'body' => request('body'),
-        ]);
-
-        back()->throwResponse();
+            $this->taskService->updateExternalIntegrations(
+                $task,
+                $request->boolean('github_update'),
+                $request->boolean('jira_update')
+            );
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -204,24 +143,6 @@ final class TaskController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $projects = ProjectStore::userProjects(userId: auth()->id())
-            ->map(fn ($project): array => [
-                'id' => $project->id,
-                'name' => $project->name,
-                'source' => $project->source,
-                'is_github' => $project->source === 'github',
-            ]);
-
-        return Inertia::render('task/create', [
-            'projects' => $projects,
-        ]);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @throws Throwable
@@ -245,22 +166,26 @@ final class TaskController extends Controller
                 'priority' => $request->input('priority', 'medium'),
                 'due_date' => $request->input('due_date'),
             ]);
+
             $assigneeIds = $request->input('assignees', []);
+
             if (! $isProjectOwner) {
                 $assigneeIds = [auth()->id()];
             }
+
             if ($assigneeIds !== []) {
                 $task->assignees()->sync($assigneeIds);
             }
 
             if ($request->has('tags')) {
-                $this->attachTags($request->input('tags'), $task);
+                $this->taskService->attachTags($request->input('tags'), $task);
             }
 
-            $this->storeAttachments($request, $task);
+            $this->taskService->storeAttachments($request, $task);
 
             DB::commit();
-            $this->notifyAssignees($task, $assigneeIds);
+
+            $this->taskService->notifyAssignees($task, $assigneeIds);
 
             if ($request->boolean('create_github_issue')) {
                 $this->gitHubAdapter->createGitHubIssue($task);
@@ -401,62 +326,6 @@ final class TaskController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @throws Throwable
-     */
-    #[Action(method: 'post', name: 'task.update', params: ['task'], middleware: ['auth', 'verified'])]
-    public function update(UpdateTaskRequest $request, Task $task): void
-    {
-        $isProjectOwner = $task->project->user_id === auth()->id();
-        $isTaskCreator = $task->created_by === auth()->id();
-
-        abort_if(! $isProjectOwner && ! $isTaskCreator, 403, 'Unauthorized action.');
-
-        DB::beginTransaction();
-        try {
-
-            $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
-            $oldStatus = $task->status;
-            $task->update($request->only(['project_id', 'title', 'description', 'status', 'priority', 'due_date']));
-
-            if ($request->has('assignees')) {
-                $newAssigneeIds = $request->input('assignees');
-                if (! $isProjectOwner) {
-                    $newAssigneeIds = array_values(array_unique(array_merge($newAssigneeIds, [auth()->id()])));
-                }
-                $task->assignees()->sync($newAssigneeIds);
-                $addedAssigneeIds = array_diff($newAssigneeIds, $currentAssigneeIds);
-            } elseif ($isProjectOwner) {
-                $task->assignees()->detach();
-            }
-
-            if ($request->has('tags')) {
-                $this->attachTags($request->input('tags'), $task);
-            }
-
-            $this->storeAttachments($request, $task);
-
-            DB::commit();
-
-            if ($request->has('assignees')) {
-                $this->notifyAssignees($task, $addedAssigneeIds ?? []);
-            }
-
-            $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
-
-            $this->updateExternalIntegrations(
-                $task,
-                $request->boolean('github_update'),
-                $request->boolean('jira_update')
-            );
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
-
-    /**
      * @throws Throwable
      */
     #[Action(method: 'put', name: 'task.updateStatus', params: ['task'], middleware: ['auth', 'verified'])]
@@ -486,9 +355,9 @@ final class TaskController extends Controller
 
             DB::commit();
 
-            $this->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
+            $this->taskService->notifyOnCompletion($task, $oldStatus, $isProjectOwner);
 
-            $this->updateExternalIntegrations(
+            $this->taskService->updateExternalIntegrations(
                 $task,
                 request()->boolean('github_update'),
                 request()->boolean('jira_update')
@@ -513,13 +382,11 @@ final class TaskController extends Controller
 
         DB::beginTransaction();
         try {
-            if (request()->boolean('delete_from_github') && $task->is_imported && $task->meta && $task->meta->source === 'github') {
-                $this->gitHubAdapter->deleteGitHubIssue($task);
-            }
-
-            if (request()->boolean('delete_from_jira') && $task->is_imported && $task->meta && $task->meta->source === 'jira') {
-                $this->jiraAdapter->deleteJiraIssue($task);
-            }
+            $this->taskService->deleteExternalIntegrations(
+                $task,
+                request()->boolean('delete_from_github'),
+                request()->boolean('delete_from_jira')
+            );
 
             $task->assignees()->detach();
 
@@ -610,96 +477,5 @@ final class TaskController extends Controller
         }
 
         back()->throwResponse();
-    }
-
-    /**
-     * Attach tags to a task
-     */
-    private function attachTags(array $tags, Task $task): void
-    {
-        $tagIds = [];
-
-        foreach ($tags as $tagName) {
-            $tag = Tag::query()->firstOrCreate([
-                'name' => $tagName,
-                'user_id' => auth()->id(),
-            ]);
-
-            $tagIds[] = $tag->id;
-        }
-
-        $task->tags()->sync($tagIds);
-    }
-
-    /**
-     * Store uploaded attachments for the given task.
-     */
-    private function storeAttachments(StoreTaskRequest|UpdateTaskRequest $request, Task $task): void
-    {
-        if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $file) {
-                if ($file) {
-                    $file->storeAs('tasks/' . $task->id, $file->getClientOriginalName(), 'public');
-                }
-            }
-        }
-    }
-
-    /**
-     * Notify the given user IDs that they have been assigned to the task.
-     *
-     * @param  array<int>  $userIds
-     */
-    private function notifyAssignees(Task $task, array $userIds): void
-    {
-        if ($userIds === []) {
-            return;
-        }
-
-        if (! $task->relationLoaded('project')) {
-            $task->load('project');
-        }
-
-        $users = User::query()->whereIn('id', $userIds)->get();
-        foreach ($users as $user) {
-            $user->notify(new TaskAssigned($task, auth()->user()));
-        }
-    }
-
-    /**
-     * Notify project owner when task is completed by a non-owner.
-     */
-    private function notifyOnCompletion(Task $task, string $oldStatus, bool $isProjectOwner): void
-    {
-        if ($oldStatus === 'completed') {
-            return;
-        }
-
-        $newStatus = $task->status;
-        if ($newStatus === 'completed' && ! $isProjectOwner) {
-            if (! $task->relationLoaded('project')) {
-                $task->load('project');
-            }
-
-            $projectOwner = User::query()->find($task->project->user_id);
-            $projectOwner?->notify(new TaskCompleted($task, auth()->user()));
-        }
-    }
-
-    /**
-     * Update external integrations for imported tasks when flags are enabled.
-     */
-    private function updateExternalIntegrations(Task $task, bool $githubUpdate, bool $jiraUpdate): void
-    {
-        $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
-        $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
-
-        if ($isGithub && $githubUpdate) {
-            $this->gitHubAdapter->updateGitHubIssue($task);
-        }
-
-        if ($isJira && $jiraUpdate) {
-            $this->jiraAdapter->updateJiraIssue($task);
-        }
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Http\Stores\TeamStore;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -20,6 +21,8 @@ final class HandleInertiaRequests extends Middleware
      * @var string
      */
     protected $rootView = 'app';
+
+    public function __construct() {}
 
     /**
      * Determines the current asset version.
@@ -44,20 +47,24 @@ final class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        $user = $request->user();
+        $teamContext = $user ? TeamStore::getContextFor($user) : null;
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'quote' => ['message' => mb_trim((string) $message), 'author' => mb_trim((string) $author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
+            'teamContext' => $teamContext,
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'isGitHubIntegrated' => $request->user() && ! empty($request->user()->github_token),
-            'isJiraIntegrated' => $request->user() && $request->user()->isJiraIntegrated(),
+            'isGitHubIntegrated' => $user && ! empty($user->github_token),
+            'isJiraIntegrated' => $user && $user->isJiraIntegrated(),
         ];
     }
 }

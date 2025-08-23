@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Events\MarkAsReadNotification;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Notifications\DatabaseNotification;
@@ -56,6 +57,8 @@ final class NotificationsController extends Controller
         $user = auth()->user();
         $user->unreadNotifications->markAsRead();
 
+        MarkAsReadNotification::dispatch($user->getKey());
+
         return response()->json(['message' => 'All notifications marked as read']);
     }
 
@@ -66,6 +69,7 @@ final class NotificationsController extends Controller
     public function markAsRead(): JsonResponse
     {
         try {
+            $user = auth()->user();
             $notification = DatabaseNotification::query()->findOrFail(request()->get('id'));
 
             if ($notification->notifiable_id !== auth()->id()) {
@@ -73,6 +77,8 @@ final class NotificationsController extends Controller
             }
 
             $notification->markAsRead();
+
+            MarkAsReadNotification::dispatch($user->getKey());
 
             return response()->json(['message' => 'Notification marked as read']);
         } catch (NotFoundExceptionInterface|ContainerExceptionInterface) {

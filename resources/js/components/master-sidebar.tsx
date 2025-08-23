@@ -1,25 +1,14 @@
-import { type NavItem, type SharedData } from '@/types'
-import { count } from '@actions/ApprovalController'
-import { count as taskCount } from '@actions/TaskController'
+import { MasterSidebarProps, NavItemGroup } from '@/@types/components'
+import { useNotifications } from '@/contexts/notifications-context'
+import { type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 import { Building, CheckSquare, ClipboardList, FileText, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
 import { FooterNavigation } from './sidebar/footer-navigation'
 import { IntegrationNavigation } from './sidebar/integration-navigation'
 import { SidebarGroup } from './sidebar/sidebar-group'
 import { UserSection } from './sidebar/user-section'
-
-interface MasterSidebarProps {
-    collapsed: boolean
-}
-
-interface NavItemGroup {
-    title: string
-    icon?: React.ElementType
-    items: NavItem[]
-}
 
 const navGroups: NavItemGroup[] = [
     {
@@ -100,42 +89,7 @@ const navGroups: NavItemGroup[] = [
 
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     const { isGitHubIntegrated, isJiraIntegrated, auth } = usePage<SharedData>().props
-    const [approvalCount, setApprovalCount] = useState(0)
-    const [pendingTaskCount, setPendingTaskCount] = useState(0)
-
-    useEffect(() => {
-        const fetchApprovalCount = async () => {
-            try {
-                const response = await count.data({})
-                setApprovalCount(response.count)
-            } catch (error) {
-                console.error('Failed to fetch approval count', error)
-            }
-        }
-
-        fetchApprovalCount().then()
-
-        const intervalId = setInterval(fetchApprovalCount, 60000)
-
-        return () => clearInterval(intervalId)
-    }, [])
-
-    useEffect(() => {
-        const fetchPendingTaskCount = async () => {
-            try {
-                const response = await taskCount.data({})
-                setPendingTaskCount(response.count)
-            } catch (error) {
-                console.error('Failed to fetch pending task count', error)
-            }
-        }
-
-        fetchPendingTaskCount().then()
-
-        const intervalId = setInterval(fetchPendingTaskCount, 60000)
-
-        return () => clearInterval(intervalId)
-    }, [])
+    const { pendingTaskCount, approvalCount } = useNotifications()
 
     return (
         <div

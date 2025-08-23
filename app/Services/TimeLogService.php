@@ -7,6 +7,8 @@ namespace App\Services;
 use App\Adapters\GitHubAdapter;
 use App\Adapters\JiraAdapter;
 use App\Enums\TimeLogStatus;
+use App\Events\TaskCompleted;
+use App\Events\TimeLogEntryCreated;
 use App\Http\Stores\TimeLogStore;
 use App\Models\Project;
 use App\Models\Task;
@@ -61,6 +63,8 @@ final readonly class TimeLogService
                 $data['status'] = TimeLogStatus::APPROVED;
                 $data['approved_by'] = auth()->id();
                 $data['approved_at'] = Carbon::now();
+            } else {
+                $data['status'] = TimeLogStatus::PENDING;
             }
         }
 
@@ -88,9 +92,10 @@ final readonly class TimeLogService
             if ($task) {
                 if ($markAsComplete) {
                     $task->update(['status' => 'completed']);
+                    TaskCompleted::dispatch($task, auth()->user(), $task->project->user);
                 }
 
-                $canRunIntegrations = $requireCompleteForIntegrations ? $markAsComplete : true;
+                $canRunIntegrations = ! $requireCompleteForIntegrations || $markAsComplete;
 
                 if ($canRunIntegrations && $closeGitHubIssue && $task->is_imported && $task->meta && $task->meta->source === 'github' && $task->meta->source_state !== 'closed') {
                     $this->gitHubAdapter->closeGitHubIssue($task);
@@ -112,6 +117,7 @@ final readonly class TimeLogService
             $teamLeader = User::teamLeader(project: $timeLog->project);
             if (auth()->id() !== $teamLeader->getKey()) {
                 $teamLeader->notify(new TimeLogEntry($timeLog, auth()->user()));
+                TimeLogEntryCreated::dispatch($timeLog, auth()->user(), $teamLeader);
             }
         }
     }
