@@ -9,11 +9,12 @@ use App\Models\Invoice;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 
-final class InvoiceStatusChanged extends Notification
+final class InvoiceStatusChanged extends Notification implements ShouldQueue
 {
     use Queueable;
 

@@ -7,10 +7,11 @@ namespace App\Notifications;
 use App\Models\TimeLog;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-final class TimeLogRejected extends Notification
+final class TimeLogRejected extends Notification implements ShouldQueue
 {
     use Queueable;
 
