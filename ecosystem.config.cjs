@@ -14,7 +14,7 @@ module.exports = {
             error_file: './storage/logs/queue.error.log',
             out_file: './storage/logs/queue.out.log',
             pid_file: './storage/logs/queue.pid.log',
-            cwd: "/home/workhours/htdocs/workhours.us",
+            cwd: "/home/workhours/htdocs/workhours.us/current",
         },
         {
             name: 'laravel-reverb',
@@ -29,7 +29,7 @@ module.exports = {
             error_file: './storage/logs/reverb.error.log',
             out_file: './storage/logs/reverb.out.log',
             pid_file: './storage/logs/reverb.pid.log',
-            cwd: "/home/workhours/htdocs/workhours.us",
+            cwd: "/home/workhours/htdocs/workhours.us/current",
         }
     ],
 };
