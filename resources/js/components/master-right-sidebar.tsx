@@ -1,10 +1,9 @@
 import { MasterRightSidebarProps } from '@/@types/components'
 import QuickTrackModal from '@/components/quick-track-modal'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useTimeTracker } from '@/contexts/time-tracker-context'
-import { type NavItem, type User } from '@/types'
-import { Link } from '@inertiajs/react'
+import { type NavItem, type User, type SharedData } from '@/types'
+import { Link, usePage } from '@inertiajs/react'
 import { useEchoPresence } from '@laravel/echo-react'
 import { BarChart3, BrainCircuit, ClockIcon, PlusCircle, UsersIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -40,6 +39,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
 
     const [quickOpen, setQuickOpen] = useState(false)
     const { running } = useTimeTracker()
+    const { auth } = usePage<SharedData>().props
 
     // Online users via presence channel
     type PresenceUser = Pick<User, 'id' | 'name' | 'email' | 'avatar'>
@@ -51,10 +51,13 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
         const ch = channel()
         // Initialize current online users
         ch.here((users: PresenceUser[]) => {
-            setOnline(users)
+            setOnline(users.filter((u) => u.id !== auth.user.id))
         })
         // Someone joined
         ch.joining((user: PresenceUser) => {
+            if (user.id === auth.user.id) {
+                return
+            }
             setOnline((prev) => {
                 if (prev.some((u) => u.id === user.id)) return prev
                 return [...prev, user]
@@ -62,6 +65,9 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
         })
         // Someone left
         ch.leaving((user: PresenceUser) => {
+            if (user.id === auth.user.id) {
+                return
+            }
             setOnline((prev) => prev.filter((u) => u.id !== user.id))
         })
 
@@ -199,14 +205,10 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                                 {online.map((u) => (
                                     <Tooltip key={u.id}>
                                         <TooltipTrigger asChild>
-                                            <div className="relative">
-                                                <Avatar className="h-8 w-8 overflow-hidden border border-gray-400">
-                                                    <AvatarImage src={u.avatar} alt={u.name} />
-                                                    <AvatarFallback className="border border-gray-400 bg-gray-100 text-gray-800">
-                                                        {u.name?.slice(0, 1) ?? '?'}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                            </div>
+                                            <span
+                                                className="block h-3.5 w-3.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-neutral-900"
+                                                aria-label="Online"
+                                            />
                                         </TooltipTrigger>
                                         <TooltipContent side="left">{u.name}</TooltipContent>
                                     </Tooltip>
@@ -216,12 +218,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                             <ul className="space-y-2">
                                 {online.map((u) => (
                                     <li key={u.id} className="flex items-center">
-                                        <Avatar className="h-6 w-6 overflow-hidden border border-gray-400">
-                                            <AvatarImage src={u.avatar} alt={u.name} />
-                                            <AvatarFallback className="border border-gray-400 bg-gray-100 text-gray-800">
-                                                {u.name?.slice(0, 1) ?? '?'}
-                                            </AvatarFallback>
-                                        </Avatar>
+                                        <span className="h-2.5 w-2.5 rounded-full bg-green-500" aria-hidden="true" />
                                         <span className="ml-2 text-sm text-neutral-700 dark:text-neutral-300">{u.name}</span>
                                     </li>
                                 ))}
