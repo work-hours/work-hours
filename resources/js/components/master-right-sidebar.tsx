@@ -39,7 +39,9 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
 
     const [quickOpen, setQuickOpen] = useState(false)
     const { running } = useTimeTracker()
-    const { auth } = usePage<SharedData>().props
+    const { auth, teamContext } = usePage<SharedData>().props as SharedData & {
+        teamContext?: { leaderIds: number[]; memberIds: number[] } | null
+    }
 
     // Online users via presence channel
     type PresenceUser = Pick<User, 'id' | 'name' | 'email' | 'avatar'>
@@ -76,7 +78,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
             leave()
         }
         // We want to (re)bind when the channel function identity changes
-    }, [channel, leave])
+    }, [channel, leave, auth.user.id])
 
     useEffect(() => {
         const onKeyDown = (e: KeyboardEvent) => {
@@ -95,6 +97,25 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
         window.addEventListener('keydown', onKeyDown)
         return () => window.removeEventListener('keydown', onKeyDown)
     }, [running])
+
+    // Filter online users based on team context
+    const filteredOnline: PresenceUser[] = (() => {
+        const tc = teamContext ?? null
+        if (!tc) {
+            return []
+        }
+        const ids = new Set<number>()
+        if (Array.isArray(tc.memberIds)) {
+            for (const id of tc.memberIds) ids.add(id)
+        }
+        if (Array.isArray(tc.leaderIds)) {
+            for (const id of tc.leaderIds) ids.add(id)
+        }
+        if (ids.size === 0) {
+            return []
+        }
+        return online.filter((u) => ids.has(u.id))
+    })()
 
     return (
         <div
@@ -196,13 +217,13 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                         <h3
                             className={`text-xs font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400 ${collapsed ? 'text-center' : ''}`}
                         >
-                            {collapsed ? 'Online' : `Online (${online.length})`}
+                            {collapsed ? 'Online' : `Online (${filteredOnline.length})`}
                         </h3>
                     </div>
                     <TooltipProvider>
                         {collapsed ? (
                             <div className="flex flex-col items-center gap-3">
-                                {online.map((u) => (
+                                {filteredOnline.map((u) => (
                                     <Tooltip key={u.id}>
                                         <TooltipTrigger asChild>
                                             <span
@@ -216,13 +237,13 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                             </div>
                         ) : (
                             <ul className="space-y-2">
-                                {online.map((u) => (
+                                {filteredOnline.map((u) => (
                                     <li key={u.id} className="flex items-center">
                                         <span className="h-2.5 w-2.5 rounded-full bg-green-500" aria-hidden="true" />
                                         <span className="ml-2 text-sm text-neutral-700 dark:text-neutral-300">{u.name}</span>
                                     </li>
                                 ))}
-                                {online.length === 0 && (
+                                {filteredOnline.length === 0 && (
                                     <li className="text-sm text-neutral-500 dark:text-neutral-400">No one online</li>
                                 )}
                             </ul>

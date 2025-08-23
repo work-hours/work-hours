@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\Team;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -44,20 +45,49 @@ final class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        $user = $request->user();
+
+        // Compute minimal team context for the authenticated user
+        $teamContext = null;
+        if ($user) {
+            // If user is a team leader, list their member ids
+            $memberIds = Team::query()
+                ->where('user_id', $user->id)
+                ->pluck('member_id')
+                ->map(fn ($id) => (int) $id)
+                ->values()
+                ->all();
+
+            // If user is a team member, list all leader ids (may be multiple)
+            $leaderIds = Team::query()
+                ->where('member_id', $user->id)
+                ->pluck('user_id')
+                ->map(fn ($id) => (int) $id)
+                ->unique()
+                ->values()
+                ->all();
+
+            $teamContext = [
+                'leaderIds' => $leaderIds,
+                'memberIds' => $memberIds,
+            ];
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'quote' => ['message' => mb_trim((string) $message), 'author' => mb_trim((string) $author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
+            'teamContext' => $teamContext,
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'isGitHubIntegrated' => $request->user() && ! empty($request->user()->github_token),
-            'isJiraIntegrated' => $request->user() && $request->user()->isJiraIntegrated(),
+            'isGitHubIntegrated' => $user && ! empty($user->github_token),
+            'isJiraIntegrated' => $user && $user->isJiraIntegrated(),
         ];
     }
 }
