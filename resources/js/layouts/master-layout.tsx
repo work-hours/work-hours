@@ -5,6 +5,7 @@ import { MasterContent } from '@/components/master-content'
 import { MasterRightSidebar } from '@/components/master-right-sidebar'
 import { MasterSidebar } from '@/components/master-sidebar'
 import RealTimeNotification from '@/components/real-time-notification'
+import ChatOffcanvas from '@/components/chat-offcanvas'
 import { NotificationsProvider } from '@/contexts/notifications-context'
 import { TimeTrackerProvider } from '@/contexts/time-tracker-context'
 import { projects } from '@actions/DashboardController'
@@ -68,6 +69,9 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                         <FloatingAiChat projects={userProjects} />
                     </>
                 )}
+
+                {/* Chat Offcanvas */}
+                <ChatOffcanvas />
 
                 <Toaster
                     position="top-right"

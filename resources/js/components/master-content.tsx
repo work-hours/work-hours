@@ -4,11 +4,13 @@ import { HourlyRateStatusBar } from '@/components/hourly-rate-status-bar'
 import RunningTracker from '@/components/running-tracker'
 import { Badge } from '@/components/ui/badge'
 import { useNotifications } from '@/contexts/notifications-context'
-import { Link } from '@inertiajs/react'
-import { Bell, ChevronRight, Home, Settings } from 'lucide-react'
+import { Link, usePage } from '@inertiajs/react'
+import { Bell, ChevronRight, Home, Settings, MessageSquare } from 'lucide-react'
 
 export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps) {
     const { unreadCount, isAdmin } = useNotifications()
+    const { props } = usePage<{ unreadChatUsersCount?: number }>()
+    const unreadChatUsersCount = props.unreadChatUsersCount ?? 0
 
     return (
         <div className="relative flex flex-1 flex-col bg-slate-50 dark:bg-slate-900">
@@ -85,6 +87,23 @@ export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps
                                 <Settings className="h-5 w-5" />
                             </Link>
                         )}
+
+                        <button
+                            type="button"
+                            onClick={() => window.dispatchEvent(new Event('open-chat'))}
+                            className="relative flex items-center rounded-md p-1.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                            aria-label="Open chat"
+                        >
+                            <MessageSquare className="h-5 w-5" />
+                            {unreadChatUsersCount > 0 && (
+                                <Badge
+                                    variant="destructive"
+                                    className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center overflow-hidden rounded-full border-0 px-1.5 text-xs font-semibold shadow-sm"
+                                >
+                                    {unreadChatUsersCount > 99 ? '99+' : unreadChatUsersCount}
+                                </Badge>
+                            )}
+                        </button>
 
                         <Link
                             href="/notifications"

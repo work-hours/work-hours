@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Http\Stores\TeamStore;
+use App\Models\Message;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -50,6 +51,18 @@ final class HandleInertiaRequests extends Middleware
         $user = $request->user();
         $teamContext = $user ? TeamStore::getContextFor($user) : null;
 
+        $unreadChatUsersCount = 0;
+        if ($user) {
+            $unreadChatUsersCount = Message::query()
+                ->whereNull('read_at')
+                ->where('user_id', '!=', $user->id)
+                ->whereHas('conversation.participants', static function ($q) use ($user): void {
+                    $q->where('users.id', $user->id);
+                })
+                ->distinct('user_id')
+                ->count('user_id');
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -58,6 +71,7 @@ final class HandleInertiaRequests extends Middleware
                 'user' => $user,
             ],
             'teamContext' => $teamContext,
+            'unreadChatUsersCount' => $unreadChatUsersCount,
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

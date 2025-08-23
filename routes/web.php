@@ -20,3 +20,4 @@ require __DIR__ . '/github.php';
 require __DIR__ . '/tags.php';
 require __DIR__ . '/admin.php';
 require __DIR__ . '/jira.php';
+require __DIR__ . '/chat.php';
