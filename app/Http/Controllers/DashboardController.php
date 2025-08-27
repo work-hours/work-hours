@@ -46,6 +46,7 @@ final class DashboardController extends Controller
 
         $totalHours = TimeLogStore::totalHours(teamMembersIds: $teamMembersIds);
         $unpaidHours = TimeLogStore::unpaidHours(teamMembersIds: $teamMembersIds);
+        $unbillableHours = TimeLogStore::unbillableHours(teamMembersIds: $teamMembersIds);
         $unpaidAmountsByCurrency = TimeLogStore::unpaidAmount(teamMembersIds: $teamMembersIds);
         $paidAmountsByCurrency = TimeLogStore::paidAmount(teamMembersIds: $teamMembersIds);
         $startDateStr = request('start-date');
@@ -71,6 +72,7 @@ final class DashboardController extends Controller
             'weeklyAverage' => $teamCount > 0 ? round($totalHours / $teamCount, 2) : 0,
             'clientCount' => $clientCount,
             'dailyTrend' => $dailyTrend,
+            'unbillableHours' => $unbillableHours,
         ];
     }
 

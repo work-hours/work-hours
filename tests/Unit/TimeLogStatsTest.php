@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use App\Enums\TimeLogStatus;
 use App\Http\Stores\TimeLogStore;
-use App\Models\TimeLog;
 use App\Models\Project;
+use App\Models\TimeLog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -46,4 +46,5 @@ it('excludes non-billable time from unpaid hours in stats', function (): void {
     $stats = TimeLogStore::stats($collection);
 
     expect($stats['unpaid_hours'])->toBe(1.5);
+    expect($stats['unbillable_hours'])->toBe(2.0);
 });

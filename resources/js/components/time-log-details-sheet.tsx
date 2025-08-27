@@ -61,7 +61,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                 {timeLog.non_billable && (
                                     <div>
                                         <p className="mb-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">Billing</p>
-                                        <Badge className="text-[10px] font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">
+                                        <Badge className="bg-purple-100 text-[10px] font-medium text-purple-800 dark:bg-purple-900 dark:text-purple-100">
                                             Non-billable
                                         </Badge>
                                     </div>

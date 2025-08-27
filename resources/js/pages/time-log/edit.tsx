@@ -404,7 +404,9 @@ export default function EditTimeLog({ timeLog, projects, tasks }: Props) {
                                         <Label htmlFor="non_billable" className="cursor-pointer text-sm font-medium">
                                             Mark as non-billable
                                         </Label>
-                                        <span className="text-xs text-muted-foreground">If enabled, hourly rate will be set to 0 for this entry.</span>
+                                        <span className="text-xs text-muted-foreground">
+                                            If enabled, hourly rate will be set to 0 for this entry.
+                                        </span>
                                     </div>
                                 </div>
 

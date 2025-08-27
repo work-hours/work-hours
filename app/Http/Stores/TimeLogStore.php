@@ -105,6 +105,15 @@ final class TimeLogStore
             ->sum('duration');
     }
 
+    public static function unbillableHours(array $teamMembersIds): float
+    {
+        return TimeLog::query()
+            ->whereIn('user_id', $teamMembersIds)
+            ->where('status', TimeLogStatus::APPROVED)
+            ->where('non_billable', true)
+            ->sum('duration');
+    }
+
     public static function unpaidHours(array $teamMembersIds)
     {
         return TimeLog::query()
@@ -282,6 +291,7 @@ final class TimeLogStore
             'totalDuration' => $timeLogStats['total_duration'],
             'unpaidHours' => $timeLogStats['unpaid_hours'],
             'paidHours' => $timeLogStats['paid_hours'],
+            'unbillableHours' => $timeLogStats['unbillable_hours'] ?? 0,
             'weeklyAverage' => $timeLogStats['weekly_average'],
             'unpaidAmountsByCurrency' => $timeLogStats['unpaid_amounts_by_currency'],
             'paidAmountsByCurrency' => $timeLogStats['paid_amounts_by_currency'],
@@ -305,6 +315,7 @@ final class TimeLogStore
             'total_duration' => $totalDuration,
             'unpaid_hours' => round($approvedLogs->where('is_paid', false)->where('non_billable', false)->sum('duration'), 2),
             'paid_hours' => round($approvedLogs->where('is_paid', true)->sum('duration'), 2),
+            'unbillable_hours' => round($approvedLogs->where('non_billable', true)->sum('duration'), 2),
             'weekly_average' => $totalDuration > 0 ? round($totalDuration / 7, 2) : 0,
             'unpaid_amounts_by_currency' => self::unpaidAmountFromLogs($approvedLogs),
             'paid_amounts_by_currency' => self::paidAmountFromLogs($approvedLogs),

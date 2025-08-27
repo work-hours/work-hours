@@ -1,5 +1,5 @@
 import { roundToTwoDecimals } from '@/lib/utils'
-import { BarChart3, Building2, Clock, CreditCard, DollarSign, PiggyBank, Users, Wallet } from 'lucide-react'
+import { BarChart3, Building2, Clock, CreditCard, DollarSign, PiggyBank, TimerReset, Users, Wallet } from 'lucide-react'
 import StatsCard from './StatsCard'
 
 interface TeamStats {
@@ -13,6 +13,7 @@ interface TeamStats {
     currency: string
     weeklyAverage: number
     clientCount: number
+    unbillableHours?: number
 }
 
 interface StatsCardsProps {
@@ -110,6 +111,15 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                         value={`${roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours)} hrs`}
                         icon={<PiggyBank className="stroke-teal-600" />}
                         color="teal"
+                    />
+                )}
+
+                {teamStats.unbillableHours !== undefined && teamStats.unbillableHours >= 0 && (
+                    <StatsCard
+                        title="Unbillable Hours"
+                        value={`${roundToTwoDecimals(teamStats.unbillableHours)} hrs`}
+                        icon={<TimerReset className="stroke-purple-600" />}
+                        color="purple"
                     />
                 )}
 

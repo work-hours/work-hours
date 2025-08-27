@@ -136,7 +136,7 @@ export default function TimeLogTable({
                                 <div className="flex flex-wrap items-center gap-1">
                                     {showProject && <small className="mr-1">{log.project_name || 'No Project'}</small>}
                                     {log.non_billable && (
-                                        <Badge className="text-[10px] font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">
+                                        <Badge className="bg-purple-100 text-[10px] font-medium text-purple-800 dark:bg-purple-900 dark:text-purple-100">
                                             Non-billable
                                         </Badge>
                                     )}

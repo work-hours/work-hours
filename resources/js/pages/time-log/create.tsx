@@ -393,7 +393,9 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                         <Label htmlFor="non_billable" className="cursor-pointer text-sm font-medium">
                                             Mark as non-billable
                                         </Label>
-                                        <span className="text-xs text-muted-foreground">If enabled, This entry will not be considered in monitory calculations.</span>
+                                        <span className="text-xs text-muted-foreground">
+                                            If enabled, This entry will not be considered in monitory calculations.
+                                        </span>
                                     </div>
                                 </div>
 

@@ -100,6 +100,7 @@ type Props = {
     unpaidAmountsByCurrency: Record<string, number>
     paidAmountsByCurrency: Record<string, number>
     weeklyAverage: number
+    unbillableHours: number
     isCreator: boolean
     tasks: Task[]
 }
@@ -114,6 +115,7 @@ export default function ProjectTimeLogs({
     unpaidAmountsByCurrency,
     paidAmountsByCurrency,
     weeklyAverage,
+    unbillableHours,
     isCreator,
     tasks,
 }: Props) {
@@ -218,6 +220,7 @@ export default function ProjectTimeLogs({
                                 currency: Object.keys(unpaidAmountsByCurrency)[0] || Object.keys(paidAmountsByCurrency)[0] || 'USD',
                                 weeklyAverage: weeklyAverage,
                                 clientCount: -1,
+                                unbillableHours: unbillableHours,
                             }}
                         />
                     </section>

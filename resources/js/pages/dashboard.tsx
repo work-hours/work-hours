@@ -24,6 +24,7 @@ interface TeamStats {
     weeklyAverage: number
     clientCount: number
     dailyTrend: Array<{ date: string; userHours: number; teamHours: number }>
+    unbillableHours?: number
 }
 
 const breadcrumbs: BreadcrumbItem[] = [

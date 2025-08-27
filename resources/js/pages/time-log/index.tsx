@@ -75,6 +75,7 @@ type Props = {
     paidHours: number
     paidAmountsByCurrency: Record<string, number>
     weeklyAverage: number
+    unbillableHours: number
     tags: { id: number; name: string }[]
 }
 
@@ -87,6 +88,7 @@ export default function TimeLog({
     unpaidAmountsByCurrency,
     paidAmountsByCurrency,
     weeklyAverage,
+    unbillableHours,
     tags,
 }: Props) {
     const { data, setData, get, processing } = useForm<Filters>({
@@ -253,6 +255,7 @@ export default function TimeLog({
                                 currency: Object.keys(unpaidAmountsByCurrency)[0] || Object.keys(paidAmountsByCurrency)[0] || 'USD',
                                 weeklyAverage: weeklyAverage,
                                 clientCount: -1,
+                                unbillableHours: unbillableHours,
                             }}
                         />
                     </section>
