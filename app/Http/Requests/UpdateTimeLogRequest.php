@@ -30,6 +30,7 @@ final class UpdateTimeLogRequest extends FormRequest
             'start_timestamp' => ['required', 'date'],
             'end_timestamp' => ['required', 'date', 'after_or_equal:start_timestamp'],
             'note' => ['required_without:task_id', 'string', 'nullable'],
+            'non_billable' => ['boolean', 'nullable'],
             'mark_task_complete' => ['boolean', 'nullable'],
             'close_github_issue' => ['boolean', 'nullable'],
             'mark_jira_done' => ['boolean', 'nullable'],

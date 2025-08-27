@@ -168,6 +168,7 @@ final class TimeLogController extends Controller
                 'end_timestamp' => $timeLog->end_timestamp,
                 'duration' => $timeLog->duration,
                 'note' => $timeLog->note,
+                'non_billable' => (bool) $timeLog->non_billable,
                 'tags' => $timeLog->tags->pluck('name'),
             ],
             'projects' => $projects,

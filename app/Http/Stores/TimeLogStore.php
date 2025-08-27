@@ -391,6 +391,7 @@ final class TimeLogStore
                 'approver_name' => $approverName,
                 'comment' => $timeLog->comment,
                 'user_non_monetary' => $isNonMonetary,
+                'non_billable' => (bool) ($timeLog->non_billable ?? false),
                 'tags' => $timeLog->tags ? $timeLog->tags->map(fn ($tag): array => [
                     'id' => $tag->id,
                     'name' => $tag->name,
