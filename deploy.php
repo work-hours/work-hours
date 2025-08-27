@@ -33,8 +33,18 @@ try {
 }
 
 try {
+    desc('Restart the back process');
+    task('pm2', function () {
+        cd('{{current_path}}');
+        run('pm2 restart ecosystem.config.cjs');
+    });
+} catch (Exception $e) {
+    writeln('PM2 task failed: ' . $e->getMessage());
+}
+
+try {
     task('optimize', function () {
-        cd('{{release_path}}');
+        cd('{{current_path}}');
         run('php artisan optimize');
     });
 } catch (Exception $e) {
@@ -43,5 +53,6 @@ try {
 
 // Hooks
 after('deploy:vendors', 'build');
-after('deploy:symlink', 'optimize');
 after('deploy:failed', 'deploy:unlock');
+after('deploy:unlock', 'optimize');
+after('optimize', 'pm2');
