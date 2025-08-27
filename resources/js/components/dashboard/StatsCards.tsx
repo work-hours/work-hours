@@ -1,5 +1,5 @@
 import { roundToTwoDecimals } from '@/lib/utils'
-import { BarChart3, Building2, Clock, CreditCard, DollarSign, PiggyBank, Users, Wallet } from 'lucide-react'
+import { BarChart3, Building2, Clock, CreditCard, DollarSign, PiggyBank, TimerReset, Users, Wallet } from 'lucide-react'
 import StatsCard from './StatsCard'
 
 interface TeamStats {
@@ -13,6 +13,7 @@ interface TeamStats {
     currency: string
     weeklyAverage: number
     clientCount: number
+    unbillableHours?: number
 }
 
 interface StatsCardsProps {
@@ -22,7 +23,8 @@ interface StatsCardsProps {
 export default function StatsCards({ teamStats }: StatsCardsProps) {
     const renderUnpaidAmountCards = () => {
         if (!teamStats.unpaidAmountsByCurrency || Object.keys(teamStats.unpaidAmountsByCurrency).length === 0) {
-            if (teamStats.unpaidAmount < 0) return null
+            if (teamStats.unpaidAmount <= 0 || teamStats.unpaidAmount === undefined) return null
+
             return (
                 <StatsCard
                     title="Unpaid Amount"
@@ -32,8 +34,9 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 />
             )
         }
+
         return Object.entries(teamStats.unpaidAmountsByCurrency)
-            .filter(([, amount]) => amount >= 0)
+            .filter(([, amount]) => amount > 0)
             .map(([currencyCode, amount]) => (
                 <StatsCard
                     key={currencyCode}
@@ -47,7 +50,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
 
     const renderPaidAmountCards = () => {
         if (!teamStats.paidAmountsByCurrency || Object.keys(teamStats.paidAmountsByCurrency).length === 0) {
-            if (teamStats.paidAmount < 0) return null
+            if (teamStats.paidAmount <= 0) return null
             return (
                 <StatsCard
                     title="Paid Amount"
@@ -58,7 +61,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
             )
         }
         return Object.entries(teamStats.paidAmountsByCurrency)
-            .filter(([, amount]) => amount >= 0)
+            .filter(([, amount]) => amount > 0)
             .map(([currencyCode, amount]) => (
                 <StatsCard
                     key={currencyCode}
@@ -73,11 +76,11 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
     return (
         <section className="relative mb-2 overflow-hidden rounded-md bg-gray-50/80 p-4 backdrop-blur-sm dark:bg-gray-900/50">
             <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                {teamStats.count >= 0 && (
+                {teamStats.count > 0 && (
                     <StatsCard title="Team Members" value={teamStats.count} icon={<Users className="stroke-blue-600" />} color="blue" />
                 )}
 
-                {teamStats.clientCount >= 0 && (
+                {teamStats.clientCount > 0 && (
                     <StatsCard
                         title="Active Clients"
                         value={teamStats.clientCount}
@@ -86,7 +89,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     />
                 )}
 
-                {teamStats.totalHours >= 0 && (
+                {teamStats.totalHours > 0 && (
                     <StatsCard
                         title="Total Hours"
                         value={`${roundToTwoDecimals(teamStats.totalHours)} hrs`}
@@ -95,7 +98,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     />
                 )}
 
-                {teamStats.unpaidHours >= 0 && (
+                {teamStats.unpaidHours > 0 && (
                     <StatsCard
                         title="Unpaid Hours"
                         value={`${roundToTwoDecimals(teamStats.unpaidHours)} hrs`}
@@ -104,7 +107,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     />
                 )}
 
-                {teamStats.totalHours - teamStats.unpaidHours >= 0 && (
+                {teamStats.totalHours - teamStats.unpaidHours > 0 && (
                     <StatsCard
                         title="Paid Hours"
                         value={`${roundToTwoDecimals(teamStats.totalHours - teamStats.unpaidHours)} hrs`}
@@ -113,7 +116,16 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                     />
                 )}
 
-                {teamStats.weeklyAverage >= 0 && (
+                {teamStats.unbillableHours !== undefined && teamStats.unbillableHours > 0 && (
+                    <StatsCard
+                        title="Unbillable Hours"
+                        value={`${roundToTwoDecimals(teamStats.unbillableHours)} hrs`}
+                        icon={<TimerReset className="stroke-purple-600" />}
+                        color="purple"
+                    />
+                )}
+
+                {teamStats.weeklyAverage > 0 && (
                     <StatsCard
                         title="Weekly Average"
                         value={`${roundToTwoDecimals(teamStats.weeklyAverage)} hrs`}

@@ -105,11 +105,21 @@ final class TimeLogStore
             ->sum('duration');
     }
 
+    public static function unbillableHours(array $teamMembersIds): float
+    {
+        return TimeLog::query()
+            ->whereIn('user_id', $teamMembersIds)
+            ->where('status', TimeLogStatus::APPROVED)
+            ->where('non_billable', true)
+            ->sum('duration');
+    }
+
     public static function unpaidHours(array $teamMembersIds)
     {
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
             ->where('is_paid', false)
+            ->where('non_billable', false)
             ->where('status', TimeLogStatus::APPROVED)
             ->sum('duration');
     }
@@ -118,7 +128,7 @@ final class TimeLogStore
     {
         $unpaidAmounts = [];
         foreach ($teamMembersIds as $memberId) {
-            $unpaidLogs = self::unpaidTimeLog(teamMemberId: $memberId);
+            $unpaidLogs = self::unpaidTimeLog(teamMemberId: $memberId)->where('non_billable', false);
             $unpaidLogs->each(function ($log) use (&$unpaidAmounts, $memberId): void {
                 $memberUnpaidHours = $log->duration;
                 $hourlyRate = Team::memberHourlyRate(project: $log->project, memberId: $memberId);
@@ -146,6 +156,7 @@ final class TimeLogStore
             ->with('project')
             ->where('user_id', $teamMemberId)
             ->where('is_paid', false)
+            ->where('non_billable', false)
             ->where('status', TimeLogStatus::APPROVED)
             ->get();
     }
@@ -169,6 +180,7 @@ final class TimeLogStore
                 ->with('project')
                 ->where('project_id', $project->id)
                 ->where('is_paid', false)
+                ->where('non_billable', false)
                 ->where('status', TimeLogStatus::APPROVED)
                 ->get();
 
@@ -208,7 +220,9 @@ final class TimeLogStore
 
             $groupedTimeLogs[$projectId]['time_logs'][] = $timeLog;
 
-            $groupedTimeLogs[$projectId]['total_hours'] += $timeLog->duration;
+            if (! $timeLog->non_billable) {
+                $groupedTimeLogs[$projectId]['total_hours'] += $timeLog->duration;
+            }
         }
 
         return array_values($groupedTimeLogs);
@@ -277,6 +291,7 @@ final class TimeLogStore
             'totalDuration' => $timeLogStats['total_duration'],
             'unpaidHours' => $timeLogStats['unpaid_hours'],
             'paidHours' => $timeLogStats['paid_hours'],
+            'unbillableHours' => $timeLogStats['unbillable_hours'] ?? 0,
             'weeklyAverage' => $timeLogStats['weekly_average'],
             'unpaidAmountsByCurrency' => $timeLogStats['unpaid_amounts_by_currency'],
             'paidAmountsByCurrency' => $timeLogStats['paid_amounts_by_currency'],
@@ -298,8 +313,9 @@ final class TimeLogStore
 
         return [
             'total_duration' => $totalDuration,
-            'unpaid_hours' => round($approvedLogs->where('is_paid', false)->sum('duration'), 2),
+            'unpaid_hours' => round($approvedLogs->where('is_paid', false)->where('non_billable', false)->sum('duration'), 2),
             'paid_hours' => round($approvedLogs->where('is_paid', true)->sum('duration'), 2),
+            'unbillable_hours' => round($approvedLogs->where('non_billable', true)->sum('duration'), 2),
             'weekly_average' => $totalDuration > 0 ? round($totalDuration / 7, 2) : 0,
             'unpaid_amounts_by_currency' => self::unpaidAmountFromLogs($approvedLogs),
             'paid_amounts_by_currency' => self::paidAmountFromLogs($approvedLogs),
@@ -314,7 +330,7 @@ final class TimeLogStore
             $hourlyRate = Team::memberHourlyRate(project: $timeLog->project, memberId: $timeLog->user_id);
             $currency = $timeLog->currency ?? 'USD';
 
-            if (! $timeLog['is_paid'] && $timeLog['status'] === TimeLogStatus::APPROVED) {
+            if (! $timeLog['is_paid'] && $timeLog['status'] === TimeLogStatus::APPROVED && ! $timeLog['non_billable']) {
                 if (! isset($unpaidAmounts[$currency])) {
                     $unpaidAmounts[$currency] = 0;
                 }
@@ -391,6 +407,7 @@ final class TimeLogStore
                 'approver_name' => $approverName,
                 'comment' => $timeLog->comment,
                 'user_non_monetary' => $isNonMonetary,
+                'non_billable' => (bool) ($timeLog->non_billable ?? false),
                 'tags' => $timeLog->tags ? $timeLog->tags->map(fn ($tag): array => [
                     'id' => $tag->id,
                     'name' => $tag->name,

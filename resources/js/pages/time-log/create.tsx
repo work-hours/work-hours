@@ -28,6 +28,7 @@ type TimeLogForm = {
     start_timestamp: string
     end_timestamp: string
     note: string
+    non_billable: boolean
     mark_task_complete: boolean
     close_github_issue: boolean
     mark_jira_done: boolean
@@ -68,6 +69,7 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
         start_timestamp: new Date().toISOString(), // Default to now, using full ISO string
         end_timestamp: '',
         note: '',
+        non_billable: false,
         mark_task_complete: false,
         close_github_issue: false,
         mark_jira_done: false,
@@ -378,6 +380,23 @@ export default function CreateTimeLog({ projects, tasks }: Props) {
                                         tabIndex={3}
                                     />
                                     <InputError message={errors.note} className="mt-1" />
+                                </div>
+
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id="non_billable"
+                                        checked={data.non_billable}
+                                        onCheckedChange={(checked) => setData('non_billable', checked as boolean)}
+                                        disabled={processing}
+                                    />
+                                    <div className="flex flex-col">
+                                        <Label htmlFor="non_billable" className="cursor-pointer text-sm font-medium">
+                                            Mark as non-billable
+                                        </Label>
+                                        <span className="text-xs text-muted-foreground">
+                                            If enabled, This entry will not be considered in monitory calculations.
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div className="grid gap-2">

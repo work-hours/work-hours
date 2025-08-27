@@ -21,7 +21,7 @@ export type TimeTrackerContextType = TimeTrackerState & {
     start: (task: TrackerTask) => void
     pause: () => void
     resume: () => void
-    stop: () => Promise<void>
+    stop: (options?: { non_billable?: boolean }) => Promise<void>
     adjustElapsed: (deltaMs: number) => void
     setElapsedExact: (ms: number) => void
 }
@@ -138,7 +138,7 @@ export function TimeTrackerProvider({ children }: { children: ReactNode }) {
         })
     }, [])
 
-    const stop = useCallback(async () => {
+    const stop = useCallback(async (options?: { non_billable?: boolean }) => {
         const s = state
         if (!s.running || !s.task || !s.startEpochMs) {
             setState({ running: false, paused: false, task: null, startEpochMs: null, elapsedMs: 0 })
@@ -156,6 +156,7 @@ export function TimeTrackerProvider({ children }: { children: ReactNode }) {
                 end_timestamp: endDate.toISOString().slice(0, 19).replace('T', ' '),
                 note: null,
                 is_paid: false,
+                non_billable: options?.non_billable ?? false,
             }
 
             await axios.post(route('time-log.store'), payload)

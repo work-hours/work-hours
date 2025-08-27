@@ -59,6 +59,7 @@ type Props = {
     paidAmountsByCurrency: Record<string, number>
     currency: string
     weeklyAverage: number
+    unbillableHours: number
     links?: { url: string | null; label: string; active: boolean }[]
 }
 
@@ -73,6 +74,7 @@ export default function TeamMemberTimeLogs({
     paidAmountsByCurrency,
     currency,
     weeklyAverage,
+    unbillableHours,
     links = [],
 }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -176,6 +178,7 @@ export default function TeamMemberTimeLogs({
                                 currency: currency,
                                 weeklyAverage: weeklyAverage,
                                 clientCount: -1,
+                                unbillableHours: unbillableHours,
                             }}
                         />
                     </section>

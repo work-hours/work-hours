@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 import { useTimeTracker } from '@/contexts/time-tracker-context'
 import { Clock, Edit3, Pause, Play, Square } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -23,6 +25,7 @@ export default function RunningTracker() {
     const [hours, setHours] = useState(0)
     const [minutes, setMinutes] = useState(0)
     const [seconds, setSeconds] = useState(0)
+    const [nonBillable, setNonBillable] = useState(false)
 
     useEffect(() => {
         if (open) {
@@ -88,6 +91,12 @@ export default function RunningTracker() {
                     </Button>
                 </div>
                 <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 pr-2">
+                        <Checkbox id="non_billable_rt" checked={nonBillable} onCheckedChange={(c) => setNonBillable(Boolean(c))} />
+                        <Label htmlFor="non_billable_rt" className="cursor-pointer text-[11px] text-gray-600 dark:text-gray-300">
+                            Non-billable
+                        </Label>
+                    </div>
                     {paused ? (
                         <Button
                             size="icon"
@@ -110,7 +119,7 @@ export default function RunningTracker() {
                     <Button
                         size="icon"
                         className="h-6 w-6 rounded-full bg-red-50 p-1 text-red-700 hover:bg-red-100 dark:bg-red-950/50 dark:text-red-400 dark:hover:bg-red-900/50"
-                        onClick={stop}
+                        onClick={() => stop({ non_billable: nonBillable })}
                         title="Stop"
                     >
                         <Square className="h-3.5 w-3.5" />

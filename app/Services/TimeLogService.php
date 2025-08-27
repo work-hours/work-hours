@@ -46,6 +46,10 @@ final readonly class TimeLogService
         $data['currency'] = $project ? TimeLogStore::currency(project: $project) : auth()->user()->currency;
         $data['hourly_rate'] = Team::memberHourlyRate(project: $project, memberId: auth()->id());
 
+        if (! empty($data['non_billable'])) {
+            $data['hourly_rate'] = 0;
+        }
+
         $isLogCompleted = ! empty($data['start_timestamp']) && ! empty($data['end_timestamp']);
 
         if ($isLogCompleted) {

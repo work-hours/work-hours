@@ -27,6 +27,7 @@ export type TimeLogEntry = {
     approver_name?: string
     comment?: string
     user_non_monetary: boolean
+    non_billable?: boolean
     task_title?: string
     task_status?: string
     task_priority?: string
@@ -112,14 +113,17 @@ export default function TimeLogTable({
                                             !log.start_timestamp ||
                                             !log.end_timestamp ||
                                             log.status !== 'approved' ||
-                                            log.user_non_monetary
+                                            log.user_non_monetary ||
+                                            log.non_billable
                                         }
                                         title={
                                             !log.start_timestamp || !log.end_timestamp
                                                 ? 'Time logs without both start and end timestamps cannot be marked as paid'
                                                 : log.status !== 'approved'
                                                   ? 'Time logs must be approved before they can be marked as paid'
-                                                  : ''
+                                                  : log.non_billable
+                                                    ? 'Non-billable time logs cannot be marked as paid'
+                                                    : ''
                                         }
                                         className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                                     />
@@ -131,6 +135,11 @@ export default function TimeLogTable({
                                 <br />
                                 <div className="flex flex-wrap items-center gap-1">
                                     {showProject && <small className="mr-1">{log.project_name || 'No Project'}</small>}
+                                    {log.non_billable && (
+                                        <Badge className="bg-purple-100 text-[10px] font-medium text-purple-800 dark:bg-purple-900 dark:text-purple-100">
+                                            Non-billable
+                                        </Badge>
+                                    )}
                                     {log.tags && log.tags.length > 0 && (
                                         <div className="flex flex-wrap gap-1">
                                             {log.tags.map((tag) => (
