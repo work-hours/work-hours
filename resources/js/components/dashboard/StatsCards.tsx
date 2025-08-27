@@ -23,7 +23,8 @@ interface StatsCardsProps {
 export default function StatsCards({ teamStats }: StatsCardsProps) {
     const renderUnpaidAmountCards = () => {
         if (!teamStats.unpaidAmountsByCurrency || Object.keys(teamStats.unpaidAmountsByCurrency).length === 0) {
-            if (teamStats.unpaidAmount <= 0) return null
+            if (teamStats.unpaidAmount <= 0 || teamStats.unpaidAmount === undefined) return null
+
             return (
                 <StatsCard
                     title="Unpaid Amount"
@@ -33,6 +34,7 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
                 />
             )
         }
+
         return Object.entries(teamStats.unpaidAmountsByCurrency)
             .filter(([, amount]) => amount > 0)
             .map(([currencyCode, amount]) => (
