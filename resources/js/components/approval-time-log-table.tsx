@@ -1,11 +1,11 @@
 import TimeLogDetailsSheet from '@/components/time-log-details-sheet'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
 import { formatDateTime } from '@/lib/utils'
-import type { TimeLogEntry } from './time-log-table'
 import { CheckCircle, Glasses, X } from 'lucide-react'
 import { useState } from 'react'
+import type { TimeLogEntry } from './time-log-table'
 
 type ApprovalTimeLogTableProps = {
     timeLogs: TimeLogEntry[]
@@ -42,7 +42,9 @@ export default function ApprovalTimeLogTable({
                                 Select
                             </TableHead>
                         )}
-                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Team Member</TableHead>
+                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
+                            Team Member
+                        </TableHead>
                         <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Project</TableHead>
                         <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">Start Time</TableHead>
                         <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">End Time</TableHead>
@@ -69,15 +71,15 @@ export default function ApprovalTimeLogTable({
                             )}
                             <TableCell className="font-medium text-gray-800 dark:text-gray-200">{log.user_name}</TableCell>
                             <TableCell className="text-sm text-gray-700 dark:text-gray-300">
-                                                            <div className="flex flex-wrap items-center gap-1">
-                                                                <span>{log.project_name || 'No Project'}</span>
-                                                                {log.non_billable && (
-                                                                    <Badge className="bg-purple-100 text-[10px] font-medium text-purple-800 dark:bg-purple-900 dark:text-purple-100">
-                                                                        Non-billable
-                                                                    </Badge>
-                                                                )}
-                                                            </div>
-                                                        </TableCell>
+                                <div className="flex flex-wrap items-center gap-1">
+                                    <span>{log.project_name || 'No Project'}</span>
+                                    {log.non_billable && (
+                                        <Badge className="bg-purple-100 text-[10px] font-medium text-purple-800 dark:bg-purple-900 dark:text-purple-100">
+                                            Non-billable
+                                        </Badge>
+                                    )}
+                                </div>
+                            </TableCell>
                             <TableCell className="text-sm text-gray-700 dark:text-gray-300">{formatDateTime(log.start_timestamp)}</TableCell>
                             <TableCell className="text-sm text-gray-700 dark:text-gray-300">{formatDateTime(log.end_timestamp)}</TableCell>
                             <TableCell>

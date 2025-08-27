@@ -138,36 +138,39 @@ export function TimeTrackerProvider({ children }: { children: ReactNode }) {
         })
     }, [])
 
-    const stop = useCallback(async (options?: { non_billable?: boolean }) => {
-        const s = state
-        if (!s.running || !s.task || !s.startEpochMs) {
-            setState({ running: false, paused: false, task: null, startEpochMs: null, elapsedMs: 0 })
-            return
-        }
-
-        try {
-            const startDate = new Date(s.startEpochMs)
-            const endDate = new Date(s.startEpochMs + s.elapsedMs)
-
-            const payload: Record<string, unknown> = {
-                project_id: s.task.project_id,
-                task_id: s.task.id,
-                start_timestamp: startDate.toISOString().slice(0, 19).replace('T', ' '),
-                end_timestamp: endDate.toISOString().slice(0, 19).replace('T', ' '),
-                note: null,
-                is_paid: false,
-                non_billable: options?.non_billable ?? false,
+    const stop = useCallback(
+        async (options?: { non_billable?: boolean }) => {
+            const s = state
+            if (!s.running || !s.task || !s.startEpochMs) {
+                setState({ running: false, paused: false, task: null, startEpochMs: null, elapsedMs: 0 })
+                return
             }
 
-            await axios.post(route('time-log.store'), payload)
-            toast.success('Time log created')
-        } catch (e) {
-            console.error('Failed to create time log', e)
-            toast.error('Failed to create time log')
-        } finally {
-            setState({ running: false, paused: false, task: null, startEpochMs: null, elapsedMs: 0 })
-        }
-    }, [state])
+            try {
+                const startDate = new Date(s.startEpochMs)
+                const endDate = new Date(s.startEpochMs + s.elapsedMs)
+
+                const payload: Record<string, unknown> = {
+                    project_id: s.task.project_id,
+                    task_id: s.task.id,
+                    start_timestamp: startDate.toISOString().slice(0, 19).replace('T', ' '),
+                    end_timestamp: endDate.toISOString().slice(0, 19).replace('T', ' '),
+                    note: null,
+                    is_paid: false,
+                    non_billable: options?.non_billable ?? false,
+                }
+
+                await axios.post(route('time-log.store'), payload)
+                toast.success('Time log created')
+            } catch (e) {
+                console.error('Failed to create time log', e)
+                toast.error('Failed to create time log')
+            } finally {
+                setState({ running: false, paused: false, task: null, startEpochMs: null, elapsedMs: 0 })
+            }
+        },
+        [state],
+    )
 
     const adjustElapsed = useCallback((deltaMs: number) => {
         setState((prev) => {
