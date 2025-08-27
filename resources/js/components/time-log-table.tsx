@@ -113,14 +113,17 @@ export default function TimeLogTable({
                                             !log.start_timestamp ||
                                             !log.end_timestamp ||
                                             log.status !== 'approved' ||
-                                            log.user_non_monetary
+                                            log.user_non_monetary ||
+                                            log.non_billable
                                         }
                                         title={
                                             !log.start_timestamp || !log.end_timestamp
                                                 ? 'Time logs without both start and end timestamps cannot be marked as paid'
                                                 : log.status !== 'approved'
                                                   ? 'Time logs must be approved before they can be marked as paid'
-                                                  : ''
+                                                  : log.non_billable
+                                                    ? 'Non-billable time logs cannot be marked as paid'
+                                                    : ''
                                         }
                                         className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                                     />
