@@ -45,7 +45,8 @@ final class Project extends Model
     public function teamMembers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'project_team', 'project_id', 'member_id')
-            ->withTimestamps();
+            ->withTimestamps()
+            ->withPivot(['is_approver', 'hourly_rate', 'currency']);
     }
 
     public function approvers(): BelongsToMany

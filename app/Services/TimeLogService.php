@@ -35,6 +35,14 @@ final readonly class TimeLogService
     }
 
     /**
+     * Base query for time logs belonging to a given project.
+     */
+    public function baseProjectQuery(Project $project): Builder
+    {
+        return TimeLog::query()->where('project_id', $project->getKey());
+    }
+
+    /**
      * Enriches incoming time log data with computed fields and metadata.
      *
      * @return array{data: array, is_completed: bool, project: (Project|null)}

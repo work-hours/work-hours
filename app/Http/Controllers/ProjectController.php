@@ -6,12 +6,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
-use App\Http\Stores\ClientStore;
 use App\Http\Stores\ProjectStore;
-use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
 use App\Models\Project;
-use App\Models\TimeLog;
+use App\Services\ProjectService;
+use App\Services\TimeLogService;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
 use Exception;
@@ -27,6 +26,11 @@ final class ProjectController extends Controller
 {
     use ExportableTrait;
 
+    public function __construct(
+        private readonly ProjectService $projectService,
+        private readonly TimeLogService $timeLogService,
+    ) {}
+
     public function index()
     {
         $filters = request()->only([
@@ -37,13 +41,7 @@ final class ProjectController extends Controller
             'search',
         ]);
 
-        $clients = ClientStore::userClients(auth()->id())
-            ->map(fn ($client): array => [
-                'id' => $client->id,
-                'name' => $client->name,
-            ]);
-
-        $teamMembers = TeamStore::teamMembers(userId: auth()->id());
+        [$clients, $teamMembers] = $this->projectService->clientsAndTeamMembers(auth()->id());
 
         return Inertia::render('project/index', [
             'filters' => $filters,
@@ -73,13 +71,8 @@ final class ProjectController extends Controller
                 'client_id' => $request->input('client_id'),
             ]);
 
-            if ($request->has('team_members')) {
-                $teamMembers = collect($request->input('team_members'))->mapWithKeys(function ($memberId) use ($request) {
-                    $isApprover = $request->has('approvers') && in_array($memberId, $request->input('approvers'), true);
-
-                    return [$memberId => ['is_approver' => $isApprover]];
-                })->toArray();
-
+            $teamMembers = $this->projectService->buildTeamMembersSyncFromRequest($request);
+            if ($teamMembers !== null) {
                 $project->teamMembers()->sync($teamMembers);
             }
 
@@ -92,17 +85,12 @@ final class ProjectController extends Controller
 
     public function create()
     {
-        $teamMembers = TeamStore::teamMembers(userId: auth()->id());
-
-        $clients = ClientStore::userClients(auth()->id())
-            ->map(fn ($client): array => [
-                'id' => $client->id,
-                'name' => $client->name,
-            ]);
+        [$clients, $teamMembers] = $this->projectService->clientsAndTeamMembers(auth()->id());
 
         return Inertia::render('project/create', [
             'teamMembers' => $teamMembers,
             'clients' => $clients,
+            'currencies' => auth()->user()->currencies,
         ]);
     }
 
@@ -110,16 +98,16 @@ final class ProjectController extends Controller
     {
         Gate::authorize('update', $project);
 
-        $teamMembers = TeamStore::teamMembers(userId: auth()->id());
+        [$clients, $teamMembers] = $this->projectService->clientsAndTeamMembers(auth()->id());
 
         $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
         $assignedApprovers = $project->approvers->pluck('id')->toArray();
-
-        $clients = ClientStore::userClients(auth()->id())
-            ->map(fn ($client): array => [
-                'id' => $client->id,
-                'name' => $client->name,
-            ]);
+        $teamMemberRates = $project->teamMembers->mapWithKeys(fn ($member) => [
+            $member->id => [
+                'hourly_rate' => $member->pivot->hourly_rate,
+                'currency' => $member->pivot->currency,
+            ],
+        ]);
 
         return Inertia::render('project/edit', [
             'project' => [
@@ -133,7 +121,9 @@ final class ProjectController extends Controller
             'teamMembers' => $teamMembers,
             'assignedTeamMembers' => $assignedTeamMembers,
             'assignedApprovers' => $assignedApprovers,
+            'teamMemberRates' => $teamMemberRates,
             'clients' => $clients,
+            'currencies' => auth()->user()->currencies,
         ]);
     }
 
@@ -149,13 +139,8 @@ final class ProjectController extends Controller
         try {
             $project->update($request->only(['name', 'description', 'client_id']));
 
-            if ($request->has('team_members')) {
-                $teamMembers = collect($request->input('team_members'))->mapWithKeys(function ($memberId) use ($request) {
-                    $isApprover = $request->has('approvers') && in_array($memberId, $request->input('approvers'), true);
-
-                    return [$memberId => ['is_approver' => $isApprover]];
-                })->toArray();
-
+            $teamMembers = $this->projectService->buildTeamMembersSyncFromRequest($request);
+            if ($teamMembers !== null) {
                 $project->teamMembers()->sync($teamMembers);
             } else {
                 $project->teamMembers()->detach();
@@ -211,7 +196,7 @@ final class ProjectController extends Controller
 
         Gate::authorize('viewTimeLogs', $project);
 
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseTimeLogQuery($project));
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->timeLogService->baseProjectQuery($project));
         $mappedTimeLogs = TimeLogStore::timeLogExportMapper(timeLogs: $timeLogs);
         $headers = TimeLogStore::timeLogExportHeaders();
         $filename = 'project_time_logs_' . $project->name . '_' . Carbon::now()->format('Y-m-d') . '.csv';
@@ -223,7 +208,7 @@ final class ProjectController extends Controller
     {
         Gate::authorize('viewTimeLogs', $project);
 
-        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->baseTimeLogQuery($project));
+        $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->timeLogService->baseProjectQuery($project));
         $tasks = $project->tasks()->with('assignees')->get();
 
         $teamMembers = ProjectStore::teamMembers(project: $project);
@@ -234,10 +219,5 @@ final class ProjectController extends Controller
             'tasks' => $tasks,
             ...TimeLogStore::resData(timeLogs: $timeLogs),
         ]);
-    }
-
-    private function baseTimeLogQuery(Project $project)
-    {
-        return TimeLog::query()->where('project_id', $project->getKey());
     }
 }
