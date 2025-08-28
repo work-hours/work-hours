@@ -20,6 +20,9 @@ type TeamMember = {
     id: number
     name: string
     email: string
+    hourly_rate?: number
+    currency?: string
+    non_monetary?: boolean
 }
 
 type Client = {
@@ -33,6 +36,7 @@ type ProjectForm = {
     client_id: string
     team_members: number[]
     approvers: number[]
+    team_member_rates: Record<number, { hourly_rate: string; currency: string }>
 }
 
 type Props = {
@@ -58,6 +62,7 @@ export default function CreateProject({ teamMembers, clients }: Props) {
         client_id: '',
         team_members: [],
         approvers: [],
+        team_member_rates: {},
     })
 
     const submit: FormEventHandler = (e) => {
@@ -79,8 +84,20 @@ export default function CreateProject({ teamMembers, clients }: Props) {
 
         if (index === -1) {
             currentMembers.push(memberId)
+            const member = teamMembers.find((m) => m.id === memberId)
+            if (member && !member.non_monetary) {
+                const currentRates = { ...data.team_member_rates }
+                currentRates[memberId] = {
+                    hourly_rate: (member.hourly_rate ?? 0).toString(),
+                    currency: member.currency ?? 'USD',
+                }
+                setData('team_member_rates', currentRates)
+            }
         } else {
             currentMembers.splice(index, 1)
+            const currentRates = { ...data.team_member_rates }
+            delete currentRates[memberId]
+            setData('team_member_rates', currentRates)
         }
 
         setData('team_members', currentMembers)
@@ -210,19 +227,46 @@ export default function CreateProject({ teamMembers, clients }: Props) {
                                         </div>
                                         <div className="space-y-2 pl-7">
                                             {teamMembers && teamMembers.length > 0 ? (
-                                                teamMembers.map((member) => (
-                                                    <div key={member.id} className="flex items-center space-x-2">
-                                                        <Checkbox
-                                                            id={`member-${member.id}`}
-                                                            checked={data.team_members.includes(member.id)}
-                                                            onCheckedChange={() => handleTeamMemberToggle(member.id)}
-                                                            disabled={processing}
-                                                        />
-                                                        <Label htmlFor={`member-${member.id}`} className="cursor-pointer text-sm">
-                                                            {member.name} ({member.email})
-                                                        </Label>
-                                                    </div>
-                                                ))
+                                                teamMembers.map((member) => {
+                                                    const isSelected = data.team_members.includes(member.id)
+                                                    const showRate = isSelected && !member.non_monetary
+                                                    const rate = data.team_member_rates[member.id]?.hourly_rate ?? (member.hourly_rate ?? 0).toString()
+                                                    return (
+                                                        <div key={member.id} className="flex items-center gap-2">
+                                                            <Checkbox
+                                                                id={`member-${member.id}`}
+                                                                checked={isSelected}
+                                                                onCheckedChange={() => handleTeamMemberToggle(member.id)}
+                                                                disabled={processing}
+                                                            />
+                                                            <Label htmlFor={`member-${member.id}`} className="cursor-pointer text-sm grow">
+                                                                {member.name} ({member.email})
+                                                            </Label>
+                                                            {showRate && (
+                                                                <div className="flex items-center gap-2">
+                                                                    <Label htmlFor={`rate-${member.id}`} className="text-xs text-muted-foreground">
+                                                                        Hourly
+                                                                    </Label>
+                                                                    <Input
+                                                                        id={`rate-${member.id}`}
+                                                                        type="number"
+                                                                        min="0"
+                                                                        step="0.01"
+                                                                        value={rate}
+                                                                        onChange={(e) => {
+                                                                            const currentRates = { ...data.team_member_rates }
+                                                                            const existing = currentRates[member.id] ?? { currency: member.currency ?? 'USD' }
+                                                                            currentRates[member.id] = { ...existing, hourly_rate: e.target.value }
+                                                                            setData('team_member_rates', currentRates)
+                                                                        }}
+                                                                        className="w-28"
+                                                                        disabled={processing}
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )
+                                                })
                                             ) : (
                                                 <p className="text-sm text-muted-foreground">No team members available</p>
                                             )}

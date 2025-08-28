@@ -35,6 +35,9 @@ final class TeamStore
                 'id' => $team->member->id,
                 'name' => $team->member->name,
                 'email' => $team->member->email,
+                'hourly_rate' => (float) ($team->hourly_rate ?? 0),
+                'currency' => $team->currency ?? 'USD',
+                'non_monetary' => (bool) ($team->non_monetary ?? false),
             ]);
         }
 

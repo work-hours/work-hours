@@ -26,10 +26,13 @@ final class Team extends Model
     public static function memberHourlyRate(Project $project, int $memberId): ?float
     {
         if ($project->user_id === $memberId) {
-            return (float) $project->user->hourly_rate ?? 0;
+            return (float) ($project->user->hourly_rate ?? 0);
         }
 
-        $entry = self::query()->where('user_id', $project->user_id)->where('member_id', $memberId)->first();
+        $entry = self::query()
+            ->where('user_id', $project->user_id)
+            ->where('member_id', $memberId)
+            ->first();
 
         if (! $entry) {
             return 0;
@@ -37,6 +40,16 @@ final class Team extends Model
 
         if ($entry->non_monetary) {
             return 0;
+        }
+
+        // Prefer project-specific hourly rate if set on the pivot
+        $pivot = \DB::table('project_team')
+            ->where('project_id', $project->getKey())
+            ->where('member_id', $memberId)
+            ->first(['hourly_rate']);
+
+        if ($pivot && $pivot->hourly_rate !== null) {
+            return (float) $pivot->hourly_rate;
         }
 
         return (float) $entry->hourly_rate;
