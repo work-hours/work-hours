@@ -124,14 +124,12 @@ final class ProjectController extends Controller
 
         $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
         $assignedApprovers = $project->approvers->pluck('id')->toArray();
-        $teamMemberRates = $project->teamMembers->mapWithKeys(function ($member) {
-            return [
-                $member->id => [
-                    'hourly_rate' => $member->pivot->hourly_rate,
-                    'currency' => $member->pivot->currency,
-                ],
-            ];
-        });
+        $teamMemberRates = $project->teamMembers->mapWithKeys(fn ($member) => [
+            $member->id => [
+                'hourly_rate' => $member->pivot->hourly_rate,
+                'currency' => $member->pivot->currency,
+            ],
+        ]);
 
         $clients = ClientStore::userClients(auth()->id())
             ->map(fn ($client): array => [

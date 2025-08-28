@@ -1,63 +1,22 @@
 import BackButton from '@/components/back-button'
 import SubmitButton from '@/components/submit-button'
 import { SearchableSelect } from '@/components/ui/searchable-select'
-import { Head, Link, useForm } from '@inertiajs/react'
-import { ArrowLeft, Building, FileText, LoaderCircle, Save, Text, Users } from 'lucide-react'
+import { Head, useForm } from '@inertiajs/react'
+import { Building, FileText, LoaderCircle, Save, Text, Users } from 'lucide-react'
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 
-type TeamMember = {
-    id: number
-    name: string
-    email: string
-    hourly_rate?: number
-    currency?: string
-    non_monetary?: boolean
-}
-
-type Client = {
-    id: number
-    name: string
-}
-
-type ProjectForm = {
-    name: string
-    description: string
-    client_id: string
-    team_members: number[]
-    approvers: number[]
-    team_member_rates: Record<number, { hourly_rate: string; currency: string }>
-}
-
-type Currency = { id: number; user_id: number; code: string }
-
-type Props = {
-    project: {
-        id: number
-        name: string
-        description: string | null
-        client_id: number | null
-        source?: string
-        is_imported?: boolean
-    }
-    teamMembers: TeamMember[]
-    assignedTeamMembers: number[]
-    assignedApprovers: number[]
-    teamMemberRates?: Record<number, { hourly_rate: number | null; currency: string | null }>
-    clients: Client[]
-    currencies: Currency[]
-}
+import type { ProjectForm, EditProjectProps as Props } from '@/@types/project'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -78,7 +37,10 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
         team_members: assignedTeamMembers || [],
         approvers: assignedApprovers || [],
         team_member_rates: Object.fromEntries(
-            Object.entries(teamMemberRates || {}).map(([id, v]) => [Number(id), { hourly_rate: (v?.hourly_rate ?? 0).toString(), currency: v?.currency ?? (currencies[0]?.code ?? 'USD') }])
+            Object.entries(teamMemberRates || {}).map(([id, v]) => [
+                Number(id),
+                { hourly_rate: (v?.hourly_rate ?? 0).toString(), currency: v?.currency ?? currencies[0]?.code ?? 'USD' },
+            ]),
         ),
     })
 
@@ -133,21 +95,12 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
             <Head title="Edit Project" />
             <div className="mx-auto flex max-w-3xl flex-col gap-4 p-4">
                 <section className="mb-2">
-                    <div className="flex items-center gap-4">
-                        <Link href={route('project.index')}>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-8 w-8 border-gray-200 bg-white p-0 dark:border-gray-700 dark:bg-gray-800"
-                            >
-                                <ArrowLeft className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                                <span className="sr-only">Back to Projects</span>
-                            </Button>
-                        </Link>
+                    <div className="flex items-center justify-between gap-4">
                         <div>
                             <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Edit Project</h1>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Update information for {project.name}</p>
                         </div>
+                        <BackButton />
                     </div>
                 </section>
 
@@ -225,8 +178,8 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                     <Label className="text-sm font-medium">
                                         Team Members <span className="text-xs text-muted-foreground">(optional)</span>
                                     </Label>
-                                    <div className="relative rounded-md border border-gray-200 dark:border-gray-700 shadow-sm">
-                                        <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 py-2 px-3">
+                                    <div className="relative rounded-md border border-gray-200 shadow-sm dark:border-gray-700">
+                                        <div className="flex items-center gap-2 border-b border-gray-200 bg-gray-50 px-3 py-2 dark:border-gray-700 dark:bg-gray-800/50">
                                             <Users className="h-4 w-4 text-muted-foreground" />
                                             <h3 className="text-sm font-medium">Select team members and set hourly rates</h3>
                                         </div>
@@ -236,17 +189,16 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                     {teamMembers.map((member) => {
                                                         const isSelected = data.team_members.includes(member.id)
                                                         const showRate = isSelected && !member.non_monetary
-                                                        const rate = data.team_member_rates[member.id]?.hourly_rate ?? (member.hourly_rate ?? 0).toString()
+                                                        const rate =
+                                                            data.team_member_rates[member.id]?.hourly_rate ?? (member.hourly_rate ?? 0).toString()
                                                         return (
                                                             <div
                                                                 key={member.id}
                                                                 className={`flex flex-wrap items-center gap-2 px-2 py-1.5 transition-colors ${
-                                                                    isSelected
-                                                                        ? 'bg-gray-50 dark:bg-gray-800/50'
-                                                                        : ''
+                                                                    isSelected ? 'bg-gray-50 dark:bg-gray-800/50' : ''
                                                                 }`}
                                                             >
-                                                                <div className="flex items-center gap-2 min-w-[200px] flex-1">
+                                                                <div className="flex min-w-[200px] flex-1 items-center gap-2">
                                                                     <Checkbox
                                                                         id={`member-${member.id}`}
                                                                         checked={isSelected}
@@ -254,17 +206,30 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                                         disabled={processing}
                                                                         className="h-3.5 w-3.5"
                                                                     />
-                                                                    <Label htmlFor={`member-${member.id}`} className="cursor-pointer text-sm font-medium">
+                                                                    <Label
+                                                                        htmlFor={`member-${member.id}`}
+                                                                        className="cursor-pointer text-sm font-medium"
+                                                                    >
                                                                         {member.name}
                                                                     </Label>
-                                                                    <span className="text-xs text-muted-foreground truncate">{member.email}</span>
+                                                                    <span className="truncate text-xs text-muted-foreground">{member.email}</span>
                                                                 </div>
 
                                                                 {showRate && (
-                                                                    <div className="flex items-center gap-1 ml-auto">
-                                                                        <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden h-7 bg-white dark:bg-gray-800">
-                                                                            <span className="text-xs px-2 text-muted-foreground whitespace-nowrap bg-gray-50 dark:bg-gray-800/80 h-full flex items-center border-r border-gray-200 dark:border-gray-700">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3" aria-label="Rate">
+                                                                    <div className="ml-auto flex items-center gap-1">
+                                                                        <div className="flex h-7 items-center overflow-hidden rounded-md border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+                                                                            <span className="flex h-full items-center border-r border-gray-200 bg-gray-50 px-2 text-xs whitespace-nowrap text-muted-foreground dark:border-gray-700 dark:bg-gray-800/80">
+                                                                                <svg
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    viewBox="0 0 24 24"
+                                                                                    fill="none"
+                                                                                    stroke="currentColor"
+                                                                                    strokeWidth="2"
+                                                                                    strokeLinecap="round"
+                                                                                    strokeLinejoin="round"
+                                                                                    className="h-3 w-3"
+                                                                                    aria-label="Rate"
+                                                                                >
                                                                                     <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                                                                                 </svg>
                                                                             </span>
@@ -276,24 +241,44 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                                                 value={rate}
                                                                                 onChange={(e) => {
                                                                                     const currentRates = { ...data.team_member_rates }
-                                                                                    const existing = currentRates[member.id] ?? { currency: member.currency ?? (currencies[0]?.code ?? 'USD') }
-                                                                                    currentRates[member.id] = { ...existing, hourly_rate: e.target.value }
+                                                                                    const existing = currentRates[member.id] ?? {
+                                                                                        currency: member.currency ?? currencies[0]?.code ?? 'USD',
+                                                                                    }
+                                                                                    currentRates[member.id] = {
+                                                                                        ...existing,
+                                                                                        hourly_rate: e.target.value,
+                                                                                    }
                                                                                     setData('team_member_rates', currentRates)
                                                                                 }}
-                                                                                className="h-7 w-20 tabular-nums text-sm border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                                                                                className="h-7 w-20 border-none text-sm tabular-nums focus-visible:ring-0 focus-visible:ring-offset-0"
                                                                                 disabled={processing}
                                                                             />
                                                                         </div>
 
-                                                                        <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden h-7 bg-white dark:bg-gray-800">
-                                                                            <span className="text-xs px-2 text-muted-foreground whitespace-nowrap bg-gray-50 dark:bg-gray-800/80 h-full flex items-center border-r border-gray-200 dark:border-gray-700">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3" aria-label="Currency">
+                                                                        <div className="flex h-7 items-center overflow-hidden rounded-md border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+                                                                            <span className="flex h-full items-center border-r border-gray-200 bg-gray-50 px-2 text-xs whitespace-nowrap text-muted-foreground dark:border-gray-700 dark:bg-gray-800/80">
+                                                                                <svg
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    viewBox="0 0 24 24"
+                                                                                    fill="none"
+                                                                                    stroke="currentColor"
+                                                                                    strokeWidth="2"
+                                                                                    strokeLinecap="round"
+                                                                                    strokeLinejoin="round"
+                                                                                    className="h-3 w-3"
+                                                                                    aria-label="Currency"
+                                                                                >
                                                                                     <circle cx="12" cy="12" r="8" />
                                                                                     <path d="M9.5 9a2.5 2.5 0 0 1 5 0v6a2.5 2.5 0 0 1-5 0" />
                                                                                 </svg>
                                                                             </span>
                                                                             <Select
-                                                                                value={data.team_member_rates[member.id]?.currency ?? member.currency ?? (currencies[0]?.code ?? 'USD')}
+                                                                                value={
+                                                                                    data.team_member_rates[member.id]?.currency ??
+                                                                                    member.currency ??
+                                                                                    currencies[0]?.code ??
+                                                                                    'USD'
+                                                                                }
                                                                                 onValueChange={(value) => {
                                                                                     const currentRates = { ...data.team_member_rates }
                                                                                     const existing = currentRates[member.id] ?? { hourly_rate: rate }
@@ -302,11 +287,17 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                                                 }}
                                                                                 disabled={processing}
                                                                             >
-                                                                                <SelectTrigger id={`currency-${member.id}`} className="h-7 w-20 text-sm border-none focus:ring-0 pl-2 pr-1">
+                                                                                <SelectTrigger
+                                                                                    id={`currency-${member.id}`}
+                                                                                    className="h-7 w-20 border-none pr-1 pl-2 text-sm focus:ring-0"
+                                                                                >
                                                                                     <SelectValue placeholder="Currency" />
                                                                                 </SelectTrigger>
                                                                                 <SelectContent>
-                                                                                    {(currencies && currencies.length > 0 ? currencies.map((c) => c.code) : ['USD']).map((c) => (
+                                                                                    {(currencies && currencies.length > 0
+                                                                                        ? currencies.map((c) => c.code)
+                                                                                        : ['USD']
+                                                                                    ).map((c) => (
                                                                                         <SelectItem key={c} value={c}>
                                                                                             {c}
                                                                                         </SelectItem>
@@ -316,15 +307,13 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                                         </div>
                                                                     </div>
                                                                 )}
-                                                                {isSelected && !showRate && (
-                                                                    <div className="h-7 ml-auto"></div>
-                                                                )}
+                                                                {isSelected && !showRate && <div className="ml-auto h-7"></div>}
                                                             </div>
                                                         )
                                                     })}
                                                 </div>
                                             ) : (
-                                                <p className="text-sm text-muted-foreground py-1">No team members available</p>
+                                                <p className="py-1 text-sm text-muted-foreground">No team members available</p>
                                             )}
                                         </div>
                                     </div>

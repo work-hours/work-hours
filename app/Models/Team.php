@@ -41,8 +41,6 @@ final class Team extends Model
         if ($entry->non_monetary) {
             return 0;
         }
-
-        // Prefer project-specific hourly rate if set on the pivot
         $pivot = ProjectTeam::query()
             ->where('project_id', $project->getKey())
             ->where('member_id', $memberId)
