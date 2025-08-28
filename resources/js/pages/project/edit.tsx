@@ -40,6 +40,8 @@ type ProjectForm = {
     team_member_rates: Record<number, { hourly_rate: string; currency: string }>
 }
 
+type Currency = { id: number; user_id: number; code: string }
+
 type Props = {
     project: {
         id: number
@@ -54,6 +56,7 @@ type Props = {
     assignedApprovers: number[]
     teamMemberRates?: Record<number, { hourly_rate: number | null; currency: string | null }>
     clients: Client[]
+    currencies: Currency[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -67,7 +70,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-export default function EditProject({ project, teamMembers, assignedTeamMembers, assignedApprovers, teamMemberRates, clients }: Props) {
+export default function EditProject({ project, teamMembers, assignedTeamMembers, assignedApprovers, teamMemberRates, clients, currencies }: Props) {
     const { data, setData, put, processing, errors } = useForm<ProjectForm>({
         name: project.name,
         description: project.description || '',
@@ -75,7 +78,7 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
         team_members: assignedTeamMembers || [],
         approvers: assignedApprovers || [],
         team_member_rates: Object.fromEntries(
-            Object.entries(teamMemberRates || {}).map(([id, v]) => [Number(id), { hourly_rate: (v?.hourly_rate ?? 0).toString(), currency: v?.currency ?? 'USD' }])
+            Object.entries(teamMemberRates || {}).map(([id, v]) => [Number(id), { hourly_rate: (v?.hourly_rate ?? 0).toString(), currency: v?.currency ?? (currencies[0]?.code ?? 'USD') }])
         ),
     })
 
@@ -256,7 +259,7 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                                         value={rate}
                                                                         onChange={(e) => {
                                                                             const currentRates = { ...data.team_member_rates }
-                                                                            const existing = currentRates[member.id] ?? { currency: member.currency ?? 'USD' }
+                                                                            const existing = currentRates[member.id] ?? { currency: member.currency ?? (currencies[0]?.code ?? 'USD') }
                                                                             currentRates[member.id] = { ...existing, hourly_rate: e.target.value }
                                                                             setData('team_member_rates', currentRates)
                                                                         }}
@@ -265,7 +268,7 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                                     />
                                                                     <div className="w-28">
                                                                         <Select
-                                                                            value={data.team_member_rates[member.id]?.currency ?? member.currency ?? 'USD'}
+                                                                            value={data.team_member_rates[member.id]?.currency ?? member.currency ?? (currencies[0]?.code ?? 'USD') }
                                                                             onValueChange={(value) => {
                                                                                 const currentRates = { ...data.team_member_rates }
                                                                                 const existing = currentRates[member.id] ?? { hourly_rate: rate }
@@ -278,7 +281,7 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                                                 <SelectValue placeholder="Currency" />
                                                                             </SelectTrigger>
                                                                             <SelectContent>
-                                                                                {['USD','EUR','GBP','INR','JPY','AUD','CAD'].map((c) => (
+                                                                                {(currencies && currencies.length > 0 ? currencies.map((c) => c.code) : ['USD']).map((c) => (
                                                                                     <SelectItem key={c} value={c}>
                                                                                         {c}
                                                                                     </SelectItem>

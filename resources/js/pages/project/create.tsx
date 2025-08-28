@@ -40,9 +40,12 @@ type ProjectForm = {
     team_member_rates: Record<number, { hourly_rate: string; currency: string }>
 }
 
+type Currency = { id: number; user_id: number; code: string }
+
 type Props = {
     teamMembers: TeamMember[]
     clients: Client[]
+    currencies: Currency[]
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -56,7 +59,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-export default function CreateProject({ teamMembers, clients }: Props) {
+export default function CreateProject({ teamMembers, clients, currencies }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<ProjectForm>({
         name: '',
         description: '',
@@ -90,7 +93,7 @@ export default function CreateProject({ teamMembers, clients }: Props) {
                 const currentRates = { ...data.team_member_rates }
                 currentRates[memberId] = {
                     hourly_rate: (member.hourly_rate ?? 0).toString(),
-                    currency: member.currency ?? 'USD',
+                    currency: member.currency ?? (currencies[0]?.code ?? 'USD'),
                 }
                 setData('team_member_rates', currentRates)
             }
@@ -256,7 +259,7 @@ export default function CreateProject({ teamMembers, clients }: Props) {
                                                                         value={rate}
                                                                         onChange={(e) => {
                                                                             const currentRates = { ...data.team_member_rates }
-                                                                            const existing = currentRates[member.id] ?? { currency: member.currency ?? 'USD' }
+                                                                            const existing = currentRates[member.id] ?? { currency: member.currency ?? (currencies[0]?.code ?? 'USD') }
                                                                             currentRates[member.id] = { ...existing, hourly_rate: e.target.value }
                                                                             setData('team_member_rates', currentRates)
                                                                         }}
@@ -265,7 +268,7 @@ export default function CreateProject({ teamMembers, clients }: Props) {
                                                                     />
                                                                     <div className="w-28">
                                                                         <Select
-                                                                            value={data.team_member_rates[member.id]?.currency ?? member.currency ?? 'USD'}
+                                                                            value={data.team_member_rates[member.id]?.currency ?? member.currency ?? (currencies[0]?.code ?? 'USD')}
                                                                             onValueChange={(value) => {
                                                                                 const currentRates = { ...data.team_member_rates }
                                                                                 const existing = currentRates[member.id] ?? { hourly_rate: rate }
@@ -278,7 +281,7 @@ export default function CreateProject({ teamMembers, clients }: Props) {
                                                                                 <SelectValue placeholder="Currency" />
                                                                             </SelectTrigger>
                                                                             <SelectContent>
-                                                                                {['USD','EUR','GBP','INR','JPY','AUD','CAD'].map((c) => (
+                                                                                {(currencies && currencies.length > 0 ? currencies.map((c) => c.code) : ['USD']).map((c) => (
                                                                                     <SelectItem key={c} value={c}>
                                                                                         {c}
                                                                                     </SelectItem>

@@ -112,6 +112,7 @@ final class ProjectController extends Controller
         return Inertia::render('project/create', [
             'teamMembers' => $teamMembers,
             'clients' => $clients,
+            'currencies' => auth()->user()->currencies,
         ]);
     }
 
@@ -152,6 +153,7 @@ final class ProjectController extends Controller
             'assignedApprovers' => $assignedApprovers,
             'teamMemberRates' => $teamMemberRates,
             'clients' => $clients,
+            'currencies' => auth()->user()->currencies,
         ]);
     }
 

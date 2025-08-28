@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class StoreProjectRequest extends FormRequest
@@ -34,7 +35,7 @@ final class StoreProjectRequest extends FormRequest
             'approvers.*' => ['exists:users,id'],
             'team_member_rates' => ['nullable', 'array'],
             'team_member_rates.*.hourly_rate' => ['nullable', 'numeric', 'min:0'],
-            'team_member_rates.*.currency' => ['nullable', 'string', 'size:3'],
+            'team_member_rates.*.currency' => ['nullable', 'string', 'size:3', Rule::in(auth()->user()?->currencies?->pluck('code')->all() ?? [])],
         ];
     }
 }
