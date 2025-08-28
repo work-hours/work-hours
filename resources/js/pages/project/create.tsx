@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import MasterLayout from '@/layouts/master-layout'
@@ -262,6 +263,29 @@ export default function CreateProject({ teamMembers, clients }: Props) {
                                                                         className="w-28"
                                                                         disabled={processing}
                                                                     />
+                                                                    <div className="w-28">
+                                                                        <Select
+                                                                            value={data.team_member_rates[member.id]?.currency ?? member.currency ?? 'USD'}
+                                                                            onValueChange={(value) => {
+                                                                                const currentRates = { ...data.team_member_rates }
+                                                                                const existing = currentRates[member.id] ?? { hourly_rate: rate }
+                                                                                currentRates[member.id] = { ...existing, currency: value }
+                                                                                setData('team_member_rates', currentRates)
+                                                                            }}
+                                                                            disabled={processing}
+                                                                        >
+                                                                            <SelectTrigger>
+                                                                                <SelectValue placeholder="Currency" />
+                                                                            </SelectTrigger>
+                                                                            <SelectContent>
+                                                                                {['USD','EUR','GBP','INR','JPY','AUD','CAD'].map((c) => (
+                                                                                    <SelectItem key={c} value={c}>
+                                                                                        {c}
+                                                                                    </SelectItem>
+                                                                                ))}
+                                                                            </SelectContent>
+                                                                        </Select>
+                                                                    </div>
                                                                 </div>
                                                             )}
                                                         </div>
