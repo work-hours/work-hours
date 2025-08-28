@@ -261,11 +261,11 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                                 </div>
 
                                                                 {showRate && (
-                                                                    <div className="flex items-center gap-2 ml-auto h-7">
-                                                                        <div className="flex items-center gap-1">
-                                                                            <Label htmlFor={`rate-${member.id}`} className="text-xs whitespace-nowrap text-muted-foreground">
-                                                                                Rate:
-                                                                            </Label>
+                                                                    <div className="flex items-center gap-1 ml-auto">
+                                                                        <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden h-7 bg-white dark:bg-gray-800">
+                                                                            <span className="text-xs px-2 text-muted-foreground whitespace-nowrap bg-gray-50 dark:bg-gray-800/80 h-full flex items-center border-r border-gray-200 dark:border-gray-700">
+                                                                                Rate
+                                                                            </span>
                                                                             <Input
                                                                                 id={`rate-${member.id}`}
                                                                                 type="number"
@@ -278,14 +278,15 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                                                     currentRates[member.id] = { ...existing, hourly_rate: e.target.value }
                                                                                     setData('team_member_rates', currentRates)
                                                                                 }}
-                                                                                className="h-7 w-24 tabular-nums text-sm"
+                                                                                className="h-7 w-20 tabular-nums text-sm border-none focus-visible:ring-0 focus-visible:ring-offset-0"
                                                                                 disabled={processing}
                                                                             />
                                                                         </div>
-                                                                        <div className="flex items-center gap-1">
-                                                                            <Label htmlFor={`currency-${member.id}`} className="text-xs whitespace-nowrap text-muted-foreground">
-                                                                                Currency:
-                                                                            </Label>
+
+                                                                        <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden h-7 bg-white dark:bg-gray-800">
+                                                                            <span className="text-xs px-2 text-muted-foreground whitespace-nowrap bg-gray-50 dark:bg-gray-800/80 h-full flex items-center border-r border-gray-200 dark:border-gray-700">
+                                                                                Currency
+                                                                            </span>
                                                                             <Select
                                                                                 value={data.team_member_rates[member.id]?.currency ?? member.currency ?? (currencies[0]?.code ?? 'USD')}
                                                                                 onValueChange={(value) => {
@@ -296,7 +297,7 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                                                 }}
                                                                                 disabled={processing}
                                                                             >
-                                                                                <SelectTrigger id={`currency-${member.id}`} className="h-7 w-24 text-sm">
+                                                                                <SelectTrigger id={`currency-${member.id}`} className="h-7 w-20 text-sm border-none focus:ring-0 pl-2 pr-1">
                                                                                     <SelectValue placeholder="Currency" />
                                                                                 </SelectTrigger>
                                                                                 <SelectContent>
