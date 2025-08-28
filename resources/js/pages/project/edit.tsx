@@ -225,77 +225,100 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                     <Label className="text-sm font-medium">
                                         Team Members <span className="text-xs text-muted-foreground">(optional)</span>
                                     </Label>
-                                    <div className="relative rounded-md border p-3">
-                                        <div className="pointer-events-none absolute top-3 left-3">
+                                    <div className="relative rounded-md border border-gray-200 dark:border-gray-700 shadow-sm">
+                                        <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 py-2 px-3">
                                             <Users className="h-4 w-4 text-muted-foreground" />
+                                            <h3 className="text-sm font-medium">Select team members and set hourly rates</h3>
                                         </div>
-                                        <div className="space-y-2 pl-7">
+                                        <div className="p-2">
                                             {teamMembers && teamMembers.length > 0 ? (
-                                                teamMembers.map((member) => {
-                                                    const isSelected = data.team_members.includes(member.id)
-                                                    const showRate = isSelected && !member.non_monetary
-                                                    const rate = data.team_member_rates[member.id]?.hourly_rate ?? (member.hourly_rate ?? 0).toString()
-                                                    return (
-                                                        <div key={member.id} className="flex items-center gap-2">
-                                                            <Checkbox
-                                                                id={`member-${member.id}`}
-                                                                checked={isSelected}
-                                                                onCheckedChange={() => handleTeamMemberToggle(member.id)}
-                                                                disabled={processing}
-                                                            />
-                                                            <Label htmlFor={`member-${member.id}`} className="cursor-pointer text-sm grow">
-                                                                {member.name} ({member.email})
-                                                            </Label>
-                                                            {showRate && (
-                                                                <div className="flex items-center gap-2 rounded-md border border-gray-200 bg-white pl-2 pr-2 dark:border-gray-700 dark:bg-gray-800">
-                                                                    <Label htmlFor={`rate-${member.id}`} className="text-xs text-muted-foreground whitespace-nowrap">
-                                                                        Hourly
-                                                                    </Label>
-                                                                    <Input
-                                                                        id={`rate-${member.id}`}
-                                                                        type="number"
-                                                                        min="0"
-                                                                        step="0.01"
-                                                                        value={rate}
-                                                                        onChange={(e) => {
-                                                                            const currentRates = { ...data.team_member_rates }
-                                                                            const existing = currentRates[member.id] ?? { currency: member.currency ?? (currencies[0]?.code ?? 'USD') }
-                                                                            currentRates[member.id] = { ...existing, hourly_rate: e.target.value }
-                                                                            setData('team_member_rates', currentRates)
-                                                                        }}
-                                                                        className="h-9 w-28 tabular-nums"
+                                                <div className="grid gap-2">
+                                                    {teamMembers.map((member) => {
+                                                        const isSelected = data.team_members.includes(member.id)
+                                                        const showRate = isSelected && !member.non_monetary
+                                                        const rate = data.team_member_rates[member.id]?.hourly_rate ?? (member.hourly_rate ?? 0).toString()
+                                                        return (
+                                                            <div
+                                                                key={member.id}
+                                                                className={`flex flex-wrap items-center gap-2 px-2 py-1.5 transition-colors ${
+                                                                    isSelected
+                                                                        ? 'bg-gray-50 dark:bg-gray-800/50'
+                                                                        : ''
+                                                                }`}
+                                                            >
+                                                                <div className="flex items-center gap-2 min-w-[200px] flex-1">
+                                                                    <Checkbox
+                                                                        id={`member-${member.id}`}
+                                                                        checked={isSelected}
+                                                                        onCheckedChange={() => handleTeamMemberToggle(member.id)}
                                                                         disabled={processing}
+                                                                        className="h-3.5 w-3.5"
                                                                     />
-                                                                    <div className="w-28">
-                                                                        <Select
-                                                                            value={data.team_member_rates[member.id]?.currency ?? member.currency ?? (currencies[0]?.code ?? 'USD') }
-                                                                            onValueChange={(value) => {
-                                                                                const currentRates = { ...data.team_member_rates }
-                                                                                const existing = currentRates[member.id] ?? { hourly_rate: rate }
-                                                                                currentRates[member.id] = { ...existing, currency: value }
-                                                                                setData('team_member_rates', currentRates)
-                                                                            }}
-                                                                            disabled={processing}
-                                                                        >
-                                                                            <SelectTrigger className="h-9" >
-                                                                                <SelectValue placeholder="Currency" />
-                                                                            </SelectTrigger>
-                                                                            <SelectContent>
-                                                                                {(currencies && currencies.length > 0 ? currencies.map((c) => c.code) : ['USD']).map((c) => (
-                                                                                    <SelectItem key={c} value={c}>
-                                                                                        {c}
-                                                                                    </SelectItem>
-                                                                                ))}
-                                                                            </SelectContent>
-                                                                        </Select>
-                                                                    </div>
+                                                                    <Label htmlFor={`member-${member.id}`} className="cursor-pointer text-sm font-medium">
+                                                                        {member.name}
+                                                                    </Label>
+                                                                    <span className="text-xs text-muted-foreground truncate">{member.email}</span>
                                                                 </div>
-                                                            )}
-                                                        </div>
-                                                    )
-                                                })
+
+                                                                {showRate && (
+                                                                    <div className="flex items-center gap-2 ml-auto h-7">
+                                                                        <div className="flex items-center gap-1">
+                                                                            <Label htmlFor={`rate-${member.id}`} className="text-xs whitespace-nowrap text-muted-foreground">
+                                                                                Rate:
+                                                                            </Label>
+                                                                            <Input
+                                                                                id={`rate-${member.id}`}
+                                                                                type="number"
+                                                                                min="0"
+                                                                                step="0.01"
+                                                                                value={rate}
+                                                                                onChange={(e) => {
+                                                                                    const currentRates = { ...data.team_member_rates }
+                                                                                    const existing = currentRates[member.id] ?? { currency: member.currency ?? (currencies[0]?.code ?? 'USD') }
+                                                                                    currentRates[member.id] = { ...existing, hourly_rate: e.target.value }
+                                                                                    setData('team_member_rates', currentRates)
+                                                                                }}
+                                                                                className="h-7 w-24 tabular-nums text-sm"
+                                                                                disabled={processing}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="flex items-center gap-1">
+                                                                            <Label htmlFor={`currency-${member.id}`} className="text-xs whitespace-nowrap text-muted-foreground">
+                                                                                Currency:
+                                                                            </Label>
+                                                                            <Select
+                                                                                value={data.team_member_rates[member.id]?.currency ?? member.currency ?? (currencies[0]?.code ?? 'USD')}
+                                                                                onValueChange={(value) => {
+                                                                                    const currentRates = { ...data.team_member_rates }
+                                                                                    const existing = currentRates[member.id] ?? { hourly_rate: rate }
+                                                                                    currentRates[member.id] = { ...existing, currency: value }
+                                                                                    setData('team_member_rates', currentRates)
+                                                                                }}
+                                                                                disabled={processing}
+                                                                            >
+                                                                                <SelectTrigger id={`currency-${member.id}`} className="h-7 w-24 text-sm">
+                                                                                    <SelectValue placeholder="Currency" />
+                                                                                </SelectTrigger>
+                                                                                <SelectContent>
+                                                                                    {(currencies && currencies.length > 0 ? currencies.map((c) => c.code) : ['USD']).map((c) => (
+                                                                                        <SelectItem key={c} value={c}>
+                                                                                            {c}
+                                                                                        </SelectItem>
+                                                                                    ))}
+                                                                                </SelectContent>
+                                                                            </Select>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                                {isSelected && !showRate && (
+                                                                    <div className="h-7 ml-auto"></div>
+                                                                )}
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
                                             ) : (
-                                                <p className="text-sm text-muted-foreground">No team members available</p>
+                                                <p className="text-sm text-muted-foreground py-1">No team members available</p>
                                             )}
                                         </div>
                                     </div>
