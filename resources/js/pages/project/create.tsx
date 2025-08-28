@@ -247,8 +247,8 @@ export default function CreateProject({ teamMembers, clients, currencies }: Prop
                                                                 {member.name} ({member.email})
                                                             </Label>
                                                             {showRate && (
-                                                                <div className="flex items-center gap-2">
-                                                                    <Label htmlFor={`rate-${member.id}`} className="text-xs text-muted-foreground">
+                                                                <div className="flex items-center gap-2 rounded-md border border-gray-200 bg-white pl-2 pr-2 dark:border-gray-700 dark:bg-gray-800">
+                                                                    <Label htmlFor={`rate-${member.id}`} className="text-xs text-muted-foreground whitespace-nowrap">
                                                                         Hourly
                                                                     </Label>
                                                                     <Input
@@ -263,7 +263,7 @@ export default function CreateProject({ teamMembers, clients, currencies }: Prop
                                                                             currentRates[member.id] = { ...existing, hourly_rate: e.target.value }
                                                                             setData('team_member_rates', currentRates)
                                                                         }}
-                                                                        className="w-28"
+                                                                        className="h-9 w-28 tabular-nums"
                                                                         disabled={processing}
                                                                     />
                                                                     <div className="w-28">
@@ -277,7 +277,7 @@ export default function CreateProject({ teamMembers, clients, currencies }: Prop
                                                                             }}
                                                                             disabled={processing}
                                                                         >
-                                                                            <SelectTrigger>
+                                                                            <SelectTrigger className="h-9" >
                                                                                 <SelectValue placeholder="Currency" />
                                                                             </SelectTrigger>
                                                                             <SelectContent>

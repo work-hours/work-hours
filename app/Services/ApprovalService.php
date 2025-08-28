@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Enums\TimeLogStatus;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TimeLogStore;
+use App\Models\ProjectTeam;
 use App\Models\TimeLog;
 use App\Models\User;
 use App\Notifications\TimeLogApproved;
@@ -14,7 +15,6 @@ use App\Notifications\TimeLogRejected;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Throwable;
 
 final class ApprovalService
@@ -28,7 +28,7 @@ final class ApprovalService
             ->pluck('id')
             ->toArray();
 
-        $approverProjects = DB::table('project_team')
+        $approverProjects = ProjectTeam::query()
             ->where('member_id', auth()->id())
             ->where('is_approver', true)
             ->pluck('project_id')
@@ -36,7 +36,7 @@ final class ApprovalService
 
         $allProjects = array_unique(array_merge($leadProjects, $approverProjects));
 
-        $teamMemberIds = DB::table('project_team')
+        $teamMemberIds = ProjectTeam::query()
             ->whereIn('project_id', $allProjects)
             ->where('member_id', '!=', auth()->id())
             ->pluck('member_id')
@@ -79,7 +79,7 @@ final class ApprovalService
 
         if ($status === TimeLogStatus::REJECTED) {
             $teamLeader = User::teamLeader(project: $timeLog->project);
-            $isApprover = DB::table('project_team')
+            $isApprover = ProjectTeam::query()
                 ->where('project_id', $timeLog->project_id)
                 ->where('member_id', auth()->id())
                 ->where('is_approver', true)
@@ -127,7 +127,7 @@ final class ApprovalService
     {
         $teamLeader = User::teamLeader(project: $timeLog->project);
 
-        $isApprover = DB::table('project_team')
+        $isApprover = ProjectTeam::query()
             ->where('project_id', $timeLog->project_id)
             ->where('member_id', auth()->id())
             ->where('is_approver', true)

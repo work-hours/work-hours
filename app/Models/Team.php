@@ -43,7 +43,7 @@ final class Team extends Model
         }
 
         // Prefer project-specific hourly rate if set on the pivot
-        $pivot = \DB::table('project_team')
+        $pivot = ProjectTeam::query()
             ->where('project_id', $project->getKey())
             ->where('member_id', $memberId)
             ->first(['hourly_rate']);
