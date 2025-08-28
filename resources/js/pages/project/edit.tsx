@@ -264,7 +264,9 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
                                                                     <div className="flex items-center gap-1 ml-auto">
                                                                         <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden h-7 bg-white dark:bg-gray-800">
                                                                             <span className="text-xs px-2 text-muted-foreground whitespace-nowrap bg-gray-50 dark:bg-gray-800/80 h-full flex items-center border-r border-gray-200 dark:border-gray-700">
-                                                                                Rate
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3" aria-label="Rate">
+                                                                                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                                                                </svg>
                                                                             </span>
                                                                             <Input
                                                                                 id={`rate-${member.id}`}
@@ -285,7 +287,10 @@ export default function EditProject({ project, teamMembers, assignedTeamMembers,
 
                                                                         <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden h-7 bg-white dark:bg-gray-800">
                                                                             <span className="text-xs px-2 text-muted-foreground whitespace-nowrap bg-gray-50 dark:bg-gray-800/80 h-full flex items-center border-r border-gray-200 dark:border-gray-700">
-                                                                                Currency
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3" aria-label="Currency">
+                                                                                    <circle cx="12" cy="12" r="8" />
+                                                                                    <path d="M9.5 9a2.5 2.5 0 0 1 5 0v6a2.5 2.5 0 0 1-5 0" />
+                                                                                </svg>
                                                                             </span>
                                                                             <Select
                                                                                 value={data.team_member_rates[member.id]?.currency ?? member.currency ?? (currencies[0]?.code ?? 'USD')}
