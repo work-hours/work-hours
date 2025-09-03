@@ -26,7 +26,7 @@ export type TimeLogEntry = {
     approved_by?: number
     approver_name?: string
     comment?: string
-    user_non_monetary: boolean
+    user_non_monetary?: boolean
     non_billable?: boolean
     task_title?: string
     task_status?: string

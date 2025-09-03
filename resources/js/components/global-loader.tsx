@@ -1,4 +1,3 @@
-import { router } from '@inertiajs/react'
 import { useEffect, useRef, useState } from 'react'
 
 /**
@@ -23,13 +22,6 @@ export default function GlobalLoader() {
             }
             setVisible(false)
         }
-
-        const onStart = () => showWithDelay()
-        const onFinish = () => hideNow()
-        const onProgress = () => {}
-        router.on('start', onStart)
-        router.on('finish', onFinish)
-        router.on('progress', onProgress)
         const winStart = () => showWithDelay()
         const winFinish = () => hideNow()
         const winProgress = () => {}
@@ -38,9 +30,6 @@ export default function GlobalLoader() {
         window.addEventListener('inertia:progress', winProgress)
 
         return () => {
-            router.off('start', onStart)
-            router.off('finish', onFinish)
-            router.off('progress', onProgress)
             window.removeEventListener('inertia:start', winStart)
             window.removeEventListener('inertia:finish', winFinish)
             window.removeEventListener('inertia:progress', winProgress)
