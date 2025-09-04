@@ -75,7 +75,7 @@ const navGroups: NavItemGroup[] = [
         items: [
             {
                 title: 'Approvals',
-                href: '/approvals',
+                href: '/time-log/approvals',
                 icon: CheckSquare,
             },
             {
