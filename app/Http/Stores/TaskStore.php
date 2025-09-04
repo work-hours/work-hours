@@ -11,6 +11,7 @@ use App\Http\QueryFilters\Task\ProjectIdFilter;
 use App\Http\QueryFilters\Task\SearchFilter;
 use App\Http\QueryFilters\Task\StatusFilter;
 use App\Http\QueryFilters\Task\TagFilter;
+use App\Http\QueryFilters\Task\DueTodayFilter;
 use App\Models\Project;
 use App\Models\Task;
 use Carbon\Carbon;
@@ -112,6 +113,7 @@ final class TaskStore
             'due-date-from',
             'due-date-to',
             'search',
+            'due-today',
         ]);
     }
 
@@ -125,6 +127,7 @@ final class TaskStore
                 ProjectIdFilter::class,
                 DueDateFromFilter::class,
                 DueDateToFilter::class,
+                DueTodayFilter::class,
                 TagFilter::class,
                 SearchFilter::class,
             ])

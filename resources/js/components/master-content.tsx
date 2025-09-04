@@ -12,7 +12,7 @@ export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps
 
     return (
         <div className="relative flex flex-1 flex-col bg-slate-50 dark:bg-slate-900">
-            <div className="sticky top-0 z-20 border-b border-gray-200 bg-white/90 shadow-sm backdrop-blur-sm dark:border-gray-800 dark:bg-gray-800/90">
+            <div className="sticky top-0 z-20 border-b border-gray-200 bg-white/90 shadow-sm backdrop-blur-sm dark:border-gray-800 dark:bg-gray-800/90 print:hidden">
                 <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 px-4 py-2.5">
                     <div className="flex items-center">
                         <div className="relative flex items-center">
@@ -105,9 +105,9 @@ export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps
                 </div>
             </div>
             <main className="relative z-10 flex-1 overflow-y-auto">
-                <HourlyRateStatusBar />
+                <div className="print:hidden"><HourlyRateStatusBar /></div>
 
-                <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-16">{children}</div>
+                <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-16 print:max-w-none print:px-0 print:pt-0 print:pb-0">{children}</div>
             </main>
         </div>
     )

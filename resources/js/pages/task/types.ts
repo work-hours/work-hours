@@ -63,5 +63,6 @@ export interface TaskFilters {
     tag: string
     'due-date-from': string | Date | ''
     'due-date-to': string | Date | ''
+    'due-today'?: boolean
     search: string
 }

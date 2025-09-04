@@ -39,6 +39,7 @@ import {
     Plus,
     Search,
     TimerReset,
+    Printer,
 } from 'lucide-react'
 import { JSX, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -102,6 +103,7 @@ export default function Tasks() {
         tag: 'all',
         'due-date-from': '',
         'due-date-to': '',
+        'due-today': false,
         search: '',
     })
     const [processing, setProcessing] = useState(false)
@@ -189,7 +191,7 @@ export default function Tasks() {
         }
     }
 
-    const handleFilterChange = (key: keyof TaskFilters, value: string | number | Date | null): void => {
+    const handleFilterChange = (key: keyof TaskFilters, value: string | number | number[] | Date | boolean | null): void => {
         setFilters((prev) => ({ ...prev, [key]: value }))
     }
 
@@ -201,6 +203,7 @@ export default function Tasks() {
             tag: 'all',
             'due-date-from': '',
             'due-date-to': '',
+            'due-today': false,
             search: '',
         })
     }
@@ -327,6 +330,7 @@ export default function Tasks() {
             tag: queryParams.tag || 'all',
             'due-date-from': queryParams['due-date-from'] || '',
             'due-date-to': queryParams['due-date-to'] || '',
+            'due-today': ['1', 'true', 'on'].includes((queryParams['due-today'] || '').toString()),
             search: queryParams.search || '',
         }
 
@@ -336,23 +340,34 @@ export default function Tasks() {
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
+            {/* Print only the task list: hide page heading/sections in print */}
             <Head title="Tasks" />
-            <div className="mx-auto flex flex-col gap-4 p-4">
-                <section className="mb-2">
+            <div className="mx-auto flex flex-col gap-4 p-4 print:p-0">
+                <section className="mb-2 print:hidden">
                     <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Task Management</h1>
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your tasks</p>
                 </section>
 
-                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
-                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800 print:shadow-none print:border-0">
+                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700 print:border-0 print:p-0">
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle className="text-xl">Tasks</CardTitle>
+                                <CardTitle className="text-xl print:text-base">Tasks</CardTitle>
                                 <CardDescription>
                                     {loading ? 'Loading tasks...' : error ? 'Failed to load tasks' : `You have ${tasks.length} tasks`}
                                 </CardDescription>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 print:hidden">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => window.print()}
+                                    disabled={loading || processing}
+                                    className="flex items-center gap-2"
+                                    title="Print current list"
+                                >
+                                    <Printer className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Print</span>
+                                </Button>
                                 <ExportButton href={route('task.export')} label="Export" />
                                 <AddNewButton href={route('task.create')}>
                                     <Plus className="h-4 w-4" />
@@ -361,7 +376,7 @@ export default function Tasks() {
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
+                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700 print:hidden">
                             <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -506,7 +521,19 @@ export default function Tasks() {
                                     />
                                 </div>
 
-                                <div className="flex items-end gap-2">
+                                <div className="flex items-end gap-3">
+                                    <div className="flex items-center space-x-2 rounded-md border px-3 py-2">
+                                        <Checkbox
+                                            id="due-today"
+                                            checked={Boolean(filters['due-today'])}
+                                            onCheckedChange={(checked) => handleFilterChange('due-today', checked === true)}
+                                            disabled={processing}
+                                        />
+                                        <Label htmlFor="due-today" className="text-sm">
+                                            Due today
+                                        </Label>
+                                    </div>
+
                                     <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
                                     </FilterButton>
@@ -521,6 +548,7 @@ export default function Tasks() {
                                                 filters.tag === 'all' &&
                                                 !filters['due-date-from'] &&
                                                 !filters['due-date-to'] &&
+                                                !filters['due-today'] &&
                                                 !filters.search)
                                         }
                                         onClick={clearFilters}
@@ -604,7 +632,7 @@ export default function Tasks() {
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="print:p-0">
                         {loading ? (
                             <div className="flex flex-col items-center justify-center py-12 text-center">
                                 <Loader2 className="mb-4 h-12 w-12 animate-spin text-muted-foreground/50" />
@@ -630,7 +658,7 @@ export default function Tasks() {
                                         <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
                                             Task Details
                                         </TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
+                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400 print:hidden">
                                             Actions
                                         </TableHead>
                                     </TableHeaderRow>
@@ -727,7 +755,7 @@ export default function Tasks() {
                                                     </div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="text-right">
+                                            <TableCell className="text-right print:hidden">
                                                 <div className="flex justify-end gap-2">
                                                     {task.assignees.some((a) => a.id === auth.user.id) && (
                                                         <TaskTrackButton task={task} currentUserId={auth.user.id} />
