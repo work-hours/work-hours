@@ -50,8 +50,8 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
 
     return (
         <NotificationsProvider>
-            <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900">
-                <MasterSidebar collapsed={collapsed} />
+            <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900 print:bg-white">
+                <div className="print:hidden"><MasterSidebar collapsed={collapsed} /></div>
 
                 <TimeTrackerProvider>
                     <div className={`flex-1 transition-all duration-300 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}>
@@ -60,26 +60,28 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                         </MasterContent>
                     </div>
 
-                    <MasterRightSidebar collapsed={collapsed} />
+                    <div className="print:hidden"><MasterRightSidebar collapsed={collapsed} /></div>
                 </TimeTrackerProvider>
 
                 {dataLoaded && (
                     <>
-                        <FloatingAiChat projects={userProjects} />
+                        <div className="print:hidden"><FloatingAiChat projects={userProjects} /></div>
                     </>
                 )}
 
-                <Toaster
-                    position="top-right"
-                    closeButton={true}
-                    toastOptions={{
-                        className: 'shadow-md rounded-lg border border-gray-200 dark:border-gray-800',
-                        duration: 10000,
-                    }}
-                />
+                <div className="print:hidden">
+                    <Toaster
+                        position="top-right"
+                        closeButton={true}
+                        toastOptions={{
+                            className: 'shadow-md rounded-lg border border-gray-200 dark:border-gray-800',
+                            duration: 10000,
+                        }}
+                    />
 
-                <CookieConsent />
-                <RealTimeNotification />
+                    <CookieConsent />
+                    <RealTimeNotification />
+                </div>
             </div>
         </NotificationsProvider>
     )
