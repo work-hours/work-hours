@@ -43,6 +43,8 @@ final class Task extends Model
         'priority',
         'due_date',
         'is_imported',
+        'is_recurring',
+        'recurring_frequency',
     ];
 
     public function project(): BelongsTo
@@ -90,6 +92,7 @@ final class Task extends Model
         return [
             'due_date' => 'date',
             'is_imported' => 'boolean',
+            'is_recurring' => 'boolean',
         ];
     }
 }

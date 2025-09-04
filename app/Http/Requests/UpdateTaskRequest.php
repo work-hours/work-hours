@@ -29,7 +29,7 @@ final class UpdateTaskRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'status' => ['required', 'string', 'in:pending,in_progress,completed'],
             'priority' => ['required', 'string', 'in:low,medium,high'],
-            'due_date' => ['nullable', 'date'],
+            'due_date' => ['nullable', 'date', 'required_if:is_recurring,true'],
             'assignees' => ['nullable', 'array'],
             'assignees.*' => ['integer', 'exists:users,id'],
             'create_github_issue' => ['nullable', 'boolean'],
@@ -38,6 +38,8 @@ final class UpdateTaskRequest extends FormRequest
             'tags.*' => ['string', 'max:255'],
             'attachments' => ['sometimes', 'array'],
             'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,gif,doc,docx,pdf,txt,zip'],
+            'is_recurring' => ['nullable', 'boolean'],
+            'recurring_frequency' => ['nullable', 'string', 'in:daily,weekly,every_other_week,monthly'],
         ];
     }
 }

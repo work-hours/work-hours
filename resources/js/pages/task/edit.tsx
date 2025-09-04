@@ -46,6 +46,8 @@ type TaskForm = {
     github_update: boolean
     jira_update: boolean
     tags: string[]
+    is_recurring?: boolean | null
+    recurring_frequency?: 'daily' | 'weekly' | 'every_other_week' | 'monthly' | ''
 }
 
 type Attachment = {
@@ -63,6 +65,8 @@ type Props = {
         status: 'pending' | 'in_progress' | 'completed'
         priority: 'low' | 'medium' | 'high'
         due_date: string | null
+        is_recurring?: boolean | null
+        recurring_frequency?: 'daily' | 'weekly' | 'every_other_week' | 'monthly' | '' | null
     }
     projects: Project[]
     potentialAssignees: User[]
@@ -109,6 +113,8 @@ export default function EditTask({
         github_update: true,
         jira_update: true,
         tags: taskTags || [],
+        is_recurring: task.is_recurring ?? null,
+        recurring_frequency: (task.recurring_frequency as TaskForm['recurring_frequency']) ?? '',
     })
 
     const [potentialAssignees, setPotentialAssignees] = useState<{ id: number; name: string; email: string }[]>(initialAssignees || [])
@@ -457,6 +463,48 @@ export default function EditTask({
                                         <InputError message={errors.jira_update} />
                                     </div>
                                 )}
+
+                                <div className="grid gap-2">
+                                    <Label className="text-sm font-medium">Recurring</Label>
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                            id="is_recurring"
+                                            checked={!!data.is_recurring}
+                                            onCheckedChange={(checked) => {
+                                                const val = checked === true
+                                                setData('is_recurring', val)
+                                                if (!val) {
+                                                    setData('recurring_frequency', '')
+                                                }
+                                            }}
+                                            disabled={processing}
+                                        />
+                                        <Label htmlFor="is_recurring" className="cursor-pointer text-sm">
+                                            Is this a recurring task?
+                                        </Label>
+                                    </div>
+                                    {data.is_recurring === true && (
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="recurring_frequency" className="text-sm font-medium">
+                                                Frequency
+                                            </Label>
+                                            <SearchableSelect
+                                                id="recurring_frequency"
+                                                value={data.recurring_frequency || ''}
+                                                onChange={(value) => setData('recurring_frequency', value as TaskForm['recurring_frequency'])}
+                                                options={[
+                                                    { id: 'daily', name: 'Daily' },
+                                                    { id: 'weekly', name: 'Weekly' },
+                                                    { id: 'every_other_week', name: 'Every other week' },
+                                                    { id: 'monthly', name: 'Monthly' },
+                                                ]}
+                                                placeholder="Select frequency"
+                                                disabled={processing}
+                                            />
+                                            <InputError message={errors.recurring_frequency} />
+                                        </div>
+                                    )}
+                                </div>
 
                                 <FileDropzone
                                     value={newAttachments}

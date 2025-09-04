@@ -75,7 +75,7 @@ final class TaskController extends Controller
 
             $currentAssigneeIds = $task->assignees->pluck('id')->toArray();
             $oldStatus = $task->status;
-            $task->update($request->only(['project_id', 'title', 'description', 'status', 'priority', 'due_date']));
+            $task->update($request->only(['project_id', 'title', 'description', 'status', 'priority', 'due_date', 'is_recurring', 'recurring_frequency']));
 
             if ($request->has('assignees')) {
                 $newAssigneeIds = $request->input('assignees');
@@ -165,6 +165,8 @@ final class TaskController extends Controller
                 'status' => $request->input('status'),
                 'priority' => $request->input('priority', 'medium'),
                 'due_date' => $request->input('due_date'),
+                'is_recurring' => $request->boolean('is_recurring', null),
+                'recurring_frequency' => $request->input('recurring_frequency'),
             ]);
 
             $assigneeIds = $request->input('assignees', []);

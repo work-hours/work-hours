@@ -265,6 +265,21 @@ export default function Tasks() {
         }
     }
 
+    const humanizeFrequency = (freq?: Task['recurring_frequency'] | null): string => {
+        switch (freq) {
+            case 'daily':
+                return 'Daily'
+            case 'weekly':
+                return 'Weekly'
+            case 'every_other_week':
+                return 'Every other week'
+            case 'monthly':
+                return 'Monthly'
+            default:
+                return ''
+        }
+    }
+
     /**
      * Helper function to safely format date values (handles both Date objects and strings)
      */
@@ -630,6 +645,14 @@ export default function Tasks() {
                                                         <div className="flex flex-wrap items-center gap-1.5">
                                                             {getStatusBadge(task, task.status)}
                                                             {getPriorityBadge(task.priority)}
+                                                            {task.is_recurring === true && (
+                                                                <Badge variant="outline" className="gap-1">
+                                                                    Recurring
+                                                                    {humanizeFrequency(task.recurring_frequency)
+                                                                        ? `: ${humanizeFrequency(task.recurring_frequency)}`
+                                                                        : ''}
+                                                                </Badge>
+                                                            )}
                                                             {task.is_imported && task.meta?.source && (
                                                                 <SourceLinkIcon source={task.meta.source} sourceUrl={task.meta?.source_url} />
                                                             )}
