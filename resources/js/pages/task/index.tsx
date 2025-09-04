@@ -191,7 +191,7 @@ export default function Tasks() {
         }
     }
 
-    const handleFilterChange = (key: keyof TaskFilters, value: string | number | Date | null): void => {
+    const handleFilterChange = (key: keyof TaskFilters, value: string | number | number[] | Date | boolean | null): void => {
         setFilters((prev) => ({ ...prev, [key]: value }))
     }
 
