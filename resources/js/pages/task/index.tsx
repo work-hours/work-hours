@@ -102,6 +102,7 @@ export default function Tasks() {
         tag: 'all',
         'due-date-from': '',
         'due-date-to': '',
+        'due-today': false,
         search: '',
     })
     const [processing, setProcessing] = useState(false)
@@ -201,6 +202,7 @@ export default function Tasks() {
             tag: 'all',
             'due-date-from': '',
             'due-date-to': '',
+            'due-today': false,
             search: '',
         })
     }
@@ -327,6 +329,7 @@ export default function Tasks() {
             tag: queryParams.tag || 'all',
             'due-date-from': queryParams['due-date-from'] || '',
             'due-date-to': queryParams['due-date-to'] || '',
+            'due-today': ['1', 'true', 'on'].includes((queryParams['due-today'] || '').toString()),
             search: queryParams.search || '',
         }
 
