@@ -647,7 +647,10 @@ export default function Tasks() {
                                                             {getPriorityBadge(task.priority)}
                                                             {task.is_recurring === true && (
                                                                 <Badge variant="outline" className="gap-1">
-                                                                    Recurring{humanizeFrequency(task.recurring_frequency) ? `: ${humanizeFrequency(task.recurring_frequency)}` : ''}
+                                                                    Recurring
+                                                                    {humanizeFrequency(task.recurring_frequency)
+                                                                        ? `: ${humanizeFrequency(task.recurring_frequency)}`
+                                                                        : ''}
                                                                 </Badge>
                                                             )}
                                                             {task.is_imported && task.meta?.source && (
