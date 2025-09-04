@@ -51,7 +51,9 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
     return (
         <NotificationsProvider>
             <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900 print:bg-white">
-                <div className="print:hidden"><MasterSidebar collapsed={collapsed} /></div>
+                <div className="print:hidden">
+                    <MasterSidebar collapsed={collapsed} />
+                </div>
 
                 <TimeTrackerProvider>
                     <div className={`flex-1 transition-all duration-300 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}>
@@ -60,12 +62,16 @@ export default function MasterLayout({ children, breadcrumbs = [] }: MasterLayou
                         </MasterContent>
                     </div>
 
-                    <div className="print:hidden"><MasterRightSidebar collapsed={collapsed} /></div>
+                    <div className="print:hidden">
+                        <MasterRightSidebar collapsed={collapsed} />
+                    </div>
                 </TimeTrackerProvider>
 
                 {dataLoaded && (
                     <>
-                        <div className="print:hidden"><FloatingAiChat projects={userProjects} /></div>
+                        <div className="print:hidden">
+                            <FloatingAiChat projects={userProjects} />
+                        </div>
                     </>
                 )}
 

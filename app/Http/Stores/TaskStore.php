@@ -6,12 +6,12 @@ namespace App\Http\Stores;
 
 use App\Http\QueryFilters\Task\DueDateFromFilter;
 use App\Http\QueryFilters\Task\DueDateToFilter;
+use App\Http\QueryFilters\Task\DueTodayFilter;
 use App\Http\QueryFilters\Task\PriorityFilter;
 use App\Http\QueryFilters\Task\ProjectIdFilter;
 use App\Http\QueryFilters\Task\SearchFilter;
 use App\Http\QueryFilters\Task\StatusFilter;
 use App\Http\QueryFilters\Task\TagFilter;
-use App\Http\QueryFilters\Task\DueTodayFilter;
 use App\Models\Project;
 use App\Models\Task;
 use Carbon\Carbon;

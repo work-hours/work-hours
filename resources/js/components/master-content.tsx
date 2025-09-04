@@ -105,7 +105,9 @@ export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps
                 </div>
             </div>
             <main className="relative z-10 flex-1 overflow-y-auto">
-                <div className="print:hidden"><HourlyRateStatusBar /></div>
+                <div className="print:hidden">
+                    <HourlyRateStatusBar />
+                </div>
 
                 <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-16 print:max-w-none print:px-0 print:pt-0 print:pb-0">{children}</div>
             </main>

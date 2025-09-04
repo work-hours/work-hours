@@ -37,9 +37,9 @@ import {
     MoreVertical,
     Play,
     Plus,
+    Printer,
     Search,
     TimerReset,
-    Printer,
 } from 'lucide-react'
 import { JSX, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -340,7 +340,6 @@ export default function Tasks() {
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
-            {/* Print only the task list: hide page heading/sections in print */}
             <Head title="Tasks" />
             <div className="mx-auto flex flex-col gap-4 p-4 print:p-0">
                 <section className="mb-2 print:hidden">
@@ -348,7 +347,7 @@ export default function Tasks() {
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your tasks</p>
                 </section>
 
-                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800 print:shadow-none print:border-0">
+                <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800 print:border-0 print:shadow-none">
                     <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700 print:border-0 print:p-0">
                         <div className="flex items-center justify-between">
                             <div>

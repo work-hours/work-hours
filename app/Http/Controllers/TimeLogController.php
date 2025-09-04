@@ -9,6 +9,7 @@ use App\Http\Requests\StoreTimeLogRequest;
 use App\Http\Requests\UpdateTimeLogRequest;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TaskStore;
+use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
 use App\Imports\TimeLogImport;
 use App\Models\Project;
@@ -17,6 +18,7 @@ use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
 use App\Notifications\TimeLogPaid;
+use App\Services\ApprovalService;
 use App\Services\TimeLogService;
 use App\Traits\ExportableTrait;
 use Carbon\Carbon;
@@ -39,7 +41,7 @@ final class TimeLogController extends Controller
 {
     use ExportableTrait;
 
-    public function __construct(private readonly TimeLogService $timeLogService) {}
+    public function __construct(private readonly TimeLogService $timeLogService, private readonly ApprovalService $approvalService) {}
 
     public function index()
     {
@@ -194,6 +196,24 @@ final class TimeLogController extends Controller
             DB::rollBack();
             throw $e;
         }
+    }
+
+    public function approvals()
+    {
+        $pendingTimeLogs = $this->approvalService->getPendingApprovals();
+        $mappedTimeLogs = TimeLogStore::timeLogMapper($pendingTimeLogs);
+        $totalDuration = round($mappedTimeLogs->sum('duration'), 2);
+        $projects = ProjectStore::userProjects(userId: auth()->id());
+
+        $teamMembers = TeamStore::teamMembers(userId: auth()->id());
+
+        return Inertia::render('time-log/approvals', [
+            'timeLogs' => $mappedTimeLogs,
+            'filters' => TimeLogStore::filters(),
+            'projects' => $projects,
+            'teamMembers' => $teamMembers,
+            'totalDuration' => $totalDuration,
+        ]);
     }
 
     /**
