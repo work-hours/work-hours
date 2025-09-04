@@ -447,7 +447,7 @@ export default function CreateTask({ projects }: Props) {
                                                 options={[
                                                     { id: 'daily', name: 'Daily' },
                                                     { id: 'weekly', name: 'Weekly' },
-                                                                                                        { id: 'every_other_week', name: 'Every other week' },
+                                                    { id: 'every_other_week', name: 'Every other week' },
                                                     { id: 'monthly', name: 'Monthly' },
                                                 ]}
                                                 placeholder="Select frequency"

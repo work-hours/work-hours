@@ -29,7 +29,7 @@ final class UpdateTaskRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'status' => ['required', 'string', 'in:pending,in_progress,completed'],
             'priority' => ['required', 'string', 'in:low,medium,high'],
-            'due_date' => ['nullable', 'date'],
+            'due_date' => ['nullable', 'date', 'required_if:is_recurring,true'],
             'assignees' => ['nullable', 'array'],
             'assignees.*' => ['integer', 'exists:users,id'],
             'create_github_issue' => ['nullable', 'boolean'],
