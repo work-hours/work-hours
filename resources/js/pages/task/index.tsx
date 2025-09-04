@@ -509,7 +509,19 @@ export default function Tasks() {
                                     />
                                 </div>
 
-                                <div className="flex items-end gap-2">
+                                <div className="flex items-end gap-3">
+                                    <div className="flex items-center space-x-2 rounded-md border px-3 py-2">
+                                        <Checkbox
+                                            id="due-today"
+                                            checked={Boolean(filters['due-today'])}
+                                            onCheckedChange={(checked) => handleFilterChange('due-today', checked === true)}
+                                            disabled={processing}
+                                        />
+                                        <Label htmlFor="due-today" className="text-sm">
+                                            Due today
+                                        </Label>
+                                    </div>
+
                                     <FilterButton title="Apply filters" disabled={processing}>
                                         <Search className="h-4 w-4" />
                                     </FilterButton>
@@ -524,6 +536,7 @@ export default function Tasks() {
                                                 filters.tag === 'all' &&
                                                 !filters['due-date-from'] &&
                                                 !filters['due-date-to'] &&
+                                                !filters['due-today'] &&
                                                 !filters.search)
                                         }
                                         onClick={clearFilters}
