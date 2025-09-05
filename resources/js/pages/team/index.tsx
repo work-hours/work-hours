@@ -11,7 +11,7 @@ import TeamMemberOffCanvas from '@/pages/team/components/TeamMemberOffCanvas'
 import { TeamPageProps, teamBreadcrumbs } from '@/pages/team/types'
 import { Head, Link } from '@inertiajs/react'
 import { Clock, Edit, MoreVertical, UserPlus, Users } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Team({ teamMembers, filters, currencies }: TeamPageProps) {
     const [offOpen, setOffOpen] = useState(false)
@@ -24,6 +24,17 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
         currency: string
         non_monetary: boolean
     } | null>(null)
+    useEffect(() => {
+        try {
+            const params = new URLSearchParams(window.location.search)
+            if ((params.get('open') || '').toLowerCase() === 'true') {
+                setMode('create')
+                setEditUser(null)
+                setOffOpen(true)
+            }
+        } catch {}
+    }, [])
+
     return (
         <MasterLayout breadcrumbs={teamBreadcrumbs}>
             <Head title="Team" />
