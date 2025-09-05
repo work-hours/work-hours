@@ -11,7 +11,7 @@ import { clients as _clients } from '@actions/ClientController'
 import ClientOffCanvas from '@/pages/client/components/ClientOffCanvas'
 import ClientFiltersOffCanvas from '@/pages/client/components/ClientFiltersOffCanvas'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Edit, FileText, Folder, Loader2, MoreVertical, Plus, Search, Users } from 'lucide-react'
+import { Edit, FileText, Filter, Folder, Loader2, MoreVertical, Plus, Search, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -200,7 +200,7 @@ export default function Clients() {
                                     }`}
                                     onClick={() => setFiltersOpen(true)}
                                 >
-                                    <Search className={`h-4 w-4 ${filters.search || filters['created-date-from'] || filters['created-date-to'] ? 'text-primary dark:text-primary-foreground' : ''}`} />
+                                    <Filter className={`h-4 w-4 ${filters.search || filters['created-date-from'] || filters['created-date-to'] ? 'text-primary dark:text-primary-foreground' : ''}`} />
                                     <span>
                                         {(() => {
                                             const count = Number(Boolean(filters.search)) + Number(Boolean(filters['created-date-from'])) + Number(Boolean(filters['created-date-to']))
