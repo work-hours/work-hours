@@ -17,7 +17,7 @@ const quickLinks: NavItem[] = [
     },
     {
         title: 'Add Member',
-        href: route('team.create'),
+        href: route('team.index', { open: 'true'}),
         icon: UsersIcon,
     },
     {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Mappers\Team\TeamListMapper;
-use App\Http\Mappers\Team\TeamUserMapper;
 use App\Http\QueryBuilders\Team\TeamListSearchableQuery;
 use App\Http\QueryBuilders\Team\TimeLogQuery;
 use App\Http\Requests\StoreTeamMemberRequest;
@@ -75,25 +74,6 @@ final class TeamController extends Controller
             $user->notify(new TeamMemberAdded($user, $creator));
             \App\Events\TeamMemberAdded::dispatch($user, $creator);
         }
-    }
-
-    public function create()
-    {
-        return Inertia::render('team/create', [
-            'currencies' => auth()->user()->currencies,
-        ]);
-    }
-
-    public function edit(User $user)
-    {
-        Gate::authorize('update', $user);
-
-        $team = TeamStore::teamEntry(userId: auth()->id(), memberId: $user->getKey());
-
-        return Inertia::render('team/edit', [
-            'user' => TeamUserMapper::map($user, $team),
-            'currencies' => auth()->user()->currencies,
-        ]);
     }
 
     /**
