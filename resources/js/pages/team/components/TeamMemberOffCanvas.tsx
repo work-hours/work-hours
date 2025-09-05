@@ -1,10 +1,10 @@
+import InputError from '@/components/input-error'
+import SubmitButton from '@/components/submit-button'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import InputError from '@/components/input-error'
-import SubmitButton from '@/components/submit-button'
 import { router, useForm } from '@inertiajs/react'
 import { LoaderCircle, Lock, Mail, Save, User, UserPlus } from 'lucide-react'
 import { useEffect } from 'react'
@@ -44,26 +44,23 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
         email: isEdit && user ? user.email : '',
         password: isEdit ? '' : '',
         hourly_rate: isEdit && user ? user.hourly_rate : 0,
-        currency: isEdit && user ? user.currency : currencies[0]?.code ?? 'USD',
+        currency: isEdit && user ? user.currency : (currencies[0]?.code ?? 'USD'),
         non_monetary: isEdit && user ? user.non_monetary : false,
     })
 
     useEffect(() => {
-        // reset form when offcanvas closes or switches mode/user
         if (!open) {
             reset()
         } else {
-            // initialize with fresh values on open
             setData({
                 name: isEdit && user ? user.name : '',
                 email: isEdit && user ? user.email : '',
                 password: isEdit ? '' : '',
                 hourly_rate: isEdit && user ? user.hourly_rate : 0,
-                currency: isEdit && user ? user.currency : currencies[0]?.code ?? 'USD',
+                currency: isEdit && user ? user.currency : (currencies[0]?.code ?? 'USD'),
                 non_monetary: isEdit && user ? user.non_monetary : false,
             })
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, mode, user])
 
     const submit = (e: React.FormEvent) => {
@@ -94,8 +91,8 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
 
     return (
         <Sheet open={open} onOpenChange={(val) => !val && onClose()}>
-            <SheetContent side="right" className="overflow-y-auto bg-white pb-4 pl-4 sm:max-w-md md:max-w-lg dark:bg-neutral-900">
-                <SheetHeader className="mb-2">
+            <SheetContent side="right" className="overflow-y-auto bg-white pr-4 pb-6 pl-4 sm:max-w-md md:max-w-lg dark:bg-neutral-900">
+                <SheetHeader className="mb-6">
                     <SheetTitle className="flex items-center gap-2 text-neutral-900 dark:text-white">
                         {isEdit ? 'Edit Team Member' : 'Add Team Member'}
                     </SheetTitle>
@@ -104,7 +101,7 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                     </SheetDescription>
                 </SheetHeader>
 
-                <div className="flex-1 overflow-y-auto p-1">
+                <div className="space-y-6">
                     <form className="flex flex-col gap-6" onSubmit={submit}>
                         <div className="grid gap-6">
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -127,7 +124,7 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                                             onChange={(e) => setData('name', e.target.value)}
                                             disabled={processing}
                                             placeholder="John Doe"
-                                            className="border-gray-200 bg-white pl-10"
+                                            className="border-neutral-200 bg-white pl-10 dark:border-neutral-800 dark:bg-neutral-800/50"
                                         />
                                     </div>
                                     <InputError message={errors.name} className="mt-1" />
@@ -150,7 +147,7 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                                             onChange={(e) => setData('email', e.target.value)}
                                             disabled={processing}
                                             placeholder="john@example.com"
-                                            className="border-gray-200 bg-white pl-10"
+                                            className="border-neutral-200 bg-white pl-10 dark:border-neutral-800 dark:bg-neutral-800/50"
                                         />
                                     </div>
                                     <InputError message={errors.email} />
@@ -160,7 +157,9 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                             <div className="grid gap-2">
                                 <Label htmlFor="password" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                     {isEdit ? (
-                                        <>Password <span className="text-xs text-gray-500">(leave empty to keep current password)</span></>
+                                        <>
+                                            Password <span className="text-xs text-gray-500">(leave empty to keep current password)</span>
+                                        </>
                                     ) : (
                                         'Password'
                                     )}
@@ -179,19 +178,19 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                                         disabled={processing}
                                         required={!isEdit}
                                         placeholder="••••••••"
-                                        className="border-gray-200 bg-white pl-10"
+                                        className="border-neutral-200 bg-white pl-10 dark:border-neutral-800 dark:bg-neutral-800/50"
                                     />
                                 </div>
                                 <InputError message={errors.password} />
                             </div>
 
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center gap-2">
                                 <input
                                     type="checkbox"
                                     id="non_monetary"
                                     checked={Boolean(data.non_monetary)}
                                     onChange={(e) => setData('non_monetary', e.target.checked)}
-                                    className="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500"
+                                    className="h-4 w-4 rounded border-neutral-300 text-neutral-700 focus:ring-neutral-500 dark:border-neutral-700 dark:bg-neutral-800"
                                 />
                                 <Label htmlFor="non_monetary" className="text-sm text-gray-700 dark:text-gray-300">
                                     Non-monetary (no hourly rate)
@@ -218,7 +217,7 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                                                 onChange={(e) => setData('hourly_rate', e.target.value)}
                                                 disabled={processing}
                                                 placeholder="0.00"
-                                                className="border-gray-200 bg-white pl-10"
+                                                className="border-neutral-200 bg-white pl-10 dark:border-neutral-800 dark:bg-neutral-800/50"
                                             />
                                         </div>
                                         <InputError message={errors.hourly_rate} />
@@ -227,11 +226,18 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                                         <Label htmlFor="currency" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                             Currency
                                         </Label>
-                                        <Select value={data.currency} onValueChange={(value) => setData('currency', value)} disabled={processing || currencies.length === 0}>
-                                            <SelectTrigger id="currency" className="border-gray-200 bg-white">
+                                        <Select
+                                            value={data.currency}
+                                            onValueChange={(value) => setData('currency', value)}
+                                            disabled={processing || currencies.length === 0}
+                                        >
+                                            <SelectTrigger
+                                                id="currency"
+                                                className="border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-800/50"
+                                            >
                                                 <SelectValue placeholder="Select a currency" />
                                             </SelectTrigger>
-                                            <SelectContent className="border-gray-200 bg-white">
+                                            <SelectContent className="border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-800/50">
                                                 {currencies.map((currency) => (
                                                     <SelectItem key={currency.id} value={currency.code}>
                                                         {currency.code}
@@ -244,7 +250,7 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                                 </div>
                             )}
 
-                            <div className="mt-2 flex justify-end gap-2">
+                            <div className="mt-6 flex justify-end gap-3 border-t border-neutral-200 pt-4 dark:border-neutral-800">
                                 <Button type="button" variant="outline" onClick={onClose} disabled={processing}>
                                     Cancel
                                 </Button>

@@ -7,8 +7,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, Ta
 import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import TeamFiltersComponent, { getFilterDescription } from '@/pages/team/components/TeamFilters'
-import { TeamPageProps, teamBreadcrumbs } from '@/pages/team/types'
 import TeamMemberOffCanvas from '@/pages/team/components/TeamMemberOffCanvas'
+import { TeamPageProps, teamBreadcrumbs } from '@/pages/team/types'
 import { Head, Link } from '@inertiajs/react'
 import { Clock, Edit, MoreVertical, UserPlus, Users } from 'lucide-react'
 import { useState } from 'react'
@@ -207,13 +207,7 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                     </CardContent>
                 </Card>
             </div>
-                <TeamMemberOffCanvas
-                    open={offOpen}
-                    mode={mode}
-                    onClose={() => setOffOpen(false)}
-                    currencies={currencies}
-                    user={editUser ?? undefined}
-                />
+            <TeamMemberOffCanvas open={offOpen} mode={mode} onClose={() => setOffOpen(false)} currencies={currencies} user={editUser ?? undefined} />
         </MasterLayout>
     )
 }
