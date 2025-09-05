@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/react'
-import { Calendar, CalendarRange, Search, TimerReset, Briefcase, CheckCircle, AlertCircle } from 'lucide-react'
+import { AlertCircle, Briefcase, Calendar, CalendarRange, CheckCircle, Search, TimerReset } from 'lucide-react'
 import { FormEventHandler } from 'react'
 
 import FilterButton from '@/components/filter-button'

@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Pagination } from '@/components/ui/pagination'
 import MasterLayout from '@/layouts/master-layout'
+import AllTimeLogsFiltersOffCanvas from '@/pages/team/components/AllTimeLogsFiltersOffCanvas'
 import { type BreadcrumbItem } from '@/types'
 import { Head, router } from '@inertiajs/react'
 import { CheckCircle, ClockIcon, Filter } from 'lucide-react'
 import { useState } from 'react'
-import AllTimeLogsFiltersOffCanvas from '@/pages/team/components/AllTimeLogsFiltersOffCanvas'
 
 import type { AllTeamTimeLogsProps as Props } from '@/@types/team-time-logs'
 
@@ -194,16 +194,44 @@ export default function AllTeamTimeLogs({
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button
-                                    variant={filters['start-date'] || filters['end-date'] || filters.user || filters.project || filters.tag || filters['is-paid'] || filters.status ? 'default' : 'outline'}
+                                    variant={
+                                        filters['start-date'] ||
+                                        filters['end-date'] ||
+                                        filters.user ||
+                                        filters.project ||
+                                        filters.tag ||
+                                        filters['is-paid'] ||
+                                        filters.status
+                                            ? 'default'
+                                            : 'outline'
+                                    }
                                     className={`flex items-center gap-2 ${
-                                        filters['start-date'] || filters['end-date'] || filters.user || filters.project || filters.tag || filters['is-paid'] || filters.status
-                                            ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:border-primary/30 dark:bg-primary/20 dark:border-primary/30 dark:hover:bg-primary/30 dark:text-primary-foreground'
+                                        filters['start-date'] ||
+                                        filters['end-date'] ||
+                                        filters.user ||
+                                        filters.project ||
+                                        filters.tag ||
+                                        filters['is-paid'] ||
+                                        filters.status
+                                            ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
                                             : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
                                     }`}
                                     onClick={() => setFiltersOpen(true)}
                                 >
-                                    <Filter className={`h-4 w-4 ${filters['start-date'] || filters['end-date'] || filters.user || filters.project || filters.tag || filters['is-paid'] || filters.status ? 'text-primary dark:text-primary-foreground' : ''}`} />
-                                    <span>{filters['start-date'] || filters['end-date'] || filters.user || filters.project || filters.tag || filters['is-paid'] || filters.status ? 'Filters Applied' : 'Filters'}</span>
+                                    <Filter
+                                        className={`h-4 w-4 ${filters['start-date'] || filters['end-date'] || filters.user || filters.project || filters.tag || filters['is-paid'] || filters.status ? 'text-primary dark:text-primary-foreground' : ''}`}
+                                    />
+                                    <span>
+                                        {filters['start-date'] ||
+                                        filters['end-date'] ||
+                                        filters.user ||
+                                        filters.project ||
+                                        filters.tag ||
+                                        filters['is-paid'] ||
+                                        filters.status
+                                            ? 'Filters Applied'
+                                            : 'Filters'}
+                                    </span>
                                 </Button>
 
                                 <ExportButton href={`${route('team.export-time-logs')}${window.location.search}`} label="Export" />
@@ -218,7 +246,6 @@ export default function AllTeamTimeLogs({
                                 )}
                             </div>
                         </div>
-
                     </CardHeader>
                     <CardContent className="p-0">
                         {timeLogs.length > 0 ? (

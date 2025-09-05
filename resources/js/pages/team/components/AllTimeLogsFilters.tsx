@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/react'
-import { Calendar, CalendarRange, Search, TimerReset, AlertCircle, Briefcase, CheckCircle } from 'lucide-react'
+import { AlertCircle, Briefcase, Calendar, CalendarRange, CheckCircle, Search, TimerReset } from 'lucide-react'
 import { FormEventHandler } from 'react'
 
 import FilterButton from '@/components/filter-button'
@@ -83,15 +83,7 @@ export default function AllTimeLogsFilters({ filters, teamMembers, projects, tag
         })
     }
 
-    const hasActiveFilters = !!(
-        data['start-date'] ||
-        data['end-date'] ||
-        data.user ||
-        data.project ||
-        data.tag ||
-        data['is-paid'] ||
-        data.status
-    )
+    const hasActiveFilters = !!(data['start-date'] || data['end-date'] || data.user || data.project || data.tag || data['is-paid'] || data.status)
 
     return (
         <form onSubmit={submit} className="flex w-full flex-col gap-6">

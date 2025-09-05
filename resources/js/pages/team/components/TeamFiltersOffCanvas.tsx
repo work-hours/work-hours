@@ -1,7 +1,7 @@
-import TeamFiltersComponent from '@/pages/team/components/TeamFilters'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import TeamFiltersComponent from '@/pages/team/components/TeamFilters'
 import { type TeamFilters } from '@/pages/team/types'
-import { Filter, SlidersHorizontal } from 'lucide-react'
+import { SlidersHorizontal } from 'lucide-react'
 
 interface TeamFiltersOffCanvasProps {
     open: boolean

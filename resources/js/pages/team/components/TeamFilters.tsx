@@ -126,11 +126,7 @@ export default function TeamFiltersComponent({ filters }: TeamFiltersProps) {
             </div>
 
             <div className="mt-2 flex w-full flex-col gap-3">
-                <FilterButton
-                    title="Apply filters"
-                    disabled={processing}
-                    className="w-full justify-center"
-                >
+                <FilterButton title="Apply filters" disabled={processing} className="w-full justify-center">
                     <Search className="mr-2 h-4 w-4" />
                     Apply Filters
                 </FilterButton>

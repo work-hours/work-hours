@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Pagination } from '@/components/ui/pagination'
 import MasterLayout from '@/layouts/master-layout'
+import MemberTimeLogsFiltersOffCanvas from '@/pages/team/components/MemberTimeLogsFiltersOffCanvas'
 import { type BreadcrumbItem } from '@/types'
 import { Head, router } from '@inertiajs/react'
 import { CheckCircle, ClockIcon, Filter } from 'lucide-react'
 import { useState } from 'react'
-import MemberTimeLogsFiltersOffCanvas from '@/pages/team/components/MemberTimeLogsFiltersOffCanvas'
 
 import type { MemberTimeLogsProps as Props } from '@/@types/team-time-logs'
 
@@ -40,7 +40,7 @@ export default function TeamMemberTimeLogs({
     ]
 
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
-        const [filtersOpen, setFiltersOpen] = useState(false)
+    const [filtersOpen, setFiltersOpen] = useState(false)
 
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
@@ -67,7 +67,6 @@ export default function TeamMemberTimeLogs({
             },
         )
     }
-
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
@@ -166,16 +165,26 @@ export default function TeamMemberTimeLogs({
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button
-                                    variant={filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status ? 'default' : 'outline'}
+                                    variant={
+                                        filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status
+                                            ? 'default'
+                                            : 'outline'
+                                    }
                                     className={`flex items-center gap-2 ${
                                         filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status
-                                            ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:border-primary/30 dark:bg-primary/20 dark:border-primary/30 dark:hover:bg-primary/30 dark:text-primary-foreground'
+                                            ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
                                             : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
                                     }`}
                                     onClick={() => setFiltersOpen(true)}
                                 >
-                                    <Filter className={`h-4 w-4 ${filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status ? 'text-primary dark:text-primary-foreground' : ''}`} />
-                                    <span>{filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status ? 'Filters Applied' : 'Filters'}</span>
+                                    <Filter
+                                        className={`h-4 w-4 ${filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status ? 'text-primary dark:text-primary-foreground' : ''}`}
+                                    />
+                                    <span>
+                                        {filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status
+                                            ? 'Filters Applied'
+                                            : 'Filters'}
+                                    </span>
                                 </Button>
                                 <ExportButton
                                     href={`${route('team.export-time-logs')}?user=${user.id}${window.location.search.replace('?', '&')}`}
@@ -192,7 +201,6 @@ export default function TeamMemberTimeLogs({
                                 )}
                             </div>
                         </div>
-
                     </CardHeader>
                     <CardContent className="p-0">
                         {timeLogs.length > 0 ? (
