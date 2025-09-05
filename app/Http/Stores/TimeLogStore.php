@@ -470,10 +470,11 @@ final class TimeLogStore
         return [
             'start-date' => request('start-date', ''),
             'end-date' => request('end-date', ''),
-            'project' => request('project', ''),
-            'is-paid' => request('is-paid', ''),
-            'status' => request('status', ''),
-            'tag' => request('tag', ''),
+            'user' => (string) request('user', ''),
+            'project' => (string) request('project', ''),
+            'is-paid' => (string) request('is-paid', ''),
+            'status' => (string) request('status', ''),
+            'tag' => (string) request('tag', ''),
         ];
     }
 }
