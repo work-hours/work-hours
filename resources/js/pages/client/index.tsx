@@ -5,13 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
-import { type BreadcrumbItem } from '@/types'
-import ClientOffCanvas from '@/pages/client/components/ClientOffCanvas'
+import { getClientFilterDescription } from '@/pages/client/components/ClientFilters'
 import ClientFiltersOffCanvas from '@/pages/client/components/ClientFiltersOffCanvas'
+import ClientOffCanvas from '@/pages/client/components/ClientOffCanvas'
+import { type BreadcrumbItem } from '@/types'
 import { Head, Link, usePage } from '@inertiajs/react'
 import { Edit, FileText, Filter, Folder, MoreVertical, Plus, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { getClientFilterDescription } from '@/pages/client/components/ClientFilters'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -20,14 +20,14 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-import type { Client, ClientFilters, ClientCurrency } from '@/@types/client'
+import type { Client, ClientCurrency, ClientFilters } from '@/@types/client'
 
- type Props = {
+type Props = {
     clients: Client[]
     filters: ClientFilters
 }
 
- type PageProps = Props & { currencies: ClientCurrency[] }
+type PageProps = Props & { currencies: ClientCurrency[] }
 export default function Clients() {
     const { clients, filters, currencies } = usePage<PageProps>().props
 
@@ -35,8 +35,6 @@ export default function Clients() {
     const [mode, setMode] = useState<'create' | 'edit'>('create')
     const [editClient, setEditClient] = useState<Client | null>(null)
     const [filtersOpen, setFiltersOpen] = useState(false)
-
-    // Auto-open create sheet when ?open=true
     useEffect(() => {
         try {
             const params = new URLSearchParams(window.location.search)
@@ -45,9 +43,7 @@ export default function Clients() {
                 setEditClient(null)
                 setOffOpen(true)
             }
-        } catch {
-            // ignore URL parsing errors
-        }
+        } catch {}
     }, [])
 
     return (
@@ -77,17 +73,18 @@ export default function Clients() {
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
-                                {/* Filter button */}
                                 <Button
                                     variant={filters.search || filters['created-date-from'] || filters['created-date-to'] ? 'default' : 'outline'}
                                     className={`flex items-center gap-2 ${
                                         filters.search || filters['created-date-from'] || filters['created-date-to']
-                                            ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:border-primary/30 dark:bg-primary/20 dark:border-primary/30 dark:hover:bg-primary/30 dark:text-primary-foreground'
+                                            ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
                                             : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
                                     }`}
                                     onClick={() => setFiltersOpen(true)}
                                 >
-                                    <Filter className={`h-4 w-4 ${filters.search || filters['created-date-from'] || filters['created-date-to'] ? 'text-primary dark:text-primary-foreground' : ''}`} />
+                                    <Filter
+                                        className={`h-4 w-4 ${filters.search || filters['created-date-from'] || filters['created-date-to'] ? 'text-primary dark:text-primary-foreground' : ''}`}
+                                    />
                                     <span>
                                         {filters.search || filters['created-date-from'] || filters['created-date-to'] ? 'Filters Applied' : 'Filters'}
                                     </span>
@@ -106,8 +103,6 @@ export default function Clients() {
                                 </Button>
                             </div>
                         </div>
-
-                        {/* Filters moved to offcanvas; header now has a Filter button */}
                     </CardHeader>
                     <CardContent className="p-0">
                         {clients.length > 0 ? (

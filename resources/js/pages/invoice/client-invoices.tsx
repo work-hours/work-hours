@@ -111,47 +111,80 @@ export default function ClientInvoices({ client, invoices }: Props) {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-4">
-                        <div className="flex flex-wrap gap-6">
-                            <div className="flex items-center gap-3">
-                                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
-                                    <User className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                                </span>
-                                <div>
-                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Contact Person</h3>
-                                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{client.contact_person || 'Not specified'}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
-                                    <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                                </span>
-                                <div>
-                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Email</h3>
-                                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{client.email || 'Not specified'}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
-                                    <Phone className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                                </span>
-                                <div>
-                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Phone</h3>
-                                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{client.phone || 'Not specified'}</p>
-                                </div>
-                            </div>
-                            {client.hourly_rate && (
+                        <div className="flex flex-col gap-6">
+                            <div className={'flex flex-row flex-wrap gap-6'}>
                                 <div className="flex items-center gap-3">
                                     <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
-                                        <DollarSign className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                        <User className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                     </span>
                                     <div>
-                                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Hourly Rate</h3>
+                                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Contact Person</h3>
                                         <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                                            {client.hourly_rate} {client.currency || 'USD'}
+                                            {client.contact_person || 'Not specified'}
                                         </p>
                                     </div>
                                 </div>
-                            )}
+                                <div className="flex items-center gap-3">
+                                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                                        <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Email</h3>
+                                        <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{client.email || 'Not specified'}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                                        <Phone className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Phone</h3>
+                                        <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{client.phone || 'Not specified'}</p>
+                                    </div>
+                                </div>
+                                {client.hourly_rate && (
+                                    <div className="flex items-center gap-3">
+                                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                                            <DollarSign className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                        </span>
+                                        <div>
+                                            <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Hourly Rate</h3>
+                                            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                                {client.hourly_rate} {client.currency || 'USD'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            <div className={'flex flex-row flex-wrap gap-6'}>
+                                <div className="flex items-center gap-3 rounded-lg bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                                        <FileText className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Total Invoiced</h3>
+                                        <p className="text-xs font-medium text-gray-800 dark:text-gray-200">{formatCurrency(totalInvoiced)}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 rounded-lg bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                                        <FileText className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Total Paid</h3>
+                                        <p className="text-xs font-medium text-gray-800 dark:text-gray-200">{formatCurrency(totalPaid)}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 rounded-lg bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                                        <FileText className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                    </span>
+                                    <div>
+                                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Outstanding</h3>
+                                        <p className="text-xs font-medium text-gray-800 dark:text-gray-200">{formatCurrency(totalOutstanding)}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
@@ -177,37 +210,6 @@ export default function ClientInvoices({ client, invoices }: Props) {
                         </div>
                     </CardHeader>
                     <CardContent className="p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-                                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
-                                    <FileText className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                                </span>
-                                <div>
-                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Total Invoiced</h3>
-                                    <p className="text-lg font-medium text-gray-800 dark:text-gray-200">{formatCurrency(totalInvoiced)}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-                                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
-                                    <DollarSign className="h-5 w-5 text-green-500 dark:text-green-400" />
-                                </span>
-                                <div>
-                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Total Paid</h3>
-                                    <p className="text-lg font-medium text-green-600 dark:text-green-400">{formatCurrency(totalPaid)}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-                                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
-                                    <DollarSign className="h-5 w-5 text-red-500 dark:text-red-400" />
-                                </span>
-                                <div>
-                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Outstanding</h3>
-                                    <p className="text-lg font-medium text-red-600 dark:text-red-400">{formatCurrency(totalOutstanding)}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Rest of the existing invoice table */}
                         {invoices.length > 0 ? (
                             <div className="overflow-x-auto">
                                 <Table className="w-full">
@@ -286,7 +288,7 @@ export default function ClientInvoices({ client, invoices }: Props) {
                                 <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You haven't created any invoices for this client yet.</p>
                                 <Button
                                     className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                    onClick={() => window.location.href = route('invoice.create', { client_id: client.id })}
+                                    onClick={() => (window.location.href = route('invoice.create', { client_id: client.id }))}
                                 >
                                     <Plus className="h-4 w-4" />
                                     <span>Create Invoice</span>

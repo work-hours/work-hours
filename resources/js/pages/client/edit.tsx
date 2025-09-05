@@ -41,8 +41,6 @@ type Props = {
     }
     currencies: Currency[]
 }
-
-// Deprecated: Client edit page moved to offcanvas on client index
 export default function EditClient({ client, currencies }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {

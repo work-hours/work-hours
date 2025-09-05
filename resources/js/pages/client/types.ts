@@ -1,5 +1,5 @@
-import { type BreadcrumbItem } from '@/types'
 import type { Client, ClientFilters } from '@/@types/client'
+import { type BreadcrumbItem } from '@/types'
 
 export type { Client, ClientFilters }
 

@@ -5,10 +5,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Textarea } from '@/components/ui/textarea'
 import { useForm } from '@inertiajs/react'
 import { Building, DollarSign, LoaderCircle, Mail, MapPin, Phone, Save, User, UserPlus } from 'lucide-react'
 import { useEffect } from 'react'
-import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 
 export type Currency = {
@@ -77,7 +77,6 @@ export default function ClientOffCanvas({ open, mode, onClose, currencies, clien
             hourly_rate: isEdit && client && client.hourly_rate !== null ? String(client.hourly_rate) : '',
             currency: isEdit && client && client.currency ? client.currency : (currencies[0]?.code ?? 'USD'),
         })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, mode, client])
 
     const submit = (e: React.FormEvent) => {
@@ -112,9 +111,13 @@ export default function ClientOffCanvas({ open, mode, onClose, currencies, clien
                 <SheetHeader className="">
                     <SheetTitle className="flex items-center gap-2 text-xl text-neutral-900 dark:text-white">
                         {isEdit ? (
-                            <><Building className="h-5 w-5 text-neutral-700 dark:text-neutral-300" /> Edit Client</>
+                            <>
+                                <Building className="h-5 w-5 text-neutral-700 dark:text-neutral-300" /> Edit Client
+                            </>
                         ) : (
-                            <><Building className="h-5 w-5 text-neutral-700 dark:text-neutral-300" /> Add Client</>
+                            <>
+                                <Building className="h-5 w-5 text-neutral-700 dark:text-neutral-300" /> Add Client
+                            </>
                         )}
                     </SheetTitle>
                     <SheetDescription className="text-sm text-neutral-500 dark:text-neutral-400">
@@ -125,7 +128,6 @@ export default function ClientOffCanvas({ open, mode, onClose, currencies, clien
                 <div>
                     <form className="flex flex-col gap-8" onSubmit={submit}>
                         <div className="space-y-8">
-                            {/* Basic Information Section */}
                             <div className="space-y-5">
                                 <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Basic Information</h3>
 
@@ -222,7 +224,6 @@ export default function ClientOffCanvas({ open, mode, onClose, currencies, clien
                                 </div>
                             </div>
 
-                            {/* Additional Information Section */}
                             <div className="space-y-5 pt-2">
                                 <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Additional Information</h3>
 
@@ -260,7 +261,6 @@ export default function ClientOffCanvas({ open, mode, onClose, currencies, clien
                                 </div>
                             </div>
 
-                            {/* Billing Information Section */}
                             <div className="space-y-5 pt-2">
                                 <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Billing Information</h3>
 

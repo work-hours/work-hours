@@ -1,5 +1,5 @@
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import type { ClientFilters } from '@/@types/client'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import ClientFiltersComponent from '@/pages/client/components/ClientFilters'
 import { SlidersHorizontal } from 'lucide-react'
 
