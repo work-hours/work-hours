@@ -25,13 +25,7 @@ type ClientForm = {
     currency: string
 }
 
-type Currency = {
-    id: number
-    user_id: number
-    code: string
-    created_at: string
-    updated_at: string
-}
+import type { ClientCurrency as Currency } from '@/@types/client'
 
 type Props = {
     currencies: Currency[]

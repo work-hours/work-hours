@@ -26,17 +26,7 @@ type Project = {
     }[]
 }
 
-type Client = {
-    id: number
-    name: string
-    email: string | null
-    contact_person: string | null
-    phone: string | null
-    address: string | null
-    notes: string | null
-    hourly_rate: number | null
-    currency: string | null
-}
+import type { Client } from '@/@types/client'
 
 type Props = {
     client: Client

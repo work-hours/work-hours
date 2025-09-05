@@ -6,11 +6,7 @@ import { Label } from '@/components/ui/label'
 import FilterButton from '@/components/filter-button'
 import { Calendar, CalendarRange, Search, TimerReset } from 'lucide-react'
 
-export type ClientFilters = {
-    search: string
-    'created-date-from': Date | string | null
-    'created-date-to': Date | string | null
-}
+import type { ClientFilters } from '@/@types/client'
 
 type Props = {
     open: boolean

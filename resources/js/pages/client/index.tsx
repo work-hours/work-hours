@@ -1,7 +1,5 @@
 import { ExportButton } from '@/components/action-buttons'
-// import AddNewButton from '@/components/add-new-button'
 import ClientDeleteAction from '@/components/client-delete-action'
-// import FilterButton from '@/components/filter-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -23,30 +21,14 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-type Client = {
-    id: number
-    name: string
-    email: string | null
-    contact_person: string | null
-    phone: string | null
-    address: string | null
-    notes: string | null
-    hourly_rate: number | null
-    currency: string | null
-}
+import type { Client, ClientFilters } from '@/@types/client'
 
-type ClientFilters = {
-    search: string
-    'created-date-from': Date | string | null
-    'created-date-to': Date | string | null
-}
-
-type Props = {
+ type Props = {
     clients: Client[]
     filters: ClientFilters
 }
 
-type PageProps = Props & { currencies: { id: number; code: string }[] }
+ type PageProps = Props & { currencies: { id: number; code: string }[] }
 export default function Clients() {
     const { filters: pageFilters, currencies } = usePage<PageProps>().props
     const [clients, setClients] = useState<Client[]>([])
@@ -173,7 +155,7 @@ export default function Clients() {
                 </section>
 
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
-                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                    <CardHeader className="p-4 dark:border-gray-700">
                         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                             <div>
                                 <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Client List</CardTitle>
