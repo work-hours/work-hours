@@ -61,8 +61,8 @@ export default function TeamFiltersComponent({ filters }: TeamFiltersProps) {
     const hasActiveFilters = !!(data['start-date'] || data['end-date'] || data.search)
 
     return (
-        <form onSubmit={submit} className="flex w-full flex-row gap-4">
-            <div className="flex w-full flex-col gap-1">
+        <form onSubmit={submit} className="flex w-full flex-col gap-6">
+            <div className="flex w-full flex-col gap-2">
                 <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                     Search
                 </Label>
@@ -80,7 +80,8 @@ export default function TeamFiltersComponent({ filters }: TeamFiltersProps) {
                     </div>
                 </div>
             </div>
-            <div className="flex w-full flex-col gap-1">
+
+            <div className="flex w-full flex-col gap-2">
                 <Label htmlFor="start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                     Start Date
                 </Label>
@@ -101,7 +102,8 @@ export default function TeamFiltersComponent({ filters }: TeamFiltersProps) {
                     }
                 />
             </div>
-            <div className="flex w-full flex-col gap-1">
+
+            <div className="flex w-full flex-col gap-2">
                 <Label htmlFor="end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                     End Date
                 </Label>
@@ -122,13 +124,26 @@ export default function TeamFiltersComponent({ filters }: TeamFiltersProps) {
                     }
                 />
             </div>
-            <div className="flex items-end gap-2">
-                <FilterButton title="Apply filters" disabled={processing}>
-                    <Search className="h-4 w-4" />
+
+            <div className="mt-2 flex w-full flex-col gap-3">
+                <FilterButton
+                    title="Apply filters"
+                    disabled={processing}
+                    className="w-full justify-center"
+                >
+                    <Search className="mr-2 h-4 w-4" />
+                    Apply Filters
                 </FilterButton>
 
-                <FilterButton variant="clear" disabled={processing || !hasActiveFilters} onClick={resetFilters} title="Clear filters">
-                    <TimerReset className="h-4 w-4" />
+                <FilterButton
+                    variant="clear"
+                    disabled={processing || !hasActiveFilters}
+                    onClick={resetFilters}
+                    title="Clear filters"
+                    className="w-full justify-center"
+                >
+                    <TimerReset className="mr-2 h-4 w-4" />
+                    Clear Filters
                 </FilterButton>
             </div>
         </form>
@@ -150,7 +165,7 @@ export const getFilterDescription = (filters: TeamFilters): string => {
         if (description) {
             description += ` matching "${filters.search}"`
         } else {
-            description = `Showing team members matching "${filters.search}"`
+            description = `Showing team data matching "${filters.search}"`
         }
     }
 

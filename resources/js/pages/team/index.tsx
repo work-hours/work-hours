@@ -6,11 +6,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
-import TeamFiltersComponent, { getFilterDescription } from '@/pages/team/components/TeamFilters'
+import { getFilterDescription } from '@/pages/team/components/TeamFilters'
+import TeamFiltersOffCanvas from '@/pages/team/components/TeamFiltersOffCanvas'
 import TeamMemberOffCanvas from '@/pages/team/components/TeamMemberOffCanvas'
 import { TeamPageProps, teamBreadcrumbs } from '@/pages/team/types'
 import { Head, Link } from '@inertiajs/react'
-import { Clock, Edit, MoreVertical, UserPlus, Users } from 'lucide-react'
+import { Clock, Edit, Filter, MoreVertical, UserPlus, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export default function Team({ teamMembers, filters, currencies }: TeamPageProps) {
@@ -24,6 +25,8 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
         currency: string
         non_monetary: boolean
     } | null>(null)
+    const [filtersOpen, setFiltersOpen] = useState(false)
+
     useEffect(() => {
         try {
             const params = new URLSearchParams(window.location.search)
@@ -32,7 +35,9 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                 setEditUser(null)
                 setOffOpen(true)
             }
-        } catch {}
+        } catch {
+            // ignore URL parsing errors
+        }
     }, [])
 
     return (
@@ -56,7 +61,7 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                 </section>
 
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
-                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                    <CardHeader className="p-4 dark:border-gray-700">
                         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                             <div>
                                 <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Team Members</CardTitle>
@@ -71,6 +76,16 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    className={`flex items-center gap-2 text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800 ${
+                                        filters['start-date'] || filters['end-date'] || filters.search ? 'ring-1 ring-primary/50' : ''
+                                    }`}
+                                    onClick={() => setFiltersOpen(true)}
+                                >
+                                    <Filter className="h-4 w-4" />
+                                    <span>Filters</span>
+                                </Button>
                                 <ExportButton href={route('team.export') + window.location.search} label="Export" />
                                 <Button
                                     className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
@@ -84,10 +99,6 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                                     <span>Add Member</span>
                                 </Button>
                             </div>
-                        </div>
-
-                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
-                            <TeamFiltersComponent filters={filters} />
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">
@@ -219,6 +230,7 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                 </Card>
             </div>
             <TeamMemberOffCanvas open={offOpen} mode={mode} onClose={() => setOffOpen(false)} currencies={currencies} user={editUser ?? undefined} />
+            <TeamFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} />
         </MasterLayout>
     )
 }
