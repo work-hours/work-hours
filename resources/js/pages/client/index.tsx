@@ -1,21 +1,19 @@
 import { ExportButton } from '@/components/action-buttons'
-import AddNewButton from '@/components/add-new-button'
+// import AddNewButton from '@/components/add-new-button'
 import ClientDeleteAction from '@/components/client-delete-action'
-import FilterButton from '@/components/filter-button'
+// import FilterButton from '@/components/filter-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import CustomInput from '@/components/ui/custom-input'
-import DatePicker from '@/components/ui/date-picker'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { formatDateValue, objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { clients as _clients } from '@actions/ClientController'
+import ClientOffCanvas from '@/pages/client/components/ClientOffCanvas'
+import ClientFiltersOffCanvas from '@/pages/client/components/ClientFiltersOffCanvas'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Calendar, CalendarRange, Edit, FileText, Folder, Loader2, MoreVertical, Plus, Search, TimerReset, Users } from 'lucide-react'
+import { Edit, FileText, Folder, Loader2, MoreVertical, Plus, Search, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -48,12 +46,18 @@ type Props = {
     filters: ClientFilters
 }
 
+type PageProps = Props & { currencies: { id: number; code: string }[] }
 export default function Clients() {
-    const { filters: pageFilters } = usePage<Props>().props
+    const { filters: pageFilters, currencies } = usePage<PageProps>().props
     const [clients, setClients] = useState<Client[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
     const [processing, setProcessing] = useState(false)
+
+    const [offOpen, setOffOpen] = useState(false)
+    const [mode, setMode] = useState<'create' | 'edit'>('create')
+    const [editClient, setEditClient] = useState<Client | null>(null)
+    const [filtersOpen, setFiltersOpen] = useState(false)
 
     const parseDate = (dateValue: Date | string | null): Date | null => {
         if (dateValue === null) return null
@@ -136,6 +140,27 @@ export default function Clients() {
         getClients(initialFilters).then()
     }, [])
 
+    // Auto-open create sheet when ?open=true
+    useEffect(() => {
+        try {
+            const params = new URLSearchParams(window.location.search)
+            if ((params.get('open') || '').toLowerCase() === 'true') {
+                setMode('create')
+                setEditClient(null)
+                setOffOpen(true)
+            }
+        } catch {
+            // ignore URL parsing errors
+        }
+    }, [])
+
+    // Refresh clients when offcanvas operations succeed
+    useEffect(() => {
+        const handler = () => getClients(filters)
+        window.addEventListener('refresh-clients', handler)
+        return () => window.removeEventListener('refresh-clients', handler)
+    }, [filters])
+
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Clients" />
@@ -183,6 +208,24 @@ export default function Clients() {
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
+                                {/* Filter button */}
+                                <Button
+                                    variant={filters.search || filters['created-date-from'] || filters['created-date-to'] ? 'default' : 'outline'}
+                                    className={`flex items-center gap-2 ${
+                                        filters.search || filters['created-date-from'] || filters['created-date-to']
+                                            ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:border-primary/30 dark:bg-primary/20 dark:border-primary/30 dark:hover:bg-primary/30 dark:text-primary-foreground'
+                                            : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+                                    }`}
+                                    onClick={() => setFiltersOpen(true)}
+                                >
+                                    <Search className={`h-4 w-4 ${filters.search || filters['created-date-from'] || filters['created-date-to'] ? 'text-primary dark:text-primary-foreground' : ''}`} />
+                                    <span>
+                                        {(() => {
+                                            const count = Number(Boolean(filters.search)) + Number(Boolean(filters['created-date-from'])) + Number(Boolean(filters['created-date-to']))
+                                            return count > 0 ? `Filters (${count})` : 'Filters'
+                                        })()}
+                                    </span>
+                                </Button>
                                 <ExportButton
                                     href={`${route('client.export')}?${objectToQueryString({
                                         search: filters.search || '',
@@ -191,93 +234,21 @@ export default function Clients() {
                                     })}`}
                                     label="Export"
                                 />
-                                <AddNewButton href={route('client.create')}>
+                                <Button
+                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    onClick={() => {
+                                        setMode('create')
+                                        setEditClient(null)
+                                        setOffOpen(true)
+                                    }}
+                                >
                                     <Plus className="h-4 w-4" />
                                     <span>Add Client</span>
-                                </AddNewButton>
+                                </Button>
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
-                            <form onSubmit={handleSubmit} className="flex w-full flex-row gap-4">
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Search
-                                    </Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="search"
-                                            placeholder="Search clients..."
-                                            className="h-10 border-gray-200 bg-white pl-9 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
-                                            value={filters.search}
-                                            onChange={(e) => handleFilterChange('search', e.target.value)}
-                                        />
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Search className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="created-date-from" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Created From
-                                    </Label>
-                                    <DatePicker
-                                        selected={parseDate(filters['created-date-from'])}
-                                        onChange={(date) => handleFilterChange('created-date-from', date)}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="created-date-from"
-                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select start date"
-                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="created-date-to" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Created To
-                                    </Label>
-                                    <DatePicker
-                                        selected={parseDate(filters['created-date-to'])}
-                                        onChange={(date) => handleFilterChange('created-date-to', date)}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="created-date-to"
-                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select end date"
-                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex items-end gap-2">
-                                    <FilterButton title="Apply filters" disabled={processing}>
-                                        <Search className="h-4 w-4" />
-                                    </FilterButton>
-
-                                    <FilterButton
-                                        variant="clear"
-                                        disabled={processing || (!filters.search && !filters['created-date-from'] && !filters['created-date-to'])}
-                                        onClick={clearFilters}
-                                        title="Clear filters"
-                                    >
-                                        <TimerReset className="h-4 w-4" />
-                                    </FilterButton>
-                                </div>
-                            </form>
-                        </div>
+                        {/* Filters moved to offcanvas; header now has a Filter button */}
                     </CardHeader>
                     <CardContent className="p-0">
                         {loading ? (
@@ -371,12 +342,17 @@ export default function Clients() {
                                                                     <span>Invoices</span>
                                                                 </DropdownMenuItem>
                                                             </Link>
-                                                            <Link href={route('client.edit', client.id)}>
-                                                                <DropdownMenuItem className="group cursor-pointer">
-                                                                    <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                    <span>Edit</span>
-                                                                </DropdownMenuItem>
-                                                            </Link>
+                                                            <DropdownMenuItem
+                                                                className="group cursor-pointer"
+                                                                onClick={() => {
+                                                                    setMode('edit')
+                                                                    setEditClient(client)
+                                                                    setOffOpen(true)
+                                                                }}
+                                                            >
+                                                                <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                <span>Edit</span>
+                                                            </DropdownMenuItem>
                                                             <ClientDeleteAction clientId={client.id} onDeleteSuccess={getClients} />
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
@@ -391,15 +367,33 @@ export default function Clients() {
                                 <Users className="mb-4 h-12 w-12 text-gray-300 dark:text-gray-600" />
                                 <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Clients</h3>
                                 <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You haven't added any clients yet.</p>
-                                <AddNewButton href={route('client.create')}>
+                                <Button
+                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    onClick={() => {
+                                        setMode('create')
+                                        setEditClient(null)
+                                        setOffOpen(true)
+                                    }}
+                                >
                                     <Plus className="h-4 w-4" />
                                     <span>Add Client</span>
-                                </AddNewButton>
+                                </Button>
                             </div>
                         )}
                     </CardContent>
                 </Card>
             </div>
+            <ClientOffCanvas open={offOpen} mode={mode} onClose={() => setOffOpen(false)} currencies={currencies} client={editClient ?? undefined} />
+            <ClientFiltersOffCanvas
+                open={filtersOpen}
+                onOpenChange={setFiltersOpen}
+                filters={filters}
+                processing={processing}
+                parseDate={parseDate}
+                onChange={handleFilterChange}
+                onClear={clearFilters}
+                onSubmit={handleSubmit}
+            />
         </MasterLayout>
     )
 }

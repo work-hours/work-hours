@@ -48,6 +48,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
+// Deprecated: Client create page moved to offcanvas on client index
 export default function CreateClient({ currencies }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<ClientForm>({
         name: '',

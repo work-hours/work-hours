@@ -34,6 +34,7 @@ final class ClientController extends Controller
         return Inertia::render('client/index', [
             'clients' => $clients,
             'filters' => ClientStore::filters(),
+            'currencies' => Auth::user()->currencies,
         ]);
     }
 
@@ -48,9 +49,7 @@ final class ClientController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('client/create', [
-            'currencies' => Auth::user()->currencies,
-        ]);
+        abort(404);
     }
 
     /**
@@ -84,10 +83,7 @@ final class ClientController extends Controller
      */
     public function edit(Client $client): Response
     {
-        return Inertia::render('client/edit', [
-            'client' => $client,
-            'currencies' => Auth::user()->currencies,
-        ]);
+        abort(404);
     }
 
     /**
