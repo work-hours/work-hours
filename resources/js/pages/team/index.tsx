@@ -77,14 +77,16 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button
-                                    variant="outline"
-                                    className={`flex items-center gap-2 text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800 ${
-                                        filters['start-date'] || filters['end-date'] || filters.search ? 'ring-1 ring-primary/50' : ''
+                                    variant={filters['start-date'] || filters['end-date'] || filters.search ? "default" : "outline"}
+                                    className={`flex items-center gap-2 ${
+                                        filters['start-date'] || filters['end-date'] || filters.search
+                                            ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:border-primary/30 dark:bg-primary/20 dark:border-primary/30 dark:hover:bg-primary/30 dark:text-primary-foreground'
+                                            : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
                                     }`}
                                     onClick={() => setFiltersOpen(true)}
                                 >
-                                    <Filter className="h-4 w-4" />
-                                    <span>Filters</span>
+                                    <Filter className={`h-4 w-4 ${filters['start-date'] || filters['end-date'] || filters.search ? 'text-primary dark:text-primary-foreground' : ''}`} />
+                                    <span>{filters['start-date'] || filters['end-date'] || filters.search ? 'Filters Applied' : 'Filters'}</span>
                                 </Button>
                                 <ExportButton href={route('team.export') + window.location.search} label="Export" />
                                 <Button
