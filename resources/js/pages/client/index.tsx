@@ -20,14 +20,14 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-import type { Client, ClientFilters } from '@/@types/client'
+import type { Client, ClientFilters, ClientCurrency } from '@/@types/client'
 
  type Props = {
     clients: Client[]
     filters: ClientFilters
 }
 
- type PageProps = Props & { currencies: { id: number; code: string }[] }
+ type PageProps = Props & { currencies: ClientCurrency[] }
 export default function Clients() {
     const { clients, filters, currencies } = usePage<PageProps>().props
 
