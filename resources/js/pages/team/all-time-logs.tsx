@@ -12,60 +12,7 @@ import { CheckCircle, ClockIcon, Filter } from 'lucide-react'
 import { useState } from 'react'
 import AllTimeLogsFiltersOffCanvas from '@/pages/team/components/AllTimeLogsFiltersOffCanvas'
 
-type TimeLog = {
-    id: number
-    user_name: string
-    project_id: number
-    project_name: string | null
-    start_timestamp: string
-    end_timestamp: string
-    duration: number
-    is_paid: boolean
-    hourly_rate?: number
-    paid_amount?: number
-}
-
-type Filters = {
-    'start-date': string
-    'end-date': string
-    user: string
-    project: string
-    'is-paid': string
-    status: string
-    tag: string
-}
-
-type TeamMember = {
-    id: number
-    name: string
-}
-
-type Project = {
-    id: number
-    name: string
-}
-
-type Tag = {
-    id: number
-    name: string
-}
-
-type Props = {
-    timeLogs: TimeLog[]
-    filters: Filters
-    teamMembers: TeamMember[]
-    projects: Project[]
-    tags: Tag[]
-    totalDuration: number
-    unpaidHours: number
-    paidHours: number
-    unpaidAmountsByCurrency: Record<string, number>
-    paidAmountsByCurrency: Record<string, number>
-    currency: string
-    weeklyAverage: number
-    unbillableHours: number
-    links?: { url: string | null; label: string; active: boolean }[]
-}
+import type { AllTeamTimeLogsProps as Props } from '@/@types/team-time-logs'
 
 export default function AllTeamTimeLogs({
     timeLogs,
@@ -157,7 +104,7 @@ export default function AllTeamTimeLogs({
                 )}
 
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
-                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                    <CardHeader className="p-4 dark:border-gray-700">
                         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                             <div>
                                 <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Team Time Logs</CardTitle>

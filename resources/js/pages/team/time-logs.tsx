@@ -12,52 +12,7 @@ import { CheckCircle, ClockIcon, Filter } from 'lucide-react'
 import { useState } from 'react'
 import MemberTimeLogsFiltersOffCanvas from '@/pages/team/components/MemberTimeLogsFiltersOffCanvas'
 
-type TimeLog = {
-    id: number
-    project_id: number
-    project_name: string | null
-    start_timestamp: string
-    end_timestamp: string
-    duration: number
-    is_paid: boolean
-    hourly_rate?: number
-    paid_amount?: number
-}
-
-type Filters = {
-    'start-date': string
-    'end-date': string
-    project: string
-    'is-paid': string
-    status: string
-}
-
-type User = {
-    id: number
-    name: string
-    email: string
-}
-
-type Project = {
-    id: number
-    name: string
-}
-
-type Props = {
-    timeLogs: TimeLog[]
-    filters: Filters
-    projects: Project[]
-    user: User
-    totalDuration: number
-    unpaidHours: number
-    paidHours: number
-    unpaidAmountsByCurrency: Record<string, number>
-    paidAmountsByCurrency: Record<string, number>
-    currency: string
-    weeklyAverage: number
-    unbillableHours: number
-    links?: { url: string | null; label: string; active: boolean }[]
-}
+import type { MemberTimeLogsProps as Props } from '@/@types/team-time-logs'
 
 export default function TeamMemberTimeLogs({
     timeLogs,
@@ -149,7 +104,7 @@ export default function TeamMemberTimeLogs({
                 )}
 
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
-                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                    <CardHeader className="p-4 dark:border-gray-700">
                         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                             <div>
                                 <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">{user.name}'s Time Logs</CardTitle>
