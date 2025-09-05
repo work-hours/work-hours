@@ -1,20 +1,16 @@
 import { ExportButton } from '@/components/action-buttons'
 import BackButton from '@/components/back-button'
 import StatsCards from '@/components/dashboard/StatsCards'
-import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import CustomInput from '@/components/ui/custom-input'
-import DatePicker from '@/components/ui/date-picker'
-import { Label } from '@/components/ui/label'
 import { Pagination } from '@/components/ui/pagination'
-import { SearchableSelect } from '@/components/ui/searchable-select'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head, router, useForm } from '@inertiajs/react'
-import { AlertCircle, Briefcase, Calendar, CalendarRange, CheckCircle, ClockIcon, Search, TimerReset } from 'lucide-react'
-import { FormEventHandler, useState } from 'react'
+import { Head, router } from '@inertiajs/react'
+import { CheckCircle, ClockIcon, Filter } from 'lucide-react'
+import { useState } from 'react'
+import MemberTimeLogsFiltersOffCanvas from '@/pages/team/components/MemberTimeLogsFiltersOffCanvas'
 
 type TimeLog = {
     id: number
@@ -89,6 +85,7 @@ export default function TeamMemberTimeLogs({
     ]
 
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
+        const [filtersOpen, setFiltersOpen] = useState(false)
 
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
@@ -116,39 +113,6 @@ export default function TeamMemberTimeLogs({
         )
     }
 
-    const { data, setData, get, processing } = useForm<Filters>({
-        'start-date': filters['start-date'] || '',
-        'end-date': filters['end-date'] || '',
-        project: filters.project || '',
-        'is-paid': filters['is-paid'] || '',
-        status: filters.status || '',
-    })
-
-    const startDate = data['start-date'] ? new Date(data['start-date']) : null
-    const endDate = data['end-date'] ? new Date(data['end-date']) : null
-
-    const handleStartDateChange = (date: Date | null) => {
-        if (date) {
-            setData('start-date', date.toISOString().split('T')[0])
-        } else {
-            setData('start-date', '')
-        }
-    }
-
-    const handleEndDateChange = (date: Date | null) => {
-        if (date) {
-            setData('end-date', date.toISOString().split('T')[0])
-        } else {
-            setData('end-date', '')
-        }
-    }
-
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault()
-        get(route('team.time-logs', user.id), {
-            preserveState: true,
-        })
-    }
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
@@ -195,21 +159,21 @@ export default function TeamMemberTimeLogs({
                                         : 'No time logs found for the selected period'}
                                 </CardDescription>
 
-                                {(data['start-date'] || data['end-date'] || data.project || data['is-paid'] || data.status) && (
+                                {(filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status) && (
                                     <CardDescription className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                         {(() => {
                                             let description = ''
 
-                                            if (data['start-date'] && data['end-date']) {
-                                                description = `Showing logs from ${data['start-date']} to ${data['end-date']}`
-                                            } else if (data['start-date']) {
-                                                description = `Showing logs from ${data['start-date']}`
-                                            } else if (data['end-date']) {
-                                                description = `Showing logs until ${data['end-date']}`
+                                            if (filters['start-date'] && filters['end-date']) {
+                                                description = `Showing logs from ${filters['start-date']} to ${filters['end-date']}`
+                                            } else if (filters['start-date']) {
+                                                description = `Showing logs from ${filters['start-date']}`
+                                            } else if (filters['end-date']) {
+                                                description = `Showing logs until ${filters['end-date']}`
                                             }
 
-                                            if (data.project) {
-                                                const selectedProject = projects.find((project) => project.id.toString() === data.project)
+                                            if (filters.project) {
+                                                const selectedProject = projects.find((project) => project.id.toString() === filters.project)
                                                 const projectName = selectedProject ? selectedProject.name : ''
 
                                                 if (description) {
@@ -219,8 +183,8 @@ export default function TeamMemberTimeLogs({
                                                 }
                                             }
 
-                                            if (data['is-paid']) {
-                                                const paymentStatus = data['is-paid'] === 'true' ? 'paid' : 'unpaid'
+                                            if (filters['is-paid']) {
+                                                const paymentStatus = filters['is-paid'] === 'true' ? 'paid' : 'unpaid'
 
                                                 if (description) {
                                                     description += ` (${paymentStatus})`
@@ -229,9 +193,9 @@ export default function TeamMemberTimeLogs({
                                                 }
                                             }
 
-                                            if (data.status) {
+                                            if (filters.status) {
                                                 const statusText =
-                                                    data.status === 'pending' ? 'pending' : data.status === 'approved' ? 'approved' : 'rejected'
+                                                    filters.status === 'pending' ? 'pending' : filters.status === 'approved' ? 'approved' : 'rejected'
 
                                                 if (description) {
                                                     description += ` with ${statusText} status`
@@ -246,6 +210,18 @@ export default function TeamMemberTimeLogs({
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
+                                <Button
+                                    variant={filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status ? 'default' : 'outline'}
+                                    className={`flex items-center gap-2 ${
+                                        filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status
+                                            ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:border-primary/30 dark:bg-primary/20 dark:border-primary/30 dark:hover:bg-primary/30 dark:text-primary-foreground'
+                                            : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+                                    }`}
+                                    onClick={() => setFiltersOpen(true)}
+                                >
+                                    <Filter className={`h-4 w-4 ${filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status ? 'text-primary dark:text-primary-foreground' : ''}`} />
+                                    <span>{filters['start-date'] || filters['end-date'] || filters.project || filters['is-paid'] || filters.status ? 'Filters Applied' : 'Filters'}</span>
+                                </Button>
                                 <ExportButton
                                     href={`${route('team.export-time-logs')}?user=${user.id}${window.location.search.replace('?', '&')}`}
                                     label="Export"
@@ -262,134 +238,6 @@ export default function TeamMemberTimeLogs({
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
-                            <form onSubmit={submit} className="flex w-full flex-row flex-wrap gap-4">
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Start Date
-                                    </Label>
-                                    <DatePicker
-                                        selected={startDate}
-                                        onChange={handleStartDateChange}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="start-date"
-                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select start date"
-                                                className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        End Date
-                                    </Label>
-                                    <DatePicker
-                                        selected={endDate}
-                                        onChange={handleEndDateChange}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="end-date"
-                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select end date"
-                                                className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="project" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Project
-                                    </Label>
-                                    <SearchableSelect
-                                        id="project"
-                                        value={data.project}
-                                        onChange={(value) => setData('project', value)}
-                                        options={[{ id: '', name: 'Projects' }, ...projects]}
-                                        placeholder="Select project"
-                                        disabled={processing}
-                                        icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                        className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="is-paid" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Payment Status
-                                    </Label>
-                                    <SearchableSelect
-                                        id="is-paid"
-                                        value={data['is-paid']}
-                                        onChange={(value) => setData('is-paid', value)}
-                                        options={[
-                                            { id: '', name: 'Statuses' },
-                                            { id: 'true', name: 'Paid' },
-                                            { id: 'false', name: 'Unpaid' },
-                                        ]}
-                                        placeholder="Select status"
-                                        disabled={processing}
-                                        icon={<CheckCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                        className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="status" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Approval Status
-                                    </Label>
-                                    <SearchableSelect
-                                        id="status"
-                                        value={data.status}
-                                        onChange={(value) => setData('status', value)}
-                                        options={[
-                                            { id: '', name: 'Statuses' },
-                                            { id: 'pending', name: 'Pending' },
-                                            { id: 'approved', name: 'Approved' },
-                                            { id: 'rejected', name: 'Rejected' },
-                                        ]}
-                                        placeholder="Select approval status"
-                                        disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                        className="border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                    />
-                                </div>
-                                <div className="flex items-end gap-2">
-                                    <FilterButton title="Apply filters" disabled={processing}>
-                                        <Search className="h-4 w-4" />
-                                    </FilterButton>
-
-                                    <FilterButton
-                                        variant="clear"
-                                        disabled={
-                                            processing ||
-                                            (!data['start-date'] && !data['end-date'] && !data.project && !data['is-paid'] && !data.status)
-                                        }
-                                        onClick={() => {
-                                            setData({
-                                                'start-date': '',
-                                                'end-date': '',
-                                                project: '',
-                                                'is-paid': '',
-                                                status: '',
-                                            })
-                                            get(route('team.time-logs', user.id), {
-                                                preserveState: true,
-                                            })
-                                        }}
-                                        title="Clear filters"
-                                    >
-                                        <TimerReset className="h-4 w-4" />
-                                    </FilterButton>
-                                </div>
-                            </form>
-                        </div>
                     </CardHeader>
                     <CardContent className="p-0">
                         {timeLogs.length > 0 ? (
@@ -420,6 +268,14 @@ export default function TeamMemberTimeLogs({
                         )}
                     </CardContent>
                 </Card>
+
+                <MemberTimeLogsFiltersOffCanvas
+                    open={filtersOpen}
+                    onOpenChange={setFiltersOpen}
+                    filters={filters}
+                    projects={projects}
+                    userId={user.id}
+                />
             </div>
         </MasterLayout>
     )
