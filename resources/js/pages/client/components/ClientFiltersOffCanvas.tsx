@@ -25,7 +25,7 @@ export default function ClientFiltersOffCanvas({ open, onOpenChange, filters, pr
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent side="right" className="overflow-y-auto bg-white pb-6 pl-4 pr-4 sm:max-w-md md:max-w-lg dark:bg-neutral-900">
-                <SheetHeader className="mb-6">
+                <SheetHeader className="">
                     <SheetTitle className="flex items-center gap-2 text-neutral-900 dark:text-white">Filters</SheetTitle>
                     <SheetDescription className="text-sm text-neutral-500 dark:text-neutral-400">
                         Narrow down clients by date range or search.

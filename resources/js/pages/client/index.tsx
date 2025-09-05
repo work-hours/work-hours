@@ -202,10 +202,7 @@ export default function Clients() {
                                 >
                                     <Filter className={`h-4 w-4 ${filters.search || filters['created-date-from'] || filters['created-date-to'] ? 'text-primary dark:text-primary-foreground' : ''}`} />
                                     <span>
-                                        {(() => {
-                                            const count = Number(Boolean(filters.search)) + Number(Boolean(filters['created-date-from'])) + Number(Boolean(filters['created-date-to']))
-                                            return count > 0 ? `Filters (${count})` : 'Filters'
-                                        })()}
+                                        {filters.search || filters['created-date-from'] || filters['created-date-to'] ? 'Filters Applied' : 'Filters'}
                                     </span>
                                 </Button>
                                 <ExportButton
