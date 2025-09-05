@@ -1,5 +1,4 @@
 import { ExportButton } from '@/components/action-buttons'
-import AddNewButton from '@/components/add-new-button'
 import TeamMemberDeleteAction from '@/components/team-member-delete-action'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,10 +8,22 @@ import MasterLayout from '@/layouts/master-layout'
 import { roundToTwoDecimals } from '@/lib/utils'
 import TeamFiltersComponent, { getFilterDescription } from '@/pages/team/components/TeamFilters'
 import { TeamPageProps, teamBreadcrumbs } from '@/pages/team/types'
+import TeamMemberOffCanvas from '@/pages/team/components/TeamMemberOffCanvas'
 import { Head, Link } from '@inertiajs/react'
 import { Clock, Edit, MoreVertical, UserPlus, Users } from 'lucide-react'
+import { useState } from 'react'
 
-export default function Team({ teamMembers, filters }: TeamPageProps) {
+export default function Team({ teamMembers, filters, currencies }: TeamPageProps) {
+    const [offOpen, setOffOpen] = useState(false)
+    const [mode, setMode] = useState<'create' | 'edit'>('create')
+    const [editUser, setEditUser] = useState<{
+        id: number
+        name: string
+        email: string
+        hourly_rate: number
+        currency: string
+        non_monetary: boolean
+    } | null>(null)
     return (
         <MasterLayout breadcrumbs={teamBreadcrumbs}>
             <Head title="Team" />
@@ -50,10 +61,17 @@ export default function Team({ teamMembers, filters }: TeamPageProps) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <ExportButton href={route('team.export') + window.location.search} label="Export" />
-                                <AddNewButton href={route('team.create')}>
+                                <Button
+                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    onClick={() => {
+                                        setMode('create')
+                                        setEditUser(null)
+                                        setOffOpen(true)
+                                    }}
+                                >
                                     <UserPlus className="h-4 w-4" />
                                     <span>Add Member</span>
-                                </AddNewButton>
+                                </Button>
                             </div>
                         </div>
 
@@ -139,12 +157,24 @@ export default function Team({ teamMembers, filters }: TeamPageProps) {
                                                                     <span>Time Logs</span>
                                                                 </DropdownMenuItem>
                                                             </Link>
-                                                            <Link href={route('team.edit', member.id)}>
-                                                                <DropdownMenuItem className="group cursor-pointer">
-                                                                    <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                    <span>Edit</span>
-                                                                </DropdownMenuItem>
-                                                            </Link>
+                                                            <DropdownMenuItem
+                                                                className="group cursor-pointer"
+                                                                onClick={() => {
+                                                                    setMode('edit')
+                                                                    setEditUser({
+                                                                        id: member.id,
+                                                                        name: member.name,
+                                                                        email: member.email,
+                                                                        hourly_rate: member.hourly_rate,
+                                                                        currency: member.currency,
+                                                                        non_monetary: member.non_monetary,
+                                                                    })
+                                                                    setOffOpen(true)
+                                                                }}
+                                                            >
+                                                                <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                <span>Edit</span>
+                                                            </DropdownMenuItem>
                                                             <TeamMemberDeleteAction memberId={member.id} memberName={member.name} />
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
@@ -160,16 +190,30 @@ export default function Team({ teamMembers, filters }: TeamPageProps) {
                                     <Users className="mb-4 h-12 w-12 text-gray-300 dark:text-gray-600" />
                                     <h3 className="mb-1 text-lg font-medium text-gray-800 dark:text-gray-200">No Team Members</h3>
                                     <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">You haven't added any team members yet.</p>
-                                    <AddNewButton href={route('team.create')}>
+                                    <Button
+                                        className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                        onClick={() => {
+                                            setMode('create')
+                                            setEditUser(null)
+                                            setOffOpen(true)
+                                        }}
+                                    >
                                         <UserPlus className="h-4 w-4" />
                                         <span>Add Team Member</span>
-                                    </AddNewButton>
+                                    </Button>
                                 </div>
                             </div>
                         )}
                     </CardContent>
                 </Card>
             </div>
+                <TeamMemberOffCanvas
+                    open={offOpen}
+                    mode={mode}
+                    onClose={() => setOffOpen(false)}
+                    currencies={currencies}
+                    user={editUser ?? undefined}
+                />
         </MasterLayout>
     )
 }

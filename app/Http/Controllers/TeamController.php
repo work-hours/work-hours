@@ -44,6 +44,7 @@ final class TeamController extends Controller
         return Inertia::render('team/index', [
             'teamMembers' => TeamListSearchableQuery::builder()->get()->map(fn ($team): array => TeamListMapper::map($team)),
             'filters' => TeamStore::filters(),
+            'currencies' => auth()->user()->currencies,
         ]);
     }
 
