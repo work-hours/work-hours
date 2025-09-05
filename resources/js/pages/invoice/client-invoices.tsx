@@ -177,18 +177,33 @@ export default function ClientInvoices({ client, invoices }: Props) {
                         </div>
                     </CardHeader>
                     <CardContent className="p-4">
-                        <div className="mb-4 flex flex-wrap gap-4">
-                            <div className="flex min-w-36 flex-col rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
-                                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Total Invoiced</p>
-                                <p className="text-lg font-bold text-gray-800 dark:text-gray-200">{formatCurrency(totalInvoiced)}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                                    <FileText className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                                </span>
+                                <div>
+                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Total Invoiced</h3>
+                                    <p className="text-lg font-medium text-gray-800 dark:text-gray-200">{formatCurrency(totalInvoiced)}</p>
+                                </div>
                             </div>
-                            <div className="flex min-w-36 flex-col rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
-                                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Total Paid</p>
-                                <p className="text-lg font-bold text-green-600 dark:text-green-400">{formatCurrency(totalPaid)}</p>
+                            <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                                    <DollarSign className="h-5 w-5 text-green-500 dark:text-green-400" />
+                                </span>
+                                <div>
+                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Total Paid</h3>
+                                    <p className="text-lg font-medium text-green-600 dark:text-green-400">{formatCurrency(totalPaid)}</p>
+                                </div>
                             </div>
-                            <div className="flex min-w-36 flex-col rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
-                                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Outstanding</p>
-                                <p className="text-lg font-bold text-red-600 dark:text-red-400">{formatCurrency(totalOutstanding)}</p>
+                            <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                                    <DollarSign className="h-5 w-5 text-red-500 dark:text-red-400" />
+                                </span>
+                                <div>
+                                    <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400">Outstanding</h3>
+                                    <p className="text-lg font-medium text-red-600 dark:text-red-400">{formatCurrency(totalOutstanding)}</p>
+                                </div>
                             </div>
                         </div>
 
