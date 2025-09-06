@@ -1,5 +1,6 @@
 import { ExportButton } from '@/components/action-buttons'
 import TimeLogOffCanvas from '@/pages/time-log/components/TimeLogOffCanvas'
+import TimeLogFiltersOffCanvas from '@/pages/time-log/components/TimeLogFiltersOffCanvas'
 import StatsCards from '@/components/dashboard/StatsCards'
 import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
@@ -96,6 +97,7 @@ export default function TimeLog({
     const [offOpen, setOffOpen] = useState(false)
     const [mode, setMode] = useState<'create' | 'edit'>('create')
     const [editLog, setEditLog] = useState<TimeLogEntry | null>(null)
+    const [filtersOpen, setFiltersOpen] = useState(false)
     const { data, setData, get, processing } = useForm<Filters>({
         'start-date': filters['start-date'] || '',
         'end-date': filters['end-date'] || '',
@@ -340,6 +342,14 @@ export default function TimeLog({
                                 )}
                             </div>
                             <div className="flex gap-2">
+                                <Button
+                                    variant="outline"
+                                    className="flex items-center gap-2 border-gray-200 bg-white text-gray-700 transition-all duration-200 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                                    onClick={() => setFiltersOpen(true)}
+                                >
+                                    <Search className="h-3 w-3" />
+                                    <span>Filters</span>
+                                </Button>
                                 <ExportButton href={route('time-log.export') + window.location.search} label="Export" />
                                 <a href={route('time-log.template')} className="inline-block">
                                     <Button
@@ -382,7 +392,7 @@ export default function TimeLog({
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
+                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700 hidden">
                             <form onSubmit={submit} className="flex w-full flex-row gap-4">
                                 <div className="flex w-full flex-col gap-1">
                                     <Label htmlFor="start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -618,6 +628,8 @@ export default function TimeLog({
                     </DialogContent>
                 </Dialog>
             </div>
+
+            <TimeLogFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={data} projects={projects} tags={tags} />
 
             <TimeLogOffCanvas
                 open={offOpen}
