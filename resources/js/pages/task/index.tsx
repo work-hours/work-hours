@@ -1,48 +1,25 @@
 import { ExportButton } from '@/components/action-buttons'
-import FilterButton from '@/components/filter-button'
 import SourceLinkIcon from '@/components/source-link-icon'
 import TaskDeleteAction from '@/components/task-delete-action'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
-import CustomInput from '@/components/ui/custom-input'
-import DatePicker from '@/components/ui/date-picker'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { useTimeTracker } from '@/contexts/time-tracker-context'
 import MasterLayout from '@/layouts/master-layout'
-import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
+import { objectToQueryString, queryStringToObject } from '@/lib/utils'
+import TaskFiltersOffCanvas from '@/pages/task/components/TaskFiltersOffCanvas'
+import TaskOffCanvas from '@/pages/task/components/TaskOffCanvas'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import TaskOffCanvas from '@/pages/task/components/TaskOffCanvas'
-import TaskFiltersOffCanvas from '@/pages/task/components/TaskFiltersOffCanvas'
 import axios from 'axios'
-import {
-    AlertCircle,
-    Briefcase,
-    Calendar,
-    CalendarRange,
-    ClipboardList,
-    Edit,
-    FileText,
-    Flag,
-    Glasses,
-    Loader2,
-    MoreVertical,
-    Play,
-    Plus,
-    Printer,
-    Search,
-    TimerReset,
-    Filter,
-} from 'lucide-react'
+import { Briefcase, Calendar, ClipboardList, Edit, FileText, Filter, Glasses, Loader2, MoreVertical, Play, Plus, Printer } from 'lucide-react'
 import { JSX, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Task, TaskFilters } from './types'
@@ -109,11 +86,7 @@ export default function Tasks() {
         search: '',
     })
     const [processing, setProcessing] = useState(false)
-
-        // Filters OffCanvas state
-        const [filtersOpen, setFiltersOpen] = useState(false)
-
-    // OffCanvas state for create/edit
+    const [filtersOpen, setFiltersOpen] = useState(false)
     const [offOpen, setOffOpen] = useState(false)
     const [mode, setMode] = useState<'create' | 'edit'>('create')
     const [editTaskId, setEditTaskId] = useState<number | null>(null)
@@ -347,8 +320,6 @@ export default function Tasks() {
         setFilters(initialFilters)
         getTasks(initialFilters).then()
     }, [])
-
-    // Open offcanvas if ?open=true (create)
     useEffect(() => {
         try {
             const params = new URLSearchParams(window.location.search)
@@ -357,12 +328,8 @@ export default function Tasks() {
                 setEditTaskId(null)
                 setOffOpen(true)
             }
-        } catch {
-            // ignore URL parsing errors
-        }
+        } catch {}
     }, [])
-
-    // refresh listener
     useEffect(() => {
         const handler = () => getTasks(filters)
         window.addEventListener('refresh-tasks', handler)
@@ -398,34 +365,33 @@ export default function Tasks() {
                                     <Printer className="h-4 w-4" />
                                     <span className="hidden sm:inline">Print</span>
                                 </Button>
-                                <Button
-                                    variant={
-                                        filters.search || filters.status !== 'all' || filters.priority !== 'all' || filters.project !== 'all' || filters.tag !== 'all' ||
-                                        filters['due-date-from'] || filters['due-date-to'] || filters['due-today']
-                                            ? 'default'
-                                            : 'outline'
-                                    }
-                                    className={`flex items-center gap-2 ${
-                                        filters.search || filters.status !== 'all' || filters.priority !== 'all' || filters.project !== 'all' || filters.tag !== 'all' ||
-                                        filters['due-date-from'] || filters['due-date-to'] || filters['due-today']
-                                            ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
-                                            : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
-                                    }`}
-                                    onClick={() => setFiltersOpen(true)}
-                                >
-                                    <Filter className={`h-4 w-4 ${
-                                        filters.search || filters.status !== 'all' || filters.priority !== 'all' || filters.project !== 'all' || filters.tag !== 'all' ||
-                                        filters['due-date-from'] || filters['due-date-to'] || filters['due-today']
-                                            ? 'text-primary dark:text-primary-foreground'
-                                            : ''
-                                    }`} />
-                                    <span>{
-                                        filters.search || filters.status !== 'all' || filters.priority !== 'all' || filters.project !== 'all' || filters.tag !== 'all' ||
-                                        filters['due-date-from'] || filters['due-date-to'] || filters['due-today']
-                                            ? 'Filters Applied'
-                                            : 'Filters'
-                                    }</span>
-                                </Button>
+                                {(() => {
+                                    const hasActiveFilters = Boolean(
+                                        filters.search ||
+                                            (filters.status && filters.status !== 'all' && filters.status !== 'incomplete') ||
+                                            (filters.priority && filters.priority !== 'all') ||
+                                            (filters.project && filters.project !== 'all') ||
+                                            (filters.tag && filters.tag !== 'all') ||
+                                            filters['due-date-from'] ||
+                                            filters['due-date-to'] ||
+                                            filters['due-today'],
+                                    )
+
+                                    return (
+                                        <Button
+                                            variant={hasActiveFilters ? 'default' : 'outline'}
+                                            className={`flex items-center gap-2 ${
+                                                hasActiveFilters
+                                                    ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
+                                                    : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+                                            }`}
+                                            onClick={() => setFiltersOpen(true)}
+                                        >
+                                            <Filter className={`h-4 w-4 ${hasActiveFilters ? 'text-primary dark:text-primary-foreground' : ''}`} />
+                                            <span>{hasActiveFilters ? 'Filters Applied' : 'Filters'}</span>
+                                        </Button>
+                                    )
+                                })()}
                                 <ExportButton href={route('task.export') + window.location.search} label="Export" />
                                 <Button
                                     className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
@@ -440,7 +406,6 @@ export default function Tasks() {
                                 </Button>
                             </div>
                         </div>
-
                     </CardHeader>
                     <CardContent className="print:p-0">
                         {loading ? (
@@ -592,7 +557,14 @@ export default function Tasks() {
 
                                                                 {(task.project.user_id === auth.user.id || task.created_by === auth.user.id) && (
                                                                     <>
-                                                                        <DropdownMenuItem className="group cursor-pointer" onClick={() => { setMode('edit'); setEditTaskId(task.id); setOffOpen(true) }}>
+                                                                        <DropdownMenuItem
+                                                                            className="group cursor-pointer"
+                                                                            onClick={() => {
+                                                                                setMode('edit')
+                                                                                setEditTaskId(task.id)
+                                                                                setOffOpen(true)
+                                                                            }}
+                                                                        >
                                                                             <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                             <span>Edit</span>
                                                                         </DropdownMenuItem>
