@@ -3,7 +3,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useNotifications } from '@/contexts/notifications-context'
 import { type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
-import { Building, CheckSquare, ClipboardList, FileText, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
+import { Building, CheckSquare, ClipboardList, FileText, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon, LucideCreditCard } from 'lucide-react'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
 import { FooterNavigation } from './sidebar/footer-navigation'
@@ -55,7 +55,7 @@ const navGroups: NavItemGroup[] = [
             {
                 title: 'Invoices',
                 href: '/invoice',
-                icon: FileText,
+                icon: LucideCreditCard,
             },
         ],
     },
