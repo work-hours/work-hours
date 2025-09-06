@@ -1,5 +1,5 @@
 import { ExportButton } from '@/components/action-buttons'
-import AddNewButton from '@/components/add-new-button'
+import TimeLogOffCanvas from '@/pages/time-log/components/TimeLogOffCanvas'
 import StatsCards from '@/components/dashboard/StatsCards'
 import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
@@ -15,7 +15,7 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { TimeLogStatus, timeLogStatusOptions } from '@/types/TimeLogStatus'
-import { Head, Link, router, useForm } from '@inertiajs/react'
+import { Head, router, useForm } from '@inertiajs/react'
 import axios from 'axios'
 import {
     AlertCircle,
@@ -30,7 +30,7 @@ import {
     TimerReset,
     Upload,
 } from 'lucide-react'
-import { ChangeEvent, FormEventHandler, useRef, useState } from 'react'
+import { ChangeEvent, FormEventHandler, useEffect, useRef, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -77,6 +77,7 @@ type Props = {
     weeklyAverage: number
     unbillableHours: number
     tags: { id: number; name: string }[]
+    tasks: { id: number; title: string; project_id: number; is_imported?: boolean; meta?: { source?: string; source_state?: string } }[]
 }
 
 export default function TimeLog({
@@ -90,7 +91,11 @@ export default function TimeLog({
     weeklyAverage,
     unbillableHours,
     tags,
+    tasks,
 }: Props) {
+    const [offOpen, setOffOpen] = useState(false)
+    const [mode, setMode] = useState<'create' | 'edit'>('create')
+    const [editLog, setEditLog] = useState<TimeLogEntry | null>(null)
     const { data, setData, get, processing } = useForm<Filters>({
         'start-date': filters['start-date'] || '',
         'end-date': filters['end-date'] || '',
@@ -115,6 +120,14 @@ export default function TimeLog({
             setSelectedLogs(selectedLogs.filter((logId) => logId !== id))
         }
     }
+
+    useEffect(() => {
+        const handler = () => {
+            get(route('time-log.index'), { preserveState: true })
+        }
+        window.addEventListener('refresh-time-logs', handler)
+        return () => window.removeEventListener('refresh-time-logs', handler)
+    }, [])
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -354,10 +367,18 @@ export default function TimeLog({
                                         <span>Mark as Paid ({selectedLogs.length})</span>
                                     </Button>
                                 )}
-                                <AddNewButton href={route('time-log.create')}>
+                                <Button
+                                    variant="default"
+                                    className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    onClick={() => {
+                                        setMode('create')
+                                        setEditLog(null)
+                                        setOffOpen(true)
+                                    }}
+                                >
                                     <ClockIcon className="h-3 w-3" />
                                     <span>Log Time</span>
-                                </AddNewButton>
+                                </Button>
                             </div>
                         </div>
 
@@ -510,6 +531,11 @@ export default function TimeLog({
                                 showCheckboxes={true}
                                 selectedLogs={selectedLogs}
                                 onSelectLog={handleSelectLog}
+                                onEdit={(log) => {
+                                    setMode('edit')
+                                    setEditLog(log)
+                                    setOffOpen(true)
+                                }}
                             />
                         ) : (
                             <div className="rounded-md border bg-muted/5 p-6">
@@ -517,12 +543,17 @@ export default function TimeLog({
                                     <ClockIcon className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Time Logs</h3>
                                     <p className="mb-4 text-muted-foreground">You haven't added any time logs yet.</p>
-                                    <Link href={route('time-log.create')}>
-                                        <Button className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
-                                            <PlusCircle className="h-3 w-3" />
-                                            <span>Add Time Log</span>
-                                        </Button>
-                                    </Link>
+                                    <Button
+                                        className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                        onClick={() => {
+                                            setMode('create')
+                                            setEditLog(null)
+                                            setOffOpen(true)
+                                        }}
+                                    >
+                                        <PlusCircle className="h-3 w-3" />
+                                        <span>Add Time Log</span>
+                                    </Button>
                                 </div>
                             </div>
                         )}
@@ -587,6 +618,24 @@ export default function TimeLog({
                     </DialogContent>
                 </Dialog>
             </div>
+
+            <TimeLogOffCanvas
+                open={offOpen}
+                mode={mode}
+                onClose={() => setOffOpen(false)}
+                projects={projects}
+                tasks={tasks}
+                timeLog={editLog ? {
+                    id: editLog.id,
+                    project_id: editLog.project_id || 0,
+                    task_id: (editLog as unknown as { task_id?: number | null }).task_id ?? null,
+                    start_timestamp: editLog.start_timestamp,
+                    end_timestamp: editLog.end_timestamp || '',
+                    note: editLog.note || '',
+                    non_billable: Boolean(editLog.non_billable),
+                    tags: (editLog.tags || []).map(t => t.name),
+                } : undefined}
+            />
         </MasterLayout>
     )
 }
