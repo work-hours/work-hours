@@ -180,7 +180,7 @@ export default function TimeLogOffCanvas({ open, mode, onClose, projects, tasks,
 
     return (
         <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
-            <SheetContent side="right" className="overflow-y-auto bg-white pr-6 pb-8 pl-6 sm:max-w-md md:max-w-lg dark:bg-neutral-900">
+            <SheetContent side="right" className="bg-white pr-6 pb-8 pl-6 sm:max-w-md md:max-w-lg dark:bg-neutral-900">
                 <SheetHeader className="">
                     <SheetTitle className="flex items-center gap-2 text-xl text-neutral-900 dark:text-white">
                         {isEdit ? (

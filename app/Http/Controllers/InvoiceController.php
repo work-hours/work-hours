@@ -70,6 +70,8 @@ final class InvoiceController extends Controller
     #[Action(method: 'post', name: 'invoice.store', middleware: ['auth', 'verified'])]
     public function store(StoreInvoiceRequest $request): void
     {
+        dd($request->validated());
+
         DB::beginTransaction();
         try {
             InvoiceStore::createInvoice($request->validated(), Auth::id());
