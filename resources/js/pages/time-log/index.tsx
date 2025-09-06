@@ -30,6 +30,8 @@ import {
     Search,
     TimerReset,
     Upload,
+    SlidersHorizontal,
+    Filter,
 } from 'lucide-react'
 import { ChangeEvent, FormEventHandler, useEffect, useRef, useState } from 'react'
 
@@ -277,7 +279,7 @@ export default function TimeLog({
                 )}
 
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
-                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                    <CardHeader className="p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Your Time Logs</CardTitle>
@@ -347,7 +349,7 @@ export default function TimeLog({
                                     className="flex items-center gap-2 border-gray-200 bg-white text-gray-700 transition-all duration-200 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                                     onClick={() => setFiltersOpen(true)}
                                 >
-                                    <Search className="h-3 w-3" />
+                                    <Filter className="h-3 w-3" />
                                     <span>Filters</span>
                                 </Button>
                                 <ExportButton href={route('time-log.export') + window.location.search} label="Export" />
@@ -390,147 +392,6 @@ export default function TimeLog({
                                     <span>Log Time</span>
                                 </Button>
                             </div>
-                        </div>
-
-                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700 hidden">
-                            <form onSubmit={submit} className="flex w-full flex-row gap-4">
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Start Date
-                                    </Label>
-                                    <DatePicker
-                                        selected={startDate}
-                                        onChange={handleStartDateChange}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="start-date"
-                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select start date"
-                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        End Date
-                                    </Label>
-                                    <DatePicker
-                                        selected={endDate}
-                                        onChange={handleEndDateChange}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="end-date"
-                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select end date"
-                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="project" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Project
-                                    </Label>
-                                    <SearchableSelect
-                                        id="project"
-                                        value={data.project}
-                                        onChange={(value) => setData('project', value)}
-                                        options={[{ id: '', name: 'All Projects' }, ...projects]}
-                                        placeholder="Select project"
-                                        disabled={processing}
-                                        icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="is-paid" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Payment Status
-                                    </Label>
-                                    <SearchableSelect
-                                        id="is-paid"
-                                        value={data['is-paid']}
-                                        onChange={(value) => setData('is-paid', value)}
-                                        options={[
-                                            { id: '', name: 'All Statuses' },
-                                            { id: 'true', name: 'Paid' },
-                                            { id: 'false', name: 'Unpaid' },
-                                        ]}
-                                        placeholder="Select status"
-                                        disabled={processing}
-                                        icon={<CheckCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="status" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Approval Status
-                                    </Label>
-                                    <SearchableSelect
-                                        id="status"
-                                        value={data.status}
-                                        onChange={(value) => setData('status', value)}
-                                        options={[{ id: '', name: 'All Statuses' }, ...timeLogStatusOptions]}
-                                        placeholder="Approval status"
-                                        disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="tag" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Tag
-                                    </Label>
-                                    <SearchableSelect
-                                        id="tag"
-                                        value={data.tag}
-                                        onChange={(value) => setData('tag', value)}
-                                        options={[{ id: '', name: 'All Tags' }, ...tags]}
-                                        placeholder="Select tag"
-                                        disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-                                <div className="flex items-end gap-2">
-                                    <FilterButton title="Apply filters" disabled={processing}>
-                                        <Search className="h-4 w-4" />
-                                    </FilterButton>
-
-                                    <FilterButton
-                                        variant="clear"
-                                        disabled={
-                                            processing ||
-                                            (!data['start-date'] &&
-                                                !data['end-date'] &&
-                                                !data.project &&
-                                                !data['is-paid'] &&
-                                                !data.status &&
-                                                !data.tag)
-                                        }
-                                        onClick={() => {
-                                            setData({
-                                                'start-date': '',
-                                                'end-date': '',
-                                                project: '',
-                                                'is-paid': '',
-                                                status: '',
-                                                tag: '',
-                                            })
-                                            get(route('time-log.index'), {
-                                                preserveState: true,
-                                            })
-                                        }}
-                                        title="Clear filters"
-                                    >
-                                        <TimerReset className="h-4 w-4" />
-                                    </FilterButton>
-                                </div>
-                            </form>
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">
