@@ -277,7 +277,7 @@ export default function Tasks() {
                 setOffOpen(true)
             }
         } catch {
-            /* no-op */
+            // ignore URL parse errors
         }
     }, [])
     useEffect(() => {

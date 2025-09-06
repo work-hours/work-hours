@@ -42,6 +42,7 @@ export default function TaskFiltersForm({ filters, projects, tags }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
+        console.log(data)
         get(route('task.index'), { preserveState: true })
     }
 
