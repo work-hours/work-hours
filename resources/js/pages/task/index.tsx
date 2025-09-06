@@ -289,7 +289,9 @@ export default function Tasks() {
                 setEditTaskId(null)
                 setOffOpen(true)
             }
-        } catch 
+        } catch {
+            // Ignore URL parsing issues (e.g., in non-browser environments)
+        }
     }, [])
 
     useEffect(() => {
