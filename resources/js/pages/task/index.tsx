@@ -1,5 +1,4 @@
 import { ExportButton } from '@/components/action-buttons'
-import AddNewButton from '@/components/add-new-button'
 import FilterButton from '@/components/filter-button'
 import SourceLinkIcon from '@/components/source-link-icon'
 import TaskDeleteAction from '@/components/task-delete-action'
@@ -22,6 +21,7 @@ import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
+import TaskOffCanvas from '@/pages/task/components/TaskOffCanvas'
 import axios from 'axios'
 import {
     AlertCircle,
@@ -107,6 +107,11 @@ export default function Tasks() {
         search: '',
     })
     const [processing, setProcessing] = useState(false)
+
+    // OffCanvas state for create/edit
+    const [offOpen, setOffOpen] = useState(false)
+    const [mode, setMode] = useState<'create' | 'edit'>('create')
+    const [editTaskId, setEditTaskId] = useState<number | null>(null)
 
     const handleStatusClick = (task: Task, status: Task['status']): void => {
         setTaskToUpdate(task)
@@ -338,6 +343,27 @@ export default function Tasks() {
         getTasks(initialFilters).then()
     }, [])
 
+    // Open offcanvas if ?open=true (create)
+    useEffect(() => {
+        try {
+            const params = new URLSearchParams(window.location.search)
+            if ((params.get('open') || '').toLowerCase() === 'true') {
+                setMode('create')
+                setEditTaskId(null)
+                setOffOpen(true)
+            }
+        } catch {
+            // ignore URL parsing errors
+        }
+    }, [])
+
+    // refresh listener
+    useEffect(() => {
+        const handler = () => getTasks(filters)
+        window.addEventListener('refresh-tasks', handler)
+        return () => window.removeEventListener('refresh-tasks', handler)
+    }, [filters])
+
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Tasks" />
@@ -368,10 +394,17 @@ export default function Tasks() {
                                     <span className="hidden sm:inline">Print</span>
                                 </Button>
                                 <ExportButton href={route('task.export')} label="Export" />
-                                <AddNewButton href={route('task.create')}>
+                                <Button
+                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    onClick={() => {
+                                        setMode('create')
+                                        setEditTaskId(null)
+                                        setOffOpen(true)
+                                    }}
+                                >
                                     <Plus className="h-4 w-4" />
                                     <span>Add Task</span>
-                                </AddNewButton>
+                                </Button>
                             </div>
                         </div>
 
@@ -781,12 +814,10 @@ export default function Tasks() {
 
                                                                 {(task.project.user_id === auth.user.id || task.created_by === auth.user.id) && (
                                                                     <>
-                                                                        <Link href={route('task.edit', task.id)}>
-                                                                            <DropdownMenuItem className="group cursor-pointer">
-                                                                                <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                                <span>Edit</span>
-                                                                            </DropdownMenuItem>
-                                                                        </Link>
+                                                                        <DropdownMenuItem className="group cursor-pointer" onClick={() => { setMode('edit'); setEditTaskId(task.id); setOffOpen(true) }}>
+                                                                            <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                            <span>Edit</span>
+                                                                        </DropdownMenuItem>
                                                                         {task.project.user_id === auth.user.id && (
                                                                             <TaskDeleteAction
                                                                                 taskId={task.id}
@@ -909,6 +940,7 @@ export default function Tasks() {
                     </DialogContent>
                 </Dialog>
             </div>
+            <TaskOffCanvas open={offOpen} mode={mode} onClose={() => setOffOpen(false)} projects={projects} taskId={editTaskId ?? undefined} />
         </MasterLayout>
     )
 }

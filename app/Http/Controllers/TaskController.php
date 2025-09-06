@@ -327,6 +327,61 @@ final class TaskController extends Controller
         ]);
     }
 
+    #[Action(method: 'get', name: 'task.edit-data', params: ['task'], middleware: ['auth', 'verified'])]
+    public function editData(Task $task): array
+    {
+        $task->load(['project', 'assignees', 'meta', 'tags']);
+
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isTaskCreator = $task->created_by === auth()->id();
+
+        abort_if(! $isProjectOwner && ! $isTaskCreator, 403, 'Unauthorized action.');
+
+        $userId = (int) auth()->id();
+        $taskId = (int) $task->id;
+
+        [$projects, $files] = Concurrency::run([
+            fn () => ProjectStore::userProjects(userId: $userId)
+                ->map(fn ($project): array => [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                ]),
+            fn () => collect(Storage::disk('public')->files('tasks/' . $taskId))
+                ->map(fn (string $path): array => [
+                    'name' => basename($path),
+                    'url' => Storage::disk('public')->url($path),
+                    'size' => Storage::disk('public')->size($path),
+                ]),
+        ]);
+
+        $potentialAssignees = collect([$task->project->user])
+            ->concat($task->project->teamMembers)
+            ->unique('id')
+            ->map(fn ($user): array => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email ?? null,
+            ]);
+
+        $assignedUsers = $task->assignees->pluck('id')->toArray();
+        $taskTags = $task->tags->pluck('name')->toArray();
+
+        $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
+        $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
+
+        return [
+            'task' => $task,
+            'projects' => $projects,
+            'potentialAssignees' => $potentialAssignees,
+            'assignedUsers' => $assignedUsers,
+            'taskTags' => $taskTags,
+            'isGithub' => $isGithub,
+            'isJira' => $isJira,
+            'attachments' => $files,
+            'isProjectOwner' => $isProjectOwner,
+        ];
+    }
+
     /**
      * @throws Throwable
      */
