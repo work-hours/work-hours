@@ -456,12 +456,18 @@ export default function Projects() {
                                                                         </DropdownMenuItem>
                                                                     )}
 
-                                                                    <Link href={route('project.edit', project.id)}>
-                                                                        <DropdownMenuItem className="group cursor-pointer">
-                                                                            <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                            <span>Edit</span>
-                                                                        </DropdownMenuItem>
-                                                                    </Link>
+                                                                    <DropdownMenuItem
+                                                                        className="group cursor-pointer"
+                                                                        onSelect={(e) => {
+                                                                            e.preventDefault()
+                                                                            setMode('edit')
+                                                                            setEditProjectId(project.id)
+                                                                            setOffOpen(true)
+                                                                        }}
+                                                                    >
+                                                                        <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                        <span>Edit</span>
+                                                                    </DropdownMenuItem>
                                                                     <ProjectDeleteAction projectId={project.id} onDeleteSuccess={getProjects} />
                                                                 </>
                                                             )}
