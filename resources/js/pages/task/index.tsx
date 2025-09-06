@@ -12,9 +12,9 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { useTimeTracker } from '@/contexts/time-tracker-context'
 import MasterLayout from '@/layouts/master-layout'
+import TaskDetailsOffCanvas from '@/pages/task/components/TaskDetailsOffCanvas'
 import TaskFiltersOffCanvas from '@/pages/task/components/TaskFiltersOffCanvas'
 import TaskOffCanvas from '@/pages/task/components/TaskOffCanvas'
-import TaskDetailsOffCanvas from '@/pages/task/components/TaskDetailsOffCanvas'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
@@ -289,9 +289,7 @@ export default function Tasks() {
                 setEditTaskId(null)
                 setOffOpen(true)
             }
-        } catch {
-            // Ignore URL parsing issues (e.g., in non-browser environments)
-        }
+        } catch {}
     }, [])
 
     useEffect(() => {
