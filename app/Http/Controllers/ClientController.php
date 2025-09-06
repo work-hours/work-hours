@@ -45,14 +45,6 @@ final class ClientController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create(): Response
-    {
-        abort(404);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @throws Throwable
@@ -76,14 +68,6 @@ final class ClientController extends Controller
             DB::rollBack();
             throw $e;
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Client $client): Response
-    {
-        abort(404);
     }
 
     /**
