@@ -1,8 +1,8 @@
 import { MasterSidebarProps, NavItemGroup } from '@/@types/components'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useNotifications } from '@/contexts/notifications-context'
 import { type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Building, CheckSquare, ClipboardList, FileText, LayoutGrid, LucideProjector, LucideServerCog, Settings, TimerIcon } from 'lucide-react'
 import AppLogo from './app-logo'
 import AppLogoIcon from './app-logo-icon'
@@ -106,7 +106,8 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                             <Link
                                 href="/dashboard"
                                 className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 ${
-                                    typeof window !== 'undefined' && (window.location.pathname === '/dashboard' || window.location.pathname.startsWith('/dashboard/'))
+                                    typeof window !== 'undefined' &&
+                                    (window.location.pathname === '/dashboard' || window.location.pathname.startsWith('/dashboard/'))
                                         ? 'bg-neutral-50 text-neutral-900 shadow-sm dark:bg-neutral-800 dark:text-neutral-100'
                                         : 'text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100'
                                 }`}
@@ -114,7 +115,8 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                                 <div className="relative">
                                     <LayoutGrid
                                         className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-                                            typeof window !== 'undefined' && (window.location.pathname === '/dashboard' || window.location.pathname.startsWith('/dashboard/'))
+                                            typeof window !== 'undefined' &&
+                                            (window.location.pathname === '/dashboard' || window.location.pathname.startsWith('/dashboard/'))
                                                 ? 'text-neutral-900 dark:text-neutral-100'
                                                 : 'text-neutral-500 dark:text-neutral-400'
                                         } ${!collapsed ? 'mr-3' : ''}`}
@@ -122,9 +124,10 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                                     />
                                 </div>
                                 {!collapsed && <span>Dashboard</span>}
-                                {typeof window !== 'undefined' && (window.location.pathname === '/dashboard' || window.location.pathname.startsWith('/dashboard/')) && (
-                                    <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-neutral-600 dark:bg-neutral-400"></div>
-                                )}
+                                {typeof window !== 'undefined' &&
+                                    (window.location.pathname === '/dashboard' || window.location.pathname.startsWith('/dashboard/')) && (
+                                        <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-neutral-600 dark:bg-neutral-400"></div>
+                                    )}
                             </Link>
                             {collapsed && (
                                 <Tooltip>
