@@ -49,6 +49,7 @@ final class TimeLogController extends Controller
 
         $props = TimeLogStore::resData(timeLogs: $timeLogs);
         $props['tasks'] = TaskStore::assignedTasks(userId: auth()->id());
+        $props['open'] = request()->boolean('open');
 
         return Inertia::render('time-log/index', $props);
     }

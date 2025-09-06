@@ -63,6 +63,7 @@ type Props = {
     unbillableHours: number
     tags: { id: number; name: string }[]
     tasks: { id: number; title: string; project_id: number; is_imported?: boolean; meta?: { source?: string; source_state?: string } }[]
+    open?: boolean
 }
 
 export default function TimeLog({
@@ -77,8 +78,9 @@ export default function TimeLog({
     unbillableHours,
     tags,
     tasks,
+    open,
 }: Props) {
-    const [offOpen, setOffOpen] = useState(false)
+    const [offOpen, setOffOpen] = useState(Boolean(open))
     const [mode, setMode] = useState<'create' | 'edit'>('create')
     const [editLog, setEditLog] = useState<TimeLogEntry | null>(null)
     const [filtersOpen, setFiltersOpen] = useState(false)
