@@ -21,10 +21,11 @@ export type ProjectFiltersProps = {
     filters: ProjectFilters
     clients: { id: number; name: string }[]
     teamMembers: { id: number; name: string }[]
+    onApply: (filters: ProjectFilters) => void
 }
 
-export default function ProjectFiltersComponent({ filters, clients, teamMembers }: ProjectFiltersProps) {
-    const { data, setData, get, processing } = useForm<ProjectFilters>({
+export default function ProjectFiltersComponent({ filters, clients, teamMembers, onApply }: ProjectFiltersProps) {
+    const { data, setData, processing } = useForm<ProjectFilters>({
         client: filters.client || '',
         'team-member': filters['team-member'] || '',
         'created-date-from': filters['created-date-from'] || null,
@@ -34,24 +35,25 @@ export default function ProjectFiltersComponent({ filters, clients, teamMembers 
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        get(route('project.index'), {
-            preserveState: true,
-            preserveScroll: true,
+        onApply({
+            client: data.client || '',
+            'team-member': data['team-member'] || '',
+            'created-date-from': data['created-date-from'] || null,
+            'created-date-to': data['created-date-to'] || null,
+            search: data.search || '',
         })
     }
 
     const resetFilters = () => {
-        setData({
+        const cleared = {
             client: '',
             'team-member': '',
-            'created-date-from': null,
-            'created-date-to': null,
+            'created-date-from': null as string | null,
+            'created-date-to': null as string | null,
             search: '',
-        })
-        get(route('project.index'), {
-            preserveState: true,
-            preserveScroll: true,
-        })
+        }
+        setData(cleared)
+        onApply(cleared)
     }
 
     const hasActive = !!(

@@ -499,7 +499,35 @@ export default function Projects() {
             </div>
             <ProjectNotesSheet projectId={notesProjectId} open={notesOpen} onOpenChange={(open) => setNotesOpen(open)} />
             <ProjectOffCanvas open={offOpen} mode={mode} onClose={() => setOffOpen(false)} clients={clients} teamMembers={teamMembers} currencies={currencies} projectId={editProjectId ?? undefined} />
-            <ProjectFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} clients={clients} teamMembers={teamMembers} />
+            <ProjectFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} clients={clients} teamMembers={teamMembers}
+                onApply={(applied) => {
+                    // Update local state
+                    setFilters(applied)
+
+                    // Update URL query params similar to Team filters experience
+                    try {
+                        const params = new URLSearchParams(window.location.search)
+                        const setOrDelete = (key: string, value: string | null) => {
+                            const v = value ?? ''
+                            if (v) {
+                                params.set(key, v)
+                            } else {
+                                params.delete(key)
+                            }
+                        }
+                        setOrDelete('client', applied.client || '')
+                        setOrDelete('team-member', applied['team-member'] || '')
+                        setOrDelete('created-date-from', applied['created-date-from'])
+                        setOrDelete('created-date-to', applied['created-date-to'])
+                        setOrDelete('search', applied.search || '')
+                        const newUrl = `${window.location.pathname}?${params.toString()}`
+                        window.history.replaceState({}, '', newUrl)
+                    } catch { /* ignore URL update issues */ }
+
+                    // Fetch projects and close filters
+                    getProjects(applied).then(() => setFiltersOpen(false))
+                }}
+            />
         </MasterLayout>
     )
 }

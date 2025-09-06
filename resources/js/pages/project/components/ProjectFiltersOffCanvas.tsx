@@ -8,9 +8,10 @@ interface ProjectFiltersOffCanvasProps {
     filters: ProjectFilters
     clients: { id: number; name: string }[]
     teamMembers: { id: number; name: string }[]
+    onApply: (filters: ProjectFilters) => void
 }
 
-export default function ProjectFiltersOffCanvas({ open, onOpenChange, filters, clients, teamMembers }: ProjectFiltersOffCanvasProps) {
+export default function ProjectFiltersOffCanvas({ open, onOpenChange, filters, clients, teamMembers, onApply }: ProjectFiltersOffCanvasProps) {
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent side="right" className="overflow-y-auto bg-white pr-6 pb-8 pl-6 sm:max-w-md md:max-w-lg dark:bg-neutral-900">
@@ -24,7 +25,7 @@ export default function ProjectFiltersOffCanvas({ open, onOpenChange, filters, c
                 </SheetHeader>
 
                 <div className="rounded-md border border-neutral-100 bg-white dark:border-neutral-800 dark:bg-neutral-800/30">
-                    <ProjectFiltersComponent filters={filters} clients={clients} teamMembers={teamMembers} />
+                    <ProjectFiltersComponent filters={filters} clients={clients} teamMembers={teamMembers} onApply={onApply} />
                 </div>
             </SheetContent>
         </Sheet>
