@@ -198,7 +198,6 @@ final class InvoiceController extends Controller
     #[Action(method: 'get', name: 'invoice.downloadPdf', params: ['invoice'], middleware: ['auth', 'verified'])]
     public function downloadPdf(Invoice $invoice): SymfonyResponse
     {
-
         if (! $invoice->relationLoaded('client')) {
             $invoice->load('client');
         }
@@ -212,7 +211,6 @@ final class InvoiceController extends Controller
         }
 
         try {
-
             $pdf = Pdf::loadView('pdf.invoice', [
                 'invoice' => $invoice,
                 'client' => $invoice->client,
@@ -238,9 +236,7 @@ final class InvoiceController extends Controller
     {
         DB::beginTransaction();
         try {
-
             InvoiceStore::sendInvoiceEmail($invoice);
-
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -256,7 +252,6 @@ final class InvoiceController extends Controller
     #[Action(method: 'post', name: 'invoice.updateStatus', params: ['invoice'], middleware: ['auth', 'verified'])]
     public function updateStatus(Invoice $invoice): void
     {
-
         request()->validate([
             'status' => 'required|string|in:draft,sent,paid,partially_paid,overdue,cancelled',
             'paid_amount' => 'required_if:status,paid,partially_paid|numeric|min:0',
