@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 const quickLinks: NavItem[] = [
     {
         title: 'Log Time',
-        href: route('time-log.create'),
+        href: route('time-log.index', { open: 'true' }),
         icon: ClockIcon,
     },
     {
@@ -22,7 +22,7 @@ const quickLinks: NavItem[] = [
     },
     {
         title: 'New Project',
-        href: route('project.create'),
+        href: route('project.index', { open: 'true' }),
         icon: PlusCircle,
     },
     {
