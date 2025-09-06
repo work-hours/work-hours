@@ -1,39 +1,21 @@
 import { ExportButton } from '@/components/action-buttons'
-import TimeLogOffCanvas from '@/pages/time-log/components/TimeLogOffCanvas'
-import TimeLogFiltersOffCanvas from '@/pages/time-log/components/TimeLogFiltersOffCanvas'
 import StatsCards from '@/components/dashboard/StatsCards'
-import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import CustomInput from '@/components/ui/custom-input'
-import DatePicker from '@/components/ui/date-picker'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { SearchableSelect } from '@/components/ui/searchable-select'
 import MasterLayout from '@/layouts/master-layout'
+import TimeLogFiltersOffCanvas from '@/pages/time-log/components/TimeLogFiltersOffCanvas'
+import TimeLogOffCanvas from '@/pages/time-log/components/TimeLogOffCanvas'
 import { type BreadcrumbItem } from '@/types'
-import { TimeLogStatus, timeLogStatusOptions } from '@/types/TimeLogStatus'
+import { TimeLogStatus } from '@/types/TimeLogStatus'
 import { Head, router, useForm } from '@inertiajs/react'
 import axios from 'axios'
-import {
-    AlertCircle,
-    Briefcase,
-    Calendar,
-    CalendarRange,
-    CheckCircle,
-    ClockIcon,
-    FileSpreadsheet,
-    PlusCircle,
-    Search,
-    TimerReset,
-    Upload,
-    SlidersHorizontal,
-    Filter,
-} from 'lucide-react'
-import { ChangeEvent, FormEventHandler, useEffect, useRef, useState } from 'react'
+import { AlertCircle, CheckCircle, ClockIcon, FileSpreadsheet, Filter, PlusCircle, Upload } from 'lucide-react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -109,6 +91,8 @@ export default function TimeLog({
         tag: filters.tag || '',
     })
 
+    const [hasActiveFilters, setHasActiveFilters] = useState(false)
+
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
     const [importDialogOpen, setImportDialogOpen] = useState(false)
     const [importFile, setImportFile] = useState<File | null>(null)
@@ -126,6 +110,7 @@ export default function TimeLog({
     }
 
     useEffect(() => {
+        setHasActiveFilters(Boolean(data['start-date'] || data['end-date'] || data.project || data['is-paid'] || data.status || data.tag))
         const handler = () => {
             get(route('time-log.index'), { preserveState: true })
         }
@@ -221,32 +206,6 @@ export default function TimeLog({
                 },
             },
         )
-    }
-
-    const startDate = data['start-date'] ? new Date(data['start-date']) : null
-    const endDate = data['end-date'] ? new Date(data['end-date']) : null
-
-    const handleStartDateChange = (date: Date | null) => {
-        if (date) {
-            setData('start-date', date.toISOString().split('T')[0])
-        } else {
-            setData('start-date', '')
-        }
-    }
-
-    const handleEndDateChange = (date: Date | null) => {
-        if (date) {
-            setData('end-date', date.toISOString().split('T')[0])
-        } else {
-            setData('end-date', '')
-        }
-    }
-
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault()
-        get(route('time-log.index'), {
-            preserveState: true,
-        })
     }
 
     return (
@@ -345,12 +304,16 @@ export default function TimeLog({
                             </div>
                             <div className="flex gap-2">
                                 <Button
-                                    variant="outline"
-                                    className="flex items-center gap-2 border-gray-200 bg-white text-gray-700 transition-all duration-200 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                                    variant={hasActiveFilters ? 'default' : 'outline'}
+                                    className={`flex items-center gap-2 ${
+                                        hasActiveFilters
+                                            ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
+                                            : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                                    }`}
                                     onClick={() => setFiltersOpen(true)}
                                 >
-                                    <Filter className="h-3 w-3" />
-                                    <span>Filters</span>
+                                    <Filter className={`h-3 w-3 ${hasActiveFilters ? 'text-primary dark:text-primary-foreground' : ''}`} />
+                                    <span>{hasActiveFilters ? 'Filters Applied' : 'Filters'}</span>
                                 </Button>
                                 <ExportButton href={route('time-log.export') + window.location.search} label="Export" />
                                 <a href={route('time-log.template')} className="inline-block">
@@ -490,7 +453,14 @@ export default function TimeLog({
                 </Dialog>
             </div>
 
-            <TimeLogFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={data} projects={projects} tags={tags} />
+            <TimeLogFiltersOffCanvas
+                open={filtersOpen}
+                onOpenChange={setFiltersOpen}
+                filters={data}
+                projects={projects}
+                tags={tags}
+                setHasActiveFilters={setHasActiveFilters}
+            />
 
             <TimeLogOffCanvas
                 open={offOpen}
@@ -498,16 +468,20 @@ export default function TimeLog({
                 onClose={() => setOffOpen(false)}
                 projects={projects}
                 tasks={tasks}
-                timeLog={editLog ? {
-                    id: editLog.id,
-                    project_id: editLog.project_id || 0,
-                    task_id: (editLog as unknown as { task_id?: number | null }).task_id ?? null,
-                    start_timestamp: editLog.start_timestamp,
-                    end_timestamp: editLog.end_timestamp || '',
-                    note: editLog.note || '',
-                    non_billable: Boolean(editLog.non_billable),
-                    tags: (editLog.tags || []).map(t => t.name),
-                } : undefined}
+                timeLog={
+                    editLog
+                        ? {
+                              id: editLog.id,
+                              project_id: editLog.project_id || 0,
+                              task_id: (editLog as unknown as { task_id?: number | null }).task_id ?? null,
+                              start_timestamp: editLog.start_timestamp,
+                              end_timestamp: editLog.end_timestamp || '',
+                              note: editLog.note || '',
+                              non_billable: Boolean(editLog.non_billable),
+                              tags: (editLog.tags || []).map((t) => t.name),
+                          }
+                        : undefined
+                }
             />
         </MasterLayout>
     )
