@@ -22,6 +22,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import TaskOffCanvas from '@/pages/task/components/TaskOffCanvas'
+import TaskFiltersOffCanvas from '@/pages/task/components/TaskFiltersOffCanvas'
 import axios from 'axios'
 import {
     AlertCircle,
@@ -40,6 +41,7 @@ import {
     Printer,
     Search,
     TimerReset,
+    Filter,
 } from 'lucide-react'
 import { JSX, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -107,6 +109,9 @@ export default function Tasks() {
         search: '',
     })
     const [processing, setProcessing] = useState(false)
+
+        // Filters OffCanvas state
+        const [filtersOpen, setFiltersOpen] = useState(false)
 
     // OffCanvas state for create/edit
     const [offOpen, setOffOpen] = useState(false)
@@ -393,7 +398,35 @@ export default function Tasks() {
                                     <Printer className="h-4 w-4" />
                                     <span className="hidden sm:inline">Print</span>
                                 </Button>
-                                <ExportButton href={route('task.export')} label="Export" />
+                                <Button
+                                    variant={
+                                        filters.search || filters.status !== 'all' || filters.priority !== 'all' || filters.project !== 'all' || filters.tag !== 'all' ||
+                                        filters['due-date-from'] || filters['due-date-to'] || filters['due-today']
+                                            ? 'default'
+                                            : 'outline'
+                                    }
+                                    className={`flex items-center gap-2 ${
+                                        filters.search || filters.status !== 'all' || filters.priority !== 'all' || filters.project !== 'all' || filters.tag !== 'all' ||
+                                        filters['due-date-from'] || filters['due-date-to'] || filters['due-today']
+                                            ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
+                                            : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+                                    }`}
+                                    onClick={() => setFiltersOpen(true)}
+                                >
+                                    <Filter className={`h-4 w-4 ${
+                                        filters.search || filters.status !== 'all' || filters.priority !== 'all' || filters.project !== 'all' || filters.tag !== 'all' ||
+                                        filters['due-date-from'] || filters['due-date-to'] || filters['due-today']
+                                            ? 'text-primary dark:text-primary-foreground'
+                                            : ''
+                                    }`} />
+                                    <span>{
+                                        filters.search || filters.status !== 'all' || filters.priority !== 'all' || filters.project !== 'all' || filters.tag !== 'all' ||
+                                        filters['due-date-from'] || filters['due-date-to'] || filters['due-today']
+                                            ? 'Filters Applied'
+                                            : 'Filters'
+                                    }</span>
+                                </Button>
+                                <ExportButton href={route('task.export') + window.location.search} label="Export" />
                                 <Button
                                     className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
                                     onClick={() => {
@@ -409,7 +442,7 @@ export default function Tasks() {
                         </div>
 
                         <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700 print:hidden">
-                            <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
+                                {/*
                                 <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
                                     <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                         Search
@@ -591,6 +624,7 @@ export default function Tasks() {
                                 </div>
                             </form>
 
+                            */}
                             <div className={'mt-4 text-sm text-muted-foreground'}>
                                 {(filters.status !== 'all' ||
                                     filters.priority !== 'all' ||
@@ -940,6 +974,7 @@ export default function Tasks() {
                     </DialogContent>
                 </Dialog>
             </div>
+            <TaskFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} projects={projects} tags={tags} />
             <TaskOffCanvas open={offOpen} mode={mode} onClose={() => setOffOpen(false)} projects={projects} taskId={editTaskId ?? undefined} />
         </MasterLayout>
     )
