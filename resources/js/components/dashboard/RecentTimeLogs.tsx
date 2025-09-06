@@ -88,7 +88,7 @@ export default function RecentTimeLogs() {
                             <ClockIcon className="mb-2 h-10 w-10 opacity-40" />
                             <p className="mb-2 text-sm">No recent time logs found</p>
                             <Link
-                                href={route('time-log.create')}
+                                href={route('time-log.index', { open: 'true'})}
                                 className="text-xs font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
                             >
                                 Create your first time log
