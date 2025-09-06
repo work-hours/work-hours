@@ -15,6 +15,7 @@ export type TimeLogFiltersOffCanvasProps = {
     }
     projects: { id: number; name: string }[]
     tags: { id: number; name: string }[]
+    setHasActiveFilters?: (val: boolean) => void
 }
 
 export default function TimeLogFiltersOffCanvas({ open, onOpenChange, filters, projects, tags, setHasActiveFilters }: TimeLogFiltersOffCanvasProps) {

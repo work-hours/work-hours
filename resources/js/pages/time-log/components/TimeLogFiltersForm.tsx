@@ -22,6 +22,7 @@ interface Props {
     filters: TimeLogFilters
     projects: { id: number; name: string }[]
     tags: { id: number; name: string }[]
+    setHasActiveFilters?: (val: boolean) => void
 }
 
 export default function TimeLogFiltersForm({ filters, projects, tags, setHasActiveFilters }: Props) {
@@ -46,7 +47,9 @@ export default function TimeLogFiltersForm({ filters, projects, tags, setHasActi
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        setHasActiveFilters(Boolean(data['start-date'] || data['end-date'] || data.project || data['is-paid'] || data.status || data.tag))
+        if (setHasActiveFilters) {
+            setHasActiveFilters(Boolean(data['start-date'] || data['end-date'] || data.project || data['is-paid'] || data.status || data.tag))
+        }
         get(route('time-log.index'), { preserveState: true })
     }
 
