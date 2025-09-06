@@ -57,7 +57,12 @@ function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: n
 }
 
 export default function Tasks() {
-    const { auth, projects, tags, filters: serverFilters } = usePage<
+    const {
+        auth,
+        projects,
+        tags,
+        filters: serverFilters,
+    } = usePage<
         SharedData & {
             projects: { id: number; name: string }[]
             tags: { id: number; name: string; color: string }[]
@@ -159,6 +164,7 @@ export default function Tasks() {
         setLoading(true)
         setError(false)
         setProcessing(true)
+
         try {
             setTasks(
                 await _tasks.data({
@@ -173,7 +179,6 @@ export default function Tasks() {
             setProcessing(false)
         }
     }
-
 
     const getPriorityBadge = (priority: Task['priority']): JSX.Element => {
         switch (priority) {
@@ -250,11 +255,12 @@ export default function Tasks() {
         }
     }
 
-
     useEffect(() => {
         if (!serverFilters) return
+
         const qpPriority = (serverFilters.priority || '').toString()
         const allowedPriorities = ['all', 'low', 'medium', 'high'] as const
+
         const normalizedFilters: TaskFilters = {
             status: (serverFilters.status as TaskFilters['status']) ?? 'incomplete',
             priority: (allowedPriorities as readonly string[]).includes(qpPriority) ? (qpPriority as TaskFilters['priority']) : 'all',
@@ -262,12 +268,16 @@ export default function Tasks() {
             tag: serverFilters.tag ?? 'all',
             'due-date-from': serverFilters['due-date-from'] ?? '',
             'due-date-to': serverFilters['due-date-to'] ?? '',
-            'due-today': Boolean(serverFilters['due-today']),
+            'due-today':
+                typeof serverFilters['due-today'] === 'boolean'
+                    ? serverFilters['due-today']
+                    : String(serverFilters['due-today']).toLowerCase() !== 'false',
             search: serverFilters.search ?? '',
         }
         setFilters(normalizedFilters)
         getTasks(normalizedFilters).then()
     }, [serverFilters])
+
     useEffect(() => {
         try {
             const params = new URLSearchParams(window.location.search)
@@ -276,10 +286,9 @@ export default function Tasks() {
                 setEditTaskId(null)
                 setOffOpen(true)
             }
-        } catch {
-            // ignore URL parse errors
-        }
+        } catch {}
     }, [])
+
     useEffect(() => {
         const handler = () => getTasks(filters)
         window.addEventListener('refresh-tasks', handler)

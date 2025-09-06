@@ -42,7 +42,6 @@ export default function TaskFiltersForm({ filters, projects, tags }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        console.log(data)
         get(route('task.index'), { preserveState: true })
     }
 
@@ -57,8 +56,6 @@ export default function TaskFiltersForm({ filters, projects, tags }: Props) {
             'due-today': false,
             search: '',
         })
-
-        get(route('task.index'), { preserveState: true })
     }
 
     const hasActive = Boolean(
