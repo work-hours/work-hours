@@ -24,7 +24,7 @@ export default function TaskFiltersOffCanvas({ open, onOpenChange, filters, proj
                     </SheetDescription>
                 </SheetHeader>
 
-                <div className="rounded-md border border-neutral-100 bg-white dark:border-neutral-800 dark:bg-neutral-800/30">
+                <div className="bg-white dark:border-neutral-800 dark:bg-neutral-800/30">
                     <TaskFiltersForm filters={filters} projects={projects} tags={tags} />
                 </div>
             </SheetContent>

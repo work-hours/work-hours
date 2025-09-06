@@ -58,11 +58,11 @@ export type Task = {
  */
 export interface TaskFilters {
     status: 'all' | 'incomplete' | 'pending' | 'in_progress' | 'completed'
-    priority: string
-    project: string
-    tag: string
+    priority: 'all' | 'low' | 'medium' | 'high'
+    project: string | number | 'all'
+    tag: string | number | 'all'
     'due-date-from': string | Date | ''
     'due-date-to': string | Date | ''
-    'due-today'?: boolean
+    'due-today': boolean
     search: string
 }

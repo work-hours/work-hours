@@ -10,16 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
 
-export type TaskFilters = {
-    status: 'all' | 'incomplete' | 'pending' | 'in_progress' | 'completed'
-    priority: 'all' | 'low' | 'medium' | 'high'
-    project: string | number | 'all'
-    tag: string | number | 'all'
-    'due-date-from': string | Date | ''
-    'due-date-to': string | Date | ''
-    'due-today': boolean
-    search: string
-}
+import type { TaskFilters } from '@/pages/task/types'
 
 interface Props {
     filters: TaskFilters
@@ -31,8 +22,8 @@ export default function TaskFiltersForm({ filters, projects, tags }: Props) {
     const { data, setData, get, processing } = useForm<TaskFilters>({
         status: filters.status ?? 'all',
         priority: filters.priority ?? 'all',
-        project: (filters.project as any) ?? 'all',
-        tag: (filters.tag as any) ?? 'all',
+        project: (filters.project as TaskFilters['project']) ?? 'all',
+        tag: (filters.tag as TaskFilters['tag']) ?? 'all',
         'due-date-from': filters['due-date-from'] || '',
         'due-date-to': filters['due-date-to'] || '',
         'due-today': Boolean(filters['due-today']),
@@ -65,6 +56,7 @@ export default function TaskFiltersForm({ filters, projects, tags }: Props) {
             'due-today': false,
             search: '',
         })
+
         get(route('task.index'), { preserveState: true })
     }
 
@@ -80,7 +72,7 @@ export default function TaskFiltersForm({ filters, projects, tags }: Props) {
     )
 
     return (
-        <form onSubmit={submit} className="flex w-full flex-col gap-6 p-4">
+        <form onSubmit={submit} className="flex w-full flex-col gap-6">
             <div className="flex w-full flex-col gap-2">
                 <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
                     Search
