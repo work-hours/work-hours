@@ -56,8 +56,8 @@ type Client = {
 type ProjectFilters = {
     client: string
     'team-member': string
-    'created-date-from': string | Date | null
-    'created-date-to': string | Date | null
+    'created-date-from': string | null
+    'created-date-to': string | null
     search: string
 }
 
@@ -98,7 +98,6 @@ export default function Projects() {
     const getProjects = async (filters?: ProjectFilters): Promise<void> => {
         setLoading(true)
         setError(false)
-        setProcessing(true)
         try {
             setProjects(
                 await _projects.data({
@@ -110,7 +109,6 @@ export default function Projects() {
             setError(true)
         } finally {
             setLoading(false)
-            setProcessing(false)
         }
     }
 
