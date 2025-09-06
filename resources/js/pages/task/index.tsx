@@ -306,9 +306,11 @@ export default function Tasks() {
     useEffect(() => {
         const queryParams = queryStringToObject()
 
+        const qpPriority = (queryParams.priority || '').toString()
+        const allowedPriorities = ['all', 'low', 'medium', 'high'] as const
         const initialFilters: TaskFilters = {
             status: (queryParams.status as TaskFilters['status']) || 'incomplete',
-            priority: queryParams.priority || 'all',
+            priority: (allowedPriorities as readonly string[]).includes(qpPriority) ? (qpPriority as TaskFilters['priority']) : 'all',
             project: queryParams.project || 'all',
             tag: queryParams.tag || 'all',
             'due-date-from': queryParams['due-date-from'] || '',
