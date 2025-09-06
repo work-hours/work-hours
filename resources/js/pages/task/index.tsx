@@ -264,6 +264,14 @@ export default function Tasks() {
         const qpPriority = (serverFilters.priority || '').toString()
         const allowedPriorities = ['all', 'low', 'medium', 'high'] as const
 
+        let dueTodayFilter = false
+        if (serverFilters['due-today']) {
+            dueTodayFilter =
+                typeof serverFilters['due-today'] === 'boolean'
+                    ? serverFilters['due-today']
+                    : String(serverFilters['due-today']).toLowerCase() !== 'false'
+        }
+
         const normalizedFilters: TaskFilters = {
             status: (serverFilters.status as TaskFilters['status']) ?? 'incomplete',
             priority: (allowedPriorities as readonly string[]).includes(qpPriority) ? (qpPriority as TaskFilters['priority']) : 'all',
@@ -271,16 +279,11 @@ export default function Tasks() {
             tag: serverFilters.tag ?? 'all',
             'due-date-from': serverFilters['due-date-from'] ?? '',
             'due-date-to': serverFilters['due-date-to'] ?? '',
-            'due-today':
-                typeof serverFilters['due-today'] === 'boolean'
-                    ? serverFilters['due-today']
-                    : String(serverFilters['due-today']).toLowerCase() !== 'false',
+            'due-today': dueTodayFilter,
             search: serverFilters.search ?? '',
         }
 
         setFilters(normalizedFilters)
-
-        console.log('normalizedFilters', normalizedFilters)
 
         getTasks(normalizedFilters).then()
     }, [serverFilters])
@@ -293,9 +296,7 @@ export default function Tasks() {
                 setEditTaskId(null)
                 setOffOpen(true)
             }
-        } catch {
-            //
-        }
+        } catch {}
     }, [])
 
     useEffect(() => {
