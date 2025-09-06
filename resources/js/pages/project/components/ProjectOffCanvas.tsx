@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
 import { useForm } from '@inertiajs/react'
-import { Building, FileText, LoaderCircle, Save, Text, Users, FolderPlus } from 'lucide-react'
+import { Building, FileText, FolderPlus, LoaderCircle, Save, Text, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -52,8 +52,6 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
         approvers: [],
         team_member_rates: {},
     })
-
-    // Load edit data if in edit mode
     useEffect(() => {
         if (open && isEdit && projectId) {
             fetch(route('project.edit-data', projectId))
@@ -65,12 +63,14 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
 
                     const rates: Record<number, TeamMemberRate> = {}
                     if (payload.teamMemberRates) {
-                        Object.entries(payload.teamMemberRates as Record<string, { hourly_rate?: number | null; currency?: string | null }>).forEach(([id, v]) => {
-                            rates[Number(id)] = {
-                                hourly_rate: (v?.hourly_rate ?? 0).toString(),
-                                currency: v?.currency ?? (currencies[0]?.code ?? 'USD'),
-                            }
-                        })
+                        Object.entries(payload.teamMemberRates as Record<string, { hourly_rate?: number | null; currency?: string | null }>).forEach(
+                            ([id, v]) => {
+                                rates[Number(id)] = {
+                                    hourly_rate: (v?.hourly_rate ?? 0).toString(),
+                                    currency: v?.currency ?? currencies[0]?.code ?? 'USD',
+                                }
+                            },
+                        )
                     }
 
                     setData({
@@ -88,7 +88,6 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
                 })
         }
         if (open && !isEdit) {
-            // reset for create
             setIsImported(false)
             setLocalMembers(teamMembers)
             setData({
@@ -103,7 +102,6 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
         if (!open) {
             reset()
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, mode, projectId])
 
     const submit = (e: React.FormEvent) => {
@@ -182,7 +180,7 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
         <Sheet open={open} onOpenChange={(val) => !val && onClose()}>
             <SheetContent side="right" className="overflow-y-auto bg-white pr-6 pb-8 pl-6 sm:max-w-2xl dark:bg-neutral-900">
                 <SheetHeader>
-                    <SheetTitle className="text-xl text-neutral-900 dark:text-white flex items-center gap-2">
+                    <SheetTitle className="flex items-center gap-2 text-xl text-neutral-900 dark:text-white">
                         {isEdit ? (
                             <>
                                 <Save className="h-5 w-5 text-neutral-700 dark:text-neutral-300" /> Edit Project
@@ -260,7 +258,7 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
                                         onChange={(e) => setData('description', e.target.value)}
                                         disabled={processing}
                                         placeholder="Project description"
-                                        className="min-h-[100px] pl-10 border-neutral-200 bg-white ring-offset-white focus-visible:ring-neutral-400 dark:border-neutral-800 dark:bg-neutral-800/50 dark:ring-offset-neutral-900 dark:focus-visible:ring-neutral-600"
+                                        className="min-h-[100px] border-neutral-200 bg-white pl-10 ring-offset-white focus-visible:ring-neutral-400 dark:border-neutral-800 dark:bg-neutral-800/50 dark:ring-offset-neutral-900 dark:focus-visible:ring-neutral-600"
                                     />
                                 </div>
                                 <InputError message={errors.description} />
@@ -277,7 +275,9 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
                                 <div className="relative rounded-md border border-neutral-200 shadow-sm dark:border-neutral-700">
                                     <div className="flex items-center gap-2 border-b border-neutral-200 bg-neutral-50 px-3 py-2 dark:border-neutral-700 dark:bg-neutral-800/50">
                                         <Users className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-                                        <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Select team members and set hourly rates</h3>
+                                        <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                            Select team members and set hourly rates
+                                        </h3>
                                     </div>
                                     <div className="p-3">
                                         {localMembers && localMembers.length > 0 ? (
@@ -285,7 +285,8 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
                                                 {localMembers.map((member) => {
                                                     const isSelected = data.team_members.includes(member.id)
                                                     const showRate = isSelected && !member.non_monetary
-                                                    const rate = data.team_member_rates[member.id]?.hourly_rate ?? (member.hourly_rate ?? 0).toString()
+                                                    const rate =
+                                                        data.team_member_rates[member.id]?.hourly_rate ?? (member.hourly_rate ?? 0).toString()
                                                     return (
                                                         <div
                                                             key={member.id}
@@ -299,17 +300,32 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
                                                                     disabled={processing}
                                                                     className="h-4 w-4 border-neutral-300 text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800"
                                                                 />
-                                                                <Label htmlFor={`member-${member.id}`} className="cursor-pointer text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                                                <Label
+                                                                    htmlFor={`member-${member.id}`}
+                                                                    className="cursor-pointer text-sm font-medium text-neutral-700 dark:text-neutral-300"
+                                                                >
                                                                     {member.name}
                                                                 </Label>
-                                                                <span className="truncate text-xs text-gray-500 dark:text-gray-400">{member.email}</span>
+                                                                <span className="truncate text-xs text-gray-500 dark:text-gray-400">
+                                                                    {member.email}
+                                                                </span>
                                                             </div>
 
                                                             {showRate && (
                                                                 <div className="ml-auto flex items-center gap-2">
                                                                     <div className="flex h-8 items-center overflow-hidden rounded-md border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
                                                                         <span className="flex h-full items-center border-r border-neutral-200 bg-neutral-50 px-2 text-xs whitespace-nowrap text-gray-500 dark:border-neutral-700 dark:bg-neutral-800/80 dark:text-gray-400">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3" aria-label="Rate">
+                                                                            <svg
+                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                                viewBox="0 0 24 24"
+                                                                                fill="none"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="2"
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                className="h-3 w-3"
+                                                                                aria-label="Rate"
+                                                                            >
                                                                                 <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                                                                             </svg>
                                                                         </span>
@@ -321,7 +337,9 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
                                                                             value={rate}
                                                                             onChange={(e) => {
                                                                                 const currentRates = { ...data.team_member_rates }
-                                                                                const existing = currentRates[member.id] ?? { currency: member.currency ?? currencies[0]?.code ?? 'USD' }
+                                                                                const existing = currentRates[member.id] ?? {
+                                                                                    currency: member.currency ?? currencies[0]?.code ?? 'USD',
+                                                                                }
                                                                                 currentRates[member.id] = { ...existing, hourly_rate: e.target.value }
                                                                                 setData('team_member_rates', currentRates)
                                                                             }}
@@ -332,13 +350,28 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
 
                                                                     <div className="flex h-8 items-center overflow-hidden rounded-md border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
                                                                         <span className="flex h-full items-center border-r border-neutral-200 bg-neutral-50 px-2 text-xs whitespace-nowrap text-gray-500 dark:border-neutral-700 dark:bg-neutral-800/80 dark:text-gray-400">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3" aria-label="Currency">
+                                                                            <svg
+                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                                viewBox="0 0 24 24"
+                                                                                fill="none"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="2"
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                className="h-3 w-3"
+                                                                                aria-label="Currency"
+                                                                            >
                                                                                 <circle cx="12" cy="12" r="8" />
                                                                                 <path d="M9.5 9a2.5 2.5 0 0 1 5 0v6a2.5 2.5 0 0 1-5 0" />
                                                                             </svg>
                                                                         </span>
                                                                         <Select
-                                                                            value={data.team_member_rates[member.id]?.currency ?? member.currency ?? currencies[0]?.code ?? 'USD'}
+                                                                            value={
+                                                                                data.team_member_rates[member.id]?.currency ??
+                                                                                member.currency ??
+                                                                                currencies[0]?.code ??
+                                                                                'USD'
+                                                                            }
                                                                             onValueChange={(value) => {
                                                                                 const currentRates = { ...data.team_member_rates }
                                                                                 const existing = currentRates[member.id] ?? { hourly_rate: rate }
@@ -347,11 +380,17 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
                                                                             }}
                                                                             disabled={processing}
                                                                         >
-                                                                            <SelectTrigger id={`currency-${member.id}`} className="h-8 w-20 border-none pr-1 pl-2 text-sm focus:ring-0">
+                                                                            <SelectTrigger
+                                                                                id={`currency-${member.id}`}
+                                                                                className="h-8 w-20 border-none pr-1 pl-2 text-sm focus:ring-0"
+                                                                            >
                                                                                 <SelectValue placeholder="Currency" />
                                                                             </SelectTrigger>
                                                                             <SelectContent className="border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-800/50">
-                                                                                {(currencies && currencies.length > 0 ? currencies.map((c) => c.code) : ['USD']).map((c) => (
+                                                                                {(currencies && currencies.length > 0
+                                                                                    ? currencies.map((c) => c.code)
+                                                                                    : ['USD']
+                                                                                ).map((c) => (
                                                                                     <SelectItem key={c} value={c}>
                                                                                         {c}
                                                                                     </SelectItem>
@@ -395,8 +434,12 @@ export default function ProjectOffCanvas({ open, mode, onClose, clients, teamMem
                                                             disabled={processing}
                                                             className="h-4 w-4 border-neutral-300 text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800"
                                                         />
-                                                        <Label htmlFor={`approver-${member.id}`} className="cursor-pointer text-sm text-neutral-700 dark:text-neutral-300">
-                                                            {member.name} <span className="text-xs text-gray-500 dark:text-gray-400">({member.email})</span>
+                                                        <Label
+                                                            htmlFor={`approver-${member.id}`}
+                                                            className="cursor-pointer text-sm text-neutral-700 dark:text-neutral-300"
+                                                        >
+                                                            {member.name}{' '}
+                                                            <span className="text-xs text-gray-500 dark:text-gray-400">({member.email})</span>
                                                         </Label>
                                                     </div>
                                                 ))

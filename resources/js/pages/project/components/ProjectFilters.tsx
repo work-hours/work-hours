@@ -56,13 +56,7 @@ export default function ProjectFiltersComponent({ filters, clients, teamMembers,
         onApply(cleared)
     }
 
-    const hasActive = !!(
-        data.client ||
-        data['team-member'] ||
-        data['created-date-from'] ||
-        data['created-date-to'] ||
-        data.search
-    )
+    const hasActive = !!(data.client || data['team-member'] || data['created-date-from'] || data['created-date-to'] || data.search)
 
     return (
         <form onSubmit={submit} className="flex w-full flex-col gap-6">

@@ -144,7 +144,7 @@ export default function Projects() {
                 setOffOpen(true)
             }
         } catch {
-            // ignore
+            // ignore invalid open param
         }
 
         const refresh = () => getProjects(initialFilters)
@@ -501,10 +501,7 @@ export default function Projects() {
             <ProjectOffCanvas open={offOpen} mode={mode} onClose={() => setOffOpen(false)} clients={clients} teamMembers={teamMembers} currencies={currencies} projectId={editProjectId ?? undefined} />
             <ProjectFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} clients={clients} teamMembers={teamMembers}
                 onApply={(applied) => {
-                    // Update local state
                     setFilters(applied)
-
-                    // Update URL query params similar to Team filters experience
                     try {
                         const params = new URLSearchParams(window.location.search)
                         const setOrDelete = (key: string, value: string | null) => {
@@ -524,8 +521,9 @@ export default function Projects() {
                         window.history.replaceState({}, '', newUrl)
                     } catch { /* ignore URL update issues */ }
 
-                    // Fetch projects and close filters
-                    getProjects(applied).then(() => setFiltersOpen(false))
+                    getProjects(applied).then(() => {
+                        //
+                    })
                 }}
             />
         </MasterLayout>
