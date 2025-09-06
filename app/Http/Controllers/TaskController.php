@@ -40,24 +40,6 @@ final class TaskController extends Controller
     ) {}
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $projects = ProjectStore::userProjects(userId: auth()->id())
-            ->map(fn ($project): array => [
-                'id' => $project->id,
-                'name' => $project->name,
-                'source' => $project->source,
-                'is_github' => $project->source === 'github',
-            ]);
-
-        return Inertia::render('task/create', [
-            'projects' => $projects,
-        ]);
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @throws Throwable
@@ -268,62 +250,6 @@ final class TaskController extends Controller
             'task' => $task,
             'attachments' => $files,
             'mentionableUsers' => $mentionableUsers,
-        ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
-    {
-        $task->load(['project', 'assignees', 'meta', 'tags']);
-
-        $isProjectOwner = $task->project->user_id === auth()->id();
-        $isTaskCreator = $task->created_by === auth()->id();
-
-        abort_if(! $isProjectOwner && ! $isTaskCreator, 403, 'Unauthorized action.');
-
-        $userId = (int) auth()->id();
-        $taskId = (int) $task->id;
-
-        [$projects, $files] = Concurrency::run([
-            fn () => ProjectStore::userProjects(userId: $userId)
-                ->map(fn ($project): array => [
-                    'id' => $project->id,
-                    'name' => $project->name,
-                ]),
-            fn () => collect(Storage::disk('public')->files('tasks/' . $taskId))
-                ->map(fn (string $path): array => [
-                    'name' => basename($path),
-                    'url' => Storage::disk('public')->url($path),
-                    'size' => Storage::disk('public')->size($path),
-                ]),
-        ]);
-
-        $potentialAssignees = collect([$task->project->user])
-            ->concat($task->project->teamMembers)
-            ->unique('id')
-            ->map(fn ($user): array => [
-                'id' => $user->id,
-                'name' => $user->name,
-            ]);
-
-        $assignedUsers = $task->assignees->pluck('id')->toArray();
-        $taskTags = $task->tags->pluck('name')->toArray();
-
-        $isGithub = $task->is_imported && $task->meta && $task->meta->source === 'github';
-        $isJira = $task->is_imported && $task->meta && $task->meta->source === 'jira';
-
-        return Inertia::render('task/edit', [
-            'task' => $task,
-            'projects' => $projects,
-            'potentialAssignees' => $potentialAssignees,
-            'assignedUsers' => $assignedUsers,
-            'taskTags' => $taskTags,
-            'isGithub' => $isGithub,
-            'isJira' => $isJira,
-            'attachments' => $files,
-            'isProjectOwner' => $isProjectOwner,
         ]);
     }
 
