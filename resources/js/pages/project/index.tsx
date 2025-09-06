@@ -144,6 +144,7 @@ export default function Projects() {
                 setOffOpen(true)
             }
         } catch {
+            // ignore URL param parsing errors
         }
 
         const refresh = () => getProjects(initialFilters)
@@ -518,7 +519,9 @@ export default function Projects() {
                         setOrDelete('search', applied.search || '')
                         const newUrl = `${window.location.pathname}?${params.toString()}`
                         window.history.replaceState({}, '', newUrl)
-                    } catch 
+                    } catch {
+                        // ignore URL update errors (e.g., SSR or invalid history state)
+                    }
 
                     getProjects(applied).then(() => {
                     })
