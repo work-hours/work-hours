@@ -12,7 +12,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { useTimeTracker } from '@/contexts/time-tracker-context'
 import MasterLayout from '@/layouts/master-layout'
-import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import TaskFiltersOffCanvas from '@/pages/task/components/TaskFiltersOffCanvas'
 import TaskOffCanvas from '@/pages/task/components/TaskOffCanvas'
 import { type BreadcrumbItem, type SharedData } from '@/types'
@@ -58,10 +57,11 @@ function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: n
 }
 
 export default function Tasks() {
-    const { auth, projects, tags } = usePage<
+    const { auth, projects, tags, filters: serverFilters } = usePage<
         SharedData & {
             projects: { id: number; name: string }[]
             tags: { id: number; name: string; color: string }[]
+            filters: TaskFilters
         }
     >().props
     const [tasks, setTasks] = useState<Task[]>([])
@@ -174,22 +174,6 @@ export default function Tasks() {
         }
     }
 
-    const handleFilterChange = (key: keyof TaskFilters, value: string | number | number[] | Date | boolean | null): void => {
-        setFilters((prev) => ({ ...prev, [key]: value }))
-    }
-
-    const clearFilters = (): void => {
-        setFilters({
-            status: 'incomplete',
-            priority: 'all',
-            project: 'all',
-            tag: 'all',
-            'due-date-from': '',
-            'due-date-to': '',
-            'due-today': false,
-            search: '',
-        })
-    }
 
     const getPriorityBadge = (priority: Task['priority']): JSX.Element => {
         switch (priority) {
@@ -266,62 +250,24 @@ export default function Tasks() {
         }
     }
 
-    /**
-     * Helper function to safely format date values (handles both Date objects and strings)
-     */
-    const formatDateValue = (dateValue: Date | string | ''): string => {
-        if (dateValue instanceof Date) {
-            return dateValue.toISOString().split('T')[0]
-        } else if (typeof dateValue === 'string' && dateValue) {
-            return dateValue
-        }
-        return ''
-    }
-
-    const handleSubmit = (e: { preventDefault: () => void }): void => {
-        e.preventDefault()
-        const formattedFilters = { ...filters }
-
-        if (formattedFilters['due-date-from'] instanceof Date) {
-            const year = formattedFilters['due-date-from'].getFullYear()
-            const month = String(formattedFilters['due-date-from'].getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters['due-date-from'].getDate()).padStart(2, '0')
-            formattedFilters['due-date-from'] = `${year}-${month}-${day}`
-        }
-
-        if (formattedFilters['due-date-to'] instanceof Date) {
-            const year = formattedFilters['due-date-to'].getFullYear()
-            const month = String(formattedFilters['due-date-to'].getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters['due-date-to'].getDate()).padStart(2, '0')
-            formattedFilters['due-date-to'] = `${year}-${month}-${day}`
-        }
-
-        const filtersString = objectToQueryString(formattedFilters)
-
-        getTasks(formattedFilters).then(() => {
-            window.history.pushState({}, '', `?${filtersString}`)
-        })
-    }
 
     useEffect(() => {
-        const queryParams = queryStringToObject()
-
-        const qpPriority = (queryParams.priority || '').toString()
+        if (!serverFilters) return
+        const qpPriority = (serverFilters.priority || '').toString()
         const allowedPriorities = ['all', 'low', 'medium', 'high'] as const
-        const initialFilters: TaskFilters = {
-            status: (queryParams.status as TaskFilters['status']) || 'incomplete',
+        const normalizedFilters: TaskFilters = {
+            status: (serverFilters.status as TaskFilters['status']) ?? 'incomplete',
             priority: (allowedPriorities as readonly string[]).includes(qpPriority) ? (qpPriority as TaskFilters['priority']) : 'all',
-            project: queryParams.project || 'all',
-            tag: queryParams.tag || 'all',
-            'due-date-from': queryParams['due-date-from'] || '',
-            'due-date-to': queryParams['due-date-to'] || '',
-            'due-today': ['1', 'true', 'on'].includes((queryParams['due-today'] || '').toString()),
-            search: queryParams.search || '',
+            project: serverFilters.project ?? 'all',
+            tag: serverFilters.tag ?? 'all',
+            'due-date-from': serverFilters['due-date-from'] ?? '',
+            'due-date-to': serverFilters['due-date-to'] ?? '',
+            'due-today': Boolean(serverFilters['due-today']),
+            search: serverFilters.search ?? '',
         }
-
-        setFilters(initialFilters)
-        getTasks(initialFilters).then()
-    }, [])
+        setFilters(normalizedFilters)
+        getTasks(normalizedFilters).then()
+    }, [serverFilters])
     useEffect(() => {
         try {
             const params = new URLSearchParams(window.location.search)
@@ -330,7 +276,9 @@ export default function Tasks() {
                 setEditTaskId(null)
                 setOffOpen(true)
             }
-        } catch {}
+        } catch {
+            /* no-op */
+        }
     }, [])
     useEffect(() => {
         const handler = () => getTasks(filters)
