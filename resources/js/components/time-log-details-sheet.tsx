@@ -16,10 +16,13 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent side="right" className="overflow-y-auto bg-white pb-4 pl-4 sm:max-w-md md:max-w-lg dark:bg-neutral-900">
+            <SheetContent
+                side="right"
+                className="overflow-y-auto bg-white pr-6 pb-8 pl-6 sm:max-w-md md:max-w-lg dark:bg-neutral-900"
+            >
                 <SheetHeader className="mb-6">
-                    <SheetTitle className="flex items-center gap-2 text-neutral-900 dark:text-white">
-                        <Clock className="h-5 w-5 text-primary" />
+                    <SheetTitle className="flex items-center gap-2 text-xl text-neutral-900 dark:text-white">
+                        <Clock className="h-5 w-5 text-neutral-700 dark:text-neutral-300" />
                         Time Log Details
                     </SheetTitle>
                     <SheetDescription className="text-sm text-neutral-500 dark:text-neutral-400">
@@ -27,7 +30,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                     </SheetDescription>
                 </SheetHeader>
 
-                <div className="space-y-6">
+                <div className="space-y-8">
                     <div className="space-y-2.5">
                         <h3 className="flex items-center gap-2 text-sm font-medium tracking-wider text-neutral-500 uppercase dark:text-neutral-400">
                             <Briefcase className="h-4 w-4 text-primary/80" />
@@ -120,8 +123,9 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                                               ? 'secondary'
                                                               : 'outline'
                                                 }
+                                                className="capitalize"
                                             >
-                                                {timeLog.task_status}
+                                                {timeLog.task_status.replace('_', ' ')}
                                             </Badge>
                                         </div>
                                     )}
@@ -139,6 +143,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                                             ? 'outline'
                                                             : 'muted'
                                                 }
+                                                className="capitalize"
                                             >
                                                 {timeLog.task_priority}
                                             </Badge>
