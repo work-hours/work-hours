@@ -1,19 +1,15 @@
 import { ExportButton } from '@/components/action-buttons'
 import BackButton from '@/components/back-button'
 import StatsCards from '@/components/dashboard/StatsCards'
-import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import CustomInput from '@/components/ui/custom-input'
-import DatePicker from '@/components/ui/date-picker'
-import { Label } from '@/components/ui/label'
-import { SearchableSelect } from '@/components/ui/searchable-select'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head, router, useForm } from '@inertiajs/react'
-import { AlertCircle, Calendar, CalendarRange, CheckCircle, ClockIcon, Search, TimerReset, User } from 'lucide-react'
-import { FormEventHandler, useState } from 'react'
+import { Head, router } from '@inertiajs/react'
+import { CheckCircle, ClockIcon, Filter } from 'lucide-react'
+import { useState } from 'react'
+import ProjectTimeLogsFiltersOffCanvas from '@/pages/project/components/ProjectTimeLogsFiltersOffCanvas'
 
 type TimeLog = {
     id: number
@@ -57,20 +53,6 @@ type TeamMember = {
     email: string
 }
 
-type Task = {
-    id: number
-    project_id: number
-    title: string
-    description: string | null
-    status: 'pending' | 'in_progress' | 'completed'
-    priority: 'low' | 'medium' | 'high'
-    due_date: string | null
-    assignees: {
-        id: number
-        name: string
-        email: string
-    }[]
-}
 
 type Props = {
     timeLogs: TimeLog[]
@@ -111,6 +93,7 @@ export default function ProjectTimeLogs({
     ]
 
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
+        const [filtersOpen, setFiltersOpen] = useState(false)
 
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
@@ -138,39 +121,6 @@ export default function ProjectTimeLogs({
         )
     }
 
-    const { data, setData, get, processing } = useForm<Filters>({
-        'start-date': filters['start-date'] || '',
-        'end-date': filters['end-date'] || '',
-        user: filters.user || '',
-        'is-paid': filters['is-paid'] || '',
-        status: filters.status || '',
-    })
-
-    const startDate = data['start-date'] ? new Date(data['start-date']) : null
-    const endDate = data['end-date'] ? new Date(data['end-date']) : null
-
-    const handleStartDateChange = (date: Date | null) => {
-        if (date) {
-            setData('start-date', date.toISOString().split('T')[0])
-        } else {
-            setData('start-date', '')
-        }
-    }
-
-    const handleEndDateChange = (date: Date | null) => {
-        if (date) {
-            setData('end-date', date.toISOString().split('T')[0])
-        } else {
-            setData('end-date', '')
-        }
-    }
-
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault()
-        get(route('project.time-logs', project.id), {
-            preserveState: true,
-        })
-    }
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
@@ -217,21 +167,21 @@ export default function ProjectTimeLogs({
                                         : 'No time logs found for the selected period'}
                                 </CardDescription>
 
-                                {(data['start-date'] || data['end-date'] || data.user || data['is-paid'] || data.status) && (
+                                {(filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status) && (
                                     <CardDescription className="mt-1">
                                         {(() => {
                                             let description = ''
 
-                                            if (data['start-date'] && data['end-date']) {
-                                                description = `Showing logs from ${data['start-date']} to ${data['end-date']}`
-                                            } else if (data['start-date']) {
-                                                description = `Showing logs from ${data['start-date']}`
-                                            } else if (data['end-date']) {
-                                                description = `Showing logs until ${data['end-date']}`
+                                            if (filters['start-date'] && filters['end-date']) {
+                                                description = `Showing logs from ${filters['start-date']} to ${filters['end-date']}`
+                                            } else if (filters['start-date']) {
+                                                description = `Showing logs from ${filters['start-date']}`
+                                            } else if (filters['end-date']) {
+                                                description = `Showing logs until ${filters['end-date']}`
                                             }
 
-                                            if (data.user) {
-                                                const selectedMember = teamMembers.find((member) => member.id.toString() === data.user)
+                                            if (filters.user) {
+                                                const selectedMember = teamMembers.find((member) => member.id.toString() === filters.user)
                                                 const memberName = selectedMember ? selectedMember.name : ''
 
                                                 if (description) {
@@ -241,8 +191,8 @@ export default function ProjectTimeLogs({
                                                 }
                                             }
 
-                                            if (data['is-paid']) {
-                                                const paymentStatus = data['is-paid'] === 'true' ? 'paid' : 'unpaid'
+                                            if (filters['is-paid']) {
+                                                const paymentStatus = filters['is-paid'] === 'true' ? 'paid' : 'unpaid'
 
                                                 if (description) {
                                                     description += ` (${paymentStatus})`
@@ -251,9 +201,9 @@ export default function ProjectTimeLogs({
                                                 }
                                             }
 
-                                            if (data.status) {
+                                            if (filters.status) {
                                                 const statusText =
-                                                    data.status === 'pending' ? 'pending' : data.status === 'approved' ? 'approved' : 'rejected'
+                                                    filters.status === 'pending' ? 'pending' : filters.status === 'approved' ? 'approved' : 'rejected'
 
                                                 if (description) {
                                                     description += ` with ${statusText} status`
@@ -268,6 +218,18 @@ export default function ProjectTimeLogs({
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
+                                <Button
+                                    variant={filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status ? 'default' : 'outline'}
+                                    className={`flex items-center gap-2 ${
+                                        filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status
+                                            ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
+                                            : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+                                    }`}
+                                    onClick={() => setFiltersOpen(true)}
+                                >
+                                    <Filter className={`h-4 w-4 ${filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status ? 'text-primary dark:text-primary-foreground' : ''}`} />
+                                    <span>{filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status ? 'Filters Applied' : 'Filters'}</span>
+                                </Button>
                                 <ExportButton
                                     href={`${route('project.export-time-logs')}?project=${project.id}${window.location.search.replace('?', '&')}`}
                                     label="Export"
@@ -284,131 +246,6 @@ export default function ProjectTimeLogs({
                             </div>
                         </div>
 
-                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
-                            <form onSubmit={submit} className="flex w-full flex-row flex-wrap gap-4">
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Start Date
-                                    </Label>
-                                    <DatePicker
-                                        selected={startDate}
-                                        onChange={handleStartDateChange}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="start-date"
-                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select start date"
-                                            />
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        End Date
-                                    </Label>
-                                    <DatePicker
-                                        selected={endDate}
-                                        onChange={handleEndDateChange}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="end-date"
-                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select end date"
-                                            />
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="user" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Team Member
-                                    </Label>
-                                    <SearchableSelect
-                                        id="user"
-                                        value={data.user}
-                                        onChange={(value) => setData('user', value)}
-                                        options={[{ id: '', name: 'Team Members' }, ...teamMembers]}
-                                        placeholder="Select team member"
-                                        disabled={processing}
-                                        icon={<User className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="is-paid" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Payment Status
-                                    </Label>
-                                    <SearchableSelect
-                                        id="is-paid"
-                                        value={data['is-paid']}
-                                        onChange={(value) => setData('is-paid', value)}
-                                        options={[
-                                            { id: '', name: 'Statuses' },
-                                            { id: 'true', name: 'Paid' },
-                                            { id: 'false', name: 'Unpaid' },
-                                        ]}
-                                        placeholder="Select status"
-                                        disabled={processing}
-                                        icon={<CheckCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="status" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Approval Status
-                                    </Label>
-                                    <SearchableSelect
-                                        id="status"
-                                        value={data.status}
-                                        onChange={(value) => setData('status', value)}
-                                        options={[
-                                            { id: '', name: 'Statuses' },
-                                            { id: 'pending', name: 'Pending' },
-                                            { id: 'approved', name: 'Approved' },
-                                            { id: 'rejected', name: 'Rejected' },
-                                        ]}
-                                        placeholder="Select approval status"
-                                        disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-                                <div className="flex items-end gap-2">
-                                    <FilterButton title="Apply filters" disabled={processing}>
-                                        <Search className="h-4 w-4" />
-                                    </FilterButton>
-
-                                    <FilterButton
-                                        variant="clear"
-                                        disabled={
-                                            processing || (!data['start-date'] && !data['end-date'] && !data.user && !data['is-paid'] && !data.status)
-                                        }
-                                        onClick={() => {
-                                            setData({
-                                                'start-date': '',
-                                                'end-date': '',
-                                                user: '',
-                                                'is-paid': '',
-                                                status: '',
-                                            })
-                                            get(route('project.time-logs', project.id), {
-                                                preserveState: true,
-                                            })
-                                        }}
-                                        title="Clear filters"
-                                    >
-                                        <TimerReset className="h-4 w-4" />
-                                    </FilterButton>
-                                </div>
-                            </form>
-                        </div>
                     </CardHeader>
                     <CardContent className="p-0">
                         {timeLogs.length > 0 ? (
@@ -434,6 +271,7 @@ export default function ProjectTimeLogs({
                     </CardContent>
                 </Card>
             </div>
+            <ProjectTimeLogsFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} teamMembers={teamMembers} projectId={project.id} />
         </MasterLayout>
     )
 }

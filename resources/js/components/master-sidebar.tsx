@@ -20,17 +20,17 @@ const navGroups: NavItemGroup[] = [
                 href: '/dashboard',
                 icon: LayoutGrid,
             },
-            {
-                title: 'Team',
-                href: '/team',
-                icon: LucideServerCog,
-            },
         ],
     },
     {
         title: 'Work',
         icon: Building,
         items: [
+            {
+                title: 'Team',
+                href: '/team',
+                icon: LucideServerCog,
+            },
             {
                 title: 'Clients',
                 href: '/client',
