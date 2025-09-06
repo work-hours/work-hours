@@ -253,6 +253,55 @@ final class TaskController extends Controller
         ]);
     }
 
+    #[Action(method: 'get', name: 'task.detail-data', params: ['task'], middleware: ['auth', 'verified'])]
+    public function detailData(Task $task): array
+    {
+        $task->load(['project', 'project.user', 'project.teamMembers', 'assignees', 'tags', 'comments.user', 'meta']);
+
+        $isProjectOwner = $task->project->user_id === auth()->id();
+        $isTeamMember = $task->project->teamMembers->contains('id', auth()->id());
+        $isAssignee = $task->assignees->contains('id', auth()->id());
+
+        abort_if(! $isProjectOwner && ! $isTeamMember && ! $isAssignee, 403, 'Unauthorized action.');
+
+        $taskId = (int) $task->id;
+
+        [$files] = Concurrency::run([
+            fn () => collect(Storage::disk('public')->files('tasks/' . $taskId))
+                ->map(fn (string $path): array => [
+                    'name' => basename($path),
+                    'url' => Storage::disk('public')->url($path),
+                    'size' => Storage::disk('public')->size($path),
+                ]),
+        ]);
+
+        $normalize = static function (string $name): string {
+            $base = mb_strtolower($name);
+
+            return preg_replace('/[^a-z0-9._-]+/i', '', $base) ?? $base;
+        };
+
+        $mentionableUsers = collect([$task->project->user])
+            ->merge($task->project->teamMembers)
+            ->merge($task->assignees)
+            ->filter()
+            ->reject(fn ($u): bool => $u->id === auth()->id())
+            ->unique('id')
+            ->values()
+            ->map(fn ($u): array => [
+                'id' => $u->id,
+                'name' => $u->name,
+                'handle' => $normalize($u->name),
+                'email' => $u->email ?? null,
+            ]);
+
+        return [
+            'task' => $task,
+            'attachments' => $files,
+            'mentionableUsers' => $mentionableUsers,
+        ];
+    }
+
     #[Action(method: 'get', name: 'task.edit-data', params: ['task'], middleware: ['auth', 'verified'])]
     public function editData(Task $task): array
     {

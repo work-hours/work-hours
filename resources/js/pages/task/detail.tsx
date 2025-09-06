@@ -76,9 +76,7 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
                 }
                 return [...prev, newItem]
             })
-        } catch {
-            // ignore
-        }
+        } catch {}
     })
     const [editingBody, setEditingBody] = useState<string>('')
 

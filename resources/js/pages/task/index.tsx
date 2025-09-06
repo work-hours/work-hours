@@ -14,6 +14,7 @@ import { useTimeTracker } from '@/contexts/time-tracker-context'
 import MasterLayout from '@/layouts/master-layout'
 import TaskFiltersOffCanvas from '@/pages/task/components/TaskFiltersOffCanvas'
 import TaskOffCanvas from '@/pages/task/components/TaskOffCanvas'
+import TaskDetailsOffCanvas from '@/pages/task/components/TaskDetailsOffCanvas'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
@@ -95,6 +96,8 @@ export default function Tasks() {
     const [offOpen, setOffOpen] = useState(false)
     const [mode, setMode] = useState<'create' | 'edit'>('create')
     const [editTaskId, setEditTaskId] = useState<number | null>(null)
+    const [detailsOpen, setDetailsOpen] = useState(false)
+    const [detailsTaskId, setDetailsTaskId] = useState<number | null>(null)
 
     const handleStatusClick = (task: Task, status: Task['status']): void => {
         setTaskToUpdate(task)
@@ -286,7 +289,7 @@ export default function Tasks() {
                 setEditTaskId(null)
                 setOffOpen(true)
             }
-        } catch {}
+        } catch 
     }, [])
 
     useEffect(() => {
@@ -507,13 +510,23 @@ export default function Tasks() {
                                                                 </Button>
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent>
+                                                                <DropdownMenuItem
+                                                                    className="group cursor-pointer"
+                                                                    onSelect={(e) => {
+                                                                        e.preventDefault()
+                                                                        setDetailsTaskId(task.id)
+                                                                        setDetailsOpen(true)
+                                                                    }}
+                                                                >
+                                                                    <Glasses className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Quick View</span>
+                                                                </DropdownMenuItem>
                                                                 <Link href={route('task.detail', task.id)}>
                                                                     <DropdownMenuItem className="group cursor-pointer">
                                                                         <Glasses className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                         <span>View</span>
                                                                     </DropdownMenuItem>
                                                                 </Link>
-
                                                                 {(task.project.user_id === auth.user.id || task.created_by === auth.user.id) && (
                                                                     <>
                                                                         <DropdownMenuItem
@@ -656,6 +669,7 @@ export default function Tasks() {
             </div>
             <TaskFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} projects={projects} tags={tags} />
             <TaskOffCanvas open={offOpen} mode={mode} onClose={() => setOffOpen(false)} projects={projects} taskId={editTaskId ?? undefined} />
+            <TaskDetailsOffCanvas open={detailsOpen} onClose={() => setDetailsOpen(false)} taskId={detailsTaskId} />
         </MasterLayout>
     )
 }
