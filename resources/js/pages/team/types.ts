@@ -19,9 +19,18 @@ export type TeamFilters = {
     search: string
 }
 
+export type Currency = {
+    id: number
+    user_id: number
+    code: string
+    created_at: string
+    updated_at: string
+}
+
 export type TeamPageProps = {
     teamMembers: TeamMember[]
     filters: TeamFilters
+    currencies: Currency[]
 }
 
 export const teamBreadcrumbs: BreadcrumbItem[] = [

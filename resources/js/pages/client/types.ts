@@ -1,22 +1,7 @@
+import type { Client, ClientFilters } from '@/@types/client'
 import { type BreadcrumbItem } from '@/types'
 
-export type Client = {
-    id: number
-    name: string
-    email: string | null
-    contact_person: string | null
-    phone: string | null
-    address: string | null
-    notes: string | null
-    hourly_rate: number | null
-    currency: string | null
-}
-
-export type ClientFilters = {
-    search: string
-    'created-date-from': Date | string | null
-    'created-date-to': Date | string | null
-}
+export type { Client, ClientFilters }
 
 export type ClientPageProps = {
     clients: Client[]

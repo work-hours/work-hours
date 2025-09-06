@@ -1,39 +1,19 @@
 import { ExportButton } from '@/components/action-buttons'
-import AddNewButton from '@/components/add-new-button'
-import FilterButton from '@/components/filter-button'
 import JiraIcon from '@/components/icons/jira-icon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import CustomInput from '@/components/ui/custom-input'
-import DatePicker from '@/components/ui/date-picker'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
-import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
+import { queryStringToObject } from '@/lib/utils'
+import ProjectFiltersOffCanvas from '@/pages/project/components/ProjectFiltersOffCanvas'
+import ProjectOffCanvas from '@/pages/project/components/ProjectOffCanvas'
 import { type BreadcrumbItem } from '@/types'
 import { syncRepository } from '@actions/GitHubRepositoryController'
 import { syncProject } from '@actions/JiraController'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import {
-    Briefcase,
-    Calendar,
-    CalendarRange,
-    Clock,
-    Edit,
-    FolderPlus,
-    Folders,
-    GithubIcon,
-    Loader2,
-    MoreVertical,
-    Search,
-    StickyNote,
-    TimerReset,
-    User,
-} from 'lucide-react'
+import { Clock, Edit, Filter, FolderPlus, Folders, GithubIcon, Loader2, MoreVertical, StickyNote } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import ProjectDeleteAction from './components/ProjectDeleteAction'
@@ -76,8 +56,8 @@ type Client = {
 type ProjectFilters = {
     client: string
     'team-member': string
-    'created-date-from': string | Date | null
-    'created-date-to': string | Date | null
+    'created-date-from': string | null
+    'created-date-to': string | null
     search: string
 }
 
@@ -91,16 +71,20 @@ type Props = {
     filters: ProjectFilters
     clients: Client[]
     teamMembers: TeamMember[]
+    currencies: { id: number; user_id: number; code: string }[]
 }
 
 export default function Projects() {
     const [notesOpen, setNotesOpen] = useState(false)
     const [notesProjectId, setNotesProjectId] = useState<number | null>(null)
-    const { auth, filters: pageFilters, clients, teamMembers } = usePage<Props>().props
+    const { auth, filters: pageFilters, clients, teamMembers, currencies } = usePage<Props>().props
     const [projects, setProjects] = useState<Project[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
-    const [processing, setProcessing] = useState(false)
+    const [offOpen, setOffOpen] = useState(false)
+    const [mode, setMode] = useState<'create' | 'edit'>('create')
+    const [editProjectId, setEditProjectId] = useState<number | null>(null)
+    const [filtersOpen, setFiltersOpen] = useState(false)
 
     const [filters, setFilters] = useState<ProjectFilters>({
         client: pageFilters?.client || '',
@@ -110,24 +94,9 @@ export default function Projects() {
         search: pageFilters?.search || '',
     })
 
-    const handleFilterChange = (key: keyof ProjectFilters, value: string | number | Date | null): void => {
-        setFilters((prev) => ({ ...prev, [key]: value }))
-    }
-
-    const clearFilters = (): void => {
-        setFilters({
-            client: '',
-            'team-member': '',
-            'created-date-from': null,
-            'created-date-to': null,
-            search: '',
-        })
-    }
-
     const getProjects = async (filters?: ProjectFilters): Promise<void> => {
         setLoading(true)
         setError(false)
-        setProcessing(true)
         try {
             setProjects(
                 await _projects.data({
@@ -139,7 +108,6 @@ export default function Projects() {
             setError(true)
         } finally {
             setLoading(false)
-            setProcessing(false)
         }
     }
 
@@ -150,31 +118,6 @@ export default function Projects() {
             return dateValue
         }
         return ''
-    }
-
-    const handleSubmit = (e: { preventDefault: () => void }): void => {
-        e.preventDefault()
-        const formattedFilters = { ...filters }
-
-        if (formattedFilters['created-date-from'] instanceof Date) {
-            const year = formattedFilters['created-date-from'].getFullYear()
-            const month = String(formattedFilters['created-date-from'].getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters['created-date-from'].getDate()).padStart(2, '0')
-            formattedFilters['created-date-from'] = `${year}-${month}-${day}`
-        }
-
-        if (formattedFilters['created-date-to'] instanceof Date) {
-            const year = formattedFilters['created-date-to'].getFullYear()
-            const month = String(formattedFilters['created-date-to'].getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters['created-date-to'].getDate()).padStart(2, '0')
-            formattedFilters['created-date-to'] = `${year}-${month}-${day}`
-        }
-
-        const filtersString = objectToQueryString(formattedFilters)
-
-        getProjects(formattedFilters).then(() => {
-            window.history.pushState({}, '', `?${filtersString}`)
-        })
     }
 
     useEffect(() => {
@@ -190,6 +133,19 @@ export default function Projects() {
 
         setFilters(initialFilters)
         getProjects(initialFilters).then()
+
+        try {
+            const params = new URLSearchParams(window.location.search)
+            if ((params.get('open') || '').toLowerCase() === 'true') {
+                setMode('create')
+                setEditProjectId(null)
+                setOffOpen(true)
+            }
+        } catch {}
+
+        const refresh = () => getProjects(initialFilters)
+        window.addEventListener('refresh-projects', refresh)
+        return () => window.removeEventListener('refresh-projects', refresh)
     }, [])
 
     return (
@@ -263,143 +219,56 @@ export default function Projects() {
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
+                                <Button
+                                    variant={
+                                        filters['team-member'] ||
+                                        filters.client ||
+                                        filters['created-date-from'] ||
+                                        filters['created-date-to'] ||
+                                        filters.search
+                                            ? 'default'
+                                            : 'outline'
+                                    }
+                                    className={`flex items-center gap-2 ${
+                                        filters['team-member'] ||
+                                        filters.client ||
+                                        filters['created-date-from'] ||
+                                        filters['created-date-to'] ||
+                                        filters.search
+                                            ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
+                                            : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+                                    }`}
+                                    onClick={() => setFiltersOpen(true)}
+                                >
+                                    <Filter
+                                        className={`h-4 w-4 ${filters['team-member'] || filters.client || filters['created-date-from'] || filters['created-date-to'] || filters.search ? 'text-primary dark:text-primary-foreground' : ''}`}
+                                    />
+                                    <span>
+                                        {filters['team-member'] ||
+                                        filters.client ||
+                                        filters['created-date-from'] ||
+                                        filters['created-date-to'] ||
+                                        filters.search
+                                            ? 'Filters Applied'
+                                            : 'Filters'}
+                                    </span>
+                                </Button>
                                 <ExportButton
                                     href={`${route('project.export')}?team-member=${filters['team-member'] || ''}&client=${filters.client || ''}&created-date-from=${formatDateValue(filters['created-date-from'])}&created-date-to=${formatDateValue(filters['created-date-to'])}&search=${filters.search || ''}`}
                                     label="Export"
                                 />
-                                <AddNewButton href={route('project.create')}>
+                                <Button
+                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    onClick={() => {
+                                        setMode('create')
+                                        setEditProjectId(null)
+                                        setOffOpen(true)
+                                    }}
+                                >
                                     <FolderPlus className="h-4 w-4" />
                                     <span>Add Project</span>
-                                </AddNewButton>
+                                </Button>
                             </div>
-                        </div>
-
-                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
-                            <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Search
-                                    </Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="search"
-                                            placeholder="Search project"
-                                            className="border-gray-200 bg-white pl-9 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
-                                            value={filters.search}
-                                            onChange={(e) => handleFilterChange('search', e.target.value)}
-                                        />
-                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <Search className="h-4 w-4 text-gray-400 dark:text-gray-500" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="client" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Client
-                                    </Label>
-                                    <SearchableSelect
-                                        id="client"
-                                        value={filters.client}
-                                        onChange={(value) => handleFilterChange('client', value)}
-                                        options={[
-                                            { id: '', name: 'Clients' },
-                                            ...clients.map((client) => ({
-                                                id: client.id.toString(),
-                                                name: client.name,
-                                            })),
-                                        ]}
-                                        placeholder="Clients"
-                                        disabled={processing}
-                                        icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="team-member" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Team Member
-                                    </Label>
-                                    <SearchableSelect
-                                        id="team-member"
-                                        value={filters['team-member']}
-                                        onChange={(value) => handleFilterChange('team-member', value)}
-                                        options={[
-                                            { id: '', name: 'Team Members' },
-                                            ...teamMembers.map((member) => ({
-                                                id: member.id.toString(),
-                                                name: member.name,
-                                            })),
-                                        ]}
-                                        placeholder="Team Members"
-                                        disabled={processing}
-                                        icon={<User className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="created-date-from" className="text-xs font-medium">
-                                        Created Date From
-                                    </Label>
-                                    <DatePicker
-                                        selected={parseDate(filters['created-date-from'])}
-                                        onChange={(date) => handleFilterChange('created-date-from', date)}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="created-date-from"
-                                                icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
-                                                disabled={processing}
-                                                placeholder="Select start date"
-                                            />
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="created-date-to" className="text-xs font-medium">
-                                        Created Date To
-                                    </Label>
-                                    <DatePicker
-                                        selected={parseDate(filters['created-date-to'])}
-                                        onChange={(date) => handleFilterChange('created-date-to', date)}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="created-date-to"
-                                                icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
-                                                disabled={processing}
-                                                placeholder="Select end date"
-                                            />
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex items-end gap-2">
-                                    <FilterButton title="Apply filters" disabled={processing}>
-                                        <Search className="h-4 w-4" />
-                                    </FilterButton>
-
-                                    <FilterButton
-                                        variant="clear"
-                                        disabled={
-                                            processing ||
-                                            (!filters.client &&
-                                                !filters['team-member'] &&
-                                                !filters['created-date-from'] &&
-                                                !filters['created-date-to'] &&
-                                                !filters.search)
-                                        }
-                                        onClick={clearFilters}
-                                        title="Clear filters"
-                                    >
-                                        <TimerReset className="h-4 w-4" />
-                                    </FilterButton>
-                                </div>
-                            </form>
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">
@@ -604,12 +473,18 @@ export default function Projects() {
                                                                         </DropdownMenuItem>
                                                                     )}
 
-                                                                    <Link href={route('project.edit', project.id)}>
-                                                                        <DropdownMenuItem className="group cursor-pointer">
-                                                                            <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                            <span>Edit</span>
-                                                                        </DropdownMenuItem>
-                                                                    </Link>
+                                                                    <DropdownMenuItem
+                                                                        className="group cursor-pointer"
+                                                                        onSelect={(e) => {
+                                                                            e.preventDefault()
+                                                                            setMode('edit')
+                                                                            setEditProjectId(project.id)
+                                                                            setOffOpen(true)
+                                                                        }}
+                                                                    >
+                                                                        <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                        <span>Edit</span>
+                                                                    </DropdownMenuItem>
                                                                     <ProjectDeleteAction projectId={project.id} onDeleteSuccess={getProjects} />
                                                                 </>
                                                             )}
@@ -640,6 +515,45 @@ export default function Projects() {
                 </Card>
             </div>
             <ProjectNotesSheet projectId={notesProjectId} open={notesOpen} onOpenChange={(open) => setNotesOpen(open)} />
+            <ProjectOffCanvas
+                open={offOpen}
+                mode={mode}
+                onClose={() => setOffOpen(false)}
+                clients={clients}
+                teamMembers={teamMembers}
+                currencies={currencies}
+                projectId={editProjectId ?? undefined}
+            />
+            <ProjectFiltersOffCanvas
+                open={filtersOpen}
+                onOpenChange={setFiltersOpen}
+                filters={filters}
+                clients={clients}
+                teamMembers={teamMembers}
+                onApply={(applied) => {
+                    setFilters(applied)
+                    try {
+                        const params = new URLSearchParams(window.location.search)
+                        const setOrDelete = (key: string, value: string | null) => {
+                            const v = value ?? ''
+                            if (v) {
+                                params.set(key, v)
+                            } else {
+                                params.delete(key)
+                            }
+                        }
+                        setOrDelete('client', applied.client || '')
+                        setOrDelete('team-member', applied['team-member'] || '')
+                        setOrDelete('created-date-from', applied['created-date-from'])
+                        setOrDelete('created-date-to', applied['created-date-to'])
+                        setOrDelete('search', applied.search || '')
+                        const newUrl = `${window.location.pathname}?${params.toString()}`
+                        window.history.replaceState({}, '', newUrl)
+                    } catch {}
+
+                    getProjects(applied).then(() => {})
+                }}
+            />
         </MasterLayout>
     )
 }

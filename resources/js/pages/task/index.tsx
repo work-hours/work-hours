@@ -1,46 +1,25 @@
 import { ExportButton } from '@/components/action-buttons'
-import AddNewButton from '@/components/add-new-button'
-import FilterButton from '@/components/filter-button'
 import SourceLinkIcon from '@/components/source-link-icon'
 import TaskDeleteAction from '@/components/task-delete-action'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
-import CustomInput from '@/components/ui/custom-input'
-import DatePicker from '@/components/ui/date-picker'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import { useTimeTracker } from '@/contexts/time-tracker-context'
 import MasterLayout from '@/layouts/master-layout'
-import { objectToQueryString, parseDate, queryStringToObject } from '@/lib/utils'
+import TaskDetailsOffCanvas from '@/pages/task/components/TaskDetailsOffCanvas'
+import TaskFiltersOffCanvas from '@/pages/task/components/TaskFiltersOffCanvas'
+import TaskOffCanvas from '@/pages/task/components/TaskOffCanvas'
 import { type BreadcrumbItem, type SharedData } from '@/types'
 import { tasks as _tasks } from '@actions/TaskController'
 import { Head, Link, usePage } from '@inertiajs/react'
 import axios from 'axios'
-import {
-    AlertCircle,
-    Briefcase,
-    Calendar,
-    CalendarRange,
-    ClipboardList,
-    Edit,
-    FileText,
-    Flag,
-    Glasses,
-    Loader2,
-    MoreVertical,
-    Play,
-    Plus,
-    Printer,
-    Search,
-    TimerReset,
-} from 'lucide-react'
+import { Briefcase, Calendar, ClipboardList, Edit, FileText, Filter, Glasses, Loader2, MoreVertical, Play, Plus, Printer } from 'lucide-react'
 import { JSX, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Task, TaskFilters } from './types'
@@ -79,10 +58,16 @@ function TaskTrackButton({ task, currentUserId }: { task: Task; currentUserId: n
 }
 
 export default function Tasks() {
-    const { auth, projects, tags } = usePage<
+    const {
+        auth,
+        projects,
+        tags,
+        filters: serverFilters,
+    } = usePage<
         SharedData & {
             projects: { id: number; name: string }[]
             tags: { id: number; name: string; color: string }[]
+            filters: TaskFilters
         }
     >().props
     const [tasks, setTasks] = useState<Task[]>([])
@@ -107,6 +92,12 @@ export default function Tasks() {
         search: '',
     })
     const [processing, setProcessing] = useState(false)
+    const [filtersOpen, setFiltersOpen] = useState(false)
+    const [offOpen, setOffOpen] = useState(false)
+    const [mode, setMode] = useState<'create' | 'edit'>('create')
+    const [editTaskId, setEditTaskId] = useState<number | null>(null)
+    const [detailsOpen, setDetailsOpen] = useState(false)
+    const [detailsTaskId, setDetailsTaskId] = useState<number | null>(null)
 
     const handleStatusClick = (task: Task, status: Task['status']): void => {
         setTaskToUpdate(task)
@@ -176,6 +167,7 @@ export default function Tasks() {
         setLoading(true)
         setError(false)
         setProcessing(true)
+
         try {
             setTasks(
                 await _tasks.data({
@@ -189,23 +181,6 @@ export default function Tasks() {
             setLoading(false)
             setProcessing(false)
         }
-    }
-
-    const handleFilterChange = (key: keyof TaskFilters, value: string | number | number[] | Date | boolean | null): void => {
-        setFilters((prev) => ({ ...prev, [key]: value }))
-    }
-
-    const clearFilters = (): void => {
-        setFilters({
-            status: 'incomplete',
-            priority: 'all',
-            project: 'all',
-            tag: 'all',
-            'due-date-from': '',
-            'due-date-to': '',
-            'due-today': false,
-            search: '',
-        })
     }
 
     const getPriorityBadge = (priority: Task['priority']): JSX.Element => {
@@ -283,60 +258,52 @@ export default function Tasks() {
         }
     }
 
-    /**
-     * Helper function to safely format date values (handles both Date objects and strings)
-     */
-    const formatDateValue = (dateValue: Date | string | ''): string => {
-        if (dateValue instanceof Date) {
-            return dateValue.toISOString().split('T')[0]
-        } else if (typeof dateValue === 'string' && dateValue) {
-            return dateValue
-        }
-        return ''
-    }
+    useEffect(() => {
+        if (!serverFilters) return
 
-    const handleSubmit = (e: { preventDefault: () => void }): void => {
-        e.preventDefault()
-        const formattedFilters = { ...filters }
+        const qpPriority = (serverFilters.priority || '').toString()
+        const allowedPriorities = ['all', 'low', 'medium', 'high'] as const
 
-        if (formattedFilters['due-date-from'] instanceof Date) {
-            const year = formattedFilters['due-date-from'].getFullYear()
-            const month = String(formattedFilters['due-date-from'].getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters['due-date-from'].getDate()).padStart(2, '0')
-            formattedFilters['due-date-from'] = `${year}-${month}-${day}`
+        let dueTodayFilter = false
+        if (serverFilters['due-today']) {
+            dueTodayFilter =
+                typeof serverFilters['due-today'] === 'boolean'
+                    ? serverFilters['due-today']
+                    : String(serverFilters['due-today']).toLowerCase() !== 'false'
         }
 
-        if (formattedFilters['due-date-to'] instanceof Date) {
-            const year = formattedFilters['due-date-to'].getFullYear()
-            const month = String(formattedFilters['due-date-to'].getMonth() + 1).padStart(2, '0')
-            const day = String(formattedFilters['due-date-to'].getDate()).padStart(2, '0')
-            formattedFilters['due-date-to'] = `${year}-${month}-${day}`
+        const normalizedFilters: TaskFilters = {
+            status: (serverFilters.status as TaskFilters['status']) ?? 'incomplete',
+            priority: (allowedPriorities as readonly string[]).includes(qpPriority) ? (qpPriority as TaskFilters['priority']) : 'all',
+            project: serverFilters.project ?? 'all',
+            tag: serverFilters.tag ?? 'all',
+            'due-date-from': serverFilters['due-date-from'] ?? '',
+            'due-date-to': serverFilters['due-date-to'] ?? '',
+            'due-today': dueTodayFilter,
+            search: serverFilters.search ?? '',
         }
 
-        const filtersString = objectToQueryString(formattedFilters)
+        setFilters(normalizedFilters)
 
-        getTasks(formattedFilters).then(() => {
-            window.history.pushState({}, '', `?${filtersString}`)
-        })
-    }
+        getTasks(normalizedFilters).then()
+    }, [serverFilters])
 
     useEffect(() => {
-        const queryParams = queryStringToObject()
-
-        const initialFilters: TaskFilters = {
-            status: (queryParams.status as TaskFilters['status']) || 'incomplete',
-            priority: queryParams.priority || 'all',
-            project: queryParams.project || 'all',
-            tag: queryParams.tag || 'all',
-            'due-date-from': queryParams['due-date-from'] || '',
-            'due-date-to': queryParams['due-date-to'] || '',
-            'due-today': ['1', 'true', 'on'].includes((queryParams['due-today'] || '').toString()),
-            search: queryParams.search || '',
-        }
-
-        setFilters(initialFilters)
-        getTasks(initialFilters).then()
+        try {
+            const params = new URLSearchParams(window.location.search)
+            if ((params.get('open') || '').toLowerCase() === 'true') {
+                setMode('create')
+                setEditTaskId(null)
+                setOffOpen(true)
+            }
+        } catch {}
     }, [])
+
+    useEffect(() => {
+        const handler = () => getTasks(filters)
+        window.addEventListener('refresh-tasks', handler)
+        return () => window.removeEventListener('refresh-tasks', handler)
+    }, [filters])
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
@@ -367,267 +334,45 @@ export default function Tasks() {
                                     <Printer className="h-4 w-4" />
                                     <span className="hidden sm:inline">Print</span>
                                 </Button>
-                                <ExportButton href={route('task.export')} label="Export" />
-                                <AddNewButton href={route('task.create')}>
+                                {(() => {
+                                    const hasActiveFilters = Boolean(
+                                        filters.search ||
+                                            (filters.status && filters.status !== 'all' && filters.status !== 'incomplete') ||
+                                            (filters.priority && filters.priority !== 'all') ||
+                                            (filters.project && filters.project !== 'all') ||
+                                            (filters.tag && filters.tag !== 'all') ||
+                                            filters['due-date-from'] ||
+                                            filters['due-date-to'] ||
+                                            filters['due-today'],
+                                    )
+
+                                    return (
+                                        <Button
+                                            variant={hasActiveFilters ? 'default' : 'outline'}
+                                            className={`flex items-center gap-2 ${
+                                                hasActiveFilters
+                                                    ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
+                                                    : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+                                            }`}
+                                            onClick={() => setFiltersOpen(true)}
+                                        >
+                                            <Filter className={`h-4 w-4 ${hasActiveFilters ? 'text-primary dark:text-primary-foreground' : ''}`} />
+                                            <span>{hasActiveFilters ? 'Filters Applied' : 'Filters'}</span>
+                                        </Button>
+                                    )
+                                })()}
+                                <ExportButton href={route('task.export') + window.location.search} label="Export" />
+                                <Button
+                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    onClick={() => {
+                                        setMode('create')
+                                        setEditTaskId(null)
+                                        setOffOpen(true)
+                                    }}
+                                >
                                     <Plus className="h-4 w-4" />
                                     <span>Add Task</span>
-                                </AddNewButton>
-                            </div>
-                        </div>
-
-                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700 print:hidden">
-                            <form onSubmit={handleSubmit} className="flex w-full flex-row flex-wrap gap-4">
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="search" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Search
-                                    </Label>
-                                    <div className="relative">
-                                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-400 dark:text-gray-500" />
-                                        <Input
-                                            id="search"
-                                            placeholder="Search"
-                                            className="h-10 border-gray-200 bg-white pl-10 text-gray-800 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500"
-                                            value={filters.search}
-                                            onChange={(e) => handleFilterChange('search', e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="status" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Status
-                                    </Label>
-                                    <SearchableSelect
-                                        id="status"
-                                        value={filters.status}
-                                        onChange={(value) => handleFilterChange('status', value)}
-                                        options={[
-                                            { id: 'all', name: 'Statuses' },
-                                            { id: 'incomplete', name: 'Incomplete' },
-                                            { id: 'pending', name: 'Pending' },
-                                            { id: 'in_progress', name: 'In Progress' },
-                                            { id: 'completed', name: 'Completed' },
-                                        ]}
-                                        placeholder="Statuses"
-                                        disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="priority" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Priority
-                                    </Label>
-                                    <SearchableSelect
-                                        id="priority"
-                                        value={filters.priority}
-                                        onChange={(value) => handleFilterChange('priority', value)}
-                                        options={[
-                                            { id: 'all', name: 'Priorities' },
-                                            { id: 'low', name: 'Low' },
-                                            { id: 'medium', name: 'Medium' },
-                                            { id: 'high', name: 'High' },
-                                        ]}
-                                        placeholder="Priorities"
-                                        disabled={processing}
-                                        icon={<Flag className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="project" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Project
-                                    </Label>
-                                    <SearchableSelect
-                                        id="project"
-                                        value={filters.project}
-                                        onChange={(value) => handleFilterChange('project', value)}
-                                        options={[
-                                            { id: 'all', name: 'Projects' },
-                                            ...projects.map((project) => ({
-                                                id: project.id.toString(),
-                                                name: project.name,
-                                            })),
-                                        ]}
-                                        placeholder="Projects"
-                                        disabled={processing}
-                                        icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="tag" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Tag
-                                    </Label>
-                                    <SearchableSelect
-                                        id="tag"
-                                        value={filters.tag}
-                                        onChange={(value) => handleFilterChange('tag', value)}
-                                        options={[
-                                            { id: 'all', name: 'Tags' },
-                                            ...tags.map((tag) => ({
-                                                id: tag.id.toString(),
-                                                name: tag.name,
-                                            })),
-                                        ]}
-                                        placeholder="Tags"
-                                        disabled={processing}
-                                        icon={<Flag className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="due-date-from" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Due Date From
-                                    </Label>
-                                    <DatePicker
-                                        selected={parseDate(filters['due-date-from'])}
-                                        onChange={(date) => handleFilterChange('due-date-from', date)}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="due-date-from"
-                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select start date"
-                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex w-full flex-col gap-1 sm:w-auto sm:flex-1">
-                                    <Label htmlFor="due-date-to" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Due Date To
-                                    </Label>
-                                    <DatePicker
-                                        selected={parseDate(filters['due-date-to'])}
-                                        onChange={(date) => handleFilterChange('due-date-to', date)}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="due-date-to"
-                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select end date"
-                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex items-end gap-3">
-                                    <div className="flex items-center space-x-2 rounded-md border px-3 py-2">
-                                        <Checkbox
-                                            id="due-today"
-                                            checked={Boolean(filters['due-today'])}
-                                            onCheckedChange={(checked) => handleFilterChange('due-today', checked === true)}
-                                            disabled={processing}
-                                        />
-                                        <Label htmlFor="due-today" className="text-sm">
-                                            Due today
-                                        </Label>
-                                    </div>
-
-                                    <FilterButton title="Apply filters" disabled={processing}>
-                                        <Search className="h-4 w-4" />
-                                    </FilterButton>
-
-                                    <FilterButton
-                                        variant="clear"
-                                        disabled={
-                                            processing ||
-                                            (filters.status === 'all' &&
-                                                filters.priority === 'all' &&
-                                                filters.project === 'all' &&
-                                                filters.tag === 'all' &&
-                                                !filters['due-date-from'] &&
-                                                !filters['due-date-to'] &&
-                                                !filters['due-today'] &&
-                                                !filters.search)
-                                        }
-                                        onClick={clearFilters}
-                                        title="Clear filters"
-                                    >
-                                        <TimerReset className="h-4 w-4" />
-                                    </FilterButton>
-                                </div>
-                            </form>
-
-                            <div className={'mt-4 text-sm text-muted-foreground'}>
-                                {(filters.status !== 'all' ||
-                                    filters.priority !== 'all' ||
-                                    filters.project !== 'all' ||
-                                    filters.tag !== 'all' ||
-                                    filters['due-date-from'] ||
-                                    filters['due-date-to'] ||
-                                    filters.search) && (
-                                    <CardDescription>
-                                        {(() => {
-                                            let description = ''
-
-                                            if (filters['due-date-from'] && filters['due-date-to']) {
-                                                description = `Showing tasks from ${formatDateValue(filters['due-date-from'])} to ${formatDateValue(filters['due-date-to'])}`
-                                            } else if (filters['due-date-from']) {
-                                                description = `Showing tasks from ${formatDateValue(filters['due-date-from'])}`
-                                            } else if (filters['due-date-to']) {
-                                                description = `Showing tasks until ${formatDateValue(filters['due-date-to'])}`
-                                            }
-
-                                            if (filters.status !== 'all') {
-                                                if (description) {
-                                                    description += ` with status "${filters.status.replace('_', ' ')}"`
-                                                } else {
-                                                    description = `Showing tasks with status "${filters.status.replace('_', ' ')}"`
-                                                }
-                                            }
-
-                                            if (filters.priority !== 'all') {
-                                                if (description) {
-                                                    description += ` and priority "${filters.priority}"`
-                                                } else {
-                                                    description = `Showing tasks with priority "${filters.priority}"`
-                                                }
-                                            }
-
-                                            if (filters.project !== 'all') {
-                                                const project = projects.find((p) => p.id.toString() === filters.project)
-                                                if (project) {
-                                                    if (description) {
-                                                        description += ` in project "${project.name}"`
-                                                    } else {
-                                                        description = `Showing tasks in project "${project.name}"`
-                                                    }
-                                                }
-                                            }
-
-                                            if (filters.tag !== 'all') {
-                                                const tag = tags.find((t) => t.id.toString() === filters.tag)
-                                                if (tag) {
-                                                    if (description) {
-                                                        description += ` with tag "${tag.name}"`
-                                                    } else {
-                                                        description = `Showing tasks with tag "${tag.name}"`
-                                                    }
-                                                }
-                                            }
-
-                                            if (filters.search) {
-                                                if (description) {
-                                                    description += ` matching "${filters.search}"`
-                                                } else {
-                                                    description = `Showing tasks matching "${filters.search}"`
-                                                }
-                                            }
-
-                                            return description
-                                        })()}
-                                    </CardDescription>
-                                )}
+                                </Button>
                             </div>
                         </div>
                     </CardHeader>
@@ -772,21 +517,36 @@ export default function Tasks() {
                                                                 </Button>
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent>
+                                                                <DropdownMenuItem
+                                                                    className="group cursor-pointer"
+                                                                    onSelect={(e) => {
+                                                                        e.preventDefault()
+                                                                        setDetailsTaskId(task.id)
+                                                                        setDetailsOpen(true)
+                                                                    }}
+                                                                >
+                                                                    <Glasses className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Quick View</span>
+                                                                </DropdownMenuItem>
                                                                 <Link href={route('task.detail', task.id)}>
                                                                     <DropdownMenuItem className="group cursor-pointer">
                                                                         <Glasses className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                         <span>View</span>
                                                                     </DropdownMenuItem>
                                                                 </Link>
-
                                                                 {(task.project.user_id === auth.user.id || task.created_by === auth.user.id) && (
                                                                     <>
-                                                                        <Link href={route('task.edit', task.id)}>
-                                                                            <DropdownMenuItem className="group cursor-pointer">
-                                                                                <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                                <span>Edit</span>
-                                                                            </DropdownMenuItem>
-                                                                        </Link>
+                                                                        <DropdownMenuItem
+                                                                            className="group cursor-pointer"
+                                                                            onClick={() => {
+                                                                                setMode('edit')
+                                                                                setEditTaskId(task.id)
+                                                                                setOffOpen(true)
+                                                                            }}
+                                                                        >
+                                                                            <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                            <span>Edit</span>
+                                                                        </DropdownMenuItem>
                                                                         {task.project.user_id === auth.user.id && (
                                                                             <TaskDeleteAction
                                                                                 taskId={task.id}
@@ -814,12 +574,17 @@ export default function Tasks() {
                                     <FileText className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Tasks</h3>
                                     <p className="mb-4 text-muted-foreground">You haven't added any tasks yet.</p>
-                                    <Link href={route('task.create')}>
-                                        <Button className="flex items-center gap-2">
-                                            <Plus className="h-4 w-4" />
-                                            <span>Add Task</span>
-                                        </Button>
-                                    </Link>
+                                    <Button
+                                        className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                        onClick={() => {
+                                            setMode('create')
+                                            setEditTaskId(null)
+                                            setOffOpen(true)
+                                        }}
+                                    >
+                                        <Plus className="h-4 w-4" />
+                                        <span>Add Task</span>
+                                    </Button>
                                 </div>
                             </div>
                         )}
@@ -909,6 +674,9 @@ export default function Tasks() {
                     </DialogContent>
                 </Dialog>
             </div>
+            <TaskFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} projects={projects} tags={tags} />
+            <TaskOffCanvas open={offOpen} mode={mode} onClose={() => setOffOpen(false)} projects={projects} taskId={editTaskId ?? undefined} />
+            <TaskDetailsOffCanvas open={detailsOpen} onClose={() => setDetailsOpen(false)} taskId={detailsTaskId} />
         </MasterLayout>
     )
 }

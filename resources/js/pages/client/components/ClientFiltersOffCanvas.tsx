@@ -1,0 +1,31 @@
+import type { ClientFilters } from '@/@types/client'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import ClientFiltersComponent from '@/pages/client/components/ClientFilters'
+import { SlidersHorizontal } from 'lucide-react'
+
+type Props = {
+    open: boolean
+    onOpenChange: (open: boolean) => void
+    filters: ClientFilters
+}
+
+export default function ClientFiltersOffCanvas({ open, onOpenChange, filters }: Props) {
+    return (
+        <Sheet open={open} onOpenChange={onOpenChange}>
+            <SheetContent side="right" className="overflow-y-auto bg-white pr-6 pb-8 pl-6 sm:max-w-md md:max-w-lg dark:bg-neutral-900">
+                <SheetHeader className="">
+                    <SheetTitle className="flex items-center gap-2 text-xl text-neutral-900 dark:text-white">
+                        <SlidersHorizontal className="h-5 w-5 text-neutral-700 dark:text-neutral-300" /> Filters
+                    </SheetTitle>
+                    <SheetDescription className="text-sm text-neutral-500 dark:text-neutral-400">
+                        Narrow down clients by date range or search.
+                    </SheetDescription>
+                </SheetHeader>
+
+                <div className="rounded-md border border-neutral-100 bg-white dark:border-neutral-800 dark:bg-neutral-800/30">
+                    <ClientFiltersComponent filters={filters} />
+                </div>
+            </SheetContent>
+        </Sheet>
+    )
+}

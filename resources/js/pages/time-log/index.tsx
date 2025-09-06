@@ -1,36 +1,21 @@
 import { ExportButton } from '@/components/action-buttons'
-import AddNewButton from '@/components/add-new-button'
 import StatsCards from '@/components/dashboard/StatsCards'
-import FilterButton from '@/components/filter-button'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import CustomInput from '@/components/ui/custom-input'
-import DatePicker from '@/components/ui/date-picker'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { SearchableSelect } from '@/components/ui/searchable-select'
 import MasterLayout from '@/layouts/master-layout'
+import TimeLogFiltersOffCanvas from '@/pages/time-log/components/TimeLogFiltersOffCanvas'
+import TimeLogOffCanvas from '@/pages/time-log/components/TimeLogOffCanvas'
 import { type BreadcrumbItem } from '@/types'
-import { TimeLogStatus, timeLogStatusOptions } from '@/types/TimeLogStatus'
-import { Head, Link, router, useForm } from '@inertiajs/react'
+import { TimeLogStatus } from '@/types/TimeLogStatus'
+import { Head, router, useForm } from '@inertiajs/react'
 import axios from 'axios'
-import {
-    AlertCircle,
-    Briefcase,
-    Calendar,
-    CalendarRange,
-    CheckCircle,
-    ClockIcon,
-    FileSpreadsheet,
-    PlusCircle,
-    Search,
-    TimerReset,
-    Upload,
-} from 'lucide-react'
-import { ChangeEvent, FormEventHandler, useRef, useState } from 'react'
+import { AlertCircle, CheckCircle, ClockIcon, FileSpreadsheet, Filter, PlusCircle, Upload } from 'lucide-react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -77,6 +62,8 @@ type Props = {
     weeklyAverage: number
     unbillableHours: number
     tags: { id: number; name: string }[]
+    tasks: { id: number; title: string; project_id: number; is_imported?: boolean; meta?: { source?: string; source_state?: string } }[]
+    open?: boolean
 }
 
 export default function TimeLog({
@@ -90,7 +77,13 @@ export default function TimeLog({
     weeklyAverage,
     unbillableHours,
     tags,
+    tasks,
+    open,
 }: Props) {
+    const [offOpen, setOffOpen] = useState(Boolean(open))
+    const [mode, setMode] = useState<'create' | 'edit'>('create')
+    const [editLog, setEditLog] = useState<TimeLogEntry | null>(null)
+    const [filtersOpen, setFiltersOpen] = useState(false)
     const { data, setData, get, processing } = useForm<Filters>({
         'start-date': filters['start-date'] || '',
         'end-date': filters['end-date'] || '',
@@ -99,6 +92,8 @@ export default function TimeLog({
         status: filters.status || '',
         tag: filters.tag || '',
     })
+
+    const [hasActiveFilters, setHasActiveFilters] = useState(false)
 
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
     const [importDialogOpen, setImportDialogOpen] = useState(false)
@@ -115,6 +110,15 @@ export default function TimeLog({
             setSelectedLogs(selectedLogs.filter((logId) => logId !== id))
         }
     }
+
+    useEffect(() => {
+        setHasActiveFilters(Boolean(data['start-date'] || data['end-date'] || data.project || data['is-paid'] || data.status || data.tag))
+        const handler = () => {
+            get(route('time-log.index'), { preserveState: true })
+        }
+        window.addEventListener('refresh-time-logs', handler)
+        return () => window.removeEventListener('refresh-time-logs', handler)
+    }, [])
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -206,32 +210,6 @@ export default function TimeLog({
         )
     }
 
-    const startDate = data['start-date'] ? new Date(data['start-date']) : null
-    const endDate = data['end-date'] ? new Date(data['end-date']) : null
-
-    const handleStartDateChange = (date: Date | null) => {
-        if (date) {
-            setData('start-date', date.toISOString().split('T')[0])
-        } else {
-            setData('start-date', '')
-        }
-    }
-
-    const handleEndDateChange = (date: Date | null) => {
-        if (date) {
-            setData('end-date', date.toISOString().split('T')[0])
-        } else {
-            setData('end-date', '')
-        }
-    }
-
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault()
-        get(route('time-log.index'), {
-            preserveState: true,
-        })
-    }
-
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
             <Head title="Time Log" />
@@ -262,7 +240,7 @@ export default function TimeLog({
                 )}
 
                 <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
-                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                    <CardHeader className="p-4 dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="text-xl">Your Time Logs</CardTitle>
@@ -327,6 +305,18 @@ export default function TimeLog({
                                 )}
                             </div>
                             <div className="flex gap-2">
+                                <Button
+                                    variant={hasActiveFilters ? 'default' : 'outline'}
+                                    className={`flex items-center gap-2 ${
+                                        hasActiveFilters
+                                            ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
+                                            : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                                    }`}
+                                    onClick={() => setFiltersOpen(true)}
+                                >
+                                    <Filter className={`h-3 w-3 ${hasActiveFilters ? 'text-primary dark:text-primary-foreground' : ''}`} />
+                                    <span>{hasActiveFilters ? 'Filters Applied' : 'Filters'}</span>
+                                </Button>
                                 <ExportButton href={route('time-log.export') + window.location.search} label="Export" />
                                 <a href={route('time-log.template')} className="inline-block">
                                     <Button
@@ -354,152 +344,19 @@ export default function TimeLog({
                                         <span>Mark as Paid ({selectedLogs.length})</span>
                                     </Button>
                                 )}
-                                <AddNewButton href={route('time-log.create')}>
+                                <Button
+                                    variant="default"
+                                    className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                    onClick={() => {
+                                        setMode('create')
+                                        setEditLog(null)
+                                        setOffOpen(true)
+                                    }}
+                                >
                                     <ClockIcon className="h-3 w-3" />
                                     <span>Log Time</span>
-                                </AddNewButton>
+                                </Button>
                             </div>
-                        </div>
-
-                        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
-                            <form onSubmit={submit} className="flex w-full flex-row gap-4">
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="start-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Start Date
-                                    </Label>
-                                    <DatePicker
-                                        selected={startDate}
-                                        onChange={handleStartDateChange}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="start-date"
-                                                icon={<Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select start date"
-                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="end-date" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        End Date
-                                    </Label>
-                                    <DatePicker
-                                        selected={endDate}
-                                        onChange={handleEndDateChange}
-                                        dateFormat="yyyy-MM-dd"
-                                        isClearable
-                                        disabled={processing}
-                                        customInput={
-                                            <CustomInput
-                                                id="end-date"
-                                                icon={<CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                                disabled={processing}
-                                                placeholder="Select end date"
-                                                className="h-10 border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                            />
-                                        }
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="project" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Project
-                                    </Label>
-                                    <SearchableSelect
-                                        id="project"
-                                        value={data.project}
-                                        onChange={(value) => setData('project', value)}
-                                        options={[{ id: '', name: 'All Projects' }, ...projects]}
-                                        placeholder="Select project"
-                                        disabled={processing}
-                                        icon={<Briefcase className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="is-paid" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Payment Status
-                                    </Label>
-                                    <SearchableSelect
-                                        id="is-paid"
-                                        value={data['is-paid']}
-                                        onChange={(value) => setData('is-paid', value)}
-                                        options={[
-                                            { id: '', name: 'All Statuses' },
-                                            { id: 'true', name: 'Paid' },
-                                            { id: 'false', name: 'Unpaid' },
-                                        ]}
-                                        placeholder="Select status"
-                                        disabled={processing}
-                                        icon={<CheckCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="status" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Approval Status
-                                    </Label>
-                                    <SearchableSelect
-                                        id="status"
-                                        value={data.status}
-                                        onChange={(value) => setData('status', value)}
-                                        options={[{ id: '', name: 'All Statuses' }, ...timeLogStatusOptions]}
-                                        placeholder="Approval status"
-                                        disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-                                <div className="flex w-full flex-col gap-1">
-                                    <Label htmlFor="tag" className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                        Tag
-                                    </Label>
-                                    <SearchableSelect
-                                        id="tag"
-                                        value={data.tag}
-                                        onChange={(value) => setData('tag', value)}
-                                        options={[{ id: '', name: 'All Tags' }, ...tags]}
-                                        placeholder="Select tag"
-                                        disabled={processing}
-                                        icon={<AlertCircle className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
-                                    />
-                                </div>
-                                <div className="flex items-end gap-2">
-                                    <FilterButton title="Apply filters" disabled={processing}>
-                                        <Search className="h-4 w-4" />
-                                    </FilterButton>
-
-                                    <FilterButton
-                                        variant="clear"
-                                        disabled={
-                                            processing ||
-                                            (!data['start-date'] &&
-                                                !data['end-date'] &&
-                                                !data.project &&
-                                                !data['is-paid'] &&
-                                                !data.status &&
-                                                !data.tag)
-                                        }
-                                        onClick={() => {
-                                            setData({
-                                                'start-date': '',
-                                                'end-date': '',
-                                                project: '',
-                                                'is-paid': '',
-                                                status: '',
-                                                tag: '',
-                                            })
-                                            get(route('time-log.index'), {
-                                                preserveState: true,
-                                            })
-                                        }}
-                                        title="Clear filters"
-                                    >
-                                        <TimerReset className="h-4 w-4" />
-                                    </FilterButton>
-                                </div>
-                            </form>
                         </div>
                     </CardHeader>
                     <CardContent className="p-0">
@@ -510,6 +367,11 @@ export default function TimeLog({
                                 showCheckboxes={true}
                                 selectedLogs={selectedLogs}
                                 onSelectLog={handleSelectLog}
+                                onEdit={(log) => {
+                                    setMode('edit')
+                                    setEditLog(log)
+                                    setOffOpen(true)
+                                }}
                             />
                         ) : (
                             <div className="rounded-md border bg-muted/5 p-6">
@@ -517,12 +379,17 @@ export default function TimeLog({
                                     <ClockIcon className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Time Logs</h3>
                                     <p className="mb-4 text-muted-foreground">You haven't added any time logs yet.</p>
-                                    <Link href={route('time-log.create')}>
-                                        <Button className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600">
-                                            <PlusCircle className="h-3 w-3" />
-                                            <span>Add Time Log</span>
-                                        </Button>
-                                    </Link>
+                                    <Button
+                                        className="flex items-center gap-2 bg-gray-900 text-sm text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                        onClick={() => {
+                                            setMode('create')
+                                            setEditLog(null)
+                                            setOffOpen(true)
+                                        }}
+                                    >
+                                        <PlusCircle className="h-3 w-3" />
+                                        <span>Add Time Log</span>
+                                    </Button>
                                 </div>
                             </div>
                         )}
@@ -587,6 +454,37 @@ export default function TimeLog({
                     </DialogContent>
                 </Dialog>
             </div>
+
+            <TimeLogFiltersOffCanvas
+                open={filtersOpen}
+                onOpenChange={setFiltersOpen}
+                filters={data}
+                projects={projects}
+                tags={tags}
+                setHasActiveFilters={setHasActiveFilters}
+            />
+
+            <TimeLogOffCanvas
+                open={offOpen}
+                mode={mode}
+                onClose={() => setOffOpen(false)}
+                projects={projects}
+                tasks={tasks}
+                timeLog={
+                    editLog
+                        ? {
+                              id: editLog.id,
+                              project_id: editLog.project_id || 0,
+                              task_id: (editLog as unknown as { task_id?: number | null }).task_id ?? null,
+                              start_timestamp: editLog.start_timestamp,
+                              end_timestamp: editLog.end_timestamp || '',
+                              note: editLog.note || '',
+                              non_billable: Boolean(editLog.non_billable),
+                              tags: (editLog.tags || []).map((t) => t.name),
+                          }
+                        : undefined
+                }
+            />
         </MasterLayout>
     )
 }

@@ -1,4 +1,5 @@
 import { MasterSidebarProps, NavItemGroup } from '@/@types/components'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useNotifications } from '@/contexts/notifications-context'
 import { type SharedData } from '@/types'
 import { Link, usePage } from '@inertiajs/react'
@@ -12,25 +13,14 @@ import { UserSection } from './sidebar/user-section'
 
 const navGroups: NavItemGroup[] = [
     {
-        title: 'Dashboard',
-        icon: LayoutGrid,
+        title: 'Work',
+        icon: Building,
         items: [
-            {
-                title: 'Dashboard',
-                href: '/dashboard',
-                icon: LayoutGrid,
-            },
             {
                 title: 'Team',
                 href: '/team',
                 icon: LucideServerCog,
             },
-        ],
-    },
-    {
-        title: 'Work',
-        icon: Building,
-        items: [
             {
                 title: 'Clients',
                 href: '/client',
@@ -103,13 +93,58 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                 }`}
             >
                 <div className={`flex w-full items-center ${collapsed ? 'flex-col justify-center' : ''}`}>
-                    <Link href={route('dashboard')} className={`${collapsed ? 'mb-2 flex items-center justify-center p-1' : 'flex items-center'}`}>
+                    <a href="/dashboard" className={`${collapsed ? 'mb-2 flex items-center justify-center p-1' : 'flex items-center'}`}>
                         {collapsed ? <AppLogoIcon className="h-12 w-24 text-neutral-700 dark:text-neutral-300" /> : <AppLogo />}
-                    </Link>
+                    </a>
                 </div>
             </div>
 
             <div className={`flex flex-1 flex-col overflow-y-auto pt-3 ${collapsed ? 'px-2' : 'px-4'}`}>
+                <div className="mb-3">
+                    <TooltipProvider>
+                        <div className="relative">
+                            <Link
+                                href="/dashboard"
+                                className={`group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200 ${
+                                    typeof window !== 'undefined' &&
+                                    (window.location.pathname === '/dashboard' || window.location.pathname.startsWith('/dashboard/'))
+                                        ? 'bg-neutral-50 text-neutral-900 shadow-sm dark:bg-neutral-800 dark:text-neutral-100'
+                                        : 'text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100'
+                                }`}
+                            >
+                                <div className="relative">
+                                    <LayoutGrid
+                                        className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
+                                            typeof window !== 'undefined' &&
+                                            (window.location.pathname === '/dashboard' || window.location.pathname.startsWith('/dashboard/'))
+                                                ? 'text-neutral-900 dark:text-neutral-100'
+                                                : 'text-neutral-500 dark:text-neutral-400'
+                                        } ${!collapsed ? 'mr-3' : ''}`}
+                                        aria-hidden="true"
+                                    />
+                                </div>
+                                {!collapsed && <span>Dashboard</span>}
+                                {typeof window !== 'undefined' &&
+                                    (window.location.pathname === '/dashboard' || window.location.pathname.startsWith('/dashboard/')) && (
+                                        <div className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-neutral-600 dark:bg-neutral-400"></div>
+                                    )}
+                            </Link>
+                            {collapsed && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                        side="right"
+                                        className="border-neutral-200 bg-white text-neutral-800 shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                                    >
+                                        Dashboard
+                                    </TooltipContent>
+                                </Tooltip>
+                            )}
+                        </div>
+                    </TooltipProvider>
+                </div>
                 <div className="mb-6">
                     <div className="mb-3 pb-2">
                         <h3

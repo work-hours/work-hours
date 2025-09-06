@@ -1,4 +1,3 @@
-import AddNewButton from '@/components/add-new-button'
 import BackButton from '@/components/back-button'
 import {
     AlertDialog,
@@ -188,11 +187,6 @@ export default function TaskDetail({ task, attachments = [], mentionableUsers = 
             <div className="mx-auto max-w-4xl space-y-4">
                 <div className="flex items-center justify-between">
                     <BackButton />
-                    {currentUserId === task.project.user_id && (
-                        <AddNewButton href={route('task.edit', task.id)}>
-                            <Pencil className="h-4 w-4" /> Edit Task
-                        </AddNewButton>
-                    )}
                 </div>
 
                 <Card>

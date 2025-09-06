@@ -46,6 +46,7 @@ type TimeLogTableProps = {
     showEditDelete?: boolean
     selectedLogs?: number[]
     onSelectLog?: (id: number, checked: boolean) => void
+    onEdit?: (log: TimeLogEntry) => void
 }
 
 export default function TimeLogTable({
@@ -58,6 +59,7 @@ export default function TimeLogTable({
     showEditDelete = true,
     selectedLogs = [],
     onSelectLog,
+    onEdit,
 }: TimeLogTableProps) {
     const [selectedTimeLog, setSelectedTimeLog] = useState<TimeLogEntry | null>(null)
     const [isDetailsOpen, setIsDetailsOpen] = useState(false)
@@ -239,12 +241,19 @@ export default function TimeLogTable({
                                             {showEditDelete && (
                                                 <>
                                                     {!log.is_paid ? (
-                                                        <Link href={route('time-log.edit', log.id)}>
-                                                            <DropdownMenuItem className="group cursor-pointer">
+                                                        onEdit ? (
+                                                            <DropdownMenuItem className="group cursor-pointer" onSelect={() => onEdit(log)}>
                                                                 <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                 <span>Edit</span>
                                                             </DropdownMenuItem>
-                                                        </Link>
+                                                        ) : (
+                                                            <Link href={route('time-log.edit', log.id)}>
+                                                                <DropdownMenuItem className="group cursor-pointer">
+                                                                    <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Edit</span>
+                                                                </DropdownMenuItem>
+                                                            </Link>
+                                                        )
                                                     ) : (
                                                         <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
                                                             <Edit className="mr-2 h-4 w-4 text-gray-400" />

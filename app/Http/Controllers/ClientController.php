@@ -34,6 +34,7 @@ final class ClientController extends Controller
         return Inertia::render('client/index', [
             'clients' => $clients,
             'filters' => ClientStore::filters(),
+            'currencies' => Auth::user()->currencies,
         ]);
     }
 
@@ -41,16 +42,6 @@ final class ClientController extends Controller
     public function clients(): Collection
     {
         return ClientStore::userClients(Auth::id());
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(): Response
-    {
-        return Inertia::render('client/create', [
-            'currencies' => Auth::user()->currencies,
-        ]);
     }
 
     /**
@@ -77,17 +68,6 @@ final class ClientController extends Controller
             DB::rollBack();
             throw $e;
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Client $client): Response
-    {
-        return Inertia::render('client/edit', [
-            'client' => $client,
-            'currencies' => Auth::user()->currencies,
-        ]);
     }
 
     /**

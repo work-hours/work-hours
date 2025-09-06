@@ -47,6 +47,7 @@ final class ProjectController extends Controller
             'filters' => $filters,
             'clients' => $clients,
             'teamMembers' => $teamMembers,
+            'currencies' => auth()->user()->currencies,
         ]);
     }
 
@@ -125,6 +126,40 @@ final class ProjectController extends Controller
             'clients' => $clients,
             'currencies' => auth()->user()->currencies,
         ]);
+    }
+
+    #[Action(method: 'get', name: 'project.edit-data', params: ['project'], middleware: ['auth', 'verified'])]
+    public function editData(Project $project): array
+    {
+        Gate::authorize('update', $project);
+
+        [$clients, $teamMembers] = $this->projectService->clientsAndTeamMembers(auth()->id());
+
+        $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
+        $assignedApprovers = $project->approvers->pluck('id')->toArray();
+        $teamMemberRates = $project->teamMembers->mapWithKeys(fn ($member) => [
+            $member->id => [
+                'hourly_rate' => $member->pivot->hourly_rate,
+                'currency' => $member->pivot->currency,
+            ],
+        ]);
+
+        return [
+            'project' => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'description' => $project->description,
+                'client_id' => $project->client_id,
+                'source' => $project->source,
+                'is_imported' => $project->source !== null,
+            ],
+            'teamMembers' => $teamMembers,
+            'assignedTeamMembers' => $assignedTeamMembers,
+            'assignedApprovers' => $assignedApprovers,
+            'teamMemberRates' => $teamMemberRates,
+            'clients' => $clients,
+            'currencies' => auth()->user()->currencies,
+        ];
     }
 
     /**
@@ -209,14 +244,12 @@ final class ProjectController extends Controller
         Gate::authorize('viewTimeLogs', $project);
 
         $timeLogs = TimeLogStore::timeLogs(baseQuery: $this->timeLogService->baseProjectQuery($project));
-        $tasks = $project->tasks()->with('assignees')->get();
 
         $teamMembers = ProjectStore::teamMembers(project: $project);
 
         return Inertia::render('project/time-logs', [
             'project' => $project,
             'teamMembers' => $teamMembers,
-            'tasks' => $tasks,
             ...TimeLogStore::resData(timeLogs: $timeLogs),
         ]);
     }
