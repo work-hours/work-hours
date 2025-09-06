@@ -1,36 +1,18 @@
 import { ExportButton } from '@/components/action-buttons'
-import AddNewButton from '@/components/add-new-button'
 import BackButton from '@/components/back-button'
 import StatsCards from '@/components/dashboard/StatsCards'
 import FilterButton from '@/components/filter-button'
-import ProjectTaskDeleteAction from '@/components/project-task-delete-action'
 import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import CustomInput from '@/components/ui/custom-input'
 import DatePicker from '@/components/ui/date-picker'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
 import { SearchableSelect } from '@/components/ui/searchable-select'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
 import { Head, router, useForm } from '@inertiajs/react'
-import {
-    AlertCircle,
-    Calendar,
-    CalendarRange,
-    CheckCircle,
-    ClipboardList,
-    ClockIcon,
-    Edit,
-    MoreVertical,
-    Plus,
-    Search,
-    TimerReset,
-    User,
-} from 'lucide-react'
+import { AlertCircle, Calendar, CalendarRange, CheckCircle, ClockIcon, Search, TimerReset, User } from 'lucide-react'
 import { FormEventHandler, useState } from 'react'
 
 type TimeLog = {
@@ -102,7 +84,6 @@ type Props = {
     weeklyAverage: number
     unbillableHours: number
     isCreator: boolean
-    tasks: Task[]
 }
 
 export default function ProjectTimeLogs({
@@ -117,7 +98,6 @@ export default function ProjectTimeLogs({
     weeklyAverage,
     unbillableHours,
     isCreator,
-    tasks,
 }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -448,153 +428,6 @@ export default function ProjectTimeLogs({
                                     <ClockIcon className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Time Logs</h3>
                                     <p className="mb-4 text-muted-foreground">No time logs have been added to this project yet.</p>
-                                </div>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-
-                <Card className="overflow-hidden transition-all hover:shadow-md">
-                    <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="text-xl">{project.name} - Tasks</CardTitle>
-                                <CardDescription>
-                                    {tasks.length > 0
-                                        ? `Showing ${tasks.length} ${tasks.length === 1 ? 'task' : 'tasks'}`
-                                        : 'No tasks found for this project'}
-                                </CardDescription>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <AddNewButton href={`/task/create?project_id=${project.id}`}>
-                                    <Plus className="h-4 w-4" />
-                                    <span>Add Task</span>
-                                </AddNewButton>
-                            </div>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        {tasks.length > 0 ? (
-                            <Table>
-                                <TableHeader>
-                                    <TableHeaderRow>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-xs font-medium text-gray-500 dark:text-gray-400">
-                                            Task Details
-                                        </TableHead>
-                                        <TableHead className="dark:bg-gray-750 bg-gray-50 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
-                                            Actions
-                                        </TableHead>
-                                    </TableHeaderRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {tasks.map((task) => (
-                                        <TableRow
-                                            key={task.id}
-                                            className="dark:hover:bg-gray-750 border-b border-gray-100 hover:bg-gray-50 dark:border-gray-700"
-                                        >
-                                            <TableCell className="max-w-xl">
-                                                <div className="flex flex-col gap-3">
-                                                    <div className="flex flex-wrap items-center gap-2">
-                                                        <span className="font-medium text-gray-900 dark:text-gray-100">{task.title}</span>
-                                                        <div className="flex flex-wrap items-center gap-1.5">
-                                                            {task.status === 'completed' && (
-                                                                <Badge variant="success" className="capitalize">
-                                                                    {task.status.replace('_', ' ')}
-                                                                </Badge>
-                                                            )}
-                                                            {task.status === 'in_progress' && (
-                                                                <Badge variant="warning" className="capitalize">
-                                                                    {task.status.replace('_', ' ')}
-                                                                </Badge>
-                                                            )}
-                                                            {task.status === 'pending' && (
-                                                                <Badge variant="secondary" className="capitalize">
-                                                                    {task.status.replace('_', ' ')}
-                                                                </Badge>
-                                                            )}
-
-                                                            {task.priority === 'high' && (
-                                                                <Badge variant="destructive" className="capitalize">
-                                                                    {task.priority}
-                                                                </Badge>
-                                                            )}
-                                                            {task.priority === 'medium' && (
-                                                                <Badge variant="default" className="capitalize">
-                                                                    {task.priority}
-                                                                </Badge>
-                                                            )}
-                                                            {task.priority === 'low' && (
-                                                                <Badge variant="outline" className="capitalize">
-                                                                    {task.priority}
-                                                                </Badge>
-                                                            )}
-                                                        </div>
-                                                    </div>
-
-                                                    {task.due_date && (
-                                                        <div className="flex items-center text-sm text-amber-700 dark:text-amber-400">
-                                                            <Calendar className="mr-1.5 h-3.5 w-3.5" />
-                                                            <span>{new Date(task.due_date).toLocaleDateString()}</span>
-                                                        </div>
-                                                    )}
-
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Assigned to:</span>
-                                                        {task.assignees && task.assignees.length > 0 ? (
-                                                            <div className="flex flex-wrap gap-1">
-                                                                {task.assignees.map((assignee) => (
-                                                                    <span
-                                                                        key={assignee.id}
-                                                                        className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/30"
-                                                                        title={assignee.email}
-                                                                    >
-                                                                        {assignee.name}
-                                                                    </span>
-                                                                ))}
-                                                            </div>
-                                                        ) : (
-                                                            <span className="text-xs text-gray-400 dark:text-gray-500">Unassigned</span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="h-8 w-8 p-0 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
-                                                        >
-                                                            <MoreVertical className="h-4 w-4" />
-                                                            <span className="sr-only">Open menu</span>
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="w-48">
-                                                        <a href={route('task.edit', task.id)}>
-                                                            <DropdownMenuItem className="group cursor-pointer">
-                                                                <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                <span>Edit</span>
-                                                            </DropdownMenuItem>
-                                                        </a>
-                                                        <ProjectTaskDeleteAction taskId={task.id} taskTitle={task.title} />
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        ) : (
-                            <div className="rounded-md border bg-muted/5 p-6">
-                                <div className="flex flex-col items-center justify-center py-12 text-center">
-                                    <ClipboardList className="mb-4 h-12 w-12 text-muted-foreground/50" />
-                                    <h3 className="mb-1 text-lg font-medium">No Tasks</h3>
-                                    <p className="mb-4 text-muted-foreground">No tasks have been added to this project yet.</p>
-                                    <AddNewButton href={`/task/create?project_id=${project.id}`}>
-                                        <Plus className="h-4 w-4" />
-                                        <span>Add Task</span>
-                                    </AddNewButton>
                                 </div>
                             </div>
                         )}
