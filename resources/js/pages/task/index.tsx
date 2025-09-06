@@ -277,7 +277,11 @@ export default function Tasks() {
                     : String(serverFilters['due-today']).toLowerCase() !== 'false',
             search: serverFilters.search ?? '',
         }
+
         setFilters(normalizedFilters)
+
+        console.log('normalizedFilters', normalizedFilters)
+
         getTasks(normalizedFilters).then()
     }, [serverFilters])
 
@@ -289,7 +293,9 @@ export default function Tasks() {
                 setEditTaskId(null)
                 setOffOpen(true)
             }
-        } catch {}
+        } catch {
+            //
+        }
     }, [])
 
     useEffect(() => {
