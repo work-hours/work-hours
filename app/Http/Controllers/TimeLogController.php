@@ -97,18 +97,6 @@ final class TimeLogController extends Controller
         }
     }
 
-    public function create()
-    {
-        $projects = ProjectStore::userProjects(userId: auth()->id());
-
-        $tasks = TaskStore::assignedTasks(userId: auth()->id());
-
-        return Inertia::render('time-log/create', [
-            'projects' => $projects,
-            'tasks' => $tasks,
-        ]);
-    }
-
     /**
      * @throws Throwable
      */
@@ -152,33 +140,6 @@ final class TimeLogController extends Controller
             DB::rollBack();
             throw $e;
         }
-    }
-
-    public function edit(TimeLog $timeLog)
-    {
-        Gate::authorize('update', $timeLog);
-
-        $projects = ProjectStore::userProjects(userId: auth()->id());
-
-        $tasks = TaskStore::assignedTasks(userId: auth()->id());
-
-        $timeLog->load('tags');
-
-        return Inertia::render('time-log/edit', [
-            'timeLog' => [
-                'id' => $timeLog->id,
-                'project_id' => $timeLog->project_id,
-                'task_id' => $timeLog->task_id,
-                'start_timestamp' => $timeLog->start_timestamp,
-                'end_timestamp' => $timeLog->end_timestamp,
-                'duration' => $timeLog->duration,
-                'note' => $timeLog->note,
-                'non_billable' => (bool) $timeLog->non_billable,
-                'tags' => $timeLog->tags->pluck('name'),
-            ],
-            'projects' => $projects,
-            'tasks' => $tasks,
-        ]);
     }
 
     /**

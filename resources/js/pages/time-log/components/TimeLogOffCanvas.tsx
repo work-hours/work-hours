@@ -10,7 +10,7 @@ import { SearchableSelect } from '@/components/ui/searchable-select'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import TagInput from '@/components/ui/tag-input'
 import { useForm } from '@inertiajs/react'
-import { Briefcase, Clock, ClipboardList, LoaderCircle, Save, Timer } from 'lucide-react'
+import { Briefcase, ClipboardList, Clock, LoaderCircle, Save, Timer } from 'lucide-react'
 import { useEffect, useMemo } from 'react'
 import { toast } from 'sonner'
 
@@ -235,7 +235,9 @@ export default function TimeLogOffCanvas({ open, mode, onClose, projects, tasks,
                                                 id="task_id"
                                                 value={data.task_id === null ? '' : String(data.task_id)}
                                                 onChange={(value) => setData('task_id', value ? parseInt(value) : null)}
-                                                options={tasks.filter((t) => t.project_id === (data.project_id ?? -1)).map((t) => ({ id: t.id, name: t.title }))}
+                                                options={tasks
+                                                    .filter((t) => t.project_id === (data.project_id ?? -1))
+                                                    .map((t) => ({ id: t.id, name: t.title }))}
                                                 placeholder="Select a task (optional)"
                                                 disabled={processing || data.project_id === null}
                                                 icon={<ClipboardList className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
@@ -316,7 +318,9 @@ export default function TimeLogOffCanvas({ open, mode, onClose, projects, tasks,
                                             filterDate={(date) => {
                                                 const s = new Date(data.start_timestamp)
                                                 return (
-                                                    date.getDate() === s.getDate() && date.getMonth() === s.getMonth() && date.getFullYear() === s.getFullYear()
+                                                    date.getDate() === s.getDate() &&
+                                                    date.getMonth() === s.getMonth() &&
+                                                    date.getFullYear() === s.getFullYear()
                                                 )
                                             }}
                                             filterTime={(time) => {
@@ -376,7 +380,9 @@ export default function TimeLogOffCanvas({ open, mode, onClose, projects, tasks,
                                         <Label htmlFor="non_billable" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                             Mark as non-billable
                                         </Label>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">This time won't be included in payment calculations</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                            This time won't be included in payment calculations
+                                        </p>
                                     </div>
                                 </div>
 
