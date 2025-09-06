@@ -597,12 +597,17 @@ export default function Tasks() {
                                     <FileText className="mb-4 h-12 w-12 text-muted-foreground/50" />
                                     <h3 className="mb-1 text-lg font-medium">No Tasks</h3>
                                     <p className="mb-4 text-muted-foreground">You haven't added any tasks yet.</p>
-                                    <Link href={route('task.create')}>
-                                        <Button className="flex items-center gap-2">
-                                            <Plus className="h-4 w-4" />
-                                            <span>Add Task</span>
-                                        </Button>
-                                    </Link>
+                                    <Button
+                                        className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                        onClick={() => {
+                                            setMode('create')
+                                            setEditTaskId(null)
+                                            setOffOpen(true)
+                                        }}
+                                    >
+                                        <Plus className="h-4 w-4" />
+                                        <span>Add Task</span>
+                                    </Button>
                                 </div>
                             </div>
                         )}
