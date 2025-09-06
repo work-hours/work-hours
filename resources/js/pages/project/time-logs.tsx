@@ -5,11 +5,11 @@ import TimeLogTable, { TimeLogEntry } from '@/components/time-log-table'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import MasterLayout from '@/layouts/master-layout'
+import ProjectTimeLogsFiltersOffCanvas from '@/pages/project/components/ProjectTimeLogsFiltersOffCanvas'
 import { type BreadcrumbItem } from '@/types'
 import { Head, router } from '@inertiajs/react'
 import { CheckCircle, ClockIcon, Filter } from 'lucide-react'
 import { useState } from 'react'
-import ProjectTimeLogsFiltersOffCanvas from '@/pages/project/components/ProjectTimeLogsFiltersOffCanvas'
 
 type TimeLog = {
     id: number
@@ -53,7 +53,6 @@ type TeamMember = {
     email: string
 }
 
-
 type Props = {
     timeLogs: TimeLog[]
     filters: Filters
@@ -93,7 +92,7 @@ export default function ProjectTimeLogs({
     ]
 
     const [selectedLogs, setSelectedLogs] = useState<number[]>([])
-        const [filtersOpen, setFiltersOpen] = useState(false)
+    const [filtersOpen, setFiltersOpen] = useState(false)
 
     const handleSelectLog = (id: number, checked: boolean) => {
         if (checked) {
@@ -120,7 +119,6 @@ export default function ProjectTimeLogs({
             },
         )
     }
-
 
     return (
         <MasterLayout breadcrumbs={breadcrumbs}>
@@ -219,7 +217,11 @@ export default function ProjectTimeLogs({
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button
-                                    variant={filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status ? 'default' : 'outline'}
+                                    variant={
+                                        filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status
+                                            ? 'default'
+                                            : 'outline'
+                                    }
                                     className={`flex items-center gap-2 ${
                                         filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status
                                             ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
@@ -227,8 +229,14 @@ export default function ProjectTimeLogs({
                                     }`}
                                     onClick={() => setFiltersOpen(true)}
                                 >
-                                    <Filter className={`h-4 w-4 ${filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status ? 'text-primary dark:text-primary-foreground' : ''}`} />
-                                    <span>{filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status ? 'Filters Applied' : 'Filters'}</span>
+                                    <Filter
+                                        className={`h-4 w-4 ${filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status ? 'text-primary dark:text-primary-foreground' : ''}`}
+                                    />
+                                    <span>
+                                        {filters['start-date'] || filters['end-date'] || filters.user || filters['is-paid'] || filters.status
+                                            ? 'Filters Applied'
+                                            : 'Filters'}
+                                    </span>
                                 </Button>
                                 <ExportButton
                                     href={`${route('project.export-time-logs')}?project=${project.id}${window.location.search.replace('?', '&')}`}
@@ -245,7 +253,6 @@ export default function ProjectTimeLogs({
                                 )}
                             </div>
                         </div>
-
                     </CardHeader>
                     <CardContent className="p-0">
                         {timeLogs.length > 0 ? (
@@ -271,7 +278,13 @@ export default function ProjectTimeLogs({
                     </CardContent>
                 </Card>
             </div>
-            <ProjectTimeLogsFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} teamMembers={teamMembers} projectId={project.id} />
+            <ProjectTimeLogsFiltersOffCanvas
+                open={filtersOpen}
+                onOpenChange={setFiltersOpen}
+                filters={filters}
+                teamMembers={teamMembers}
+                projectId={project.id}
+            />
         </MasterLayout>
     )
 }

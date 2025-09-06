@@ -10,7 +10,13 @@ interface ProjectTimeLogsFiltersOffCanvasProps {
     projectId: number
 }
 
-export default function ProjectTimeLogsFiltersOffCanvas({ open, onOpenChange, filters, teamMembers, projectId }: ProjectTimeLogsFiltersOffCanvasProps) {
+export default function ProjectTimeLogsFiltersOffCanvas({
+    open,
+    onOpenChange,
+    filters,
+    teamMembers,
+    projectId,
+}: ProjectTimeLogsFiltersOffCanvasProps) {
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent side="right" className="overflow-y-auto bg-white pr-6 pb-8 pl-6 sm:max-w-md md:max-w-lg dark:bg-neutral-900">

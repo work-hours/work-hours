@@ -6,18 +6,18 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { queryStringToObject } from '@/lib/utils'
+import ProjectFiltersOffCanvas from '@/pages/project/components/ProjectFiltersOffCanvas'
+import ProjectOffCanvas from '@/pages/project/components/ProjectOffCanvas'
 import { type BreadcrumbItem } from '@/types'
 import { syncRepository } from '@actions/GitHubRepositoryController'
 import { syncProject } from '@actions/JiraController'
 import { projects as _projects } from '@actions/ProjectController'
 import { Head, Link, usePage } from '@inertiajs/react'
-import { Clock, Edit, FolderPlus, Folders, GithubIcon, Loader2, MoreVertical, StickyNote, Filter } from 'lucide-react'
+import { Clock, Edit, Filter, FolderPlus, Folders, GithubIcon, Loader2, MoreVertical, StickyNote } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import ProjectDeleteAction from './components/ProjectDeleteAction'
 import ProjectNotesSheet from './components/ProjectNotesSheet'
-import ProjectOffCanvas from '@/pages/project/components/ProjectOffCanvas'
-import ProjectFiltersOffCanvas from '@/pages/project/components/ProjectFiltersOffCanvas'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -94,7 +94,6 @@ export default function Projects() {
         search: pageFilters?.search || '',
     })
 
-
     const getProjects = async (filters?: ProjectFilters): Promise<void> => {
         setLoading(true)
         setError(false)
@@ -121,7 +120,6 @@ export default function Projects() {
         return ''
     }
 
-
     useEffect(() => {
         const queryParams = queryStringToObject()
 
@@ -143,9 +141,7 @@ export default function Projects() {
                 setEditProjectId(null)
                 setOffOpen(true)
             }
-        } catch {
-            // ignore URL param parsing errors
-        }
+        } catch {}
 
         const refresh = () => getProjects(initialFilters)
         window.addEventListener('refresh-projects', refresh)
@@ -224,16 +220,38 @@ export default function Projects() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button
-                                    variant={filters['team-member'] || filters.client || filters['created-date-from'] || filters['created-date-to'] || filters.search ? 'default' : 'outline'}
+                                    variant={
+                                        filters['team-member'] ||
+                                        filters.client ||
+                                        filters['created-date-from'] ||
+                                        filters['created-date-to'] ||
+                                        filters.search
+                                            ? 'default'
+                                            : 'outline'
+                                    }
                                     className={`flex items-center gap-2 ${
-                                        filters['team-member'] || filters.client || filters['created-date-from'] || filters['created-date-to'] || filters.search
+                                        filters['team-member'] ||
+                                        filters.client ||
+                                        filters['created-date-from'] ||
+                                        filters['created-date-to'] ||
+                                        filters.search
                                             ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
                                             : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
                                     }`}
                                     onClick={() => setFiltersOpen(true)}
                                 >
-                                    <Filter className={`h-4 w-4 ${filters['team-member'] || filters.client || filters['created-date-from'] || filters['created-date-to'] || filters.search ? 'text-primary dark:text-primary-foreground' : ''}`} />
-                                    <span>{filters['team-member'] || filters.client || filters['created-date-from'] || filters['created-date-to'] || filters.search ? 'Filters Applied' : 'Filters'}</span>
+                                    <Filter
+                                        className={`h-4 w-4 ${filters['team-member'] || filters.client || filters['created-date-from'] || filters['created-date-to'] || filters.search ? 'text-primary dark:text-primary-foreground' : ''}`}
+                                    />
+                                    <span>
+                                        {filters['team-member'] ||
+                                        filters.client ||
+                                        filters['created-date-from'] ||
+                                        filters['created-date-to'] ||
+                                        filters.search
+                                            ? 'Filters Applied'
+                                            : 'Filters'}
+                                    </span>
                                 </Button>
                                 <ExportButton
                                     href={`${route('project.export')}?team-member=${filters['team-member'] || ''}&client=${filters.client || ''}&created-date-from=${formatDateValue(filters['created-date-from'])}&created-date-to=${formatDateValue(filters['created-date-to'])}&search=${filters.search || ''}`}
@@ -252,7 +270,6 @@ export default function Projects() {
                                 </Button>
                             </div>
                         </div>
-
                     </CardHeader>
                     <CardContent className="p-0">
                         {loading ? (
@@ -498,8 +515,21 @@ export default function Projects() {
                 </Card>
             </div>
             <ProjectNotesSheet projectId={notesProjectId} open={notesOpen} onOpenChange={(open) => setNotesOpen(open)} />
-            <ProjectOffCanvas open={offOpen} mode={mode} onClose={() => setOffOpen(false)} clients={clients} teamMembers={teamMembers} currencies={currencies} projectId={editProjectId ?? undefined} />
-            <ProjectFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} clients={clients} teamMembers={teamMembers}
+            <ProjectOffCanvas
+                open={offOpen}
+                mode={mode}
+                onClose={() => setOffOpen(false)}
+                clients={clients}
+                teamMembers={teamMembers}
+                currencies={currencies}
+                projectId={editProjectId ?? undefined}
+            />
+            <ProjectFiltersOffCanvas
+                open={filtersOpen}
+                onOpenChange={setFiltersOpen}
+                filters={filters}
+                clients={clients}
+                teamMembers={teamMembers}
                 onApply={(applied) => {
                     setFilters(applied)
                     try {
@@ -519,12 +549,9 @@ export default function Projects() {
                         setOrDelete('search', applied.search || '')
                         const newUrl = `${window.location.pathname}?${params.toString()}`
                         window.history.replaceState({}, '', newUrl)
-                    } catch {
-                        // ignore URL update errors (e.g., SSR or invalid history state)
-                    }
+                    } catch {}
 
-                    getProjects(applied).then(() => {
-                    })
+                    getProjects(applied).then(() => {})
                 }}
             />
         </MasterLayout>
