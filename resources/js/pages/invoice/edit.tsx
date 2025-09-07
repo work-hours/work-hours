@@ -36,6 +36,7 @@ type InvoiceForm = {
     tax_rate: string
     currency: string | null
     items: InvoiceItemForm[]
+    grouped_time_log_ids: number[]
 }
 
 type InvoiceItemForm = {
@@ -45,6 +46,8 @@ type InvoiceItemForm = {
     quantity: string
     unit_price: string
     amount: string
+    // client-side only flag: when a project total is selected for this row
+    group_project_id?: number
 }
 
 type Client = {
@@ -148,6 +151,7 @@ export default function EditInvoice({ invoice }: Props) {
         tax_rate: invoice.tax_rate ? invoice.tax_rate.toString() : '0',
         currency: invoice.currency,
         items: formatInvoiceItems(invoice.items),
+        grouped_time_log_ids: [],
     })
 
     useEffect(() => {
@@ -313,6 +317,7 @@ export default function EditInvoice({ invoice }: Props) {
                     quantity: projectGroup.total_hours.toString(),
                     unit_price: projectGroup.hourly_rate.toString(),
                     amount: amount,
+                    group_project_id: projectId,
                 }
 
                 setData('items', updatedItems)
@@ -321,6 +326,9 @@ export default function EditInvoice({ invoice }: Props) {
         }
 
         const timeLogId = value
+
+        // clear any previous group selection when picking an individual time log
+        updatedItems[index].group_project_id = undefined
 
         for (const projectGroup of timeLogs) {
             const timeLog = projectGroup.time_logs.find((log) => log.id.toString() === timeLogId)
@@ -344,6 +352,19 @@ export default function EditInvoice({ invoice }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
+
+        // Build grouped_time_log_ids from current selections of project totals
+        const ids = new Set<number>()
+        data.items.forEach((it) => {
+            if (it.group_project_id) {
+                const grp = timeLogs.find((g) => g.project_id === it.group_project_id)
+                if (grp && grp.time_logs) {
+                    grp.time_logs.forEach((log) => ids.add(log.id))
+                }
+            }
+        })
+        setData('grouped_time_log_ids', Array.from(ids))
+
         put(route('invoice.update', invoice.id), {
             onSuccess: () => {
                 toast.success('Invoice updated successfully')

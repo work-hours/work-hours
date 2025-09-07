@@ -71,7 +71,6 @@ final class InvoiceController extends Controller
     public function store(StoreInvoiceRequest $request): void
     {
         dd($request->validated());
-
         DB::beginTransaction();
         try {
             InvoiceStore::createInvoice($request->validated(), Auth::id());
