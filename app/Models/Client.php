@@ -21,6 +21,8 @@ use Illuminate\Support\Carbon;
  * @property string|null $phone
  * @property string|null $address
  * @property string|null $notes
+ * @property float|null $hourly_rate
+ * @property string|null $currency
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property User $user

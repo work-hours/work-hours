@@ -1,15 +1,14 @@
 import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
 import BackButton from '@/components/back-button'
-import InvoiceDeleteAction from '@/components/invoice-delete-action'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableHeaderRow, TableRow } from '@/components/ui/table'
 import MasterLayout from '@/layouts/master-layout'
 import { type BreadcrumbItem } from '@/types'
-import { Head, Link } from '@inertiajs/react'
-import { DollarSign, Edit, FileText, Mail, MoreVertical, Phone, Plus, User } from 'lucide-react'
+import { Head } from '@inertiajs/react'
+import { DollarSign, FileText, Mail, MoreVertical, Phone, Plus, User } from 'lucide-react'
 
 type Invoice = {
     id: number
@@ -265,15 +264,7 @@ export default function ClientInvoices({ client, invoices }: Props) {
                                                                 <MoreVertical className="h-4 w-4" />
                                                             </Button>
                                                         </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end" className="w-48">
-                                                            <Link href={route('invoice.edit', invoice.id)}>
-                                                                <DropdownMenuItem className="group cursor-pointer">
-                                                                    <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                    <span>Edit</span>
-                                                                </DropdownMenuItem>
-                                                            </Link>
-                                                            <InvoiceDeleteAction invoiceId={invoice.id} invoiceNumber={invoice.invoice_number} />
-                                                        </DropdownMenuContent>
+                                                        <DropdownMenuContent align="end" className="w-48"></DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </TableCell>
                                             </TableRow>

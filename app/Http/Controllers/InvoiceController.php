@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreInvoiceRequest;
-use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Stores\ClientStore;
 use App\Http\Stores\InvoiceStore;
 use App\Http\Stores\TimeLogStore;
 use App\Models\Client;
 use App\Models\Invoice;
+use App\Models\TimeLog;
 use App\Notifications\InvoiceStatusChanged;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -81,55 +81,10 @@ final class InvoiceController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Invoice $invoice): Response
-    {
-        $clients = ClientStore::userClients(Auth::id());
-        $timeLogs = TimeLogStore::unpaidTimeLogs(Auth::id());
-
-        return Inertia::render('invoice/edit', [
-            'invoice' => $invoice->load('items.timeLog'),
-            'clients' => $clients,
-            'timeLogs' => $timeLogs,
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @throws Throwable
-     */
-    #[Action(method: 'put', name: 'invoice.update', params: ['invoice'], middleware: ['auth', 'verified'])]
-    public function update(UpdateInvoiceRequest $request, Invoice $invoice): void
-    {
-        DB::beginTransaction();
-        try {
-            InvoiceStore::updateInvoice($invoice, $request->validated());
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @throws Throwable
      */
-    #[Action(method: 'delete', name: 'invoice.destroy', params: ['invoice'], middleware: ['auth', 'verified'])]
-    public function destroy(Invoice $invoice): void
-    {
-        DB::beginTransaction();
-        try {
-            $invoice->delete();
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
 
     /**
      * Display the invoices for the specified client.
@@ -198,7 +153,6 @@ final class InvoiceController extends Controller
     #[Action(method: 'get', name: 'invoice.downloadPdf', params: ['invoice'], middleware: ['auth', 'verified'])]
     public function downloadPdf(Invoice $invoice): SymfonyResponse
     {
-
         if (! $invoice->relationLoaded('client')) {
             $invoice->load('client');
         }
@@ -212,7 +166,6 @@ final class InvoiceController extends Controller
         }
 
         try {
-
             $pdf = Pdf::loadView('pdf.invoice', [
                 'invoice' => $invoice,
                 'client' => $invoice->client,
@@ -238,9 +191,7 @@ final class InvoiceController extends Controller
     {
         DB::beginTransaction();
         try {
-
             InvoiceStore::sendInvoiceEmail($invoice);
-
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -256,7 +207,6 @@ final class InvoiceController extends Controller
     #[Action(method: 'post', name: 'invoice.updateStatus', params: ['invoice'], middleware: ['auth', 'verified'])]
     public function updateStatus(Invoice $invoice): void
     {
-
         request()->validate([
             'status' => 'required|string|in:draft,sent,paid,partially_paid,overdue,cancelled',
             'paid_amount' => 'required_if:status,paid,partially_paid|numeric|min:0',
@@ -268,7 +218,6 @@ final class InvoiceController extends Controller
         try {
 
             $invoice->status = $newStatus;
-
             if (request()->has('paid_amount')) {
                 $invoice->paid_amount = request('paid_amount');
             }
@@ -276,7 +225,6 @@ final class InvoiceController extends Controller
             $invoice->save();
 
             if ($newStatus === 'sent') {
-
                 InvoiceStore::sendInvoiceEmail($invoice);
             } elseif ($newStatus === 'overdue') {
                 if (! $invoice->relationLoaded('client')) {
@@ -288,6 +236,8 @@ final class InvoiceController extends Controller
                 if ($clientEmail) {
                     Notification::route('mail', $clientEmail)->notify(new InvoiceStatusChanged($invoice));
                 }
+            } elseif ($newStatus === 'cancelled') {
+                TimeLog::query()->where('invoice_id', $invoice->id)->update(['invoice_id' => null]);
             }
 
             DB::commit();

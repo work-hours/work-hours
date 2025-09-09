@@ -36,6 +36,7 @@ type InvoiceForm = {
     tax_rate: string
     currency: string | null
     items: InvoiceItemForm[]
+    grouped_time_log_ids: number[]
 }
 
 type InvoiceItemForm = {
@@ -45,6 +46,7 @@ type InvoiceItemForm = {
     quantity: string
     unit_price: string
     amount: string
+    group_project_id?: number
 }
 
 type Client = {
@@ -134,7 +136,7 @@ export default function EditInvoice({ invoice }: Props) {
         }))
     }
 
-    const { data, setData, put, processing, errors } = useForm<InvoiceForm>({
+    const { data, setData, put, processing, errors, transform } = useForm<InvoiceForm>({
         client_id: invoice.client_id.toString(),
         invoice_number: invoice.invoice_number,
         issue_date: formatStringToDate(invoice.issue_date),
@@ -148,6 +150,7 @@ export default function EditInvoice({ invoice }: Props) {
         tax_rate: invoice.tax_rate ? invoice.tax_rate.toString() : '0',
         currency: invoice.currency,
         items: formatInvoiceItems(invoice.items),
+        grouped_time_log_ids: [],
     })
 
     useEffect(() => {
@@ -313,6 +316,7 @@ export default function EditInvoice({ invoice }: Props) {
                     quantity: projectGroup.total_hours.toString(),
                     unit_price: projectGroup.hourly_rate.toString(),
                     amount: amount,
+                    group_project_id: projectId,
                 }
 
                 setData('items', updatedItems)
@@ -321,6 +325,7 @@ export default function EditInvoice({ invoice }: Props) {
         }
 
         const timeLogId = value
+        updatedItems[index].group_project_id = undefined
 
         for (const projectGroup of timeLogs) {
             const timeLog = projectGroup.time_logs.find((log) => log.id.toString() === timeLogId)
@@ -344,12 +349,29 @@ export default function EditInvoice({ invoice }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
+        const ids = new Set<number>()
+        data.items.forEach((it) => {
+            if (it.group_project_id) {
+                const grp = timeLogs.find((g) => g.project_id === it.group_project_id)
+                if (grp && grp.time_logs) {
+                    grp.time_logs.forEach((log) => ids.add(log.id))
+                }
+            }
+        })
+        transform((formData) => ({
+            ...formData,
+            grouped_time_log_ids: Array.from(ids),
+        }))
+
         put(route('invoice.update', invoice.id), {
             onSuccess: () => {
                 toast.success('Invoice updated successfully')
             },
             onError: () => {
                 toast.error('Failed to update invoice')
+            },
+            onFinish: () => {
+                transform((d) => d)
             },
         })
     }

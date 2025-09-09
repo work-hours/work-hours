@@ -69,12 +69,31 @@ final class InvoiceStore
             }
 
             $items = $data['items'] ?? [];
+            $groupedTimeLogIds = $data['grouped_time_log_ids'] ?? [];
+
             unset($data['items']);
+            unset($data['grouped_time_log_ids']);
 
             $invoice = Invoice::query()->create($data);
 
             if (! empty($items) && is_array($items)) {
                 self::createInvoiceItems($invoice, $items);
+            }
+
+            $timeLogIds = collect($items)
+                ->pluck('time_log_id')
+                ->filter()
+                ->unique()
+                ->values();
+
+            if (! empty($groupedTimeLogIds) && is_array($groupedTimeLogIds)) {
+                $timeLogIds = $timeLogIds->merge($groupedTimeLogIds)->unique()->values();
+            }
+
+            if ($timeLogIds->isNotEmpty()) {
+                TimeLog::query()
+                    ->whereIn('id', $timeLogIds)
+                    ->update(['invoice_id' => $invoice->id]);
             }
 
             self::updateInvoiceTotal($invoice);
@@ -107,10 +126,6 @@ final class InvoiceStore
             }
 
             self::updateInvoiceTotal($invoice);
-
-            if ($invoice->status === InvoiceStatus::PAID) {
-                self::markTimeLogsPaid($invoice);
-            }
 
             if ($invoice->status !== $oldStatus &&
                 ($invoice->status === InvoiceStatus::SENT || $invoice->status === InvoiceStatus::OVERDUE)) {
@@ -205,10 +220,6 @@ final class InvoiceStore
         foreach ($items as $item) {
             $item['invoice_id'] = $invoice->id;
             InvoiceItem::query()->create($item);
-
-            if (isset($item['time_log_id']) && $invoice->status === InvoiceStatus::PAID) {
-                TimeLog::query()->where('id', $item['time_log_id'])->update(['is_paid' => true]);
-            }
         }
     }
 
@@ -217,7 +228,6 @@ final class InvoiceStore
      */
     private static function updateInvoiceTotal(Invoice $invoice): void
     {
-
         $subtotal = $invoice->items()->sum('amount');
 
         $discountAmount = 0;
@@ -266,7 +276,6 @@ final class InvoiceStore
      */
     private static function updateInvoiceItems(Invoice $invoice, array $items): void
     {
-
         $existingItemIds = $invoice->items->pluck('id')->toArray();
         $updatedItemIds = [];
 
@@ -279,7 +288,6 @@ final class InvoiceStore
                     $updatedItemIds[] = $invoiceItem->id;
                 }
             } else {
-
                 $item['invoice_id'] = $invoice->id;
                 $newItem = InvoiceItem::query()->create($item);
                 $updatedItemIds[] = $newItem->id;
@@ -289,21 +297,6 @@ final class InvoiceStore
         $itemsToDelete = array_diff($existingItemIds, $updatedItemIds);
         if ($itemsToDelete !== []) {
             InvoiceItem::query()->whereIn('id', $itemsToDelete)->delete();
-        }
-    }
-
-    /**
-     * Mark time logs as paid when invoice is paid
-     */
-    private static function markTimeLogsPaid(Invoice $invoice): void
-    {
-        $timeLogIds = $invoice->items()
-            ->whereNotNull('time_log_id')
-            ->pluck('time_log_id')
-            ->toArray();
-
-        if (! empty($timeLogIds)) {
-            TimeLog::query()->whereIn('id', $timeLogIds)->update(['is_paid' => true]);
         }
     }
 

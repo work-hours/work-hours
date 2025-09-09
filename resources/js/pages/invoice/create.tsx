@@ -1,7 +1,17 @@
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { type SharedData } from '@/types'
-import { Head, useForm, usePage } from '@inertiajs/react'
+import { Head, router, useForm, usePage } from '@inertiajs/react'
 import { Calendar, FileText, Hash, LoaderCircle, Plus, Trash2, User } from 'lucide-react'
-import { FormEventHandler, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import BackButton from '@/components/back-button'
@@ -35,6 +45,7 @@ type InvoiceForm = {
     tax_rate: string
     currency: string
     items: InvoiceItemForm[]
+    grouped_time_log_ids: number[]
 }
 
 type InvoiceItemForm = {
@@ -43,6 +54,7 @@ type InvoiceItemForm = {
     quantity: string
     unit_price: string
     amount: string
+    group_project_id?: number
 }
 
 type Client = {
@@ -86,13 +98,12 @@ export default function CreateInvoice() {
     const [clients, setClients] = useState<Client[]>([])
     const [timeLogs, setTimeLogs] = useState<ProjectTimeLogGroup[]>([])
     const [loadingClients, setLoadingClients] = useState(true)
-    const [activeSection, setActiveSection] = useState('details')
 
     const generateInvoiceNumber = (): string => {
         return `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`
     }
 
-    const { data, setData, post, processing, errors, reset } = useForm<InvoiceForm>({
+    const { data, setData, post, processing, errors, transform } = useForm<InvoiceForm>({
         client_id: '',
         invoice_number: generateInvoiceNumber(),
         issue_date: new Date(),
@@ -113,6 +124,7 @@ export default function CreateInvoice() {
                 amount: '0',
             },
         ],
+        grouped_time_log_ids: [],
     })
 
     useEffect(() => {
@@ -266,6 +278,7 @@ export default function CreateInvoice() {
                 quantity: '1',
                 unit_price: '0',
                 amount: '0',
+                group_project_id: undefined,
             }
 
             setData('items', updatedItems)
@@ -286,6 +299,7 @@ export default function CreateInvoice() {
                     quantity: projectGroup.total_hours.toString(),
                     unit_price: projectGroup.hourly_rate.toString(),
                     amount: amount,
+                    group_project_id: projectId,
                 }
 
                 setData('items', updatedItems)
@@ -294,6 +308,7 @@ export default function CreateInvoice() {
         }
 
         const timeLogId = value
+        updatedItems[index].group_project_id = undefined
 
         for (const projectGroup of timeLogs) {
             const timeLog = projectGroup.time_logs.find((log) => log.id.toString() === timeLogId)
@@ -315,15 +330,33 @@ export default function CreateInvoice() {
         }
     }
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault()
+    const [confirmOpen, setConfirmOpen] = useState(false)
+
+    const actuallySubmit = () => {
+        const ids = new Set<number>()
+        data.items.forEach((it) => {
+            if (it.group_project_id) {
+                const grp = timeLogs.find((g) => g.project_id === it.group_project_id)
+                if (grp && grp.time_logs) {
+                    grp.time_logs.forEach((log) => ids.add(log.id))
+                }
+            }
+        })
+        transform((formData) => ({
+            ...formData,
+            grouped_time_log_ids: Array.from(ids),
+        }))
+
         post(route('invoice.store'), {
             onSuccess: () => {
                 toast.success('Invoice created successfully')
-                reset()
+                router.visit(route('invoice.index') ?? '/invoice')
             },
             onError: () => {
                 toast.error('Failed to create invoice')
+            },
+            onFinish: () => {
+                transform((d) => d)
             },
         })
     }
@@ -350,7 +383,13 @@ export default function CreateInvoice() {
                     </div>
                 </section>
 
-                <form className="flex flex-col gap-6" onSubmit={submit}>
+                <form
+                    className="flex flex-col gap-6"
+                    onSubmit={(e) => {
+                        e.preventDefault()
+                        setConfirmOpen(true)
+                    }}
+                >
                     <h2 className="mt-2 flex items-center gap-2 border-b pb-2 text-xl font-semibold">
                         <FileText className="h-5 w-5" />
                         Invoice Details
@@ -808,6 +847,29 @@ export default function CreateInvoice() {
                     </div>
                 </form>
             </div>
+
+            <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Create invoice?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will create the invoice with the current details and associate selected time logs.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={processing}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => {
+                                setConfirmOpen(false)
+                                actuallySubmit()
+                            }}
+                            disabled={processing}
+                        >
+                            Confirm
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </MasterLayout>
     )
 }

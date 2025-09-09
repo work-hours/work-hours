@@ -53,6 +53,8 @@ final class UpdateInvoiceRequest extends FormRequest
             'items.*.quantity' => ['required', 'numeric', 'min:0.01'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'items.*.amount' => ['required', 'numeric', 'min:0'],
+            'grouped_time_log_ids' => ['sometimes', 'array'],
+            'grouped_time_log_ids.*' => ['integer', 'exists:time_logs,id'],
         ];
     }
 }

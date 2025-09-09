@@ -41,6 +41,7 @@ final class TimeLog extends Model
         'end_timestamp',
         'duration',
         'is_paid',
+        'invoice_id',
         'non_billable',
         'hourly_rate',
         'note',
