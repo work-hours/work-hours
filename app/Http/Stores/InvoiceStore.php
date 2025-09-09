@@ -103,40 +103,6 @@ final class InvoiceStore
     }
 
     /**
-     * Update an existing invoice and its items
-     *
-     * @throws Throwable
-     */
-    public static function updateInvoice(Invoice $invoice, array $data): Invoice
-    {
-        return DB::transaction(function () use ($invoice, $data) {
-            $items = $data['items'] ?? [];
-            unset($data['items']);
-
-            $oldStatus = $invoice->status;
-
-            if (! isset($data['currency'])) {
-                $data['currency'] = self::determineCurrency((int) $invoice->client_id, (int) $invoice->user_id);
-            }
-
-            $invoice->update($data);
-
-            if (! empty($items) && is_array($items)) {
-                self::updateInvoiceItems($invoice, $items);
-            }
-
-            self::updateInvoiceTotal($invoice);
-
-            if ($invoice->status !== $oldStatus &&
-                ($invoice->status === InvoiceStatus::SENT || $invoice->status === InvoiceStatus::OVERDUE)) {
-                self::sendInvoiceStatusNotification($invoice);
-            }
-
-            return $invoice->fresh(['items']);
-        });
-    }
-
-    /**
      * Map invoice data for export
      */
     public static function invoiceExportMapper(Collection $invoices): Collection
