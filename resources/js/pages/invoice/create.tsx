@@ -95,7 +95,7 @@ export default function CreateInvoice() {
         return `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`
     }
 
-    const { data, setData, post, processing, errors, reset } = useForm<InvoiceForm>({
+    const { data, setData, post, processing, errors, reset, transform } = useForm<InvoiceForm>({
         client_id: '',
         invoice_number: generateInvoiceNumber(),
         issue_date: new Date(),
@@ -337,7 +337,12 @@ export default function CreateInvoice() {
                 }
             }
         })
-        setData('grouped_time_log_ids', Array.from(ids))
+
+        // Ensure IDs are included at submit-time to avoid async state issues
+        transform((formData) => ({
+            ...formData,
+            grouped_time_log_ids: Array.from(ids),
+        }))
 
         post(route('invoice.store'), {
             onSuccess: () => {
@@ -346,6 +351,10 @@ export default function CreateInvoice() {
             },
             onError: () => {
                 toast.error('Failed to create invoice')
+            },
+            onFinish: () => {
+                // reset transform to default so future submits aren't affected
+                transform((d) => d)
             },
         })
     }

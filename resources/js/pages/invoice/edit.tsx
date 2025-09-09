@@ -137,7 +137,7 @@ export default function EditInvoice({ invoice }: Props) {
         }))
     }
 
-    const { data, setData, put, processing, errors } = useForm<InvoiceForm>({
+    const { data, setData, put, processing, errors, transform } = useForm<InvoiceForm>({
         client_id: invoice.client_id.toString(),
         invoice_number: invoice.invoice_number,
         issue_date: formatStringToDate(invoice.issue_date),
@@ -363,7 +363,12 @@ export default function EditInvoice({ invoice }: Props) {
                 }
             }
         })
-        setData('grouped_time_log_ids', Array.from(ids))
+
+        // Ensure IDs are included at submit-time to avoid async state issues
+        transform((formData) => ({
+            ...formData,
+            grouped_time_log_ids: Array.from(ids),
+        }))
 
         put(route('invoice.update', invoice.id), {
             onSuccess: () => {
@@ -371,6 +376,10 @@ export default function EditInvoice({ invoice }: Props) {
             },
             onError: () => {
                 toast.error('Failed to update invoice')
+            },
+            onFinish: () => {
+                // reset transform to default so future submits aren't affected
+                transform((d) => d)
             },
         })
     }
