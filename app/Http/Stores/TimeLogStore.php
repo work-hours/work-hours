@@ -180,7 +180,6 @@ final class TimeLogStore
                 ->with('project')
                 ->where('project_id', $project->id)
                 ->whereNull('invoice_id')
-                ->where('is_paid', false)
                 ->where('non_billable', false)
                 ->where('status', TimeLogStatus::APPROVED)
                 ->get();
