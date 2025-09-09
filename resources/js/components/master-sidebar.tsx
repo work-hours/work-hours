@@ -68,6 +68,11 @@ const navGroups: NavItemGroup[] = [
                 href: '/invoice',
                 icon: LucideCreditCard,
             },
+            {
+                title: 'Expenses',
+                href: '/expense',
+                icon: FileText,
+            },
         ],
     },
     {
