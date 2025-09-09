@@ -218,7 +218,6 @@ final class InvoiceController extends Controller
         try {
 
             $invoice->status = $newStatus;
-
             if (request()->has('paid_amount')) {
                 $invoice->paid_amount = request('paid_amount');
             }
