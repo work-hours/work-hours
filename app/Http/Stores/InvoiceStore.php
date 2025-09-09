@@ -13,6 +13,7 @@ use App\Http\QueryFilters\Invoice\StatusFilter;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Models\TimeLog;
 use App\Models\User;
 use App\Notifications\InvoiceStatusChanged;
 use Carbon\Carbon;
@@ -68,12 +69,31 @@ final class InvoiceStore
             }
 
             $items = $data['items'] ?? [];
+            $groupedTimeLogIds = $data['grouped_time_log_ids'] ?? [];
+
             unset($data['items']);
+            unset($data['grouped_time_log_ids']);
 
             $invoice = Invoice::query()->create($data);
 
             if (! empty($items) && is_array($items)) {
                 self::createInvoiceItems($invoice, $items);
+            }
+
+            $timeLogIds = collect($items)
+                ->pluck('time_log_id')
+                ->filter()
+                ->unique()
+                ->values();
+
+            if (! empty($groupedTimeLogIds) && is_array($groupedTimeLogIds)) {
+                $timeLogIds = $timeLogIds->merge($groupedTimeLogIds)->unique()->values();
+            }
+
+            if ($timeLogIds->isNotEmpty()) {
+                TimeLog::query()
+                    ->whereIn('id', $timeLogIds)
+                    ->update(['invoice_id' => $invoice->id]);
             }
 
             self::updateInvoiceTotal($invoice);
