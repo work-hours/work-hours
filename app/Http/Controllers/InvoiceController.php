@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreInvoiceRequest;
-use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Stores\ClientStore;
 use App\Http\Stores\InvoiceStore;
 use App\Http\Stores\TimeLogStore;
@@ -74,39 +73,6 @@ final class InvoiceController extends Controller
         DB::beginTransaction();
         try {
             InvoiceStore::createInvoice($request->validated(), Auth::id());
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Invoice $invoice): Response
-    {
-        $clients = ClientStore::userClients(Auth::id());
-        $timeLogs = TimeLogStore::unpaidTimeLogs(Auth::id());
-
-        return Inertia::render('invoice/edit', [
-            'invoice' => $invoice->load('items.timeLog'),
-            'clients' => $clients,
-            'timeLogs' => $timeLogs,
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @throws Throwable
-     */
-    #[Action(method: 'put', name: 'invoice.update', params: ['invoice'], middleware: ['auth', 'verified'])]
-    public function update(UpdateInvoiceRequest $request, Invoice $invoice): void
-    {
-        DB::beginTransaction();
-        try {
-            InvoiceStore::updateInvoice($invoice, $request->validated());
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();

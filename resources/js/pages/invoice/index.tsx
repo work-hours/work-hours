@@ -22,8 +22,8 @@ import MasterLayout from '@/layouts/master-layout'
 import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { invoices as _invoices } from '@actions/InvoiceController'
-import { Head, Link, router, usePage } from '@inertiajs/react'
-import { Calendar, Download, Edit, FileText, Filter, Loader2, Mail, MoreVertical, Plus } from 'lucide-react'
+import { Head, router, usePage } from '@inertiajs/react'
+import { Calendar, Download, FileText, Filter, Loader2, Mail, MoreVertical, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -481,12 +481,6 @@ export default function Invoices() {
                                                                     <span>Download PDF</span>
                                                                 </DropdownMenuItem>
                                                             </a>
-                                                            <Link href={route('invoice.edit', invoice.id)}>
-                                                                <DropdownMenuItem className="group cursor-pointer">
-                                                                    <Edit className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                    <span>Edit Invoice</span>
-                                                                </DropdownMenuItem>
-                                                            </Link>
                                                             <DropdownMenuItem
                                                                 className="group cursor-pointer"
                                                                 onClick={() => handleEmailClick(invoice)}
@@ -720,7 +714,9 @@ export default function Invoices() {
                         setOrDelete('created-date-to', applied['created-date-to'])
                         const newUrl = `${window.location.pathname}?${params.toString()}`
                         window.history.replaceState({}, '', newUrl)
-                    } catch {}
+                    } catch {
+                        // ignore URL update errors
+                    }
                     getInvoices({
                         search: applied.search || '',
                         client: applied.client || '',
