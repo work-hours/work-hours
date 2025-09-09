@@ -1,6 +1,5 @@
 import { ExportButton } from '@/components/action-buttons'
 import AddNewButton from '@/components/add-new-button'
-import InvoiceDeleteAction from '@/components/invoice-delete-action'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -79,7 +78,6 @@ export default function Invoices() {
     const [invoices, setInvoices] = useState<Invoice[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
-    const [processing, setProcessing] = useState(false)
     const [emailDialogOpen, setEmailDialogOpen] = useState(false)
     const [statusDialogOpen, setStatusDialogOpen] = useState(false)
     const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
@@ -101,7 +99,6 @@ export default function Invoices() {
     const getInvoices = async (filters?: InvoiceFilters): Promise<void> => {
         setLoading(true)
         setError(false)
-        setProcessing(true)
         try {
             const apiFilters = filters ? { ...filters } : undefined
 
@@ -125,7 +122,6 @@ export default function Invoices() {
             setError(true)
         } finally {
             setLoading(false)
-            setProcessing(false)
         }
     }
 
@@ -506,7 +502,6 @@ export default function Invoices() {
                                                                 <Calendar className="mr-2 h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                                                 <span>Update Status</span>
                                                             </DropdownMenuItem>
-                                                            <InvoiceDeleteAction invoiceId={invoice.id} invoiceNumber={invoice.invoice_number} />
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </div>
@@ -714,9 +709,7 @@ export default function Invoices() {
                         setOrDelete('created-date-to', applied['created-date-to'])
                         const newUrl = `${window.location.pathname}?${params.toString()}`
                         window.history.replaceState({}, '', newUrl)
-                    } catch {
-                        // ignore URL update errors
-                    }
+                    } catch {}
                     getInvoices({
                         search: applied.search || '',
                         client: applied.client || '',

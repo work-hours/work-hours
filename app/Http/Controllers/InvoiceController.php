@@ -85,18 +85,6 @@ final class InvoiceController extends Controller
      *
      * @throws Throwable
      */
-    #[Action(method: 'delete', name: 'invoice.destroy', params: ['invoice'], middleware: ['auth', 'verified'])]
-    public function destroy(Invoice $invoice): void
-    {
-        DB::beginTransaction();
-        try {
-            $invoice->delete();
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
 
     /**
      * Display the invoices for the specified client.
