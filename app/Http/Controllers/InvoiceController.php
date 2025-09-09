@@ -11,6 +11,7 @@ use App\Http\Stores\InvoiceStore;
 use App\Http\Stores\TimeLogStore;
 use App\Models\Client;
 use App\Models\Invoice;
+use App\Models\TimeLog;
 use App\Notifications\InvoiceStatusChanged;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -282,6 +283,8 @@ final class InvoiceController extends Controller
                 if ($clientEmail) {
                     Notification::route('mail', $clientEmail)->notify(new InvoiceStatusChanged($invoice));
                 }
+            } elseif ($newStatus === 'cancelled') {
+                TimeLog::query()->where('invoice_id', $invoice->id)->update(['invoice_id' => null]);
             }
 
             DB::commit();

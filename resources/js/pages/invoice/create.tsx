@@ -9,7 +9,7 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { type SharedData } from '@/types'
-import { Head, useForm, usePage, router } from '@inertiajs/react'
+import { Head, router, useForm, usePage } from '@inertiajs/react'
 import { Calendar, FileText, Hash, LoaderCircle, Plus, Trash2, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -350,9 +350,6 @@ export default function CreateInvoice() {
         post(route('invoice.store'), {
             onSuccess: () => {
                 toast.success('Invoice created successfully')
-                // Redirect to invoice listing after successful creation
-                // Prefer named route if available; fallback to path
-                // Using Inertia router.visit for client-side navigation
                 router.visit(route('invoice.index') ?? '/invoice')
             },
             onError: () => {

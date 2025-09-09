@@ -13,7 +13,7 @@ use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
 
-it('returns only timelogs without an invoice for the given client', function () {
+it('returns only timelogs without an invoice for the given client', function (): void {
     $this->markTestSkipped('Factories not available in this project; skipping until factories exist.');
     $user = User::factory()->create();
     actingAs($user);
