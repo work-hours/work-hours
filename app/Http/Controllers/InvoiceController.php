@@ -271,7 +271,6 @@ final class InvoiceController extends Controller
             $invoice->save();
 
             if ($newStatus === 'sent') {
-
                 InvoiceStore::sendInvoiceEmail($invoice);
             } elseif ($newStatus === 'overdue') {
                 if (! $invoice->relationLoaded('client')) {

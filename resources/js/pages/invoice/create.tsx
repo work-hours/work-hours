@@ -323,6 +323,13 @@ export default function CreateInvoice() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
+
+        // Ask for confirmation before creating the invoice
+        const confirmed = window.confirm('Are you sure you want to create this invoice?')
+        if (!confirmed) {
+            return
+        }
+
         const ids = new Set<number>()
         data.items.forEach((it) => {
             if (it.group_project_id) {
