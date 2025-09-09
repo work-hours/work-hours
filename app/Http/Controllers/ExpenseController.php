@@ -18,7 +18,13 @@ final class ExpenseController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('expense/index');
+        return Inertia::render('expense/index', [
+            'filters' => [
+                'search' => request('search', ''),
+                'created-date-from' => request('created-date-from', ''),
+                'created-date-to' => request('created-date-to', ''),
+            ],
+        ]);
     }
 
     public function create(): Response
@@ -75,5 +81,34 @@ final class ExpenseController extends Controller
         }
 
         $expense->update($data);
+    }
+
+    /**
+     * List expenses for the authenticated user.
+     */
+    #[Action(method: 'get', name: 'expenses', middleware: ['auth', 'verified'])]
+    public function expenses(): \Illuminate\Support\Collection
+    {
+        return Expense::query()
+            ->where('user_id', Auth::id())
+            ->when(request('search'), function ($q, $search): void {
+                $q->where(function ($qq) use ($search): void {
+                    $qq->where('title', 'like', "%$search%")
+                        ->orWhere('description', 'like', "%$search%");
+                });
+            })
+            ->when(request('created-date-from'), fn ($q, $from) => $q->whereDate('created_at', '>=', $from))
+            ->when(request('created-date-to'), fn ($q, $to) => $q->whereDate('created_at', '<=', $to))
+            ->latest()
+            ->get()
+            ->map(function (Expense $expense) {
+                return [
+                    'id' => $expense->id,
+                    'title' => $expense->title,
+                    'description' => $expense->description,
+                    'receipt_url' => $expense->receipt_path ? Storage::disk('public')->url($expense->receipt_path) : null,
+                    'created_at' => $expense->created_at?->toISOString(),
+                ];
+            });
     }
 }

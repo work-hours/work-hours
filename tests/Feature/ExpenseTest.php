@@ -31,6 +31,21 @@ it('can create an expense with receipt', function (): void {
     Storage::disk('public')->assertExists($expense->receipt_path);
 });
 
+it('lists only the authenticated user\'s expenses', function (): void {
+    $user = User::factory()->create();
+    $other = User::factory()->create();
+
+    Expense::factory()->create(['user_id' => $user->id, 'title' => 'Mine', 'description' => 'd', 'receipt_path' => 'receipts/a.png']);
+    Expense::factory()->create(['user_id' => $other->id, 'title' => 'Not Mine', 'description' => 'd', 'receipt_path' => 'receipts/b.png']);
+
+    $this->actingAs($user);
+
+    $response = $this->get(route('expenses', ['search' => '']))->assertSuccessful();
+
+    $data = $response->json();
+    expect(collect($data)->pluck('title'))->toContain('Mine')->not->toContain('Not Mine');
+});
+
 it('can update an expense and optionally replace receipt', function (): void {
     Storage::fake('public');
 
