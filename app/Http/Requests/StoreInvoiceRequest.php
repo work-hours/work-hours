@@ -44,7 +44,6 @@ final class StoreInvoiceRequest extends FormRequest
             'items.*.quantity' => ['required', 'numeric', 'min:0.01'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'items.*.amount' => ['required', 'numeric', 'min:0'],
-            // New: allow grouped timelog IDs at the top-level for grouped (project total) selections
             'grouped_time_log_ids' => ['sometimes', 'array'],
             'grouped_time_log_ids.*' => ['integer', 'exists:time_logs,id'],
         ];

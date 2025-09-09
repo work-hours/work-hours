@@ -16,10 +16,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent
-                side="right"
-                className="overflow-y-auto bg-white pr-6 pb-8 pl-6 sm:max-w-md md:max-w-lg dark:bg-gray-900"
-            >
+            <SheetContent side="right" className="overflow-y-auto bg-white pr-6 pb-8 pl-6 sm:max-w-md md:max-w-lg dark:bg-gray-900">
                 <SheetHeader className="mb-6">
                     <SheetTitle className="flex items-center gap-2 text-xl text-gray-900 dark:text-white">
                         <Clock className="h-5 w-5 text-primary" />
@@ -269,11 +266,7 @@ export default function TimeLogDetailsSheet({ timeLog, open, onOpenChange }: Tim
                                     <p className="mb-1 text-xs font-medium text-gray-500 dark:text-gray-400">Status</p>
                                     <Badge
                                         variant={
-                                            timeLog.status === 'approved'
-                                                ? 'success'
-                                                : timeLog.status === 'rejected'
-                                                    ? 'destructive'
-                                                    : 'secondary'
+                                            timeLog.status === 'approved' ? 'success' : timeLog.status === 'rejected' ? 'destructive' : 'secondary'
                                         }
                                         className="inline-flex items-center gap-1.5"
                                     >

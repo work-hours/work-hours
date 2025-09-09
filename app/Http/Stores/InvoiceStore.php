@@ -13,7 +13,6 @@ use App\Http\QueryFilters\Invoice\StatusFilter;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
-use App\Models\TimeLog;
 use App\Models\User;
 use App\Notifications\InvoiceStatusChanged;
 use Carbon\Carbon;

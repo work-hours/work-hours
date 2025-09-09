@@ -44,7 +44,6 @@ type InvoiceItemForm = {
     quantity: string
     unit_price: string
     amount: string
-    // client-side only: when a project total is selected, remember which project
     group_project_id?: number
 }
 
@@ -300,8 +299,6 @@ export default function CreateInvoice() {
         }
 
         const timeLogId = value
-
-        // clear any previous group selection when picking an individual time log
         updatedItems[index].group_project_id = undefined
 
         for (const projectGroup of timeLogs) {
@@ -326,8 +323,6 @@ export default function CreateInvoice() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-
-        // Build grouped_time_log_ids from current selections of project totals
         const ids = new Set<number>()
         data.items.forEach((it) => {
             if (it.group_project_id) {
@@ -337,8 +332,6 @@ export default function CreateInvoice() {
                 }
             }
         })
-
-        // Ensure IDs are included at submit-time to avoid async state issues
         transform((formData) => ({
             ...formData,
             grouped_time_log_ids: Array.from(ids),
@@ -353,7 +346,6 @@ export default function CreateInvoice() {
                 toast.error('Failed to create invoice')
             },
             onFinish: () => {
-                // reset transform to default so future submits aren't affected
                 transform((d) => d)
             },
         })

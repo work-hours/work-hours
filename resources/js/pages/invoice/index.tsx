@@ -23,7 +23,7 @@ import { objectToQueryString, queryStringToObject } from '@/lib/utils'
 import { type BreadcrumbItem } from '@/types'
 import { invoices as _invoices } from '@actions/InvoiceController'
 import { Head, Link, router, usePage } from '@inertiajs/react'
-import { Calendar, Download, Edit, FileText, Loader2, Mail, MoreVertical, Plus, Filter } from 'lucide-react'
+import { Calendar, Download, Edit, FileText, Filter, Loader2, Mail, MoreVertical, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -98,7 +98,6 @@ export default function Invoices() {
         'created-date-to': pageFilters?.['created-date-to'] || null,
     })
 
-
     const getInvoices = async (filters?: InvoiceFilters): Promise<void> => {
         setLoading(true)
         setError(false)
@@ -138,7 +137,6 @@ export default function Invoices() {
         }
         return ''
     }
-
 
     useEffect(() => {
         const queryParams = queryStringToObject()
@@ -279,12 +277,20 @@ export default function Invoices() {
                             <div className="flex items-center gap-2">
                                 <Button
                                     variant={
-                                        filters.search || filters.client !== 'all' || filters.status !== 'all' || filters['created-date-from'] || filters['created-date-to']
+                                        filters.search ||
+                                        filters.client !== 'all' ||
+                                        filters.status !== 'all' ||
+                                        filters['created-date-from'] ||
+                                        filters['created-date-to']
                                             ? 'default'
                                             : 'outline'
                                     }
                                     className={`flex items-center gap-2 ${
-                                        filters.search || filters.client !== 'all' || filters.status !== 'all' || filters['created-date-from'] || filters['created-date-to']
+                                        filters.search ||
+                                        filters.client !== 'all' ||
+                                        filters.status !== 'all' ||
+                                        filters['created-date-from'] ||
+                                        filters['created-date-to']
                                             ? 'border-primary/20 bg-primary/10 text-primary hover:border-primary/30 hover:bg-primary/20 dark:border-primary/30 dark:bg-primary/20 dark:text-primary-foreground dark:hover:bg-primary/30'
                                             : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
                                     }`}
@@ -302,7 +308,11 @@ export default function Invoices() {
                                         }`}
                                     />
                                     <span>
-                                        {filters.search || filters.client !== 'all' || filters.status !== 'all' || filters['created-date-from'] || filters['created-date-to']
+                                        {filters.search ||
+                                        filters.client !== 'all' ||
+                                        filters.status !== 'all' ||
+                                        filters['created-date-from'] ||
+                                        filters['created-date-to']
                                             ? 'Filters Applied'
                                             : 'Filters'}
                                     </span>
@@ -325,54 +335,54 @@ export default function Invoices() {
                         </div>
 
                         <div className={'mt-2 text-sm text-muted-foreground'}>
-                                {(filters.search ||
-                                    filters.client !== 'all' ||
-                                    filters.status !== 'all' ||
-                                    filters['created-date-from'] ||
-                                    filters['created-date-to']) && (
-                                    <CardDescription>
-                                        {(() => {
-                                            let description = ''
+                            {(filters.search ||
+                                filters.client !== 'all' ||
+                                filters.status !== 'all' ||
+                                filters['created-date-from'] ||
+                                filters['created-date-to']) && (
+                                <CardDescription>
+                                    {(() => {
+                                        let description = ''
 
-                                            if (filters['created-date-from'] && filters['created-date-to']) {
-                                                description = `Showing invoices from ${formatDateValue(filters['created-date-from'])} to ${formatDateValue(
-                                                    filters['created-date-to'],
-                                                )}`
-                                            } else if (filters['created-date-from']) {
-                                                description = `Showing invoices from ${formatDateValue(filters['created-date-from'])}`
-                                            } else if (filters['created-date-to']) {
-                                                description = `Showing invoices until ${formatDateValue(filters['created-date-to'])}`
+                                        if (filters['created-date-from'] && filters['created-date-to']) {
+                                            description = `Showing invoices from ${formatDateValue(filters['created-date-from'])} to ${formatDateValue(
+                                                filters['created-date-to'],
+                                            )}`
+                                        } else if (filters['created-date-from']) {
+                                            description = `Showing invoices from ${formatDateValue(filters['created-date-from'])}`
+                                        } else if (filters['created-date-to']) {
+                                            description = `Showing invoices until ${formatDateValue(filters['created-date-to'])}`
+                                        }
+
+                                        if (filters.status) {
+                                            if (description) {
+                                                description += ` with status "${formatStatusLabel(filters.status)}"`
+                                            } else {
+                                                description = `Showing invoices with status "${formatStatusLabel(filters.status)}"`
                                             }
+                                        }
 
-                                            if (filters.status) {
-                                                if (description) {
-                                                    description += ` with status "${formatStatusLabel(filters.status)}"`
-                                                } else {
-                                                    description = `Showing invoices with status "${formatStatusLabel(filters.status)}"`
-                                                }
+                                        if (filters.client) {
+                                            if (description) {
+                                                description += ` for selected client`
+                                            } else {
+                                                description = `Showing invoices for selected client`
                                             }
+                                        }
 
-                                            if (filters.client) {
-                                                if (description) {
-                                                    description += ` for selected client`
-                                                } else {
-                                                    description = `Showing invoices for selected client`
-                                                }
+                                        if (filters.search) {
+                                            if (description) {
+                                                description += ` matching "${filters.search}"`
+                                            } else {
+                                                description = `Showing invoices matching "${filters.search}"`
                                             }
+                                        }
 
-                                            if (filters.search) {
-                                                if (description) {
-                                                    description += ` matching "${filters.search}"`
-                                                } else {
-                                                    description = `Showing invoices matching "${filters.search}"`
-                                                }
-                                            }
-
-                                            return description
-                                        })()}
-                                    </CardDescription>
-                                )}
-                            </div>
+                                        return description
+                                    })()}
+                                </CardDescription>
+                            )}
+                        </div>
                     </CardHeader>
                     <CardContent>
                         {loading ? (
@@ -683,7 +693,6 @@ export default function Invoices() {
                 }}
                 clients={clients}
                 onApply={(applied) => {
-                    // normalize back to index page state ('all' for blanks)
                     const normalized = {
                         search: applied.search || '',
                         client: applied.client || 'all',
@@ -712,8 +721,6 @@ export default function Invoices() {
                         const newUrl = `${window.location.pathname}?${params.toString()}`
                         window.history.replaceState({}, '', newUrl)
                     } catch {}
-
-                    // call API with empty values instead of 'all'
                     getInvoices({
                         search: applied.search || '',
                         client: applied.client || '',
