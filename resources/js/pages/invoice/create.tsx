@@ -1,7 +1,17 @@
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { type SharedData } from '@/types'
 import { Head, useForm, usePage } from '@inertiajs/react'
 import { Calendar, FileText, Hash, LoaderCircle, Plus, Trash2, User } from 'lucide-react'
-import { FormEventHandler, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import BackButton from '@/components/back-button'
@@ -88,7 +98,6 @@ export default function CreateInvoice() {
     const [clients, setClients] = useState<Client[]>([])
     const [timeLogs, setTimeLogs] = useState<ProjectTimeLogGroup[]>([])
     const [loadingClients, setLoadingClients] = useState(true)
-    const [activeSection, setActiveSection] = useState('details')
 
     const generateInvoiceNumber = (): string => {
         return `INV-${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`
@@ -321,15 +330,9 @@ export default function CreateInvoice() {
         }
     }
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault()
+    const [confirmOpen, setConfirmOpen] = useState(false)
 
-        // Ask for confirmation before creating the invoice
-        const confirmed = window.confirm('Are you sure you want to create this invoice?')
-        if (!confirmed) {
-            return
-        }
-
+    const actuallySubmit = () => {
         const ids = new Set<number>()
         data.items.forEach((it) => {
             if (it.group_project_id) {
@@ -380,7 +383,13 @@ export default function CreateInvoice() {
                     </div>
                 </section>
 
-                <form className="flex flex-col gap-6" onSubmit={submit}>
+                <form
+                    className="flex flex-col gap-6"
+                    onSubmit={(e) => {
+                        e.preventDefault()
+                        setConfirmOpen(true)
+                    }}
+                >
                     <h2 className="mt-2 flex items-center gap-2 border-b pb-2 text-xl font-semibold">
                         <FileText className="h-5 w-5" />
                         Invoice Details
@@ -838,6 +847,29 @@ export default function CreateInvoice() {
                     </div>
                 </form>
             </div>
+
+            <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Create invoice?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will create the invoice with the current details and associate selected time logs.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={processing}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => {
+                                setConfirmOpen(false)
+                                actuallySubmit()
+                            }}
+                            disabled={processing}
+                        >
+                            Confirm
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </MasterLayout>
     )
 }
