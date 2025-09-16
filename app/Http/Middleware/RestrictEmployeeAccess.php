@@ -30,8 +30,9 @@ final class RestrictEmployeeAccess
         if (! $isEmployee) {
             return $next($request);
         }
-
-        // Allow-list for employees: only sidebar sections and their supporting endpoints
+        if ($this->isApiLikeRequest($request)) {
+            return $next($request);
+        }
         $path = '/' . mb_ltrim($request->path(), '/');
 
         $allowedPrefixes = [
@@ -41,7 +42,6 @@ final class RestrictEmployeeAccess
             '/time-log',
         ];
 
-        // Always allow logout so employees can sign out
         if ($request->routeIs('logout')) {
             return $next($request);
         }
@@ -51,8 +51,17 @@ final class RestrictEmployeeAccess
                 return $next($request);
             }
         }
-
-        // For disallowed URLs, forbid access
         abort(403, 'You are not allowed to access this page.');
+    }
+
+    private function isApiLikeRequest(Request $request): bool
+    {
+        if ($request->expectsJson() || $request->wantsJson() || $request->isXmlHttpRequest() || $request->ajax()) {
+            return true;
+        }
+
+        $path = mb_ltrim($request->path(), '/');
+
+        return str_starts_with($path, 'api') || str_starts_with($path, 'action');
     }
 }
