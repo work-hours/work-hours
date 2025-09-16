@@ -36,6 +36,7 @@ final class RestrictEmployeeAccess
         $path = '/' . mb_ltrim($request->path(), '/');
 
         $allowedPrefixes = [
+            '/',
             '/dashboard',
             '/project',
             '/task',
