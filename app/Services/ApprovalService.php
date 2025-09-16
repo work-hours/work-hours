@@ -131,12 +131,14 @@ final class ApprovalService
      */
     public function authorizeApproval(TimeLog $timeLog): void
     {
+        $teamLeader = User::teamLeader(project: $timeLog->project);
+
         $isApprover = ProjectTeam::query()
             ->where('project_id', $timeLog->project_id)
             ->where('member_id', auth()->id())
             ->where('is_approver', true)
             ->exists();
 
-        throw_if(! $isApprover, new Exception('You are not authorized to approve this time log.'));
+        throw_if(auth()->id() !== $teamLeader->getKey() && ! $isApprover, new Exception('You are not authorized to approve this time log.'));
     }
 }
