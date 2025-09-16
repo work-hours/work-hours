@@ -58,11 +58,14 @@ final class Team extends Model
     {
         $entry = self::query()->where('user_id', $userId)->where('member_id', $memberId)->first();
 
-        if (! $entry) {
-            return false;
-        }
+        return (bool) $entry?->non_monetary;
+    }
 
-        return (bool) $entry->non_monetary;
+    public static function isMemberEmployee(int $userId, int $memberId): bool
+    {
+        $entry = self::query()->where('user_id', $userId)->where('member_id', $memberId)->first();
+
+        return (bool) $entry?->is_employee;
     }
 
     public function user(): BelongsTo

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Enums\TimeLogStatus;
+use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
 use App\Models\Project;
 use App\Models\ProjectTeam;
+use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
 use App\Notifications\TimeLogApproved;
@@ -63,13 +65,15 @@ final class ApprovalService
     public function processTimeLog(TimeLog $timeLog, TimeLogStatus $status, ?string $comment): void
     {
         $this->authorizeApproval($timeLog);
+        $userIsEmployee = Team::isMemberEmployee(userId: $timeLog->project->user_id, memberId: $timeLog->user_id);
+        $markPaid = $status === TimeLogStatus::APPROVED && $userIsEmployee;
 
         $timeLog->update([
             'status' => $status,
             'approved_by' => auth()->id(),
             'approved_at' => Carbon::now(),
             'comment' => $comment,
-            'is_paid' => $status === TimeLogStatus::APPROVED,
+            'is_paid' => $markPaid,
         ]);
 
         $timeLogOwner = User::query()->find($timeLog->user_id);
