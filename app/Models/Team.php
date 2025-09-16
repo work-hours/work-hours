@@ -15,13 +15,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float $hourly_rate
  * @property string currency
  * @property bool $non_monetary
+ * @property bool $is_employee
  * @property User $user
  * @property User $member
  */
 #[UsePolicy(TeamPolicy::class)]
 final class Team extends Model
 {
-    protected $fillable = ['user_id', 'member_id', 'hourly_rate', 'currency', 'non_monetary'];
+    protected $fillable = ['user_id', 'member_id', 'hourly_rate', 'currency', 'non_monetary', 'is_employee'];
 
     public static function memberHourlyRate(Project $project, int $memberId): ?float
     {

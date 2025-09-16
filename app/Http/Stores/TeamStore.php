@@ -38,6 +38,7 @@ final class TeamStore
                 'hourly_rate' => (float) ($team->hourly_rate ?? 0),
                 'currency' => $team->currency ?? 'USD',
                 'non_monetary' => (bool) ($team->non_monetary ?? false),
+                'is_employee' => (bool) ($team->is_employee ?? false),
             ]);
         }
 
@@ -66,9 +67,10 @@ final class TeamStore
         array $userData,
         ?float $hourlyRate,
         ?string $currency,
-        bool $nonMonetary
+        bool $nonMonetary,
+        bool $isEmployee
     ): array {
-        return DB::transaction(function () use ($ownerUserId, $userData, $hourlyRate, $currency, $nonMonetary): array {
+        return DB::transaction(function () use ($ownerUserId, $userData, $hourlyRate, $currency, $nonMonetary, $isEmployee): array {
             $user = User::query()->where('email', $userData['email'])->first();
             $isNewUser = false;
 
@@ -77,7 +79,7 @@ final class TeamStore
                 $user = User::query()->create($userData);
             }
 
-            $finalNonMonetary = $nonMonetary;
+            $finalNonMonetary = $isEmployee ? true : $nonMonetary;
             $finalHourlyRate = $finalNonMonetary ? 0 : ($hourlyRate ?? 0);
 
             Team::query()->updateOrCreate(
@@ -89,6 +91,7 @@ final class TeamStore
                     'hourly_rate' => $finalHourlyRate,
                     'currency' => $currency,
                     'non_monetary' => $finalNonMonetary,
+                    'is_employee' => $isEmployee,
                 ]
             );
 
@@ -121,16 +124,21 @@ final class TeamStore
                 unset($data['password']);
             }
 
+            $isEmployee = isset($data['is_employee']) && (bool) $data['is_employee'];
             $nonMonetary = isset($data['non_monetary']) && (bool) $data['non_monetary'];
+            if ($isEmployee) {
+                $nonMonetary = true;
+            }
             $hourlyRate = $nonMonetary ? 0 : ((float) ($data['hourly_rate'] ?? 0));
 
             $teamData = [
                 'hourly_rate' => $hourlyRate,
                 'currency' => $data['currency'] ?? null,
                 'non_monetary' => $nonMonetary,
+                'is_employee' => $isEmployee,
             ];
 
-            unset($data['hourly_rate'], $data['currency'], $data['non_monetary']);
+            unset($data['hourly_rate'], $data['currency'], $data['non_monetary'], $data['is_employee']);
 
             $memberUser->update($data);
 

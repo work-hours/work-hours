@@ -53,8 +53,9 @@ final class TeamController extends Controller
     #[Action(method: 'post', name: 'team.store', middleware: ['auth', 'verified'])]
     public function store(StoreTeamMemberRequest $request): void
     {
-        $userData = $request->safe()->except(['hourly_rate', 'currency']);
+        $userData = $request->safe()->except(['hourly_rate', 'currency', 'non_monetary', 'is_employee']);
         $nonMonetary = $request->boolean('non_monetary', false);
+        $isEmployee = $request->boolean('is_employee', false);
 
         $result = TeamStore::createOrAttachMemberForUser(
             ownerUserId: auth()->id(),
@@ -62,6 +63,7 @@ final class TeamController extends Controller
             hourlyRate: (int) $request->get('hourly_rate'),
             currency: $request->get('currency'),
             nonMonetary: $nonMonetary,
+            isEmployee: $isEmployee,
         );
 
         $user = $result['user'];

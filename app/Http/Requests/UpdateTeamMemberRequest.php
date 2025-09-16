@@ -32,6 +32,8 @@ final class UpdateTeamMemberRequest extends FormRequest
             'password' => ['nullable', 'string', 'min:8'],
             'hourly_rate' => ['nullable', 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'max:3'],
+            'non_monetary' => ['sometimes', 'boolean'],
+            'is_employee' => ['sometimes', 'boolean'],
         ];
     }
 }

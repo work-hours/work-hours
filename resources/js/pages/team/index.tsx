@@ -24,6 +24,7 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
         hourly_rate: number
         currency: string
         non_monetary: boolean
+        is_employee: boolean
     } | null>(null)
     const [filtersOpen, setFiltersOpen] = useState(false)
 
