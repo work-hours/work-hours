@@ -64,6 +64,7 @@ final class ApprovalService
             'approved_by' => auth()->id(),
             'approved_at' => Carbon::now(),
             'comment' => $comment,
+            'is_paid' => $status === TimeLogStatus::APPROVED,
         ]);
 
         $timeLogOwner = User::query()->find($timeLog->user_id);
