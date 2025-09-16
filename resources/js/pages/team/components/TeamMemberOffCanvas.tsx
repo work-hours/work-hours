@@ -18,6 +18,7 @@ export type TeamMemberOffCanvasProps = {
     mode: 'create' | 'edit'
     onClose: () => void
     currencies: Currency[]
+    genericEmails: string[]
     user?: {
         id: number
         name: string
@@ -39,7 +40,7 @@ type TeamMemberForm = {
     is_employee: boolean
 }
 
-export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, user }: TeamMemberOffCanvasProps) {
+export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, genericEmails, user }: TeamMemberOffCanvasProps) {
     const isEdit = mode === 'edit'
 
     const { data, setData, post, put, processing, errors, reset } = useForm<TeamMemberForm>({
@@ -93,6 +94,16 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
             })
         }
     }
+
+    const emailDomain = (data.email.split('@')[1] || '').toLowerCase()
+    const isGenericDomain = genericEmails.includes(emailDomain)
+    const isEmployeeDisabled = !isEdit && isGenericDomain
+
+    useEffect(() => {
+        if (isEmployeeDisabled && data.is_employee) {
+            setData('is_employee', false)
+        }
+    }, [isEmployeeDisabled])
 
     return (
         <Sheet open={open} onOpenChange={(val) => !val && onClose()}>
@@ -216,6 +227,7 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                                                     setData('non_monetary', true)
                                                 }
                                             }}
+                                            disabled={isEmployeeDisabled || processing}
                                             className="border-neutral-300 text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800"
                                         />
                                     </div>
@@ -223,7 +235,10 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                                         <Label htmlFor="is_employee" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                             Is Employee
                                         </Label>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">If checked, Non-monetary will be auto-enabled</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                            If checked, Non-monetary will be auto-enabled
+                                            {isEmployeeDisabled ? ' — cannot mark as employee when using a generic email domain' : ''}
+                                        </p>
                                     </div>
                                 </div>
 

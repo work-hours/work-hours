@@ -14,7 +14,7 @@ import { Head, Link } from '@inertiajs/react'
 import { Clock, Edit, Filter, MoreVertical, UserPlus, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-export default function Team({ teamMembers, filters, currencies }: TeamPageProps) {
+export default function Team({ teamMembers, filters, currencies, genericEmails }: TeamPageProps) {
     const [offOpen, setOffOpen] = useState(false)
     const [mode, setMode] = useState<'create' | 'edit'>('create')
     const [editUser, setEditUser] = useState<{
@@ -144,14 +144,16 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                                             >
                                                 <TableCell className="py-3">
                                                     <div className="font-medium text-gray-800 dark:text-gray-200">{member.name}</div>
-                                                    <div className="text-xs text-gray-500 dark:text-gray-400">{member.email}</div>
-                                                    {member.is_employee ? (
-                                                        <span className="inline-flex items-center rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                                                            Employee
-                                                        </span>
-                                                    ) : (
-                                                        <></>
-                                                    )}
+                                                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                                                        {member.email}
+                                                        {member.is_employee ? (
+                                                            <span className="ml-1 inline-flex items-center rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                                                E
+                                                            </span>
+                                                        ) : (
+                                                            <></>
+                                                        )}
+                                                    </div>
                                                 </TableCell>
                                                 <TableCell className="text-sm text-gray-700 dark:text-gray-300">
                                                     {member.non_monetary ? '-' : member.hourly_rate}
@@ -240,7 +242,14 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                     </CardContent>
                 </Card>
             </div>
-            <TeamMemberOffCanvas open={offOpen} mode={mode} onClose={() => setOffOpen(false)} currencies={currencies} user={editUser ?? undefined} />
+            <TeamMemberOffCanvas
+                open={offOpen}
+                mode={mode}
+                onClose={() => setOffOpen(false)}
+                currencies={currencies}
+                genericEmails={genericEmails}
+                user={editUser ?? undefined}
+            />
             <TeamFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} />
         </MasterLayout>
     )

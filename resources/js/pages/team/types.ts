@@ -32,6 +32,7 @@ export type TeamPageProps = {
     teamMembers: TeamMember[]
     filters: TeamFilters
     currencies: Currency[]
+    genericEmails: string[]
 }
 
 export const teamBreadcrumbs: BreadcrumbItem[] = [
