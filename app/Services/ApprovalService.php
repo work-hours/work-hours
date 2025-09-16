@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Enums\TimeLogStatus;
-use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TimeLogStore;
+use App\Models\Project;
 use App\Models\ProjectTeam;
 use App\Models\TimeLog;
 use App\Models\User;
@@ -24,7 +24,8 @@ final class ApprovalService
      */
     public function getPendingApprovals(): Collection
     {
-        $leadProjects = ProjectStore::userProjects(userId: auth()->id())
+        $ownedProjects = Project::query()
+            ->where('user_id', auth()->id())
             ->pluck('id')
             ->toArray();
 
@@ -34,10 +35,14 @@ final class ApprovalService
             ->pluck('project_id')
             ->toArray();
 
-        $allProjects = array_unique(array_merge($leadProjects, $approverProjects));
+        $visibleProjects = array_values(array_unique(array_merge($ownedProjects, $approverProjects)));
+
+        if ($visibleProjects === []) {
+            return collect();
+        }
 
         $teamMemberIds = ProjectTeam::query()
-            ->whereIn('project_id', $allProjects)
+            ->whereIn('project_id', $visibleProjects)
             ->where('member_id', '!=', auth()->id())
             ->pluck('member_id')
             ->toArray();
@@ -45,7 +50,7 @@ final class ApprovalService
         return TimeLogStore::timeLogs(
             baseQuery: TimeLog::query()
                 ->whereIn('user_id', $teamMemberIds)
-                ->whereIn('project_id', $allProjects)
+                ->whereIn('project_id', $visibleProjects)
                 ->where('status', 'pending')
         );
     }
@@ -126,14 +131,12 @@ final class ApprovalService
      */
     public function authorizeApproval(TimeLog $timeLog): void
     {
-        $teamLeader = User::teamLeader(project: $timeLog->project);
-
         $isApprover = ProjectTeam::query()
             ->where('project_id', $timeLog->project_id)
             ->where('member_id', auth()->id())
             ->where('is_approver', true)
             ->exists();
 
-        throw_if(auth()->id() !== $teamLeader->getKey() && ! $isApprover, new Exception('You are not authorized to approve this time log.'));
+        throw_if(! $isApprover, new Exception('You are not authorized to approve this time log.'));
     }
 }
