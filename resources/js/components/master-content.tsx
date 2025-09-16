@@ -4,11 +4,13 @@ import { HourlyRateStatusBar } from '@/components/hourly-rate-status-bar'
 import RunningTracker from '@/components/running-tracker'
 import { Badge } from '@/components/ui/badge'
 import { useNotifications } from '@/contexts/notifications-context'
-import { Link } from '@inertiajs/react'
+import type { SharedData } from '@/types'
+import { Link, usePage } from '@inertiajs/react'
 import { Bell, ChevronRight, Home, Settings } from 'lucide-react'
 
 export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps) {
     const { unreadCount, isAdmin } = useNotifications()
+    const { isEmployee } = usePage<SharedData>().props
 
     return (
         <div className="relative flex flex-1 flex-col bg-slate-50 dark:bg-slate-900">
@@ -105,9 +107,7 @@ export function MasterContent({ children, breadcrumbs = [] }: MasterContentProps
                 </div>
             </div>
             <main className="relative z-10 flex-1 overflow-y-auto">
-                <div className="print:hidden">
-                    <HourlyRateStatusBar />
-                </div>
+                <div className="print:hidden">{!isEmployee && <HourlyRateStatusBar />}</div>
 
                 <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-16 print:max-w-none print:px-0 print:pt-0 print:pb-0">{children}</div>
             </main>

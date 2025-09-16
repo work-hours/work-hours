@@ -29,6 +29,7 @@ export interface SharedData {
     ziggy: Config & { location: string }
     sidebarOpen: boolean
     isGitHubIntegrated?: boolean
+    isEmployee?: boolean
     [key: string]: unknown
 }
 

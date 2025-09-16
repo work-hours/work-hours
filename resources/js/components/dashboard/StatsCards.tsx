@@ -49,17 +49,6 @@ export default function StatsCards({ teamStats }: StatsCardsProps) {
     }
 
     const renderPaidAmountCards = () => {
-        if (!teamStats.paidAmountsByCurrency || Object.keys(teamStats.paidAmountsByCurrency).length === 0) {
-            if (teamStats.paidAmount <= 0) return null
-            return (
-                <StatsCard
-                    title="Paid Amount"
-                    value={`${teamStats.currency || 'USD'} ${roundToTwoDecimals(teamStats.paidAmount)}`}
-                    icon={<DollarSign className="stroke-emerald-600" />}
-                    color="emerald"
-                />
-            )
-        }
         return Object.entries(teamStats.paidAmountsByCurrency)
             .filter(([, amount]) => amount > 0)
             .map(([currencyCode, amount]) => (

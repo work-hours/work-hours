@@ -149,7 +149,9 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                                                         <span className="inline-flex items-center rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
                                                             Employee
                                                         </span>
-                                                    ) : (<></>)}
+                                                    ) : (
+                                                        <></>
+                                                    )}
                                                 </TableCell>
                                                 <TableCell className="text-sm text-gray-700 dark:text-gray-300">
                                                     {member.non_monetary ? '-' : member.hourly_rate}
