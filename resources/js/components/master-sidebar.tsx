@@ -92,6 +92,7 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     const { isGitHubIntegrated, isJiraIntegrated, auth, isEmployee } = usePage<SharedData>().props
     const { pendingTaskCount, approvalCount } = useNotifications()
     const employeeItems = [
+        { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
         { title: 'Projects', href: '/project', icon: LucideProjector },
         { title: 'Tasks', href: '/task', icon: ClipboardList },
         { title: 'Time Logs', href: '/time-log', icon: TimerIcon },
