@@ -15,16 +15,24 @@ const breadcrumbs = [
     { title: 'Create', href: '/expense/create' },
 ]
 
+type Currency = { id: number; code: string }
+
 type ExpenseForm = {
     title: string
     description: string
+    amount: string
+    currency: string
     receipt: File | null
 }
 
-export default function CreateExpense() {
+type Props = { currencies: Currency[] }
+
+export default function CreateExpense({ currencies }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm<ExpenseForm>({
         title: '',
         description: '',
+        amount: '0.00',
+        currency: currencies && currencies.length > 0 ? currencies[0].code : 'USD',
         receipt: null,
     })
 
@@ -34,6 +42,8 @@ export default function CreateExpense() {
         formData.append('title', data.title)
         formData.append('description', data.description)
         if (data.receipt) formData.append('receipt', data.receipt)
+        formData.append('amount', data.amount)
+        formData.append('currency', data.currency)
 
         post(route('expense.store'), {
             data: formData,
@@ -76,6 +86,44 @@ export default function CreateExpense() {
                                 <Label htmlFor="description">Description <span className="text-destructive">*</span></Label>
                                 <Textarea id="description" value={data.description} onChange={(e) => setData('description', e.target.value)} required disabled={processing} className="min-h-[120px]" />
                                 <InputError message={errors.description} className="mt-1" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <Label htmlFor="amount">Amount <span className="text-destructive">*</span></Label>
+                                    <Input
+                                        id="amount"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        value={data.amount}
+                                        onChange={(e) => setData('amount', e.target.value)}
+                                        required
+                                        disabled={processing}
+                                    />
+                                    <InputError message={errors.amount} className="mt-1" />
+                                </div>
+                                <div>
+                                    <Label htmlFor="currency">Currency <span className="text-destructive">*</span></Label>
+                                    <select
+                                        id="currency"
+                                        value={data.currency}
+                                        onChange={(e) => setData('currency', e.target.value)}
+                                        className="mt-1 block w-full rounded-md border px-3 py-2 text-sm dark:bg-neutral-900"
+                                        disabled={processing}
+                                        required
+                                    >
+                                        {currencies && currencies.length > 0 ? (
+                                            currencies.map((c) => (
+                                                <option key={c.id} value={c.code}>
+                                                    {c.code}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option value="USD">USD</option>
+                                        )}
+                                    </select>
+                                    <InputError message={errors.currency} className="mt-1" />
+                                </div>
                             </div>
                             <div>
                                 <Label htmlFor="receipt">Receipt <span className="text-destructive">*</span></Label>

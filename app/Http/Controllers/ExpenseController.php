@@ -29,7 +29,11 @@ final class ExpenseController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('expense/create');
+        $currencies = auth()->user()?->currencies()->get(['id', 'code']) ?? collect();
+
+        return Inertia::render('expense/create', [
+            'currencies' => $currencies,
+        ]);
     }
 
     public function edit(Expense $expense): Response
@@ -43,8 +47,11 @@ final class ExpenseController extends Controller
                 'id' => $expense->id,
                 'title' => $expense->title,
                 'description' => $expense->description,
+                'amount' => (float) $expense->amount,
+                'currency' => $expense->currency,
                 'receipt_url' => $expense->receipt_path ? Storage::disk('public')->url($expense->receipt_path) : null,
             ],
+            'currencies' => auth()->user()?->currencies()->get(['id', 'code']) ?? collect(),
         ]);
     }
 
@@ -59,6 +66,8 @@ final class ExpenseController extends Controller
             'user_id' => Auth::id(),
             'title' => $request->string('title')->toString(),
             'description' => $request->string('description')->toString(),
+            'amount' => (float) $request->input('amount'),
+            'currency' => $request->string('currency')->toString(),
             'receipt_path' => $path,
         ]);
     }
@@ -73,6 +82,8 @@ final class ExpenseController extends Controller
         $data = [
             'title' => $request->string('title')->toString(),
             'description' => $request->string('description')->toString(),
+            'amount' => (float) $request->input('amount'),
+            'currency' => $request->string('currency')->toString(),
         ];
 
         if ($request->hasFile('receipt')) {
@@ -106,6 +117,8 @@ final class ExpenseController extends Controller
                     'id' => $expense->id,
                     'title' => $expense->title,
                     'description' => $expense->description,
+                    'amount' => (float) $expense->amount,
+                    'currency' => $expense->currency,
                     'receipt_url' => $expense->receipt_path ? Storage::disk('public')->url($expense->receipt_path) : null,
                     'created_at' => $expense->created_at?->toISOString(),
                 ];

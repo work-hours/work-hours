@@ -20,6 +20,8 @@ type Expense = {
   id: number
   title: string
   description: string
+  amount: number
+  currency: string
   receipt_url: string | null
   created_at: string
 }
@@ -123,6 +125,7 @@ export default function ExpensesIndex() {
                   <TableHeaderRow>
                     <TableHead>Title</TableHead>
                     <TableHead>Description</TableHead>
+                    <TableHead>Amount</TableHead>
                     <TableHead>Receipt</TableHead>
                     <TableHead>Created</TableHead>
                     <TableHead className="w-[80px]">Actions</TableHead>
@@ -131,7 +134,7 @@ export default function ExpensesIndex() {
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
+                      <TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">
                         <Loader2 className="mr-2 inline h-4 w-4 animate-spin" /> Loading expenses...
                       </TableCell>
                     </TableRow>
@@ -150,6 +153,7 @@ export default function ExpensesIndex() {
                       <TableRow key={expense.id} className="hover:bg-muted/30">
                         <TableCell className="font-medium">{expense.title}</TableCell>
                         <TableCell className="max-w-[420px] truncate text-muted-foreground">{expense.description}</TableCell>
+                        <TableCell className="font-medium">{expense.currency} {Number(expense.amount).toFixed(2)}</TableCell>
                         <TableCell>
                           {expense.receipt_url ? (
                             <a className="text-blue-600 hover:underline" href={expense.receipt_url} target="_blank" rel="noreferrer">

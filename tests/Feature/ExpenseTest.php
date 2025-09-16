@@ -17,6 +17,8 @@ it('can create an expense with receipt', function (): void {
     $response = $this->post(route('expense.store'), [
         'title' => 'Lunch Meeting',
         'description' => 'Client lunch meeting',
+        'amount' => 25.50,
+        'currency' => 'USD',
         'receipt' => $file,
     ]);
 
@@ -35,8 +37,8 @@ it('lists only the authenticated user\'s expenses', function (): void {
     $user = User::factory()->create();
     $other = User::factory()->create();
 
-    Expense::factory()->create(['user_id' => $user->id, 'title' => 'Mine', 'description' => 'd', 'receipt_path' => 'receipts/a.png']);
-    Expense::factory()->create(['user_id' => $other->id, 'title' => 'Not Mine', 'description' => 'd', 'receipt_path' => 'receipts/b.png']);
+    Expense::factory()->create(['user_id' => $user->id, 'title' => 'Mine', 'description' => 'd', 'amount' => 10, 'currency' => 'USD', 'receipt_path' => 'receipts/a.png']);
+    Expense::factory()->create(['user_id' => $other->id, 'title' => 'Not Mine', 'description' => 'd', 'amount' => 20, 'currency' => 'USD', 'receipt_path' => 'receipts/b.png']);
 
     $this->actingAs($user);
 
@@ -59,12 +61,16 @@ it('can update an expense and optionally replace receipt', function (): void {
         'user_id' => $user->id,
         'title' => 'Taxi',
         'description' => 'Airport taxi',
+        'amount' => 50,
+        'currency' => 'USD',
         'receipt_path' => $path,
     ]);
 
     $response = $this->put(route('expense.update', $expense), [
         'title' => 'Taxi Ride',
         'description' => 'Airport taxi updated',
+        'amount' => 55,
+        'currency' => 'USD',
     ]);
 
     $response->assertSuccessful();
@@ -81,6 +87,8 @@ it('can update an expense and optionally replace receipt', function (): void {
     $response = $this->put(route('expense.update', $expense), [
         'title' => 'Taxi Ride',
         'description' => 'Airport taxi updated',
+        'amount' => 60,
+        'currency' => 'USD',
         'receipt' => $newFile,
     ]);
 

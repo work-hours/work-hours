@@ -16,6 +16,8 @@ final class Expense extends Model
         'user_id',
         'title',
         'description',
+        'amount',
+        'currency',
         'receipt_path',
     ];
 
@@ -29,6 +31,7 @@ final class Expense extends Model
         return [
             'id' => 'integer',
             'user_id' => 'integer',
+            'amount' => 'decimal:2',
         ];
     }
 }
