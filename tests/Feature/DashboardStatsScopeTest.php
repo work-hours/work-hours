@@ -7,9 +7,9 @@ use App\Models\Project;
 use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\getJson;
 
@@ -104,6 +104,6 @@ it('excludes team member logs from their own external projects in dashboard stat
     $trendForDay = collect($json['dailyTrend'])->firstWhere('date', $todayMinus1);
     expect($trendForDay)->not->toBeNull();
     expect($trendForDay['teamHours'])->toEqual(0.0)->or(
-        fn () => true // In case date shift, we won't strictly assert trend to avoid flakiness
+        fn (): true => true // In case date shift, we won't strictly assert trend to avoid flakiness
     );
 });
