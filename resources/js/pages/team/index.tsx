@@ -9,7 +9,7 @@ import { roundToTwoDecimals } from '@/lib/utils'
 import { getFilterDescription } from '@/pages/team/components/TeamFilters'
 import TeamFiltersOffCanvas from '@/pages/team/components/TeamFiltersOffCanvas'
 import TeamMemberOffCanvas from '@/pages/team/components/TeamMemberOffCanvas'
-import { TeamPageProps, teamBreadcrumbs } from '@/pages/team/types'
+import { teamBreadcrumbs, TeamPageProps } from '@/pages/team/types'
 import { Head, Link } from '@inertiajs/react'
 import { Clock, Edit, Filter, MoreVertical, UserPlus, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -145,6 +145,11 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                                                 <TableCell className="py-3">
                                                     <div className="font-medium text-gray-800 dark:text-gray-200">{member.name}</div>
                                                     <div className="text-xs text-gray-500 dark:text-gray-400">{member.email}</div>
+                                                    {member.is_employee ? (
+                                                        <span className="inline-flex items-center rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                                            Employee
+                                                        </span>
+                                                    ) : (<></>)}
                                                 </TableCell>
                                                 <TableCell className="text-sm text-gray-700 dark:text-gray-300">
                                                     {member.non_monetary ? '-' : member.hourly_rate}
