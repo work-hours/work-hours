@@ -193,6 +193,7 @@ export default function Team({ teamMembers, filters, currencies }: TeamPageProps
                                                                         hourly_rate: member.hourly_rate,
                                                                         currency: member.currency,
                                                                         non_monetary: member.non_monetary,
+                                                                        is_employee: member.is_employee ?? false,
                                                                     })
                                                                     setOffOpen(true)
                                                                 }}
