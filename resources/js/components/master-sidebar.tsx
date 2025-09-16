@@ -91,8 +91,6 @@ const navGroups: NavItemGroup[] = [
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
     const { isGitHubIntegrated, isJiraIntegrated, auth, isEmployee } = usePage<SharedData>().props
     const { pendingTaskCount, approvalCount } = useNotifications()
-
-    // Flat menu for employees (no grouping)
     const employeeItems = [
         { title: 'Projects', href: '/project', icon: LucideProjector },
         { title: 'Tasks', href: '/task', icon: ClipboardList },
@@ -194,7 +192,6 @@ export function MasterSidebar({ collapsed }: MasterSidebarProps) {
                         </>
                     ) : (
                         <div className="space-y-1">
-                            {/* Flat list for employees */}
                             {employeeItems.map((item) => {
                                 const isActive =
                                     typeof window !== 'undefined' &&

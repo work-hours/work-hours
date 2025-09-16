@@ -31,7 +31,6 @@ final class ProjectPolicy
      */
     public function create(User $user): bool
     {
-        // Employees cannot create projects
         $isEmployee = Team::query()->where('member_id', $user->getKey())->where('is_employee', true)->exists();
 
         return ! $isEmployee;
