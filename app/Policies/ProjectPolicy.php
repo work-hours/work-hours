@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Models\Project;
+use App\Models\Team;
 use App\Models\User;
 
 final class ProjectPolicy
@@ -28,9 +29,12 @@ final class ProjectPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(): bool
+    public function create(User $user): bool
     {
-        return false;
+        // Employees cannot create projects
+        $isEmployee = Team::query()->where('member_id', $user->getKey())->where('is_employee', true)->exists();
+
+        return ! $isEmployee;
     }
 
     /**

@@ -8,7 +8,7 @@ import MasterLayout from '@/layouts/master-layout'
 import { queryStringToObject } from '@/lib/utils'
 import ProjectFiltersOffCanvas from '@/pages/project/components/ProjectFiltersOffCanvas'
 import ProjectOffCanvas from '@/pages/project/components/ProjectOffCanvas'
-import { type BreadcrumbItem } from '@/types'
+import { type BreadcrumbItem, type SharedData } from '@/types'
 import { syncRepository } from '@actions/GitHubRepositoryController'
 import { syncProject } from '@actions/JiraController'
 import { projects as _projects } from '@actions/ProjectController'
@@ -77,7 +77,7 @@ type Props = {
 export default function Projects() {
     const [notesOpen, setNotesOpen] = useState(false)
     const [notesProjectId, setNotesProjectId] = useState<number | null>(null)
-    const { auth, filters: pageFilters, clients, teamMembers, currencies } = usePage<Props>().props
+    const { auth, filters: pageFilters, clients, teamMembers, currencies, isEmployee } = usePage<SharedData & Props>().props
     const [projects, setProjects] = useState<Project[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<boolean>(false)
@@ -136,7 +136,7 @@ export default function Projects() {
 
         try {
             const params = new URLSearchParams(window.location.search)
-            if ((params.get('open') || '').toLowerCase() === 'true') {
+            if (!isEmployee && (params.get('open') || '').toLowerCase() === 'true') {
                 setMode('create')
                 setEditProjectId(null)
                 setOffOpen(true)
@@ -257,17 +257,19 @@ export default function Projects() {
                                     href={`${route('project.export')}?team-member=${filters['team-member'] || ''}&client=${filters.client || ''}&created-date-from=${formatDateValue(filters['created-date-from'])}&created-date-to=${formatDateValue(filters['created-date-to'])}&search=${filters.search || ''}`}
                                     label="Export"
                                 />
-                                <Button
-                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                    onClick={() => {
-                                        setMode('create')
-                                        setEditProjectId(null)
-                                        setOffOpen(true)
-                                    }}
-                                >
-                                    <FolderPlus className="h-4 w-4" />
-                                    <span>Add Project</span>
-                                </Button>
+                                {!isEmployee && (
+                                    <Button
+                                        className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                        onClick={() => {
+                                            setMode('create')
+                                            setEditProjectId(null)
+                                            setOffOpen(true)
+                                        }}
+                                    >
+                                        <FolderPlus className="h-4 w-4" />
+                                        <span>Add Project</span>
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </CardHeader>

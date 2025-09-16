@@ -63,6 +63,7 @@ final class ProjectController extends Controller
     #[Action(method: 'post', name: 'project.store', middleware: ['auth', 'verified'])]
     public function store(StoreProjectRequest $request): void
     {
+        Gate::authorize('create', Project::class);
         DB::beginTransaction();
         try {
             $project = Project::query()->create([
@@ -86,6 +87,8 @@ final class ProjectController extends Controller
 
     public function create()
     {
+        Gate::authorize('create', Project::class);
+
         [$clients, $teamMembers] = $this->projectService->clientsAndTeamMembers(auth()->id());
 
         return Inertia::render('project/create', [
