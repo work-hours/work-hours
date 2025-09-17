@@ -6,7 +6,6 @@ namespace App\Http\Middleware;
 
 use App\Models\Team;
 use Closure;
-use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,7 +26,7 @@ final class RestrictEmployeeAccess
 
         $middleware = collect($route->middleware())->map(static fn ($m): string => (string) $m);
 
-        if (! $middleware->contains('auth')) {
+        if ($middleware->doesntContain('auth')) {
             return $next($request);
         }
 
