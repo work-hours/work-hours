@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->middleware('verified')->group(function (): void {
+Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::middleware(AdminMiddleware::class)
         ->prefix('administration')
         ->name('admin.')

@@ -6,7 +6,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectNoteController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->middleware('verified')->group(function (): void {
+Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('project', [ProjectController::class, 'index'])->name('project.index');
     Route::get('project/create', [ProjectController::class, 'create'])->name('project.create');
     Route::get('project/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');

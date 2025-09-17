@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Team;
 use Closure;
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,9 +17,17 @@ final class RestrictEmployeeAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $currentPath = '/' . mb_ltrim($request->path(), '/');
+        $route = $request->route();
         $user = $request->user();
 
         if ($user === null) {
+            return $next($request);
+        }
+
+        $middleware = collect($route->middleware())->map(static fn ($m): string => (string) $m);
+
+        if (! $middleware->contains('auth')) {
             return $next($request);
         }
 
@@ -30,13 +39,12 @@ final class RestrictEmployeeAccess
         if (! $isEmployee) {
             return $next($request);
         }
+
         if ($this->isApiLikeRequest($request)) {
             return $next($request);
         }
-        $path = '/' . mb_ltrim($request->path(), '/');
 
-        $allowedPrefixes = [
-            '/',
+        $allowedPaths = [
             '/dashboard',
             '/project',
             '/task',
@@ -47,11 +55,10 @@ final class RestrictEmployeeAccess
             return $next($request);
         }
 
-        foreach ($allowedPrefixes as $prefix) {
-            if (str_starts_with($path, $prefix)) {
-                return $next($request);
-            }
+        if (in_array($currentPath, $allowedPaths, true)) {
+            return $next($request);
         }
+
         abort(403, 'You are not allowed to access this page.');
     }
 

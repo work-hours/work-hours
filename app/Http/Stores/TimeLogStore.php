@@ -40,6 +40,7 @@ final class TimeLogStore
             $startDate = Carbon::today()->subDays($days - 1)->startOfDay();
             $endDate = Carbon::today()->endOfDay();
         }
+
         $logs = TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
             ->where('status', TimeLogStatus::APPROVED)
