@@ -18,6 +18,7 @@ export type TeamMemberOffCanvasProps = {
     mode: 'create' | 'edit'
     onClose: () => void
     currencies: Currency[]
+    genericEmails: string[]
     user?: {
         id: number
         name: string
@@ -25,6 +26,7 @@ export type TeamMemberOffCanvasProps = {
         hourly_rate: number
         currency: string
         non_monetary: boolean
+        is_employee: boolean
     }
 }
 
@@ -35,9 +37,10 @@ type TeamMemberForm = {
     hourly_rate: number | string
     currency: string
     non_monetary: boolean
+    is_employee: boolean
 }
 
-export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, user }: TeamMemberOffCanvasProps) {
+export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, genericEmails, user }: TeamMemberOffCanvasProps) {
     const isEdit = mode === 'edit'
 
     const { data, setData, post, put, processing, errors, reset } = useForm<TeamMemberForm>({
@@ -47,6 +50,7 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
         hourly_rate: isEdit && user ? user.hourly_rate : 0,
         currency: isEdit && user ? user.currency : (currencies[0]?.code ?? 'USD'),
         non_monetary: isEdit && user ? user.non_monetary : false,
+        is_employee: isEdit && user ? user.is_employee : false,
     })
 
     useEffect(() => {
@@ -60,6 +64,7 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                 hourly_rate: isEdit && user ? user.hourly_rate : 0,
                 currency: isEdit && user ? user.currency : (currencies[0]?.code ?? 'USD'),
                 non_monetary: isEdit && user ? user.non_monetary : false,
+                is_employee: isEdit && user ? user.is_employee : false,
             })
         }
     }, [open, mode, user])
@@ -89,6 +94,16 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
             })
         }
     }
+
+    const emailDomain = (data.email.split('@')[1] || '').toLowerCase()
+    const isGenericDomain = genericEmails.includes(emailDomain)
+    const isEmployeeDisabled = !isEdit && isGenericDomain
+
+    useEffect(() => {
+        if (isEmployeeDisabled && data.is_employee) {
+            setData('is_employee', false)
+        }
+    }, [isEmployeeDisabled])
 
     return (
         <Sheet open={open} onOpenChange={(val) => !val && onClose()}>
@@ -203,9 +218,37 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, u
                                 <div className="flex items-center gap-3 rounded-md border border-neutral-100 bg-neutral-50 p-3 dark:border-neutral-800 dark:bg-neutral-800/30">
                                     <div className="flex h-5 items-center">
                                         <Checkbox
+                                            id="is_employee"
+                                            checked={Boolean(data.is_employee)}
+                                            onCheckedChange={(checked) => {
+                                                const val = Boolean(checked)
+                                                setData('is_employee', val)
+                                                if (val) {
+                                                    setData('non_monetary', true)
+                                                }
+                                            }}
+                                            disabled={isEmployeeDisabled || processing}
+                                            className="border-neutral-300 text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800"
+                                        />
+                                    </div>
+                                    <div className="space-y-1 leading-none">
+                                        <Label htmlFor="is_employee" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Is Employee
+                                        </Label>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                            If checked, Non-monetary will be auto-enabled
+                                            {isEmployeeDisabled ? ' — cannot mark as employee when using a generic email domain' : ''}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-3 rounded-md border border-neutral-100 bg-neutral-50 p-3 dark:border-neutral-800 dark:bg-neutral-800/30">
+                                    <div className="flex h-5 items-center">
+                                        <Checkbox
                                             id="non_monetary"
                                             checked={Boolean(data.non_monetary)}
                                             onCheckedChange={(checked) => setData('non_monetary', Boolean(checked))}
+                                            disabled={Boolean(data.is_employee)}
                                             className="border-neutral-300 text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800"
                                         />
                                     </div>

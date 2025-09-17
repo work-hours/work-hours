@@ -26,7 +26,7 @@ use Illuminate\Pipeline\Pipeline;
 
 final class TimeLogStore
 {
-    public static function dailyTrend(array $teamMembersIds, int $userId, int $days = 7, ?Carbon $startDate = null, ?Carbon $endDate = null): array
+    public static function dailyTrend(array $teamMembersIds, int $userId, int $days = 7, ?Carbon $startDate = null, ?Carbon $endDate = null, ?int $projectOwnerId = null): array
     {
         if ($startDate instanceof Carbon || $endDate instanceof Carbon) {
             $startDate = ($startDate ?? Carbon::today())->copy()->startOfDay();
@@ -40,10 +40,16 @@ final class TimeLogStore
             $startDate = Carbon::today()->subDays($days - 1)->startOfDay();
             $endDate = Carbon::today()->endOfDay();
         }
+
         $logs = TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
             ->where('status', TimeLogStatus::APPROVED)
             ->whereBetween('start_timestamp', [$startDate, $endDate])
+            ->when($projectOwnerId !== null, function (Builder $q) use ($projectOwnerId): void {
+                $q->whereHas('project', function (Builder $q2) use ($projectOwnerId): void {
+                    $q2->where('user_id', $projectOwnerId);
+                });
+            })
             ->get(['user_id', 'start_timestamp', 'duration']);
 
         $groupedByDate = $logs->groupBy(fn (TimeLog $log): string => $log->start_timestamp->toDateString());
@@ -97,38 +103,53 @@ final class TimeLogStore
             ->get();
     }
 
-    public static function totalHours(array $teamMembersIds): float
+    public static function totalHours(array $teamMembersIds, ?int $projectOwnerId = null): float
     {
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
             ->where('status', TimeLogStatus::APPROVED)
+            ->when($projectOwnerId !== null, function (Builder $q) use ($projectOwnerId): void {
+                $q->whereHas('project', function (Builder $q2) use ($projectOwnerId): void {
+                    $q2->where('user_id', $projectOwnerId);
+                });
+            })
             ->sum('duration');
     }
 
-    public static function unbillableHours(array $teamMembersIds): float
+    public static function unbillableHours(array $teamMembersIds, ?int $projectOwnerId = null): float
     {
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
             ->where('status', TimeLogStatus::APPROVED)
             ->where('non_billable', true)
+            ->when($projectOwnerId !== null, function (Builder $q) use ($projectOwnerId): void {
+                $q->whereHas('project', function (Builder $q2) use ($projectOwnerId): void {
+                    $q2->where('user_id', $projectOwnerId);
+                });
+            })
             ->sum('duration');
     }
 
-    public static function unpaidHours(array $teamMembersIds)
+    public static function unpaidHours(array $teamMembersIds, ?int $projectOwnerId = null)
     {
         return TimeLog::query()
             ->whereIn('user_id', $teamMembersIds)
             ->where('is_paid', false)
             ->where('non_billable', false)
             ->where('status', TimeLogStatus::APPROVED)
+            ->when($projectOwnerId !== null, function (Builder $q) use ($projectOwnerId): void {
+                $q->whereHas('project', function (Builder $q2) use ($projectOwnerId): void {
+                    $q2->where('user_id', $projectOwnerId);
+                });
+            })
             ->sum('duration');
     }
 
-    public static function unpaidAmount(array $teamMembersIds): array
+    public static function unpaidAmount(array $teamMembersIds, ?int $projectOwnerId = null): array
     {
         $unpaidAmounts = [];
         foreach ($teamMembersIds as $memberId) {
-            $unpaidLogs = self::unpaidTimeLog(teamMemberId: $memberId)->where('non_billable', false);
+            $unpaidLogs = self::unpaidTimeLog(teamMemberId: $memberId, projectOwnerId: $projectOwnerId)->where('non_billable', false);
             $unpaidLogs->each(function ($log) use (&$unpaidAmounts, $memberId): void {
                 $memberUnpaidHours = $log->duration;
                 $hourlyRate = Team::memberHourlyRate(project: $log->project, memberId: $memberId);
@@ -150,7 +171,7 @@ final class TimeLogStore
         return $unpaidAmounts;
     }
 
-    public static function unpaidTimeLog(int $teamMemberId): Collection
+    public static function unpaidTimeLog(int $teamMemberId, ?int $projectOwnerId = null): Collection
     {
         return TimeLog::query()
             ->with('project')
@@ -158,6 +179,11 @@ final class TimeLogStore
             ->where('is_paid', false)
             ->where('non_billable', false)
             ->where('status', TimeLogStatus::APPROVED)
+            ->when($projectOwnerId !== null, function (Builder $q) use ($projectOwnerId): void {
+                $q->whereHas('project', function (Builder $q2) use ($projectOwnerId): void {
+                    $q2->where('user_id', $projectOwnerId);
+                });
+            })
             ->get();
     }
 
@@ -228,11 +254,11 @@ final class TimeLogStore
         return array_values($groupedTimeLogs);
     }
 
-    public static function paidAmount(array $teamMembersIds): array
+    public static function paidAmount(array $teamMembersIds, ?int $projectOwnerId = null): array
     {
         $paidAmounts = [];
         foreach ($teamMembersIds as $memberId) {
-            $paidLogs = self::paidTimeLog(teamMemberId: $memberId);
+            $paidLogs = self::paidTimeLog(teamMemberId: $memberId, projectOwnerId: $projectOwnerId);
             $paidLogs->each(function ($log) use (&$paidAmounts, $memberId): void {
                 $memberPaidHours = $log->duration;
                 $hourlyRate = Team::memberHourlyRate(project: $log->project, memberId: $memberId);
@@ -254,13 +280,18 @@ final class TimeLogStore
         return $paidAmounts;
     }
 
-    public static function paidTimeLog(int $teamMemberId): Collection
+    public static function paidTimeLog(int $teamMemberId, ?int $projectOwnerId = null): Collection
     {
         return TimeLog::query()
             ->with('project')
             ->where('user_id', $teamMemberId)
             ->where('is_paid', true)
             ->where('status', TimeLogStatus::APPROVED)
+            ->when($projectOwnerId !== null, function (Builder $q) use ($projectOwnerId): void {
+                $q->whereHas('project', function (Builder $q2) use ($projectOwnerId): void {
+                    $q2->where('user_id', $projectOwnerId);
+                });
+            })
             ->get();
     }
 

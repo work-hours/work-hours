@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Http\Stores\TeamStore;
+use App\Models\Team;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -49,6 +50,7 @@ final class HandleInertiaRequests extends Middleware
 
         $user = $request->user();
         $teamContext = $user ? TeamStore::getContextFor($user) : null;
+        $isEmployee = $user && Team::query()->where('member_id', $user->id)->where('is_employee', true)->exists();
 
         return [
             ...parent::share($request),
@@ -58,6 +60,7 @@ final class HandleInertiaRequests extends Middleware
                 'user' => $user,
             ],
             'teamContext' => $teamContext,
+            'isEmployee' => $isEmployee,
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

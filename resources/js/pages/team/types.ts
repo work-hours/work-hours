@@ -7,6 +7,7 @@ export type TeamMember = {
     hourly_rate: number
     currency: string
     non_monetary: boolean
+    is_employee: boolean
     totalHours: number
     weeklyAverage: number
     unpaidHours: number
@@ -31,6 +32,7 @@ export type TeamPageProps = {
     teamMembers: TeamMember[]
     filters: TeamFilters
     currencies: Currency[]
+    genericEmails: string[]
 }
 
 export const teamBreadcrumbs: BreadcrumbItem[] = [

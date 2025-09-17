@@ -237,35 +237,6 @@ final class InvoiceStore
         ]);
     }
 
-    /**
-     * Update invoice items
-     */
-    private static function updateInvoiceItems(Invoice $invoice, array $items): void
-    {
-        $existingItemIds = $invoice->items->pluck('id')->toArray();
-        $updatedItemIds = [];
-
-        foreach ($items as $item) {
-            if (isset($item['id'])) {
-
-                $invoiceItem = InvoiceItem::query()->find($item['id']);
-                if ($invoiceItem && $invoiceItem->invoice_id === $invoice->id) {
-                    $invoiceItem->update($item);
-                    $updatedItemIds[] = $invoiceItem->id;
-                }
-            } else {
-                $item['invoice_id'] = $invoice->id;
-                $newItem = InvoiceItem::query()->create($item);
-                $updatedItemIds[] = $newItem->id;
-            }
-        }
-
-        $itemsToDelete = array_diff($existingItemIds, $updatedItemIds);
-        if ($itemsToDelete !== []) {
-            InvoiceItem::query()->whereIn('id', $itemsToDelete)->delete();
-        }
-    }
-
     private static function sendInvoiceStatusNotification(Invoice $invoice): void
     {
         if (! $invoice->relationLoaded('client')) {

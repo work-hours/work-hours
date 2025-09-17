@@ -43,12 +43,14 @@ final class DashboardController extends Controller
 
         $teamMembers = TeamStore::teamMembersIds(userId: auth()->id())->merge([auth()->id()]);
         $teamMembersIds = $teamMembers->toArray();
+        $ownerId = (int) auth()->id();
 
-        $totalHours = TimeLogStore::totalHours(teamMembersIds: $teamMembersIds);
-        $unpaidHours = TimeLogStore::unpaidHours(teamMembersIds: $teamMembersIds);
-        $unbillableHours = TimeLogStore::unbillableHours(teamMembersIds: $teamMembersIds);
-        $unpaidAmountsByCurrency = TimeLogStore::unpaidAmount(teamMembersIds: $teamMembersIds);
-        $paidAmountsByCurrency = TimeLogStore::paidAmount(teamMembersIds: $teamMembersIds);
+        $totalHours = TimeLogStore::totalHours(teamMembersIds: $teamMembersIds, projectOwnerId: $ownerId);
+        $unpaidHours = TimeLogStore::unpaidHours(teamMembersIds: $teamMembersIds, projectOwnerId: $ownerId);
+        $unbillableHours = TimeLogStore::unbillableHours(teamMembersIds: $teamMembersIds, projectOwnerId: $ownerId);
+        $unpaidAmountsByCurrency = TimeLogStore::unpaidAmount(teamMembersIds: $teamMembersIds, projectOwnerId: $ownerId);
+        $paidAmountsByCurrency = TimeLogStore::paidAmount(teamMembersIds: $teamMembersIds, projectOwnerId: $ownerId);
+
         $startDateStr = request('start-date');
         $endDateStr = request('end-date');
         $startDate = $startDateStr ? Carbon::parse($startDateStr)->startOfDay() : null;
@@ -56,10 +58,11 @@ final class DashboardController extends Controller
 
         $dailyTrend = TimeLogStore::dailyTrend(
             teamMembersIds: $teamMembersIds,
-            userId: (int) auth()->id(),
+            userId: $ownerId,
             days: 7,
             startDate: $startDate,
             endDate: $endDate,
+            projectOwnerId: $ownerId,
         );
 
         return [

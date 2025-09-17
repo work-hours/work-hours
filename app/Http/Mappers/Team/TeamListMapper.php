@@ -34,6 +34,7 @@ final class TeamListMapper
             'hourly_rate' => $team->hourly_rate,
             'currency' => $team->currency,
             'non_monetary' => (bool) $team->non_monetary,
+            'is_employee' => (bool) ($team->is_employee ?? false),
             'totalHours' => $totalDuration,
             'weeklyAverage' => $weeklyAverage,
             'unpaidHours' => $unpaidHours,

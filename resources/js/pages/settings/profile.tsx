@@ -29,7 +29,7 @@ type ProfileForm = {
 }
 
 export default function Profile({ mustVerifyEmail, status, currencies }: { mustVerifyEmail: boolean; status?: string; currencies: string[] }) {
-    const { auth } = usePage<SharedData>().props
+    const { auth, isEmployee } = usePage<SharedData>().props
 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
         name: auth.user.name,
@@ -117,49 +117,51 @@ export default function Profile({ mustVerifyEmail, status, currencies }: { mustV
                                     <InputError className="mt-1" message={errors.email} />
                                 </div>
 
-                                <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <div className="grid gap-3">
-                                        <Label htmlFor="hourly_rate" className="text-sm font-medium">
-                                            Hourly Rate
-                                        </Label>
-                                        <div className="relative">
-                                            <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                {!isEmployee && (
+                                    <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        <div className="grid gap-3">
+                                            <Label htmlFor="hourly_rate" className="text-sm font-medium">
+                                                Hourly Rate
+                                            </Label>
+                                            <div className="relative">
+                                                <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                                </div>
+                                                <Input
+                                                    id="hourly_rate"
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0"
+                                                    className="pl-10"
+                                                    value={data.hourly_rate}
+                                                    onChange={(e) => setData('hourly_rate', e.target.value)}
+                                                    required={!isEmployee}
+                                                    placeholder="Hourly rate"
+                                                />
                                             </div>
-                                            <Input
-                                                id="hourly_rate"
-                                                type="number"
-                                                step="0.01"
-                                                min="0"
-                                                className="pl-10"
-                                                value={data.hourly_rate}
-                                                onChange={(e) => setData('hourly_rate', e.target.value)}
-                                                required
-                                                placeholder="Hourly rate"
-                                            />
+                                            <InputError className="mt-1" message={errors.hourly_rate} />
                                         </div>
-                                        <InputError className="mt-1" message={errors.hourly_rate} />
-                                    </div>
 
-                                    <div className="grid gap-3">
-                                        <Label htmlFor="currency" className="text-sm font-medium">
-                                            Currency
-                                        </Label>
-                                        <Select value={data.currency} onValueChange={(value) => setData('currency', value)}>
-                                            <SelectTrigger id="currency">
-                                                <SelectValue placeholder="Select currency" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {currencies.map((code: string) => (
-                                                    <SelectItem key={code} value={code}>
-                                                        {code}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <InputError className="mt-1" message={errors.currency} />
+                                        <div className="grid gap-3">
+                                            <Label htmlFor="currency" className="text-sm font-medium">
+                                                Currency
+                                            </Label>
+                                            <Select value={data.currency} onValueChange={(value) => setData('currency', value)}>
+                                                <SelectTrigger id="currency">
+                                                    <SelectValue placeholder="Select currency" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {currencies.map((code: string) => (
+                                                        <SelectItem key={code} value={code}>
+                                                            {code}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <InputError className="mt-1" message={errors.currency} />
+                                        </div>
                                     </div>
-                                </div>
+                                )}
 
                                 {mustVerifyEmail && auth.user.email_verified_at === null && (
                                     <div className="mt-2 rounded-md bg-amber-50 p-4 dark:bg-amber-900/20">

@@ -23,7 +23,7 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
         (item) => typeof window !== 'undefined' && (window.location.pathname === item.href || window.location.pathname.startsWith(`${item.href}/`)),
     )
 
-    const hasApprovals = items.some((item) => item.href === '/approvals')
+    const hasApprovals = items.some((item) => item.href === '/time-log/approvals')
     const hasTasks = items.some((item) => item.href === '/task')
     const groupApprovalCount = hasApprovals ? approvalCount : 0
     const groupTaskCount = hasTasks ? pendingTaskCount : 0
@@ -114,7 +114,7 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
                                                     aria-hidden="true"
                                                 />
                                             )}
-                                            {item.href === '/approvals' && approvalCount > 0 && (
+                                            {item.href === '/time-log/approvals' && approvalCount > 0 && (
                                                 <Badge
                                                     variant="destructive"
                                                     className="absolute top-0 -right-24 flex h-4 min-w-4 items-center justify-center overflow-hidden rounded-full border-0 bg-red-600 px-1 text-xs font-medium text-white shadow-sm dark:bg-red-500"
@@ -146,7 +146,7 @@ export function SidebarGroup({ title, icon: Icon, items, collapsed, approvalCoun
                                                 className="border-neutral-200 bg-white text-neutral-800 shadow-md dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
                                             >
                                                 {item.title}
-                                                {item.href === '/approvals' && approvalCount > 0 && ` (${approvalCount})`}
+                                                {item.href === '/time-log/approvals' && approvalCount > 0 && ` (${approvalCount})`}
                                                 {item.href === '/task' && pendingTaskCount > 0 && ` (${pendingTaskCount})`}
                                             </TooltipContent>
                                         </Tooltip>

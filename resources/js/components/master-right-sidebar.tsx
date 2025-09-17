@@ -3,8 +3,8 @@ import OnlineUsers from '@/components/online-users'
 import QuickTrackModal from '@/components/quick-track-modal'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useTimeTracker } from '@/contexts/time-tracker-context'
-import { type NavItem } from '@/types'
-import { Link } from '@inertiajs/react'
+import { type NavItem, type SharedData } from '@/types'
+import { Link, usePage } from '@inertiajs/react'
 import { BarChart3, BrainCircuit, ClockIcon, PlusCircle, UsersIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -33,12 +33,16 @@ const quickLinks: NavItem[] = [
 ]
 
 export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps) {
+    const { isEmployee } = usePage<SharedData>().props
+
     const handleAskAiClick = () => {
         window.dispatchEvent(new Event('open-ai-chat'))
     }
 
     const [quickOpen, setQuickOpen] = useState(false)
     const { running } = useTimeTracker()
+
+    const displayedQuickLinks = isEmployee ? quickLinks.filter((q) => q.title === 'Log Time') : quickLinks
 
     useEffect(() => {
         const onKeyDown = (e: KeyboardEvent) => {
@@ -73,7 +77,7 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                     </div>
                     <TooltipProvider>
                         <nav className="relative z-10 space-y-1">
-                            {quickLinks.slice(0, 5).map((item) => (
+                            {displayedQuickLinks.map((item) => (
                                 <div key={item.href} className="relative">
                                     <Link
                                         href={item.href}
@@ -106,23 +110,25 @@ export function MasterRightSidebar({ collapsed = true }: MasterRightSidebarProps
                     </div>
                     <TooltipProvider>
                         <nav className="relative z-10 space-y-1">
-                            <div className="relative">
-                                <button
-                                    onClick={handleAskAiClick}
-                                    className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100"
-                                >
-                                    <BrainCircuit className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                                    {!collapsed && <span>Ask AI</span>}
-                                </button>
-                                {collapsed && (
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
-                                        </TooltipTrigger>
-                                        <TooltipContent side="left">Ask AI</TooltipContent>
-                                    </Tooltip>
-                                )}
-                            </div>
+                            {!isEmployee && (
+                                <div className="relative">
+                                    <button
+                                        onClick={handleAskAiClick}
+                                        className="flex w-full items-center rounded-md px-2 py-2 text-sm font-medium text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800/70 dark:hover:text-neutral-100"
+                                    >
+                                        <BrainCircuit className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                                        {!collapsed && <span>Ask AI</span>}
+                                    </button>
+                                    {collapsed && (
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <div className="pointer-events-none absolute inset-0 z-20 cursor-pointer"></div>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="left">Ask AI</TooltipContent>
+                                        </Tooltip>
+                                    )}
+                                </div>
+                            )}
 
                             <div className="relative">
                                 <button
