@@ -16,7 +16,8 @@ final class RestrictEmployeeAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $currentPath = '/' . mb_ltrim($request->path(), '/');
+        [$currentPath] = explode('/', mb_ltrim($request->path(), '/'));
+
         $route = $request->route();
         $user = $request->user();
 
@@ -44,10 +45,10 @@ final class RestrictEmployeeAccess
         }
 
         $allowedPaths = [
-            '/dashboard',
-            '/project',
-            '/task',
-            '/time-log',
+            'dashboard',
+            'project',
+            'task',
+            'time-log',
         ];
 
         if ($request->routeIs('logout')) {
