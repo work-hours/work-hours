@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Http\Stores\PermissionStore;
 use App\Http\Stores\ProjectStore;
 use App\Http\Stores\TeamStore;
 use App\Models\User;
@@ -82,7 +83,19 @@ final class TeamPolicy
         if (! $response) {
             return false;
         }
+        if (TeamStore::isLeaderOfMemberIds($user->getKey(), $member->getKey())) {
+            return true;
+        }
+        $employeeLeaderId = TeamStore::employeeLeaderIdFor($user->getKey());
+        if ($employeeLeaderId) {
+            $hasViewLogsPermission = PermissionStore::userHasTeamPermission($user, 'View Time Logs');
+            if (! $hasViewLogsPermission) {
+                return false;
+            }
 
-        return TeamStore::isLeaderOfMemberIds($user->getKey(), $member->getKey());
+            return TeamStore::isLeaderOfMemberIds((int) $employeeLeaderId, $member->getKey());
+        }
+
+        return false;
     }
 }

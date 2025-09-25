@@ -45,6 +45,7 @@ export default function Team({ teamMembers, filters, currencies, genericEmails, 
     const canCreate = isEmployeeView ? myTeamPermissions.includes('Create') : true
     const canUpdate = isEmployeeView ? myTeamPermissions.includes('Update') : true
     const canDelete = isEmployeeView ? myTeamPermissions.includes('Delete') : true
+    const canViewTimeLogs = isEmployeeView ? myTeamPermissions.includes('View Time Logs') : true
 
     return (
         <MasterLayout breadcrumbs={teamBreadcrumbs}>
@@ -53,15 +54,17 @@ export default function Team({ teamMembers, filters, currencies, genericEmails, 
                 <section className="mb-2">
                     <div className="mb-2 flex items-center justify-between">
                         <h1 className="text-2xl font-medium tracking-tight text-gray-800 dark:text-gray-100">Team Management</h1>
-                        <Link href={route('team.all-time-logs')}>
-                            <Button
-                                variant="outline"
-                                className="flex items-center gap-2 text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
-                            >
-                                <Clock className="h-4 w-4" />
-                                <span>All Time Logs</span>
-                            </Button>
-                        </Link>
+                        {canViewTimeLogs && (
+                            <Link href={route('team.all-time-logs')}>
+                                <Button
+                                    variant="outline"
+                                    className="flex items-center gap-2 text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
+                                >
+                                    <Clock className="h-4 w-4" />
+                                    <span>All Time Logs</span>
+                                </Button>
+                            </Link>
+                        )}
                     </div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Manage your team members and monitor their productivity</p>
                 </section>
@@ -194,12 +197,14 @@ export default function Team({ teamMembers, filters, currencies, genericEmails, 
                                                             </Button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end" className="w-48">
-                                                            <Link href={route('team.time-logs', member.id)}>
-                                                                <DropdownMenuItem className="group cursor-pointer">
-                                                                    <Clock className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                    <span>Time Logs</span>
-                                                                </DropdownMenuItem>
-                                                            </Link>
+                                                            {canViewTimeLogs && (
+                                                                <Link href={route('team.time-logs', member.id)}>
+                                                                    <DropdownMenuItem className="group cursor-pointer">
+                                                                        <Clock className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                        <span>Time Logs</span>
+                                                                    </DropdownMenuItem>
+                                                                </Link>
+                                                            )}
                                                             {canUpdate && (
                                                                 <DropdownMenuItem
                                                                     className="group cursor-pointer"

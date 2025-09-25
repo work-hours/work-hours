@@ -49,9 +49,7 @@ final class TeamController extends Controller
         $leaderIdForListing = null;
         if ($employeeLeaderId) {
             $hasListPermission = PermissionStore::userHasTeamPermission($authUser, 'List');
-
             abort_unless($hasListPermission, 403, 'You do not have permission to view team members.');
-
             $leaderIdForListing = (int) $employeeLeaderId;
         }
 
@@ -196,6 +194,13 @@ final class TeamController extends Controller
 
     public function allTimeLogs()
     {
+        $authUser = auth()->user();
+        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
+        if ($employeeLeaderId) {
+            $hasViewLogsPermission = PermissionStore::userHasTeamPermission($authUser, 'View Time Logs');
+            abort_unless($hasViewLogsPermission, 403, 'You do not have permission to view time logs.');
+        }
+
         $baseQuery = TimeLogQuery::builder(userId: auth()->id());
 
         [$paginatedLogs, $allFilteredLogs] = $this->teamService->paginateWithFull($baseQuery);
@@ -252,6 +257,13 @@ final class TeamController extends Controller
     #[Action(method: 'get', name: 'team.export-time-logs', middleware: ['auth', 'verified'])]
     public function exportTimeLogs(): StreamedResponse
     {
+        $authUser = auth()->user();
+        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
+        if ($employeeLeaderId) {
+            $hasViewLogsPermission = PermissionStore::userHasTeamPermission($authUser, 'View Time Logs');
+            abort_unless($hasViewLogsPermission, 403, 'You do not have permission to export time logs.');
+        }
+
         $timeLogs = TimeLogQuery::builder(userId: auth()->id())->get();
         $mappedTimeLogs = TimeLogStore::timeLogExportMapper(timeLogs: $timeLogs);
         $headers = TimeLogStore::timeLogExportHeaders();
