@@ -1,7 +1,7 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { type User } from '@/types'
 import { Link } from '@inertiajs/react'
 import { LogOut } from 'lucide-react'
-import { type User } from '@/types'
 
 interface UserSectionProps {
     collapsed: boolean

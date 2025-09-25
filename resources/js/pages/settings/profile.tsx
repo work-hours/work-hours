@@ -1,19 +1,31 @@
 import { type BreadcrumbItem, type SharedData, type User } from '@/types'
 import { Transition } from '@headlessui/react'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
-import { AlertCircle, CheckCircle, DollarSign, Image as ImageIcon, LoaderCircle, Mail, Save, Trash2, Upload, UserCircle, User as UserIcon, X } from 'lucide-react'
-import { FormEventHandler, useState, useRef } from 'react'
+import {
+    AlertCircle,
+    CheckCircle,
+    DollarSign,
+    Image as ImageIcon,
+    LoaderCircle,
+    Mail,
+    Save,
+    Trash2,
+    Upload,
+    UserCircle,
+    User as UserIcon,
+} from 'lucide-react'
+import { FormEventHandler, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import MasterLayout from '@/layouts/master-layout'
 import SettingsLayout from '@/layouts/settings/layout'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 function ProfilePhotoSection() {
     const { auth } = usePage<SharedData>().props
@@ -27,8 +39,6 @@ function ProfilePhotoSection() {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0]
             photoForm.setData('photo', file)
-
-            // Create preview URL for the selected image
             const url = URL.createObjectURL(file)
             setPreviewUrl(url)
         }
@@ -58,16 +68,12 @@ function ProfilePhotoSection() {
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             const file = e.dataTransfer.files[0]
-
-            // Check if file is an image
             if (!file.type.startsWith('image/')) {
                 toast.error('Please upload an image file')
                 return
             }
 
             photoForm.setData('photo', file)
-
-            // Create preview URL
             const url = URL.createObjectURL(file)
             setPreviewUrl(url)
         }
@@ -134,29 +140,21 @@ function ProfilePhotoSection() {
 
     return (
         <div className="space-y-4">
-            {/* Delete Confirmation Dialog */}
             <Dialog open={isConfirmingRemoval} onOpenChange={setIsConfirmingRemoval}>
                 <DialogContent>
                     <DialogHeader>
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="mb-1 flex items-center gap-2">
                             <div className="rounded-full bg-red-100 p-2 dark:bg-red-900/30">
                                 <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
                             </div>
-                            <DialogTitle className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                                Remove profile picture
-                            </DialogTitle>
+                            <DialogTitle className="text-lg font-medium text-gray-900 dark:text-gray-100">Remove profile picture</DialogTitle>
                         </div>
                         <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
                             Are you sure you want to remove your profile picture? This action cannot be undone.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={cancelRemovePhoto}
-                        >
+                        <Button type="button" variant="outline" size="sm" onClick={cancelRemovePhoto}>
                             Cancel
                         </Button>
                         <Button
@@ -171,7 +169,6 @@ function ProfilePhotoSection() {
                 </DialogContent>
             </Dialog>
 
-            {/* Profile Photo Section */}
             <div className="flex items-center gap-6">
                 <div className="relative h-24 w-24 flex-shrink-0">
                     <img
@@ -180,7 +177,7 @@ function ProfilePhotoSection() {
                         className="h-full w-full rounded-full border-2 border-gray-200 object-cover shadow-sm dark:border-gray-700"
                     />
                     {previewUrl && (
-                        <div className="absolute -bottom-1 -right-1 rounded-full bg-gray-900 p-1 text-white dark:bg-white dark:text-gray-900">
+                        <div className="absolute -right-1 -bottom-1 rounded-full bg-gray-900 p-1 text-white dark:bg-white dark:text-gray-900">
                             <span className="sr-only">Preview image</span>
                             <CheckCircle className="h-4 w-4" />
                         </div>
@@ -189,17 +186,9 @@ function ProfilePhotoSection() {
 
                 <div className="flex flex-col gap-2">
                     <p className="font-medium text-gray-700 dark:text-gray-300">Profile photo</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                        JPG, PNG or GIF. Maximum size 2MB.
-                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">JPG, PNG or GIF. Maximum size 2MB.</p>
                     <div className="flex flex-wrap gap-2">
-                        <Button
-                            type="button"
-                            onClick={triggerFileInput}
-                            size="sm"
-                            variant="outline"
-                            className="flex items-center gap-1.5"
-                        >
+                        <Button type="button" onClick={triggerFileInput} size="sm" variant="outline" className="flex items-center gap-1.5">
                             <Upload className="h-3.5 w-3.5" />
                             Select image
                         </Button>
@@ -221,21 +210,11 @@ function ProfilePhotoSection() {
             </div>
 
             <form onSubmit={uploadPhoto}>
-                <input
-                    ref={fileInputRef}
-                    id="photo"
-                    name="photo"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="sr-only"
-                />
+                <input ref={fileInputRef} id="photo" name="photo" type="file" accept="image/*" onChange={handleFileChange} className="sr-only" />
 
                 <div
-                    className={`mt-4 flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors
-                    ${isDragging
-                        ? 'border-blue-400 bg-blue-50 dark:border-blue-500 dark:bg-blue-950/20'
-                        : 'border-gray-300 dark:border-gray-700'
+                    className={`mt-4 flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors ${
+                        isDragging ? 'border-blue-400 bg-blue-50 dark:border-blue-500 dark:bg-blue-950/20' : 'border-gray-300 dark:border-gray-700'
                     } ${photoForm.data.photo ? 'bg-gray-50 dark:bg-gray-800/50' : ''}`}
                     onDragEnter={handleDragEnter}
                     onDragLeave={handleDragLeave}
@@ -249,9 +228,7 @@ function ProfilePhotoSection() {
                             </div>
                             <div>
                                 <p className="font-medium">{photoForm.data.photo.name}</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {(photoForm.data.photo.size / 1024 / 1024).toFixed(2)} MB
-                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{(photoForm.data.photo.size / 1024 / 1024).toFixed(2)} MB</p>
                             </div>
 
                             <div className="flex gap-2">
@@ -274,12 +251,7 @@ function ProfilePhotoSection() {
                                     )}
                                 </Button>
 
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={cancelUpload}
-                                >
+                                <Button type="button" variant="outline" size="sm" onClick={cancelUpload}>
                                     Cancel
                                 </Button>
                             </div>
@@ -291,19 +263,22 @@ function ProfilePhotoSection() {
                             </div>
                             <div className="space-y-1">
                                 <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Drag and drop an image, or <button type="button" onClick={triggerFileInput} className="text-blue-600 underline hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-400">browse</button>
+                                    Drag and drop an image, or{' '}
+                                    <button
+                                        type="button"
+                                        onClick={triggerFileInput}
+                                        className="text-blue-600 underline hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-400"
+                                    >
+                                        browse
+                                    </button>
                                 </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    Supports JPG, PNG and GIF up to 2MB
-                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">Supports JPG, PNG and GIF up to 2MB</p>
                             </div>
                         </div>
                     )}
                 </div>
 
-                {(photoForm.errors as any)?.photo && (
-                    <InputError className="mt-2" message={(photoForm.errors as any).photo} />
-                )}
+                {(photoForm.errors as any)?.photo && <InputError className="mt-2" message={(photoForm.errors as any).photo} />}
             </form>
         </div>
     )
