@@ -119,7 +119,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
             setApprovalSuccess(response.data.message)
 
             setTimeout(() => {
-                get(route('approvals.index'), { preserveState: true })
+                get(route('time-log.approvals'), { preserveState: true })
                 closeApproveDialog()
                 setSelectedLogs([])
             }, 1500)
@@ -164,7 +164,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
             setApprovalSuccess(response.data.message)
 
             setTimeout(() => {
-                get(route('approvals.index'), { preserveState: true })
+                get(route('time-log.approvals'), { preserveState: true })
                 closeRejectDialog()
                 setSelectedLogs([])
             }, 1500)
@@ -208,7 +208,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        get(route('approvals.index'), {
+        get(route('time-log.approvals'), {
             preserveState: true,
         })
     }
@@ -350,7 +350,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                                                 project: '',
                                                 user: '',
                                             })
-                                            get(route('approvals.index'), {
+                                            get(route('time-log.approvals'), {
                                                 preserveState: true,
                                             })
                                         }}
