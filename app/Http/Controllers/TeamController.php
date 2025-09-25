@@ -12,6 +12,7 @@ use App\Http\Requests\UpdateTeamMemberRequest;
 use App\Http\Stores\TagStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
+use App\Models\Permission;
 use App\Models\User;
 use App\Notifications\PasswordChanged;
 use App\Notifications\TeamMemberAdded;
@@ -40,11 +41,24 @@ final class TeamController extends Controller
      */
     public function index()
     {
+        $permissionsByModule = Permission::query()
+            ->orderBy('module')
+            ->orderBy('name')
+            ->get()
+            ->groupBy(fn ($perm) => (string) ($perm->module ?? 'General'))
+            ->map(fn ($group) => $group->map(fn ($perm) => [
+                'id' => $perm->id,
+                'name' => $perm->name,
+                'description' => $perm->description,
+            ])->values())
+            ->toArray();
+
         return Inertia::render('team/index', [
             'teamMembers' => TeamListSearchableQuery::builder()->get()->map(fn ($team): array => TeamListMapper::map($team)),
             'filters' => TeamStore::filters(),
             'currencies' => auth()->user()->currencies,
             'genericEmails' => config('generic_email'),
+            'permissionsByModule' => $permissionsByModule,
         ]);
     }
 
@@ -54,7 +68,7 @@ final class TeamController extends Controller
     #[Action(method: 'post', name: 'team.store', middleware: ['auth', 'verified'])]
     public function store(StoreTeamMemberRequest $request): void
     {
-        $userData = $request->safe()->except(['hourly_rate', 'currency', 'non_monetary', 'is_employee']);
+        $userData = $request->safe()->except(['hourly_rate', 'currency', 'non_monetary', 'is_employee', 'permissions']);
         $nonMonetary = $request->boolean('non_monetary', false);
         $isEmployee = $request->boolean('is_employee', false);
 
@@ -69,6 +83,15 @@ final class TeamController extends Controller
 
         $user = $result['user'];
         $isNewUser = $result['is_new'];
+
+        // Sync permissions if provided and user is marked as employee
+        if ($isEmployee) {
+            $permissions = (array) $request->input('permissions', []);
+            $user->permissions()->sync($permissions);
+        } else {
+            // Ensure no permissions remain if not employee
+            $user->permissions()->detach();
+        }
 
         $creator = auth()->user();
         if ($isNewUser) {
@@ -94,6 +117,18 @@ final class TeamController extends Controller
             memberUser: $user,
             data: $data,
         );
+
+        // Sync permissions only if provided, to avoid wiping existing unintentionally
+        if ($request->has('is_employee')) {
+            if ($request->boolean('is_employee')) {
+                if ($request->has('permissions')) {
+                    $user->permissions()->sync((array) $request->input('permissions', []));
+                }
+            } else {
+                // Not an employee: remove all permissions
+                $user->permissions()->detach();
+            }
+        }
 
         if ($result['password_changed']) {
             $user->notify(new PasswordChanged($user, auth()->user(), $result['plain_password']));

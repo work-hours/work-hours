@@ -13,12 +13,15 @@ import { toast } from 'sonner'
 
 import type { Currency } from '@/pages/team/types'
 
+import type { PermissionsByModule } from '@/pages/team/types'
+
 export type TeamMemberOffCanvasProps = {
     open: boolean
     mode: 'create' | 'edit'
     onClose: () => void
     currencies: Currency[]
     genericEmails: string[]
+    permissionsByModule: PermissionsByModule
     user?: {
         id: number
         name: string
@@ -27,6 +30,7 @@ export type TeamMemberOffCanvasProps = {
         currency: string
         non_monetary: boolean
         is_employee: boolean
+        permissions?: number[]
     }
 }
 
@@ -38,9 +42,10 @@ type TeamMemberForm = {
     currency: string
     non_monetary: boolean
     is_employee: boolean
+    permissions: number[]
 }
 
-export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, genericEmails, user }: TeamMemberOffCanvasProps) {
+export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, genericEmails, permissionsByModule, user }: TeamMemberOffCanvasProps) {
     const isEdit = mode === 'edit'
 
     const { data, setData, post, put, processing, errors, reset } = useForm<TeamMemberForm>({
@@ -51,6 +56,7 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, g
         currency: isEdit && user ? user.currency : (currencies[0]?.code ?? 'USD'),
         non_monetary: isEdit && user ? user.non_monetary : false,
         is_employee: isEdit && user ? user.is_employee : false,
+        permissions: isEdit && user && Array.isArray(user.permissions) ? user.permissions : [],
     })
 
     useEffect(() => {
@@ -65,6 +71,7 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, g
                 currency: isEdit && user ? user.currency : (currencies[0]?.code ?? 'USD'),
                 non_monetary: isEdit && user ? user.non_monetary : false,
                 is_employee: isEdit && user ? user.is_employee : false,
+                permissions: isEdit && user && Array.isArray(user.permissions) ? user.permissions : [],
             })
         }
     }, [open, mode, user])
@@ -313,6 +320,49 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, g
                                     </div>
                                 )}
                             </div>
+
+                            {data.is_employee && (
+                                <div className="space-y-4 pt-2">
+                                    <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Permissions</h3>
+                                    <div className="space-y-6">
+                                        {Object.entries(permissionsByModule).map(([module, perms]) => (
+                                            <div key={module} className="space-y-2">
+                                                <div className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{module}</div>
+                                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                                    {perms.map((perm) => {
+                                                        const checked = data.permissions.includes(perm.id)
+                                                        return (
+                                                            <label key={perm.id} className="flex items-start gap-3 rounded-md border border-neutral-100 p-3 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/30">
+                                                                <Checkbox
+                                                                    id={`perm_${perm.id}`}
+                                                                    checked={checked}
+                                                                    onCheckedChange={(val) => {
+                                                                        const want = Boolean(val)
+                                                                        setData(
+                                                                            'permissions',
+                                                                            want
+                                                                                ? [...data.permissions, perm.id]
+                                                                                : data.permissions.filter((id) => id !== perm.id)
+                                                                        )
+                                                                    }}
+                                                                    disabled={processing}
+                                                                    className="mt-0.5 border-neutral-300 text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800"
+                                                                />
+                                                                <div className="space-y-0.5">
+                                                                    <div className="text-sm font-medium text-neutral-700 dark:text-neutral-200">{perm.name}</div>
+                                                                    {perm.description ? (
+                                                                        <div className="text-xs text-neutral-500 dark:text-neutral-400">{perm.description}</div>
+                                                                    ) : null}
+                                                                </div>
+                                                            </label>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="mt-6 flex justify-end gap-3 border-t border-neutral-200 pt-6 dark:border-neutral-800">
                                 <Button

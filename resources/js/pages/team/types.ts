@@ -28,11 +28,15 @@ export type Currency = {
     updated_at: string
 }
 
+export type PermissionItem = { id: number; name: string; description?: string | null }
+export type PermissionsByModule = Record<string, PermissionItem[]>
+
 export type TeamPageProps = {
     teamMembers: TeamMember[]
     filters: TeamFilters
     currencies: Currency[]
     genericEmails: string[]
+    permissionsByModule: PermissionsByModule
 }
 
 export const teamBreadcrumbs: BreadcrumbItem[] = [

@@ -14,7 +14,7 @@ import { Head, Link } from '@inertiajs/react'
 import { Clock, Edit, Filter, MoreVertical, UserPlus, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-export default function Team({ teamMembers, filters, currencies, genericEmails }: TeamPageProps) {
+export default function Team({ teamMembers, filters, currencies, genericEmails, permissionsByModule }: TeamPageProps) {
     const [offOpen, setOffOpen] = useState(false)
     const [mode, setMode] = useState<'create' | 'edit'>('create')
     const [editUser, setEditUser] = useState<{
@@ -248,6 +248,7 @@ export default function Team({ teamMembers, filters, currencies, genericEmails }
                 onClose={() => setOffOpen(false)}
                 currencies={currencies}
                 genericEmails={genericEmails}
+                permissionsByModule={permissionsByModule}
                 user={editUser ?? undefined}
             />
             <TeamFiltersOffCanvas open={filtersOpen} onOpenChange={setFiltersOpen} filters={filters} />

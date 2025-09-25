@@ -34,6 +34,8 @@ final class UpdateTeamMemberRequest extends FormRequest
             'currency' => ['nullable', 'string', 'max:3'],
             'non_monetary' => ['sometimes', 'boolean'],
             'is_employee' => ['sometimes', 'boolean'],
+            'permissions' => ['sometimes', 'array'],
+            'permissions.*' => ['integer', 'exists:permissions,id'],
         ];
     }
 }
