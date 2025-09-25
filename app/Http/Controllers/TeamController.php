@@ -44,7 +44,7 @@ final class TeamController extends Controller
         $permissionsByModule = PermissionStore::permissionsByModule();
 
         $authUser = auth()->user();
-        $leaderIdForListing = $this->leaderIdForActionWithPermission(
+        $leaderIdForListing = $this->teamService->leaderIdForActionWithPermission(
             authUser: $authUser,
             permission: 'List',
             forbiddenMessage: 'You do not have permission to view team members.'
@@ -71,7 +71,7 @@ final class TeamController extends Controller
         $nonMonetary = $request->boolean('non_monetary', false);
         $isEmployee = $request->boolean('is_employee', false);
 
-        $ownerUserId = $this->leaderIdForActionWithPermission(
+        $ownerUserId = $this->teamService->leaderIdForActionWithPermission(
             authUser: $authUser,
             permission: 'Create',
             forbiddenMessage: 'You do not have permission to create team members.'
@@ -89,7 +89,7 @@ final class TeamController extends Controller
 
         $user = $result['user'];
         $isNewUser = $result['is_new'];
-        $this->applyEmployeePermissions(
+        $this->teamService->applyEmployeePermissions(
             user: $user,
             isEmployee: $isEmployee,
             permissions: $isEmployee ? (array) $request->input('permissions', []) : null,
@@ -113,7 +113,7 @@ final class TeamController extends Controller
         $authUser = auth()->user();
 
         $data = $request->validated();
-        $ownerUserId = $this->resolveOwnerIdForMemberAction(
+        $ownerUserId = $this->teamService->resolveOwnerIdForMemberAction(
             authUser: $authUser,
             targetUser: $user,
             permission: 'Update',
@@ -126,7 +126,7 @@ final class TeamController extends Controller
             data: $data,
         );
         if ($request->has('is_employee')) {
-            $this->applyEmployeePermissions(
+            $this->teamService->applyEmployeePermissions(
                 user: $user,
                 isEmployee: $request->boolean('is_employee'),
                 permissions: $request->has('permissions') ? (array) $request->input('permissions', []) : null,
@@ -146,7 +146,7 @@ final class TeamController extends Controller
     {
         $authUser = auth()->user();
 
-        $teamLeaderId = $this->resolveOwnerIdForMemberAction(
+        $teamLeaderId = $this->teamService->resolveOwnerIdForMemberAction(
             authUser: $authUser,
             targetUser: $user,
             permission: 'Delete',
@@ -166,19 +166,21 @@ final class TeamController extends Controller
     public function allTimeLogs()
     {
         $authUser = auth()->user();
-        $this->ensureEmployeeHasPermission(
+        $this->teamService->ensureEmployeeHasPermission(
             authUser: $authUser,
             permission: 'View Time Logs',
             forbiddenMessage: 'You do not have permission to view time logs.'
         );
 
-        $baseQuery = TimeLogQuery::builder(userId: auth()->id());
+        $userId = TeamStore::employeeLeaderIdFor($authUser->getKey()) ?? $authUser->getKey();
+
+        $baseQuery = TimeLogQuery::builder(userId: $userId);
 
         [$paginatedLogs, $allFilteredLogs] = $this->teamService->paginateWithFull($baseQuery);
 
-        $teamMembersList = TeamStore::teamMembers(userId: auth()->id());
+        $teamMembersList = TeamStore::teamMembers(userId: $userId);
 
-        $tags = TagStore::userTags(userId: auth()->id());
+        $tags = TagStore::userTags(userId: $userId);
 
         return Inertia::render('team/all-time-logs', [
             'teamMembers' => $teamMembersList,
@@ -209,7 +211,7 @@ final class TeamController extends Controller
     public function export(): StreamedResponse
     {
         $authUser = auth()->user();
-        $leaderIdForListing = $this->leaderIdForActionWithPermission(
+        $leaderIdForListing = $this->teamService->leaderIdForActionWithPermission(
             authUser: $authUser,
             permission: 'List',
             forbiddenMessage: 'You do not have permission to export team members.'
@@ -226,7 +228,7 @@ final class TeamController extends Controller
     public function exportTimeLogs(): StreamedResponse
     {
         $authUser = auth()->user();
-        $this->ensureEmployeeHasPermission(
+        $this->teamService->ensureEmployeeHasPermission(
             authUser: $authUser,
             permission: 'View Time Logs',
             forbiddenMessage: 'You do not have permission to export time logs.'
@@ -238,75 +240,5 @@ final class TeamController extends Controller
         $filename = $this->teamService->csvDateFilename('team_time_logs');
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);
-    }
-
-    /**
-     * Determine the applicable leader/user ID for listing-like actions, enforcing a permission when the
-     * authenticated user is acting under a leader.
-     */
-    private function leaderIdForActionWithPermission(User $authUser, string $permission, string $forbiddenMessage): ?int
-    {
-        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
-
-        if (! $employeeLeaderId) {
-            return null;
-        }
-
-        $hasPermission = PermissionStore::userHasTeamPermission($authUser, $permission);
-        abort_unless($hasPermission, 403, $forbiddenMessage);
-
-        return (int) $employeeLeaderId;
-    }
-
-    /**
-     * When the authenticated user is an employee under a leader, ensure they have the given permission.
-     */
-    private function ensureEmployeeHasPermission(User $authUser, string $permission, string $forbiddenMessage): void
-    {
-        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
-        if ($employeeLeaderId) {
-            $hasPermission = PermissionStore::userHasTeamPermission($authUser, $permission);
-            abort_unless($hasPermission, 403, $forbiddenMessage);
-        }
-    }
-
-    /**
-     * Resolve the owner/leader ID for member-targeted actions (update/delete), applying authorization rules.
-     */
-    private function resolveOwnerIdForMemberAction(User $authUser, User $targetUser, string $permission, string $unauthorizedMessage): int
-    {
-        $ownerUserId = (int) $authUser->getKey();
-
-        $isLeaderOfMember = TeamStore::isLeaderOfMemberIds($authUser->getKey(), $targetUser->getKey());
-        if ($isLeaderOfMember) {
-            return $ownerUserId;
-        }
-
-        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
-        abort_unless($employeeLeaderId, 403, $unauthorizedMessage);
-
-        $hasPermission = PermissionStore::userHasTeamPermission($authUser, $permission);
-        $targetUnderLeader = TeamStore::isLeaderOfMemberIds((int) $employeeLeaderId, $targetUser->getKey());
-        abort_if(! $hasPermission || ! $targetUnderLeader, 403, $unauthorizedMessage);
-
-        return (int) $employeeLeaderId;
-    }
-
-    /**
-     * Apply permissions for a user based on their employee status.
-     * - If isEmployee is true and permissions provided, sync them.
-     * - If isEmployee is false, detach all permissions.
-     */
-    private function applyEmployeePermissions(User $user, bool $isEmployee, ?array $permissions = null): void
-    {
-        if ($isEmployee) {
-            if (is_array($permissions)) {
-                $user->permissions()->sync($permissions);
-            }
-
-            return;
-        }
-
-        $user->permissions()->detach();
     }
 }
