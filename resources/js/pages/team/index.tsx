@@ -25,6 +25,7 @@ export default function Team({ teamMembers, filters, currencies, genericEmails, 
         currency: string
         non_monetary: boolean
         is_employee: boolean
+        permissions?: number[]
     } | null>(null)
     const [filtersOpen, setFiltersOpen] = useState(false)
 
