@@ -1,3 +1,4 @@
+import { type ApprovalProps, type Filters } from '@/@types/approvals'
 import ApprovalTimeLogTable from '@/components/approval-time-log-table'
 import StatsCard from '@/components/dashboard/StatsCard'
 import FilterButton from '@/components/filter-button'
@@ -25,45 +26,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-type TimeLog = {
-    id: number
-    user_id: number
-    user_name: string
-    project_id: number
-    project_name: string | null
-    start_timestamp: string
-    end_timestamp: string
-    duration: number
-    status: 'pending' | 'approved' | 'rejected'
-}
-
-type Filters = {
-    'start-date': string
-    'end-date': string
-    project: string
-    user: string
-}
-
-type Project = {
-    id: number
-    name: string
-}
-
-type TeamMember = {
-    id: number
-    name: string
-    email: string
-}
-
-type Props = {
-    timeLogs: TimeLog[]
-    filters: Filters
-    projects: Project[]
-    teamMembers: TeamMember[]
-    totalDuration: number
-}
-
-export default function Approvals({ timeLogs, filters, projects, teamMembers, totalDuration }: Props) {
+export default function Approvals({ timeLogs, filters, projects, teamMembers, totalDuration }: ApprovalProps) {
     const { data, setData, get, processing } = useForm<Filters>({
         'start-date': filters['start-date'] || '',
         'end-date': filters['end-date'] || '',
@@ -156,7 +119,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
             setApprovalSuccess(response.data.message)
 
             setTimeout(() => {
-                get(route('approvals.index'), { preserveState: true })
+                get(route('time-log.approvals'), { preserveState: true })
                 closeApproveDialog()
                 setSelectedLogs([])
             }, 1500)
@@ -201,7 +164,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
             setApprovalSuccess(response.data.message)
 
             setTimeout(() => {
-                get(route('approvals.index'), { preserveState: true })
+                get(route('time-log.approvals'), { preserveState: true })
                 closeRejectDialog()
                 setSelectedLogs([])
             }, 1500)
@@ -245,7 +208,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault()
-        get(route('approvals.index'), {
+        get(route('time-log.approvals'), {
             preserveState: true,
         })
     }
@@ -387,7 +350,7 @@ export default function Approvals({ timeLogs, filters, projects, teamMembers, to
                                                 project: '',
                                                 user: '',
                                             })
-                                            get(route('approvals.index'), {
+                                            get(route('time-log.approvals'), {
                                                 preserveState: true,
                                             })
                                         }}
