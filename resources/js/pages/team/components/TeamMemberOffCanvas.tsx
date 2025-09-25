@@ -11,9 +11,7 @@ import { DollarSign, LoaderCircle, Lock, Mail, Save, User, UserPlus } from 'luci
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 
-import type { Currency } from '@/pages/team/types'
-
-import type { PermissionsByModule } from '@/pages/team/types'
+import type { Currency, PermissionsByModule } from '@/pages/team/types'
 
 export type TeamMemberOffCanvasProps = {
     open: boolean
@@ -88,7 +86,9 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, g
         let next = [...data.permissions]
 
         Object.values(permissionsByModule).forEach((perms) => {
-            const hasCUD = perms.some((p) => (p.name === 'Create' || p.name === 'Update' || p.name === 'Delete') && next.includes(p.id))
+            const hasCUD = perms.some(
+                (p) => (p.name === 'Create' || p.name === 'Update' || p.name === 'Delete' || p.name === 'View Time Logs') && next.includes(p.id),
+            )
             if (hasCUD) {
                 const listPerm = perms.find((p) => p.name === 'List')
                 if (listPerm && !next.includes(listPerm.id)) {
