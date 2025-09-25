@@ -9,10 +9,10 @@ use App\Http\QueryBuilders\Team\TeamListSearchableQuery;
 use App\Http\QueryBuilders\Team\TimeLogQuery;
 use App\Http\Requests\StoreTeamMemberRequest;
 use App\Http\Requests\UpdateTeamMemberRequest;
+use App\Http\Stores\PermissionStore;
 use App\Http\Stores\TagStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
-use App\Models\Permission;
 use App\Models\User;
 use App\Notifications\PasswordChanged;
 use App\Notifications\TeamMemberAdded;
@@ -41,17 +41,7 @@ final class TeamController extends Controller
      */
     public function index()
     {
-        $permissionsByModule = Permission::query()
-            ->orderBy('module')
-            ->orderBy('name')
-            ->get()
-            ->groupBy(fn ($perm) => (string) ($perm->module ?? 'General'))
-            ->map(fn ($group) => $group->map(fn ($perm) => [
-                'id' => $perm->id,
-                'name' => $perm->name,
-                'description' => $perm->description,
-            ])->values())
-            ->toArray();
+        $permissionsByModule = PermissionStore::permissionsByModule();
 
         return Inertia::render('team/index', [
             'teamMembers' => TeamListSearchableQuery::builder()->get()->map(fn ($team): array => TeamListMapper::map($team)),
