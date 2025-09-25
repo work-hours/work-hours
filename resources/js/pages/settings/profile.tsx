@@ -1,7 +1,7 @@
 import { type BreadcrumbItem, type SharedData, type User } from '@/types'
 import { Transition } from '@headlessui/react'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
-import { CheckCircle, DollarSign, Image as ImageIcon, LoaderCircle, Mail, Save, Trash2, Upload, UserCircle, User as UserIcon } from 'lucide-react'
+import { AlertCircle, CheckCircle, DollarSign, Image as ImageIcon, LoaderCircle, Mail, Save, Trash2, Upload, UserCircle, User as UserIcon, X } from 'lucide-react'
 import { FormEventHandler, useState, useRef } from 'react'
 import { toast } from 'sonner'
 
@@ -13,12 +13,14 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import MasterLayout from '@/layouts/master-layout'
 import SettingsLayout from '@/layouts/settings/layout'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 function ProfilePhotoSection() {
     const { auth } = usePage<SharedData>().props
     const photoForm = useForm<{ photo: File | null }>({ photo: null })
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [isDragging, setIsDragging] = useState<boolean>(false)
+    const [isConfirmingRemoval, setIsConfirmingRemoval] = useState<boolean>(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -96,13 +98,25 @@ function ProfilePhotoSection() {
         })
     }
 
-    function removePhoto() {
+    function startRemovePhoto() {
+        setIsConfirmingRemoval(true)
+    }
+
+    function cancelRemovePhoto() {
+        setIsConfirmingRemoval(false)
+    }
+
+    function confirmRemovePhoto() {
         router.delete(route('profile.photo.destroy'), {
             onSuccess: () => {
                 toast.success('Profile picture removed')
                 setPreviewUrl(null)
+                setIsConfirmingRemoval(false)
             },
-            onError: () => toast.error('Failed to remove profile picture'),
+            onError: () => {
+                toast.error('Failed to remove profile picture')
+                setIsConfirmingRemoval(false)
+            },
             preserveScroll: true,
         })
     }
@@ -120,6 +134,44 @@ function ProfilePhotoSection() {
 
     return (
         <div className="space-y-4">
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={isConfirmingRemoval} onOpenChange={setIsConfirmingRemoval}>
+                <DialogContent>
+                    <DialogHeader>
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="rounded-full bg-red-100 p-2 dark:bg-red-900/30">
+                                <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                            </div>
+                            <DialogTitle className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                                Remove profile picture
+                            </DialogTitle>
+                        </div>
+                        <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
+                            Are you sure you want to remove your profile picture? This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={cancelRemovePhoto}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            size="sm"
+                            onClick={confirmRemovePhoto}
+                            className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600"
+                        >
+                            Remove
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Profile Photo Section */}
             <div className="flex items-center gap-6">
                 <div className="relative h-24 w-24 flex-shrink-0">
                     <img
@@ -155,7 +207,7 @@ function ProfilePhotoSection() {
                         {(auth.user as User).profile_photo_url && (
                             <Button
                                 type="button"
-                                onClick={removePhoto}
+                                onClick={startRemovePhoto}
                                 size="sm"
                                 variant="outline"
                                 className="flex items-center gap-1.5 text-red-500 hover:bg-red-50 hover:text-red-600 dark:text-red-400 dark:hover:bg-red-950/30 dark:hover:text-red-300"
