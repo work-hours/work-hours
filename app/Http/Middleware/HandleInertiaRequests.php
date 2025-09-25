@@ -61,6 +61,7 @@ final class HandleInertiaRequests extends Middleware
             ],
             'teamContext' => $teamContext,
             'isEmployee' => $isEmployee,
+            'myTeamPermissions' => $user ? $user->permissions()->where('module', 'Team')->pluck('name')->toArray() : [],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

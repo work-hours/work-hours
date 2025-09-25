@@ -68,9 +68,10 @@ final class TeamStore
         ?float $hourlyRate,
         ?string $currency,
         bool $nonMonetary,
-        bool $isEmployee
+        bool $isEmployee,
+        ?int $createdBy = null
     ): array {
-        return DB::transaction(function () use ($ownerUserId, $userData, $hourlyRate, $currency, $nonMonetary, $isEmployee): array {
+        return DB::transaction(function () use ($ownerUserId, $userData, $hourlyRate, $currency, $nonMonetary, $isEmployee, $createdBy): array {
             $user = User::query()->where('email', $userData['email'])->first();
             $isNewUser = false;
 
@@ -88,6 +89,7 @@ final class TeamStore
                     'member_id' => $user->getKey(),
                 ],
                 [
+                    'created_by' => $createdBy ?? $ownerUserId,
                     'hourly_rate' => $finalHourlyRate,
                     'currency' => $currency,
                     'non_monetary' => $finalNonMonetary,

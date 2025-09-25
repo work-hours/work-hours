@@ -38,6 +38,7 @@ export type TeamPageProps = {
     currencies: Currency[]
     genericEmails: string[]
     permissionsByModule: PermissionsByModule
+    myTeamPermissions: string[]
 }
 
 export const teamBreadcrumbs: BreadcrumbItem[] = [

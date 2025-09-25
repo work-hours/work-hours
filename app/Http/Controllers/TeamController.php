@@ -13,6 +13,7 @@ use App\Http\Stores\PermissionStore;
 use App\Http\Stores\TagStore;
 use App\Http\Stores\TeamStore;
 use App\Http\Stores\TimeLogStore;
+use App\Models\Team;
 use App\Models\User;
 use App\Notifications\PasswordChanged;
 use App\Notifications\TeamMemberAdded;
@@ -43,12 +44,31 @@ final class TeamController extends Controller
     {
         $permissionsByModule = PermissionStore::permissionsByModule();
 
+        $authUser = auth()->user();
+        $employeeLeaderId = Team::query()
+            ->where('member_id', $authUser->getKey())
+            ->where('is_employee', true)
+            ->value('user_id');
+
+        $leaderIdForListing = null;
+        if ($employeeLeaderId) {
+            $hasListPermission = $authUser->permissions()
+                ->where('module', 'Team')
+                ->where('name', 'List')
+                ->exists();
+
+            abort_unless($hasListPermission, 403, 'You do not have permission to view team members.');
+
+            $leaderIdForListing = (int) $employeeLeaderId;
+        }
+
         return Inertia::render('team/index', [
-            'teamMembers' => TeamListSearchableQuery::builder()->get()->map(fn ($team): array => TeamListMapper::map($team)),
+            'teamMembers' => TeamListSearchableQuery::builder($leaderIdForListing)->get()->map(fn ($team): array => TeamListMapper::map($team)),
             'filters' => TeamStore::filters(),
-            'currencies' => auth()->user()->currencies,
+            'currencies' => $authUser->currencies,
             'genericEmails' => config('generic_email'),
             'permissionsByModule' => $permissionsByModule,
+            'myTeamPermissions' => $authUser->permissions()->where('module', 'Team')->pluck('name')->toArray(),
         ]);
     }
 
@@ -58,17 +78,34 @@ final class TeamController extends Controller
     #[Action(method: 'post', name: 'team.store', middleware: ['auth', 'verified'])]
     public function store(StoreTeamMemberRequest $request): void
     {
+        $authUser = auth()->user();
         $userData = $request->safe()->except(['hourly_rate', 'currency', 'non_monetary', 'is_employee', 'permissions']);
         $nonMonetary = $request->boolean('non_monetary', false);
         $isEmployee = $request->boolean('is_employee', false);
 
+        $employeeLeaderId = Team::query()
+            ->where('member_id', $authUser->getKey())
+            ->where('is_employee', true)
+            ->value('user_id');
+
+        $ownerUserId = (int) $authUser->getKey();
+        if ($employeeLeaderId) {
+            $hasCreatePermission = $authUser->permissions()
+                ->where('module', 'Team')
+                ->where('name', 'Create')
+                ->exists();
+            abort_unless($hasCreatePermission, 403, 'You do not have permission to create team members.');
+            $ownerUserId = (int) $employeeLeaderId;
+        }
+
         $result = TeamStore::createOrAttachMemberForUser(
-            ownerUserId: auth()->id(),
+            ownerUserId: $ownerUserId,
             userData: $userData,
             hourlyRate: (int) $request->get('hourly_rate'),
             currency: $request->get('currency'),
             nonMonetary: $nonMonetary,
             isEmployee: $isEmployee,
+            createdBy: (int) $authUser->getKey(),
         );
 
         $user = $result['user'];
@@ -80,7 +117,7 @@ final class TeamController extends Controller
             $user->permissions()->detach();
         }
 
-        $creator = auth()->user();
+        $creator = $authUser;
         if ($isNewUser) {
             $user->notify(new TeamMemberCreated($user, $creator, $userData['password']));
         } else {
@@ -95,12 +132,40 @@ final class TeamController extends Controller
     #[Action(method: 'put', name: 'team.update', params: ['user'], middleware: ['auth', 'verified'])]
     public function update(UpdateTeamMemberRequest $request, User $user): void
     {
-        Gate::authorize('update', $user);
+        $authUser = auth()->user();
 
         $data = $request->validated();
+        $ownerUserId = (int) $authUser->getKey();
+        $isLeaderOfMember = Team::query()
+            ->where('user_id', $authUser->getKey())
+            ->where('member_id', $user->getKey())
+            ->exists();
+
+        if (! $isLeaderOfMember) {
+            $employeeLeaderId = Team::query()
+                ->where('member_id', $authUser->getKey())
+                ->where('is_employee', true)
+                ->value('user_id');
+
+            abort_unless($employeeLeaderId, 403, 'You are not authorized to update this member.');
+
+            $hasUpdatePermission = $authUser->permissions()
+                ->where('module', 'Team')
+                ->where('name', 'Update')
+                ->exists();
+
+            $targetUnderLeader = Team::query()
+                ->where('user_id', $employeeLeaderId)
+                ->where('member_id', $user->getKey())
+                ->exists();
+
+            abort_if(! $hasUpdatePermission || ! $targetUnderLeader, 403, 'You are not authorized to update this member.');
+
+            $ownerUserId = (int) $employeeLeaderId;
+        }
 
         $result = TeamStore::updateMemberForUser(
-            ownerUserId: auth()->id(),
+            ownerUserId: $ownerUserId,
             memberUser: $user,
             data: $data,
         );
@@ -115,7 +180,7 @@ final class TeamController extends Controller
         }
 
         if ($result['password_changed']) {
-            $user->notify(new PasswordChanged($user, auth()->user(), $result['plain_password']));
+            $user->notify(new PasswordChanged($user, $authUser, $result['plain_password']));
         }
     }
 
@@ -125,11 +190,40 @@ final class TeamController extends Controller
     #[Action(method: 'delete', name: 'team.destroy', params: ['user'], middleware: ['auth', 'verified'])]
     public function destroy(User $user): void
     {
-        Gate::authorize('delete', $user);
+        $authUser = auth()->user();
+
+        $teamLeaderId = (int) $authUser->getKey();
+        $isLeaderOfMember = Team::query()
+            ->where('user_id', $authUser->getKey())
+            ->where('member_id', $user->getKey())
+            ->exists();
+
+        if (! $isLeaderOfMember) {
+            $employeeLeaderId = Team::query()
+                ->where('member_id', $authUser->getKey())
+                ->where('is_employee', true)
+                ->value('user_id');
+
+            abort_unless($employeeLeaderId, 403, 'You are not authorized to delete this member.');
+
+            $hasDeletePermission = $authUser->permissions()
+                ->where('module', 'Team')
+                ->where('name', 'Delete')
+                ->exists();
+
+            $targetUnderLeader = Team::query()
+                ->where('user_id', $employeeLeaderId)
+                ->where('member_id', $user->getKey())
+                ->exists();
+
+            abort_if(! $hasDeletePermission || ! $targetUnderLeader, 403, 'You are not authorized to delete this member.');
+
+            $teamLeaderId = (int) $employeeLeaderId;
+        }
 
         DB::beginTransaction();
         try {
-            TeamStore::removeUserFromTeam(teamLeaderId: auth()->id(), memberId: $user->getKey());
+            TeamStore::removeUserFromTeam(teamLeaderId: $teamLeaderId, memberId: $user->getKey());
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
@@ -174,7 +268,24 @@ final class TeamController extends Controller
     #[Action(method: 'get', name: 'team.export', middleware: ['auth', 'verified'])]
     public function export(): StreamedResponse
     {
-        $teamMembers = TeamListSearchableQuery::builder()->get()->map(fn ($team): array => TeamListMapper::map($team));
+        $authUser = auth()->user();
+        $employeeLeaderId = Team::query()
+            ->where('member_id', $authUser->getKey())
+            ->where('is_employee', true)
+            ->value('user_id');
+
+        $leaderIdForListing = null;
+        if ($employeeLeaderId) {
+            $hasListPermission = $authUser->permissions()
+                ->where('module', 'Team')
+                ->where('name', 'List')
+                ->exists();
+
+            abort_unless($hasListPermission, 403, 'You do not have permission to export team members.');
+            $leaderIdForListing = (int) $employeeLeaderId;
+        }
+
+        $teamMembers = TeamListSearchableQuery::builder($leaderIdForListing)->get()->map(fn ($team): array => TeamListMapper::map($team));
         $headers = TeamStore::exportHeaders();
         $filename = $this->teamService->csvDateFilename('team_members');
 

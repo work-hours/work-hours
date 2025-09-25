@@ -14,7 +14,7 @@ import { Head, Link } from '@inertiajs/react'
 import { Clock, Edit, Filter, MoreVertical, UserPlus, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-export default function Team({ teamMembers, filters, currencies, genericEmails, permissionsByModule }: TeamPageProps) {
+export default function Team({ teamMembers, filters, currencies, genericEmails, permissionsByModule, myTeamPermissions }: TeamPageProps) {
     const [offOpen, setOffOpen] = useState(false)
     const [mode, setMode] = useState<'create' | 'edit'>('create')
     const [editUser, setEditUser] = useState<{
@@ -36,8 +36,15 @@ export default function Team({ teamMembers, filters, currencies, genericEmails, 
                 setEditUser(null)
                 setOffOpen(true)
             }
-        } catch {}
+        } catch (e) {
+            console.debug('Failed to parse URLSearchParams', e)
+        }
     }, [])
+
+    const isEmployeeView = Array.isArray(myTeamPermissions) && myTeamPermissions.length > 0
+    const canCreate = isEmployeeView ? myTeamPermissions.includes('Create') : true
+    const canUpdate = isEmployeeView ? myTeamPermissions.includes('Update') : true
+    const canDelete = isEmployeeView ? myTeamPermissions.includes('Delete') : true
 
     return (
         <MasterLayout breadcrumbs={teamBreadcrumbs}>
@@ -90,17 +97,19 @@ export default function Team({ teamMembers, filters, currencies, genericEmails, 
                                     <span>{filters['start-date'] || filters['end-date'] || filters.search ? 'Filters Applied' : 'Filters'}</span>
                                 </Button>
                                 <ExportButton href={route('team.export') + window.location.search} label="Export" />
-                                <Button
-                                    className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
-                                    onClick={() => {
-                                        setMode('create')
-                                        setEditUser(null)
-                                        setOffOpen(true)
-                                    }}
-                                >
-                                    <UserPlus className="h-4 w-4" />
-                                    <span>Add Member</span>
-                                </Button>
+                                {canCreate && (
+                                    <Button
+                                        className="flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                        onClick={() => {
+                                            setMode('create')
+                                            setEditUser(null)
+                                            setOffOpen(true)
+                                        }}
+                                    >
+                                        <UserPlus className="h-4 w-4" />
+                                        <span>Add Member</span>
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </CardHeader>
@@ -191,27 +200,29 @@ export default function Team({ teamMembers, filters, currencies, genericEmails, 
                                                                     <span>Time Logs</span>
                                                                 </DropdownMenuItem>
                                                             </Link>
-                                                            <DropdownMenuItem
-                                                                className="group cursor-pointer"
-                                                                onClick={() => {
-                                                                    setMode('edit')
-                                                                    setEditUser({
-                                                                        id: member.id,
-                                                                        name: member.name,
-                                                                        email: member.email,
-                                                                        hourly_rate: member.hourly_rate,
-                                                                        currency: member.currency,
-                                                                        non_monetary: member.non_monetary,
-                                                                        is_employee: member.is_employee ?? false,
-                                                                        permissions: Array.isArray(member.permissions) ? member.permissions : [],
-                                                                    })
-                                                                    setOffOpen(true)
-                                                                }}
-                                                            >
-                                                                <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                                                                <span>Edit</span>
-                                                            </DropdownMenuItem>
-                                                            <TeamMemberDeleteAction memberId={member.id} memberName={member.name} />
+                                                            {canUpdate && (
+                                                                <DropdownMenuItem
+                                                                    className="group cursor-pointer"
+                                                                    onClick={() => {
+                                                                        setMode('edit')
+                                                                        setEditUser({
+                                                                            id: member.id,
+                                                                            name: member.name,
+                                                                            email: member.email,
+                                                                            hourly_rate: member.hourly_rate,
+                                                                            currency: member.currency,
+                                                                            non_monetary: member.non_monetary,
+                                                                            is_employee: member.is_employee ?? false,
+                                                                            permissions: Array.isArray(member.permissions) ? member.permissions : [],
+                                                                        })
+                                                                        setOffOpen(true)
+                                                                    }}
+                                                                >
+                                                                    <Edit className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                                                                    <span>Edit</span>
+                                                                </DropdownMenuItem>
+                                                            )}
+                                                            {canDelete && <TeamMemberDeleteAction memberId={member.id} memberName={member.name} />}
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </TableCell>

@@ -15,10 +15,12 @@ final class TeamListSearchableQuery
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public static function builder(): Builder
+    public static function builder(?int $leaderId = null): Builder
     {
+        $ownerId = $leaderId ?? (int) auth()->id();
+
         return Team::query()
-            ->where('user_id', auth()->id())
+            ->where('user_id', $ownerId)
             ->with(['member', 'member.permissions'])
             ->when(request()->get('search'), function ($query): void {
                 $search = request('search');

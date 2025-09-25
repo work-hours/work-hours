@@ -30,6 +30,7 @@ export interface SharedData {
     sidebarOpen: boolean
     isGitHubIntegrated?: boolean
     isEmployee?: boolean
+    myTeamPermissions?: string[]
     [key: string]: unknown
 }
 

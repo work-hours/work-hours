@@ -89,14 +89,16 @@ const navGroups: NavItemGroup[] = [
 ]
 
 export function MasterSidebar({ collapsed }: MasterSidebarProps) {
-    const { isGitHubIntegrated, isJiraIntegrated, auth, isEmployee } = usePage<SharedData>().props
+    const { isGitHubIntegrated, isJiraIntegrated, auth, isEmployee, myTeamPermissions } = usePage<SharedData>().props
     const { pendingTaskCount, approvalCount } = useNotifications()
+    const canSeeTeam = Array.isArray(myTeamPermissions) && myTeamPermissions.includes('List')
     const employeeItems = [
         { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
+        ...(canSeeTeam ? ([{ title: 'Team', href: '/team', icon: LucideServerCog }] as const) : []),
         { title: 'Projects', href: '/project', icon: LucideProjector },
         { title: 'Tasks', href: '/task', icon: ClipboardList },
         { title: 'Time Logs', href: '/time-log', icon: TimerIcon },
-    ]
+    ] as const
 
     return (
         <div
