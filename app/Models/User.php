@@ -100,6 +100,14 @@ final class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Permissions assigned to the user.
+     */
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'user_permission');
+    }
+
+    /**
      * Check if the user is an admin.
      */
     public function isAdmin(): bool

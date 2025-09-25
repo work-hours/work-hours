@@ -26,6 +26,30 @@ return new class extends Migration
             $table->foreignId('permission_id')->constrained()->onDelete('cascade');
             $table->unique(['user_id', 'permission_id']);
         });
+
+        App\Models\Permission::query()->create([
+            'module' => 'Team',
+            'name' => 'List',
+            'description' => 'List all team members',
+        ]);
+
+        App\Models\Permission::query()->create([
+            'module' => 'Team',
+            'name' => 'Create',
+            'description' => 'Create a new team member',
+        ]);
+
+        App\Models\Permission::query()->create([
+            'module' => 'Team',
+            'name' => 'Update',
+            'description' => 'Update a team member',
+        ]);
+
+        App\Models\Permission::query()->create([
+            'module' => 'Team',
+            'name' => 'Delete',
+            'description' => 'Delete a team member',
+        ]);
     }
 
     /**
