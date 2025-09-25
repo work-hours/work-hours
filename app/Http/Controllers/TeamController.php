@@ -73,13 +73,10 @@ final class TeamController extends Controller
 
         $user = $result['user'];
         $isNewUser = $result['is_new'];
-
-        // Sync permissions if provided and user is marked as employee
         if ($isEmployee) {
             $permissions = (array) $request->input('permissions', []);
             $user->permissions()->sync($permissions);
         } else {
-            // Ensure no permissions remain if not employee
             $user->permissions()->detach();
         }
 
@@ -107,15 +104,12 @@ final class TeamController extends Controller
             memberUser: $user,
             data: $data,
         );
-
-        // Sync permissions only if provided, to avoid wiping existing unintentionally
         if ($request->has('is_employee')) {
             if ($request->boolean('is_employee')) {
                 if ($request->has('permissions')) {
                     $user->permissions()->sync((array) $request->input('permissions', []));
                 }
             } else {
-                // Not an employee: remove all permissions
                 $user->permissions()->detach();
             }
         }

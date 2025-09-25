@@ -34,7 +34,7 @@ final class PermissionStore
     public static function mapPermissionsByModule(Collection $permissions): array
     {
         return $permissions
-            ->groupBy(static fn ($perm) => (string) ($perm->module ?? 'General'))
+            ->groupBy(static fn ($perm): string => (string) ($perm->module ?? 'General'))
             ->map(static fn (Collection $group) => $group->map(static fn ($perm): array => [
                 'id' => (int) $perm->id,
                 'name' => (string) $perm->name,

@@ -75,6 +75,34 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, g
             })
         }
     }, [open, mode, user])
+    useEffect(() => {
+        if (!open) {
+            return
+        }
+
+        if (!data.is_employee) {
+            return
+        }
+
+        let changed = false
+        let next = [...data.permissions]
+
+        Object.values(permissionsByModule).forEach((perms) => {
+            const hasCUD = perms.some((p) => (p.name === 'Create' || p.name === 'Update' || p.name === 'Delete') && next.includes(p.id))
+            if (hasCUD) {
+                const listPerm = perms.find((p) => p.name === 'List')
+                if (listPerm && !next.includes(listPerm.id)) {
+                    next.push(listPerm.id)
+                    changed = true
+                }
+            }
+        })
+
+        if (changed) {
+            next = Array.from(new Set(next))
+            setData('permissions', next)
+        }
+    }, [open, data.permissions, data.is_employee, permissionsByModule])
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -327,31 +355,50 @@ export default function TeamMemberOffCanvas({ open, mode, onClose, currencies, g
                                     <div className="space-y-6">
                                         {Object.entries(permissionsByModule).map(([module, perms]) => (
                                             <div key={module} className="space-y-2">
-                                                <div className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">{module}</div>
+                                                <div className="text-xs font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+                                                    {module}
+                                                </div>
                                                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                                     {perms.map((perm) => {
                                                         const checked = data.permissions.includes(perm.id)
                                                         return (
-                                                            <label key={perm.id} className="flex items-start gap-3 rounded-md border border-neutral-100 p-3 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/30">
+                                                            <label
+                                                                key={perm.id}
+                                                                className="flex items-start gap-3 rounded-md border border-neutral-100 p-3 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/30"
+                                                            >
                                                                 <Checkbox
                                                                     id={`perm_${perm.id}`}
                                                                     checked={checked}
                                                                     onCheckedChange={(val) => {
                                                                         const want = Boolean(val)
-                                                                        setData(
-                                                                            'permissions',
-                                                                            want
-                                                                                ? [...data.permissions, perm.id]
-                                                                                : data.permissions.filter((id) => id !== perm.id)
-                                                                        )
+                                                                        let next = want
+                                                                            ? [...data.permissions, perm.id]
+                                                                            : data.permissions.filter((id) => id !== perm.id)
+                                                                        if (
+                                                                            want &&
+                                                                            (perm.name === 'Create' ||
+                                                                                perm.name === 'Update' ||
+                                                                                perm.name === 'Delete')
+                                                                        ) {
+                                                                            const listPerm = perms.find((p) => p.name === 'List')
+                                                                            if (listPerm && !next.includes(listPerm.id)) {
+                                                                                next = [...next, listPerm.id]
+                                                                            }
+                                                                        }
+
+                                                                        setData('permissions', next)
                                                                     }}
                                                                     disabled={processing}
                                                                     className="mt-0.5 border-neutral-300 text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800"
                                                                 />
                                                                 <div className="space-y-0.5">
-                                                                    <div className="text-sm font-medium text-neutral-700 dark:text-neutral-200">{perm.name}</div>
+                                                                    <div className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                                                                        {perm.name}
+                                                                    </div>
                                                                     {perm.description ? (
-                                                                        <div className="text-xs text-neutral-500 dark:text-neutral-400">{perm.description}</div>
+                                                                        <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                                                                            {perm.description}
+                                                                        </div>
                                                                     ) : null}
                                                                 </div>
                                                             </label>
