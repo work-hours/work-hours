@@ -1,8 +1,8 @@
 import { type BreadcrumbItem, type SharedData, type User } from '@/types'
 import { Transition } from '@headlessui/react'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
-import { CheckCircle, DollarSign, LoaderCircle, Mail, Save, UserCircle, User as UserIcon } from 'lucide-react'
-import { FormEventHandler } from 'react'
+import { CheckCircle, DollarSign, Image as ImageIcon, LoaderCircle, Mail, Save, Trash2, Upload, UserCircle, User as UserIcon } from 'lucide-react'
+import { FormEventHandler, useState, useRef } from 'react'
 import { toast } from 'sonner'
 
 import InputError from '@/components/input-error'
@@ -17,11 +17,62 @@ import SettingsLayout from '@/layouts/settings/layout'
 function ProfilePhotoSection() {
     const { auth } = usePage<SharedData>().props
     const photoForm = useForm<{ photo: File | null }>({ photo: null })
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+    const [isDragging, setIsDragging] = useState<boolean>(false)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
         if (e.target.files && e.target.files.length > 0) {
-            photoForm.setData('photo', e.target.files[0])
+            const file = e.target.files[0]
+            photoForm.setData('photo', file)
+
+            // Create preview URL for the selected image
+            const url = URL.createObjectURL(file)
+            setPreviewUrl(url)
         }
+    }
+
+    function handleDragEnter(e: React.DragEvent<HTMLDivElement>) {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragging(true)
+    }
+
+    function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragging(false)
+    }
+
+    function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+        e.preventDefault()
+        e.stopPropagation()
+    }
+
+    function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragging(false)
+
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            const file = e.dataTransfer.files[0]
+
+            // Check if file is an image
+            if (!file.type.startsWith('image/')) {
+                toast.error('Please upload an image file')
+                return
+            }
+
+            photoForm.setData('photo', file)
+
+            // Create preview URL
+            const url = URL.createObjectURL(file)
+            setPreviewUrl(url)
+        }
+    }
+
+    function triggerFileInput() {
+        fileInputRef.current?.click()
     }
 
     function uploadPhoto(e: React.FormEvent) {
@@ -36,6 +87,7 @@ function ProfilePhotoSection() {
             onSuccess: () => {
                 toast.success('Profile picture updated')
                 photoForm.reset()
+                setPreviewUrl(null)
             },
             onError: () => {
                 toast.error('Failed to update profile picture')
@@ -46,42 +98,162 @@ function ProfilePhotoSection() {
 
     function removePhoto() {
         router.delete(route('profile.photo.destroy'), {
-            onSuccess: () => toast.success('Profile picture removed'),
+            onSuccess: () => {
+                toast.success('Profile picture removed')
+                setPreviewUrl(null)
+            },
             onError: () => toast.error('Failed to remove profile picture'),
             preserveScroll: true,
         })
     }
 
-    return (
-        <form onSubmit={uploadPhoto} className="flex items-center gap-4">
-            <img
-                src={(auth.user as User).profile_photo_url || '/images/avatar-placeholder.png'}
-                alt="Profile"
-                className="h-16 w-16 rounded-full border border-gray-200 object-cover dark:border-gray-700"
-            />
+    function cancelUpload() {
+        photoForm.setData('photo', null)
+        setPreviewUrl(null)
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+        }
+    }
 
-            <div className="flex flex-1 items-center gap-3">
-                <Input id="photo" type="file" accept="image/*" onChange={handleFileChange} />
-                <Button
-                    type="submit"
-                    disabled={photoForm.processing}
-                    className="bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
-                >
-                    {photoForm.processing ? (
-                        <span className="flex items-center gap-2">
-                            <LoaderCircle className="h-4 w-4 animate-spin" />
-                            Uploading...
-                        </span>
-                    ) : (
-                        'Upload'
+    const currentPhotoUrl = (auth.user as User).profile_photo_url || '/images/avatar-placeholder.png'
+    const displayUrl = previewUrl || currentPhotoUrl
+
+    return (
+        <div className="space-y-4">
+            <div className="flex items-center gap-6">
+                <div className="relative h-24 w-24 flex-shrink-0">
+                    <img
+                        src={displayUrl}
+                        alt="Profile"
+                        className="h-full w-full rounded-full border-2 border-gray-200 object-cover shadow-sm dark:border-gray-700"
+                    />
+                    {previewUrl && (
+                        <div className="absolute -bottom-1 -right-1 rounded-full bg-gray-900 p-1 text-white dark:bg-white dark:text-gray-900">
+                            <span className="sr-only">Preview image</span>
+                            <CheckCircle className="h-4 w-4" />
+                        </div>
                     )}
-                </Button>
-                <Button type="button" variant="secondary" onClick={removePhoto} className="text-sm">
-                    Remove
-                </Button>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    <p className="font-medium text-gray-700 dark:text-gray-300">Profile photo</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                        JPG, PNG or GIF. Maximum size 2MB.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                        <Button
+                            type="button"
+                            onClick={triggerFileInput}
+                            size="sm"
+                            variant="outline"
+                            className="flex items-center gap-1.5"
+                        >
+                            <Upload className="h-3.5 w-3.5" />
+                            Select image
+                        </Button>
+
+                        {(auth.user as User).profile_photo_url && (
+                            <Button
+                                type="button"
+                                onClick={removePhoto}
+                                size="sm"
+                                variant="outline"
+                                className="flex items-center gap-1.5 text-red-500 hover:bg-red-50 hover:text-red-600 dark:text-red-400 dark:hover:bg-red-950/30 dark:hover:text-red-300"
+                            >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                Remove photo
+                            </Button>
+                        )}
+                    </div>
+                </div>
             </div>
-            <InputError className="mt-1" message={(photoForm.errors as any)?.photo} />
-        </form>
+
+            <form onSubmit={uploadPhoto}>
+                <input
+                    ref={fileInputRef}
+                    id="photo"
+                    name="photo"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="sr-only"
+                />
+
+                <div
+                    className={`mt-4 flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors
+                    ${isDragging
+                        ? 'border-blue-400 bg-blue-50 dark:border-blue-500 dark:bg-blue-950/20'
+                        : 'border-gray-300 dark:border-gray-700'
+                    } ${photoForm.data.photo ? 'bg-gray-50 dark:bg-gray-800/50' : ''}`}
+                    onDragEnter={handleDragEnter}
+                    onDragLeave={handleDragLeave}
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
+                >
+                    {photoForm.data.photo ? (
+                        <div className="flex w-full flex-col items-center space-y-3 text-center">
+                            <div className="rounded-full bg-green-100 p-2 text-green-600 dark:bg-green-900/30 dark:text-green-400">
+                                <ImageIcon className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <p className="font-medium">{photoForm.data.photo.name}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    {(photoForm.data.photo.size / 1024 / 1024).toFixed(2)} MB
+                                </p>
+                            </div>
+
+                            <div className="flex gap-2">
+                                <Button
+                                    type="submit"
+                                    disabled={photoForm.processing}
+                                    size="sm"
+                                    className="bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                                >
+                                    {photoForm.processing ? (
+                                        <span className="flex items-center gap-1.5">
+                                            <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+                                            Uploading...
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center gap-1.5">
+                                            <Upload className="h-3.5 w-3.5" />
+                                            Upload photo
+                                        </span>
+                                    )}
+                                </Button>
+
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={cancelUpload}
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center space-y-2 text-center">
+                            <div className="rounded-full bg-gray-100 p-2 text-gray-600 dark:bg-gray-700 dark:text-gray-400">
+                                <Upload className="h-5 w-5" />
+                            </div>
+                            <div className="space-y-1">
+                                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Drag and drop an image, or <button type="button" onClick={triggerFileInput} className="text-blue-600 underline hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-400">browse</button>
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    Supports JPG, PNG and GIF up to 2MB
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {(photoForm.errors as any)?.photo && (
+                    <InputError className="mt-2" message={(photoForm.errors as any).photo} />
+                )}
+            </form>
+        </div>
     )
 }
 
