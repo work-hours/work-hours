@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             HandleAppearance::class,
             HandleInertiaRequests::class,
-            RestrictEmployeeAccess::class,
+            // RestrictEmployeeAccess::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
     })
