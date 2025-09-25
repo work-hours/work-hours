@@ -1,7 +1,7 @@
-import { type BreadcrumbItem, type SharedData } from '@/types'
+import { type BreadcrumbItem, type SharedData, type User } from '@/types'
 import { Transition } from '@headlessui/react'
-import { Head, Link, useForm, usePage } from '@inertiajs/react'
-import { CheckCircle, DollarSign, LoaderCircle, Mail, Save, User, UserCircle } from 'lucide-react'
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
+import { CheckCircle, DollarSign, LoaderCircle, Mail, Save, UserCircle, User as UserIcon } from 'lucide-react'
 import { FormEventHandler } from 'react'
 import { toast } from 'sonner'
 
@@ -13,6 +13,77 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import MasterLayout from '@/layouts/master-layout'
 import SettingsLayout from '@/layouts/settings/layout'
+
+function ProfilePhotoSection() {
+    const { auth } = usePage<SharedData>().props
+    const photoForm = useForm<{ photo: File | null }>({ photo: null })
+
+    function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+        if (e.target.files && e.target.files.length > 0) {
+            photoForm.setData('photo', e.target.files[0])
+        }
+    }
+
+    function uploadPhoto(e: React.FormEvent) {
+        e.preventDefault()
+        if (!photoForm.data.photo) {
+            toast.error('Please choose an image file to upload')
+            return
+        }
+
+        photoForm.post(route('profile.photo.update'), {
+            forceFormData: true,
+            onSuccess: () => {
+                toast.success('Profile picture updated')
+                photoForm.reset()
+            },
+            onError: () => {
+                toast.error('Failed to update profile picture')
+            },
+            preserveScroll: true,
+        })
+    }
+
+    function removePhoto() {
+        router.delete(route('profile.photo.destroy'), {
+            onSuccess: () => toast.success('Profile picture removed'),
+            onError: () => toast.error('Failed to remove profile picture'),
+            preserveScroll: true,
+        })
+    }
+
+    return (
+        <form onSubmit={uploadPhoto} className="flex items-center gap-4">
+            <img
+                src={(auth.user as User).profile_photo_url || '/images/avatar-placeholder.png'}
+                alt="Profile"
+                className="h-16 w-16 rounded-full border border-gray-200 object-cover dark:border-gray-700"
+            />
+
+            <div className="flex flex-1 items-center gap-3">
+                <Input id="photo" type="file" accept="image/*" onChange={handleFileChange} />
+                <Button
+                    type="submit"
+                    disabled={photoForm.processing}
+                    className="bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
+                >
+                    {photoForm.processing ? (
+                        <span className="flex items-center gap-2">
+                            <LoaderCircle className="h-4 w-4 animate-spin" />
+                            Uploading...
+                        </span>
+                    ) : (
+                        'Upload'
+                    )}
+                </Button>
+                <Button type="button" variant="secondary" onClick={removePhoto} className="text-sm">
+                    Remove
+                </Button>
+            </div>
+            <InputError className="mt-1" message={(photoForm.errors as any)?.photo} />
+        </form>
+    )
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -65,6 +136,25 @@ export default function Profile({ mustVerifyEmail, status, currencies }: { mustV
                                     <UserCircle className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                                 </div>
                                 <div>
+                                    <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Profile Picture</CardTitle>
+                                    <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+                                        Upload a profile picture to personalize your account
+                                    </CardDescription>
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="p-4">
+                            <ProfilePhotoSection />
+                        </CardContent>
+                    </Card>
+
+                    <Card className="overflow-hidden bg-white shadow-sm transition-all dark:bg-gray-800">
+                        <CardHeader className="border-b border-gray-100 p-4 dark:border-gray-700">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-700">
+                                    <UserCircle className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                                </div>
+                                <div>
                                     <CardTitle className="text-lg font-medium text-gray-800 dark:text-gray-100">Personal Information</CardTitle>
                                     <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
                                         Manage your profile details and preferences
@@ -80,7 +170,7 @@ export default function Profile({ mustVerifyEmail, status, currencies }: { mustV
                                     </Label>
                                     <div className="relative">
                                         <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                                            <User className="h-4 w-4 text-muted-foreground" />
+                                            <UserIcon className="h-4 w-4 text-muted-foreground" />
                                         </div>
                                         <Input
                                             id="name"

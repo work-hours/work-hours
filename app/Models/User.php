@@ -40,6 +40,15 @@ final class User extends Authenticatable implements MustVerifyEmail
     use HasFactory, Notifiable;
 
     /**
+     * Appended accessors for array / JSON.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -48,6 +57,7 @@ final class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'profile_photo_path',
         'github_token',
         'hourly_rate',
         'currency',
@@ -126,5 +136,18 @@ final class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the URL to the user's profile photo.
+     */
+    protected function getProfilePhotoUrlAttribute(): string
+    {
+        if (! empty($this->profile_photo_path)) {
+            return asset('storage/' . $this->profile_photo_path);
+        }
+        $hash = md5(mb_strtolower(mb_trim((string) $this->email)));
+
+        return 'https://www.gravatar.com/avatar/' . $hash . '?s=200&d=identicon';
     }
 }

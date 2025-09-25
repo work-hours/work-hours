@@ -24,7 +24,7 @@ final class Team extends Model
 {
     protected $fillable = ['user_id', 'member_id', 'hourly_rate', 'currency', 'non_monetary', 'is_employee'];
 
-    public static function memberHourlyRate(Project $project, int $memberId): ?float
+    public static function memberHourlyRate(Project $project, int $memberId): float
     {
         if ($project->user_id === $memberId) {
             return (float) ($project->user->hourly_rate ?? 0);
