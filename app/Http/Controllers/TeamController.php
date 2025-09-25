@@ -44,14 +44,11 @@ final class TeamController extends Controller
         $permissionsByModule = PermissionStore::permissionsByModule();
 
         $authUser = auth()->user();
-        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
-
-        $leaderIdForListing = null;
-        if ($employeeLeaderId) {
-            $hasListPermission = PermissionStore::userHasTeamPermission($authUser, 'List');
-            abort_unless($hasListPermission, 403, 'You do not have permission to view team members.');
-            $leaderIdForListing = (int) $employeeLeaderId;
-        }
+        $leaderIdForListing = $this->leaderIdForActionWithPermission(
+            authUser: $authUser,
+            permission: 'List',
+            forbiddenMessage: 'You do not have permission to view team members.'
+        );
 
         return Inertia::render('team/index', [
             'teamMembers' => TeamListSearchableQuery::builder($leaderIdForListing)->get()->map(fn ($team): array => TeamListMapper::map($team)),
@@ -74,14 +71,11 @@ final class TeamController extends Controller
         $nonMonetary = $request->boolean('non_monetary', false);
         $isEmployee = $request->boolean('is_employee', false);
 
-        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
-
-        $ownerUserId = (int) $authUser->getKey();
-        if ($employeeLeaderId) {
-            $hasCreatePermission = PermissionStore::userHasTeamPermission($authUser, 'Create');
-            abort_unless($hasCreatePermission, 403, 'You do not have permission to create team members.');
-            $ownerUserId = (int) $employeeLeaderId;
-        }
+        $ownerUserId = $this->leaderIdForActionWithPermission(
+            authUser: $authUser,
+            permission: 'Create',
+            forbiddenMessage: 'You do not have permission to create team members.'
+        ) ?? (int) $authUser->getKey();
 
         $result = TeamStore::createOrAttachMemberForUser(
             ownerUserId: $ownerUserId,
@@ -95,12 +89,11 @@ final class TeamController extends Controller
 
         $user = $result['user'];
         $isNewUser = $result['is_new'];
-        if ($isEmployee) {
-            $permissions = (array) $request->input('permissions', []);
-            $user->permissions()->sync($permissions);
-        } else {
-            $user->permissions()->detach();
-        }
+        $this->applyEmployeePermissions(
+            user: $user,
+            isEmployee: $isEmployee,
+            permissions: $isEmployee ? (array) $request->input('permissions', []) : null,
+        );
 
         $creator = $authUser;
         if ($isNewUser) {
@@ -120,22 +113,12 @@ final class TeamController extends Controller
         $authUser = auth()->user();
 
         $data = $request->validated();
-        $ownerUserId = (int) $authUser->getKey();
-        $isLeaderOfMember = TeamStore::isLeaderOfMemberIds($authUser->getKey(), $user->getKey());
-
-        if (! $isLeaderOfMember) {
-            $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
-
-            abort_unless($employeeLeaderId, 403, 'You are not authorized to update this member.');
-
-            $hasUpdatePermission = PermissionStore::userHasTeamPermission($authUser, 'Update');
-
-            $targetUnderLeader = TeamStore::isLeaderOfMemberIds((int) $employeeLeaderId, $user->getKey());
-
-            abort_if(! $hasUpdatePermission || ! $targetUnderLeader, 403, 'You are not authorized to update this member.');
-
-            $ownerUserId = (int) $employeeLeaderId;
-        }
+        $ownerUserId = $this->resolveOwnerIdForMemberAction(
+            authUser: $authUser,
+            targetUser: $user,
+            permission: 'Update',
+            unauthorizedMessage: 'You are not authorized to update this member.'
+        );
 
         $result = TeamStore::updateMemberForUser(
             ownerUserId: $ownerUserId,
@@ -143,13 +126,11 @@ final class TeamController extends Controller
             data: $data,
         );
         if ($request->has('is_employee')) {
-            if ($request->boolean('is_employee')) {
-                if ($request->has('permissions')) {
-                    $user->permissions()->sync((array) $request->input('permissions', []));
-                }
-            } else {
-                $user->permissions()->detach();
-            }
+            $this->applyEmployeePermissions(
+                user: $user,
+                isEmployee: $request->boolean('is_employee'),
+                permissions: $request->has('permissions') ? (array) $request->input('permissions', []) : null,
+            );
         }
 
         if ($result['password_changed']) {
@@ -165,22 +146,12 @@ final class TeamController extends Controller
     {
         $authUser = auth()->user();
 
-        $teamLeaderId = (int) $authUser->getKey();
-        $isLeaderOfMember = TeamStore::isLeaderOfMemberIds($authUser->getKey(), $user->getKey());
-
-        if (! $isLeaderOfMember) {
-            $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
-
-            abort_unless($employeeLeaderId, 403, 'You are not authorized to delete this member.');
-
-            $hasDeletePermission = PermissionStore::userHasTeamPermission($authUser, 'Delete');
-
-            $targetUnderLeader = TeamStore::isLeaderOfMemberIds((int) $employeeLeaderId, $user->getKey());
-
-            abort_if(! $hasDeletePermission || ! $targetUnderLeader, 403, 'You are not authorized to delete this member.');
-
-            $teamLeaderId = (int) $employeeLeaderId;
-        }
+        $teamLeaderId = $this->resolveOwnerIdForMemberAction(
+            authUser: $authUser,
+            targetUser: $user,
+            permission: 'Delete',
+            unauthorizedMessage: 'You are not authorized to delete this member.'
+        );
 
         DB::beginTransaction();
         try {
@@ -195,17 +166,18 @@ final class TeamController extends Controller
     public function allTimeLogs()
     {
         $authUser = auth()->user();
-        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
-        if ($employeeLeaderId) {
-            $hasViewLogsPermission = PermissionStore::userHasTeamPermission($authUser, 'View Time Logs');
-            abort_unless($hasViewLogsPermission, 403, 'You do not have permission to view time logs.');
-        }
+        $this->ensureEmployeeHasPermission(
+            authUser: $authUser,
+            permission: 'View Time Logs',
+            forbiddenMessage: 'You do not have permission to view time logs.'
+        );
 
         $baseQuery = TimeLogQuery::builder(userId: auth()->id());
 
         [$paginatedLogs, $allFilteredLogs] = $this->teamService->paginateWithFull($baseQuery);
 
         $teamMembersList = TeamStore::teamMembers(userId: auth()->id());
+
         $tags = TagStore::userTags(userId: auth()->id());
 
         return Inertia::render('team/all-time-logs', [
@@ -237,15 +209,11 @@ final class TeamController extends Controller
     public function export(): StreamedResponse
     {
         $authUser = auth()->user();
-        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
-
-        $leaderIdForListing = null;
-        if ($employeeLeaderId) {
-            $hasListPermission = PermissionStore::userHasTeamPermission($authUser, 'List');
-
-            abort_unless($hasListPermission, 403, 'You do not have permission to export team members.');
-            $leaderIdForListing = (int) $employeeLeaderId;
-        }
+        $leaderIdForListing = $this->leaderIdForActionWithPermission(
+            authUser: $authUser,
+            permission: 'List',
+            forbiddenMessage: 'You do not have permission to export team members.'
+        );
 
         $teamMembers = TeamListSearchableQuery::builder($leaderIdForListing)->get()->map(fn ($team): array => TeamListMapper::map($team));
         $headers = TeamStore::exportHeaders();
@@ -258,11 +226,11 @@ final class TeamController extends Controller
     public function exportTimeLogs(): StreamedResponse
     {
         $authUser = auth()->user();
-        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
-        if ($employeeLeaderId) {
-            $hasViewLogsPermission = PermissionStore::userHasTeamPermission($authUser, 'View Time Logs');
-            abort_unless($hasViewLogsPermission, 403, 'You do not have permission to export time logs.');
-        }
+        $this->ensureEmployeeHasPermission(
+            authUser: $authUser,
+            permission: 'View Time Logs',
+            forbiddenMessage: 'You do not have permission to export time logs.'
+        );
 
         $timeLogs = TimeLogQuery::builder(userId: auth()->id())->get();
         $mappedTimeLogs = TimeLogStore::timeLogExportMapper(timeLogs: $timeLogs);
@@ -270,5 +238,75 @@ final class TeamController extends Controller
         $filename = $this->teamService->csvDateFilename('team_time_logs');
 
         return $this->exportToCsv($mappedTimeLogs, $headers, $filename);
+    }
+
+    /**
+     * Determine the applicable leader/user ID for listing-like actions, enforcing a permission when the
+     * authenticated user is acting under a leader.
+     */
+    private function leaderIdForActionWithPermission(User $authUser, string $permission, string $forbiddenMessage): ?int
+    {
+        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
+
+        if (! $employeeLeaderId) {
+            return null;
+        }
+
+        $hasPermission = PermissionStore::userHasTeamPermission($authUser, $permission);
+        abort_unless($hasPermission, 403, $forbiddenMessage);
+
+        return (int) $employeeLeaderId;
+    }
+
+    /**
+     * When the authenticated user is an employee under a leader, ensure they have the given permission.
+     */
+    private function ensureEmployeeHasPermission(User $authUser, string $permission, string $forbiddenMessage): void
+    {
+        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
+        if ($employeeLeaderId) {
+            $hasPermission = PermissionStore::userHasTeamPermission($authUser, $permission);
+            abort_unless($hasPermission, 403, $forbiddenMessage);
+        }
+    }
+
+    /**
+     * Resolve the owner/leader ID for member-targeted actions (update/delete), applying authorization rules.
+     */
+    private function resolveOwnerIdForMemberAction(User $authUser, User $targetUser, string $permission, string $unauthorizedMessage): int
+    {
+        $ownerUserId = (int) $authUser->getKey();
+
+        $isLeaderOfMember = TeamStore::isLeaderOfMemberIds($authUser->getKey(), $targetUser->getKey());
+        if ($isLeaderOfMember) {
+            return $ownerUserId;
+        }
+
+        $employeeLeaderId = TeamStore::employeeLeaderIdFor($authUser->getKey());
+        abort_unless($employeeLeaderId, 403, $unauthorizedMessage);
+
+        $hasPermission = PermissionStore::userHasTeamPermission($authUser, $permission);
+        $targetUnderLeader = TeamStore::isLeaderOfMemberIds((int) $employeeLeaderId, $targetUser->getKey());
+        abort_if(! $hasPermission || ! $targetUnderLeader, 403, $unauthorizedMessage);
+
+        return (int) $employeeLeaderId;
+    }
+
+    /**
+     * Apply permissions for a user based on their employee status.
+     * - If isEmployee is true and permissions provided, sync them.
+     * - If isEmployee is false, detach all permissions.
+     */
+    private function applyEmployeePermissions(User $user, bool $isEmployee, ?array $permissions = null): void
+    {
+        if ($isEmployee) {
+            if (is_array($permissions)) {
+                $user->permissions()->sync($permissions);
+            }
+
+            return;
+        }
+
+        $user->permissions()->detach();
     }
 }
