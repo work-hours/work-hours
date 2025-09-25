@@ -234,7 +234,9 @@ final class TeamController extends Controller
             forbiddenMessage: 'You do not have permission to export time logs.'
         );
 
-        $timeLogs = TimeLogQuery::builder(userId: auth()->id())->get();
+        $userId = TeamStore::employeeLeaderIdFor($authUser->getKey()) ?? $authUser->getKey();
+
+        $timeLogs = TimeLogQuery::builder(userId: $userId)->get();
         $mappedTimeLogs = TimeLogStore::timeLogExportMapper(timeLogs: $timeLogs);
         $headers = TimeLogStore::timeLogExportHeaders();
         $filename = $this->teamService->csvDateFilename('team_time_logs');
