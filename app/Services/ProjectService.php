@@ -42,7 +42,7 @@ final readonly class ProjectService
         $rates = $request->input('team_member_rates', []);
 
         return collect($request->input('team_members'))
-            ->mapWithKeys(function ($memberId) use ($request, $rates) {
+            ->mapWithKeys(function ($memberId) use ($request, $rates): array {
                 $isApprover = $request->has('approvers') && in_array($memberId, (array) $request->input('approvers'), true);
                 $rate = $rates[$memberId]['hourly_rate'] ?? null;
                 $currency = $rates[$memberId]['currency'] ?? null;
