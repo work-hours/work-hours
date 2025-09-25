@@ -138,7 +138,7 @@ final class TeamStore
                 'is_employee' => $isEmployee,
             ];
 
-            unset($data['hourly_rate'], $data['currency'], $data['non_monetary'], $data['is_employee']);
+            unset($data['hourly_rate'], $data['currency'], $data['non_monetary'], $data['is_employee'], $data['permissions']);
 
             $memberUser->update($data);
 
