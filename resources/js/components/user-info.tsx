@@ -5,10 +5,12 @@ import { type User } from '@/types'
 export function UserInfo({ user, showEmail = false }: { user: User; showEmail?: boolean }) {
     const getInitials = useInitials()
 
+    const photo = user.profile_photo_url ?? user.avatar ?? undefined
+
     return (
         <>
             <Avatar className="h-8 w-8 overflow-hidden border border-gray-400">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={photo} alt={user.name} />
                 <AvatarFallback className="border border-gray-400 bg-gray-100 text-gray-800">{getInitials(user.name)}</AvatarFallback>
             </Avatar>
             <div className="ml-2 grid flex-1 text-left text-sm leading-tight">

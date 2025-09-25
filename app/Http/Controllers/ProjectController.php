@@ -106,7 +106,7 @@ final class ProjectController extends Controller
 
         $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
         $assignedApprovers = $project->approvers->pluck('id')->toArray();
-        $teamMemberRates = $project->teamMembers->mapWithKeys(fn ($member) => [
+        $teamMemberRates = $project->teamMembers->mapWithKeys(fn ($member): array => [
             $member->id => [
                 'hourly_rate' => $member->pivot->hourly_rate,
                 'currency' => $member->pivot->currency,
@@ -140,7 +140,7 @@ final class ProjectController extends Controller
 
         $assignedTeamMembers = $project->teamMembers->pluck('id')->toArray();
         $assignedApprovers = $project->approvers->pluck('id')->toArray();
-        $teamMemberRates = $project->teamMembers->mapWithKeys(fn ($member) => [
+        $teamMemberRates = $project->teamMembers->mapWithKeys(fn ($member): array => [
             $member->id => [
                 'hourly_rate' => $member->pivot->hourly_rate,
                 'currency' => $member->pivot->currency,

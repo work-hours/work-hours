@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Settings\ProfilePhotoUpdateRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -62,5 +64,38 @@ final class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    /**
+     * Update the user's profile photo.
+     */
+    public function updatePhoto(ProfilePhotoUpdateRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+        if (! empty($user->profile_photo_path)) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+        }
+
+        $path = $request->file('photo')->store('avatars', 'public');
+
+        $user->forceFill([
+            'profile_photo_path' => $path,
+        ])->save();
+
+        return to_route('profile.edit');
+    }
+
+    /**
+     * Remove the user's profile photo.
+     */
+    public function destroyPhoto(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        if (! empty($user->profile_photo_path)) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+            $user->forceFill(['profile_photo_path' => null])->save();
+        }
+
+        return to_route('profile.edit');
     }
 }

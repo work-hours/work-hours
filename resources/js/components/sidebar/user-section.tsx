@@ -1,12 +1,11 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { type User } from '@/types'
 import { Link } from '@inertiajs/react'
 import { LogOut } from 'lucide-react'
 
 interface UserSectionProps {
     collapsed: boolean
-    user: {
-        name?: string
-    }
+    user: User
 }
 
 export function UserSection({ collapsed, user }: UserSectionProps) {
@@ -15,15 +14,19 @@ export function UserSection({ collapsed, user }: UserSectionProps) {
             <div className="mb-3 px-2">
                 <div className={`flex items-center ${collapsed ? 'justify-center' : ''} relative z-10`}>
                     <div className="flex-shrink-0">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 font-bold text-gray-700 shadow-sm ring-2 ring-white dark:bg-gray-700 dark:text-gray-200 dark:ring-gray-800">
-                            {user && user.name ? user.name.charAt(0) : ''}
-                        </div>
+                        {user.profile_photo_url ? (
+                            <img src={user.profile_photo_url} alt={user.name} className="h-8 w-8 rounded-full object-cover" />
+                        ) : (
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 font-bold text-gray-700 shadow-sm ring-2 ring-white dark:bg-gray-700 dark:text-gray-200 dark:ring-gray-800">
+                                {user && user.name ? user.name.charAt(0) : ''}
+                            </div>
+                        )}
                     </div>
                     {!collapsed && (
                         <div className="ml-3">
                             <p className="truncate text-sm font-medium text-gray-700 dark:text-gray-300">{user && user.name ? user.name : ''}</p>
                             <Link
-                                href="/settings/profile"
+                                href={route('profile.edit')}
                                 className="relative z-10 text-xs text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                             >
                                 View profile
