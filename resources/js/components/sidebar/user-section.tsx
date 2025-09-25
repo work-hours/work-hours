@@ -15,9 +15,13 @@ export function UserSection({ collapsed, user }: UserSectionProps) {
             <div className="mb-3 px-2">
                 <div className={`flex items-center ${collapsed ? 'justify-center' : ''} relative z-10`}>
                     <div className="flex-shrink-0">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 font-bold text-gray-700 shadow-sm ring-2 ring-white dark:bg-gray-700 dark:text-gray-200 dark:ring-gray-800">
-                            {user && user.name ? user.name.charAt(0) : ''}
-                        </div>
+                        {user.profile_photo_url ? (
+                            <img src={user.profile_photo_url} alt={user.name} className="h-8 w-8 rounded-full object-cover" />
+                        ) : (
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 font-bold text-gray-700 shadow-sm ring-2 ring-white dark:bg-gray-700 dark:text-gray-200 dark:ring-gray-800">
+                                {user && user.name ? user.name.charAt(0) : ''}
+                            </div>
+                        )}
                     </div>
                     {!collapsed && (
                         <div className="ml-3">
