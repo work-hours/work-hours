@@ -54,6 +54,30 @@ final class TeamStore
     }
 
     /**
+     * Find the leader ID for a member if they are marked as employee under a leader.
+     */
+    public static function employeeLeaderIdFor(int $memberId): ?int
+    {
+        $id = Team::query()
+            ->where('member_id', $memberId)
+            ->where('is_employee', true)
+            ->value('user_id');
+
+        return $id !== null ? (int) $id : null;
+    }
+
+    /**
+     * Check whether a member is under a specific leader.
+     */
+    public static function isLeaderOfMemberIds(int $leaderId, int $memberId): bool
+    {
+        return Team::query()
+            ->where('user_id', $leaderId)
+            ->where('member_id', $memberId)
+            ->exists();
+    }
+
+    /**
      * Create or get a user by email and attach to the given user's team.
      * Returns an array with the created/found user and whether it's a new user.
      *

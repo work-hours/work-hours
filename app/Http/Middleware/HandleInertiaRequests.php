@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Http\Stores\PermissionStore;
 use App\Http\Stores\TeamStore;
-use App\Models\Team;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -50,7 +50,8 @@ final class HandleInertiaRequests extends Middleware
 
         $user = $request->user();
         $teamContext = $user ? TeamStore::getContextFor($user) : null;
-        $isEmployee = $user && Team::query()->where('member_id', $user->id)->where('is_employee', true)->exists();
+        $employeeLeaderId = $user ? TeamStore::employeeLeaderIdFor($user->getKey()) : null;
+        $isEmployee = $user !== null && $employeeLeaderId !== null;
 
         return [
             ...parent::share($request),
@@ -61,7 +62,7 @@ final class HandleInertiaRequests extends Middleware
             ],
             'teamContext' => $teamContext,
             'isEmployee' => $isEmployee,
-            'myTeamPermissions' => $user ? $user->permissions()->where('module', 'Team')->pluck('name')->toArray() : [],
+            'myTeamPermissions' => $user ? PermissionStore::userTeamPermissionNames($user) : [],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

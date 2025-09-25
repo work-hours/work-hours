@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Stores;
 
 use App\Models\Permission;
+use App\Models\User;
 use Illuminate\Support\Collection;
 
 final class PermissionStore
@@ -41,5 +42,29 @@ final class PermissionStore
                 'description' => $perm->description !== null ? (string) $perm->description : null,
             ])->values()->all())
             ->toArray();
+    }
+
+    /**
+     * Get the current user's Team permission names.
+     *
+     * @return list<string>
+     */
+    public static function userTeamPermissionNames(User $user): array
+    {
+        return $user->permissions()
+            ->where('module', 'Team')
+            ->pluck('name')
+            ->toArray();
+    }
+
+    /**
+     * Check whether the user has a specific Team permission.
+     */
+    public static function userHasTeamPermission(User $user, string $name): bool
+    {
+        return $user->permissions()
+            ->where('module', 'Team')
+            ->where('name', $name)
+            ->exists();
     }
 }
