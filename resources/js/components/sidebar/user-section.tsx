@@ -27,7 +27,7 @@ export function UserSection({ collapsed, user }: UserSectionProps) {
                         <div className="ml-3">
                             <p className="truncate text-sm font-medium text-gray-700 dark:text-gray-300">{user && user.name ? user.name : ''}</p>
                             <Link
-                                href="/settings/profile"
+                                href={route('profile.edit')}
                                 className="relative z-10 text-xs text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                             >
                                 View profile
