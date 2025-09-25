@@ -36,7 +36,9 @@ export default function Team({ teamMembers, filters, currencies, genericEmails, 
                 setEditUser(null)
                 setOffOpen(true)
             }
-        } catch {}
+        } catch {
+            // noop
+        }
     }, [])
 
     return (
@@ -203,6 +205,7 @@ export default function Team({ teamMembers, filters, currencies, genericEmails, 
                                                                         currency: member.currency,
                                                                         non_monetary: member.non_monetary,
                                                                         is_employee: member.is_employee ?? false,
+                                                                        permissions: Array.isArray(member.permissions) ? member.permissions : [],
                                                                     })
                                                                     setOffOpen(true)
                                                                 }}

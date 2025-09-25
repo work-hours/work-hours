@@ -32,6 +32,10 @@ use Illuminate\Support\Carbon;
  * @property mixed $unreadNotifications
  * @property Collection|Task[] $assignedTasks
  * @property mixed $currencies
+ * @property mixed $projects
+ * @property mixed $clients
+ * @property mixed $timeLogs
+ * @property mixed $permissions
  */
 #[UsePolicy(TeamPolicy::class)]
 final class User extends Authenticatable implements MustVerifyEmail

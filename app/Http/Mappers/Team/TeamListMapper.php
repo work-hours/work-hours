@@ -35,6 +35,7 @@ final class TeamListMapper
             'currency' => $team->currency,
             'non_monetary' => (bool) $team->non_monetary,
             'is_employee' => (bool) ($team->is_employee ?? false),
+            'permissions' => $team->member->permissions?->pluck('id')->map(fn ($id) => (int) $id)->values()->all() ?? [],
             'totalHours' => $totalDuration,
             'weeklyAverage' => $weeklyAverage,
             'unpaidHours' => $unpaidHours,

@@ -19,7 +19,7 @@ final class TeamListSearchableQuery
     {
         return Team::query()
             ->where('user_id', auth()->id())
-            ->with('member')
+            ->with(['member', 'member.permissions'])
             ->when(request()->get('search'), function ($query): void {
                 $search = request('search');
                 $query->whereHas('member', function ($q) use ($search): void {
