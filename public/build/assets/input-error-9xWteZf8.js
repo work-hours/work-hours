@@ -1,1 +1,0 @@
-import{j as m}from"./app-CE94QcfB.js";import{c as n}from"./utils-DKW5XViW.js";function x({message:t,className:r="",...e}){return t?m.jsx("p",{...e,className:n("mt-1 text-sm font-medium text-red-600 dark:text-red-400",r),children:t}):null}export{x as I};
