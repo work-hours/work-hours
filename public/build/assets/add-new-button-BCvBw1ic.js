@@ -1,1 +1,0 @@
-import{j as r,L as s}from"./app-Bk4PR63W.js";import{B as o}from"./button-BGAiRGZg.js";import{c as m}from"./utils-DKW5XViW.js";function d({className:t,children:a,...e}){return r.jsx(o,{asChild:!0,className:m("flex items-center gap-2 bg-gray-900 text-sm hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600",t),children:r.jsx(s,{...e,children:a})})}export{d as A};
