@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
-import { lactPreBuild } from './vendor/msamgan/lact/resources/methods';
+// import { lactPreBuild } from './vendor/msamgan/lact/resources/methods';
 import {run} from "vite-plugin-run";
 
 
@@ -23,8 +23,7 @@ export default defineConfig({
                 run: ["php", "artisan", "lact:run"],
                 pattern: ["routes/**/*.php", "app/**/Http/Controllers/**/*.php"],
             },
-        ]),
-        lactPreBuild()
+        ])
     ],
     esbuild: {
         jsx: 'automatic',
