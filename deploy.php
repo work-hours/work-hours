@@ -22,16 +22,6 @@ host('146.190.32.125')
     ->set('writable_mode', 'chmod');
 
 try {
-    desc('Build the Lact files');
-    task('lact', function () {
-        cd('{{release_path}}');
-        run('./vendor/bin/lact');
-    });
-} catch (Exception $e) {
-    writeln('Build task failed: ' . $e->getMessage());
-}
-
-try {
     desc('Build the assets');
     task('build', function () {
         cd('{{release_path}}');
@@ -62,8 +52,7 @@ try {
 }
 
 // Hooks
-after('deploy:vendors', 'lact');
-after('lact', 'build');
+after('deploy:vendors', 'build');
 after('deploy:failed', 'deploy:unlock');
 after('deploy:success', 'optimize');
 after('optimize', 'pm2');
