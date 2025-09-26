@@ -1,0 +1,1 @@
+import{t as a}from"./format-DaJbwain.js";function p(n,u){const e=a(n.start),s=a(n.end);let r=+e>+s;const c=r?+e:+s,t=r?s:e;t.setHours(0,0,0,0);let D=1;const o=[];for(;+t<=c;)o.push(a(t)),t.setDate(t.getDate()+D),t.setHours(0,0,0,0);return r?o.reverse():o}export{p as e};

@@ -52,7 +52,7 @@ try {
 }
 
 // Hooks
-after('deploy:vendors', 'build');
+// after('deploy:vendors', 'build');
 after('deploy:failed', 'deploy:unlock');
 after('deploy:success', 'optimize');
 after('optimize', 'pm2');
