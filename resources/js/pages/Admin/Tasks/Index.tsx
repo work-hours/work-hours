@@ -51,9 +51,6 @@ export default function Index({ tasks }: Props) {
                                         Title
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                                        Project
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                                         Creator
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
@@ -85,11 +82,9 @@ export default function Index({ tasks }: Props) {
                                         <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-gray-100">
                                             {task.id}
                                         </td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {task.title}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {task.project?.name ?? '-'}
+                                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                            <div className="font-medium text-gray-900 dark:text-gray-100">{task.title}</div>
+                                            <div className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{task.project?.name ?? '-'}</div>
                                         </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
                                             {task.creator?.name ?? '-'}
