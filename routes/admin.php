@@ -19,6 +19,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->group(function (): void {
             Route::get('/', [AdminController::class, 'index'])->name('index');
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
+            Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
             Route::get('/projects', (new AdminProjectController())->index(...))->name('projects.index');
             Route::get('/clients', (new AdminClientController())->index(...))->name('clients.index');
             Route::get('/invoices', (new AdminInvoiceController())->index(...))->name('invoices.index');
