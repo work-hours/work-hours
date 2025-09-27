@@ -31,8 +31,6 @@ final class AdminController extends Controller
         $invoiceCount = Invoice::query()->count();
         $tasksCount = Task::query()->count();
         $totalHoursLogged = (float) TimeLog::query()->sum('duration');
-
-        // Build a 30-day registration trend for email-verified users only
         $start = Carbon::now()->subDays(29)->startOfDay();
         $end = Carbon::now()->endOfDay();
 
@@ -48,8 +46,6 @@ final class AdminController extends Controller
                 'date' => (string) $row->date,
                 'count' => (int) $row->count,
             ]);
-
-        // Normalize to include days with zero count (users)
         $userTrend = collect();
         for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
             $dateKey = $d->toDateString();
@@ -59,8 +55,6 @@ final class AdminController extends Controller
                 'count' => $count,
             ]);
         }
-
-        // Build a 30-day time log entry trend by created_at
         /** @var Collection<int, array{date: string, count: int}> $timeLogsByDay */
         $timeLogsByDay = TimeLog::query()
             ->whereBetween('created_at', [$start, $end])
@@ -72,8 +66,6 @@ final class AdminController extends Controller
                 'date' => (string) $row->date,
                 'count' => (int) $row->count,
             ]);
-
-        // Normalize to include days with zero count (time logs)
         $timeLogTrend = collect();
         for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
             $dateKey = $d->toDateString();

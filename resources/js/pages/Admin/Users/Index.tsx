@@ -112,10 +112,13 @@ export default function Index({ users }: Props) {
                                             {user.id}
                                         </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                                                                    <Link href={route('admin.users.show', user.id)} className="text-indigo-600 hover:underline dark:text-indigo-400">
-                                                                                        {user.name}
-                                                                                    </Link>
-                                                                                </td>
+                                            <Link
+                                                href={route('admin.users.show', user.id)}
+                                                className="text-indigo-600 hover:underline dark:text-indigo-400"
+                                            >
+                                                {user.name}
+                                            </Link>
+                                        </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{user.email}</td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
                                             {formatDateTime(user.email_verified_at)}

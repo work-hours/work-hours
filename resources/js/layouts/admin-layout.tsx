@@ -1,9 +1,20 @@
 import Background from '@/components/ui/background'
 import { Head, Link, usePage } from '@inertiajs/react'
 import {
-    Briefcase, CheckSquare, ChevronDown, ChevronLeft, ChevronRight,
-    Coins, LayoutDashboard, Projector, Settings, Users, Clock,
-    Search, Bell, Moon, Sun, UserCircle
+    Briefcase,
+    CheckSquare,
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    Clock,
+    Coins,
+    LayoutDashboard,
+    Moon,
+    Projector,
+    Settings,
+    Sun,
+    UserCircle,
+    Users,
 } from 'lucide-react'
 import { ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
@@ -28,12 +39,10 @@ const NavGroup = ({ title, children, defaultOpen = false }: NavGroupProps) => {
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/60 dark:hover:text-gray-200"
             >
-                <span className="text-xs font-semibold uppercase tracking-wider">{title}</span>
+                <span className="text-xs font-semibold tracking-wider uppercase">{title}</span>
                 <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </button>
-            <div className={`mt-1 space-y-1 pl-2 ${isOpen ? 'block' : 'hidden'}`}>
-                {children}
-            </div>
+            <div className={`mt-1 space-y-1 pl-2 ${isOpen ? 'block' : 'hidden'}`}>{children}</div>
         </div>
     )
 }
@@ -89,7 +98,10 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                 <div className="flex h-full flex-col">
                     <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4 dark:border-gray-800">
                         {!collapsed && (
-                            <Link href={route('admin.index')} className="flex items-center space-x-2 text-lg font-medium tracking-tight text-gray-800 dark:text-gray-200">
+                            <Link
+                                href={route('admin.index')}
+                                className="flex items-center space-x-2 text-lg font-medium tracking-tight text-gray-800 dark:text-gray-200"
+                            >
                                 <Settings className="h-5 w-5 text-indigo-500" />
                                 <span>Administration</span>
                             </Link>
@@ -344,14 +356,10 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                             </button>
 
                             <div className="relative">
-                                <button className="flex items-center rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                <button className="flex items-center rounded-full text-sm focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none">
                                     <span className="sr-only">Open user menu</span>
                                     {auth?.user?.profile_photo_url ? (
-                                        <img
-                                            className="h-8 w-8 rounded-full"
-                                            src={auth.user.profile_photo_url}
-                                            alt={auth.user.name}
-                                        />
+                                        <img className="h-8 w-8 rounded-full" src={auth.user.profile_photo_url} alt={auth.user.name} />
                                     ) : (
                                         <UserCircle className="h-8 w-8 text-gray-500" />
                                     )}
@@ -362,9 +370,7 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                 </div>
 
                 <main className="relative z-10 flex-1 overflow-y-auto">
-                    <div className="container mx-auto px-4 pt-6 pb-16 transition-all duration-200">
-                        {children}
-                    </div>
+                    <div className="container mx-auto px-4 pt-6 pb-16 transition-all duration-200">{children}</div>
                 </main>
             </div>
 

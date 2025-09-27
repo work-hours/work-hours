@@ -26,9 +26,9 @@ it('allows admin to view user detail page', function (): void {
 
     $response->assertSuccessful();
 
-    $response->assertInertia(fn (Assert $page) => $page
+    $response->assertInertia(fn (Assert $page): Assert => $page
         ->component('Admin/Users/Show')
-        ->has('user', fn (Assert $user) => $user
+        ->has('user', fn (Assert $user): Assert => $user
             ->where('id', $target->id)
             ->where('name', $target->name)
             ->etc()

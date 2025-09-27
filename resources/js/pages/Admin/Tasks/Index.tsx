@@ -94,21 +94,15 @@ export default function Index({ tasks }: Props) {
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
                                             {task.creator?.name ?? '-'}
                                         </td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {task.status}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {task.priority}
-                                        </td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{task.status}</td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{task.priority}</td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
                                             {task.assignees_count}
                                         </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
                                             {task.comments_count}
                                         </td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {task.tags_count}
-                                        </td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{task.tags_count}</td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
                                             {task.due_date ? formatDate(task.due_date) : '-'}
                                         </td>

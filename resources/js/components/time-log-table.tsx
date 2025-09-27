@@ -18,6 +18,7 @@ export type TimeLogEntry = {
     duration: number
     user_name?: string
     is_paid?: boolean
+    is_invoiced?: boolean
     note?: string
     hourly_rate?: number
     paid_amount?: number
@@ -140,6 +141,11 @@ export default function TimeLogTable({
                                     {log.non_billable && (
                                         <Badge className="bg-purple-100 text-[10px] font-medium text-purple-800 dark:bg-purple-900 dark:text-purple-100">
                                             Non-billable
+                                        </Badge>
+                                    )}
+                                    {log.is_invoiced && (
+                                        <Badge className="bg-indigo-100 text-[10px] font-medium text-indigo-800 dark:bg-indigo-900 dark:text-indigo-100">
+                                            Invoiced
                                         </Badge>
                                     )}
                                     {log.tags && log.tags.length > 0 && (

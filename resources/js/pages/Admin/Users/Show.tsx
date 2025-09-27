@@ -2,11 +2,44 @@ import AdminLayout from '@/layouts/admin-layout'
 import { formatDateTime } from '@/lib/utils'
 import { Head, Link } from '@inertiajs/react'
 
-interface Project { id: number; name: string; status?: string | null; created_at: string }
-interface Client { id: number; name: string; company?: string | null; created_at: string }
-interface Task { id: number; title: string; status: string; priority: string; due_date?: string | null; created_at: string; project?: { id: number; name: string } | null }
-interface TimeLog { id: number; started_at: string; ended_at: string | null; duration_minutes: number; created_at: string; project?: { id: number; name: string } | null; task?: { id: number; title: string } | null }
-interface Invoice { id: number; number: string; status: string; total: number; currency: string; created_at: string }
+interface Project {
+    id: number
+    name: string
+    status?: string | null
+    created_at: string
+}
+interface Client {
+    id: number
+    name: string
+    company?: string | null
+    created_at: string
+}
+interface Task {
+    id: number
+    title: string
+    status: string
+    priority: string
+    due_date?: string | null
+    created_at: string
+    project?: { id: number; name: string } | null
+}
+interface TimeLog {
+    id: number
+    started_at: string
+    ended_at: string | null
+    duration_minutes: number
+    created_at: string
+    project?: { id: number; name: string } | null
+    task?: { id: number; title: string } | null
+}
+interface Invoice {
+    id: number
+    number: string
+    status: string
+    total: number
+    currency: string
+    created_at: string
+}
 
 type TeamMemberEntry = {
     user_id: number
@@ -75,7 +108,7 @@ export default function Show({ user, recent, teams }: Props) {
 
                 <div className="grid gap-6 md:grid-cols-3">
                     <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
-                        <h2 className="mb-4 text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">Personal Details</h2>
+                        <h2 className="mb-4 text-sm font-semibold text-gray-500 uppercase dark:text-gray-400">Personal Details</h2>
                         <dl className="grid grid-cols-1 gap-3 text-sm">
                             <div className="flex items-center justify-between">
                                 <dt className="text-gray-500 dark:text-gray-400">Email</dt>
@@ -83,7 +116,9 @@ export default function Show({ user, recent, teams }: Props) {
                             </div>
                             <div className="flex items-center justify-between">
                                 <dt className="text-gray-500 dark:text-gray-400">Verified</dt>
-                                <dd className="text-gray-900 dark:text-gray-100">{user.email_verified_at ? formatDateTime(user.email_verified_at) : '—'}</dd>
+                                <dd className="text-gray-900 dark:text-gray-100">
+                                    {user.email_verified_at ? formatDateTime(user.email_verified_at) : '—'}
+                                </dd>
                             </div>
                             <div className="flex items-center justify-between">
                                 <dt className="text-gray-500 dark:text-gray-400">Hourly Rate</dt>
@@ -97,7 +132,7 @@ export default function Show({ user, recent, teams }: Props) {
                     </div>
 
                     <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
-                        <h2 className="mb-4 text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">Overview</h2>
+                        <h2 className="mb-4 text-sm font-semibold text-gray-500 uppercase dark:text-gray-400">Overview</h2>
                         <div className="grid grid-cols-3 gap-4 text-center">
                             <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-700/50">
                                 <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{user.projects_count}</div>
@@ -115,12 +150,32 @@ export default function Show({ user, recent, teams }: Props) {
                     </div>
 
                     <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
-                        <h2 className="mb-4 text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">Quick Links</h2>
+                        <h2 className="mb-4 text-sm font-semibold text-gray-500 uppercase dark:text-gray-400">Quick Links</h2>
                         <div className="grid grid-cols-2 gap-3 text-sm">
-                            <Link className="rounded border px-3 py-2 text-center hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700" href={route('admin.projects.index')}>Projects</Link>
-                            <Link className="rounded border px-3 py-2 text-center hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700" href={route('admin.tasks.index')}>Tasks</Link>
-                            <Link className="rounded border px-3 py-2 text-center hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700" href={route('admin.clients.index')}>Clients</Link>
-                            <Link className="rounded border px-3 py-2 text-center hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700" href={route('admin.time-logs.index')}>Time Logs</Link>
+                            <Link
+                                className="rounded border px-3 py-2 text-center hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
+                                href={route('admin.projects.index')}
+                            >
+                                Projects
+                            </Link>
+                            <Link
+                                className="rounded border px-3 py-2 text-center hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
+                                href={route('admin.tasks.index')}
+                            >
+                                Tasks
+                            </Link>
+                            <Link
+                                className="rounded border px-3 py-2 text-center hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
+                                href={route('admin.clients.index')}
+                            >
+                                Clients
+                            </Link>
+                            <Link
+                                className="rounded border px-3 py-2 text-center hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
+                                href={route('admin.time-logs.index')}
+                            >
+                                Time Logs
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -242,7 +297,11 @@ export default function Show({ user, recent, teams }: Props) {
                                         </div>
                                         <div className="text-right text-xs text-gray-500 dark:text-gray-400">
                                             <div>
-                                                {tm.non_monetary ? 'Non-monetary' : tm.hourly_rate != null ? `${tm.hourly_rate} ${tm.currency ?? ''}` : '—'}
+                                                {tm.non_monetary
+                                                    ? 'Non-monetary'
+                                                    : tm.hourly_rate != null
+                                                      ? `${tm.hourly_rate} ${tm.currency ?? ''}`
+                                                      : '—'}
                                             </div>
                                             <div className="mt-0.5">{tm.is_employee ? 'Employee' : 'Contractor'}</div>
                                         </div>
@@ -265,7 +324,11 @@ export default function Show({ user, recent, teams }: Props) {
                                         </div>
                                         <div className="text-right text-xs text-gray-500 dark:text-gray-400">
                                             <div>
-                                                {mo.non_monetary ? 'Non-monetary' : mo.hourly_rate != null ? `${mo.hourly_rate} ${mo.currency ?? ''}` : '—'}
+                                                {mo.non_monetary
+                                                    ? 'Non-monetary'
+                                                    : mo.hourly_rate != null
+                                                      ? `${mo.hourly_rate} ${mo.currency ?? ''}`
+                                                      : '—'}
                                             </div>
                                             <div className="mt-0.5">{mo.is_employee ? 'Employee' : 'Contractor'}</div>
                                         </div>
@@ -283,7 +346,7 @@ export default function Show({ user, recent, teams }: Props) {
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
-            <h2 className="mb-4 text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">{title}</h2>
+            <h2 className="mb-4 text-sm font-semibold text-gray-500 uppercase dark:text-gray-400">{title}</h2>
             {children}
         </div>
     )

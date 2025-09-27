@@ -1,7 +1,7 @@
+import { Pagination } from '@/components/ui/pagination'
 import AdminLayout from '@/layouts/admin-layout'
 import { formatDateTime } from '@/lib/utils'
 import { Head } from '@inertiajs/react'
-import { Pagination } from '@/components/ui/pagination'
 
 interface TimeLog {
     id: number
@@ -105,13 +105,19 @@ export default function Index({ timeLogs }: Props) {
                                             <div>{formatDateTime(log.start_timestamp)}</div>
                                             <div className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{formatDateTime(log.end_timestamp)}</div>
                                         </td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{hoursFromDuration(log.duration)}</td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                            {hoursFromDuration(log.duration)}
+                                        </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
                                             {log.hourly_rate ? `${log.currency ?? ''} ${Number(log.hourly_rate).toFixed(2)}` : '-'}
                                         </td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{log.is_paid ? 'Yes' : 'No'}</td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                            {log.is_paid ? 'Yes' : 'No'}
+                                        </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{log.status}</td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{formatDateTime(log.created_at)}</td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                            {formatDateTime(log.created_at)}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

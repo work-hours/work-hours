@@ -155,7 +155,7 @@ final class TimeLogStore
                 $hourlyRate = Team::memberHourlyRate(project: $log->project, memberId: $memberId);
                 $currency = $log->currency ?? 'USD';
 
-                if ($hourlyRate) {
+                if ($hourlyRate !== 0.0) {
                     if (! isset($unpaidAmounts[$currency])) {
                         $unpaidAmounts[$currency] = 0;
                     }
@@ -264,7 +264,7 @@ final class TimeLogStore
                 $hourlyRate = Team::memberHourlyRate(project: $log->project, memberId: $memberId);
                 $currency = $log->currency ?? 'USD';
 
-                if ($hourlyRate) {
+                if ($hourlyRate !== 0.0) {
                     if (! isset($paidAmounts[$currency])) {
                         $paidAmounts[$currency] = 0;
                     }
@@ -413,6 +413,8 @@ final class TimeLogStore
 
             $isNonMonetary = Team::isMemberNonMonetary(userId: $timeLog->project->user_id, memberId: $timeLog->user_id);
 
+            $isProjectOwner = $timeLog->project && $timeLog->project->user_id === auth()->id();
+
             return [
                 'id' => $timeLog->id,
                 'user_id' => $timeLog->user_id,
@@ -439,6 +441,7 @@ final class TimeLogStore
                 'comment' => $timeLog->comment,
                 'user_non_monetary' => $isNonMonetary,
                 'non_billable' => (bool) ($timeLog->non_billable ?? false),
+                'is_invoiced' => $isProjectOwner && (bool) ($timeLog->invoice_id ?? false),
                 'tags' => $timeLog->tags ? $timeLog->tags->map(fn ($tag): array => [
                     'id' => $tag->id,
                     'name' => $tag->name,

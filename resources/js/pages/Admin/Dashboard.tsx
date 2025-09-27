@@ -34,8 +34,6 @@ export const statCard = ({ title, count, link }: { title: string; count: number;
 
 function TrendChart({ data, title, ariaLabel }: { data: TrendPoint[]; title: string; ariaLabel: string }) {
     const max = Math.max(1, ...data.map((d) => d.count))
-
-    // SVG dimensions
     const width = 600
     const height = 220
     const padX = 24
@@ -44,15 +42,11 @@ function TrendChart({ data, title, ariaLabel }: { data: TrendPoint[]; title: str
     const n = data.length
     const innerW = width - padX * 2
     const innerH = height - padY * 2
-
-    // Calculate xy points
     const xy = data.map((d, i) => {
         const x = n > 1 ? padX + (i * innerW) / (n - 1) : padX + innerW / 2
         const y = padY + (1 - d.count / max) * innerH
         return { x, y }
     })
-
-    // Catmull–Rom to Bezier conversion for a smooth path
     function smoothPath(points: { x: number; y: number }[]): string {
         if (points.length === 0) {
             return ''
@@ -70,8 +64,6 @@ function TrendChart({ data, title, ariaLabel }: { data: TrendPoint[]; title: str
             const p1 = points[i]
             const p2 = points[i + 1]
             const p3 = points[i + 2] ?? p2
-
-            // Catmull-Rom to Bezier (alpha = 0.5, uniform)
             const cp1x = p1.x + (p2.x - p0.x) / 6
             const cp1y = p1.y + (p2.y - p0.y) / 6
             const cp2x = p2.x - (p3.x - p1.x) / 6
@@ -94,14 +86,12 @@ function TrendChart({ data, title, ariaLabel }: { data: TrendPoint[]; title: str
 
             <div role="img" aria-label={ariaLabel} className="w-full">
                 <svg viewBox={`0 0 ${width} ${height}`} className="h-56 w-full">
-                    {/* Background grid (light) */}
                     <g opacity="0.08" className="stroke-gray-800 dark:stroke-white">
                         {[0, 1, 2, 3, 4].map((i) => {
                             const y = padY + (i * innerH) / 4
                             return <line key={i} x1={padX} y1={y} x2={width - padX} y2={y} strokeWidth="1" />
                         })}
                     </g>
-                    {/* Y-axis labels */}
                     <g className="fill-gray-600 text-xs dark:fill-gray-300">
                         {[0, 1, 2, 3, 4].map((i) => {
                             const y = padY + (i * innerH) / 4
@@ -114,10 +104,8 @@ function TrendChart({ data, title, ariaLabel }: { data: TrendPoint[]; title: str
                         })}
                     </g>
 
-                    {/* Area under curve (slight tint) */}
                     <path d={areaD} className="fill-blue-600/10 dark:fill-blue-400/10" />
 
-                    {/* Smooth line curve */}
                     <path
                         d={lineD}
                         fill="none"
@@ -128,7 +116,6 @@ function TrendChart({ data, title, ariaLabel }: { data: TrendPoint[]; title: str
                         strokeLinejoin="round"
                     />
 
-                    {/* Points with native tooltip */}
                     {data.map((d, i) => {
                         const x = n > 1 ? padX + (i * innerW) / (n - 1) : padX + innerW / 2
                         const y = padY + (1 - d.count / max) * innerH
@@ -136,7 +123,7 @@ function TrendChart({ data, title, ariaLabel }: { data: TrendPoint[]; title: str
                             <g key={d.date + i}>
                                 <circle cx={x} cy={y} r={3.5} className="fill-blue-600 dark:fill-blue-400" />
                                 {d.count > 0 && (
-                                    <text x={x} y={y - 8} textAnchor="middle" className="text-xs fill-gray-700 dark:fill-gray-200">
+                                    <text x={x} y={y - 8} textAnchor="middle" className="fill-gray-700 text-xs dark:fill-gray-200">
                                         {d.count}
                                     </text>
                                 )}
@@ -155,28 +142,34 @@ function TrendChart({ data, title, ariaLabel }: { data: TrendPoint[]; title: str
     )
 }
 
-export default function Dashboard({ userCount, timeLogCount, projectCount, clientCount, invoiceCount, tasksCount, totalHoursLogged, userRegistrationTrend, timeLogTrend }: DashboardProps) {
+export default function Dashboard({
+    userCount,
+    timeLogCount,
+    projectCount,
+    clientCount,
+    invoiceCount,
+    tasksCount,
+    totalHoursLogged,
+    userRegistrationTrend,
+    timeLogTrend,
+}: DashboardProps) {
     return (
         <AdminLayout>
             <Head title="Admin Dashboard" />
             <div className="container mx-auto py-6">
                 <h1 className="mb-6 text-2xl font-semibold">Admin Dashboard</h1>
 
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12">
+                <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {statCard({ title: 'Total Hours Logged', count: Number(totalHoursLogged.toFixed(2)), link: null })}
                 </div>
 
-                <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 mb-12">
+                <div className="mt-6 mb-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <TrendChart
                         data={userRegistrationTrend}
                         title="User registrations (verified only)"
                         ariaLabel="User registration trend last 30 days, verified users only"
                     />
-                    <TrendChart
-                        data={timeLogTrend}
-                        title="Time log entries"
-                        ariaLabel="Time log entries trend last 30 days"
-                    />
+                    <TrendChart data={timeLogTrend} title="Time log entries" ariaLabel="Time log entries trend last 30 days" />
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -187,8 +180,6 @@ export default function Dashboard({ userCount, timeLogCount, projectCount, clien
                     {statCard({ title: 'Invoices', count: invoiceCount, link: '/administration/invoices' })}
                     {statCard({ title: 'Time Logs', count: timeLogCount, link: '/administration/time-logs' })}
                 </div>
-
-
             </div>
         </AdminLayout>
     )
