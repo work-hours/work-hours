@@ -33,6 +33,14 @@ it('allows admin to view user detail page', function (): void {
             ->where('name', $target->name)
             ->etc()
         )
-        ->hasAll(['recent.projects', 'recent.clients', 'recent.assignedTasks', 'recent.timeLogs', 'recent.invoices'])
+        ->hasAll([
+            'recent.projects',
+            'recent.clients',
+            'recent.assignedTasks',
+            'recent.timeLogs',
+            'recent.invoices',
+            'teams.members',
+            'teams.memberOf',
+        ])
     );
 });

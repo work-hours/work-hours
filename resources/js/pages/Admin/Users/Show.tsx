@@ -8,6 +8,26 @@ interface Task { id: number; title: string; status: string; priority: string; du
 interface TimeLog { id: number; started_at: string; ended_at: string | null; duration_minutes: number; created_at: string; project?: { id: number; name: string } | null; task?: { id: number; title: string } | null }
 interface Invoice { id: number; number: string; status: string; total: number; currency: string; created_at: string }
 
+type TeamMemberEntry = {
+    user_id: number
+    member_id: number
+    hourly_rate: number | null
+    currency: string | null
+    non_monetary: boolean
+    is_employee: boolean
+    member?: { id: number; name: string; email: string }
+}
+
+type MemberOfEntry = {
+    user_id: number
+    member_id: number
+    hourly_rate: number | null
+    currency: string | null
+    non_monetary: boolean
+    is_employee: boolean
+    user?: { id: number; name: string; email: string }
+}
+
 interface UserDto {
     id: number
     name: string
@@ -31,9 +51,13 @@ interface Props {
         timeLogs: TimeLog[]
         invoices: Invoice[]
     }
+    teams: {
+        members: TeamMemberEntry[]
+        memberOf: MemberOfEntry[]
+    }
 }
 
-export default function Show({ user, recent }: Props) {
+export default function Show({ user, recent, teams }: Props) {
     return (
         <AdminLayout>
             <Head title={`Admin - ${user.name}`} />
@@ -196,6 +220,54 @@ export default function Show({ user, recent }: Props) {
                                                 {inv.total} {inv.currency}
                                             </div>
                                             <div className="mt-0.5">{inv.status}</div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </SectionCard>
+                </div>
+
+                <div className="mt-6 grid gap-6 md:grid-cols-2">
+                    <SectionCard title="Team Members">
+                        {teams.members.length === 0 ? (
+                            <EmptyState label="No team members" />
+                        ) : (
+                            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                                {teams.members.map((tm) => (
+                                    <li key={`${tm.user_id}-${tm.member_id}`} className="flex items-center justify-between py-3">
+                                        <div>
+                                            <div className="font-medium text-gray-900 dark:text-gray-100">{tm.member?.name ?? '—'}</div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-400">{tm.member?.email ?? '—'}</div>
+                                        </div>
+                                        <div className="text-right text-xs text-gray-500 dark:text-gray-400">
+                                            <div>
+                                                {tm.non_monetary ? 'Non-monetary' : tm.hourly_rate != null ? `${tm.hourly_rate} ${tm.currency ?? ''}` : '—'}
+                                            </div>
+                                            <div className="mt-0.5">{tm.is_employee ? 'Employee' : 'Contractor'}</div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </SectionCard>
+
+                    <SectionCard title="Member Of">
+                        {teams.memberOf.length === 0 ? (
+                            <EmptyState label="Not a member of any team" />
+                        ) : (
+                            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                                {teams.memberOf.map((mo) => (
+                                    <li key={`${mo.user_id}-${mo.member_id}`} className="flex items-center justify-between py-3">
+                                        <div>
+                                            <div className="font-medium text-gray-900 dark:text-gray-100">{mo.user?.name ?? '—'}</div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-400">{mo.user?.email ?? '—'}</div>
+                                        </div>
+                                        <div className="text-right text-xs text-gray-500 dark:text-gray-400">
+                                            <div>
+                                                {mo.non_monetary ? 'Non-monetary' : mo.hourly_rate != null ? `${mo.hourly_rate} ${mo.currency ?? ''}` : '—'}
+                                            </div>
+                                            <div className="mt-0.5">{mo.is_employee ? 'Employee' : 'Contractor'}</div>
                                         </div>
                                     </li>
                                 ))}

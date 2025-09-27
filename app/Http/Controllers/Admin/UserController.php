@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
+use App\Models\Team;
 use App\Models\TimeLog;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -94,6 +95,22 @@ final class UserController extends Controller
                 'assignedTasks' => $recentAssignedTasks,
                 'timeLogs' => $recentTimeLogs,
                 'invoices' => $recentInvoices,
+            ],
+            'teams' => [
+                'members' => Team::query()
+                    ->select(['user_id', 'member_id', 'hourly_rate', 'currency', 'non_monetary', 'is_employee'])
+                    ->with(['member:id,name,email'])
+                    ->where('user_id', $user->id)
+                    ->latest('id')
+                    ->limit(10)
+                    ->get(),
+                'memberOf' => Team::query()
+                    ->select(['user_id', 'member_id', 'hourly_rate', 'currency', 'non_monetary', 'is_employee'])
+                    ->with(['user:id,name,email'])
+                    ->where('member_id', $user->id)
+                    ->latest('id')
+                    ->limit(10)
+                    ->get(),
             ],
         ]);
     }
