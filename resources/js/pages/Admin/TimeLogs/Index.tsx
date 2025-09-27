@@ -26,6 +26,10 @@ interface PaginatedData<T> {
         label: string
         active: boolean
     }[]
+    total?: number
+    meta?: {
+        total: number
+    }
 }
 
 interface Props {
@@ -43,12 +47,13 @@ function hoursFromDuration(duration: number): string {
 }
 
 export default function Index({ timeLogs }: Props) {
+    const totalCount = timeLogs.meta?.total ?? timeLogs.total ?? timeLogs.data.length
     return (
         <AdminLayout>
             <Head title="Admin - Time Logs" />
             <div className="container mx-auto py-6">
                 <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold">Time Logs</h1>
+                    <h1 className="text-2xl font-semibold">Time Logs ({totalCount})</h1>
                 </div>
 
                 <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">

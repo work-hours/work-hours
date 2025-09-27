@@ -22,6 +22,10 @@ interface PaginatedData<T> {
         label: string
         active: boolean
     }[]
+    total?: number
+    meta?: {
+        total: number
+    }
 }
 
 interface Props {
@@ -29,12 +33,13 @@ interface Props {
 }
 
 export default function Index({ projects }: Props) {
+    const totalCount = projects.meta?.total ?? projects.total ?? projects.data.length
     return (
         <AdminLayout>
             <Head title="Admin - Project Management" />
             <div className="container mx-auto py-6">
                 <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold">Project Management</h1>
+                    <h1 className="text-2xl font-semibold">Project Management ({totalCount})</h1>
                 </div>
 
                 <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">

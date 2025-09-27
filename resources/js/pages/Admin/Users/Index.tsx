@@ -23,6 +23,10 @@ interface PaginatedData {
         label: string
         active: boolean
     }[]
+    total?: number
+    meta?: {
+        total: number
+    }
 }
 
 interface Props {
@@ -30,14 +34,14 @@ interface Props {
 }
 
 export default function Index({ users }: Props) {
-    console.log(users)
+    const totalCount = users.meta?.total ?? users.total ?? users.data.length
 
     return (
         <AdminLayout>
             <Head title="Admin - User Management" />
             <div className="container mx-auto py-6">
                 <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold">User Management</h1>
+                    <h1 className="text-2xl font-semibold">User Management ({totalCount})</h1>
                 </div>
 
                 <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
