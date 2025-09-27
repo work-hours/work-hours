@@ -14,6 +14,7 @@ interface DashboardProps {
     invoiceCount: number
     tasksCount: number
     userRegistrationTrend: TrendPoint[]
+    timeLogTrend: TrendPoint[]
 }
 
 export const statCard = ({ title, count, link }: { title: string; count: number; link: string | null }) => (
@@ -30,7 +31,7 @@ export const statCard = ({ title, count, link }: { title: string; count: number;
     </div>
 )
 
-function TrendChart({ data }: { data: TrendPoint[] }) {
+function TrendChart({ data, title, ariaLabel }: { data: TrendPoint[]; title: string; ariaLabel: string }) {
     const max = Math.max(1, ...data.map((d) => d.count))
 
     // SVG dimensions
@@ -43,18 +44,54 @@ function TrendChart({ data }: { data: TrendPoint[] }) {
     const innerW = width - padX * 2
     const innerH = height - padY * 2
 
-    const points = data.map((d, i) => {
+    // Calculate xy points
+    const xy = data.map((d, i) => {
         const x = n > 1 ? padX + (i * innerW) / (n - 1) : padX + innerW / 2
         const y = padY + (1 - d.count / max) * innerH
-        return `${x},${y}`
+        return { x, y }
     })
+
+    // Catmull–Rom to Bezier conversion for a smooth path
+    function smoothPath(points: { x: number; y: number }[]): string {
+        if (points.length === 0) {
+            return ''
+        }
+        if (points.length === 1) {
+            const p = points[0]
+            return `M ${p.x} ${p.y}`
+        }
+
+        const path: string[] = []
+        path.push(`M ${points[0].x} ${points[0].y}`)
+
+        for (let i = 0; i < points.length - 1; i++) {
+            const p0 = points[i - 1] ?? points[i]
+            const p1 = points[i]
+            const p2 = points[i + 1]
+            const p3 = points[i + 2] ?? p2
+
+            // Catmull-Rom to Bezier (alpha = 0.5, uniform)
+            const cp1x = p1.x + (p2.x - p0.x) / 6
+            const cp1y = p1.y + (p2.y - p0.y) / 6
+            const cp2x = p2.x - (p3.x - p1.x) / 6
+            const cp2y = p2.y - (p3.y - p1.y) / 6
+
+            path.push(`C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`)
+        }
+
+        return path.join(' ')
+    }
+
+    const lineD = smoothPath(xy)
+    const baselineY = height - padY
+    const areaD = `${lineD} L ${xy[xy.length - 1]?.x ?? padX} ${baselineY} L ${xy[0]?.x ?? padX} ${baselineY} Z`
 
     return (
         <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
-            <h2 className="mb-2 text-lg font-medium">User registrations (verified only)</h2>
+            <h2 className="mb-2 text-lg font-medium">{title}</h2>
             <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">Last 30 days</p>
 
-            <div role="img" aria-label="User registration trend last 30 days, verified users only" className="w-full">
+            <div role="img" aria-label={ariaLabel} className="w-full">
                 <svg viewBox={`0 0 ${width} ${height}`} className="h-56 w-full">
                     {/* Background grid (light) */}
                     <g opacity="0.08" className="stroke-gray-800 dark:stroke-white">
@@ -76,20 +113,18 @@ function TrendChart({ data }: { data: TrendPoint[] }) {
                         })}
                     </g>
 
-                    {/* Line */}
-                    <polyline
+                    {/* Area under curve (slight tint) */}
+                    <path d={areaD} className="fill-blue-600/10 dark:fill-blue-400/10" />
+
+                    {/* Smooth line curve */}
+                    <path
+                        d={lineD}
                         fill="none"
                         stroke="currentColor"
                         className="text-blue-600 dark:text-blue-400"
                         strokeWidth="2.5"
-                        points={points.join(' ')}
-                    />
-
-                    {/* Area under line (slight tint) */}
-                    <polyline
-                        fill="currentColor"
-                        className="text-blue-600/10 dark:text-blue-400/10"
-                        points={`${padX},${height - padY} ${points.join(' ')} ${width - padX},${height - padY}`}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                     />
 
                     {/* Points with native tooltip */}
@@ -119,7 +154,7 @@ function TrendChart({ data }: { data: TrendPoint[] }) {
     )
 }
 
-export default function Dashboard({ userCount, timeLogCount, projectCount, clientCount, invoiceCount, tasksCount, userRegistrationTrend }: DashboardProps) {
+export default function Dashboard({ userCount, timeLogCount, projectCount, clientCount, invoiceCount, tasksCount, userRegistrationTrend, timeLogTrend }: DashboardProps) {
     return (
         <AdminLayout>
             <Head title="Admin Dashboard" />
@@ -127,7 +162,16 @@ export default function Dashboard({ userCount, timeLogCount, projectCount, clien
                 <h1 className="mb-6 text-2xl font-semibold">Admin Dashboard</h1>
 
                 <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 mb-12">
-                    <TrendChart data={userRegistrationTrend} />
+                    <TrendChart
+                        data={userRegistrationTrend}
+                        title="User registrations (verified only)"
+                        ariaLabel="User registration trend last 30 days, verified users only"
+                    />
+                    <TrendChart
+                        data={timeLogTrend}
+                        title="Time log entries"
+                        ariaLabel="Time log entries trend last 30 days"
+                    />
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">

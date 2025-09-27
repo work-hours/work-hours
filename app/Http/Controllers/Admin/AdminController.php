@@ -48,12 +48,36 @@ final class AdminController extends Controller
                 'count' => (int) $row->count,
             ]);
 
-        // Normalize to include days with zero count
-        $trend = collect();
+        // Normalize to include days with zero count (users)
+        $userTrend = collect();
         for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
             $dateKey = $d->toDateString();
             $count = (int) ($verifiedByDay->firstWhere('date', $dateKey)['count'] ?? 0);
-            $trend->push([
+            $userTrend->push([
+                'date' => $dateKey,
+                'count' => $count,
+            ]);
+        }
+
+        // Build a 30-day time log entry trend by created_at
+        /** @var Collection<int, array{date: string, count: int}> $timeLogsByDay */
+        $timeLogsByDay = TimeLog::query()
+            ->whereBetween('created_at', [$start, $end])
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->map(fn ($row): array => [
+                'date' => (string) $row->date,
+                'count' => (int) $row->count,
+            ]);
+
+        // Normalize to include days with zero count (time logs)
+        $timeLogTrend = collect();
+        for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
+            $dateKey = $d->toDateString();
+            $count = (int) ($timeLogsByDay->firstWhere('date', $dateKey)['count'] ?? 0);
+            $timeLogTrend->push([
                 'date' => $dateKey,
                 'count' => $count,
             ]);
@@ -66,7 +90,8 @@ final class AdminController extends Controller
             'clientCount' => $clientCount,
             'invoiceCount' => $invoiceCount,
             'tasksCount' => $tasksCount,
-            'userRegistrationTrend' => $trend,
+            'userRegistrationTrend' => $userTrend,
+            'timeLogTrend' => $timeLogTrend,
         ]);
     }
 }
