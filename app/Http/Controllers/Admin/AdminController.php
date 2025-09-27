@@ -12,6 +12,8 @@ use App\Models\Task;
 use App\Models\TimeLog;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,6 +31,34 @@ final class AdminController extends Controller
         $invoiceCount = Invoice::query()->count();
         $tasksCount = Task::query()->count();
 
+        // Build a 30-day registration trend for email-verified users only
+        $start = Carbon::now()->subDays(29)->startOfDay();
+        $end = Carbon::now()->endOfDay();
+
+        /** @var Collection<int, array{date: string, count: int}> $verifiedByDay */
+        $verifiedByDay = User::query()
+            ->whereNotNull('email_verified_at')
+            ->whereBetween('email_verified_at', [$start, $end])
+            ->selectRaw('DATE(email_verified_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->map(fn ($row): array => [
+                'date' => (string) $row->date,
+                'count' => (int) $row->count,
+            ]);
+
+        // Normalize to include days with zero count
+        $trend = collect();
+        for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
+            $dateKey = $d->toDateString();
+            $count = (int) ($verifiedByDay->firstWhere('date', $dateKey)['count'] ?? 0);
+            $trend->push([
+                'date' => $dateKey,
+                'count' => $count,
+            ]);
+        }
+
         return Inertia::render('Admin/Dashboard', [
             'userCount' => $userCount,
             'timeLogCount' => $timeLogCount,
@@ -36,6 +66,7 @@ final class AdminController extends Controller
             'clientCount' => $clientCount,
             'invoiceCount' => $invoiceCount,
             'tasksCount' => $tasksCount,
+            'userRegistrationTrend' => $trend,
         ]);
     }
 }
