@@ -23,6 +23,10 @@ interface PaginatedData<T> {
         label: string
         active: boolean
     }[]
+    total?: number
+    meta?: {
+        total: number
+    }
 }
 
 interface Props {
@@ -30,6 +34,7 @@ interface Props {
 }
 
 export default function Index({ invoices }: Props) {
+    const totalCount = invoices.meta?.total ?? invoices.total ?? invoices.data.length
     const formatCurrency = (amount: number): string => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
 
     const statusBadgeClass = (status: string): string => {
@@ -58,7 +63,7 @@ export default function Index({ invoices }: Props) {
             <Head title="Admin - Invoice Management" />
             <div className="container mx-auto py-6">
                 <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold">Invoice Management</h1>
+                    <h1 className="text-2xl font-semibold">Invoice Management ({totalCount})</h1>
                 </div>
 
                 <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">

@@ -1,18 +1,20 @@
 import { Pagination } from '@/components/ui/pagination'
 import AdminLayout from '@/layouts/admin-layout'
-import { formatDateTime } from '@/lib/utils'
+import { formatDate, formatDateTime } from '@/lib/utils'
 import { Head } from '@inertiajs/react'
 
-interface Client {
+interface Task {
     id: number
-    name: string
-    email: string | null
-    contact_person: string | null
-    phone: string | null
+    title: string
+    status: string
+    priority: string
+    due_date: string | null
     created_at: string
-    user: { id: number; name: string }
-    projects_count: number
-    invoices_count: number
+    project: { id: number; name: string } | null
+    creator: { id: number; name: string } | null
+    assignees_count: number
+    comments_count: number
+    tags_count: number
 }
 
 interface PaginatedData<T> {
@@ -29,17 +31,17 @@ interface PaginatedData<T> {
 }
 
 interface Props {
-    clients: PaginatedData<Client>
+    tasks: PaginatedData<Task>
 }
 
-export default function Index({ clients }: Props) {
-    const totalCount = clients.meta?.total ?? clients.total ?? clients.data.length
+export default function Index({ tasks }: Props) {
+    const totalCount = tasks.meta?.total ?? tasks.total ?? tasks.data.length
     return (
         <AdminLayout>
-            <Head title="Admin - Client Management" />
+            <Head title="Admin - Task Management" />
             <div className="container mx-auto py-6">
                 <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold">Client Management ({totalCount})</h1>
+                    <h1 className="text-2xl font-semibold">Task Management ({totalCount})</h1>
                 </div>
 
                 <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
@@ -51,25 +53,28 @@ export default function Index({ clients }: Props) {
                                         ID
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                                        Name
+                                        Title
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                                        Owner
+                                        Creator
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                                        Email
+                                        Status
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                                        Contact Person
+                                        Priority
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                                        Phone
+                                        Assignees
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                                        Projects
+                                        Comments
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                                        Invoices
+                                        Tags
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
+                                        Due Date
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                                         Created At
@@ -77,30 +82,38 @@ export default function Index({ clients }: Props) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-                                {clients.data.map((client: Client) => (
-                                    <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                {tasks.data.map((task: Task) => (
+                                    <tr key={task.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                                         <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                            {client.id}
+                                            {task.id}
                                         </td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{client.name}</td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">{client.user?.name}</td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {client.email ?? '-'}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {client.contact_person ?? '-'}
+                                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                            <div className="font-medium text-gray-900 dark:text-gray-100">{task.title}</div>
+                                            <div className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{task.project?.name ?? '-'}</div>
                                         </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {client.phone ?? '-'}
+                                            {task.creator?.name ?? '-'}
                                         </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {client.projects_count}
+                                            {task.status}
                                         </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {client.invoices_count}
+                                            {task.priority}
                                         </td>
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                            {formatDateTime(client.created_at)}
+                                            {task.assignees_count}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                            {task.comments_count}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                            {task.tags_count}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                            {task.due_date ? formatDate(task.due_date) : '-'}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                            {formatDateTime(task.created_at)}
                                         </td>
                                     </tr>
                                 ))}
@@ -109,7 +122,7 @@ export default function Index({ clients }: Props) {
                     </div>
 
                     <div className="border-t border-gray-200 px-6 py-4 dark:border-gray-700">
-                        <Pagination links={clients.links} />
+                        <Pagination links={tasks.links} />
                     </div>
                 </div>
             </div>

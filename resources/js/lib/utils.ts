@@ -13,6 +13,13 @@ export function formatDateTime(dateString: string | null | undefined): string {
     return date.local().format('YYYY-MM-DD HH:mm')
 }
 
+export function formatDate(dateString: string | null | undefined): string {
+    if (!dateString) return '-'
+    const date = moment.utc(dateString)
+    if (!date.isValid()) return '-'
+    return date.local().format('YYYY-MM-DD')
+}
+
 export function formatTimeEntry(startTimestamp: string | null | undefined, endTimestamp: string | null | undefined): string {
     if (!startTimestamp) return '-'
 
