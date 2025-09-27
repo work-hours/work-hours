@@ -7,6 +7,7 @@ interface DashboardProps {
     projectCount: number
     clientCount: number
     invoiceCount: number
+    tasksCount: number
 }
 
 export const statCard = ({ title, count, link }: { title: string; count: number; link: string | null }) => (
@@ -23,7 +24,7 @@ export const statCard = ({ title, count, link }: { title: string; count: number;
     </div>
 )
 
-export default function Dashboard({ userCount, timeLogCount, projectCount, clientCount, invoiceCount }: DashboardProps) {
+export default function Dashboard({ userCount, timeLogCount, projectCount, clientCount, invoiceCount, tasksCount }: DashboardProps) {
     return (
         <AdminLayout>
             <Head title="Admin Dashboard" />
@@ -34,6 +35,7 @@ export default function Dashboard({ userCount, timeLogCount, projectCount, clien
                     {statCard({ title: 'Users', count: userCount, link: '/administration/users' })}
                     {statCard({ title: 'Projects', count: projectCount, link: '/administration/projects' })}
                     {statCard({ title: 'Clients', count: clientCount, link: '/administration/clients' })}
+                    {statCard({ title: 'Tasks', count: tasksCount, link: '/administration/tasks' })}
                     {statCard({ title: 'Invoices', count: invoiceCount, link: '/administration/invoices' })}
                     {statCard({ title: 'Time Logs', count: timeLogCount, link: null })}
                 </div>

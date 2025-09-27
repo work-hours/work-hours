@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Project;
+use App\Models\Task;
 use App\Models\TimeLog;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -26,6 +27,7 @@ final class AdminController extends Controller
         $projectCount = Project::query()->count();
         $clientCount = Client::query()->count();
         $invoiceCount = Invoice::query()->count();
+        $tasksCount = Task::query()->count();
 
         return Inertia::render('Admin/Dashboard', [
             'userCount' => $userCount,
@@ -33,6 +35,7 @@ final class AdminController extends Controller
             'projectCount' => $projectCount,
             'clientCount' => $clientCount,
             'invoiceCount' => $invoiceCount,
+            'tasksCount' => $tasksCount,
         ]);
     }
 }
