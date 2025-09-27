@@ -1,6 +1,6 @@
 import Background from '@/components/ui/background'
 import { Head, Link } from '@inertiajs/react'
-import { Briefcase, CheckSquare, ChevronLeft, ChevronRight, Coins, LayoutDashboard, Projector, Settings, Users } from 'lucide-react'
+import { Briefcase, CheckSquare, ChevronLeft, ChevronRight, Coins, LayoutDashboard, Projector, Settings, Users, Clock } from 'lucide-react'
 import { ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 
@@ -119,6 +119,19 @@ export default function AdminLayout({ children, title = 'Admin' }: AdminLayoutPr
                                 >
                                     <CheckSquare className="h-4 w-4 flex-shrink-0 opacity-80" />
                                     {!collapsed && <span className="ml-3">Tasks</span>}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href={route('admin.time-logs.index')}
+                                    className={`flex items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/60 dark:hover:text-gray-100 ${
+                                        window.location.pathname.startsWith('/administration/time-logs')
+                                            ? 'bg-gray-50/80 text-gray-900 dark:bg-gray-800/40 dark:text-gray-100'
+                                            : ''
+                                    }`}
+                                >
+                                    <Clock className="h-4 w-4 flex-shrink-0 opacity-80" />
+                                    {!collapsed && <span className="ml-3">Time Logs</span>}
                                 </Link>
                             </li>
                             <li>

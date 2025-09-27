@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ClientController as AdminClientController;
 use App\Http\Controllers\Admin\InvoiceController as AdminInvoiceController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\TaskController as AdminTaskController;
+use App\Http\Controllers\Admin\TimeLogController as AdminTimeLogController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -22,5 +23,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             Route::get('/clients', (new AdminClientController())->index(...))->name('clients.index');
             Route::get('/invoices', (new AdminInvoiceController())->index(...))->name('invoices.index');
             Route::get('/tasks', (new AdminTaskController())->index(...))->name('tasks.index');
+            Route::get('/time-logs', (new AdminTimeLogController())->index(...))->name('time-logs.index');
         });
 });

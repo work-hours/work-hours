@@ -37,7 +37,7 @@ export default function Dashboard({ userCount, timeLogCount, projectCount, clien
                     {statCard({ title: 'Clients', count: clientCount, link: '/administration/clients' })}
                     {statCard({ title: 'Tasks', count: tasksCount, link: '/administration/tasks' })}
                     {statCard({ title: 'Invoices', count: invoiceCount, link: '/administration/invoices' })}
-                    {statCard({ title: 'Time Logs', count: timeLogCount, link: null })}
+                    {statCard({ title: 'Time Logs', count: timeLogCount, link: '/administration/time-logs' })}
                 </div>
             </div>
         </AdminLayout>
