@@ -403,4 +403,13 @@ final class TimeLogController extends Controller
     {
         return response()->json($timeLog->tags);
     }
+
+    #[Action(method: 'post', name: 'time-log.uninvoice', params: ['timeLog'], middleware: ['auth', 'verified'])]
+    public function uninvoice(TimeLog $timeLog): void
+    {
+        // Only the project owner can mark a time log as un-invoiced
+        abort_unless($timeLog->project && $timeLog->project->user_id === auth()->id(), 403);
+
+        $timeLog->update(['invoice_id' => null]);
+    }
 }
