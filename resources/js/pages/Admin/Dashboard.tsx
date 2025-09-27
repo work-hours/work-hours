@@ -13,6 +13,7 @@ interface DashboardProps {
     clientCount: number
     invoiceCount: number
     tasksCount: number
+    totalHoursLogged: number
     userRegistrationTrend: TrendPoint[]
     timeLogTrend: TrendPoint[]
 }
@@ -154,12 +155,16 @@ function TrendChart({ data, title, ariaLabel }: { data: TrendPoint[]; title: str
     )
 }
 
-export default function Dashboard({ userCount, timeLogCount, projectCount, clientCount, invoiceCount, tasksCount, userRegistrationTrend, timeLogTrend }: DashboardProps) {
+export default function Dashboard({ userCount, timeLogCount, projectCount, clientCount, invoiceCount, tasksCount, totalHoursLogged, userRegistrationTrend, timeLogTrend }: DashboardProps) {
     return (
         <AdminLayout>
             <Head title="Admin Dashboard" />
             <div className="container mx-auto py-6">
                 <h1 className="mb-6 text-2xl font-semibold">Admin Dashboard</h1>
+
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12">
+                    {statCard({ title: 'Total Hours Logged', count: Number(totalHoursLogged.toFixed(2)), link: null })}
+                </div>
 
                 <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 mb-12">
                     <TrendChart

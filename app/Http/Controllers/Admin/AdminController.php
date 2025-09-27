@@ -30,6 +30,7 @@ final class AdminController extends Controller
         $clientCount = Client::query()->count();
         $invoiceCount = Invoice::query()->count();
         $tasksCount = Task::query()->count();
+        $totalHoursLogged = (float) TimeLog::query()->sum('duration');
 
         // Build a 30-day registration trend for email-verified users only
         $start = Carbon::now()->subDays(29)->startOfDay();
@@ -90,6 +91,7 @@ final class AdminController extends Controller
             'clientCount' => $clientCount,
             'invoiceCount' => $invoiceCount,
             'tasksCount' => $tasksCount,
+            'totalHoursLogged' => $totalHoursLogged,
             'userRegistrationTrend' => $userTrend,
             'timeLogTrend' => $timeLogTrend,
         ]);
