@@ -16,7 +16,7 @@ add('shared_dirs', []);
 add('writable_dirs', []);
 
 // Hosts
-host('146.190.32.125')
+host('159.203.100.0')
     ->set('remote_user', 'workhours')
     ->set('deploy_path', '~/htdocs/workhours.us')
     ->set('writable_mode', 'chmod');

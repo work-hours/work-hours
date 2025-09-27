@@ -146,7 +146,9 @@ final class User extends Authenticatable implements MustVerifyEmail
         if (! empty($this->profile_photo_path)) {
             return asset('storage/' . $this->profile_photo_path);
         }
-        $hash = md5(mb_strtolower(mb_trim((string) $this->email)));
+
+        $email = (string) ($this->getRawOriginal('email') ?? '');
+        $hash = md5(mb_strtolower(mb_trim($email)));
 
         return 'https://www.gravatar.com/avatar/' . $hash . '?s=200&d=identicon';
     }
